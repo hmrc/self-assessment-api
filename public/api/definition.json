@@ -25,6 +25,7 @@
             "endpointName":"Resolve Customer",
             "method":"GET",
             "authType":"USER",
+            "scope": "read:self-assessment-api",
             "throttlingTier":"UNLIMITED"
           },
           {
@@ -32,13 +33,16 @@
             "endpointName":"Discover",
             "method":"GET",
             "authType":"USER",
+            "scope": "read:self-assessment-api",
             "throttlingTier":"UNLIMITED"
           },
+          /* TODO - this documentation is missing */
           {
             "uriPattern":"/{utr}/employments",
             "endpointName":"Employments",
             "method":"GET",
             "authType":"USER",
+            "scope": "read:self-assessment-api",
             "throttlingTier":"UNLIMITED"
           }
         ]
