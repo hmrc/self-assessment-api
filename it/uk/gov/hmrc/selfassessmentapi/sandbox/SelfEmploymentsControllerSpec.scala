@@ -16,6 +16,7 @@ class SelfEmploymentsControllerSpec extends BaseFunctionalSpec {
 
     "return a 201 response with links to newly created self employment" in {
       given()
+        .userIsAuthorisedForTheResource(saUtr)
         .when()
         .post(s"/sandbox/$saUtr/self-employments", Some(toJson(Some(SelfEmployment(None, "name", LocalDate.now.minusDays(1))))))
         .thenAssertThat()
@@ -26,6 +27,7 @@ class SelfEmploymentsControllerSpec extends BaseFunctionalSpec {
 
     "return a valid response containing an existing self employment" in {
       given()
+        .userIsAuthorisedForTheResource(saUtr)
         .when()
         .get(s"/sandbox/$saUtr/self-employments/$selfEmploymentId")
         .thenAssertThat()
