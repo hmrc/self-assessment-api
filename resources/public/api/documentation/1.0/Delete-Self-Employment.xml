@@ -1,0 +1,82 @@
+<endpoint>
+    <name>Delete Self Employment</name>
+    <description>This endpoint deletes a self-employment</description>
+    <section id="resource">
+        <title>Resource</title>
+        <resource>DELETE /self-assessment/{utr}/self-employments/{selfEmploymentsId}</resource>
+    </section>
+    <section id="path-parameters">
+        <title>Path Parameters</title>
+        <table>
+            <headings>
+                <cell>Name</cell>
+                <cell>Type</cell>
+                <cell>Example</cell>
+                <cell>Description</cell>
+            </headings>
+            <rows>
+                <row>
+                    <cell>
+                        <code>utr</code>
+                    </cell>
+                    <cell>
+                        <code>String</code>
+                    </cell>
+                    <cell>
+                        <code>2234567890</code>
+                    </cell>
+                    <cell>The Self Assessment UTR of the customer</cell>
+                </row>
+                <row>
+                    <cell>
+                        <code>selfEmploymentsId</code>
+                    </cell>
+                    <cell>
+                        <code>String</code>
+                    </cell>
+                    <cell>
+                        <code>1234567</code>
+                    </cell>
+                    <cell>The Self Employments id</cell>
+                </row>
+
+            </rows>
+        </table>
+    </section>
+    <section id="authorisation">
+        <title>Authorisation</title>
+        <authorisation>
+            <type>USER</type>
+            <scope>write:self-assessment-api</scope>
+        </authorisation>
+    </section>
+    <section id="content-types">
+        <title>Accepted Media Types</title>
+        <list>
+            <item>
+                <code>application/vnd.hmrc.1.0+json</code>
+            </item>
+        </list>
+    </section>
+    <section id="sample-response">
+        <title>Response</title>
+        <httpStatus>204 (NO_CONTENT)</httpStatus>
+    </section>
+    <section id="error-responses">
+        <title>Error Scenarios</title>
+        <table>
+            <headings>
+                <cell>Error Scenario</cell>
+                <cell>HTTP Status</cell>
+                <cell>Code</cell>
+            </headings>
+            <rows>
+                <row>
+                    <cell>Resource was not found</cell>
+                    <cell><code>404 (Not Found)</code></cell>
+                    <cell><code>NOT_FOUND</code></cell>
+                </row>
+            </rows>
+        </table>
+    </section>
+</endpoint>

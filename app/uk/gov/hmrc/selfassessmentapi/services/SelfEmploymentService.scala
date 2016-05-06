@@ -26,4 +26,8 @@ trait SelfEmploymentService {
   def create(selfEmployment: SelfEmployment) : Future[SelfEmploymentId]
 
   def findBySelfEmploymentId(utr: SaUtr, selfEmploymentId: SelfEmploymentId) : Future[Option[SelfEmployment]]
+
+  def update(selfEmployment: SelfEmployment, utr: SaUtr, selfEmploymentId: SelfEmploymentId): Future[Unit]
+
+  def delete(utr: SaUtr, selfEmploymentId: SelfEmploymentId): Future[Boolean]
 }
