@@ -20,13 +20,13 @@ class AuthorisationSpec extends BaseFunctionalSpec {
   }
 
   "if the user is authorised for the resource they" should {
-    "receive a 404 response for an inexistent resource" in {
+    "receive a 501 response for any live resource" in {
       given()
         .userIsAuthorisedForTheResource(saUtr)
         .when()
         .get(s"/$saUtr/self-employments/$selfEmploymentId")
         .thenAssertThat()
-        .statusIs(404)
+        .statusIs(501)
     }
   }
 }

@@ -21,22 +21,21 @@ import play.api.libs.json.Json
 import play.api.libs.json.Json.obj
 import play.api.mvc.Action
 import play.api.mvc.hal._
-import uk.gov.hmrc.api.controllers.ErrorNotFound
+import uk.gov.hmrc.api.controllers.{ErrorNotFound, HeaderValidator}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.domain.{SelfEmployment, SelfEmploymentId}
 import uk.gov.hmrc.selfassessmentapi.services.SelfEmploymentService
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
-trait SelfEmploymentsController extends BaseController with Links {
+trait SelfEmploymentsController extends BaseController with HeaderValidator with Links {
 
   override lazy val context: String = AppContext.apiGatewayContext
 
   val selfEmploymentService: SelfEmploymentService
 
-  def findById(utr: SaUtr, seId: SelfEmploymentId) = Action.async { request =>
+  def findById(utr: SaUtr, seId: SelfEmploymentId) = validateAccept(acceptHeaderValidationRules).async { request =>
     for (selfEmployment <- selfEmploymentService.findBySelfEmploymentId(utr, seId)) yield {
       selfEmployment match {
         case Some(se) => Ok(halResource(Json.toJson(selfEmployment), Seq(HalLink("self", selfEmploymentsHref(utr, seId)))))
@@ -55,7 +54,16 @@ trait SelfEmploymentsController extends BaseController with Links {
 
   def update(saUtr: SaUtr, seId: SelfEmploymentId) = Action.async(parse.json) { implicit request =>
     withJsonBody[SelfEmployment] { selfEmployment =>
-      Future.successful(Ok(halResource(obj(), Seq(HalLink("self", selfEmploymentsHref(saUtr, seId))))))
+      for (_ <- selfEmploymentService.update(selfEmployment, saUtr, seId)) yield {
+        Ok(halResource(obj(), Seq(HalLink("self", selfEmploymentsHref(saUtr, seId)))))
+      }
     }
   }
+
+  def delete(saUtr: SaUtr, seId: SelfEmploymentId) =
+    validateAccept(acceptHeaderValidationRules).async { request =>
+      selfEmploymentService.delete(saUtr, seId).map { isDeleted =>
+        if (isDeleted) NoContent else NotFound(Json.toJson(ErrorNotFound))
+      }
+    }
 }

@@ -16,17 +16,29 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers.live
 
-import play.api.libs.json.Json._
+import play.api.libs.json.Json
 import play.api.mvc.Action
-import play.api.mvc.hal._
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.selfassessmentapi.controllers.ErrorNotImplemented
 import uk.gov.hmrc.selfassessmentapi.domain.SelfEmploymentId
 import uk.gov.hmrc.selfassessmentapi.services.live.SelfEmploymentService
 
 object SelfEmploymentsController extends uk.gov.hmrc.selfassessmentapi.controllers.SelfEmploymentsController {
   override val selfEmploymentService = SelfEmploymentService
 
-  override def update(saUtr: SaUtr, seId: SelfEmploymentId) = Action(parse.json) {request =>
-    NotImplemented(halResource(obj(), Seq()))
+  override def create(saUtr: SaUtr) = Action(parse.json) { request =>
+    NotImplemented(Json.toJson(ErrorNotImplemented))
+  }
+
+  override def findById(utr: SaUtr, seId: SelfEmploymentId) = validateAccept(acceptHeaderValidationRules) {
+    NotImplemented(Json.toJson(ErrorNotImplemented))
+  }
+
+  override def update(saUtr: SaUtr, seId: SelfEmploymentId) = Action(parse.json) { request =>
+    NotImplemented(Json.toJson(ErrorNotImplemented))
+  }
+
+  override def delete(utr: SaUtr, seId: SelfEmploymentId) = validateAccept(acceptHeaderValidationRules) {
+    NotImplemented(Json.toJson(ErrorNotImplemented))
   }
 }

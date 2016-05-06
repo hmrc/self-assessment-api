@@ -5,7 +5,7 @@ GET        /:utr                   uk.gov.hmrc.selfassessmentapi.controllers.san
 GET         /:utr/self-employments/:selfEmploymentId        uk.gov.hmrc.selfassessmentapi.controllers.sandbox.SelfEmploymentsController.findById(utr: uk.gov.hmrc.domain.SaUtr, selfEmploymentId: uk.gov.hmrc.selfassessmentapi.domain.SelfEmploymentId)
 POST        /:utr/self-employments                          uk.gov.hmrc.selfassessmentapi.controllers.sandbox.SelfEmploymentsController.create(utr: uk.gov.hmrc.domain.SaUtr)
 PUT         /:utr/self-employments/:selfEmploymentId        uk.gov.hmrc.selfassessmentapi.controllers.sandbox.SelfEmploymentsController.update(utr: uk.gov.hmrc.domain.SaUtr, selfEmploymentId: uk.gov.hmrc.selfassessmentapi.domain.SelfEmploymentId)
-
+DELETE      /:utr/self-employments/:selfEmploymentId        uk.gov.hmrc.selfassessmentapi.controllers.sandbox.SelfEmploymentsController.delete(utr: uk.gov.hmrc.domain.SaUtr, selfEmploymentId: uk.gov.hmrc.selfassessmentapi.domain.SelfEmploymentId)
 
 POST       /:utr/liabilities                    uk.gov.hmrc.selfassessmentapi.controllers.sandbox.LiabilityController.requestLiability(utr: uk.gov.hmrc.domain.SaUtr, taxPeriod: Option[String])
 GET        /:utr/liabilities/:liabilityId       uk.gov.hmrc.selfassessmentapi.controllers.sandbox.LiabilityController.retrieveLiability(utr: uk.gov.hmrc.domain.SaUtr, liabilityId: String)

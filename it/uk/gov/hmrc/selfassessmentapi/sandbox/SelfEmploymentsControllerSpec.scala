@@ -2,15 +2,14 @@ package uk.gov.hmrc.selfassessmentapi.sandbox
 
 import org.joda.time.LocalDate
 import play.api.libs.json.Json._
+import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.selfassessmentapi.domain.SelfEmployment
 import uk.gov.hmrc.support.BaseFunctionalSpec
-
-import scala.util.Random
 
 class SelfEmploymentsControllerSpec extends BaseFunctionalSpec {
 
   val saUtr = generateSaUtr()
-  val selfEmploymentId = Random.nextLong().toString
+  val selfEmploymentId = BSONObjectID.generate.stringify
 
   "Sandbox Self employment" should {
 
@@ -44,6 +43,14 @@ class SelfEmploymentsControllerSpec extends BaseFunctionalSpec {
         .statusIs(200)
         .contentTypeIs("application/hal+json")
         .bodyHasLink("self", s"/self-assessment/$saUtr/self-employments/$selfEmploymentId")
+    }
+
+    "return 204 response when an existing self employment is deleted" in {
+      given()
+        .when()
+        .delete(s"/sandbox/$saUtr/self-employments/$selfEmploymentId")
+        .thenAssertThat()
+        .statusIs(204)
     }
   }
 }

@@ -88,6 +88,14 @@ class SelfAssessmentApiDefinition(apiContext: String, apiStatus: APIStatus) {
                 scope = Some(writeScope)
               ),
               Endpoint(
+                uriPattern = "/{utr}/self-employments/{selfEmploymentsId}",
+                endpointName = "Delete Self Employment",
+                method = HttpMethod.DELETE,
+                authType = AuthType.USER,
+                throttlingTier = ResourceThrottlingTier.UNLIMITED,
+                scope = Some(writeScope)
+              ),
+              Endpoint(
                 uriPattern = "/{utr}/liabilities",
                 endpointName = "Request Liability",
                 method = HttpMethod.POST,
