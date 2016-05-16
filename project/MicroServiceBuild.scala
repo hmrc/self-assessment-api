@@ -81,7 +81,9 @@ private object AppDependencies {
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
         "org.scalatestplus" %% "play" % "1.2.0" % scope,
         "com.github.tomakehurst" % "wiremock" % "1.54" % scope,
-        "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "1.50.3" % scope
+        "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "1.50.3" % scope,
+        // this does not get automatically added by the plugin
+        "org.scoverage" % "scalac-scoverage-runtime_2.11" % "1.1.1" % scope
       )
     }.test
   }
