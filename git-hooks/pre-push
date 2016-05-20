@@ -12,7 +12,7 @@ fi
 $CMD
 RESULT=$?
 if [ $RESULT -ne 0 ]; then
-    echo "failed $CMD: Please format Scala code properly"
+    echo "failed $CMD: Please format Scala code with sbt scalamft"
     exit 1
 fi
 
