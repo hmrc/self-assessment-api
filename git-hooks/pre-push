@@ -1,0 +1,19 @@
+#.git/hooks/pre-push
+#!/bin/bash
+
+CMD="sbt clean scalafmtTest"
+
+# Check if we have commits to push
+commits=`git log @{u}..`
+if [ -z "$commits" ]; then
+    exit 0
+fi
+
+$CMD
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+    echo "failed $CMD: Please format Scala code with sbt scalamft"
+    exit 1
+fi
+
+exit 0

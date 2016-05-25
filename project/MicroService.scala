@@ -2,6 +2,7 @@ import sbt.Keys._
 import sbt.Tests.{SubProcess, Group}
 import sbt._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
+import org.scalafmt.sbt.ScalaFmtPlugin.autoImport.scalafmtConfig
 
 
 trait MicroService {
@@ -50,6 +51,7 @@ trait MicroService {
       testGrouping in FuncTest := oneForkedJvmPerTest((definedTests in FuncTest).value),
       parallelExecution in FuncTest := false)
     .settings(resolvers += Resolver.bintrayRepo("hmrc", "releases"))
+    .settings(scalafmtConfig := Some(file(".scalafmt")))
 }
 
 private object TestPhases {
