@@ -16,11 +16,13 @@
 
 package uk.gov.hmrc.selfassessmentapi.domain
 
-import play.api.libs.json.JsValue
+object SourceTypes {
+  val SelfEmployments = selfemployment.SourceType.SelfEmployments
+  val FurnishedHolidayLettings = furnishedholidaylettings.SourceType.FurnishedHolidayLettings
+  val UKProperty = ukproperty.SourceType.UKProperty
+  val Employments = employment.SourceType.Employments
 
-trait SourceType extends Documentable {
-  val name: String
-  val example: JsValue
-  val summaryTypes: Seq[SummaryType]
+  val types = Seq(SelfEmployments, FurnishedHolidayLettings, UKProperty, Employments)
+  private val typesByName = types.map(x => x.name -> x).toMap
+  def fromName(name: String): Option[SourceType] = typesByName.get(name)
 }
-

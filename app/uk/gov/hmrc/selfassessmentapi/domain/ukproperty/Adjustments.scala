@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.domain
+package uk.gov.hmrc.selfassessmentapi.domain.ukproperty
 
-import play.api.libs.json.JsValue
+import play.api.libs.json._
+import uk.gov.hmrc.selfassessmentapi.domain._
 
-trait SourceType extends Documentable {
-  val name: String
-  val example: JsValue
-  val summaryTypes: Seq[SummaryType]
+case class Adjustments(lossBroughtForward: Option[BigDecimal] = None)
+
+object Adjustments {
+  implicit val writes = Json.writes[Adjustments]
+
+  implicit val reads: Reads[Adjustments] = (__ \ "lossBroughtForward").readNullable[BigDecimal](positiveAmountValidator("lossBroughtForward")).map {
+    Adjustments(_)
+  }
 }
-
