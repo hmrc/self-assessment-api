@@ -23,34 +23,6 @@ import uk.gov.hmrc.selfassessmentapi.controllers.definition.EnumJson
 import uk.gov.hmrc.selfassessmentapi.domain._
 import uk.gov.hmrc.selfassessmentapi.domain.furnishedholidaylettings.PropertyLocationType
 
-case class Allowances(annualInvestmentAllowance: Option[BigDecimal] = None,
-                      businessPremisesRenovationAllowance: Option[BigDecimal] = None,
-                      otherCapitalAllowance: Option[BigDecimal] = None,
-                      wearAndTearAllowance: Option[BigDecimal] = None
-                               )
-
-object Allowances {
-  implicit val writes = Json.writes[Allowances]
-
-  implicit val reads: Reads[Allowances] = (
-    (__ \ "annualInvestmentAllowance").readNullable[BigDecimal](positiveAmountValidator("annualInvestmentAllowance")) and
-      (__ \ "businessPremisesRenovationAllowance").readNullable[BigDecimal](positiveAmountValidator("businessPremisesRenovationAllowance")) and
-      (__ \ "otherCapitalAllowance").readNullable[BigDecimal](positiveAmountValidator("otherCapitalAllowance")) and
-      (__ \ "wearAndTearAllowance").readNullable[BigDecimal](positiveAmountValidator("wearAndTearAllowance"))
-    ) (Allowances.apply _)
-}
-
-case class Adjustments(lossBroughtForward: Option[BigDecimal] = None)
-
-object Adjustments {
-  implicit val writes = Json.writes[Adjustments]
-
-  implicit val reads: Reads[Adjustments] = (__ \ "lossBroughtForward").readNullable[BigDecimal](positiveAmountValidator("lossBroughtForward")).map {
-    Adjustments(_)
-  }
-}
-
-
 case class UKProperty(id: Option[SourceId] = None,
                       name: String,
                       allowances: Option[Allowances] = None,
