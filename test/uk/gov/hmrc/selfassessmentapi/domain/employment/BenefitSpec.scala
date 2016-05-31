@@ -37,7 +37,7 @@ class BenefitSpec extends JsonSpec {
         val empBenefit = Benefit(`type` = PrivateInsurance, amount = testAmount)
         assertValidationError[Benefit](
           empBenefit,
-          Map(("/amount", INVALID_MONETARY_AMOUNT) -> "amount should be non-negative number up to 2 decimal values"),
+          Map("/amount" -> INVALID_MONETARY_AMOUNT),
           "Expected invalid employment benefit amount")
       }
     }
@@ -47,7 +47,7 @@ class BenefitSpec extends JsonSpec {
         val empBenefit = Benefit(`type` = PrivateInsurance, amount = testAmount)
         assertValidationError[Benefit](
           empBenefit,
-          Map(("/amount", INVALID_MONETARY_AMOUNT) -> "amount should be non-negative number up to 2 decimal values"),
+          Map("/amount" -> INVALID_MONETARY_AMOUNT),
           "Expected invalid employment benefit amount")
       }
     }
@@ -56,7 +56,7 @@ class BenefitSpec extends JsonSpec {
       val empBenefit = Benefit(`type` = PrivateInsurance, amount = BigDecimal(-1000.12))
       assertValidationError[Benefit](
         empBenefit,
-        Map(("/amount", INVALID_MONETARY_AMOUNT) -> "amount should be non-negative number up to 2 decimal values"),
+        Map("/amount" -> INVALID_MONETARY_AMOUNT),
         "Expected negative employment benefit amount")
     }
 
@@ -71,7 +71,7 @@ class BenefitSpec extends JsonSpec {
 
       assertValidationError[Benefit](
         json,
-        Map(("/type", NO_VALUE_FOUND) -> "Employment Benefit type is invalid"),
+        Map("/type" -> NO_VALUE_FOUND),
         s"Expected benefit type not in {${BenefitType.values.mkString(", ")}}")
     }
   }

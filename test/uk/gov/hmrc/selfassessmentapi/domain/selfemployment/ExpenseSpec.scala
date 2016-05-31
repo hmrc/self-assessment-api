@@ -36,8 +36,7 @@ class ExpenseSpec extends JsonSpec {
         val seExpense = Expense(`type` = CISPayments, amount = testAmount)
         assertValidationError[Expense](
           seExpense,
-          Map(("/amount", INVALID_MONETARY_AMOUNT) -> "amount should be non-negative number up to 2 decimal values"),
-          "Expected invalid self-employment-income")
+          Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected invalid self-employment-income")
       }
     }
 
@@ -46,8 +45,7 @@ class ExpenseSpec extends JsonSpec {
         val seExpense = Expense(`type` = CISPayments, amount = testAmount)
         assertValidationError[Expense](
           seExpense,
-          Map(("/amount", INVALID_MONETARY_AMOUNT) -> "amount should be non-negative number up to 2 decimal values"),
-          "Expected invalid self-employment-income")
+          Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected invalid self-employment-income")
       }
     }
 
@@ -55,8 +53,7 @@ class ExpenseSpec extends JsonSpec {
       val seExpense = Expense(`type` = CISPayments, amount = BigDecimal(-1000.12))
       assertValidationError[Expense](
         seExpense,
-        Map(("/amount", INVALID_MONETARY_AMOUNT) -> "amount should be non-negative number up to 2 decimal values"),
-        "Expected negative self-employment expense")
+        Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected negative self-employment expense")
     }
 
     "reject invalid Expense category" in {
@@ -70,8 +67,9 @@ class ExpenseSpec extends JsonSpec {
 
       assertValidationError[Expense](
         json,
-        Map(("/type", NO_VALUE_FOUND) -> "Self Employment Expense type is invalid"),
-        s"Expected expense type not in {${ExpenseType.values.mkString(", ")}}")
+        Map("/type" -> NO_VALUE_FOUND),
+        "Expected expense type not in { CoGBought, CISPayments, StaffCosts, TravelCosts, PremisesRunningCosts, MaintenanceCosts, " +
+          "AdminCosts,  AdvertisingCosts, Internet, FinancialCharges, BadDept, ProfessionalFees, Deprecation, Other }")
     }
   }
 }

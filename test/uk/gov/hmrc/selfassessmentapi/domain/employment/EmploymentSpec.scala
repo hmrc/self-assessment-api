@@ -34,8 +34,7 @@ class EmploymentSpec extends JsonSpec {
 
       assertValidationError[Employment](
         se,
-        Map(("/name", MAX_FIELD_LENGTH_EXCEEDED) -> "field length exceeded the max 100 chars"),
-        "Expected valid employment")
+        Map("/name" -> MAX_FIELD_LENGTH_EXCEEDED), "Expected valid employment")
     }
   }
 }

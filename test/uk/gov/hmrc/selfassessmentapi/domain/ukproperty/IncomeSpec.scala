@@ -33,11 +33,9 @@ class IncomeSpec extends JsonSpec {
   "validate" should {
     "reject amounts with more than 2 decimal values" in {
       Seq(BigDecimal(1000.123), BigDecimal(1000.1234), BigDecimal(1000.12345), BigDecimal(1000.123456789)).foreach { testAmount =>
-        val value = Income(`type` = RentIncome, amount = testAmount)
         assertValidationError[Income](
-          value,
-          Map(("/amount", INVALID_MONETARY_AMOUNT) -> "amount should be non-negative number up to 2 decimal values"),
-          "Expected invalid uk-property-income with more than 2 decimal places")
+          Income(`type` = RentIncome, amount = testAmount),
+          Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected invalid uk-property-income with more than 2 decimal places")
       }
     }
 
@@ -51,16 +49,13 @@ class IncomeSpec extends JsonSpec {
 
       assertValidationError[Income](
         json,
-        Map(("/type", NO_VALUE_FOUND) -> "UK Property Income type is invalid"),
-        "should fail with invalid type")
+        Map("/type" ->  NO_VALUE_FOUND), "should fail with invalid type")
     }
 
     "reject negative amount" in {
-      val seIncome = Income(`type` = RentIncome, amount = BigDecimal(-1000.12))
       assertValidationError[Income](
-        seIncome,
-        Map(("/amount", INVALID_MONETARY_AMOUNT) -> "amount should be non-negative number up to 2 decimal values"),
-        "should fail with INVALID_MONETARY_AMOUNT error")
+        Income(`type` = RentIncome, amount = BigDecimal(-1000.12)),
+        Map("/amount" -> INVALID_MONETARY_AMOUNT), "should fail with INVALID_MONETARY_AMOUNT error")
     }
   }
 }

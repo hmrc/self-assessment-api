@@ -38,8 +38,7 @@ class SelfEmploymentSpec extends JsonSpec {
 
       assertValidationError[SelfEmployment](
         se,
-        Map(("/commencementDate", COMMENCEMENT_DATE_NOT_IN_THE_PAST) -> "commencement date should be in the past",
-          ("/name", MAX_FIELD_LENGTH_EXCEEDED) -> "field length exceeded the max 100 chars"),
+        Map("/commencementDate" -> COMMENCEMENT_DATE_NOT_IN_THE_PAST, "/name" -> MAX_FIELD_LENGTH_EXCEEDED),
         "Expected valid self-employment")
     }
 
@@ -52,8 +51,7 @@ class SelfEmploymentSpec extends JsonSpec {
 
       assertValidationError[SelfEmployment](
         se,
-        Map(("/allowances/annualInvestmentAllowance", INVALID_MONETARY_AMOUNT) -> s"annualInvestmentAllowance should be non-negative number up to 2 decimal values"),
-        "Expected valid self-employment")
+        Map("/allowances/annualInvestmentAllowance" -> INVALID_MONETARY_AMOUNT), "Expected valid self-employment")
     }
 
     "reject invalid adjustments" in {
@@ -65,8 +63,7 @@ class SelfEmploymentSpec extends JsonSpec {
 
       assertValidationError[SelfEmployment](
         se,
-        Map(("/adjustments/lossBroughtForward", INVALID_MONETARY_AMOUNT) -> s"lossBroughtForward should be non-negative number up to 2 decimal values"),
-        "Expected valid self-employment")
+        Map("/adjustments/lossBroughtForward" -> INVALID_MONETARY_AMOUNT), "Expected valid self-employment")
     }
 
   }

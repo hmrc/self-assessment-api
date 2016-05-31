@@ -43,8 +43,7 @@ class ExpenseSpec extends JsonSpec {
 
       assertValidationError[Expense](
         json,
-        Map(("/type", NO_VALUE_FOUND) -> "Employments expense type is invalid"),
-        "Expected invalid employments-expense")
+        Map("/type" -> NO_VALUE_FOUND), "Expected invalid employments-expense")
     }
 
     "reject amounts with more than 2 decimal values" in {
@@ -52,8 +51,7 @@ class ExpenseSpec extends JsonSpec {
         val expense = Expense(`type` = TravelAndSubsistence, amount = testAmount)
         assertValidationError[Expense](
           expense,
-          Map(("/amount", INVALID_MONETARY_AMOUNT) -> "amount should be non-negative number up to 2 decimal values"),
-          "Expected invalid employments-expense")
+          Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected invalid employments-expense")
       }
     }
 
@@ -61,8 +59,7 @@ class ExpenseSpec extends JsonSpec {
       val expense = Expense(`type` = FixedDeductions, amount = BigDecimal(-1000.13))
       assertValidationError[Expense](
         expense,
-        Map(("/amount", INVALID_MONETARY_AMOUNT) -> "amount should be non-negative number up to 2 decimal values"),
-        "Expected negative employments-expense")
+        Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected negative employments-expense")
     }
   }
 }

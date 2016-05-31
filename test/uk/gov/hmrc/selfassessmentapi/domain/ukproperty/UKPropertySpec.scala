@@ -28,11 +28,8 @@ class UKPropertySpec extends JsonSpec {
     }
 
     "reject name with more than 100 characters" in {
-      val value = UKProperty(None, "Abcd" * 100, None, None, None)
-      assertValidationError[UKProperty](
-        value,
-        Map(("/name", MAX_FIELD_LENGTH_EXCEEDED) -> "field length exceeded the max 100 chars"),
-        "Expected invalid uk-property")
+      assertValidationError[UKProperty](UKProperty(None, "Abcd" * 100, None, None, None),
+        Map("/name" -> MAX_FIELD_LENGTH_EXCEEDED), "Expected invalid uk-property")
     }
 
 
@@ -41,8 +38,7 @@ class UKPropertySpec extends JsonSpec {
         val value = UKProperty.example.copy(allowances = Some(Allowances(annualInvestmentAllowance = Some(amount))))
         assertValidationError[UKProperty](
           value,
-          Map(("/allowances/annualInvestmentAllowance", INVALID_MONETARY_AMOUNT) -> "annualInvestmentAllowance should be non-negative number up to 2 decimal values"),
-          "Expected invalid uk-property")
+          Map("/allowances/annualInvestmentAllowance" -> INVALID_MONETARY_AMOUNT), "Expected invalid uk-property")
       }
     }
 
@@ -51,8 +47,7 @@ class UKPropertySpec extends JsonSpec {
         val value = UKProperty.example.copy(allowances = Some(Allowances(businessPremisesRenovationAllowance = Some(amount))))
         assertValidationError[UKProperty](
           value,
-          Map(("/allowances/businessPremisesRenovationAllowance", INVALID_MONETARY_AMOUNT) -> "businessPremisesRenovationAllowance should be non-negative number up to 2 decimal values"),
-          "Expected invalid uk-property")
+          Map("/allowances/businessPremisesRenovationAllowance" -> INVALID_MONETARY_AMOUNT), "Expected invalid uk-property")
       }
     }
 
@@ -61,8 +56,7 @@ class UKPropertySpec extends JsonSpec {
         val value = UKProperty.example.copy(allowances = Some(Allowances(otherCapitalAllowance = Some(amount))))
         assertValidationError[UKProperty](
           value,
-          Map(("/allowances/otherCapitalAllowance", INVALID_MONETARY_AMOUNT) -> "otherCapitalAllowance should be non-negative number up to 2 decimal values"),
-          "Expected invalid uk-property")
+          Map("/allowances/otherCapitalAllowance" -> INVALID_MONETARY_AMOUNT), "Expected invalid uk-property")
       }
     }
 
@@ -72,28 +66,23 @@ class UKPropertySpec extends JsonSpec {
         val value = UKProperty.example.copy(allowances = Some(Allowances(wearAndTearAllowance = Some(amount))))
         assertValidationError[UKProperty](
           value,
-          Map(("/allowances/wearAndTearAllowance", INVALID_MONETARY_AMOUNT) -> "wearAndTearAllowance should be non-negative number up to 2 decimal values"),
-          "Expected invalid uk-property")
+          Map("/allowances/wearAndTearAllowance" -> INVALID_MONETARY_AMOUNT), "Expected invalid uk-property")
       }
     }
 
     "reject lossBroughtForward with negative amounts" in {
       Seq(BigDecimal(-1213.00), BigDecimal(-2243434.00)).foreach { amount =>
-        val value = UKProperty.example.copy(adjustments = Some(Adjustments(Some(amount))))
         assertValidationError[UKProperty](
-          value,
-          Map(("/adjustments/lossBroughtForward", INVALID_MONETARY_AMOUNT) -> "lossBroughtForward should be non-negative number up to 2 decimal values"),
-          "Expected invalid uk-property")
+          UKProperty.example.copy(adjustments = Some(Adjustments(Some(amount)))),
+          Map("/adjustments/lossBroughtForward" -> INVALID_MONETARY_AMOUNT), "Expected invalid uk-property")
       }
     }
 
     "reject rentARoomRelief with negative amounts" in {
       Seq(BigDecimal(-1213.00), BigDecimal(-2243434.00)).foreach { amount =>
-        val value = UKProperty.example.copy(rentARoomRelief = Some(amount))
         assertValidationError[UKProperty](
-          value,
-          Map(("/rentARoomRelief", INVALID_MONETARY_AMOUNT) -> "rentARoomRelief should be non-negative number up to 2 decimal values"),
-          "Expected invalid uk-property")
+          UKProperty.example.copy(rentARoomRelief = Some(amount)),
+          Map("/rentARoomRelief" -> INVALID_MONETARY_AMOUNT), "Expected invalid uk-property")
       }
     }
 

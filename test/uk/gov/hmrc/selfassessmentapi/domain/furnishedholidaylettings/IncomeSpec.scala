@@ -33,7 +33,7 @@ class IncomeSpec extends JsonSpec {
         val income = Income(amount = testAmount)
         assertValidationError[Income](
           income,
-          Map(("/amount", INVALID_MONETARY_AMOUNT) -> "amount should be non-negative number up to 2 decimal values"),
+          Map("/amount" -> INVALID_MONETARY_AMOUNT),
           "Expected invalid furnished-holiday-lettings-income")
       }
     }
@@ -42,7 +42,7 @@ class IncomeSpec extends JsonSpec {
       val income = Income(amount = BigDecimal(-1000.13))
       assertValidationError[Income](
         income,
-        Map(("/amount", INVALID_MONETARY_AMOUNT) -> "amount should be non-negative number up to 2 decimal values"),
+        Map("/amount" -> INVALID_MONETARY_AMOUNT),
         "Expected negative furnished-holiday-lettings-income")
     }
   }

@@ -43,26 +43,21 @@ class IncomeSpec extends JsonSpec {
 
       assertValidationError[Income](
         json,
-        Map(("/type", NO_VALUE_FOUND) -> "Employments income type is invalid"),
-        "Expected invalid employments-income")
+        Map("/type" -> NO_VALUE_FOUND), "Expected invalid employments-income")
     }
 
     "reject amounts with more than 2 decimal values" in {
       Seq(BigDecimal(1000.123), BigDecimal(1000.12456), BigDecimal(1000.123454), BigDecimal(1000.123456789)).foreach { testAmount =>
-        val income = Income(`type` = Salary, amount = testAmount)
         assertValidationError[Income](
-          income,
-          Map(("/amount", INVALID_MONETARY_AMOUNT) -> "amount should be non-negative number up to 2 decimal values"),
-          "Expected invalid employments-income")
+          Income(`type` = Salary, amount = testAmount),
+          Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected invalid employments-income")
       }
     }
 
     "reject negative amount" in {
-      val income = Income(`type` = Salary, amount = BigDecimal(-1000.13))
       assertValidationError[Income](
-        income,
-        Map(("/amount", INVALID_MONETARY_AMOUNT) -> "amount should be non-negative number up to 2 decimal values"),
-        "Expected negative employments-income")
+        Income(`type` = Salary, amount = BigDecimal(-1000.13)),
+        Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected negative employments-income")
     }
   }
 }
