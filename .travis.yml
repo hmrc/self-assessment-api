@@ -9,4 +9,4 @@ cache:
   directories:
     - '$HOME/.ivy2/cache'
 script:
-  - sbt test func:test
+  - sbt coverage test func:test coverageReport
