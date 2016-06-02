@@ -7,10 +7,10 @@ This REST API allows clients to submit information related to a taxpayer, and th
 A typical workflow would be:
 
 1. Authenticate.
-1. Create a self-assessment resource.
+1. Access a self-assessment resource (this is implicitly created).
 1. Send details of various income **sources** (e.g. employment or property).
 1. Send details of various types of **summary** (e.g. income or expenses) for each source.
-1. Create a liability calculation resources.
+1. Request a liability calculation.
 1. Wait for calculation to complete (only a short time).
 1. Request calculation and display it to your user.
 
@@ -18,7 +18,7 @@ All end points are User Restricted (see [authorisation](https://developer.servic
 
 The API makes use of HATEOAS/HAL resource links. Your application must not store a catalogue of URLs, as these may change. Instead, use the root URL to discover what resources are available.
 
-Sources and summaries will be given IDs. Do not expect these to be GUIDs. They will only be unique within context. I.e. source IDs will be unique for that type of source and within that self-assessment. Similarly, summary IDs will be unique for that type of summary within the its source.
+Sources and summaries will be given IDs. Do not expect these to be GUIDs. They will only be unique within context. I.e. source IDs will be unique for that type of source and within that self-assessment. Similarly, summary IDs will be unique for that type of summary within its source.
 
 You will probably want to store these IDs within your application for disambiguation.
 
