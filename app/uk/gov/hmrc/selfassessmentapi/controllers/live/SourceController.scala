@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers.live
 import play.api.libs.json.JsValue
-import play.api.libs.json.Json.toJson
-import play.api.mvc.{Action, AnyContent}
+import play.api.libs.json.Json._
+import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfassessmentapi.FeatureSwitchAction
 import uk.gov.hmrc.selfassessmentapi.controllers.ErrorNotImplemented
@@ -28,37 +28,41 @@ import scala.concurrent.Future
 
 object SourceController extends uk.gov.hmrc.selfassessmentapi.controllers.SourceController with SourceTypeSupport {
 
-  // this whole implementation can be deleted (defaulted to the super class implementation) once all sources are supported
+  val supportedSourceTypes: Set[SourceType] = Set(SelfEmployments)
 
-  val supportedLiveSourceTypes: Set[SourceType] = Set(SelfEmployments)
+  private def withSupportedTypeAndBody(sourceType: SourceType)(f: Request[JsValue] => Future[Result]) =
+    FeatureSwitchAction(sourceType).async(parse.json) {
+      implicit request => supportedSourceTypes.contains(sourceType) match {
+        case true => f(request)
+        case false => Future.successful(NotImplemented(toJson(ErrorNotImplemented)))
+      }
+    }
 
-  private def toJsValue(sourceType: SourceType)(f: => Action[JsValue]) = {
-    if (supportedLiveSourceTypes.contains(sourceType)) f()
-    else FeatureSwitchAction(sourceType).async(parse.json) {request => Future.successful(NotImplemented(toJson(ErrorNotImplemented)))}
+  private def withSupportedType(sourceType: SourceType)(f: => Future[Result]) =
+    FeatureSwitchAction(sourceType).async {
+      supportedSourceTypes.contains(sourceType) match {
+        case true => f
+        case false => Future.successful(NotImplemented(toJson(ErrorNotImplemented)))
+      }
+    }
+
+  def create(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType) = withSupportedTypeAndBody(sourceType) {
+    implicit request => super.createSource(request, saUtr, taxYear, sourceType)
   }
 
-  private def toAnyContent(sourceType: SourceType)(f: => Action[AnyContent]) = {
-    if (supportedLiveSourceTypes.contains(sourceType)) f()
-    else FeatureSwitchAction(sourceType).async {Future.successful(NotImplemented(toJson(ErrorNotImplemented)))}
+  def read(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId) = withSupportedType(sourceType) {
+    super.readSource(saUtr, taxYear, sourceType, sourceId)
   }
 
-  override def create(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType) = toJsValue(sourceType) {
-    super.create(saUtr, taxYear, sourceType)
+  def update(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId) = withSupportedTypeAndBody(sourceType) {
+    request => super.updateSource(request, saUtr, taxYear, sourceType, sourceId)
   }
 
-  override def update(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId) = toJsValue(sourceType) {
-    super.update(saUtr, taxYear, sourceType, sourceId)
+  def delete(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId) = withSupportedType(sourceType) {
+    super.deleteSource(saUtr, taxYear, sourceType, sourceId)
   }
 
-  override def read(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId) = toAnyContent(sourceType) {
-    super.read(saUtr, taxYear, sourceType, sourceId)
-  }
-
-  override def delete(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId) = toAnyContent(sourceType) {
-    super.delete(saUtr, taxYear, sourceType, sourceId)
-  }
-
-  override def list(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType) = toAnyContent(sourceType) {
-    super.list(saUtr, taxYear, sourceType)
+  def list(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType) = withSupportedType(sourceType) {
+    super.listSources(saUtr, taxYear, sourceType)
   }
 }

@@ -17,7 +17,9 @@
 package uk.gov.hmrc.selfassessmentapi.controllers
 
 import play.api.hal.HalLink
+import play.api.libs.json.JsValue
 import play.api.libs.json.Json._
+import play.api.mvc.{Request, Result}
 import play.api.mvc.hal._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfassessmentapi.FeatureSwitchAction
@@ -37,8 +39,7 @@ trait SummaryController extends BaseController with Links with SourceTypeSupport
     handler.getOrElse(throw UnknownSummaryException(sourceType, summaryTypeName))
   }
 
-
-  def create(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, summaryTypeName: String) = FeatureSwitchAction(sourceType, summaryTypeName).async(parse.json) { implicit request =>
+  def createSummary(request: Request[JsValue], saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, summaryTypeName: String) = {
     handler(sourceType, summaryTypeName).create(saUtr, taxYear, sourceId, request.body) match {
       case Left(errorResult) =>
         Future.successful {
@@ -55,16 +56,15 @@ trait SummaryController extends BaseController with Links with SourceTypeSupport
     }
   }
 
-  def read(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, summaryTypeName: String, summaryId: SummaryId) = FeatureSwitchAction(sourceType, summaryTypeName).async { implicit request =>
+  def readSummary(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, summaryTypeName: String, summaryId: SummaryId) = {
     handler(sourceType, summaryTypeName).findById(saUtr, taxYear, sourceId, summaryId) map {
       case Some(summary) =>
         Ok(halResource(toJson(summary), Seq(HalLink("self", sourceTypeAndSummaryTypeIdHref(saUtr, taxYear, sourceType, sourceId, summaryTypeName, summaryId)))))
-      case None =>
-        NotFound
+      case None => NotFound
     }
   }
 
-  def update(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, summaryTypeName: String, summaryId: SummaryId) = FeatureSwitchAction(sourceType, summaryTypeName).async(parse.json) { implicit request =>
+  def updateSummary(request: Request[JsValue], saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, summaryTypeName: String, summaryId: SummaryId) = {
     handler(sourceType, summaryTypeName).update(saUtr, taxYear, sourceId, summaryId, request.body) match {
       case Left(errorResult) =>
         Future.successful {
@@ -83,15 +83,14 @@ trait SummaryController extends BaseController with Links with SourceTypeSupport
   }
 
 
-  def delete(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, summaryTypeName: String, summaryId: SummaryId) = FeatureSwitchAction(sourceType, summaryTypeName).async { implicit request =>
+  def deleteSummary(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, summaryTypeName: String, summaryId: SummaryId) = {
     handler(sourceType, summaryTypeName).delete(saUtr, taxYear, sourceId, summaryId) map {
       case true => NoContent
       case false => NotFound
     }
   }
 
-
-  def list(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, summaryTypeName: String) = FeatureSwitchAction(sourceType, summaryTypeName).async { implicit request =>
+  def listSummaries(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, summaryTypeName: String) = {
     val svc = handler(sourceType, summaryTypeName)
     svc.find(saUtr, taxYear, sourceId) map { summaries =>
       val json = toJson(summaries.map(summary => halResource(summary.json,

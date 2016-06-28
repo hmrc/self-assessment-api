@@ -2,18 +2,22 @@ package uk.gov.hmrc.selfassessmentapi.live
 
 import java.util.UUID
 
-import uk.gov.hmrc.selfassessmentapi.domain._
+import uk.gov.hmrc.selfassessmentapi.domain.{SummaryType, _}
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
-class NotImplementedSummariesControllerSpec extends BaseFunctionalSpec {
+class NotImplementedSummariesSpec extends BaseFunctionalSpec {
 
   val sourceId = UUID.randomUUID()
   val summaryId = UUID.randomUUID()
 
+  val liveSummaryImplementedTypes = Seq(selfemployment.SummaryTypes.Incomes)
+
+  private def filter(types: Seq[SummaryType]) = types.filterNot(liveSummaryImplementedTypes.contains(_))
+
   "create summaries" should {
     "not be implemented" in {
      SourceTypes.types.foreach { source =>
-       source.summaryTypes.foreach { summary =>
+       filter(source.summaryTypes).foreach { summary =>
          given()
            .userIsAuthorisedForTheResource(saUtr)
            .when()
@@ -29,7 +33,7 @@ class NotImplementedSummariesControllerSpec extends BaseFunctionalSpec {
   "get summaries" should {
     "not be implemented" in {
       SourceTypes.types.foreach { source =>
-        source.summaryTypes.foreach { summary =>
+        filter(source.summaryTypes).foreach { summary =>
           given()
             .userIsAuthorisedForTheResource(saUtr)
             .when()
@@ -44,7 +48,7 @@ class NotImplementedSummariesControllerSpec extends BaseFunctionalSpec {
   "delete summaries" should {
     "not be implemented" in {
       SourceTypes.types.foreach { source =>
-        source.summaryTypes.foreach { summary =>
+        filter(source.summaryTypes).foreach { summary =>
           given()
             .userIsAuthorisedForTheResource(saUtr)
             .when()
@@ -59,7 +63,7 @@ class NotImplementedSummariesControllerSpec extends BaseFunctionalSpec {
   "update summaries" should {
     "not be implemented" in {
       SourceTypes.types.foreach { source =>
-        source.summaryTypes.foreach { summary =>
+        filter(source.summaryTypes).foreach { summary =>
           given()
             .userIsAuthorisedForTheResource(saUtr)
             .when()
@@ -75,7 +79,7 @@ class NotImplementedSummariesControllerSpec extends BaseFunctionalSpec {
   "get all summaries" should {
     "not be implemented" in {
       SourceTypes.types.foreach { source =>
-        source.summaryTypes.foreach { summary =>
+        filter(source.summaryTypes).foreach { summary =>
           given()
             .userIsAuthorisedForTheResource(saUtr)
             .when()

@@ -35,9 +35,8 @@ import uk.gov.hmrc.play.http.logging.filters.LoggingFilter
 import uk.gov.hmrc.play.microservice.bootstrap.DefaultMicroserviceGlobal
 import uk.gov.hmrc.play.scheduling._
 import uk.gov.hmrc.selfassessmentapi.controllers.UnknownSummaryException
-import uk.gov.hmrc.selfassessmentapi.controllers.live.NotImplementedSourcesController._
 import uk.gov.hmrc.selfassessmentapi.jobs.DeleteExpiredDataJob
-
+import play.api.mvc.Results._
 import scala.concurrent.Future
 import scala.util.matching.Regex
 

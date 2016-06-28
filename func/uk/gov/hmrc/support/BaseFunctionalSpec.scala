@@ -116,7 +116,7 @@ trait BaseFunctionalSpec extends TestApplication {
     }
 
     def statusIs(statusCode: Int) = {
-      withClue(s"expected $request to return $statusCode; but got ${response.status}\n") { response.status shouldBe statusCode }
+      withClue(s"expected $request to return $statusCode; but got ${response.body}\n") { response.status shouldBe statusCode }
       this
     }
 

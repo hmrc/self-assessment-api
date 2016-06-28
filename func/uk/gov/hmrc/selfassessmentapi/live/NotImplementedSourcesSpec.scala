@@ -7,7 +7,7 @@ import uk.gov.hmrc.selfassessmentapi.domain.ukproperty.SourceType.UKProperties
 import uk.gov.hmrc.selfassessmentapi.domain.unearnedincome.SourceType.UnearnedIncomes
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
-class NotImplementedSourcesControllerSpec extends BaseFunctionalSpec {
+class NotImplementedSourcesSpec extends BaseFunctionalSpec {
 
   val sourceId = BSONObjectID.generate.stringify
   val notImplementedTypes = Seq(FurnishedHolidayLettings, UKProperties, Employments, UnearnedIncomes)

@@ -15,5 +15,32 @@
  */
 
 package uk.gov.hmrc.selfassessmentapi.controllers.sandbox
+import play.api.mvc.Action
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.selfassessmentapi.domain.{SourceId, SourceType, SummaryId, TaxYear}
 
-object SummaryController extends uk.gov.hmrc.selfassessmentapi.controllers.SummaryController with SourceTypeSupport
+object SummaryController extends uk.gov.hmrc.selfassessmentapi.controllers.SummaryController with SourceTypeSupport {
+
+  def create(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId,
+             summaryTypeName: String) = Action.async(parse.json) {
+    request => super.createSummary(request, saUtr, taxYear, sourceType, sourceId, summaryTypeName)
+  }
+
+  def read(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, summaryTypeName: String,
+           summaryId: SummaryId) = Action.async {
+    super.readSummary(saUtr, taxYear, sourceType, sourceId, summaryTypeName, summaryId)
+  }
+
+  def update(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId,
+             summaryTypeName: String, summaryId: SummaryId) = Action.async(parse.json) {
+    request => super.updateSummary(request, saUtr, taxYear, sourceType, sourceId, summaryTypeName, summaryId)
+  }
+
+  def delete(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, summaryTypeName: String, summaryId: SummaryId) = Action.async {
+    super.deleteSummary(saUtr, taxYear, sourceType, sourceId, summaryTypeName, summaryId)
+  }
+
+  def list(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, summaryTypeName: String) = Action.async {
+    super.listSummaries(saUtr, taxYear, sourceType, sourceId, summaryTypeName)
+  }
+}

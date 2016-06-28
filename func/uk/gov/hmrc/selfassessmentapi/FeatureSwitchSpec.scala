@@ -3,9 +3,8 @@ package uk.gov.hmrc.selfassessmentapi
 import java.util.UUID
 
 import play.api.test.FakeApplication
-import uk.gov.hmrc.selfassessmentapi.domain.employment.SourceType.Employments
 import uk.gov.hmrc.selfassessmentapi.domain._
-import uk.gov.hmrc.selfassessmentapi.domain.employment.SummaryTypes.Expenses
+import uk.gov.hmrc.selfassessmentapi.domain.employment.SourceType.Employments
 import uk.gov.hmrc.selfassessmentapi.domain.furnishedholidaylettings.SourceType.FurnishedHolidayLettings
 import uk.gov.hmrc.selfassessmentapi.domain.selfemployment.SourceType.SelfEmployments
 import uk.gov.hmrc.selfassessmentapi.domain.ukproperty.SourceType.UKProperties
@@ -45,21 +44,25 @@ class FeatureSwitchSpec extends BaseFunctionalSpec {
   }
 
   def statusCode(status: Status.Value, method: String)(implicit mode: Mode): Int = {
-    status match {
-      case Status.BLOCKED => 404
-      case Status.VISIBLE =>
-        mode match {
-          case LIVE => 501
-          case SANDBOX => if (method.equalsIgnoreCase("post")) 201 else 200
+    mode match {
+      case SANDBOX => if (method.equalsIgnoreCase("post")) 201 else 200
+      case LIVE =>
+        status match {
+          case Status.VISIBLE => 501
+          case Status.BLOCKED => 404
         }
     }
   }
 
+  val sourceToExpenses = Map(SelfEmployments -> selfemployment.SummaryTypes.Expenses,
+    FurnishedHolidayLettings -> furnishedholidaylettings.SummaryTypes.Expenses,
+    Employments -> employment.SummaryTypes.Expenses)
+
   "self-employments and Furnished Holiday Lettings resource" should {
     "be blocked" in {
-      Map(SelfEmployments -> Status.BLOCKED, FurnishedHolidayLettings -> Status.BLOCKED, Employments -> Status.VISIBLE).foreach {
+      Map(SelfEmployments -> Status.BLOCKED/*, FurnishedHolidayLettings -> Status.BLOCKED, Employments -> Status.VISIBLE*/).foreach {
         case (source, status) =>
-          Seq(LIVE, SANDBOX).foreach { implicit mode =>
+          Seq(SANDBOX, LIVE).foreach { implicit mode =>
             given()
               .userIsAuthorisedForTheResource(saUtr)
               .when()
@@ -84,14 +87,14 @@ class FeatureSwitchSpec extends BaseFunctionalSpec {
             given()
               .userIsAuthorisedForTheResource(saUtr)
               .when()
-              .post(s"${mode.url}/$saUtr/$taxYear/${source.name}/$sourceId/expenses", Some(Expenses.example()))
+              .post(s"${mode.url}/$saUtr/$taxYear/${source.name}/$sourceId/expenses", Some(sourceToExpenses(source).example()))
               .thenAssertThat()
               .statusIs(statusCode(status, "POST"))
 
             given()
               .userIsAuthorisedForTheResource(saUtr)
               .when()
-              .put(s"${mode.url}/$saUtr/$taxYear/${source.name}/$sourceId/expenses/$summaryId", Some(Expenses.example()))
+              .put(s"${mode.url}/$saUtr/$taxYear/${source.name}/$sourceId/expenses/$summaryId", Some(sourceToExpenses(source).example()))
               .thenAssertThat()
               .statusIs(statusCode(status, "PUT"))
 
@@ -135,17 +138,17 @@ class FeatureSwitchSpec extends BaseFunctionalSpec {
       when()
         .get(s"/sandbox/$saUtr/$taxYear/uk-properties/$sourceId/expenses")
         .thenAssertThat()
-        .statusIs(404)
+        .statusIs(200)
 
       when()
         .get(s"/sandbox/$saUtr/$taxYear/uk-properties/$sourceId/expenses/$summaryId")
         .thenAssertThat()
-        .statusIs(404)
+        .statusIs(200)
 
       when()
         .put(s"/sandbox/$saUtr/$taxYear/uk-properties/$sourceId/expenses/$summaryId", Some(ukproperty.SummaryTypes.Expenses.example()))
         .thenAssertThat()
-        .statusIs(404)
+        .statusIs(200)
     }
   }
 

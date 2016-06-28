@@ -16,4 +16,30 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers.sandbox
 
-object SourceController extends uk.gov.hmrc.selfassessmentapi.controllers.SourceController with SourceTypeSupport
+import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.selfassessmentapi.domain.{SourceId, SourceType, TaxYear}
+
+object SourceController extends uk.gov.hmrc.selfassessmentapi.controllers.SourceController with SourceTypeSupport {
+
+  def create(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType) = Action.async(parse.json) {
+    request => super.createSource(request, saUtr, taxYear, sourceType)
+  }
+
+  def read(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId) = Action.async {
+    request => super.readSource(saUtr, taxYear, sourceType, sourceId)
+  }
+
+
+  def update(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId) = Action.async(parse.json) {
+    request => super.updateSource(request, saUtr, taxYear, sourceType, sourceId)
+  }
+
+  def delete(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId) = Action.async {
+    request => super.deleteSource(saUtr, taxYear, sourceType, sourceId)
+  }
+
+  def list(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType): Action[AnyContent] = Action.async {
+    super.listSources(saUtr, taxYear, sourceType)
+  }
+}

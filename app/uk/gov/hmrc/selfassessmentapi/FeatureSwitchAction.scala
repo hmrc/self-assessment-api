@@ -18,9 +18,8 @@ package uk.gov.hmrc.selfassessmentapi
 
 import play.api.mvc.{ActionBuilder, Request, Result}
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
-import uk.gov.hmrc.selfassessmentapi.controllers.live.NotImplementedSourcesController._
 import uk.gov.hmrc.selfassessmentapi.domain.SourceType
-
+import play.api.mvc.Results._
 import scala.concurrent.Future
 
 class FeatureSwitchAction(source: SourceType, summary: String) extends ActionBuilder[Request] {
@@ -31,5 +30,5 @@ class FeatureSwitchAction(source: SourceType, summary: String) extends ActionBui
 }
 
 object FeatureSwitchAction {
-  def apply(source: SourceType, summary: String = ""): FeatureSwitchAction = new FeatureSwitchAction(source, summary)
+  def apply(source: SourceType, summary: String = "") = new FeatureSwitchAction(source, summary)
 }
