@@ -20,7 +20,7 @@ import play.api.Configuration
 import uk.gov.hmrc.selfassessmentapi.domain.SourceType
 
 case class FeatureSwitch(value: Option[Configuration]) {
-  implicit val DEFAULT_VALUE = false
+  val DEFAULT_VALUE = false
 
   def isEnabled(sourceType: SourceType, summary: String): Boolean = value match {
     case Some(config) =>
@@ -30,7 +30,7 @@ case class FeatureSwitch(value: Option[Configuration]) {
   }
 }
 
-case class FeatureConfig(config: Configuration)(implicit val defaultValue: Boolean) {
+case class FeatureConfig(config: Configuration) {
 
   def isSummaryEnabled(source: String, summary: String): Boolean = {
     val summaryEnabled = config.getBoolean(s"$source.$summary.enabled") match {

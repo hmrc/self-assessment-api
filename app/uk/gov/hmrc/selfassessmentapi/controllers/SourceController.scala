@@ -42,13 +42,13 @@ trait SourceController extends BaseController with Links with SourceTypeSupport 
               case _ => BadRequest
             }
           }
-        case Right(id) => id.map { sourceId => Created(halResource(obj(), sourceLinks(saUtr, taxYear, sourceType, sourceId))) }
+        case Right(id) => id.map { sourceId => Created(halResource(obj(), buildSourceHalLinks(saUtr, taxYear, sourceType, sourceId))) }
       }
     }
 
   protected def readSource(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId) = {
     sourceHandler(sourceType).findById(saUtr, taxYear, sourceId) map {
-      case Some(summary) => Ok(halResource(toJson(summary), sourceLinks(saUtr, taxYear, sourceType, sourceId)))
+      case Some(summary) => Ok(halResource(toJson(summary), buildSourceHalLinks(saUtr, taxYear, sourceType, sourceId)))
       case None => NotFound
     }
   }
@@ -64,7 +64,7 @@ trait SourceController extends BaseController with Links with SourceTypeSupport 
             }
         }
         case Right(id) => id.map {
-          case true => Ok(halResource(obj(), sourceLinks(saUtr, taxYear, sourceType, sourceId)))
+          case true => Ok(halResource(obj(), buildSourceHalLinks(saUtr, taxYear, sourceType, sourceId)))
           case false => NotFound
         }
       }
@@ -84,5 +84,9 @@ trait SourceController extends BaseController with Links with SourceTypeSupport 
         Set(HalLink("self", sourceIdHref(saUtr, taxYear, sourceType, source.id))))))
       Ok(halResourceList(svc.listName, json, sourceHref(saUtr, taxYear, sourceType)))
     }
+  }
+
+  protected def buildSourceHalLinks(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId): Set[HalLink] = {
+    sourceLinks(saUtr, taxYear, sourceType, sourceId)
   }
 }

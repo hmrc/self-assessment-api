@@ -22,9 +22,9 @@ import play.api.libs.json.Json._
 import play.api.mvc.Action
 import play.api.mvc.hal._
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.selfassessmentapi.config.AppContext
+import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureConfig}
 import uk.gov.hmrc.selfassessmentapi.controllers.{BaseController, ErrorNotImplemented, Links}
-import uk.gov.hmrc.selfassessmentapi.domain.{SourceTypes, TaxYear}
+import uk.gov.hmrc.selfassessmentapi.domain.TaxYear
 
 import scala.concurrent.Future
 
@@ -33,11 +33,17 @@ object TaxYearDiscoveryController extends BaseController with Links {
 
   final def discoverTaxYear(utr: SaUtr, taxYear: TaxYear) = Action.async {
     request =>
-      val halLinks =
-        Set(HalLink(SourceTypes.SelfEmployments.name,
-                    sourceHref(utr, taxYear, SourceTypes.SelfEmployments)),
-            HalLink("self", discoverTaxYearHref(utr, taxYear)))
+      val halLinks = buildSourceHalLinks(utr, taxYear) + HalLink("self", discoverTaxYearHref(utr, taxYear))
       Future.successful(Ok(halResource(obj(), halLinks)))
+  }
+
+  private def buildSourceHalLinks(utr: SaUtr, taxYear: TaxYear) = {
+    SourceController.supportedSourceTypes.filter { source =>
+      if (AppContext.featureSwitch.isDefined) FeatureConfig(AppContext.featureSwitch.get).isSourceEnabled(source.name)
+      else false
+    } map { source =>
+      HalLink(source.name, sourceHref(utr, taxYear, source))
+    }
   }
 
   final def update(utr: SaUtr, taxYear: TaxYear) = Action {

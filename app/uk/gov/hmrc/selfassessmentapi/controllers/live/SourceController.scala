@@ -15,11 +15,14 @@
  */
 
 package uk.gov.hmrc.selfassessmentapi.controllers.live
+
+import play.api.hal.HalLink
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json._
 import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfassessmentapi.FeatureSwitchAction
+import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureConfig}
 import uk.gov.hmrc.selfassessmentapi.controllers.ErrorNotImplemented
 import uk.gov.hmrc.selfassessmentapi.domain.selfemployment.SourceType.SelfEmployments
 import uk.gov.hmrc.selfassessmentapi.domain.unearnedincome.SourceType.UnearnedIncomes
@@ -65,5 +68,12 @@ object SourceController extends uk.gov.hmrc.selfassessmentapi.controllers.Source
 
   def list(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType) = withSupportedType(sourceType) {
     super.listSources(saUtr, taxYear, sourceType)
+  }
+
+  override def buildSourceHalLinks(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId): Set[HalLink] = {
+    sourceLinks(saUtr, taxYear, sourceType, sourceId).filter { halLink =>
+      if (AppContext.featureSwitch.isDefined) FeatureConfig(AppContext.featureSwitch.get).isSummaryEnabled(sourceType.name, halLink.rel)
+      else false
+    }
   }
 }

@@ -9,7 +9,7 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.TestApplication
 import uk.gov.hmrc.selfassessmentapi.controllers.ErrorNotImplemented
-import uk.gov.hmrc.selfassessmentapi.domain.{SourceType, SourceTypes}
+import uk.gov.hmrc.selfassessmentapi.domain.{SummaryType, SourceType, SourceTypes}
 
 import scala.util.matching.Regex
 
@@ -32,9 +32,43 @@ trait BaseFunctionalSpec extends TestApplication {
       this
     }
 
+    def bodyHasSummaryLink(sourceType: SourceType, summaryType: SummaryType, saUtr: SaUtr, taxYear: String) = {
+      bodyHasLink(summaryType.name, s"/self-assessment/$saUtr/$taxYear/${sourceType.name}/.+/${summaryType.name}".r)
+      this
+    }
+
+    def bodyDoesNotHaveSummaryLink(sourceType: SourceType, summaryType: SummaryType, saUtr: SaUtr, taxYear: String) = {
+      val hrefPattern = s"/self-assessment/$saUtr/$taxYear/${sourceType.name}/.+/${summaryType.name}".r
+      getLinkFromBody(summaryType.name) match {
+        case Some(href) => hrefPattern findFirstIn href match {
+          case Some(v) => fail(s"$summaryType Hal link found.")
+          case None => true
+        }
+        case unknown => true
+      }
+      this
+    }
+
     def bodyHasLinksForAllSourceTypes(saUtr: SaUtr, taxYear: String) = {
       SourceTypes.types.foreach { sourceType =>
         bodyHasLink(sourceType.name, s"/self-assessment/$saUtr/$taxYear/${sourceType.name}")
+      }
+      this
+    }
+
+    def bodyHasLinksForSourceType(sourceType: SourceType, saUtr: SaUtr, taxYear: String) = {
+      bodyHasLink(sourceType.name, s"/self-assessment/$saUtr/$taxYear/${sourceType.name}")
+      this
+    }
+
+    def bodyDoesNotHaveLinksForSourceType(sourceType: SourceType, saUtr: SaUtr, taxYear: String) = {
+      val hrefPattern = s"/self-assessment/$saUtr/$taxYear/${sourceType.name}".r
+      getLinkFromBody(sourceType.name) match {
+        case Some(href) => hrefPattern findFirstIn href match {
+          case Some(v) => fail(s"$sourceType Hal link found.")
+          case None => true
+        }
+        case unknown => true
       }
       this
     }
@@ -79,7 +113,7 @@ trait BaseFunctionalSpec extends TestApplication {
       this
     }
 
-    def bodyHasPath[T](path: String, value: T)(implicit reads: Reads[T]) : Assertions = {
+    def bodyHasPath[T](path: String, value: T)(implicit reads: Reads[T]): Assertions = {
       extractPathElement(path) shouldEqual Some(value)
       this
     }
