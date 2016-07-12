@@ -26,20 +26,16 @@ package object controllers {
   def validate[T](id: String, jsValue: JsValue)(implicit reads: Reads[T]): Either[ErrorResult, String] = {
     Try(jsValue.validate[T]) match {
       case Success(JsSuccess(payload, _)) => Right(id)
-      case Success(JsError(errors)) =>
-        Left(ErrorResult(validationErrors = Some(errors)))
-      case Failure(e) =>
-        Left(ErrorResult(message = Some(s"could not parse body due to ${e.getMessage}")))
+      case Success(JsError(errors)) => Left(ValidationErrorResult(errors))
+      case Failure(e) => Left(GenericErrorResult(s"could not parse body due to ${e.getMessage}"))
     }
   }
 
   def validate[T, R](jsValue: JsValue)(f: T => Future[R])(implicit reads: Reads[T]): Either[ErrorResult, Future[R]] = {
     Try(jsValue.validate[T]) match {
       case Success(JsSuccess(payload, _)) => Right(f(payload))
-      case Success(JsError(errors)) =>
-        Left(ErrorResult(validationErrors = Some(errors)))
-      case Failure(e) =>
-        Left(ErrorResult(message = Some(s"could not parse body due to ${e.getMessage}")))
+      case Success(JsError(errors)) => Left(ValidationErrorResult(errors))
+      case Failure(e) => Left(GenericErrorResult(s"could not parse body due to ${e.getMessage}"))
     }
   }
 }
