@@ -16,14 +16,15 @@
 
 package uk.gov.hmrc.selfassessmentapi
 
-import play.api.data.validation.ValidationError
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.domain.CountryCodes.{apply => _, _}
+import uk.gov.hmrc.selfassessmentapi.domain.CountryCodes.{apply => _}
 import uk.gov.hmrc.selfassessmentapi.domain.ErrorCode._
-import uk.gov.hmrc.selfassessmentapi.domain.UkCountryCodes.{apply => _, _}
+import uk.gov.hmrc.selfassessmentapi.domain.UkCountryCodes.{apply => _}
 
 
 package object domain {
+
+  import play.api.data.validation.ValidationError
 
   type SourceId = String
   type SummaryId = String

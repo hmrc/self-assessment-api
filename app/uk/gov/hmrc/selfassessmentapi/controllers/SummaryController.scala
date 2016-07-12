@@ -17,12 +17,11 @@
 package uk.gov.hmrc.selfassessmentapi.controllers
 
 import play.api.hal.HalLink
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import play.api.libs.json.Json._
-import play.api.mvc.{Request, Result}
+import play.api.mvc.Request
 import play.api.mvc.hal._
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.selfassessmentapi.FeatureSwitchAction
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.domain._
 
@@ -44,14 +43,14 @@ trait SummaryController extends BaseController with Links with SourceTypeSupport
       case Left(errorResult) =>
         Future.successful {
           errorResult match {
-            case ErrorResult(Some(message), _) => BadRequest(message)
-            case ErrorResult(_, Some(errors)) => BadRequest(failedValidationJson(errors))
-            case _ => BadRequest
+            case GenericErrorResult(message) => BadRequest(Json.toJson(GenericError(ErrorCode.PARSE, message)))
+            case ValidationErrorResult(errors) => BadRequest(Json.toJson(toCompositeError(errors)))
+            case _ => ???
           }
         }
       case Right(futOptId) => futOptId.map {
         case Some(id) => Created(halResource(obj(), Set(HalLink("self", sourceTypeAndSummaryTypeIdHref(saUtr, taxYear, sourceType, sourceId, summaryTypeName, id)))))
-        case _ => BadRequest
+        case _ => ???
       }
     }
   }
@@ -69,9 +68,9 @@ trait SummaryController extends BaseController with Links with SourceTypeSupport
       case Left(errorResult) =>
         Future.successful {
           errorResult match {
-            case ErrorResult(Some(message), _) => BadRequest(message)
-            case ErrorResult(_, Some(errors)) => BadRequest(failedValidationJson(errors))
-            case _ => BadRequest
+            case GenericErrorResult(message) => BadRequest(Json.toJson(GenericError(ErrorCode.PARSE, message)))
+            case ValidationErrorResult(errors) => BadRequest(Json.toJson(toCompositeError(errors)))
+            case _ => ???
           }
         }
       case Right(optResult) => optResult.map {

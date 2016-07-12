@@ -16,6 +16,10 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers
 
-import uk.gov.hmrc.selfassessmentapi.domain._
+import uk.gov.hmrc.selfassessmentapi.domain.ValidationErrors
 
-case class ErrorResult(message: Option[String] = None, validationErrors: Option[ValidationErrors] = None)
+trait ErrorResult
+
+case class GenericErrorResult(message: String) extends ErrorResult
+
+case class ValidationErrorResult(validationErrors: ValidationErrors) extends ErrorResult

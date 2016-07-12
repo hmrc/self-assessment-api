@@ -2,7 +2,6 @@ package uk.gov.hmrc.selfassessmentapi
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.support.BaseFunctionalSpec
-import uk.gov.hmrc.selfassessmentapi.domain.ErrorCode._
 
 // FIXME: Refactor into live and sandbox tests
 
@@ -84,7 +83,7 @@ class TaxYearValidationSpec extends BaseFunctionalSpec {
         .put(s"/sandbox/$saUtr/$taxYear", Some(payload))
         .thenAssertThat()
         .statusIs(400)
-        .bodyContainsError(("/taxYearProperties/childBenefit/dateBenefitStopped", "BENEFIT_STOPPED_DATE_INVALID"))
+        .bodyIsError("/taxYearProperties/childBenefit/dateBenefitStopped", "BENEFIT_STOPPED_DATE_INVALID")
     }
   }
 
@@ -94,7 +93,7 @@ class TaxYearValidationSpec extends BaseFunctionalSpec {
         .get(s"/sandbox/$saUtr/not-a-tax-year").withAcceptHeader()
         .thenAssertThat()
         .statusIs(400)
-        .body(_ \ "message").is("ERROR_TAX_YEAR_INVALID")
+        .bodyIsError("TAX_YEAR_INVALID")
     }
   }
 
@@ -120,7 +119,7 @@ class TaxYearValidationSpec extends BaseFunctionalSpec {
         .get(s"/$saUtr/not-a-tax-year").withAcceptHeader()
         .thenAssertThat()
         .statusIs(400)
-        .body(_ \ "message").is("ERROR_TAX_YEAR_INVALID")
+        .bodyIsError("TAX_YEAR_INVALID")
     }
   }
 
@@ -149,8 +148,7 @@ class TaxYearValidationSpec extends BaseFunctionalSpec {
         .put(s"/$saUtr/$taxYear", Some(payload))
         .thenAssertThat()
         .statusIs(400)
-        .bodyHasPath("""(0) \ code """, ONLY_PENSION_CONTRIBUTIONS_SUPPORTED)
-        .bodyHasPath("""(0) \ path """, "/taxYearProperties")
+        .bodyIsError("/taxYearProperties", "ONLY_PENSION_CONTRIBUTIONS_SUPPORTED")
     }
   }
 

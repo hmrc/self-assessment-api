@@ -16,14 +16,15 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers
 
-import play.api.libs.json.{JsString, _}
+import play.api.libs.json._
 import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.selfassessmentapi.domain
 import uk.gov.hmrc.selfassessmentapi.domain.ErrorCode._
-import uk.gov.hmrc.selfassessmentapi.domain.ValidationErrors
-import scala.concurrent.Future
+import uk.gov.hmrc.selfassessmentapi.domain.{ErrorCode, _}
 
-import scala.util.{Success, Try, Failure}
+import scala.concurrent.Future
+import scala.util.{Failure, Success, Try}
 
 trait BaseController
   extends uk.gov.hmrc.play.microservice.controller.BaseController with HalSupport {
@@ -37,32 +38,20 @@ trait BaseController
     implicit request: Request[JsValue], m: Manifest[T], reads: Reads[T]) =
     Try(request.body.validate[T]) match {
       case Success(JsSuccess(payload, _)) => f(payload)
-      case Success(JsError(errors)) =>
-        Future.successful(BadRequest(failedValidationJson(errors)))
+      case Success(JsError(errors)) => Future.successful(BadRequest(Json.toJson(toCompositeError(errors))))
       case Failure(e) =>
-        Future.successful(BadRequest(s"could not parse body due to ${e.getMessage}"))
+        Future.successful(BadRequest(Json.toJson(GenericError(ErrorCode.PARSE, s"could not parse body due to ${e.getMessage}"))))
     }
 
-  def addValidationError(path: String, code: Option[ErrorCode], message: String) = {
-      JsObject(Seq(
-          "path" -> JsString(path),
-          "code" -> JsString(code match {
-            case Some(errorCode) => errorCode.toString
-            case None => "N/A"
-          }),
-          "message" -> JsString(message))
-      )
+  private def toValidationErrorSeq(errors: domain.ValidationErrors) = {
+    for {
+      (path, errSeq) <- errors
+      error <- errSeq
+      code <- error.args.headOption.filter(_.isInstanceOf[ErrorCode]).map(_.asInstanceOf[ErrorCode])
+    } yield
+      ValidationError(code, error.message, path.toString())
   }
 
-  def failedValidationJson(errors: ValidationErrors) = {
-    JsArray(
-      for {
-        (path, errSeq) <- errors
-        error <- errSeq
-      } yield
-        addValidationError(path.toString(),
-          error.args.headOption.filter(_.isInstanceOf[ErrorCode]).map(_.asInstanceOf[ErrorCode]),
-          error.message)
-    )
-  }
+  def toCompositeError(errors: domain.ValidationErrors): CompositeError =
+    CompositeError(ErrorCode.VALIDATION, "Validation errors", toValidationErrorSeq(errors))
 }
