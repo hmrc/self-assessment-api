@@ -42,11 +42,10 @@ Install [Service Manager](https://github.com/hmrc/service-manager), if you want 
 
 Start the app:
 
-    run -Drun.mode=Dev
+    sbt run -Drun.mode=Dev
 
 Now you can test sandbox:
 
-    UTR=2234567890 ;# or UTR=1234567895
     curl -v http://localhost:9000/sandbox/$UTR -H 'Accept: application/vnd.hmrc.1.0+json'
 
 ### License
