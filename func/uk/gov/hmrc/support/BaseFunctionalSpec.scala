@@ -23,8 +23,10 @@ trait BaseFunctionalSpec extends TestApplication {
     UrlInterpolation {
 
     def bodyContainsError(error: (String, String)) = {
-      val paths = (response.json \\ "path").map(_.as[String])
-      val codes = (response.json \\ "code").map(_.as[String])
+      // TODO body could contain multiple errors
+      val firstError: JsValue = (response.json \ "errors") (0)
+      val paths = (firstError \\ "path").map(_.as[String])
+      val codes = (firstError \\ "code").map(_.as[String])
       if (paths.nonEmpty) paths.head shouldBe error._1
       if (codes.nonEmpty) codes.head shouldBe error._2
     }

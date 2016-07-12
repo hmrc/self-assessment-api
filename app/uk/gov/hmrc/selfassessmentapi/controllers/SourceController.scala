@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.controllers
 
 import play.api.hal.HalLink
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import play.api.libs.json.Json._
 import play.api.mvc.Request
 import play.api.mvc.hal._
@@ -37,9 +37,9 @@ trait SourceController extends BaseController with Links with SourceTypeSupport 
       case Left(errorResult) =>
         Future.successful {
           errorResult match {
-            case GenericErrorResult(message) => BadRequest(message)
-            case ValidationErrorResult(errors) => BadRequest(failedValidationJson(errors))
-            case _ => BadRequest
+            case GenericErrorResult(message) => BadRequest(Json.toJson(GenericError(ErrorCode.PARSE, message)))
+            case ValidationErrorResult(errors) => BadRequest(Json.toJson(toCompositeError(errors)))
+            case _ => ???
           }
         }
       case Right(id) => id.map { sourceId => Created(halResource(obj(), sourceLinks(saUtr, taxYear, sourceType, sourceId))) }
@@ -58,9 +58,9 @@ trait SourceController extends BaseController with Links with SourceTypeSupport 
       case Left(errorResult) =>
         Future.successful {
           errorResult match {
-            case GenericErrorResult(message) => BadRequest(message)
-            case ValidationErrorResult(errors) => BadRequest(failedValidationJson(errors))
-            case _ => BadRequest
+            case GenericErrorResult(message) => BadRequest(Json.toJson(GenericError(ErrorCode.PARSE, message)))
+            case ValidationErrorResult(errors) => BadRequest(Json.toJson(toCompositeError(errors)))
+            case _ => ???
           }
         }
       case Right(result) => result.map {

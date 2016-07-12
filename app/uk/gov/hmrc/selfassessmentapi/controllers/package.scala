@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers
 
-import play.api.libs.json.{JsError, JsSuccess, JsValue, Reads}
+import play.api.libs.json._
 
-import scala.util.{Failure, Success, Try}
 import scala.concurrent.Future
+import scala.util.{Failure, Success, Try}
 
 package object controllers {
 

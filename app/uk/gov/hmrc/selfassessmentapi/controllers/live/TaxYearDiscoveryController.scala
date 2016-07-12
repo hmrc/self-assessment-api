@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.controllers.live
 
 import play.api.hal.HalLink
-import play.api.libs.json.JsArray
+import play.api.libs.json.Json
 import play.api.libs.json.Json._
 import play.api.mvc.Action
 import play.api.mvc.hal._
@@ -25,7 +25,7 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureConfig}
 import uk.gov.hmrc.selfassessmentapi.controllers.{BaseController, Links}
 import uk.gov.hmrc.selfassessmentapi.domain.ErrorCode._
-import uk.gov.hmrc.selfassessmentapi.domain.{SourceTypes, TaxYear, TaxYearProperties}
+import uk.gov.hmrc.selfassessmentapi.domain._
 import uk.gov.hmrc.selfassessmentapi.repositories.SelfAssessmentRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -57,15 +57,17 @@ object TaxYearDiscoveryController extends BaseController with Links {
     }
   }
 
-  private def validateRequest(taxYearProperties: TaxYearProperties, taxYear: String) = {
+  private def validateRequest(taxYearProperties: TaxYearProperties, taxYear: String) : Option[ValidationError] = {
     if (taxYearProperties.charitableGivings.isDefined || taxYearProperties.blindPerson.isDefined ||
         taxYearProperties.studentLoan.isDefined || taxYearProperties.taxRefundedOrSetOff.isDefined ||
         taxYearProperties.childBenefit.isDefined) {
       Some(
-          Seq(
-              addValidationError("/taxYearProperties",
-                                 Some(ONLY_PENSION_CONTRIBUTIONS_SUPPORTED),
-                                 s"Only update of Pension Contributions is supported")))
+            ValidationError(
+              ONLY_PENSION_CONTRIBUTIONS_SUPPORTED,
+              s"Only update of Pension Contributions is supported",
+              "/taxYearProperties"
+            )
+      )
     } else None
   }
 
@@ -73,7 +75,7 @@ object TaxYearDiscoveryController extends BaseController with Links {
     implicit request =>
       withJsonBody[TaxYearProperties] { taxYearProperties =>
         validateRequest(taxYearProperties, taxYear.taxYear) match {
-          case Some(errors) => Future.successful(BadRequest(JsArray(errors)))
+          case Some(error) => Future.successful(BadRequest(Json.toJson(error)))
           case None =>
             repository.updateTaxYearProperties(utr, taxYear, taxYearProperties).map {
               case true => Ok(halResource(obj(), buildSourceHalLinks(utr, taxYear)))

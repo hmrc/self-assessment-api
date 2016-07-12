@@ -2,7 +2,6 @@ package uk.gov.hmrc.selfassessmentapi
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.support.BaseFunctionalSpec
-import uk.gov.hmrc.selfassessmentapi.domain.ErrorCode._
 
 // FIXME: Refactor into live and sandbox tests
 
@@ -149,8 +148,7 @@ class TaxYearValidationSpec extends BaseFunctionalSpec {
         .put(s"/$saUtr/$taxYear", Some(payload))
         .thenAssertThat()
         .statusIs(400)
-        .bodyHasPath("""(0) \ code """, ONLY_PENSION_CONTRIBUTIONS_SUPPORTED)
-        .bodyHasPath("""(0) \ path """, "/taxYearProperties")
+        .bodyContainsError(("/taxYearProperties", "ONLY_PENSION_CONTRIBUTIONS_SUPPORTED"))
     }
   }
 
