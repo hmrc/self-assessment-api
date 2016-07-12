@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import org.json.{JSONArray, JSONObject}
 import org.skyscreamer.jsonassert.JSONAssert.assertEquals
 import org.skyscreamer.jsonassert.JSONCompareMode.LENIENT
-import play.api.libs.json.{JsArray, JsObject, JsValue, Reads}
+import play.api.libs.json._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.TestApplication
@@ -23,13 +23,21 @@ trait BaseFunctionalSpec extends TestApplication {
     UrlInterpolation {
 
     def bodyContainsError(error: (String, String)) = {
-      // TODO body could contain multiple errors
       val firstError: JsValue = (response.json \ "errors") (0)
+      firstError should not be JsUndefined
       val paths = (firstError \\ "path").map(_.as[String])
       val codes = (firstError \\ "code").map(_.as[String])
-      if (paths.nonEmpty) paths.head shouldBe error._1
-      if (codes.nonEmpty) codes.head shouldBe error._2
+      paths.isEmpty shouldBe false
+      paths.head shouldBe error._1
+      codes.head shouldBe error._2
     }
+
+    def bodyIsError(path: String, code: String) = {
+      body(_ \ "path").is(path)
+      body(_ \ "code").is(code)
+    }
+
+    def bodyIsError(code: String) = body(_ \ "code").is(code)
 
     if (request.startsWith("POST") || request.startsWith("PUT")) {
       Map("sourceId" -> sourceIdFromHal(), "summaryId" -> summaryIdFromHal(), "liabilityId" -> liabilityIdFromHal()) foreach {

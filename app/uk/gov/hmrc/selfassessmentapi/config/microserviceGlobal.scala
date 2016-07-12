@@ -20,6 +20,7 @@ import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.{StringReader, ValueReader}
 import play.api.libs.json.Json
+import play.api.mvc.Results._
 import play.api.mvc._
 import play.api.{Application, Configuration, Play, Routes}
 import uk.gov.hmrc.api.config.{ServiceLocatorConfig, ServiceLocatorRegistration}
@@ -30,14 +31,14 @@ import uk.gov.hmrc.play.auth.controllers.{AuthConfig, AuthParamsControllerConfig
 import uk.gov.hmrc.play.auth.microservice.connectors.{AccountId, HttpVerb, Regime, ResourceToAuthorise}
 import uk.gov.hmrc.play.auth.microservice.filters.AuthorisationFilter
 import uk.gov.hmrc.play.config.{AppName, RunMode}
-import uk.gov.hmrc.play.http.{HeaderCarrier, NotImplementedException}
 import uk.gov.hmrc.play.http.logging.filters.LoggingFilter
+import uk.gov.hmrc.play.http.{HeaderCarrier, NotImplementedException}
 import uk.gov.hmrc.play.microservice.bootstrap.DefaultMicroserviceGlobal
 import uk.gov.hmrc.play.scheduling._
+import uk.gov.hmrc.selfassessmentapi.controllers.live.LiabilityController.{NotFound => _, NotImplemented => _}
 import uk.gov.hmrc.selfassessmentapi.controllers.{ErrorNotImplemented, UnknownSummaryException}
+import uk.gov.hmrc.selfassessmentapi.domain.{ErrorCode, GenericError}
 import uk.gov.hmrc.selfassessmentapi.jobs.DeleteExpiredDataJob
-import play.api.mvc.Results._
-import uk.gov.hmrc.selfassessmentapi.controllers.live.LiabilityController.{NotFound => _, NotImplemented => _, _}
 
 import scala.concurrent.Future
 import scala.util.matching.Regex
@@ -142,6 +143,7 @@ object MicroserviceGlobal extends DefaultMicroserviceGlobal with MicroserviceReg
 
   override def onError(request : RequestHeader, ex: Throwable) = {
     ex.getCause match {
+      // TODO  these remove auditing, is this a problem?
       case ex: UnknownSummaryException => Future.successful(NotFound)
       case ex: NotImplementedException => Future.successful(NotImplemented(Json.toJson(ErrorNotImplemented)))
       case _ => super.onError(request, ex)
@@ -150,7 +152,9 @@ object MicroserviceGlobal extends DefaultMicroserviceGlobal with MicroserviceReg
 
   override def onBadRequest(request: RequestHeader, error: String) = {
     error match {
+        // TODO  these remove auditing, is this a problem?
       case "ERROR_INVALID_SOURCE_TYPE" => Future.successful(NotFound)
+      case "ERROR_TAX_YEAR_INVALID" => Future.successful(BadRequest(Json.toJson(GenericError(ErrorCode.TAX_YEAR_INVALID, "Tax year invalid"))))
       case _ => super.onBadRequest(request, error)
     }
   }

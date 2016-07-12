@@ -17,7 +17,7 @@ import scala.util.matching.Regex
 case class ExpectedError(path: String, code: String, httpStatusCode: Regex = "400".r)
 case class ExpectedUpdate(path: JsValue => JsValue, value: String = "")
 
-case class ErrorScenario(invalidInput: JsValue, error: ExpectedError)
+case class ErrorScenario(invalidInput: JsValue, error: ExpectedError) {}
 case class UpdateScenario(updatedValue: JsValue, expectedUpdate: ExpectedUpdate)
 
 class SourceControllerSpec extends BaseFunctionalSpec {
@@ -26,10 +26,12 @@ class SourceControllerSpec extends BaseFunctionalSpec {
 
   val notImplementedSourceTypes = Set(SourceTypes.Employments, SourceTypes.FurnishedHolidayLettings, SourceTypes.UKProperties)
 
+  val ok = "20.".r
+
   val errorScenarios: Map[SourceType, ErrorScenario] = Map(
     SelfEmployments -> ErrorScenario(invalidInput = toJson(SelfEmployment.example().copy(commencementDate = LocalDate.now().plusDays(1))),
       error = ExpectedError(path = "/commencementDate", code = s"$COMMENCEMENT_DATE_NOT_IN_THE_PAST")),
-    UnearnedIncomes -> ErrorScenario(invalidInput = toJson(UnearnedIncome.example()), error = ExpectedError(path = "", code = "", httpStatusCode = "20.".r))
+    UnearnedIncomes -> ErrorScenario(invalidInput = toJson(UnearnedIncome.example()), error = ExpectedError(path = "", code = "", httpStatusCode = ok))
   )
 
   val updateScenarios: Map[SourceType, UpdateScenario] = Map(
@@ -120,7 +122,7 @@ class SourceControllerSpec extends BaseFunctionalSpec {
     }
 
     "not be able to create a source with invalid data" in {
-      implementedSourceTypes.foreach { sourceType =>
+      implementedSourceTypes.filter(errorScenarios(_).error.httpStatusCode != ok).foreach { sourceType =>
         given()
           .userIsAuthorisedForTheResource(saUtr)
         .when()
@@ -132,7 +134,7 @@ class SourceControllerSpec extends BaseFunctionalSpec {
     }
 
     "not be able to update a source with invalid data" in {
-      implementedSourceTypes.foreach { sourceType =>
+      implementedSourceTypes.filter(errorScenarios(_).error.httpStatusCode != ok).foreach { sourceType =>
         given()
           .userIsAuthorisedForTheResource(saUtr)
         .when()
