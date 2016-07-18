@@ -26,7 +26,7 @@ object TaxDeductedAmountForUkSavingsIncomeCalculation extends CalculationStep {
       unearnedIncome.savings.filter(_.`type` == InterestFromBanksTaxed).map(_.amount).sum
     }.sum
     val grossingUpPercentage = BigDecimal("0.25")
-    val totalTaxDeducted = grossingUpPercentage * totalInterest
+    val totalTaxDeducted = roundUp(grossingUpPercentage * totalInterest)
     liability.copy(
         incomeTaxDeducted = Some(IncomeTaxDeducted(interestFromUk = totalInterest, total = totalTaxDeducted)))
   }
