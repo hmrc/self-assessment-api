@@ -41,7 +41,8 @@ case class MongoLiability(id: BSONObjectID,
                           payPensionsProfitsIncome: Seq[TaxBandAllocation] = Nil,
                           savingsIncome: Seq[TaxBandAllocation] = Nil,
                           dividendsIncome: Seq[TaxBandAllocation] = Nil,
-                          allowancesAndReliefs: AllowancesAndReliefs = AllowancesAndReliefs()) extends Math {
+                          allowancesAndReliefs: AllowancesAndReliefs = AllowancesAndReliefs(),
+                          incomeTaxDeducted: Option[IncomeTaxDeducted] = None) extends Math {
 
   def toLiability =
     Liability(
@@ -69,6 +70,7 @@ case class MongoLiability(id: BSONObjectID,
       ),
       credits = Nil,
       class4Nic = CalculatedAmount(calculations = Nil, total = 0),
+      incomeTaxDeducted = incomeTaxDeducted.getOrElse(IncomeTaxDeducted(0, 0)),
       totalTaxDue = 0
     )
 
