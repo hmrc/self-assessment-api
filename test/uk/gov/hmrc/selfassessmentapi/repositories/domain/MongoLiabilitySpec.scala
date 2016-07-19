@@ -69,6 +69,7 @@ class MongoLiabilitySpec extends UnitSpec with SelfEmploymentSugar {
         incomeTaxCalculations = IncomeTaxCalculations(Nil, Nil, Nil, 0),
         credits = Nil,
         class4Nic = CalculatedAmount(Nil, 0),
+        incomeTaxDeducted = IncomeTaxDeducted(0, 0),
         totalTaxDue = 0
       )
     }
