@@ -22,7 +22,7 @@ import net.ceedubs.ficus.readers.{StringReader, ValueReader}
 import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc._
-import play.api.{Application, Configuration, Play, Routes}
+import play.api._
 import uk.gov.hmrc.api.config.{ServiceLocatorConfig, ServiceLocatorRegistration}
 import uk.gov.hmrc.api.connector.ServiceLocatorConnector
 import uk.gov.hmrc.api.controllers.{ErrorAcceptHeaderInvalid, ErrorNotFound, HeaderValidator}
@@ -113,6 +113,16 @@ object HeaderValidatorFilter extends Filter with HeaderValidator {
   }
 }
 
+
+object ClientInfoLoggingFilter extends Filter {
+  def apply(next: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
+    rh.headers.get("X-Client-ID").map { clientId =>
+      Logger.warn(s"Got a client with clientId : [$clientId] requesting URI : [${rh.uri}]")
+    }
+    next(rh)
+  }
+}
+
 trait MicroserviceRegistration extends ServiceLocatorRegistration with ServiceLocatorConfig {
   override lazy val registrationEnabled: Boolean = AppContext.registrationEnabled
   override val slConnector: ServiceLocatorConnector = ServiceLocatorConnector(WSHttp)
@@ -131,7 +141,7 @@ object MicroserviceGlobal extends DefaultMicroserviceGlobal with MicroserviceReg
 
   override val authFilter = Some(MicroserviceAuthFilter)
 
-  override def microserviceFilters: Seq[EssentialFilter] = Seq(HeaderValidatorFilter) ++ defaultMicroserviceFilters
+  override def microserviceFilters: Seq[EssentialFilter] = Seq(HeaderValidatorFilter, ClientInfoLoggingFilter) ++ defaultMicroserviceFilters
 
   override lazy val scheduledJobs: Seq[ScheduledJob] = createScheduledJobs()
 
