@@ -17,19 +17,25 @@
 package uk.gov.hmrc.selfassessmentapi.repositories
 
 import org.joda.time.DateTime
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.mock.MockitoSugar
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
-import uk.gov.hmrc.selfassessmentapi.domain.TaxYearProperties
 import uk.gov.hmrc.selfassessmentapi.domain.pensioncontribution.{PensionContribution, PensionSaving}
+import uk.gov.hmrc.selfassessmentapi.config.FeatureSwitch
+import uk.gov.hmrc.selfassessmentapi.domain.{TaxYearProperties, TaxYearPropertyType}
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.MongoSelfAssessment
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach {
+class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach with MockitoSugar {
 
-  private val mongoRepository = new SelfAssessmentMongoRepository
+  private val mockFeatureSwitch = mock[FeatureSwitch]
+
+  private val mongoRepository = new SelfAssessmentMongoRepository(mockFeatureSwitch)
 
   override def beforeEach() {
     await(mongoRepository.drop)
@@ -123,12 +129,33 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
 
   "findTaxYearProperties" should {
     "return tax year properties matching utr and tax year" in {
+      when(mockFeatureSwitch.isEnabled(any[TaxYearPropertyType])).thenReturn(true)
       val taxYearProps = TaxYearProperties(pensionContributions = Some(PensionContribution(ukRegisteredPension = Some(10000.00))))
       val sa = MongoSelfAssessment(BSONObjectID.generate, saUtr, taxYear, DateTime.now(), DateTime.now(), Some(taxYearProps))
       await(mongoRepository.insert(sa))
       val records = await(mongoRepository.findTaxYearProperties(saUtr, taxYear))
       records.size shouldBe 1
       records shouldEqual Some(taxYearProps)
+    }
+
+    "ignore individual tax year properties when the individual source is disabled" in {
+      when(mockFeatureSwitch.isEnabled(any[TaxYearPropertyType])).thenReturn(false)
+      val taxYearProps = TaxYearProperties.example()
+      val sa = MongoSelfAssessment(BSONObjectID.generate, saUtr, taxYear, DateTime.now(), DateTime.now(), Some(taxYearProps))
+      await(mongoRepository.insert(sa))
+
+      val records = await(mongoRepository.findTaxYearProperties(saUtr, taxYear))
+      records shouldBe Some(TaxYearProperties())
+    }
+
+    "take in to account individual tax year properties when individual properties are enabled" in {
+      when(mockFeatureSwitch.isEnabled(any[TaxYearPropertyType])).thenReturn(true)
+      val taxYearProps = TaxYearProperties.example()
+      val sa = MongoSelfAssessment(BSONObjectID.generate, saUtr, taxYear, DateTime.now(), DateTime.now(), Some(taxYearProps))
+      await(mongoRepository.insert(sa))
+
+      val records = await(mongoRepository.findTaxYearProperties(saUtr, taxYear))
+      records shouldBe Some(TaxYearProperties.example())
     }
   }
 
