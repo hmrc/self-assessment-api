@@ -25,7 +25,14 @@ import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDouble, BSONElement, 
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.mongo.{AtomicUpdate, ReactiveRepository}
-import uk.gov.hmrc.selfassessmentapi.domain.{TaxYear, TaxYearProperties}
+import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
+import uk.gov.hmrc.selfassessmentapi.domain.blindperson.BlindPersons
+import uk.gov.hmrc.selfassessmentapi.domain.charitablegiving.CharitableGivings
+import uk.gov.hmrc.selfassessmentapi.domain.childbenefit.ChildBenefits
+import uk.gov.hmrc.selfassessmentapi.domain.pensioncontribution.PensionContributions
+import uk.gov.hmrc.selfassessmentapi.domain.studentsloan.StudentLoans
+import uk.gov.hmrc.selfassessmentapi.domain.taxrefundedorsetoff.TaxRefundedOrSetOffs
+import uk.gov.hmrc.selfassessmentapi.domain.{TaxYear, TaxYearProperties, TaxYearPropertyType}
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.MongoSelfAssessment
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -33,12 +40,14 @@ import scala.concurrent.Future
 
 
 object SelfAssessmentRepository extends MongoDbConnection {
-  private lazy val repository = new SelfAssessmentMongoRepository
+  private lazy val repository = new SelfAssessmentMongoRepository(featureSwitch)
+
+  private lazy val featureSwitch = FeatureSwitch(AppContext.featureSwitch)
 
   def apply() = repository
 }
 
-class SelfAssessmentMongoRepository(implicit mongo: () => DB)
+class SelfAssessmentMongoRepository(featureSwitch: FeatureSwitch)(implicit mongo: () => DB)
   extends ReactiveRepository[MongoSelfAssessment, BSONObjectID](
     "selfAssessments",
     mongo,
@@ -126,11 +135,25 @@ class SelfAssessmentMongoRepository(implicit mongo: () => DB)
     } yield ()
   }
 
-  def findTaxYearProperties(saUtr: SaUtr, taxYear: TaxYear): Future[Option[TaxYearProperties]] =
+  def findTaxYearProperties(saUtr: SaUtr, taxYear: TaxYear): Future[Option[TaxYearProperties]] = {
     for {
       optionSa <- find("saUtr" -> saUtr.utr, "taxYear" -> taxYear.taxYear).map(_.headOption)
     } yield for {
       sa <- optionSa
       taxYearProperties <- sa.taxYearProperties
-    } yield taxYearProperties
+    } yield createSwitchedProperties(taxYearProperties)
+  }
+
+  private[this] def createSwitchedProperties(taxYearProperties: TaxYearProperties): TaxYearProperties = {
+    val pensionContribution = if (featureIsEnabled(PensionContributions)) taxYearProperties.pensionContributions else None
+    val charitableGiving = if (featureIsEnabled(CharitableGivings)) taxYearProperties.charitableGivings else None
+    val blindPerson = if (featureIsEnabled(BlindPersons)) taxYearProperties.blindPerson else None
+    val studentLoan = if (featureIsEnabled(StudentLoans)) taxYearProperties.studentLoan else None
+    val taxRefundedOrSetOff = if (featureIsEnabled(TaxRefundedOrSetOffs)) taxYearProperties.taxRefundedOrSetOff else None
+    val childBenefit = if (featureIsEnabled(ChildBenefits)) taxYearProperties.childBenefit else None
+
+    TaxYearProperties(taxYearProperties.id, pensionContribution, charitableGiving, blindPerson, studentLoan, taxRefundedOrSetOff, childBenefit)
+  }
+
+  private[this] def featureIsEnabled(source: TaxYearPropertyType): Boolean = featureSwitch.isEnabled(source)
 }

@@ -24,6 +24,7 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.time.{Millis, Seconds, Span}
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
+import uk.gov.hmrc.selfassessmentapi.config.FeatureSwitch
 import uk.gov.hmrc.selfassessmentapi.domain.selfemployment.SelfEmployment
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.MongoJobStatus._
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.{MongoJobHistory, MongoSelfAssessment, MongoSelfEmployment}
@@ -36,7 +37,8 @@ import scala.concurrent.Future
 
 class DeleteExpiredDataServiceSpec extends MongoEmbeddedDatabase with MockitoSugar with ScalaFutures {
 
-  private val saRepo = new SelfAssessmentMongoRepository
+  private val mockFeatureSwitch = mock[FeatureSwitch]
+  private val saRepo = new SelfAssessmentMongoRepository(mockFeatureSwitch)
   private val seRepo = new SelfEmploymentMongoRepository
   private val uiRepo = new UnearnedIncomeMongoRepository
   private val jobRepo = new JobHistoryMongoRepository
