@@ -25,7 +25,7 @@ import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{JsonMarshaller, _}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.employment._
 import uk.gov.hmrc.selfassessmentapi.repositories._
-import uk.gov.hmrc.selfassessmentapi.repositories.domain.{Employment => _, EmploymentIncomeSummary}
+import uk.gov.hmrc.selfassessmentapi.repositories.domain.{EmploymentIncomeSummary, Employment => _}
 import uk.gov.hmrc.selfassessmentapi.repositories.{SourceRepository, SummaryRepository}
 
 import scala.concurrent.ExecutionContext.Implicits.global

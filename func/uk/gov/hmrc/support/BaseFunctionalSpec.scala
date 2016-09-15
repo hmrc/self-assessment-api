@@ -308,14 +308,6 @@ trait BaseFunctionalSpec extends TestApplication {
     }
 
     class BodyAssertions(content: JsValue, assertions: Assertions) {
-      private def is(re: Regex) = {
-        content.asOpt[String] match {
-          case Some(actualValue) => actualValue should fullyMatch regex re
-          case _ => "" shouldBe value
-        }
-        assertions
-      }
-
       def is(value: String) = {
         content.asOpt[String] match {
           case Some(actualValue) => actualValue shouldBe value

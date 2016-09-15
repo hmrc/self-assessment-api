@@ -17,7 +17,6 @@
 package uk.gov.hmrc.selfassessmentapi.controllers.api
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.controllers.api._
 
 case class UkPropertyIncome(sourceId: SourceId, profit: BigDecimal)
 

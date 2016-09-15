@@ -31,8 +31,8 @@ import scala.util.Try
 
 trait MongoEmbeddedDatabase extends UnitSpec with BeforeAndAfterAll with BeforeAndAfterEach {
 
-  private var mongodExe: MongodExecutable = null
-  private var mongod: MongodProcess = null
+  private var mongodExe: MongodExecutable = _
+  private var mongod: MongodProcess = _
 
   private val diskPort = 27017
   private val embeddedPort = 12345

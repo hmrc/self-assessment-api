@@ -25,7 +25,9 @@ import uk.gov.hmrc.selfassessmentapi.repositories._
 class LiabilitySpec extends JsonSpec {
 
   "EmploymentIncome" should {
-    roundTripJson(EmploymentIncome("abc", 5000, 50, 50, 4950))
+    "correctly map to JSON" in {
+      roundTripJson(EmploymentIncome("abc", 5000, 50, 50, 4950))
+    }
   }
 
   "SelfEmploymentIncome" should {
@@ -73,16 +75,6 @@ class LiabilitySpec extends JsonSpec {
   "UKPropertyIncome" should {
     "correctly map to JSON" in {
       roundTripJson(UkPropertyIncome("abc", 500))
-    }
-  }
-
-  private implicit class JsValueComparator(jsValue: JsValue) {
-    def bodyIs(expectedBody: String) = {
-      jsValue match {
-        case arr: JsArray => assertEquals(expectedBody, new JSONArray(arr.toString()), STRICT)
-        case _ => assertEquals(expectedBody, new JSONObject(jsValue.toString()), STRICT)
-      }
-      this
     }
   }
 }

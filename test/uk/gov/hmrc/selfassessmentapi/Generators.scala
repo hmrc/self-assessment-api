@@ -24,7 +24,7 @@ object Generators {
   def amountGen(lower: BigDecimal, upper: BigDecimal): Gen[BigDecimal] =
     for {
       value <- Gen.chooseNum(lower.intValue(), upper.intValue())
-    } yield BigDecimal.valueOf(value)
+    } yield BigDecimal(value)
 
   val basicTaxBandAmountGen: Gen[BigDecimal] =
     amountGen(TaxBand.BasicTaxBand().lowerBound, TaxBand.BasicTaxBand().upperBound.get)
@@ -34,6 +34,6 @@ object Generators {
 
   val additionalHigherTaxBandAmountGen: Gen[BigDecimal] = amountGen(
     TaxBand.AdditionalHigherTaxBand().lowerBound,
-    TaxBand.AdditionalHigherTaxBand().upperBound.getOrElse(BigDecimal.valueOf(Int.MaxValue)))
+    TaxBand.AdditionalHigherTaxBand().upperBound.getOrElse(BigDecimal(Int.MaxValue)))
 
 }

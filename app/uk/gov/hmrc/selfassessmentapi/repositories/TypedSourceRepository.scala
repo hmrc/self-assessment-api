@@ -21,7 +21,7 @@ import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.mongo.Repository
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
-import uk.gov.hmrc.selfassessmentapi.repositories.domain.{SelfEmployment, SourceMetadata}
+import uk.gov.hmrc.selfassessmentapi.repositories.domain.SourceMetadata
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global

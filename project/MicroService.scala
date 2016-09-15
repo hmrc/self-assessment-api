@@ -29,7 +29,15 @@ trait MicroService {
       scalaVersion := "2.11.8",
       // use lint option to avoid missing string interpolation warnings https://github.com/playframework/playframework/issues/5134
       // remove when we upgrade to play 2.5.x https://github.com/playframework/playframework/pull/5135
-      scalacOptions ++= Seq("-Xlint:-missing-interpolator"),
+      scalacOptions ++= Seq("-Xlint:-missing-interpolator",
+                            "-Xfatal-warnings",
+                            "-deprecation",
+                            "-encoding", "UTF-8",
+                            "-unchecked",
+                            "-language:postfixOps",
+                            "-language:implicitConversions",
+                            "-Ywarn-numeric-widen",
+                            "-Yno-adapted-args"),
       libraryDependencies ++= appDependencies,
       parallelExecution in Test := false,
       fork in Test := false,

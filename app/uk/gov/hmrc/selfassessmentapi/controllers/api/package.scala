@@ -19,7 +19,6 @@ package uk.gov.hmrc.selfassessmentapi.controllers
 import play.api.data.validation.ValidationError
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.CountryCodes.{apply => _}
-import uk.gov.hmrc.selfassessmentapi.controllers.api.ErrorCode
 import uk.gov.hmrc.selfassessmentapi.controllers.api.ErrorCode._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.UkCountryCodes.{apply => _}
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.AmountHolder

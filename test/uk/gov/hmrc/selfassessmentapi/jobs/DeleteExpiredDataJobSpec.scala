@@ -115,7 +115,7 @@ class DeleteExpiredDataJobSpec extends TestApplication {
     }
 
     "should return a success message with no of records deleted " in {
-      when(service.deleteExpiredData(any())).thenReturn(Future.successful(100))
+      when(service.deleteExpiredData(any[DateTime]())).thenReturn(Future.successful(100))
 
       val message = await(deleteExpiredData.deleteExpiredData(DateTime.now))
 
@@ -123,7 +123,7 @@ class DeleteExpiredDataJobSpec extends TestApplication {
     }
 
     "should return a message with out no of records when there are no records found" in {
-      when(service.deleteExpiredData(any())).thenReturn(Future.successful(0))
+      when(service.deleteExpiredData(any[DateTime]())).thenReturn(Future.successful(0))
 
       val message = await(deleteExpiredData.deleteExpiredData(DateTime.now))
 
@@ -131,7 +131,7 @@ class DeleteExpiredDataJobSpec extends TestApplication {
     }
 
     "should return an error message when any exceptions occur" in {
-      when(service.deleteExpiredData(any())).thenReturn(Future(throw new RuntimeException("Exception occurred.")))
+      when(service.deleteExpiredData(any[DateTime]())).thenReturn(Future(throw new RuntimeException("Exception occurred.")))
 
       val message = await(deleteExpiredData.deleteExpiredData(DateTime.now))
 
