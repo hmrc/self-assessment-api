@@ -7,9 +7,12 @@ import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class LiabilityDocumentationSourcesEnabledSpec extends BaseFunctionalSpec {
 
-  override lazy val app = FakeApplication(additionalConfiguration =  Map("Test.feature-switch.employments.enabled" -> true,
-    "Test.feature-switch.self-employments.enabled" -> true, "Test.feature-switch.unearned-incomes.enabled" -> true,
-    "Test.feature-switch.furnished-holiday-lettings.enabled" -> true, "Test.feature-switch.uk-properties.enabled" -> true))
+  override lazy val app = FakeApplication(additionalConfiguration =  Map(
+    "Test.feature-switch.sources.employments.enabled" -> true,
+    "Test.feature-switch.sources.self-employments.enabled" -> true,
+    "Test.feature-switch.sources.unearned-incomes.enabled" -> true,
+    "Test.feature-switch.sources.furnished-holiday-lettings.enabled" -> true,
+    "Test.feature-switch.sources.uk-properties.enabled" -> true))
 
   "Request to retrieve liability documentation when all the sources are enabled" should {
     "return 200 with xml response with all sources in the xml" in {

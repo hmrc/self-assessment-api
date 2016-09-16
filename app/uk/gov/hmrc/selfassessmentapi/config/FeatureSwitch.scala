@@ -28,15 +28,15 @@ case class FeatureSwitch(value: Option[Configuration]) {
     case None => DEFAULT_VALUE
   }
 
+  def isEnabled(propertyType: TaxYearPropertyType): Boolean = value match {
+    case Some(config) => FeatureConfig(config).isTaxYearPropertyEnabled(propertyType.name)
+    case None => DEFAULT_VALUE
+  }
+
   def isEnabled(sourceType: SourceType, summary: String): Boolean = value match {
     case Some(config) =>
       if(summary.isEmpty) FeatureConfig(config).isSourceEnabled(sourceType.name)
       else FeatureConfig(config).isSummaryEnabled(sourceType.name, summary)
-    case None => DEFAULT_VALUE
-  }
-
-  def isEnabled(source: TaxYearPropertyType): Boolean = value match {
-    case Some(config) => FeatureConfig(config).isSourceEnabled(source.name)
     case None => DEFAULT_VALUE
   }
 
@@ -58,14 +58,15 @@ case class FeatureSwitch(value: Option[Configuration]) {
 sealed case class FeatureConfig(config: Configuration) {
 
   def isSummaryEnabled(source: String, summary: String): Boolean = {
-    val summaryEnabled = config.getBoolean(s"$source.$summary.enabled") match {
-      case Some(flag) => flag
-      case None => true
-    }
+    val summaryEnabled = config.getBoolean(s"$source.$summary.enabled").getOrElse(true)
     isSourceEnabled(source) && summaryEnabled
   }
 
   def isSourceEnabled(source: String): Boolean = {
-    config.getBoolean(s"$source.enabled").getOrElse(false)
+    config.getBoolean(s"sources.$source.enabled").getOrElse(false)
+  }
+
+  def isTaxYearPropertyEnabled(property: String): Boolean = {
+    config.getBoolean(s"taxYearProperties.$property.enabled").getOrElse(false)
   }
 }

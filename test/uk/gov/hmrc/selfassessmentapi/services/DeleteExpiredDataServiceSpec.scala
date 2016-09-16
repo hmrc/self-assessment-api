@@ -164,5 +164,4 @@ class DeleteExpiredDataServiceSpec extends MongoEmbeddedDatabase with MockitoSug
         whenReady(futureWrite)(identity)
     }
   }
-
 }

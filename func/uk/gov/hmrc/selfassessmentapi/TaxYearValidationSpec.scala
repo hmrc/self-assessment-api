@@ -7,12 +7,12 @@ import uk.gov.hmrc.support.BaseFunctionalSpec
 // FIXME: Refactor into live and sandbox tests
 
 class TaxYearValidationSpec extends BaseFunctionalSpec {
-  override lazy val app: FakeApplication = FakeApplication(additionalConfiguration = Map("Test.feature-switch.pensionContributions.enabled" -> true,
-                                                                                         "Test.feature-switch.charitableGivings.enabled" -> true,
-                                                                                         "Test.feature-switch.blindPerson.enabled" -> true,
-                                                                                         "Test.feature-switch.studentLoan.enabled" -> true,
-                                                                                         "Test.feature-switch.taxRefundedOrSetOff.enabled" -> true,
-                                                                                         "Test.feature-switch.childBenefit.enabled" -> true))
+  override lazy val app: FakeApplication = FakeApplication(additionalConfiguration = Map("Test.feature-switch.taxYearProperties.pensionContributions.enabled" -> true,
+                                                                                         "Test.feature-switch.taxYearProperties.charitableGivings.enabled" -> true,
+                                                                                         "Test.feature-switch.taxYearProperties.blindPerson.enabled" -> true,
+                                                                                         "Test.feature-switch.taxYearProperties.studentLoan.enabled" -> true,
+                                                                                         "Test.feature-switch.taxYearProperties.taxRefundedOrSetOff.enabled" -> true,
+                                                                                         "Test.feature-switch.taxYearProperties.childBenefit.enabled" -> true))
 
   "the payload is invalid for a sandbox request, they" should {
     "receive 400 if the dateBenefitStopped is after the end of tax year from the url " in {
