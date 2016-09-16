@@ -29,7 +29,7 @@ class JobHistoryRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfter
 
   private val mongoRepository = new JobHistoryMongoRepository
 
-  override def beforeEach() {
+  override def beforeEach() = {
     await(mongoRepository.drop)
     await(mongoRepository.ensureIndexes)
   }

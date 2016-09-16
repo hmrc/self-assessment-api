@@ -6,8 +6,8 @@ import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class SwitchPensionContributionOnSpec extends BaseFunctionalSpec {
   override lazy val app: FakeApplication = FakeApplication(additionalConfiguration = Map(
-    "Test.feature-switch.pensionContributions.enabled" -> true,
-    "Test.feature-switch.childBenefit.enabled" -> true))
+    "Test.feature-switch.taxYearProperties.pensionContributions.enabled" -> true,
+    "Test.feature-switch.taxYearProperties.childBenefit.enabled" -> true))
 
   "if pension contribution is turned on then tax year resource" should {
     "return 200" in {
@@ -41,8 +41,8 @@ class SwitchPensionContributionOnSpec extends BaseFunctionalSpec {
 
 class SwitchPensionContributionOffSpec extends BaseFunctionalSpec {
   override lazy val app: FakeApplication = FakeApplication(additionalConfiguration = Map(
-    "Test.feature-switch.pensionContributions.enabled" -> false,
-    "Test.feature-switch.childBenefit.enabled" -> true))
+    "Test.feature-switch.taxYearProperties.pensionContributions.enabled" -> false,
+    "Test.feature-switch.taxYearProperties.childBenefit.enabled" -> true))
 
   "if pension contribution is turned off then tax year resource" should {
     "return 400 bad request with the correct error code" in {
@@ -76,8 +76,8 @@ class SwitchPensionContributionOffSpec extends BaseFunctionalSpec {
 
 class SwitchCharitableGivingsOnSpec extends BaseFunctionalSpec {
   override lazy val app: FakeApplication = FakeApplication(additionalConfiguration = Map(
-    "Test.feature-switch.charitableGivings.enabled" -> true,
-    "Test.feature-switch.childBenefit.enabled" -> true))
+    "Test.feature-switch.taxYearProperties.charitableGivings.enabled" -> true,
+    "Test.feature-switch.taxYearProperties.childBenefit.enabled" -> true))
 
   "if charitable givings are turned on then tax year resource" should {
     "return 200" in {
@@ -122,8 +122,8 @@ class SwitchCharitableGivingsOnSpec extends BaseFunctionalSpec {
 
 class SwitchCharitableGivingsOffSpec extends BaseFunctionalSpec {
   override lazy val app: FakeApplication = FakeApplication(additionalConfiguration = Map(
-    "Test.feature-switch.charitableGivings.enabled" -> false,
-    "Test.feature-switch.childBenefit.enabled" -> true))
+    "Test.feature-switch.taxYearProperties.charitableGivings.enabled" -> false,
+    "Test.feature-switch.taxYearProperties.childBenefit.enabled" -> true))
 
   "if charitable givings are turned off then tax year resource" should {
     "return 400 bad request with the correct error code" in {
@@ -168,8 +168,8 @@ class SwitchCharitableGivingsOffSpec extends BaseFunctionalSpec {
 
 class SwitchBlindPersonOnSpec extends BaseFunctionalSpec {
   override lazy val app: FakeApplication = FakeApplication(additionalConfiguration = Map(
-    "Test.feature-switch.blindPerson.enabled" -> true,
-    "Test.feature-switch.childBenefit.enabled" -> true))
+    "Test.feature-switch.taxYearProperties.blindPerson.enabled" -> true,
+    "Test.feature-switch.taxYearProperties.childBenefit.enabled" -> true))
 
   "if blind person is turned on then tax year resource" should {
     "return 200" in {
@@ -203,8 +203,8 @@ class SwitchBlindPersonOnSpec extends BaseFunctionalSpec {
 
 class SwitchBlindPersonOffSpec extends BaseFunctionalSpec {
   override lazy val app: FakeApplication = FakeApplication(additionalConfiguration = Map(
-    "Test.feature-switch.blindPerson.enabled" -> false,
-    "Test.feature-switch.childBenefit.enabled" -> true))
+    "Test.feature-switch.taxYearProperties.blindPerson.enabled" -> false,
+    "Test.feature-switch.taxYearProperties.childBenefit.enabled" -> true))
 
   "if blind person is turned off then tax year resource" should {
     "return 400 bad request with the correct error code" in {
@@ -238,8 +238,8 @@ class SwitchBlindPersonOffSpec extends BaseFunctionalSpec {
 
 class SwitchStudentLoanOnSpec extends BaseFunctionalSpec {
   override lazy val app: FakeApplication = FakeApplication(additionalConfiguration = Map(
-    "Test.feature-switch.studentLoan.enabled" -> true,
-    "Test.feature-switch.childBenefit.enabled" -> true))
+    "Test.feature-switch.taxYearProperties.studentLoan.enabled" -> true,
+    "Test.feature-switch.taxYearProperties.childBenefit.enabled" -> true))
 
   "if student loan is turned on then tax year resource" should {
     "return 200" in {
@@ -271,8 +271,8 @@ class SwitchStudentLoanOnSpec extends BaseFunctionalSpec {
 
 class SwitchStudentLoanOffSpec extends BaseFunctionalSpec {
   override lazy val app: FakeApplication = FakeApplication(additionalConfiguration = Map(
-    "Test.feature-switch.studentLoan.enabled" -> false,
-    "Test.feature-switch.childBenefit.enabled" -> true))
+    "Test.feature-switch.taxYearProperties.studentLoan.enabled" -> false,
+    "Test.feature-switch.taxYearProperties.childBenefit.enabled" -> true))
 
   "if student loan is turned off then tax year resource" should {
     "return 400 bad request with the correct error code" in {
@@ -304,8 +304,8 @@ class SwitchStudentLoanOffSpec extends BaseFunctionalSpec {
 
 class SwitchTaxRefundedOrSetOffOnSpec extends BaseFunctionalSpec {
   override lazy val app: FakeApplication = FakeApplication(additionalConfiguration = Map(
-    "Test.feature-switch.taxRefundedOrSetOff.enabled" -> true,
-    "Test.feature-switch.childBenefit.enabled" -> true))
+    "Test.feature-switch.taxYearProperties.taxRefundedOrSetOff.enabled" -> true,
+    "Test.feature-switch.taxYearProperties.childBenefit.enabled" -> true))
 
   "if student loan is turned on then tax year resource" should {
     "return 200" in {
@@ -336,8 +336,8 @@ class SwitchTaxRefundedOrSetOffOnSpec extends BaseFunctionalSpec {
 
 class SwitchTaxRefundedOrSetOffOffSpec extends BaseFunctionalSpec {
   override lazy val app: FakeApplication = FakeApplication(additionalConfiguration = Map(
-    "Test.feature-switch.taxRefundedOrSetOff.enabled" -> false,
-    "Test.feature-switch.childBenefit.enabled" -> true))
+    "Test.feature-switch.taxYearProperties.taxRefundedOrSetOff.enabled" -> false,
+    "Test.feature-switch.taxYearProperties.childBenefit.enabled" -> true))
 
   "if student loan is turned off then tax year resource" should {
     "return 400 bad request with the correct error code" in {
@@ -368,8 +368,8 @@ class SwitchTaxRefundedOrSetOffOffSpec extends BaseFunctionalSpec {
 
 class SwitchChildBenefitOnSpec extends BaseFunctionalSpec {
   override lazy val app: FakeApplication = FakeApplication(additionalConfiguration = Map(
-    "Test.feature-switch.taxRefundedOrSetOff.enabled" -> true,
-    "Test.feature-switch.childBenefit.enabled" -> true))
+    "Test.feature-switch.taxYearProperties.taxRefundedOrSetOff.enabled" -> true,
+    "Test.feature-switch.taxYearProperties.childBenefit.enabled" -> true))
 
   "if student loan is turned on then tax year resource" should {
     "return 200" in {
@@ -400,8 +400,8 @@ class SwitchChildBenefitOnSpec extends BaseFunctionalSpec {
 
 class SwitchChildBenefitOffSpec extends BaseFunctionalSpec {
   override lazy val app: FakeApplication = FakeApplication(additionalConfiguration = Map(
-    "Test.feature-switch.taxRefundedOrSetOff.enabled" -> true,
-    "Test.feature-switch.childBenefit.enabled" -> false))
+    "Test.feature-switch.taxYearProperties.taxRefundedOrSetOff.enabled" -> true,
+    "Test.feature-switch.taxYearProperties.childBenefit.enabled" -> false))
 
   "if student loan is turned off then tax year resource" should {
     "return 400 bad request with the correct error code" in {

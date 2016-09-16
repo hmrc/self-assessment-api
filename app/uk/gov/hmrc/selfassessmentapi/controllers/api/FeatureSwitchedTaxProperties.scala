@@ -28,13 +28,10 @@ object FeatureSwitchedTaxProperties {
 
   private val featureSwitch = FeatureSwitch(AppContext.featureSwitch)
 
-  def atLeastOnePropertyIsEnabled: Boolean =
-    featureSwitch.isEnabled(PensionContributions) ||
-      featureSwitch.isEnabled(CharitableGivings) ||
-      featureSwitch.isEnabled(BlindPersons) ||
-      featureSwitch.isEnabled(StudentLoans) ||
-      featureSwitch.isEnabled(TaxRefundedOrSetOffs) ||
-      featureSwitch.isEnabled(ChildBenefits)
+  private val propertyTypes =
+    Seq(PensionContributions, CharitableGivings, BlindPersons, StudentLoans, TaxRefundedOrSetOffs, ChildBenefits)
+
+  def atLeastOnePropertyIsEnabled: Boolean = propertyTypes.exists(featureSwitch.isEnabled)
 
   def apply() =
     TaxYearProperties(

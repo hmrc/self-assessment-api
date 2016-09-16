@@ -30,9 +30,9 @@ class SelfAssessmentApiDefinitionSpec extends TestApplication {
 
 
       val json = Json.toJson(definition)
-      json.validate[Definition].asEither map {
-        case Right(result) =>
+      json.validate[Definition].asEither foreach {
         case Left(errors) => fail(s"Failed to validate definition json: ${errors.mkString(",")}")
+        case _ =>
       }
     }
   }

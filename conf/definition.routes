@@ -1,2 +1,2 @@
 GET        /api/definition                                       uk.gov.hmrc.selfassessmentapi.controllers.definition.DocumentationController.definition()
-GET        /api/documentation/:version/:endpointName             uk.gov.hmrc.selfassessmentapi.controllers.definition.DocumentationController.documentation(version, endpointName)
+GET        /api/documentation/:version/:endpointName             uk.gov.hmrc.selfassessmentapi.controllers.definition.DocumentationController.documentation(version: String, endpointName: String)

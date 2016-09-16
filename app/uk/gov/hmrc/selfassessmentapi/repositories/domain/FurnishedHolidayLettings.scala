@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.repositories.domain
 
-import org.joda.time.{DateTime, DateTimeZone, LocalDate}
+import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json.{Format, Json}
 import reactivemongo.bson.{BSONDocument, BSONDouble, BSONObjectID, BSONString}
 import uk.gov.hmrc.domain._
@@ -173,7 +173,6 @@ object FurnishedHolidayLettings {
   implicit val mongoFormats = ReactiveMongoFormats.mongoEntity({
     implicit val BSONObjectIDFormat: Format[BSONObjectID] = ReactiveMongoFormats.objectIdFormats
     implicit val dateTimeFormat: Format[DateTime] = ReactiveMongoFormats.dateTimeFormats
-    implicit val localDateFormat: Format[LocalDate] = ReactiveMongoFormats.localDateFormats
     Format(Json.reads[FurnishedHolidayLettings], Json.writes[FurnishedHolidayLettings])
   })
 

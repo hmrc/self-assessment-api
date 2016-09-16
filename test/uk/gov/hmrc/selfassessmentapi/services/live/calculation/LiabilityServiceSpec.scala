@@ -27,7 +27,6 @@ import uk.gov.hmrc.selfassessmentapi.config.FeatureSwitch
 import uk.gov.hmrc.selfassessmentapi.controllers.api.SourceTypes
 import SourceTypes._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.TaxYear
-import uk.gov.hmrc.selfassessmentapi.repositories.SelfAssessmentMongoRepository
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.LiabilityResult
 import uk.gov.hmrc.selfassessmentapi.repositories.live._
 import uk.gov.hmrc.selfassessmentapi.services.live.TaxYearPropertiesService
