@@ -26,14 +26,30 @@ case class UnearnedIncomeBuilder(objectID: BSONObjectID = BSONObjectID.generate)
 
   private var unearnedIncomes: UnearnedIncome = UnearnedIncome(objectID, objectID.stringify, generateSaUtr(), taxYear, now, now)
 
-  def withSavings(savings: (SavingsIncomeType, BigDecimal)*) = {
-    unearnedIncomes = unearnedIncomes.copy(savings = savings.map(saving => UnearnedIncomesSavingsIncomeSummary("", saving._1, saving._2)))
+  private def withSavings(savings: (SavingsIncomeType, BigDecimal)*) = {
+    unearnedIncomes = unearnedIncomes.copy(savings = unearnedIncomes.savings ++ savings.map(saving => UnearnedIncomesSavingsIncomeSummary("", saving._1, saving._2)))
     this
   }
 
-  def withDividends(dividends: (DividendType, BigDecimal)*) = {
-    unearnedIncomes = unearnedIncomes.copy(dividends = dividends.map(dividend => UnearnedIncomesDividendSummary("", dividend._1, dividend._2)))
+  def withTaxedSavings(savings : BigDecimal*) = {
+    withSavings(savings.map((InterestFromBanksTaxed, _)):_*)
+  }
+
+  def withUntaxedSavings(savings : BigDecimal*) = {
+    withSavings(savings.map((InterestFromBanksUntaxed, _)):_*)
+  }
+
+  private def withDividends(dividends: (DividendType, BigDecimal)*) = {
+    unearnedIncomes = unearnedIncomes.copy(dividends = unearnedIncomes.dividends ++ dividends.map(dividend => UnearnedIncomesDividendSummary("", dividend._1, dividend._2)))
     this
+  }
+
+  def withUKDividends(dividends: BigDecimal*) = {
+    withDividends(dividends.map((FromUKCompanies, _)):_*)
+  }
+
+  def withOtherUKDividends(dividends: BigDecimal*) = {
+    withDividends(dividends.map((FromOtherUKSources, _)):_*)
   }
 
   def create() = unearnedIncomes

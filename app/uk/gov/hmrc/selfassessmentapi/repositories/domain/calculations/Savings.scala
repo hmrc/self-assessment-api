@@ -91,7 +91,7 @@ object Savings {
       Savings.StartingRate(selfAssessment), Savings.PersonalAllowance(selfAssessment), NonSavings.TotalTaxableIncome(selfAssessment),
       Deductions.TotalUkPensionContributions(selfAssessment))
 
-    def apply(taxableSavingsIncome: BigDecimal, startingSavingsRate: BigDecimal, personalSavingsAllowance: BigDecimal,
+    private def apply(taxableSavingsIncome: BigDecimal, startingSavingsRate: BigDecimal, personalSavingsAllowance: BigDecimal,
               taxableNonSavingsIncome: BigDecimal, ukPensionContributions: BigDecimal = 0): Seq[TaxBandSummary] = {
       val startingTaxBand = TaxBand.SavingsStartingTaxBand(startingSavingsRate)
       val nilTaxBand = TaxBand.NilTaxBand(Some(startingTaxBand), personalSavingsAllowance)

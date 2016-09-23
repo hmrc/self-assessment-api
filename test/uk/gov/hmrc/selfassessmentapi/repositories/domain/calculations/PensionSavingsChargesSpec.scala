@@ -20,6 +20,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.prop.Tables.Table
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.controllers.api.TaxBandSummary
+import uk.gov.hmrc.selfassessmentapi.repositories.domain.builders._
 
 
 class PensionSavingsChargesSpec extends UnitSpec {
@@ -27,7 +28,13 @@ class PensionSavingsChargesSpec extends UnitSpec {
 
   "PensionSavingsCharges.IncomeTaxBandSummary" should {
     "be calculated when TotalTaxableIncome present falls within HigherRate band" in {
-      PensionSavingsCharges.IncomeTaxBandSummary(totalTaxableIncome = 31999, pensionContributionExcess = 2000) should contain theSameElementsInOrderAs
+      PensionSavingsCharges.IncomeTaxBandSummary(SelfAssessmentBuilder()
+        .withUnearnedIncomes(UnearnedIncomeBuilder().withUntaxedSavings(30999))
+        .withEmployments(EmploymentBuilder().withSalary(6000))
+        .withSelfEmployments(SelfEmploymentBuilder().withTurnover(6000))
+        .withTaxYearProperties(TaxYearPropertiesBuilder().pensionSavings(excessOfAnnualAllowance = 2000))
+        .create()
+      ) should contain theSameElementsInOrderAs
         Seq(
           TaxBandSummary("basicRate", 1, "20%", 0.20),
           TaxBandSummary("higherRate", 1999, "40%", 799.60),
@@ -36,7 +43,14 @@ class PensionSavingsChargesSpec extends UnitSpec {
     }
 
     "be calculated when TotalTaxableIncome and ukPensionsContributions present falls within Basic and Higher rate band" in {
-      PensionSavingsCharges.IncomeTaxBandSummary(totalTaxableIncome = 31999, ukPensionContribution = 1500, pensionContributionExcess = 2000) should contain theSameElementsInOrderAs
+      PensionSavingsCharges.IncomeTaxBandSummary(SelfAssessmentBuilder()
+        .withUnearnedIncomes(UnearnedIncomeBuilder().withUntaxedSavings(30999))
+        .withEmployments(EmploymentBuilder().withSalary(6000))
+        .withSelfEmployments(SelfEmploymentBuilder().withTurnover(6000))
+        .withTaxYearProperties(TaxYearPropertiesBuilder().ukRegisteredPension(1500)
+                                                         .pensionSavings(excessOfAnnualAllowance = 2000))
+        .create()
+      ) should contain theSameElementsInOrderAs
         Seq(
           TaxBandSummary("basicRate", 1501, "20%", 300.2),
           TaxBandSummary("higherRate", 499, "40%", 199.6),
@@ -45,7 +59,14 @@ class PensionSavingsChargesSpec extends UnitSpec {
     }
 
     "be calculated when TotalTaxableIncome and ukPensionsContributions present falls within Basic, Higher and Additional Higher rate band" in {
-      PensionSavingsCharges.IncomeTaxBandSummary(totalTaxableIncome = 31999, ukPensionContribution = 40000, pensionContributionExcess = 200000) should contain theSameElementsInOrderAs
+      PensionSavingsCharges.IncomeTaxBandSummary(SelfAssessmentBuilder()
+        .withUnearnedIncomes(UnearnedIncomeBuilder().withUntaxedSavings(31999))
+        .withEmployments(EmploymentBuilder().withSalary(6000))
+        .withSelfEmployments(SelfEmploymentBuilder().withTurnover(5000))
+        .withTaxYearProperties(TaxYearPropertiesBuilder().ukRegisteredPension(40000)
+                                                         .pensionSavings(excessOfAnnualAllowance = 200000))
+        .create()
+      ) should contain theSameElementsInOrderAs
         Seq(
           TaxBandSummary("basicRate", 40001, "20%", 8000.2),
           TaxBandSummary("higherRate", 118000, "40%", 47200),
@@ -90,8 +111,12 @@ class PensionSavingsChargesSpec extends UnitSpec {
         val contribution = Print(BigDecimal(pensionContribution.toInt)).as("ukPensionContribution")
         val contributionExcess = Print(BigDecimal(pensionContributionExcess.toInt)).as("pensionContributionExcess")
 
-        val taxBands = PensionSavingsCharges.IncomeTaxBandSummary(totalTaxableIncome = totalTaxables,
-          ukPensionContribution = contribution, pensionContributionExcess  = contributionExcess)
+        val taxBands = PensionSavingsCharges.IncomeTaxBandSummary(SelfAssessmentBuilder()
+          .withEmployments(EmploymentBuilder().withSalary(totalTaxables))
+          .withTaxYearProperties(TaxYearPropertiesBuilder().ukRegisteredPension(contribution)
+                                                           .pensionSavings(excessOfAnnualAllowance = contributionExcess))
+          .create()
+        )
 
         PensionSavingsCharges.IncomeTax(taxBands) shouldBe BigDecimal(incomeTaxCalculated)
 

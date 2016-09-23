@@ -42,7 +42,7 @@ object NonSavings {
     def apply(selfAssessment: SelfAssessment): Seq[TaxBandSummary] =
       apply(NonSavings.TotalTaxableIncome(selfAssessment), Deductions.TotalUkPensionContributions(selfAssessment))
 
-    def apply(totalNonSavingsTaxableIncome: BigDecimal, ukPensionContributions: BigDecimal = 0): Seq[TaxBandSummary] = {
+    private def apply(totalNonSavingsTaxableIncome: BigDecimal, ukPensionContributions: BigDecimal = 0): Seq[TaxBandSummary] = {
       val basicTaxBand = TaxBand.BasicTaxBand(additionsToUpperBound = ukPensionContributions)
       val higherTaxBand = TaxBand.HigherTaxBand(basicTaxBand, additionsToUpperBound = ukPensionContributions)
       Seq(basicTaxBand, higherTaxBand, TaxBand.AdditionalHigherTaxBand(higherTaxBand)).map { taxBand =>

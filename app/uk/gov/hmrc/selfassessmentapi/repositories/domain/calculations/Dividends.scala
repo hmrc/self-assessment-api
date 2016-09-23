@@ -52,7 +52,7 @@ object Dividends {
 
   object IncomeTaxBandSummary  {
 
-    def apply(taxableNonSavingsIncome: BigDecimal, taxableSavingsIncome: BigDecimal, taxableDividendIncome: BigDecimal,
+    private def apply(taxableNonSavingsIncome: BigDecimal, taxableSavingsIncome: BigDecimal, taxableDividendIncome: BigDecimal,
               personalDividendAllowance: BigDecimal, ukPensionContribution: BigDecimal): Seq[TaxBandSummary] = {
       val nilTaxBand = TaxBand.NilTaxBand(bandWidth = personalDividendAllowance)
       val basicTaxBand = TaxBand.BasicTaxBand(Some(nilTaxBand), taxableNonSavingsIncome + taxableSavingsIncome,

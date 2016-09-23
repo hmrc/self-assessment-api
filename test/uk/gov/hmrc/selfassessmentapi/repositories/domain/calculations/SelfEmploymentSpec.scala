@@ -19,8 +19,6 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain.calculations
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{SelfAssessment, SelfEmploymentIncome}
-import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment._
-import uk.gov.hmrc.selfassessmentapi.controllers.api.SelfEmploymentIncome
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.builders.SelfEmploymentBuilder
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.calculations
 
@@ -41,11 +39,11 @@ class SelfEmploymentSpec extends UnitSpec {
   "TotalProfit" should {
     "be sum of profits from across all self employments" in {
       val selfEmploymentOne = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 2000))
+        .withTurnover(2000)
         .create()
 
       val selfEmploymentTwo = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 3000))
+        .withTurnover(3000)
         .create()
 
       calculations.SelfEmployment.TotalProfit(SelfAssessment(selfEmployments = Seq(selfEmploymentOne, selfEmploymentTwo))) shouldBe BigDecimal(5000)
@@ -78,12 +76,10 @@ class SelfEmploymentSpec extends UnitSpec {
         )*/
 
       val selfEmployment = SelfEmploymentBuilder()
-        .incomes(
-          (IncomeType.Turnover, 1200.01),
-          (IncomeType.Other, 799.99))
-        .balancingCharges(
-          (BalancingChargeType.BPRA, 10),
-          (BalancingChargeType.Other, 20))
+        .withTurnover(1200.01)
+        .withOtherIncome(799.99)
+        .withBpraBalancingCharges(10)
+        .withOtherBalancingCharges(20)
         .goodsAndServicesOwnUse(50)
         .withAdjustments(
           basisAdjustment = 200,
@@ -102,7 +98,7 @@ class SelfEmploymentSpec extends UnitSpec {
     "be equal to incomes and outstandingBusinessIncome" in {
 
       val selfEmployment = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 10000.98))
+        .withTurnover(10000.98)
         .withAdjustments(
           outstandingBusinessIncome = 5000.32,
           lossBroughtForward = 20000.50,
@@ -120,12 +116,11 @@ class SelfEmploymentSpec extends UnitSpec {
     "not contain any expenses apart from depreciation" in {
 
       val selfEmployment = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 2000))
-        .expenses(
-          (ExpenseType.AdminCosts, 100),
-          (ExpenseType.BadDebt, 50.01),
-          (ExpenseType.CISPaymentsToSubcontractors, 49.99),
-          (ExpenseType.Depreciation, 1000000))
+        .withTurnover(2000)
+        .withAdminCosts(100)
+        .withBadDebt(50.01)
+        .withCISPaymentsToSubcontractors(49.99)
+        .withDepreciation(1000000)
         .create()
 
       calculations.SelfEmployment.Profit(selfEmployment) shouldBe BigDecimal(1800)
@@ -134,7 +129,7 @@ class SelfEmploymentSpec extends UnitSpec {
     "subtract all allowances from profit" in {
 
       val selfEmployment = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 2000))
+        .withTurnover(2000)
         .withAllowances(
           annualInvestmentAllowance = 50,
           capitalAllowanceMainPool = 10,
@@ -152,7 +147,7 @@ class SelfEmploymentSpec extends UnitSpec {
     "be rounded down to the nearest pound" in {
 
       val selfEmployment = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 1.99))
+        .withTurnover(1.99)
         .withAllowances(
           annualInvestmentAllowance = 0.02,
           allowancesOnSales = 0,
@@ -168,7 +163,7 @@ class SelfEmploymentSpec extends UnitSpec {
     "subtract adjustments from profit" in {
 
       val selfEmployment = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 2000))
+        .withTurnover(2000)
         .withAdjustments(
           includedNonTaxableProfits = 50,
           basisAdjustment = -15,
@@ -185,7 +180,7 @@ class SelfEmploymentSpec extends UnitSpec {
     "reduce cap annualInvestmentAllowance at 200000" in {
 
       val selfEmployment = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 230000))
+        .withTurnover(230000)
         .withAllowances(
           annualInvestmentAllowance = 230000,
           allowancesOnSales = 0,
@@ -202,7 +197,7 @@ class SelfEmploymentSpec extends UnitSpec {
     "be sum of adjusted profits and outstandingBusinessIncome" in {
 
       val selfEmployment = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 2000))
+        .withTurnover(2000)
         .withAdjustments(
           outstandingBusinessIncome = 1000,
           lossBroughtForward = 0,
@@ -219,8 +214,8 @@ class SelfEmploymentSpec extends UnitSpec {
     "be zero if expenses are bigger than incomes (loss)" in {
 
       val selfEmployment = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 2000))
-        .expenses((ExpenseType.AdminCosts, 4000))
+        .withTurnover(2000)
+        .withAdminCosts(4000)
         .withAdjustments(
           lossBroughtForward = 1000,
           outstandingBusinessIncome = 0,
@@ -239,7 +234,7 @@ class SelfEmploymentSpec extends UnitSpec {
   "SelfEmployment.TaxableProfit" should {
     "be RoundDown(Profit - CappedAt(LossBroughtForward, AdjustedProfit))" in {
       val selfEmployment = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 10000.98))
+        .withTurnover(10000.98)
         .withAdjustments(
           outstandingBusinessIncome = 5000.32,
           lossBroughtForward = 20000.50,
@@ -259,10 +254,10 @@ class SelfEmploymentSpec extends UnitSpec {
       val dummyID = BSONObjectID.generate
 
       val selfEmploymentOne = SelfEmploymentBuilder(dummyID)
-        .incomes((IncomeType.Turnover, 2000))
+        .withTurnover(2000)
         .create()
       val selfEmploymentTwo = SelfEmploymentBuilder(dummyID)
-        .incomes((IncomeType.Turnover, 3000))
+        .withTurnover(3000)
         .create()
 
       calculations.SelfEmployment.Incomes(SelfAssessment(selfEmployments = Seq(selfEmploymentOne, selfEmploymentTwo))) should contain theSameElementsAs
@@ -274,7 +269,7 @@ class SelfEmploymentSpec extends UnitSpec {
   "TotalLossBroughtForward" should {
     "be the Rounded up sum of all loss brought forward" in {
       val selfEmploymentOne = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 2000))
+        .withTurnover(2000)
         .withAdjustments(
           lossBroughtForward = 100.45,
           outstandingBusinessIncome = 0,
@@ -286,7 +281,7 @@ class SelfEmploymentSpec extends UnitSpec {
         .create()
 
       val selfEmploymentTwo = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 2000))
+        .withTurnover(2000)
         .withAdjustments(
           lossBroughtForward = 200.13,
           outstandingBusinessIncome = 0,
@@ -302,7 +297,7 @@ class SelfEmploymentSpec extends UnitSpec {
 
     "be the Rounded up sum of all loss brought forward capped at adjusted profits" in {
       val selfEmploymentOne = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 2000.45))
+        .withTurnover(2000.45)
         .withAdjustments(
           lossBroughtForward = 2100,
           outstandingBusinessIncome = 0,
@@ -314,7 +309,7 @@ class SelfEmploymentSpec extends UnitSpec {
         .create()
 
       val selfEmploymentTwo = SelfEmploymentBuilder()
-        .incomes((IncomeType.Turnover, 2000))
+        .withTurnover(2000)
         .withAdjustments(
           lossBroughtForward = 1000.45,
           outstandingBusinessIncome = 0,

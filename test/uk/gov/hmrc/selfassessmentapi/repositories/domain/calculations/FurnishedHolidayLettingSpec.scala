@@ -18,9 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain.calculations
 
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.controllers.api.SelfAssessment
-import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.ExpenseType._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.PropertyLocationType
-import uk.gov.hmrc.selfassessmentapi.controllers.api._
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.builders.{FurnishedHolidayLettingBuilder, UKPropertyBuilder}
 
 class FurnishedHolidayLettingSpec extends UnitSpec {
@@ -30,11 +28,10 @@ class FurnishedHolidayLettingSpec extends UnitSpec {
 
       val letting = FurnishedHolidayLettingBuilder(capitalAllowance = 100)
         .incomes(1200.01, 799.99)
-        .expenses(
-          (FinancialCosts, 200),
-          (ProfessionalFees, 200),
-          (PremisesRunningCosts, 49.99),
-          (Other, 50))
+        .withFinancialCosts( 200)
+        .withProfessionalFees(200)
+        .withPremisesRunningCosts(49.99)
+        .withOtherExpenses(50)
         .balancingCharges(10, 20)
         .privateUseAdjustments(50)
         .create()
@@ -55,7 +52,7 @@ class FurnishedHolidayLettingSpec extends UnitSpec {
 
       val letting = FurnishedHolidayLettingBuilder()
         .incomes(2000)
-        .expenses((FinancialCosts, 4000))
+        .withFinancialCosts(4000)
         .lossBroughtForward(1000)
         .create()
 
@@ -105,9 +102,9 @@ class FurnishedHolidayLettingSpec extends UnitSpec {
     "FHL Total(LBF) + Excess UK Property LBF capped at FHL Total(AdjustedProfit)" +
       "i.e CapAt(FHL.Total(LBF) + ExcessUKPropertyLBF, FHL.Total(AdjustedProfit))" in {
 
-      val ukPropertyOne = UKPropertyBuilder().incomes((ukproperty.IncomeType.RentIncome, 4000)).lossBroughtForward(5000).create()
-      val ukPropertyTwo = UKPropertyBuilder().incomes((ukproperty.IncomeType.RentIncome, 15000)).lossBroughtForward(12500).create()
-      val ukPropertyThree = UKPropertyBuilder().incomes((ukproperty.IncomeType.RentIncome, 1500)).lossBroughtForward(7000).create()
+      val ukPropertyOne = UKPropertyBuilder().withRentIncomes(4000).lossBroughtForward(5000).create()
+      val ukPropertyTwo = UKPropertyBuilder().withRentIncomes(15000).lossBroughtForward(12500).create()
+      val ukPropertyThree = UKPropertyBuilder().withRentIncomes(1500).lossBroughtForward(7000).create()
 
       val furnishedHolidayLettingOne = FurnishedHolidayLettingBuilder(location = PropertyLocationType.UK).incomes(6500).lossBroughtForward(2500).create()
       val furnishedHolidayLettingTwo = FurnishedHolidayLettingBuilder(location = PropertyLocationType.UK).incomes(5000).lossBroughtForward(2000).create()
@@ -180,9 +177,9 @@ class FurnishedHolidayLettingSpec extends UnitSpec {
   "TotalLossBroughtForward for FHL" should {
     "FHL UK TotalCappedLBF + FHL EEA TotalCappedLBF" in {
 
-      val ukPropertyOne = UKPropertyBuilder().incomes((ukproperty.IncomeType.RentIncome, 4000)).lossBroughtForward(5000).create()
-      val ukPropertyTwo = UKPropertyBuilder().incomes((ukproperty.IncomeType.RentIncome, 15000)).lossBroughtForward(12500).create()
-      val ukPropertyThree = UKPropertyBuilder().incomes((ukproperty.IncomeType.RentIncome, 1500)).lossBroughtForward(7000).create()
+      val ukPropertyOne = UKPropertyBuilder().withRentIncomes(4000).lossBroughtForward(5000).create()
+      val ukPropertyTwo = UKPropertyBuilder().withRentIncomes(15000).lossBroughtForward(12500).create()
+      val ukPropertyThree = UKPropertyBuilder().withRentIncomes(1500).lossBroughtForward(7000).create()
 
       val furnishedHolidayLettingOne = FurnishedHolidayLettingBuilder(location = PropertyLocationType.UK).incomes(6500).lossBroughtForward(2500).create()
       val furnishedHolidayLettingTwo = FurnishedHolidayLettingBuilder(location = PropertyLocationType.UK).incomes(5000).lossBroughtForward(2000).create()

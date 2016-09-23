@@ -166,12 +166,11 @@ class LiabilitySpec extends UnitSpec {
 
   "FunctionalLiability.create" should {
     "correctly compute values for employments" in {
-      import uk.gov.hmrc.selfassessmentapi.controllers.api.employment._
 
       val employment = EmploymentBuilder()
-        .withIncomes((IncomeType.Salary, 20000), (IncomeType.Other, 2500.50))
-        .withExpenses((ExpenseType.TravelAndSubsistence, 500.50), (ExpenseType.ProfessionalFees, 250.52))
-        .withBenefits((BenefitType.Accommodation, 1000), (BenefitType.PrivateInsurance, 200))
+        .withSalary(20000).withOtherIncome(2500.50)
+        .withTravelAndSubsistenceExpense(500.50).withProfessionalFeesExpense(250.52)
+        .withAccommodationBenefit(1000).withPrivateInsuranceBenefit(200)
         .withUkTaxPaid(500.25)
         .create()
 
@@ -207,9 +206,9 @@ class LiabilitySpec extends UnitSpec {
             lossBroughtForward = 500.05,
             outstandingBusinessIncome = 123.45,
             accountingAdjustment = 0)
-          .incomes((IncomeType.Turnover, 200000.22))
-          .expenses((ExpenseType.PremisesRunningCosts, 12334.56))
-          .balancingCharges((BalancingChargeType.BPRA, 500.25))
+          .withTurnover(200000.22)
+          .withPremisesRunningCosts(12334.56)
+          .withBpraBalancingCharges(500.25)
           .goodsAndServicesOwnUse(200.02)
           .create()
 
@@ -237,8 +236,8 @@ class LiabilitySpec extends UnitSpec {
           wearAndTearAllowance=12.25,
           businessPremisesRenovationAllowance = 0)
         .lossBroughtForward(500)
-        .incomes((IncomeType.RentIncome, 175000))
-        .expenses((ExpenseType.PremisesRunningCosts, 243.34))
+        .withRentIncomes(175000)
+        .withPremisesRunningCosts(243.34)
         .balancingCharges(200)
         .privateUseAdjustment(125.25)
         .taxesPaid(12500.56)
@@ -261,9 +260,8 @@ class LiabilitySpec extends UnitSpec {
     "correctly compute values for savings" in {
 
       val unearnedIncome = UnearnedIncomeBuilder()
-        .withSavings(
-          (unearnedincome.SavingsIncomeType.InterestFromBanksUntaxed, 150000.73),
-          (unearnedincome.SavingsIncomeType.InterestFromBanksTaxed, 5000.23))
+        .withUntaxedSavings(150000.73)
+        .withTaxedSavings(5000.23)
         .create()
 
 
@@ -284,12 +282,10 @@ class LiabilitySpec extends UnitSpec {
     }
 
     "correctly compute values for dividends" in {
-      import uk.gov.hmrc.selfassessmentapi.controllers.api.unearnedincome._
 
       val unearnedIncome = UnearnedIncomeBuilder()
-          .withDividends(
-            (DividendType.FromUKCompanies, 75000.33),
-            (DividendType.FromOtherUKSources, 125000.25))
+        .withUKDividends(75000.33)
+        .withOtherUKDividends(125000.25)
         .create()
 
       ComputeLiabilityFor(unearnedIncomes = Seq(unearnedIncome))
@@ -313,7 +309,7 @@ class LiabilitySpec extends UnitSpec {
       val furnishedHolidayLetting = FurnishedHolidayLettingBuilder(capitalAllowance = 123.45, location = PropertyLocationType.UK)
           .lossBroughtForward(500.50)
           .incomes(15250.50)
-          .expenses((ExpenseType.PremisesRunningCosts, 1250.25))
+          .withPremisesRunningCosts(1250.25)
           .balancingCharges(150.20)
           .privateUseAdjustments(750.65)
           .create()
@@ -336,9 +332,9 @@ class LiabilitySpec extends UnitSpec {
       import uk.gov.hmrc.selfassessmentapi.controllers.api._
 
       val employments = EmploymentBuilder()
-        .withIncomes((employment.IncomeType.Salary, 20000), (employment.IncomeType.Other, 2500.50))
-        .withExpenses((employment.ExpenseType.TravelAndSubsistence, 500.50),(employment.ExpenseType.ProfessionalFees, 250.52))
-        .withBenefits((employment.BenefitType.Accommodation, 1000), (employment.BenefitType.PrivateInsurance, 200))
+        .withSalary(20000).withOtherIncome(2500.50)
+        .withTravelAndSubsistenceExpense(500.50).withProfessionalFeesExpense(250.52)
+        .withAccommodationBenefit(1000).withPrivateInsuranceBenefit(200)
         .withUkTaxPaid(500.25)
         .create()
 
@@ -358,9 +354,9 @@ class LiabilitySpec extends UnitSpec {
           lossBroughtForward = 500.05,
           outstandingBusinessIncome = 123.45,
           accountingAdjustment = 0)
-        .incomes((selfemployment.IncomeType.Turnover, 200000.22))
-        .expenses((selfemployment.ExpenseType.PremisesRunningCosts, 12334.56))
-        .balancingCharges((selfemployment.BalancingChargeType.BPRA, 500.25))
+        .withTurnover(200000.22)
+        .withPremisesRunningCosts(12334.56)
+        .withBpraBalancingCharges(500.25)
         .goodsAndServicesOwnUse(200.02)
         .create()
 
@@ -371,8 +367,8 @@ class LiabilitySpec extends UnitSpec {
           wearAndTearAllowance = 12.25,
           businessPremisesRenovationAllowance = 0)
         .lossBroughtForward(500)
-        .incomes((ukproperty.IncomeType.RentIncome, 175000))
-        .expenses((ukproperty.ExpenseType.PremisesRunningCosts, 243.34))
+        .withRentIncomes(175000)
+        .withPremisesRunningCosts(243.34)
         .balancingCharges(200)
         .privateUseAdjustment(125.25)
         .taxesPaid(12500.56)
@@ -381,14 +377,16 @@ class LiabilitySpec extends UnitSpec {
       val furnishedHolidayLetting = FurnishedHolidayLettingBuilder(capitalAllowance = 123.45, location = furnishedholidaylettings.PropertyLocationType.UK)
         .lossBroughtForward(500.50)
         .incomes(15250.50)
-        .expenses((furnishedholidaylettings.ExpenseType.PremisesRunningCosts, 1250.25))
+        .withPremisesRunningCosts(1250.25)
         .balancingCharges(150.20)
         .privateUseAdjustments(750.65)
         .create()
 
       val unearnedIncome = UnearnedIncomeBuilder()
-        .withSavings((unearnedincome.SavingsIncomeType.InterestFromBanksUntaxed, 150000.73), (unearnedincome.SavingsIncomeType.InterestFromBanksTaxed, 5000.23))
-        .withDividends((unearnedincome.DividendType.FromUKCompanies, 75000.33), (unearnedincome.DividendType.FromOtherUKSources, 125000.25))
+        .withUntaxedSavings(150000.73)
+        .withTaxedSavings(5000.23)
+        .withUKDividends(75000.33)
+        .withOtherUKDividends(125000.25)
         .create()
 
       ComputeLiabilityFor(
@@ -438,9 +436,9 @@ class LiabilitySpec extends UnitSpec {
           lossBroughtForward = 5000.05,
           outstandingBusinessIncome = 123.45,
           accountingAdjustment = 0)
-        .incomes((selfemployment.IncomeType.Turnover, 30000.22))
-        .expenses((selfemployment.ExpenseType.PremisesRunningCosts, 12334.56))
-        .balancingCharges((selfemployment.BalancingChargeType.BPRA, 500.25))
+        .withTurnover(30000.22)
+        .withPremisesRunningCosts(12334.56)
+        .withBpraBalancingCharges(500.25)
         .goodsAndServicesOwnUse(200.02)
         .create()
 
@@ -451,8 +449,8 @@ class LiabilitySpec extends UnitSpec {
           wearAndTearAllowance = 12.25,
           businessPremisesRenovationAllowance = 0)
         .lossBroughtForward(3000)
-        .incomes((ukproperty.IncomeType.RentIncome, 3000))
-        .expenses((ukproperty.ExpenseType.PremisesRunningCosts, 243.34))
+        .withRentIncomes(3000)
+        .withPremisesRunningCosts(243.34)
         .balancingCharges(200)
         .privateUseAdjustment(125.25)
         .taxesPaid(12500.56)
@@ -461,13 +459,13 @@ class LiabilitySpec extends UnitSpec {
       val furnishedHolidayLetting = FurnishedHolidayLettingBuilder(capitalAllowance = 123.45, location = furnishedholidaylettings.PropertyLocationType.UK)
         .lossBroughtForward(0.50)
         .incomes(1525.50)
-        .expenses((furnishedholidaylettings.ExpenseType.PremisesRunningCosts, 1250.25))
+        .withPremisesRunningCosts(1250.25)
         .balancingCharges(150.20)
         .privateUseAdjustments(750.65)
         .create()
 
       val unearnedIncome = UnearnedIncomeBuilder()
-        .withSavings((unearnedincome.SavingsIncomeType.InterestFromBanksUntaxed, 2000.73), (unearnedincome.SavingsIncomeType.InterestFromBanksUntaxed, 2000.23))
+        .withUntaxedSavings(2000.73, 2000.23)
         .create()
 
       ComputeLiabilityFor(

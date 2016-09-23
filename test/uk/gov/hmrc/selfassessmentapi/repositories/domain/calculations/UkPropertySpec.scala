@@ -19,10 +19,9 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain.calculations
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.PropertyLocationType
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{SelfAssessment, UkPropertyIncome, ukproperty}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.ukproperty.ExpenseType.{apply => _, _}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.ukproperty.IncomeType._
-import uk.gov.hmrc.selfassessmentapi.controllers.api.ukproperty.{Adjustments, Allowances, ExpenseType, IncomeType}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.{SelfAssessment, UkPropertyIncome}
 import uk.gov.hmrc.selfassessmentapi.repositories.domain._
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.builders.{FurnishedHolidayLettingBuilder, UKPropertyBuilder}
 
@@ -38,18 +37,15 @@ class UKPropertySpec extends UnitSpec {
       val dummyID = BSONObjectID.generate
 
       val property = UKPropertyBuilder(rentARoomRelief = 500, objectID = dummyID)
-        .incomes(
-          (IncomeType.RentIncome, 500),
-          (IncomeType.PremiumsOfLeaseGrant, 500),
-          (IncomeType.ReversePremiums, 500))
-        .expenses(
-          (ExpenseType.PremisesRunningCosts, 100),
-          (ExpenseType.RepairsAndMaintenance, 100),
-          (ExpenseType.FinancialCosts, 100),
-          (ExpenseType.ProfessionalFees, 100),
-          (ExpenseType.CostOfServices, 100),
-          (ExpenseType.Other, 100)
-        )
+        .withRentIncomes(500)
+        .withPremiumsOfLeaseGrantIncomes(500)
+        .withReversePremiumsIncomes(500)
+        .withPremisesRunningCosts(100)
+        .withRepairsAndMaintenance(100)
+        .withFinancialCosts(100)
+        .withProfessionalFees(100)
+        .withCostOfServicesFees(100)
+        .withOtherExpenses(100)
         .privateUseAdjustment(500)
         .balancingCharges(500)
         .withAllowances(
@@ -69,8 +65,8 @@ class UKPropertySpec extends UnitSpec {
       val dummyID = BSONObjectID.generate
 
       val property = UKPropertyBuilder(objectID = dummyID)
-        .incomes((IncomeType.RentIncome, 500))
-        .expenses((ExpenseType.PremisesRunningCosts, 1000))
+        .withRentIncomes(500)
+        .withPremisesRunningCosts(1000)
         .create()
 
       val selfAssessment = SelfAssessment(ukProperties = Seq(property))
@@ -83,13 +79,13 @@ class UKPropertySpec extends UnitSpec {
       val dummyID = BSONObjectID.generate
 
       val propertyOne = UKPropertyBuilder(objectID = dummyID)
-        .incomes((IncomeType.RentIncome, 1000))
-        .expenses((ExpenseType.PremisesRunningCosts, 500))
+        .withRentIncomes(1000)
+        .withPremisesRunningCosts(500)
         .create()
 
       val propertyTwo = UKPropertyBuilder(objectID = dummyID)
-        .incomes((IncomeType.RentIncome, 1000))
-        .expenses((ExpenseType.PremisesRunningCosts, 200))
+        .withRentIncomes(1000)
+        .withPremisesRunningCosts(200)
         .create()
 
       val selfAssessment = SelfAssessment(ukProperties = Seq(propertyOne, propertyTwo))
@@ -102,10 +98,9 @@ class UKPropertySpec extends UnitSpec {
       val dummyID = BSONObjectID.generate
 
       val property = UKPropertyBuilder(objectID = dummyID)
-        .incomes(
-          (IncomeType.RentIncome, 500.55),
-          (IncomeType.PremiumsOfLeaseGrant, 500.20))
-        .expenses((ExpenseType.PremisesRunningCosts, 100.11))
+        .withRentIncomes(500.55)
+        .withPremiumsOfLeaseGrantIncomes(500.20)
+        .withPremisesRunningCosts(100.11)
         .lossBroughtForward(200.22)
         .create()
 
@@ -121,12 +116,12 @@ class UKPropertySpec extends UnitSpec {
       val dummyID = BSONObjectID.generate
 
       val propertyOne = UKPropertyBuilder(objectID = dummyID)
-        .incomes((IncomeType.RentIncome, 5000.99))
+        .withRentIncomes(5000.99)
         .lossBroughtForward(6000.34)
         .create()
 
       val propertyTwo = UKPropertyBuilder(objectID = dummyID)
-        .incomes((IncomeType.RentIncome, 3000.45))
+        .withRentIncomes(3000.45)
         .lossBroughtForward(2100.34)
         .create()
 
@@ -139,9 +134,9 @@ class UKPropertySpec extends UnitSpec {
   "Excess UK FHL Loss brought forward" should {
     "not be added to UK Properties Loss brought forward" in {
       //LBF: 3000 Overflow: 0
-      val ukPropertyOne = UKPropertyBuilder().incomes((ukproperty.IncomeType.RentIncome, 10000)).lossBroughtForward(3000).create()
-      val ukPropertyTwo = UKPropertyBuilder().incomes((ukproperty.IncomeType.RentIncome, 2000)).lossBroughtForward(0).create()
-      val ukPropertyThree = UKPropertyBuilder().incomes((ukproperty.IncomeType.RentIncome, 12000)).lossBroughtForward(0).create()
+      val ukPropertyOne = UKPropertyBuilder().withRentIncomes(10000).lossBroughtForward(3000).create()
+      val ukPropertyTwo = UKPropertyBuilder().withRentIncomes(2000).lossBroughtForward(0).create()
+      val ukPropertyThree = UKPropertyBuilder().withRentIncomes(12000).lossBroughtForward(0).create()
 
       //LBF: 24000 Overflow: 14000
       val furnishedHolidayLettingOne = FurnishedHolidayLettingBuilder(location = PropertyLocationType.UK).incomes(10000).lossBroughtForward(3000).create()
