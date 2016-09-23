@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain.builders
 
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.selfassessmentapi.TestUtils._
+import uk.gov.hmrc.selfassessmentapi.controllers.api.ukproperty.IncomeType.{PremiumsOfLeaseGrant, RentIncome, ReversePremiums}
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.{UKPropertiesTaxPaidSummary, _}
 
 case class UKPropertyBuilder(rentARoomRelief: BigDecimal = 0, objectID: BSONObjectID = BSONObjectID.generate) {
@@ -39,14 +40,50 @@ case class UKPropertyBuilder(rentARoomRelief: BigDecimal = 0, objectID: BSONObje
     this
   }
 
-  def incomes(incomes: (IncomeType.IncomeType, BigDecimal)*) = {
-    ukProperties = ukProperties.copy(incomes = incomes.map (income => UKPropertiesIncomeSummary("", income._1, income._2)))
+  private def incomes(incomes: (IncomeType.IncomeType, BigDecimal)*) = {
+    ukProperties = ukProperties.copy(incomes = ukProperties.incomes ++ incomes.map (income => UKPropertiesIncomeSummary("", income._1, income._2)))
     this
   }
 
-  def expenses(expenses: (ExpenseType.ExpenseType, BigDecimal)*) = {
-    ukProperties = ukProperties.copy(expenses = expenses.map (expense => UKPropertiesExpenseSummary("", expense._1, expense._2)))
+  def withRentIncomes(rentIncomes: BigDecimal*) = {
+    incomes(rentIncomes.map((RentIncome, _)):_*)
+  }
+
+  def withPremiumsOfLeaseGrantIncomes(premiumOfLeaseGrants: BigDecimal*) = {
+    incomes(premiumOfLeaseGrants.map((PremiumsOfLeaseGrant, _)):_*)
+  }
+
+  def withReversePremiumsIncomes(reversePremiums: BigDecimal*) = {
+    incomes(reversePremiums.map((ReversePremiums, _)):_*)
+  }
+
+  private def expenses(expenses: (ExpenseType.ExpenseType, BigDecimal)*) = {
+    ukProperties = ukProperties.copy(expenses = ukProperties.expenses ++ expenses.map (expense => UKPropertiesExpenseSummary("", expense._1, expense._2)))
     this
+  }
+
+  def withPremisesRunningCosts(premisesRunningCosts: BigDecimal*) = {
+    expenses(premisesRunningCosts.map((ExpenseType.PremisesRunningCosts, _)):_*)
+  }
+
+  def withRepairsAndMaintenance(repairsAndMaintenance: BigDecimal*) = {
+    expenses(repairsAndMaintenance.map((ExpenseType.RepairsAndMaintenance, _)):_*)
+  }
+
+  def withFinancialCosts(financialCosts: BigDecimal*) = {
+    expenses(financialCosts.map((ExpenseType.FinancialCosts, _)):_*)
+  }
+
+  def withProfessionalFees(professionalFees: BigDecimal*) = {
+    expenses(professionalFees.map((ExpenseType.ProfessionalFees, _)):_*)
+  }
+
+  def withCostOfServicesFees(costOfServices: BigDecimal*) = {
+    expenses(costOfServices.map((ExpenseType.CostOfServices, _)):_*)
+  }
+
+  def withOtherExpenses(otherExpenses: BigDecimal*) = {
+    expenses(otherExpenses.map((ExpenseType.Other, _)):_*)
   }
 
   def balancingCharges(amounts: BigDecimal*) = {

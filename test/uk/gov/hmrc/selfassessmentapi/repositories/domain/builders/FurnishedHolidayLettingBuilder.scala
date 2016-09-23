@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain.builders
 
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.selfassessmentapi.TestUtils._
+import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.ExpenseType._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.PropertyLocationType
 import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.PropertyLocationType.PropertyLocationType
 import uk.gov.hmrc.selfassessmentapi.repositories.domain._
@@ -41,9 +42,25 @@ case class FurnishedHolidayLettingBuilder(capitalAllowance: BigDecimal = 0,
     this
   }
 
-  def expenses(expenses: (ExpenseType.ExpenseType, BigDecimal)*) = {
-    furnishedHolidayLetting = furnishedHolidayLetting.copy(expenses = expenses.map (expense => FurnishedHolidayLettingsExpenseSummary("", expense._1, expense._2)))
+  private def expenses(expenses: (ExpenseType, BigDecimal)*) = {
+    furnishedHolidayLetting = furnishedHolidayLetting.copy(expenses = furnishedHolidayLetting.expenses ++ expenses.map (expense => FurnishedHolidayLettingsExpenseSummary("", expense._1, expense._2)))
     this
+  }
+
+  def withPremisesRunningCosts(costs: BigDecimal*) = {
+     expenses(costs.map((PremisesRunningCosts, _)):_*)
+  }
+
+  def withFinancialCosts(financialCosts: BigDecimal*) = {
+     expenses(financialCosts.map((FinancialCosts, _)):_*)
+  }
+
+  def withProfessionalFees(professionalFees: BigDecimal*) = {
+     expenses(professionalFees.map((ProfessionalFees, _)):_*)
+  }
+
+  def withOtherExpenses(otherExpenses: BigDecimal*) = {
+     expenses(otherExpenses.map((Other, _)):_*)
   }
 
   def balancingCharges(amounts: BigDecimal*) = {

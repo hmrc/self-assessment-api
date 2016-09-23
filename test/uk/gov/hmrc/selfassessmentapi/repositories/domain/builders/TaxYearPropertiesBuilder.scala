@@ -50,7 +50,7 @@ case class TaxYearPropertiesBuilder(objectID: BSONObjectID = BSONObjectID.genera
     this
   }
 
-  def pensionSavings(excessOfAnnualAllowance: BigDecimal, taxPaidByPensionScheme: BigDecimal) = {
+  def pensionSavings(excessOfAnnualAllowance: BigDecimal = 0, taxPaidByPensionScheme: BigDecimal = 0) = {
     taxYearProperties = taxYearProperties.copy(pensionContributions =
       taxYearProperties.pensionContributions.map(_.copy(pensionSavings =
         Some(PensionSaving(excessOfAnnualAllowance = Some(excessOfAnnualAllowance), taxPaidByPensionScheme = Some(taxPaidByPensionScheme))))))

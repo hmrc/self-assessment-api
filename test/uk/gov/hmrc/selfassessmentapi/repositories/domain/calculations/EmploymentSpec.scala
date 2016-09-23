@@ -18,9 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain.calculations
 
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{EmploymentIncome, UkTaxPaidForEmployment}
-import uk.gov.hmrc.selfassessmentapi.controllers.api.employment.{BenefitType, ExpenseType, IncomeType}
-import uk.gov.hmrc.selfassessmentapi.controllers.api.SelfAssessment
+import uk.gov.hmrc.selfassessmentapi.controllers.api.{EmploymentIncome, SelfAssessment, UkTaxPaidForEmployment}
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.builders.EmploymentBuilder
 
 class EmploymentSpec extends UnitSpec {
@@ -28,15 +26,13 @@ class EmploymentSpec extends UnitSpec {
   "TotalProfit" should {
     "be sum of rounded down profit from each employment" in {
       val employment1 = EmploymentBuilder()
-        .withIncomes(
-          (IncomeType.Salary, 1000.12),
-          (IncomeType.Other, 500.65))
+        .withSalary(1000.12)
+        .withOtherIncome(500.65)
         .create()
 
       val employment2 = EmploymentBuilder()
-        .withIncomes(
-          (IncomeType.Salary, 2000.45),
-          (IncomeType.Other, 1000.23))
+        .withSalary(2000.45)
+        .withOtherIncome(1000.23)
         .create()
 
       val selfAssessment = SelfAssessment(employments = Seq(employment1, employment2))
@@ -50,15 +46,12 @@ class EmploymentSpec extends UnitSpec {
     "be equal to Income + Benefits - Expenses" in {
 
       val employment = EmploymentBuilder()
-        .withIncomes(
-          (IncomeType.Salary, 1000),
-          (IncomeType.Other, 500))
-        .withBenefits(
-          (BenefitType.Accommodation, 100),
-          (BenefitType.Other, 400))
-        .withExpenses(
-          (ExpenseType.TravelAndSubsistence, 100),
-          (ExpenseType.ProfessionalFees, 200))
+        .withSalary(1000)
+        .withOtherIncome(500)
+        .withAccommodationBenefit(100)
+        .withOtherBenefit(400)
+        .withTravelAndSubsistenceExpense(100)
+        .withProfessionalFeesExpense(200)
         .create()
 
       Employment.Profit(employment) shouldBe 1700
@@ -67,15 +60,12 @@ class EmploymentSpec extends UnitSpec {
     "be 0 when expenses exceeds combined value of incomes and benefits" in {
 
       val employment = EmploymentBuilder()
-        .withIncomes(
-          (IncomeType.Salary, 100),
-          (IncomeType.Other, 200))
-        .withBenefits(
-          (BenefitType.Accommodation, 10),
-          (BenefitType.Other, 40))
-        .withExpenses(
-          (ExpenseType.TravelAndSubsistence, 200),
-          (ExpenseType.ProfessionalFees, 400))
+        .withSalary(100)
+        .withOtherIncome(200)
+        .withAccommodationBenefit(10)
+        .withOtherIncome(40)
+        .withTravelAndSubsistenceExpense(200)
+        .withProfessionalFeesExpense(400)
         .create()
 
       Employment.Profit(employment) shouldBe 0
@@ -83,15 +73,12 @@ class EmploymentSpec extends UnitSpec {
 
     "be round down to nearest pound" in {
       val employment = EmploymentBuilder()
-        .withIncomes(
-          (IncomeType.Salary, 1000.90),
-          (IncomeType.Other, 500.75))
-        .withBenefits(
-          (BenefitType.Accommodation, 100.10),
-          (BenefitType.Other, 400.20))
-        .withExpenses(
-          (ExpenseType.TravelAndSubsistence, 100.10),
-          (ExpenseType.ProfessionalFees, 200.40))
+        .withSalary(1000.90)
+        .withOtherIncome(500.75)
+        .withAccommodationBenefit(100.10)
+        .withOtherBenefit(400.20)
+        .withTravelAndSubsistenceExpense(100.10)
+        .withProfessionalFeesExpense(200.40)
         .create()
 
       Employment.Profit(employment) shouldBe 1701
@@ -117,27 +104,21 @@ class EmploymentSpec extends UnitSpec {
       val dummyID = BSONObjectID.generate
 
       val employment1 = EmploymentBuilder(dummyID)
-        .withIncomes(
-          (IncomeType.Salary, 1000),
-          (IncomeType.Other, 500))
-        .withBenefits(
-          (BenefitType.Accommodation, 100),
-          (BenefitType.Other, 400))
-        .withExpenses(
-          (ExpenseType.TravelAndSubsistence, 100),
-          (ExpenseType.ProfessionalFees, 200))
+        .withSalary(1000)
+        .withOtherIncome(500)
+        .withAccommodationBenefit(100)
+        .withOtherBenefit(400)
+        .withTravelAndSubsistenceExpense(100)
+        .withProfessionalFeesExpense(200)
         .create()
 
       val employment2 = EmploymentBuilder(dummyID)
-        .withIncomes(
-          (IncomeType.Salary, 2000),
-          (IncomeType.Other, 1000))
-        .withBenefits(
-          (BenefitType.CompanyVehicle, 100),
-          (BenefitType.ExpensesPayments, 400))
-        .withExpenses(
-          (ExpenseType.TravelAndSubsistence, 500),
-          (ExpenseType.ProfessionalFees, 1000))
+        .withSalary(2000)
+        .withOtherIncome(1000)
+        .withCompanyVehicleBenefit(100)
+        .withExpensesPaymentsBenefit(400)
+        .withTravelAndSubsistenceExpense(500)
+        .withProfessionalFeesExpense(1000)
         .create()
 
       val selfAssessment = SelfAssessment(employments = Seq(employment1, employment2))
@@ -152,15 +133,12 @@ class EmploymentSpec extends UnitSpec {
       val dummyID = BSONObjectID.generate
 
       val employment = EmploymentBuilder(dummyID)
-        .withIncomes(
-          (IncomeType.Salary, 1000),
-          (IncomeType.Other, 500))
-        .withBenefits(
-          (BenefitType.Accommodation, 100),
-          (BenefitType.Other, 400))
-        .withExpenses(
-          (ExpenseType.TravelAndSubsistence, 100),
-          (ExpenseType.ProfessionalFees, 200))
+        .withSalary(1000)
+        .withOtherIncome(500)
+        .withAccommodationBenefit(100)
+        .withOtherBenefit(400)
+        .withTravelAndSubsistenceExpense(100)
+        .withProfessionalFeesExpense(200)
         .create()
 
       val selfAssessment = SelfAssessment(employments = Seq(employment))

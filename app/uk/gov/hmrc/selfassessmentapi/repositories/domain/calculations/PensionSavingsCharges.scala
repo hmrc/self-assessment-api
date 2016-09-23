@@ -38,7 +38,7 @@ object PensionSavingsCharges {
 
   object IncomeTaxBandSummary  {
 
-    def apply(totalTaxableIncome: BigDecimal, ukPensionContribution: BigDecimal = 0, pensionContributionExcess: BigDecimal): Seq[TaxBandSummary] = {
+    private def apply(totalTaxableIncome: BigDecimal, ukPensionContribution: BigDecimal = 0, pensionContributionExcess: BigDecimal): Seq[TaxBandSummary] = {
       val basicTaxBand = TaxBand.BasicTaxBand(reductionInUpperBound = totalTaxableIncome, additionsToUpperBound = ukPensionContribution)
       val higherTaxBand = TaxBand.HigherTaxBand(basicTaxBand, totalTaxableIncome, ukPensionContribution)
       Seq(basicTaxBand, higherTaxBand, TaxBand.AdditionalHigherTaxBand(higherTaxBand)).map { taxBand =>

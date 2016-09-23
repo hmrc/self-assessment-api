@@ -18,6 +18,9 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain.builders
 
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.selfassessmentapi.TestUtils._
+import uk.gov.hmrc.selfassessmentapi.controllers.api.employment.BenefitType.{Accommodation, CompanyVehicle, ExpensesPayments, PrivateInsurance}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.employment.ExpenseType.{ProfessionalFees, TravelAndSubsistence}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.employment.IncomeType.{Other, Salary}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.employment.{BenefitType, ExpenseType, IncomeType}
 import uk.gov.hmrc.selfassessmentapi.repositories.domain._
 
@@ -25,22 +28,58 @@ case class EmploymentBuilder(objectID: BSONObjectID = BSONObjectID.generate) {
 
   private var anEmployment: Employment = Employment(objectID, objectID.stringify, generateSaUtr(), taxYear, now, now)
 
-  def withIncomes(incomes: (IncomeType.IncomeType, BigDecimal)*) = {
-    anEmployment = anEmployment.copy(incomes = incomes.map (
+  private def withIncomes(incomes: (IncomeType.IncomeType, BigDecimal)*) = {
+    anEmployment = anEmployment.copy(incomes = anEmployment.incomes ++ incomes.map (
       income => EmploymentIncomeSummary(objectID.stringify, income._1, income._2)))
     this
   }
 
-  def withExpenses(expenses: (ExpenseType.ExpenseType, BigDecimal)*) = {
-    anEmployment = anEmployment.copy(expenses = expenses.map (
+  def withSalary(salary: BigDecimal*) = {
+    withIncomes(salary.map((Salary, _)):_*)
+  }
+
+  def withOtherIncome(salary: BigDecimal*) = {
+    withIncomes(salary.map((Other, _)):_*)
+  }
+
+  private def withExpenses(expenses: (ExpenseType.ExpenseType, BigDecimal)*) = {
+    anEmployment = anEmployment.copy(expenses = anEmployment.expenses ++ expenses.map (
       expense => EmploymentExpenseSummary(objectID.stringify, expense._1, expense._2)))
     this
   }
 
-  def withBenefits(benefits: (BenefitType.BenefitType, BigDecimal)*) = {
-    anEmployment = anEmployment.copy(benefits = benefits.map (
+  def withTravelAndSubsistenceExpense(expenses: BigDecimal*) = {
+    withExpenses(expenses.map((TravelAndSubsistence,_)):_*)
+  }
+
+  def withProfessionalFeesExpense(expenses: BigDecimal*) = {
+    withExpenses(expenses.map((ProfessionalFees,_)):_*)
+  }
+
+  private def withBenefits(benefits: (BenefitType.BenefitType, BigDecimal)*) = {
+    anEmployment = anEmployment.copy(benefits = anEmployment.benefits ++ benefits.map (
       benefit => EmploymentBenefitSummary(objectID.stringify, benefit._1, benefit._2)))
     this
+  }
+
+  def withAccommodationBenefit(accommodations : BigDecimal*) = {
+    withBenefits(accommodations.map((Accommodation, _)):_*)
+  }
+
+  def withOtherBenefit(others : BigDecimal*) = {
+    withBenefits(others.map((BenefitType.Other, _)):_*)
+  }
+
+  def withCompanyVehicleBenefit(companyVehicles : BigDecimal*) = {
+    withBenefits(companyVehicles.map((CompanyVehicle, _)):_*)
+  }
+
+  def withExpensesPaymentsBenefit(expensesPayments : BigDecimal*) = {
+    withBenefits(expensesPayments.map((ExpensesPayments, _)):_*)
+  }
+
+  def withPrivateInsuranceBenefit(privateInsurance : BigDecimal*) = {
+    withBenefits(privateInsurance.map((PrivateInsurance, _)):_*)
   }
 
   def withUkTaxPaid(taxPaid: BigDecimal) = {
