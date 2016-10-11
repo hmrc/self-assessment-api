@@ -53,31 +53,12 @@ schemas:
         "title": "A monetary amount is UK pounds sterling",
         "type": "number"
       }
-  - NonFinancial: |
-      {
-        "properties": {
-            "businessDetailsChanged": {"type": "boolean"},
-            "totalProfitLessThat5965": {"type": "boolean"},
-            "iAmPayingClass4Nics": {"type": "boolean"}
-        },
-        "additionalProperties": false
-      }
   - Source: |
       {
         "type": "object",
         "title": "A source of income",
         "properties": {
-          "id": {"type": "string"},
-          "name": {"type": "string"},
-          "address": {"$ref": "Address"},
-          "commencentDate": {"type": "string"},
-          "cessationDate": {"type": "string"},
-          "accountingPeriod": {"$ref": "Period"},
-          "accountingtype": {
-              "type": "string",
-              "enum": ["CASH", "ACCRUAL"]
-          },
-          "basisPeriod": {"$ref": "Period"}
+          "id": {"type": "string"}
         },
         "additionalProperties": false
       }
@@ -487,17 +468,6 @@ schemas:
                 schema: Benefit
             responses:
               204:
-  /non-financials/{taxYear}:
-    get:
-      description: Get non-financial data
-      body:
-        application/json:
-          schema: NonFinancial
-    put:
-      description: Set non-financial data
-      body:
-        application/json:
-          schema: NonFinancial
   /declarations:
     post:
       description: Create a declaration
