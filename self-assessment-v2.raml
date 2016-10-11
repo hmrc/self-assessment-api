@@ -1,6 +1,6 @@
 #%RAML 0.8
 title: Self Assessment
-version: v1
+version: v2
 mediaType: application/json
 protocols:
   - HTTPS
@@ -9,7 +9,7 @@ documentation:
     content: |
       This REST API allows clients to post information related to a taxpayer, and then get an estimated tax liability calculation for a tax period.
 
-      This is for the April MVP.
+      This is for the April 2018.
   - title: Terminology
     content: |
 
@@ -52,6 +52,25 @@ schemas:
       {
         "title": "A monetary amount is UK pounds sterling",
         "type": "number"
+      }
+  - Address: |
+      {
+        "title": "Address",
+        "properties": {
+          "line1": {"type": "string"},
+          "postCode": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+  - Period: |
+      {
+        "type": "object",
+        "title": "A period of time.",
+        "properties": {
+          "from": {"type": "string"},
+          "to": {"type": "string"}
+        },
+        "additionalProperties": false
       }
   - NonFinancial: |
       {
@@ -261,6 +280,18 @@ schemas:
           schema: Source
           example: |
             {
+               "name": "Joe's slumbing",
+               "address": {
+                 "line1": "25 Lavington St",
+                 "postCode": "W1 4DH"
+               },
+               "commencentDate": "2016-07-19",
+               "cessationDate": null,
+               "accountingtype": "CASH",
+               "accountingPperiod": {
+                 "from": "2016-04-61",
+                 "to": "2017-04-05"
+              }
             }
       responses:
         201:
@@ -281,7 +312,19 @@ schemas:
                 schema: Source
                 example: |
                   {
-                    "id": "0001"
+                    "id": 2,
+                    "name": "Joe's slumbing",
+                    "address": {
+                        "line1": "25 Lavington St",
+                        "postCode": "W1 4DH"
+                    },
+                    "commencentDate": "2016-07-19",
+                    "cessationDate": null,
+                    "accountingtype": "CASH",
+                    "accountingPperiod": {
+                        "from": "2016-04-61",
+                        "to": "2017-04-05"
+                    }
                   }
       put:
         description: Update a source of income
@@ -498,6 +541,72 @@ schemas:
       body:
         application/json:
           schema: NonFinancial
+  /charitable-givings/{taxYear}:
+    get:
+      description: Get charitable givings for a tax year
+      responses:
+        200:
+          body:
+            application/json:
+              schema: CharitableGiving
+              example: |
+                {
+                  "giftAidPayments": {
+                    "carriedBackToPreviousTaxYear": 10.00,
+                    "carriedFromNextTaxYear": 20.00,
+                    "oneOff": 30.00,
+                    "toNonUkCharities": 40.00,
+                    "totalInTaxYear": 50.00
+                  },
+                  "landProperties": 10.00
+                  "qualifyingInvestmentsToNonUkCharities": 20.00,
+                  "sharesSecurities": 30.00
+                }
+    put:
+      description: Updated charitable givings for a tax year
+      body:
+        application/json:
+          schema: CharitableGiving
+          example: |
+            {
+              "giftAidPayments": {
+                "carriedBackToPreviousTaxYear": 10.00,
+                "carriedFromNextTaxYear": 20.00,
+                "oneOff": 30.00,
+                "toNonUkCharities": 40.00,
+                "totalInTaxYear": 50.00
+              },
+              "landProperties": 10.00
+              "qualifyingInvestmentsToNonUkCharities": 20.00,
+              "sharesSecurities": 30.00
+            }
+      responses:
+        204:
+  /student-loans/{taxYear}:
+    get:
+      description: Get student loans for a tax year
+    put:
+      description: Updated student loans for a tax year
+  /blind-person-allowances/{taxYear}:
+    get:
+      description: Get blind person allowances for a tax year
+    put:
+      description: Updated blind person allowances for a tax year
+  /child-benefits/{taxYear}:
+    get:
+      description: Get child benefits for a tax year
+    put:
+      description: Updated child benefits for a tax year
+  /taxes-refunded-or-set-off/{taxYear}:
+    get:
+      description: Get taxes refunded or set off for a tax year
+    put:
+      description: Updated taxes refunded or set off for a tax year
+  /pension-contributions/{taxYear}:
+    get:
+      description: Get pension contributions for a tax year
+    put:
+      description: Updated pension contributions for a tax year
   /declarations:
     post:
       description: Create a declaration
