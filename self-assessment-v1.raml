@@ -64,7 +64,6 @@ schemas:
       }
   - Source: |
       {
-        "type": "object",
         "title": "A source of income",
         "properties": {
           "id": {"type": "string"}
@@ -114,7 +113,6 @@ schemas:
     # only some categories are allowed for some source type and summary type
   - Income: |
       {
-        "type": "object",
         "title": "A summary of income transactions taken from a ledger",
         "properties": {
           "id": {"type": "string"},
@@ -134,7 +132,6 @@ schemas:
       }
   - Deduction: |
       {
-        "type": "object",
         "title": "A summary of deductions (e.g. expenses) transactions taken from a ledger",
         "properties": {
           "id": {"type": "string"},
@@ -171,7 +168,6 @@ schemas:
       }
   - Benefit: |
       {
-        "type": "object",
         "title": "A summary of benefit transactions taken from a ledger",
         "properties": {
           "id": {"type": "string"},
@@ -197,7 +193,6 @@ schemas:
       }
   - Declaration: |
       {
-        "type": "object",
         "title": "A declaration that the data is up to date",
         "properties": {
             "to": {"type": "string"}
@@ -205,7 +200,6 @@ schemas:
       }
   - Liability: |
       {
-        "type": "object",
         "title": "A tax liability",
         "properties": {
           "totalTaxDue": {"$ref": "Money"}
