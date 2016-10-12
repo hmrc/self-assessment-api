@@ -50,7 +50,7 @@ documentation:
 schemas:
   - Money: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
-        "title": "A monetary amount is UK pounds sterling",
+        "title": "A monetary amount in UK pounds sterling",
         "type": "number"
       }
   - NonFinancial: |
@@ -202,152 +202,13 @@ schemas:
         "required": ["to"],
         "additionalProperties": false
       }
-  - SelfEmploymentIncome: |
-         { "$schema": "http://json-schema.org/schema",
-            "properties": {
-                "sourceId": {"type": "string"},
-                "taxableProfit": {"$ref": "Money"},
-                "profit": {"$ref": "Money"}
-            },
-            "required": ["sourceId", "taxableProfit", "profit"],
-            "additionalProperties": false
-         }
-  - UkPropertyIncome: |
-         { "$schema": "http://json-schema.org/schema",
-            "properties": {
-                "sourceId": {"type": "string"},
-                "profit": {"$ref": "Money"}
-            },
-            "required": ["sourceId", "profit"],
-            "additionalProperties": false
-         }
-  - FurnishedHolidayLettingIncome: |
-         { "$schema": "http://json-schema.org/schema",
-            "properties": {
-                "sourceId": {"type": "string"},
-                "profit": {"$ref": "Money"}
-            },
-            "required": ["sourceId", "profit"],
-            "additionalProperties": false
-         }
-  - NonSavingsIncomes: |
-      { "$schema": "http://json-schema.org/schema",
-        "properties": {
-            "selfEmployment": {"type": "array", "items": {"$ref": "SelfEmploymentIncome"}},
-            "ukProperties": {"type": "array", "items": {"$ref": "UkPropertyIncome"}},
-            "furnishedHolidayLettings": {"type": "array", "items": {"$ref": "FurnishedHolidayLettingIncome"}}
-        },
-        "required": ["selfEmployment", "ukProperties", "furnishedHolidayLettings"],
-        "additionalProperties": false
-      }
-  - InterestFromUKBanksAndBuildingSocieties: |
-         { "$schema": "http://json-schema.org/schema",
-            "properties": {
-                "sourceId": {"type": "string"},
-                "totalInterest": {"$ref": "Money"}
-            },
-            "required": ["sourceId", "totalInterest"],
-            "additionalProperties": false
-         }
-  - SavingsIncomes: |
-        { "$schema": "http://json-schema.org/schema",
-            "properties": {
-                "fromUKBanksAndBuildingSocieties": {"type": "array", "items": {"$ref": "InterestFromUKBanksAndBuildingSocieties"}}
-            },
-            "required": ["fromUKBanksAndBuildingSocieties"],
-            "additionalProperties": false
-         }
-  - DividendsFromUKSources: |
-        { "$schema": "http://json-schema.org/schema",
-            "properties": {
-                "sourceId": {"type": "string"},
-                "totalDividend": {"$ref": "Money"}
-            },
-            "required": ["sourceId", "totalDividend"],
-            "additionalProperties": false
-         }
-  - DividendsIncomes: |
-        { "$schema": "http://json-schema.org/schema",
-            "properties": {
-                "fromUKSources": {"type": "array", "items": {"$ref": "DividendsFromUKSources"}}
-            },
-            "required": ["fromUKSources"],
-            "additionalProperties": false
-         }
-  - IncomeFromSources: |
-      { "$schema": "http://json-schema.org/schema",
-        "properties": {
-            "nonSavings": {"$ref": "NonSavingsIncomes"},
-            "savings": {"$ref": "SavingsIncomes"},
-            "dividends": {"$ref": "DividendsIncomes"},
-            "total": {"$ref": "Money"}
-        },
-        "required": ["nonSavings", "savings", "dividends", "total"],
-        "additionalProperties": false
-      }
-  - Deductions: |
-      { "$schema": "http://json-schema.org/schema",
-        "properties": {
-            "incomeTaxRelief": {"$ref": "Money"},
-            "personalAllowance": {"$ref": "Money"},
-            "retirementAnnuityContract": {"$ref": "Money"},
-            "total": {"$ref": "Money"}
-        },
-        "required": ["incomeTaxRelief", "personalAllowance", "retirementAnnuityContract", "total"],
-        "additionalProperties": false
-      }
-  - IncomeSummary: |
-      { "$schema": "http://json-schema.org/schema",
-        "properties": {
-            "incomes": {"$ref": "IncomeFromSources"},
-            "deductions": {"$ref": "Deductions"},
-            "totalIncomeOnWhichTaxIsDue": {"$ref": "Money"}
-        },
-        "required": ["incomes", "totalIncomeOnWhichTaxIsDue"],
-        "additionalProperties": false
-      }
-  - TaxBandSummary: |
-      { "$schema": "http://json-schema.org/schema",
-        "properties": {
-            "taxBand": {"type": "string"},
-            "taxableAmount": {"$ref": "Money"},
-            "chargedAt": {"type": "string"},
-            "tax": {"$ref": "Money"}
-        },
-        "required": ["taxBand", "taxableAmount", "chargedAt", "tax"],
-        "additionalProperties": false
-      }
-  - IncomeTaxCalculations: |
-      { "$schema": "http://json-schema.org/schema",
-        "properties": {
-            "nonSavings": {"type": "array", "items": {"$ref": "TaxBandSummary"}},
-            "savings": {"type": "array", "items": {"$ref": "TaxBandSummary"}},
-            "dividends": {"type": "array", "items": {"$ref": "TaxBandSummary"}},
-            "total": {"$ref": "Money"}
-        },
-        "required": ["nonSavings", "savings", "dividends","total"],
-        "additionalProperties": false
-      }
-  - TaxDeducted: |
-      { "$schema": "http://json-schema.org/schema",
-        "properties": {
-            "interestFromUk": {"$ref": "Money"}
-        },
-        "required": ["interestFromUk"],
-        "additionalProperties": false
-      }
-  # See https://developer.service.hmrc.gov.uk/api-documentation/docs/api/self-assessment-api/1.0/Retrieve%20Liability
   - Liability: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A tax liability",
         "properties": {
-          "income": {"$ref": "IncomeSummary"},
-          "incomeTaxCalculations": {"$ref": "IncomeTaxCalculations"},
-          "taxDeducted": {"$ref": "TaxDeducted"},
-          "totalTaxDue": {"$ref": "Money"},
-          "totalTaxOverpaid": {"$ref": "Money"}
+          "totalTaxDue": {"$ref": "Money"}
         },
-        "required": ["income", "incomeTaxCalculations", "taxDeducted", "totalTaxDue", "totalTaxOverpaid"],
+        "required": ["totalTaxDue"],
         "additionalProperties": false
       }
 /self-assessments/{nino}:
@@ -672,6 +533,159 @@ schemas:
             body:
               application/json:
                 schema: Liability
+                example: |
+                  {
+                    "income" : {
+                      "incomes" : {
+                        "nonSavings" : {
+                          "employment" : [ ],
+                          "selfEmployment" : [ {
+                            "sourceId" : "self-employment-1",
+                            "taxableProfit" : 8200,
+                            "profit" : 10000
+                          }, {
+                            "sourceId" : "self-employment-2",
+                            "taxableProfit" : 25000,
+                            "profit" : 28000
+                          } ],
+                          "ukProperties" : [ {
+                            "sourceId" : "property1",
+                            "profit" : 2000
+                          }, {
+                            "sourceId" : "property2",
+                            "profit" : 1500
+                          } ],
+                          "furnishedHolidayLettings" : [ {
+                            "sourceId" : "furnished-holiday-letting-1",
+                            "profit" : 8200
+                          }, {
+                            "sourceId" : "furnished-holiday-letting-2",
+                            "profit" : 25000
+                          } ]
+                        },
+                        "savings" : {
+                          "fromUKBanksAndBuildingSocieties" : [ {
+                            "sourceId" : "interest-income-1",
+                            "totalInterest" : 100
+                          }, {
+                            "sourceId" : "interest-income-2",
+                            "totalInterest" : 200
+                          } ]
+                        },
+                        "dividends" : {
+                          "fromUKSources" : [ {
+                            "sourceId" : "dividend-income-1",
+                            "totalDividend" : 1000
+                          }, {
+                            "sourceId" : "dividend-income-2",
+                            "totalDividend" : 2000
+                          } ]
+                        },
+                        "total" : 93039
+                      },
+                      "deductions" : {
+                        "incomeTaxRelief" : 5000,
+                        "personalAllowance" : 9440,
+                        "retirementAnnuityContract" : 10000,
+                        "total" : 24440
+                      },
+                      "totalIncomeOnWhichTaxIsDue" : 80000
+                    },
+                    "incomeTaxCalculations" : {
+                      "nonSavings" : [ {
+                        "taxBand" : "basicRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "20%",
+                        "tax" : 2000
+                      }, {
+                        "taxBand" : "higherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "40%",
+                        "tax" : 4000
+                      }, {
+                        "taxBand" : "additionalHigherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "45%",
+                        "tax" : 4500
+                      } ],
+                      "savings" : [ {
+                        "taxBand" : "startingRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "0%",
+                        "tax" : 0
+                      }, {
+                        "taxBand" : "nilRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "0%",
+                        "tax" : 0
+                      }, {
+                        "taxBand" : "basicRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "20%",
+                        "tax" : 2000
+                      }, {
+                        "taxBand" : "higherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "40%",
+                        "tax" : 4000
+                      }, {
+                        "taxBand" : "additionalHigherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "45%",
+                        "tax" : 4500
+                      } ],
+                      "dividends" : [ {
+                        "taxBand" : "nilRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "0%",
+                        "tax" : 0
+                      }, {
+                        "taxBand" : "basicRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "20%",
+                        "tax" : 2000
+                      }, {
+                        "taxBand" : "higherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "40%",
+                        "tax" : 4000
+                      }, {
+                        "taxBand" : "additionalHigherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "45%",
+                        "tax" : 4500
+                      } ],
+                      "total" : 31500
+                    },
+                    "otherCharges" : {
+                      "pensionSavings" : [ {
+                        "taxBand" : "basicRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "20%",
+                        "tax" : 2000
+                      }, {
+                        "taxBand" : "higherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "40%",
+                        "tax" : 4000
+                      }, {
+                        "taxBand" : "additionalHigherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "45%",
+                        "tax" : 4500
+                      } ],
+                      "total" : 10500
+                    },
+                    "taxDeducted" : {
+                      "interestFromUk" : 0,
+                      "taxPaidByPensionScheme" : 10500,
+                      "fromUkProperties" : [ ],
+                      "fromEmployments" : [ ],
+                      "total" : 0
+                    },
+                    "totalTaxDue" : 25796.95,
+                    "totalTaxOverpaid" : 0
+                  }
       patch:
         description: Correct/challenge the total tax due
         body:

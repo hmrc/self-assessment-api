@@ -50,7 +50,7 @@ documentation:
 schemas:
   - Money: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
-        "title": "A monetary amount is UK pounds sterling",
+        "title": "A monetary amount in UK pounds sterling",
         "type": "number"
       }
   - Address: |
@@ -800,6 +800,159 @@ schemas:
             body:
               application/json:
                 schema: Liability
+                example: |
+                  {
+                    "income" : {
+                      "incomes" : {
+                        "nonSavings" : {
+                          "employment" : [ ],
+                          "selfEmployment" : [ {
+                            "sourceId" : "self-employment-1",
+                            "taxableProfit" : 8200,
+                            "profit" : 10000
+                          }, {
+                            "sourceId" : "self-employment-2",
+                            "taxableProfit" : 25000,
+                            "profit" : 28000
+                          } ],
+                          "ukProperties" : [ {
+                            "sourceId" : "property1",
+                            "profit" : 2000
+                          }, {
+                            "sourceId" : "property2",
+                            "profit" : 1500
+                          } ],
+                          "furnishedHolidayLettings" : [ {
+                            "sourceId" : "furnished-holiday-letting-1",
+                            "profit" : 8200
+                          }, {
+                            "sourceId" : "furnished-holiday-letting-2",
+                            "profit" : 25000
+                          } ]
+                        },
+                        "savings" : {
+                          "fromUKBanksAndBuildingSocieties" : [ {
+                            "sourceId" : "interest-income-1",
+                            "totalInterest" : 100
+                          }, {
+                            "sourceId" : "interest-income-2",
+                            "totalInterest" : 200
+                          } ]
+                        },
+                        "dividends" : {
+                          "fromUKSources" : [ {
+                            "sourceId" : "dividend-income-1",
+                            "totalDividend" : 1000
+                          }, {
+                            "sourceId" : "dividend-income-2",
+                            "totalDividend" : 2000
+                          } ]
+                        },
+                        "total" : 93039
+                      },
+                      "deductions" : {
+                        "incomeTaxRelief" : 5000,
+                        "personalAllowance" : 9440,
+                        "retirementAnnuityContract" : 10000,
+                        "total" : 24440
+                      },
+                      "totalIncomeOnWhichTaxIsDue" : 80000
+                    },
+                    "incomeTaxCalculations" : {
+                      "nonSavings" : [ {
+                        "taxBand" : "basicRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "20%",
+                        "tax" : 2000
+                      }, {
+                        "taxBand" : "higherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "40%",
+                        "tax" : 4000
+                      }, {
+                        "taxBand" : "additionalHigherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "45%",
+                        "tax" : 4500
+                      } ],
+                      "savings" : [ {
+                        "taxBand" : "startingRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "0%",
+                        "tax" : 0
+                      }, {
+                        "taxBand" : "nilRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "0%",
+                        "tax" : 0
+                      }, {
+                        "taxBand" : "basicRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "20%",
+                        "tax" : 2000
+                      }, {
+                        "taxBand" : "higherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "40%",
+                        "tax" : 4000
+                      }, {
+                        "taxBand" : "additionalHigherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "45%",
+                        "tax" : 4500
+                      } ],
+                      "dividends" : [ {
+                        "taxBand" : "nilRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "0%",
+                        "tax" : 0
+                      }, {
+                        "taxBand" : "basicRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "20%",
+                        "tax" : 2000
+                      }, {
+                        "taxBand" : "higherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "40%",
+                        "tax" : 4000
+                      }, {
+                        "taxBand" : "additionalHigherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "45%",
+                        "tax" : 4500
+                      } ],
+                      "total" : 31500
+                    },
+                    "otherCharges" : {
+                      "pensionSavings" : [ {
+                        "taxBand" : "basicRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "20%",
+                        "tax" : 2000
+                      }, {
+                        "taxBand" : "higherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "40%",
+                        "tax" : 4000
+                      }, {
+                        "taxBand" : "additionalHigherRate",
+                        "taxableAmount" : 10000,
+                        "chargedAt" : "45%",
+                        "tax" : 4500
+                      } ],
+                      "total" : 10500
+                    },
+                    "taxDeducted" : {
+                      "interestFromUk" : 0,
+                      "taxPaidByPensionScheme" : 10500,
+                      "fromUkProperties" : [ ],
+                      "fromEmployments" : [ ],
+                      "total" : 0
+                    },
+                    "totalTaxDue" : 25796.95,
+                    "totalTaxOverpaid" : 0
+                  }
       patch:
         description: Correct/challenge the total tax due
         body:
