@@ -49,12 +49,12 @@ documentation:
       * Your application may not be the only application access and modifying a taxpayer's data. How would you differentiate different data from your application and others?
 schemas:
   - Money: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "title": "A monetary amount is UK pounds sterling",
         "type": "number"
       }
   - NonFinancial: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "properties": {
             "businessDetailsChanged": {"type": "boolean"},
             "totalProfitLessThat5965": {"type": "boolean"},
@@ -63,7 +63,7 @@ schemas:
         "additionalProperties": false
       }
   - Source: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "title": "A source of income",
         "properties": {
           "id": {"type": "string"}
@@ -72,7 +72,7 @@ schemas:
       }
     # only some allowances apply to certain sources of income
   - Allowances: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "title": "Allowances",
         "properties": {
           "allowancesOnSales": {"$ref": "Money"},
@@ -89,7 +89,7 @@ schemas:
       }
     # only some adjustments apply to certain sources of income
   - Adjustments: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "title": "Adjustments",
         "properties": {
           "accountingAdjustment": {"$ref": "Money"},
@@ -104,7 +104,7 @@ schemas:
         "additionalProperties": false
       }
   - Sources: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "type": "array",
         "items": {
           "$ref": "Source"
@@ -112,7 +112,7 @@ schemas:
       }
     # only some categories are allowed for some source type and summary type
   - Income: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "title": "A summary of income transactions taken from a ledger",
         "properties": {
           "id": {"type": "string"},
@@ -131,7 +131,7 @@ schemas:
         "additionalProperties": false
       }
   - Deduction: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "title": "A summary of deductions (e.g. expenses) transactions taken from a ledger",
         "properties": {
           "id": {"type": "string"},
@@ -167,7 +167,7 @@ schemas:
         "additionalProperties": false
       }
   - Benefit: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "title": "A summary of benefit transactions taken from a ledger",
         "properties": {
           "id": {"type": "string"},
@@ -192,14 +192,14 @@ schemas:
         "additionalProperties": false
       }
   - Declaration: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "title": "A declaration that the data is up to date",
         "properties": {
             "to": {"type": "string"}
         }
       }
   - Liability: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "title": "A tax liability",
         "properties": {
           "totalTaxDue": {"$ref": "Money"}
