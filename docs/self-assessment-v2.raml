@@ -49,7 +49,7 @@ documentation:
       * Your application may not be the only application access and modifying a taxpayer's data. How would you differentiate different data from your application and others?
 schemas:
   - Money: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A monetary amount is UK pounds sterling",
         "type": "number"
       }
@@ -75,17 +75,16 @@ schemas:
         "additionalProperties": false
       }
   - NonFinancial: |
-      {
+      { "$schema": "http://json-schema.org/draft-04/schema#",
         "properties": {
             "businessDetailsChanged": {"type": "boolean", "default": false},
             "totalProfitLessThan5965": {"type": "boolean", "default": false},
             "exemptFromClass4Nics": {"type": "boolean", "default": false}
         },
-        "required": [],
         "additionalProperties": false
       }
   - Source: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A source of income",
         "properties": {
           "id": {"type": "string"},
@@ -105,7 +104,7 @@ schemas:
       }
     # only some allowances apply to certain sources of income
   - Allowances: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "Allowances",
         "properties": {
           "allowancesOnSales": {"$ref": "Money"},
@@ -118,12 +117,11 @@ schemas:
           "restrictedCapitalAllowance": {"$ref": "Money"},
           "allowanceForSmallBalanceOfUnrelievedExpenditure": {"$ref": "Money"}
         },
-        "required": [],
         "additionalProperties": false
       }
     # only some adjustments apply to certain sources of income
   - Adjustments: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "Adjustments",
         "properties": {
           "accountingAdjustment": {"$ref": "Money", "default": 0},
@@ -135,11 +133,10 @@ schemas:
           "outstandingBusinessIncome": {"$ref": "Money", "default": 0},
           "overlapReliefUsed": {"$ref": "Money", "default": 0}
         },
-        "required": [],
         "additionalProperties": false
       }
   - Sources: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "array",
         "items": {
           "$ref": "Source"
@@ -147,7 +144,7 @@ schemas:
       }
     # only some categories are allowed for some source type and summary type
   - Income: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A summary of income transactions taken from a ledger",
         "properties": {
           "id": {"type": "string"},
@@ -167,7 +164,7 @@ schemas:
         "additionalProperties": false
       }
   - Deduction: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A summary of deductions (e.g. expenses) transactions taken from a ledger",
         "properties": {
           "id": {"type": "string"},
@@ -203,7 +200,7 @@ schemas:
         "additionalProperties": false
       }
   - Benefit: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A summary of benefit transactions taken from a ledger",
         "properties": {
           "id": {"type": "string"},
@@ -227,8 +224,14 @@ schemas:
         "required": ["id", "category", "from", "to"],
         "additionalProperties": false
       }
+  - CharitableGiving: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "properties": {
+        },
+        "additionalProperties": false
+      }
   - Declaration: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A declaration that the data is up to date",
         "properties": {
             "to": {"type": "string"}
@@ -237,7 +240,7 @@ schemas:
         "additionalProperties": false
       }
   - Liability: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A tax liability",
         "properties": {
           "totalTaxDue": {"$ref": "Money"}
