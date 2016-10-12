@@ -58,7 +58,7 @@ schemas:
         "properties": {
             "businessDetailsChanged": {"type": "boolean", "default": false},
             "totalProfitLessThan5965": {"type": "boolean", "default": false},
-            "iAmPayingClass4Nics": {"type": "boolean", "default": false}
+            "exemptFromClass4Nics": {"type": "boolean", "default": false}
         },
         "required": [],
         "additionalProperties": false
@@ -128,7 +128,7 @@ schemas:
             ]
           },
           "amount": {"$ref": "Money"},
-          "taxDeductedamount": {"$ref": "Money", "default": 0},
+          "taxDeducted": {"$ref": "Money", "default": 0},
           "from": {"type": "string"},
           "to": {"type": "string"}
         },
@@ -193,7 +193,6 @@ schemas:
           "from": {"type": "string"},
           "to": {"type": "string"}
         },
-
         "required": ["id", "category", "from", "to"],
         "additionalProperties": false
       }

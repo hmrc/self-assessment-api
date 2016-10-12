@@ -49,41 +49,43 @@ documentation:
       * Your application may not be the only application access and modifying a taxpayer's data. How would you differentiate different data from your application and others?
 schemas:
   - Money: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "title": "A monetary amount is UK pounds sterling",
         "type": "number"
       }
   - Address: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "title": "Address",
         "properties": {
           "line1": {"type": "string"},
           "postCode": {"type": "string"}
         },
+        "required": ["line1", "postCode"],
         "additionalProperties": false
       }
   - Period: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "type": "object",
         "title": "A period of time.",
         "properties": {
           "from": {"type": "string"},
           "to": {"type": "string"}
         },
+        "required": ["from", "to"],
         "additionalProperties": false
       }
   - NonFinancial: |
       {
         "properties": {
-            "businessDetailsChanged": {"type": "boolean"},
-            "totalProfitLessThat5965": {"type": "boolean"},
-            "iAmPayingClass4Nics": {"type": "boolean"}
+            "businessDetailsChanged": {"type": "boolean", "default": false},
+            "totalProfitLessThan5965": {"type": "boolean", "default": false},
+            "exemptFromClass4Nics": {"type": "boolean", "default": false}
         },
+        "required": [],
         "additionalProperties": false
       }
   - Source: |
-      {
-        "type": "object",
+      { "$schema": "http://json-schema.org/schema",
         "title": "A source of income",
         "properties": {
           "id": {"type": "string"},
@@ -92,17 +94,18 @@ schemas:
           "commencentDate": {"type": "string"},
           "cessationDate": {"type": "string"},
           "accountingPeriod": {"$ref": "Period"},
-          "accountingtype": {
+          "accountingType": {
               "type": "string",
               "enum": ["CASH", "ACCRUAL"]
           },
           "basisPeriod": {"$ref": "Period"}
         },
+        "required": ["id", "name", "address", "commencentDate", "cessationDate", "accountingPeriod", "accountingType", "basisPeriod"],
         "additionalProperties": false
       }
     # only some allowances apply to certain sources of income
   - Allowances: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "title": "Allowances",
         "properties": {
           "allowancesOnSales": {"$ref": "Money"},
@@ -115,26 +118,28 @@ schemas:
           "restrictedCapitalAllowance": {"$ref": "Money"},
           "allowanceForSmallBalanceOfUnrelievedExpenditure": {"$ref": "Money"}
         },
+        "required": [],
         "additionalProperties": false
       }
     # only some adjustments apply to certain sources of income
   - Adjustments: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "title": "Adjustments",
         "properties": {
-          "accountingAdjustment": {"$ref": "Money"},
-          "adjustmentToProfits": {"$ref": "Money"},
-          "averagingAdjustment": {"$ref": "Money"},
-          "basisAdjustment": {"$ref": "Money"},
-          "includedNonTaxableProfits": {"$ref": "Money"},
-          "lossBroughtForward": {"$ref": "Money"},
-          "outstandingBusinessIncome": {"$ref": "Money"},
-          "overlapReliefUsed": {"$ref": "Money"}
+          "accountingAdjustment": {"$ref": "Money", "default": 0},
+          "adjustmentToProfits": {"$ref": "Money", "default": 0},
+          "averagingAdjustment": {"$ref": "Money", "default": 0},
+          "basisAdjustment": {"$ref": "Money", "default": 0},
+          "includedNonTaxableProfits": {"$ref": "Money", "default": 0},
+          "lossBroughtForward": {"$ref": "Money", "default": 0},
+          "outstandingBusinessIncome": {"$ref": "Money", "default": 0},
+          "overlapReliefUsed": {"$ref": "Money", "default": 0}
         },
+        "required": [],
         "additionalProperties": false
       }
   - Sources: |
-      {
+      { "$schema": "http://json-schema.org/schema",
         "type": "array",
         "items": {
           "$ref": "Source"
@@ -142,8 +147,7 @@ schemas:
       }
     # only some categories are allowed for some source type and summary type
   - Income: |
-      {
-        "type": "object",
+      { "$schema": "http://json-schema.org/schema",
         "title": "A summary of income transactions taken from a ledger",
         "properties": {
           "id": {"type": "string"},
@@ -155,15 +159,15 @@ schemas:
             ]
           },
           "amount": {"$ref": "Money"},
+          "taxDeducted": {"$ref": "Money", "default": 0},
           "from": {"type": "string"},
           "to": {"type": "string"}
-        }
-        ,
+        },
+        "required": ["id", "category", "amount", "from", "to"],
         "additionalProperties": false
       }
   - Deduction: |
-      {
-        "type": "object",
+      { "$schema": "http://json-schema.org/schema",
         "title": "A summary of deductions (e.g. expenses) transactions taken from a ledger",
         "properties": {
           "id": {"type": "string"},
@@ -191,16 +195,15 @@ schemas:
             ]
           },
           "amount": {"$ref": "Money"},
-          "disallowableAmount": {"$ref": "Money"},
+          "disallowableAmount": {"$ref": "Money", "default": 0},
           "from": {"type": "string"},
           "to": {"type": "string"}
-        }
-        ,
+        },
+        "required": ["id", "category", "amount", "from", "to"],
         "additionalProperties": false
       }
   - Benefit: |
-      {
-        "type": "object",
+      { "$schema": "http://json-schema.org/schema",
         "title": "A summary of benefit transactions taken from a ledger",
         "properties": {
           "id": {"type": "string"},
@@ -220,25 +223,26 @@ schemas:
           "amount": {"$ref": "Money"},
           "from": {"type": "string"},
           "to": {"type": "string"}
-        }
-        ,
+        },
+        "required": ["id", "category", "from", "to"],
         "additionalProperties": false
       }
   - Declaration: |
-      {
-        "type": "object",
+      { "$schema": "http://json-schema.org/schema",
         "title": "A declaration that the data is up to date",
         "properties": {
             "to": {"type": "string"}
-        }
+        },
+        "required": ["to"],
+        "additionalProperties": false
       }
   - Liability: |
-      {
-        "type": "object",
+      { "$schema": "http://json-schema.org/schema",
         "title": "A tax liability",
         "properties": {
           "totalTaxDue": {"$ref": "Money"}
         },
+        "required": ["totalTaxDue"],
         "additionalProperties": false
       }
 /self-assessments/{nino}:
@@ -312,7 +316,7 @@ schemas:
                 schema: Source
                 example: |
                   {
-                    "id": 2,
+                    "id": "0001",
                     "name": "Joe's slumbing",
                     "address": {
                         "line1": "25 Lavington St",
