@@ -202,13 +202,152 @@ schemas:
         "required": ["to"],
         "additionalProperties": false
       }
+  - SelfEmploymentIncome: |
+         { "$schema": "http://json-schema.org/schema",
+            "properties": {
+                "sourceId": {"type": "string"},
+                "taxableProfit": {"$ref": "Money"},
+                "profit": {"$ref": "Money"}
+            },
+            "required": ["sourceId", "taxableProfit", "profit"],
+            "additionalProperties": false
+         }
+  - UkPropertyIncome: |
+         { "$schema": "http://json-schema.org/schema",
+            "properties": {
+                "sourceId": {"type": "string"},
+                "profit": {"$ref": "Money"}
+            },
+            "required": ["sourceId", "profit"],
+            "additionalProperties": false
+         }
+  - FurnishedHolidayLettingIncome: |
+         { "$schema": "http://json-schema.org/schema",
+            "properties": {
+                "sourceId": {"type": "string"},
+                "profit": {"$ref": "Money"}
+            },
+            "required": ["sourceId", "profit"],
+            "additionalProperties": false
+         }
+  - NonSavingsIncomes: |
+      { "$schema": "http://json-schema.org/schema",
+        "properties": {
+            "selfEmployment": {"type": "array", "items": {"$ref": "SelfEmploymentIncome"}},
+            "ukProperties": {"type": "array", "items": {"$ref": "UkPropertyIncome"}},
+            "furnishedHolidayLettings": {"type": "array", "items": {"$ref": "FurnishedHolidayLettingIncome"}}
+        },
+        "required": ["selfEmployment", "ukProperties", "furnishedHolidayLettings"],
+        "additionalProperties": false
+      }
+  - InterestFromUKBanksAndBuildingSocieties: |
+         { "$schema": "http://json-schema.org/schema",
+            "properties": {
+                "sourceId": {"type": "string"},
+                "totalInterest": {"$ref": "Money"}
+            },
+            "required": ["sourceId", "totalInterest"],
+            "additionalProperties": false
+         }
+  - SavingsIncomes: |
+        { "$schema": "http://json-schema.org/schema",
+            "properties": {
+                "fromUKBanksAndBuildingSocieties": {"type": "array", "items": {"$ref": "InterestFromUKBanksAndBuildingSocieties"}}
+            },
+            "required": ["fromUKBanksAndBuildingSocieties"],
+            "additionalProperties": false
+         }
+  - DividendsFromUKSources: |
+        { "$schema": "http://json-schema.org/schema",
+            "properties": {
+                "sourceId": {"type": "string"},
+                "totalDividend": {"$ref": "Money"}
+            },
+            "required": ["sourceId", "totalDividend"],
+            "additionalProperties": false
+         }
+  - DividendsIncomes: |
+        { "$schema": "http://json-schema.org/schema",
+            "properties": {
+                "fromUKSources": {"type": "array", "items": {"$ref": "DividendsFromUKSources"}}
+            },
+            "required": ["fromUKSources"],
+            "additionalProperties": false
+         }
+  - IncomeFromSources: |
+      { "$schema": "http://json-schema.org/schema",
+        "properties": {
+            "nonSavings": {"$ref": "NonSavingsIncomes"},
+            "savings": {"$ref": "SavingsIncomes"},
+            "dividends": {"$ref": "DividendsIncomes"},
+            "total": {"$ref": "Money"}
+        },
+        "required": ["nonSavings", "savings", "dividends", "total"],
+        "additionalProperties": false
+      }
+  - Deductions: |
+      { "$schema": "http://json-schema.org/schema",
+        "properties": {
+            "incomeTaxRelief": {"$ref": "Money"},
+            "personalAllowance": {"$ref": "Money"},
+            "retirementAnnuityContract": {"$ref": "Money"},
+            "total": {"$ref": "Money"}
+        },
+        "required": ["incomeTaxRelief", "personalAllowance", "retirementAnnuityContract", "total"],
+        "additionalProperties": false
+      }
+  - IncomeSummary: |
+      { "$schema": "http://json-schema.org/schema",
+        "properties": {
+            "incomes": {"$ref": "IncomeFromSources"},
+            "deductions": {"$ref": "Deductions"},
+            "totalIncomeOnWhichTaxIsDue": {"$ref": "Money"}
+        },
+        "required": ["incomes", "totalIncomeOnWhichTaxIsDue"],
+        "additionalProperties": false
+      }
+  - TaxBandSummary: |
+      { "$schema": "http://json-schema.org/schema",
+        "properties": {
+            "taxBand": {"type": "string"},
+            "taxableAmount": {"$ref": "Money"},
+            "chargedAt": {"type": "string"},
+            "tax": {"$ref": "Money"}
+        },
+        "required": ["taxBand", "taxableAmount", "chargedAt", "tax"],
+        "additionalProperties": false
+      }
+  - IncomeTaxCalculations: |
+      { "$schema": "http://json-schema.org/schema",
+        "properties": {
+            "nonSavings": {"type": "array", "items": {"$ref": "TaxBandSummary"}},
+            "savings": {"type": "array", "items": {"$ref": "TaxBandSummary"}},
+            "dividends": {"type": "array", "items": {"$ref": "TaxBandSummary"}},
+            "total": {"$ref": "Money"}
+        },
+        "required": ["nonSavings", "savings", "dividends","total"],
+        "additionalProperties": false
+      }
+  - TaxDeducted: |
+      { "$schema": "http://json-schema.org/schema",
+        "properties": {
+            "interestFromUk": {"$ref": "Money"}
+        },
+        "required": ["interestFromUk"],
+        "additionalProperties": false
+      }
+  # See https://developer.service.hmrc.gov.uk/api-documentation/docs/api/self-assessment-api/1.0/Retrieve%20Liability
   - Liability: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A tax liability",
         "properties": {
-          "totalTaxDue": {"$ref": "Money"}
+          "income": {"$ref": "IncomeSummary"},
+          "incomeTaxCalculations": {"$ref": "IncomeTaxCalculations"},
+          "taxDeducted": {"$ref": "TaxDeducted"},
+          "totalTaxDue": {"$ref": "Money"},
+          "totalTaxOverpaid": {"$ref": "Money"}
         },
-        "required": ["totalTaxDue"],
+        "required": ["income", "incomeTaxCalculations", "taxDeducted", "totalTaxDue", "totalTaxOverpaid"],
         "additionalProperties": false
       }
 /self-assessments/{nino}:
@@ -459,7 +598,7 @@ schemas:
               200:
                 body:
                   application/json:
-                    schema: Deduction
+                    schema: Benefit
                     example: |
                       {
                         "id": 3,
@@ -469,7 +608,7 @@ schemas:
                         "to": "2016-08-01"
                       }
           put:
-            description: Update deduction
+            description: Update benefit
             body:
               application/json:
                 schema: Benefit

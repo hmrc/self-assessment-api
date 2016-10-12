@@ -107,15 +107,15 @@ schemas:
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "Allowances",
         "properties": {
-          "allowancesOnSales": {"$ref": "Money"},
-          "annualInvestmentAllowance": {"$ref": "Money"},
-          "businessPremisesRenovationAllowance": {"$ref": "Money"},
-          "capitalAllowanceMainPool": {"$ref": "Money"},
-          "capitalAllowanceSpecialRatePool": {"$ref": "Money"},
-          "captialAllowances": {"$ref": "Money"},
-          "enhancedCapitalAllowance": {"$ref": "Money"},
-          "restrictedCapitalAllowance": {"$ref": "Money"},
-          "allowanceForSmallBalanceOfUnrelievedExpenditure": {"$ref": "Money"}
+          "allowancesOnSales": {"$ref": "Money", "default": 0},
+          "annualInvestmentAllowance": {"$ref": "Money", "default": 0},
+          "businessPremisesRenovationAllowance": {"$ref": "Money", "default": 0},
+          "capitalAllowanceMainPool": {"$ref": "Money", "default": 0},
+          "capitalAllowanceSpecialRatePool": {"$ref": "Money", "default": 0},
+          "captialAllowances": {"$ref": "Money", "default": 0},
+          "enhancedCapitalAllowance": {"$ref": "Money", "default": 0},
+          "restrictedCapitalAllowance": {"$ref": "Money", "default": 0},
+          "allowanceForSmallBalanceOfUnrelievedExpenditure": {"$ref": "Money", "default": 0}
         },
         "additionalProperties": false
       }
@@ -426,7 +426,7 @@ schemas:
           schema: Source
           example: |
             {
-               "name": "Joe's slumbing",
+               "name": "Joe's plumbing",
                "address": {
                  "line1": "25 Lavington St",
                  "postCode": "W1 4DH"
@@ -459,7 +459,7 @@ schemas:
                 example: |
                   {
                     "id": "0001",
-                    "name": "Joe's slumbing",
+                    "name": "Joe's plumbing",
                     "address": {
                         "line1": "25 Lavington St",
                         "postCode": "W1 4DH"
@@ -660,7 +660,7 @@ schemas:
               200:
                 body:
                   application/json:
-                    schema: Deduction
+                    schema: Benefit
                     example: |
                       {
                         "id": 3,
@@ -670,7 +670,7 @@ schemas:
                         "to": "2016-08-01"
                       }
           put:
-            description: Update deduction
+            description: Update benefit
             body:
               application/json:
                 schema: Benefit
