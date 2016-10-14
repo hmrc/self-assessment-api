@@ -21,12 +21,12 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.http.NotImplementedException
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.controllers.api.SummaryType
-import uk.gov.hmrc.selfassessmentapi.controllers.{ErrorResult, GenericErrorResult, SourceHandler, SummaryHandler}
+import uk.gov.hmrc.selfassessmentapi.controllers._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment.SourceType.SelfEmployments
 import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment.SummaryTypes.{BalancingCharges, Expenses, GoodsAndServicesOwnUses, Incomes}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment._
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
-import uk.gov.hmrc.selfassessmentapi.repositories.{SourceRepositoryWrapper, SummaryRepositoryWrapper}
+import uk.gov.hmrc.selfassessmentapi.repositories.{SourceRepositoryWrapper, SummaryRepositoryWrapper, AnnualSummaryRepositoryWrapper}
 import uk.gov.hmrc.selfassessmentapi.repositories.live.SelfEmploymentRepository
 
 import scala.concurrent.duration.Duration
@@ -53,6 +53,14 @@ object SelfEmploymentSourceHandler extends SourceHandler(SelfEmployment, SelfEmp
       case BalancingCharges => Some(SummaryHandler(SummaryRepositoryWrapper(SelfEmploymentRepository().BalancingChargeRepository), BalancingCharge, BalancingCharges.name))
       case GoodsAndServicesOwnUses => Some(SummaryHandler(SummaryRepositoryWrapper(SelfEmploymentRepository().GoodsAndServicesOwnUseRepository), GoodsAndServicesOwnUse, GoodsAndServicesOwnUses.name))
       case _ => throw new NotImplementedException(s"${SelfEmployments.name} ${summaryType.name} is not implemented")
+    }
+  }
+
+  override def annualSummaryHandler(annualSummaryType: AnnualSummaryType): Option[AnnualSummaryHandler[_]] = {
+    annualSummaryType match {
+      case AnnualSummaryType.Adjustments => Some(AnnualSummaryHandler(AnnualSummaryRepositoryWrapper(SelfEmploymentRepository().AdjustmentsRepository), Adjustments))
+      case AnnualSummaryType.Allowances => Some(AnnualSummaryHandler(AnnualSummaryRepositoryWrapper(SelfEmploymentRepository().AllowancesRepository), Allowances))
+      case _ => throw new NotImplementedException(s"${SelfEmployments.name} ${annualSummaryType.name} is not implemented")
     }
   }
 

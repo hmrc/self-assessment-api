@@ -19,9 +19,9 @@ package uk.gov.hmrc.selfassessmentapi.controllers.sandbox.bank
 import play.api.libs.json.Writes
 import uk.gov.hmrc.selfassessmentapi.controllers.api.bank.SourceType.Banks
 import uk.gov.hmrc.selfassessmentapi.controllers.api.bank.SummaryTypes.Interests
-import uk.gov.hmrc.selfassessmentapi.controllers.api.bank.{Interest, Bank}
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{SummaryId, SummaryType}
-import uk.gov.hmrc.selfassessmentapi.controllers.{SourceHandler, SummaryHandler}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.bank.{Bank, Interest}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.{AnnualSummaryType, SummaryId, SummaryType}
+import uk.gov.hmrc.selfassessmentapi.controllers.{AnnualSummaryHandler, SourceHandler, SummaryHandler}
 import uk.gov.hmrc.selfassessmentapi.repositories.sandbox.{SandboxSourceRepository, SandboxSummaryRepository}
 
 object BankSourceHandler extends SourceHandler(Bank, Banks.name) {
@@ -41,4 +41,6 @@ object BankSourceHandler extends SourceHandler(Bank, Banks.name) {
       case _ => None
     }
   }
+
+  override def annualSummaryHandler(annualSummaryType: AnnualSummaryType): Option[AnnualSummaryHandler[_]] = None
 }

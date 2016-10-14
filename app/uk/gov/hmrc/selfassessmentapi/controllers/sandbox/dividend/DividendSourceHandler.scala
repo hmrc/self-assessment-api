@@ -19,8 +19,8 @@ package uk.gov.hmrc.selfassessmentapi.controllers.sandbox.dividend
 import uk.gov.hmrc.selfassessmentapi.controllers.api.dividend.SourceType.Dividends
 import uk.gov.hmrc.selfassessmentapi.controllers.api.dividend.SummaryTypes._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.dividend._
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{SourceId, SummaryId, SummaryType}
-import uk.gov.hmrc.selfassessmentapi.controllers.{SourceHandler, SummaryHandler}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.{AnnualSummaryType, SourceId, SummaryId, SummaryType}
+import uk.gov.hmrc.selfassessmentapi.controllers.{AnnualSummaryHandler, SourceHandler, SummaryHandler}
 import uk.gov.hmrc.selfassessmentapi.repositories.sandbox.{SandboxSourceRepository, SandboxSummaryRepository}
 
 object DividendSourceHandler extends SourceHandler(Dividend, Dividends.name) {
@@ -35,6 +35,8 @@ object DividendSourceHandler extends SourceHandler(Dividend, Dividends.name) {
       case _ => None
     }
   }
+
+  override def annualSummaryHandler(annualSummaryType: AnnualSummaryType): Option[AnnualSummaryHandler[_]] = None
 
   override val repository = new SandboxSourceRepository[Dividend] {
     override implicit val writes = Dividend.writes

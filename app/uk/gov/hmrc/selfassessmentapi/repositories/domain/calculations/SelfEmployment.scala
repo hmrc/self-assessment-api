@@ -92,8 +92,8 @@ object SelfEmployment {
   }
 
   object LossBroughtForward {
-    def apply(selfEmployment: domain.SelfEmployment) =
-      ValueOrZero(selfEmployment.adjustments.flatMap(_.lossBroughtForward))
+    def apply(selfEmployment: domain.SelfEmployment): BigDecimal =
+      ValueOrZero(selfEmployment.adjustments.map(_.lossBroughtForward))
   }
 
   object TotalLossBroughtForward {

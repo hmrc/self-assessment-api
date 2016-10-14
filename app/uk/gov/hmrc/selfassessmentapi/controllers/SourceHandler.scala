@@ -52,6 +52,8 @@ abstract class SourceHandler[T](jsonMarshaller: JsonMarshaller[T], val listName:
   def delete(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId) = repository.delete(saUtr, taxYear, sourceId)
 
   def summaryHandler(summaryType: SummaryType): Option[SummaryHandler[_]]
+
+  def annualSummaryHandler(annualSummaryType: AnnualSummaryType): Option[AnnualSummaryHandler[_]]
 }
 
 

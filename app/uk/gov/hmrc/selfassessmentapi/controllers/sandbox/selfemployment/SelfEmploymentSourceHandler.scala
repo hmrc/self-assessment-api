@@ -18,12 +18,12 @@ package uk.gov.hmrc.selfassessmentapi.controllers.sandbox.selfemployment
 
 import play.api.libs.json.Writes
 import uk.gov.hmrc.selfassessmentapi.controllers.api.SummaryType
-import uk.gov.hmrc.selfassessmentapi.controllers.{SourceHandler, SummaryHandler}
+import uk.gov.hmrc.selfassessmentapi.controllers.{AnnualSummaryHandler, SourceHandler, SummaryHandler}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment.SourceType.SelfEmployments
 import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment.SummaryTypes._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment._
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
-import uk.gov.hmrc.selfassessmentapi.repositories.sandbox.{SandboxSourceRepository, SandboxSummaryRepository}
+import uk.gov.hmrc.selfassessmentapi.repositories.sandbox.{SandboxAnnualSummaryRepository, SandboxSourceRepository, SandboxSummaryRepository}
 
 object SelfEmploymentSourceHandler extends SourceHandler(SelfEmployment, SelfEmployments.name) {
 
@@ -49,9 +49,23 @@ object SelfEmploymentSourceHandler extends SourceHandler(SelfEmployment, SelfEmp
     }
   }
 
+
+  override def annualSummaryHandler(annualSummaryType: AnnualSummaryType): Option[AnnualSummaryHandler[_]] = {
+    annualSummaryType match {
+      case AnnualSummaryType.Adjustments => Some(AnnualSummaryHandler(new SandboxAnnualSummaryRepository[Adjustments] {
+        override def example: Adjustments = Adjustments.example(None)
+        override implicit val writes: Writes[Adjustments] = Adjustments.writes
+      }, Adjustments))
+      case AnnualSummaryType.Allowances => Some(AnnualSummaryHandler(new SandboxAnnualSummaryRepository[Allowances] {
+        override def example: Allowances = Allowances.example(None)
+        override implicit val writes: Writes[Allowances] = Allowances.writes
+      }, Allowances))
+      case _ => None
+    }
+  }
+
   override val repository = new SandboxSourceRepository[SelfEmployment] {
     override implicit val writes = SelfEmployment.writes
     override def example(id: SourceId) = SelfEmployment.example().copy(id = Some(id))
-
   }
 }

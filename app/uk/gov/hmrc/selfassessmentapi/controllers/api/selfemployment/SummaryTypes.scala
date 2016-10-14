@@ -71,5 +71,4 @@ object SummaryTypes {
       PositiveMonetaryFieldDescription("self-employments", "amount", "To account for the normal sale price of goods or stock have been taken out of the business")
     )
   }
-
 }

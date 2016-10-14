@@ -18,10 +18,10 @@ package uk.gov.hmrc.selfassessmentapi.controllers.live.dividend
 
 import uk.gov.hmrc.play.http.NotImplementedException
 import uk.gov.hmrc.selfassessmentapi.controllers.api.SourceTypes._
-import uk.gov.hmrc.selfassessmentapi.controllers.api.SummaryType
+import uk.gov.hmrc.selfassessmentapi.controllers.api.{AnnualSummaryType, SummaryType}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.dividend.SummaryTypes.Incomes
 import uk.gov.hmrc.selfassessmentapi.controllers.api.dividend.{Dividend, DividendIncome}
-import uk.gov.hmrc.selfassessmentapi.controllers.{SourceHandler, SummaryHandler}
+import uk.gov.hmrc.selfassessmentapi.controllers.{AnnualSummaryHandler, SourceHandler, SummaryHandler}
 import uk.gov.hmrc.selfassessmentapi.repositories.live.DividendRepository
 import uk.gov.hmrc.selfassessmentapi.repositories.{SourceRepository, SourceRepositoryWrapper, SummaryRepositoryWrapper}
 
@@ -33,6 +33,12 @@ object DividendSourceHandler extends SourceHandler(Dividend, Dividends.name) {
     summaryType match {
       case Incomes => Some(SummaryHandler(SummaryRepositoryWrapper(DividendRepository().DividendIncomeRepository), DividendIncome, Incomes.name))
       case _ => throw new NotImplementedException(s"${Dividends.name} ${summaryType.name} is not implemented")
+    }
+  }
+
+  override def annualSummaryHandler(annualSummaryType: AnnualSummaryType): Option[AnnualSummaryHandler[_]] = {
+    annualSummaryType match {
+      case _ => throw new NotImplementedException(s"${Dividends.name} ${annualSummaryType.name} is not implemented")
     }
   }
 }

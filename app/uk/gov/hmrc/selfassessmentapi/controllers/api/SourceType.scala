@@ -23,4 +23,5 @@ trait SourceType extends Documentable {
   val documentationName: String
   def example(id: Option[SourceId] = None): JsValue
   val summaryTypes: Set[SummaryType]
+  val propertyTypes: Set[AnnualSummaryType]
 }

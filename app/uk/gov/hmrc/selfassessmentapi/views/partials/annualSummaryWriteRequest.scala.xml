@@ -1,0 +1,24 @@
+@import uk.gov.hmrc.domain.SaUtr
+@import uk.gov.hmrc.selfassessmentapi.controllers.api._
+@import uk.gov.hmrc.selfassessmentapi.views.Helpers._
+
+@(method: String, saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, annualSummaryType: AnnualSummaryType, sourceId: SourceId)
+
+<section id="@(s"sample-request-${sourceType.name}-${annualSummaryType.name}")">
+  <title>@(annualSummaryType.title) request</title>
+  <resource>@method /self-assessment/@saUtr/@taxYear/@(sourceType.name)/@(sourceId)/@(annualSummaryType.name)</resource>
+  <description>@{annualSummaryType.description(if(method=="POST") "Creates" else "Updates")}</description>
+  <json>@prettyPrint(annualSummaryType.example(None))</json>
+        @if(annualSummaryType.fieldDescriptions.nonEmpty) {
+  <table>
+  <headings>
+    <cell>Name</cell>
+    <cell>Type</cell>
+    <cell>Description</cell>
+  </headings>
+  <rows>
+    @annualSummaryType.fieldDescriptions.map(fd => fieldDescriptionShort(fd))
+  </rows>
+  </table>
+  }
+</section>

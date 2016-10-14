@@ -28,6 +28,7 @@ object SourceType {
     override def example(id: Option[SummaryId] = None): JsValue = Json.toJson(Bank.example(id))
 
     override val summaryTypes: Set[SummaryType] = Set(Interests)
+    override val propertyTypes: Set[AnnualSummaryType] = Set.empty
     override val title = "Sample bank"
 
     override def description(action: String) = s"$action a bank"

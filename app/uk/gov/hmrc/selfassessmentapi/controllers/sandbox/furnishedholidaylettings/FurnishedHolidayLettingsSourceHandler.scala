@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers.sandbox.furnishedholidaylettings
 
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{SummaryType, SourceTypes}
-import uk.gov.hmrc.selfassessmentapi.controllers.{SourceHandler, SummaryHandler}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.{SourceTypes, SummaryType}
+import uk.gov.hmrc.selfassessmentapi.controllers.{AnnualSummaryHandler, SourceHandler, SummaryHandler}
 import SourceTypes.FurnishedHolidayLettings
 import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.SummaryTypes._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.{Income, _}
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{_}
+import uk.gov.hmrc.selfassessmentapi.controllers.api._
 import uk.gov.hmrc.selfassessmentapi.repositories.sandbox.{SandboxSourceRepository, SandboxSummaryRepository}
 
 object FurnishedHolidayLettingsSourceHandler extends SourceHandler(FurnishedHolidayLetting, FurnishedHolidayLettings.name) {
@@ -47,6 +47,8 @@ object FurnishedHolidayLettingsSourceHandler extends SourceHandler(FurnishedHoli
       case _ => None
     }
   }
+
+  override def annualSummaryHandler(annualSummaryType: AnnualSummaryType): Option[AnnualSummaryHandler[_]] = None
 
   override val repository = new SandboxSourceRepository[FurnishedHolidayLetting] {
     override implicit val writes = FurnishedHolidayLetting.writes

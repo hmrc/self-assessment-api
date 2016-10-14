@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment
+package uk.gov.hmrc.selfassessmentapi.controllers.api
 
-import org.joda.time.LocalDate
-import uk.gov.hmrc.selfassessmentapi.controllers.api.ErrorCode
-import ErrorCode._
-import uk.gov.hmrc.selfassessmentapi.controllers.api.JsonSpec
+import play.api.libs.json.JsValue
 
-class SelfEmploymentSpec extends JsonSpec {
-
-  "format" should {
-    "round trip valid SelfEmployment json" in {
-      roundTripJson(SelfEmployment(
-        commencementDate = new LocalDate(2016, 4, 22)))
-    }
-  }
+trait AnnualSummaryType {
+  val name: String
+  val documentationName: String
+  def example(id: Option[SummaryId]): JsValue
+  val title: String
+  def description(action: String): String
+  val fieldDescriptions:Seq[FieldDescription]
 }
