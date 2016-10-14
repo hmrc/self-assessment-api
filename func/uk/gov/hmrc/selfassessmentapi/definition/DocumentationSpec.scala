@@ -17,6 +17,7 @@ class DocumentationSpec extends BaseFunctionalSpec {
     "Test.feature-switch.furnished-holiday-lettings.eea.enabled" -> true,
     "Test.feature-switch.employments.enabled" -> true,
     "Test.feature-switch.uk-properties.enabled" -> true,
+    "Test.feature-switch.bank.enabled" -> true,
 
     "Test.feature-switch.blindPerson.enabled" -> true,
     "Test.feature-switch.charitableGivings.enabled" -> true,

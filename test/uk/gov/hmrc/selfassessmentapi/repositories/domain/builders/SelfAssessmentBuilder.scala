@@ -42,8 +42,13 @@ class SelfAssessmentBuilder {
     this
   }
 
-  def withUnearnedIncomes(unearnedIncomes: UnearnedIncomeBuilder*) = {
-    selfAssessment = selfAssessment.copy(unearnedIncomes = unearnedIncomes.map(_.create()))
+  def withDividends(dividends: DividendBuilder*) = {
+    selfAssessment = selfAssessment.copy(dividends = dividends.map(_.create()))
+    this
+  }
+
+  def withSavings(banks: BankBuilder*) = {
+    selfAssessment = selfAssessment.copy(banks = banks.map(_.create()))
     this
   }
 

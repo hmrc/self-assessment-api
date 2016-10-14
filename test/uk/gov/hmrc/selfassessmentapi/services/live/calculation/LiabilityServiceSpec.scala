@@ -42,6 +42,8 @@ class LiabilityServiceSpec extends UnitSpec with MockitoSugar {
   private val unearnedIncomeRepo = mock[UnearnedIncomeMongoRepository]
   private val ukPropertyRepo = mock[UKPropertiesMongoRepository]
   private val furnishedHolidayLettingsRepo = mock[FurnishedHolidayLettingsMongoRepository]
+  private val dividendsRepo = mock[DividendMongoRepository]
+  private val banksRepo = mock[BanksMongoRepository]
   private val taxYearPropertiesService = mock[TaxYearPropertiesService]
   private val featureSwitch = mock[FeatureSwitch]
   private val service = new LiabilityService(employmentRepo,
@@ -50,7 +52,9 @@ class LiabilityServiceSpec extends UnitSpec with MockitoSugar {
                                              furnishedHolidayLettingsRepo,
                                              liabilityRepo,
                                              ukPropertyRepo,
+                                             banksRepo,
                                              taxYearPropertiesService,
+                                             dividendsRepo,
                                              featureSwitch)
 
   "calculate" should {
@@ -131,6 +135,23 @@ class LiabilityServiceSpec extends UnitSpec with MockitoSugar {
       await(service.calculate(saUtr, taxYear))
 
       verifyNoMoreInteractions(ukPropertyRepo)
+    }
+
+    "get savings from repository when the Savings source is switched on" in {
+      when(featureSwitch.isEnabled(Banks)).thenReturn(true)
+      when(banksRepo.findAll(saUtr, taxYear)).thenReturn(Seq())
+
+      await(service.calculate(saUtr, taxYear))
+
+      verify(banksRepo).findAll(saUtr, taxYear)
+    }
+
+    "get savings from repository when the Savings source is switched off" in {
+      when(featureSwitch.isEnabled(Banks)).thenReturn(false)
+
+      await(service.calculate(saUtr, taxYear))
+
+      verifyNoMoreInteractions(banksRepo)
     }
   }
 }

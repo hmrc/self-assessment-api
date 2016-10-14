@@ -16,25 +16,16 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers.sandbox.unearnedincome
 
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{SummaryType, SourceTypes}
-import uk.gov.hmrc.selfassessmentapi.controllers.{SourceHandler, SummaryHandler}
-import SourceTypes.UnearnedIncomes
-import uk.gov.hmrc.selfassessmentapi.controllers.api.unearnedincome.SummaryTypes.{Benefits, Dividends, SavingsIncomes}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.SourceTypes.UnearnedIncomes
+import uk.gov.hmrc.selfassessmentapi.controllers.api.unearnedincome.SummaryTypes.Benefits
 import uk.gov.hmrc.selfassessmentapi.controllers.api.unearnedincome.{UnearnedIncome, _}
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{_}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.{SummaryType, _}
+import uk.gov.hmrc.selfassessmentapi.controllers.{SourceHandler, SummaryHandler}
 import uk.gov.hmrc.selfassessmentapi.repositories.sandbox.{SandboxSourceRepository, SandboxSummaryRepository}
 
 object UnearnedIncomeSourceHandler extends SourceHandler(UnearnedIncome, UnearnedIncomes.name) {
   override def summaryHandler(summaryType: SummaryType): Option[SummaryHandler[_]] =
     summaryType match {
-      case SavingsIncomes => Some(SummaryHandler(new SandboxSummaryRepository[SavingsIncome] {
-        override def example(id: Option[SummaryId]) = SavingsIncome.example(id)
-        override implicit val writes = SavingsIncome.writes
-      }, SavingsIncome, SavingsIncomes.name))
-      case Dividends => Some(SummaryHandler(new SandboxSummaryRepository[Dividend] {
-        override def example(id: Option[SummaryId]) = Dividend.example(id)
-        override implicit val writes = Dividend.writes
-      }, Dividend, Dividends.name))
       case Benefits => Some(SummaryHandler(new SandboxSummaryRepository[Benefit] {
         override def example(id: Option[SummaryId]) = Benefit.example(id)
         override implicit val writes = Benefit.writes

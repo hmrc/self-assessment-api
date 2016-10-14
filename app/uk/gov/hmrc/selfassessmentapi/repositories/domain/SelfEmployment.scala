@@ -63,17 +63,20 @@ object SelfEmploymentIncomeSummary {
 
 case class SelfEmploymentExpenseSummary(summaryId: SummaryId,
                                         `type`: ExpenseType,
-                                        amount: BigDecimal) extends Summary with AmountHolder {
+                                        amount: BigDecimal,
+                                        disallowableAmount: BigDecimal) extends Summary with AmountHolder {
   val arrayName = SelfEmploymentExpenseSummary.arrayName
 
   def toExpense: Expense =
     Expense(id = Some(summaryId),
       `type` = `type`,
-      amount = amount)
+      amount = amount,
+      disallowableAmount = disallowableAmount)
 
   def toBsonDocument = BSONDocument(
     "summaryId" -> summaryId,
     "amount" -> BSONDouble(amount.doubleValue()),
+    "disallowableAmount" -> BSONDouble(disallowableAmount.doubleValue()),
     "type" -> BSONString(`type`.toString)
   )
 }
@@ -88,7 +91,8 @@ object SelfEmploymentExpenseSummary {
     SelfEmploymentExpenseSummary(
       summaryId = id.getOrElse(BSONObjectID.generate.stringify),
       `type` = expense.`type`,
-      amount = expense.amount
+      amount = expense.amount,
+      disallowableAmount = expense.disallowableAmount
     )
   }
 }

@@ -34,10 +34,12 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
 
   private val mongoRepository = new SelfEmploymentMongoRepository
   private val selfEmploymentRepository: SourceRepository[selfemployment.SelfEmployment] = mongoRepository
-  private val summariesMap: Map[JsonMarshaller[_], SummaryRepository[_]] = Map(Income -> mongoRepository.IncomeRepository,
-    Expense -> mongoRepository.ExpenseRepository, BalancingCharge -> mongoRepository.BalancingChargeRepository,
-    GoodsAndServicesOwnUse -> mongoRepository.GoodsAndServicesOwnUseRepository)
-
+  private val summariesMap: Map[JsonMarshaller[_], SummaryRepository[_]] = Map(
+    Income -> mongoRepository.IncomeRepository,
+    Expense -> mongoRepository.ExpenseRepository,
+    BalancingCharge -> mongoRepository.BalancingChargeRepository,
+    GoodsAndServicesOwnUse -> mongoRepository.GoodsAndServicesOwnUseRepository
+  )
 
   override def beforeEach() {
     await(mongoRepository.drop)
@@ -84,7 +86,6 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
         id = await(selfEmploymentRepository.create(saUtr, taxYear, source))
       } yield source.copy(id = Some(id))
 
-
       await(selfEmploymentRepository.delete(saUtr, taxYear))
 
       val found: Seq[selfemployment.SelfEmployment] = await(selfEmploymentRepository.list(saUtr, taxYear))
@@ -104,7 +105,6 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
     }
   }
 
-
   "list" should {
     "retrieve all self employments for utr/tax year" in {
       val sources = for {
@@ -112,7 +112,6 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
         source = selfEmployment()
         id = await(selfEmploymentRepository.create(saUtr, taxYear, source))
       } yield source.copy(id = Some(id))
-
 
       val found: Seq[selfemployment.SelfEmployment] = await(selfEmploymentRepository.list(saUtr, taxYear))
 
@@ -142,22 +141,20 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
     "return true when the self employment exists and has been updated" in {
       val source = selfEmployment()
 
-      val allowances = Allowances(
-        annualInvestmentAllowance = Some(BigDecimal(10.00)),
-        capitalAllowanceMainPool = Some(BigDecimal(20.00)),
-        capitalAllowanceSpecialRatePool = Some(BigDecimal(30.00)),
-        businessPremisesRenovationAllowance = Some(BigDecimal(50.00)),
-        enhancedCapitalAllowance = Some(BigDecimal(60.00)),
-        allowancesOnSales = Some(BigDecimal(70.00)))
+      val allowances = Allowances(annualInvestmentAllowance = Some(BigDecimal(10.00)),
+                                  capitalAllowanceMainPool = Some(BigDecimal(20.00)),
+                                  capitalAllowanceSpecialRatePool = Some(BigDecimal(30.00)),
+                                  businessPremisesRenovationAllowance = Some(BigDecimal(50.00)),
+                                  enhancedCapitalAllowance = Some(BigDecimal(60.00)),
+                                  allowancesOnSales = Some(BigDecimal(70.00)))
 
-      val adjustments = Adjustments(
-        includedNonTaxableProfits = Some(BigDecimal(10.00)),
-        basisAdjustment = Some(BigDecimal(20.00)),
-        overlapReliefUsed = Some(BigDecimal(30.00)),
-        accountingAdjustment = Some(BigDecimal(40.00)),
-        averagingAdjustment = Some(BigDecimal(50.00)),
-        lossBroughtForward = Some(BigDecimal(60.00)),
-        outstandingBusinessIncome = Some(BigDecimal(70.00)))
+      val adjustments = Adjustments(includedNonTaxableProfits = Some(BigDecimal(10.00)),
+                                    basisAdjustment = Some(BigDecimal(20.00)),
+                                    overlapReliefUsed = Some(BigDecimal(30.00)),
+                                    accountingAdjustment = Some(BigDecimal(40.00)),
+                                    averagingAdjustment = Some(BigDecimal(50.00)),
+                                    lossBroughtForward = Some(BigDecimal(60.00)),
+                                    outstandingBusinessIncome = Some(BigDecimal(70.00)))
 
       val updatedSource = source.copy(
         commencementDate = source.commencementDate.minusMonths(1),
@@ -214,7 +211,9 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
     }
 
     "not remove incomes" in {
-      val source = SelfEmployment.create(saUtr, taxYear, selfEmployment()).copy(incomes = Seq(SelfEmploymentIncomeSummary(BSONObjectID.generate.stringify, IncomeType.Turnover, 10)))
+      val source = SelfEmployment
+        .create(saUtr, taxYear, selfEmployment())
+        .copy(incomes = Seq(SelfEmploymentIncomeSummary(BSONObjectID.generate.stringify, IncomeType.Turnover, 10)))
       await(mongoRepository.insert(source))
       val found = await(mongoRepository.findById(saUtr, taxYear, source.sourceId)).get
       await(selfEmploymentRepository.update(saUtr, taxYear, source.sourceId, found))
@@ -233,7 +232,8 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
       val found1 = await(mongoRepository.findById(BSONObjectID(sourceId)))
 
       // Added the equals clauses as it was failing locally once, can fail if the test runs faster and has the same time for create and update
-      found1.get.lastModifiedDateTime.isEqual(found.get.lastModifiedDateTime) || found1.get.lastModifiedDateTime.isAfter(found.get.lastModifiedDateTime) shouldBe true
+      found1.get.lastModifiedDateTime.isEqual(found.get.lastModifiedDateTime) || found1.get.lastModifiedDateTime
+        .isAfter(found.get.lastModifiedDateTime) shouldBe true
     }
   }
 
@@ -265,7 +265,8 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
         val summaries = await(repo.list(saUtr, taxYear, sourceId))
 
         val found = summaries.get
-        found should contain theSameElementsAs Seq(summaryItem.example(id = summaryId), summaryItem.example(id = summaryId1))
+        found should contain theSameElementsAs Seq(summaryItem.example(id = summaryId),
+                                                   summaryItem.example(id = summaryId1))
       }
     }
 
@@ -386,13 +387,19 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
 
         val found = await(repo.list(saUtr, taxYear, sourceId)).get
 
-        found should contain theSameElementsAs Seq(summaryItem.example(id = Some(summaryId1)), summaryItem.example(id = Some(summaryId2)))
+        found should contain theSameElementsAs Seq(summaryItem.example(id = Some(summaryId1)),
+                                                   summaryItem.example(id = Some(summaryId2)))
       }
     }
 
     "return false when the source does not exist" in {
       for ((summaryItem, repo) <- summariesMap) {
-        await(repo.update(saUtr, taxYear, BSONObjectID.generate.stringify, BSONObjectID.generate.stringify, cast(summaryItem.example()))) shouldEqual false
+        await(
+          repo.update(saUtr,
+                      taxYear,
+                      BSONObjectID.generate.stringify,
+                      BSONObjectID.generate.stringify,
+                      cast(summaryItem.example()))) shouldEqual false
       }
     }
 
@@ -403,6 +410,5 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
       }
     }
   }
-
 
 }

@@ -29,7 +29,7 @@ class PensionSavingsChargesSpec extends UnitSpec {
   "PensionSavingsCharges.IncomeTaxBandSummary" should {
     "be calculated when TotalTaxableIncome present falls within HigherRate band" in {
       PensionSavingsCharges.IncomeTaxBandSummary(SelfAssessmentBuilder()
-        .withUnearnedIncomes(UnearnedIncomeBuilder().withUntaxedSavings(30999))
+        .withSavings(BankBuilder().withUntaxedInterest(30999))
         .withEmployments(EmploymentBuilder().withSalary(6000))
         .withSelfEmployments(SelfEmploymentBuilder().withTurnover(6000))
         .withTaxYearProperties(TaxYearPropertiesBuilder().withPensionContributions().pensionSavings(excessOfAnnualAllowance = 2000))
@@ -44,7 +44,7 @@ class PensionSavingsChargesSpec extends UnitSpec {
 
     "be calculated when TotalTaxableIncome and ukPensionsContributions present falls within Basic and Higher rate band" in {
       PensionSavingsCharges.IncomeTaxBandSummary(SelfAssessmentBuilder()
-        .withUnearnedIncomes(UnearnedIncomeBuilder().withUntaxedSavings(30999))
+        .withSavings(BankBuilder().withUntaxedInterest(30999))
         .withEmployments(EmploymentBuilder().withSalary(6000))
         .withSelfEmployments(SelfEmploymentBuilder().withTurnover(6000))
         .withTaxYearProperties(TaxYearPropertiesBuilder().withPensionContributions()
@@ -61,7 +61,7 @@ class PensionSavingsChargesSpec extends UnitSpec {
 
     "be calculated when TotalTaxableIncome and ukPensionsContributions present falls within Basic, Higher and Additional Higher rate band" in {
       PensionSavingsCharges.IncomeTaxBandSummary(SelfAssessmentBuilder()
-        .withUnearnedIncomes(UnearnedIncomeBuilder().withUntaxedSavings(31999))
+        .withSavings(BankBuilder().withUntaxedInterest(31999))
         .withEmployments(EmploymentBuilder().withSalary(6000))
         .withSelfEmployments(SelfEmploymentBuilder().withTurnover(5000))
         .withTaxYearProperties(TaxYearPropertiesBuilder().withPensionContributions()

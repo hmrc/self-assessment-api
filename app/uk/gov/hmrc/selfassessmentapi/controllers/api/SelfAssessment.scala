@@ -23,9 +23,11 @@ import uk.gov.hmrc.selfassessmentapi.repositories.domain._
 case class SelfAssessment(employments: Seq[Employment] = Seq(),
                           selfEmployments: Seq[SelfEmployment] = Seq(),
                           unearnedIncomes: Seq[UnearnedIncome] = Seq(),
+                          dividends: Seq[Dividend] = Seq(),
                           ukProperties: Seq[UKProperties] = Seq(),
                           taxYearProperties: Option[TaxYearProperties] = None,
-                          furnishedHolidayLettings: Seq[FurnishedHolidayLettings] = Seq()) {
+                          furnishedHolidayLettings: Seq[FurnishedHolidayLettings] = Seq(),
+                          banks: Seq[Bank] = Seq()) {
   private def furnishedHolidayLettingsFor(propertyLocationType: PropertyLocationType) = furnishedHolidayLettings.filter(_.propertyLocation == propertyLocationType)
   def eeaFurnishedHolidayLettings = furnishedHolidayLettingsFor(PropertyLocationType.EEA)
   def ukFurnishedHolidayLettings = furnishedHolidayLettingsFor(PropertyLocationType.UK)

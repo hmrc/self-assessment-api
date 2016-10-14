@@ -19,7 +19,6 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain.calculations
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.prop.Tables.Table
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
-import uk.gov.hmrc.selfassessmentapi.controllers.api.unearnedincome.DividendType._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{DividendsFromUKSources, SelfAssessment, TaxBandSummary}
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.builders._
 
@@ -32,54 +31,55 @@ class DividendsSpec extends UnitSpec {
     }
 
     "be calculated for multiple UK dividends from multiple income sources" in {
-      val unearnedIncomeOne = UnearnedIncomeBuilder()
+      val dividendsOne = DividendBuilder()
         .withUKDividends(1000.50)
         .withOtherUKDividends(2000.99)
         .create()
 
-      val unearnedIncomeTwo = UnearnedIncomeBuilder()
+
+      val dividendsTwo = DividendBuilder()
         .withUKDividends(3000.50)
         .withOtherUKDividends(4000.999)
         .create()
 
-      Dividends.FromUK(SelfAssessment(unearnedIncomes = Seq(unearnedIncomeOne, unearnedIncomeTwo))) shouldBe
-        Seq(DividendsFromUKSources(sourceId = unearnedIncomeOne.sourceId, BigDecimal(3001)),
-          DividendsFromUKSources(sourceId = unearnedIncomeTwo.sourceId, BigDecimal(7001)))
+      Dividends.FromUK(SelfAssessment(dividends = Seq(dividendsOne, dividendsTwo))) shouldBe
+        Seq(DividendsFromUKSources(sourceId = dividendsOne.sourceId, BigDecimal(3001)),
+          DividendsFromUKSources(sourceId = dividendsTwo.sourceId, BigDecimal(7001)))
     }
 
     "be calculated for a single one uk dividend for a single income source" in {
-      val unearnedIncome = UnearnedIncomeBuilder()
+      val unearnedIncome = DividendBuilder()
         .withUKDividends(1000)
         .create()
 
-      Dividends.FromUK(SelfAssessment(unearnedIncomes = Seq(unearnedIncome))) shouldBe
+      Dividends.FromUK(SelfAssessment(dividends = Seq(unearnedIncome))) shouldBe
         Seq(DividendsFromUKSources(sourceId = unearnedIncome.sourceId, BigDecimal(1000)))
     }
 
     "be calculated for multiple uk dividends from a single income source" in {
-      val unearnedIncome = UnearnedIncomeBuilder()
+      val unearnedIncome = DividendBuilder()
         .withUKDividends(1000, 2000)
         .create()
 
-      Dividends.FromUK(SelfAssessment(unearnedIncomes = Seq(unearnedIncome))) shouldBe
+      Dividends.FromUK(SelfAssessment(dividends = Seq(unearnedIncome))) shouldBe
         Seq(DividendsFromUKSources(sourceId = unearnedIncome.sourceId, BigDecimal(3000)))
     }
 
     "be round down to nearest pound for a single dividend" in {
-      val unearnedIncome = UnearnedIncomeBuilder()
+      val unearnedIncome = DividendBuilder()
         .withUKDividends(1000.50)
         .create()
 
-      Dividends.FromUK(SelfAssessment(unearnedIncomes = Seq(unearnedIncome))) shouldBe
+      Dividends.FromUK(SelfAssessment(dividends = Seq(unearnedIncome))) shouldBe
         Seq(DividendsFromUKSources(sourceId = unearnedIncome.sourceId, BigDecimal(1000)))
     }
 
     "be round down to nearest pound for multiple dividends" in {
-      val unearnedIncome = UnearnedIncomeBuilder()
+      val unearnedIncome = DividendBuilder()
         .withUKDividends(1000.90, 2000.99)
         .create()
 
-      Dividends.FromUK(SelfAssessment(unearnedIncomes = Seq(unearnedIncome))) shouldBe
+      Dividends.FromUK(SelfAssessment(dividends = Seq(unearnedIncome))) shouldBe
         Seq(DividendsFromUKSources(sourceId = unearnedIncome.sourceId, BigDecimal(3001)))
     }
 
@@ -87,17 +87,17 @@ class DividendsSpec extends UnitSpec {
 
   "TotalDividends" should {
     "be sum of all dividends across multiple sources which have been rounded at source level" in {
-      val unearnedIncomeOne = UnearnedIncomeBuilder()
+      val unearnedIncomeOne = DividendBuilder()
         .withUKDividends(1000.50)
         .withOtherUKDividends(2000.99)
         .create()
 
-      val unearnedIncomeTwo = UnearnedIncomeBuilder()
+      val unearnedIncomeTwo = DividendBuilder()
         .withUKDividends(3000.50)
         .withOtherUKDividends(4000.999)
         .create()
 
-      Dividends.TotalIncome(SelfAssessment(unearnedIncomes = Seq(unearnedIncomeOne, unearnedIncomeTwo))) shouldBe 10002
+      Dividends.TotalIncome(SelfAssessment(dividends = Seq(unearnedIncomeOne, unearnedIncomeTwo))) shouldBe 10002
     }
   }
 
@@ -123,7 +123,7 @@ class DividendsSpec extends UnitSpec {
     "be calculated when TaxableNonSavingsIncome = 0, TaxableSavingIncome = 0 and TaxableDividendsIncome falls within BasicRate band" in {
       Dividends.IncomeTaxBandSummary(
         SelfAssessmentBuilder()
-          .withUnearnedIncomes(UnearnedIncomeBuilder().withUKDividends(42999))
+          .withDividends(DividendBuilder().withUKDividends(42999))
           .create()
       ) should contain theSameElementsInOrderAs
         Seq(
@@ -137,7 +137,7 @@ class DividendsSpec extends UnitSpec {
     "be calculated when NonSavingsIncome = 0 and TaxableSavingIncome is spread over Basic and Higher Rate band" in {
       Dividends.IncomeTaxBandSummary(
         SelfAssessmentBuilder()
-          .withUnearnedIncomes(UnearnedIncomeBuilder().withUKDividends(43001))
+          .withDividends(DividendBuilder().withUKDividends(43001))
           .create()
       ) should contain theSameElementsInOrderAs
         Seq(
@@ -152,7 +152,7 @@ class DividendsSpec extends UnitSpec {
       Dividends.IncomeTaxBandSummary(
         SelfAssessmentBuilder()
           .withTaxYearProperties(TaxYearPropertiesBuilder().withPensionContributions().ukRegisteredPension(500))
-          .withUnearnedIncomes(UnearnedIncomeBuilder().withUKDividends(43001))
+          .withDividends(DividendBuilder().withUKDividends(43001))
           .create()
       ) should contain theSameElementsInOrderAs
         Seq(
@@ -166,7 +166,7 @@ class DividendsSpec extends UnitSpec {
     "be calculated when NonSavingsIncome = 0 and TaxableSavingIncome is spread over Basic, Higher and Additional Higher Rate band" in {
       Dividends.IncomeTaxBandSummary(
         SelfAssessmentBuilder()
-          .withUnearnedIncomes(UnearnedIncomeBuilder().withUKDividends(150001))
+          .withDividends(DividendBuilder().withUKDividends(150001))
           .create()
       ) should contain theSameElementsInOrderAs
         Seq(
@@ -182,8 +182,8 @@ class DividendsSpec extends UnitSpec {
         SelfAssessmentBuilder()
           .withSelfEmployments(SelfEmploymentBuilder().withTurnover(11250))
           .withUkProperties(UKPropertyBuilder().withRentIncomes(250))
-          .withUnearnedIncomes(UnearnedIncomeBuilder().withUKDividends(30999)
-                                                      .withTaxedSavings(400))
+          .withDividends(DividendBuilder().withUKDividends(30999))
+          .withSavings(BankBuilder().withTaxedInterest(400))
           .create()
       ) should contain theSameElementsInOrderAs
         Seq(
@@ -199,8 +199,8 @@ class DividendsSpec extends UnitSpec {
         SelfAssessmentBuilder()
           .withSelfEmployments(SelfEmploymentBuilder().withTurnover(11250))
           .withUkProperties(UKPropertyBuilder().withRentIncomes(250))
-          .withUnearnedIncomes(UnearnedIncomeBuilder().withUKDividends(31001)
-                                                      .withTaxedSavings(400))
+          .withDividends(DividendBuilder().withUKDividends(31001))
+          .withSavings(BankBuilder().withTaxedInterest(400))
           .create()
       ) should contain theSameElementsInOrderAs
         Seq(
@@ -217,8 +217,8 @@ class DividendsSpec extends UnitSpec {
         SelfAssessmentBuilder()
           .withSelfEmployments(SelfEmploymentBuilder().withTurnover(250))
           .withUkProperties(UKPropertyBuilder().withRentIncomes(250))
-          .withUnearnedIncomes(UnearnedIncomeBuilder().withUKDividends(149001)
-                                                      .withTaxedSavings(400))
+          .withDividends(DividendBuilder().withUKDividends(149001))
+          .withSavings(BankBuilder().withTaxedInterest(400))
           .create()
       ) should contain theSameElementsInOrderAs
         Seq(
@@ -235,8 +235,8 @@ class DividendsSpec extends UnitSpec {
          .withSelfEmployments(SelfEmploymentBuilder().withTurnover(250))
          .withUkProperties(UKPropertyBuilder().withRentIncomes(250))
          .withTaxYearProperties(TaxYearPropertiesBuilder().withPensionContributions().ukRegisteredPension(500))
-         .withUnearnedIncomes(UnearnedIncomeBuilder().withUKDividends(149001)
-                                                     .withTaxedSavings(400))
+         .withDividends(DividendBuilder().withUKDividends(149001))
+         .withSavings(BankBuilder().withTaxedInterest(400))
          .create()
      ) should contain theSameElementsInOrderAs
        Seq(
@@ -252,7 +252,7 @@ class DividendsSpec extends UnitSpec {
         SelfAssessmentBuilder()
           .withSelfEmployments(SelfEmploymentBuilder().withTurnover(5000))
           .withUkProperties(UKPropertyBuilder().withRentIncomes(5000))
-          .withUnearnedIncomes(UnearnedIncomeBuilder().withUKDividends(18000))
+          .withDividends(DividendBuilder().withUKDividends(18000))
           .create()
       ) should contain theSameElementsInOrderAs
         Seq(
@@ -304,7 +304,8 @@ class DividendsSpec extends UnitSpec {
         val dividendIncomeTax = Dividends.IncomeTaxBandSummary(
           SelfAssessmentBuilder()
             .withSelfEmployments(SelfEmploymentBuilder().withTurnover(profits))
-            .withUnearnedIncomes(UnearnedIncomeBuilder().withUKDividends(dividends).withUntaxedSavings(savings))
+            .withDividends(DividendBuilder().withUKDividends(dividends))
+            .withSavings(BankBuilder().withUntaxedInterest(savings))
             .withTaxYearProperties(TaxYearPropertiesBuilder().withPensionContributions().ukRegisteredPension(ukPensionsContributions))
             .create()
         )

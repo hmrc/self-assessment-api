@@ -12,6 +12,7 @@ class SelfAssessmentDiscoveryControllerSpec extends BaseFunctionalSpec {
     "Test.feature-switch.furnished-holiday-lettings.uk.enabled" -> true,
     "Test.feature-switch.furnished-holiday-lettings.eea.enabled" -> true,
     "Test.feature-switch.employments.enabled" -> true,
+    "Test.feature-switch.banks.enabled" -> true,
     "Test.feature-switch.uk-properties.enabled" -> true))
 
   "Live tax years discovery" should {

@@ -131,21 +131,21 @@ class SelfAssessmentApiDefinition(apiContext: String, apiStatus: APIStatus) {
       )
     )
 
-  private lazy val resolveGroupName : SourceType => GroupName =  { sourceType =>
-    sourceType match {
-      case SourceTypes.Employments => Employments
-      case SourceTypes.SelfEmployments => SelfEmployments
-      case SourceTypes.UKProperties => UKProperties
-      case SourceTypes.FurnishedHolidayLettings => FurnishedHolidayLettings
-      case SourceTypes.UnearnedIncomes => UnearnedIncomes
-    }
+  private lazy val resolveGroupName : SourceType => GroupName = {
+    case SourceTypes.Employments => Employments
+    case SourceTypes.SelfEmployments => SelfEmployments
+    case SourceTypes.UKProperties => UKProperties
+    case SourceTypes.FurnishedHolidayLettings => FurnishedHolidayLettings
+    case SourceTypes.UnearnedIncomes => UnearnedIncomes
+    case SourceTypes.Dividends => Dividends
+    case SourceTypes.Banks => Banks
   }
 
   private lazy val sourceAndSummaryEndpoints = Helpers.enabledSourceTypes.toSeq.flatMap { sourceType =>
     val uri: String = s"/{utr}/{tax-year}/${sourceType.name}"
     val uriWithId: String = s"$uri/{${sourceType.name}-id}"
     val updateEndpoint =  sourceType match  {
-      case SourceTypes.Employments | SourceTypes.UnearnedIncomes =>  Nil
+      case SourceTypes.Employments | SourceTypes.UnearnedIncomes | SourceTypes.Banks | SourceTypes.Dividends =>  Nil
       case _ => Seq(Endpoint(uriPattern = uriWithId, endpointName = s"Update ${sourceType.documentationName}", method = PUT,
         authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)))
     }

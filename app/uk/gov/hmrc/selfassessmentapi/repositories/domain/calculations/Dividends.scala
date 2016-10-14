@@ -16,9 +16,8 @@
 
 package uk.gov.hmrc.selfassessmentapi.repositories.domain.calculations
 
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{TaxBandSummary, DividendsFromUKSources, SelfAssessment}
-import uk.gov.hmrc.selfassessmentapi.controllers.api._
-import uk.gov.hmrc.selfassessmentapi.repositories.domain.{IncomeTax, UnearnedIncome, TaxBand}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.{DividendsFromUKSources, SelfAssessment, TaxBandSummary, _}
+import uk.gov.hmrc.selfassessmentapi.repositories.domain.{IncomeTax, Dividend, TaxBand}
 
 object Dividends {
 
@@ -32,16 +31,16 @@ object Dividends {
   }
 
   object TotalIncome {
-    def apply(selfAssessment: SelfAssessment) = selfAssessment.unearnedIncomes.map(Income(_)).sum
+    def apply(selfAssessment: SelfAssessment) = selfAssessment.dividends.map(Income(_)).sum
   }
 
   private object Income {
-    def apply(unearnedIncome: UnearnedIncome) = RoundDown(unearnedIncome.dividends.map(_.amount).sum)
+    def apply(dividend: Dividend) = RoundDown(dividend.incomes.map(_.amount).sum)
   }
 
   object FromUK {
-    def apply(selfAssessment: SelfAssessment) = selfAssessment.unearnedIncomes.map { unearnedIncome =>
-      new DividendsFromUKSources(unearnedIncome.sourceId, Income(unearnedIncome))
+    def apply(selfAssessment: SelfAssessment) = selfAssessment.dividends.map { dividend =>
+      new DividendsFromUKSources(dividend.sourceId, Income(dividend))
     }
   }
 

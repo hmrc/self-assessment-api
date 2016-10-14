@@ -29,7 +29,7 @@ import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment.{SelfEmployment => _}
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.JobStatus._
-import uk.gov.hmrc.selfassessmentapi.repositories.domain.{ Employment, FurnishedHolidayLettings, JobHistory, SelfAssessment, SelfEmployment, UKProperties, UnearnedIncome }
+import uk.gov.hmrc.selfassessmentapi.repositories.domain.{ Employment, FurnishedHolidayLettings, JobHistory, SelfAssessment, SelfEmployment, UKProperties, UnearnedIncome, Bank }
 import uk.gov.hmrc.selfassessmentapi.repositories.live._
 import uk.gov.hmrc.selfassessmentapi.repositories.{JobHistoryMongoRepository, SelfAssessmentMongoRepository}
 
@@ -44,6 +44,8 @@ class DeleteExpiredDataServiceSpec extends MongoEmbeddedDatabase with MockitoSug
   private val empRepo = new EmploymentMongoRepository
   private val fhlRepo = new FurnishedHolidayLettingsMongoRepository
   private val ukPropertyRepo = new UKPropertiesMongoRepository
+  private val divRepo = new DividendMongoRepository
+  private val bankRepo = new BanksMongoRepository
   private val jobRepo = new JobHistoryMongoRepository
 
   private val saUtr = generateSaUtr()
@@ -52,7 +54,7 @@ class DeleteExpiredDataServiceSpec extends MongoEmbeddedDatabase with MockitoSug
   private val lastModifiedDate = DateTime.now().minusWeeks(1)
 
   override def beforeEach() {
-    dropCollection(saRepo, seRepo, empRepo, uiRepo, fhlRepo, ukPropertyRepo, jobRepo)
+    dropCollection(saRepo, seRepo, empRepo, uiRepo, fhlRepo, ukPropertyRepo, bankRepo, jobRepo)
   }
 
   private  def dropCollection(repos : ReactiveRepository[_, _]*) {
@@ -76,7 +78,7 @@ class DeleteExpiredDataServiceSpec extends MongoEmbeddedDatabase with MockitoSug
 
     insertSelfAssessmentRecords(sa1, sa2, latestSa3)
 
-    val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, jobRepo)
+    val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, divRepo, bankRepo, jobRepo)
 
     whenReady(service.deleteExpiredData(lastModifiedDate)) { _ =>
       val saRecords = saRepo.findAll()
@@ -183,13 +185,31 @@ class DeleteExpiredDataServiceSpec extends MongoEmbeddedDatabase with MockitoSug
       }
     }
 
+    "delete only the expired records (older than the lastModifiedDate) and not the latest records for banks" in {
+      val bank1 = Bank.create(saUtr, taxYear)
+      val bank2 = Bank.create(saUtr2, taxYear)
+      val latestBank3 = Bank.create(saUtr3, taxYear)
+
+      insertBankRecords(bank1, bank2, latestBank3)
+
+      withInsertSelfAssessment {
+        val bankRecords = bankRepo.findAll()
+
+        whenReady(bankRecords) { records =>
+          records.size shouldBe 1
+          records.head.saUtr shouldBe latestBank3.saUtr
+          records.head.taxYear shouldBe latestBank3.taxYear
+        }
+      }
+    }
+
     "mark job as failed if there is an exception when trying to delete records from self assessment" in {
       val sa1 = SelfAssessment(BSONObjectID.generate, saUtr, taxYear, DateTime.now().minusMonths(1), DateTime.now().minusMonths(1))
       val saRepo = mock[SelfAssessmentMongoRepository]
       when(saRepo.findOlderThan(any[DateTime]())).thenReturn(Future.successful(Seq(sa1)))
       when(saRepo.delete(any[SaUtr](), any[TaxYear]())).thenThrow(new RuntimeException("something wrong"))
 
-      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, jobRepo)
+      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, divRepo, bankRepo, jobRepo)
 
       an[RuntimeException] should be thrownBy await(service.deleteExpiredData(DateTime.now))
 
@@ -203,7 +223,7 @@ class DeleteExpiredDataServiceSpec extends MongoEmbeddedDatabase with MockitoSug
       await(saRepo.insert(sa1))
       when(seRepo.delete(any[SaUtr](), any[TaxYear]())).thenThrow(new RuntimeException("something wrong"))
 
-      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, jobRepo)
+      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, divRepo, bankRepo, jobRepo)
 
       an[RuntimeException] should be thrownBy await(service.deleteExpiredData(DateTime.now))
 
@@ -217,7 +237,7 @@ class DeleteExpiredDataServiceSpec extends MongoEmbeddedDatabase with MockitoSug
       await(saRepo.insert(sa1))
       when(empRepo.delete(any[SaUtr](), any[TaxYear]())).thenThrow(new RuntimeException("something wrong"))
 
-      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, jobRepo)
+      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, divRepo, bankRepo, jobRepo)
 
       an[RuntimeException] should be thrownBy await(service.deleteExpiredData(DateTime.now))
 
@@ -231,7 +251,7 @@ class DeleteExpiredDataServiceSpec extends MongoEmbeddedDatabase with MockitoSug
       await(saRepo.insert(sa1))
       when(fhlRepo.delete(any[SaUtr](), any[TaxYear]())).thenThrow(new RuntimeException("something wrong"))
 
-      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, jobRepo)
+      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, divRepo, bankRepo, jobRepo)
 
       an[RuntimeException] should be thrownBy await(service.deleteExpiredData(DateTime.now))
 
@@ -245,7 +265,7 @@ class DeleteExpiredDataServiceSpec extends MongoEmbeddedDatabase with MockitoSug
       await(saRepo.insert(sa1))
       when(ukPropertyRepo.delete(any[SaUtr](), any[TaxYear]())).thenThrow(new RuntimeException("something wrong"))
 
-      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, jobRepo)
+      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, divRepo, bankRepo, jobRepo)
 
       an[RuntimeException] should be thrownBy await(service.deleteExpiredData(DateTime.now))
 
@@ -259,7 +279,7 @@ class DeleteExpiredDataServiceSpec extends MongoEmbeddedDatabase with MockitoSug
       await(saRepo.insert(sa1))
       when(uiRepo.delete(any[SaUtr](), any[TaxYear]())).thenThrow(new RuntimeException("something wrong"))
 
-      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, jobRepo)
+      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, divRepo, bankRepo, jobRepo)
 
       an[RuntimeException] should be thrownBy await(service.deleteExpiredData(DateTime.now))
 
@@ -267,13 +287,26 @@ class DeleteExpiredDataServiceSpec extends MongoEmbeddedDatabase with MockitoSug
       verify(uiRepo).delete(any[SaUtr](), any[TaxYear]())
     }
 
+    "mark job as failed if there is an exception when trying to delete records from bank" in {
+      val sa1 = SelfAssessment(BSONObjectID.generate, saUtr, taxYear, DateTime.now().minusMonths(1), DateTime.now().minusMonths(1))
+      val bankRepo = mock[BanksMongoRepository]
+      await(saRepo.insert(sa1))
+      when(bankRepo.delete(any[SaUtr](), any[TaxYear]())).thenThrow(new RuntimeException("something wrong"))
+
+      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, divRepo, bankRepo, jobRepo)
+
+      an[RuntimeException] should be thrownBy await(service.deleteExpiredData(DateTime.now))
+
+      await(jobRepo.find().head).status shouldBe Failed
+      verify(bankRepo).delete(any[SaUtr](), any[TaxYear]())
+    }
 
     "mark job as failed if there is an exception when trying to mark job as completed" in {
       val jobRepo = mock[JobHistoryMongoRepository]
       when(jobRepo.startJob()).thenReturn(Future(JobHistory(1, InProgress)))
       when(jobRepo.completeJob(1, 0)).thenThrow(new RuntimeException("something wrong"))
 
-      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, jobRepo)
+      val service = new DeleteExpiredDataService(saRepo, seRepo, uiRepo, empRepo, fhlRepo, ukPropertyRepo, divRepo, bankRepo, jobRepo)
 
       an[RuntimeException] should be thrownBy await(service.deleteExpiredData(DateTime.now))
 
@@ -325,6 +358,13 @@ class DeleteExpiredDataServiceSpec extends MongoEmbeddedDatabase with MockitoSug
   private def insertUKPropertyRecords(records: UKProperties*) = {
     records.foreach { record =>
       val futureWrite = ukPropertyRepo.insert(record)
+      whenReady(futureWrite)(identity)
+    }
+  }
+
+  private def insertBankRecords(records: Bank*) = {
+    records.foreach { record =>
+      val futureWrite = bankRepo.insert(record)
       whenReady(futureWrite)(identity)
     }
   }

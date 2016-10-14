@@ -25,7 +25,7 @@ import reactivemongo.bson.{BSONDocument, BSONObjectID, BSONString}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.mongo.{AtomicUpdate, ReactiveRepository}
-import uk.gov.hmrc.selfassessmentapi.controllers.api.unearnedincome.{Benefit, Dividend, SavingsIncome}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.unearnedincome.Benefit
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{SourceId, SummaryId, TaxYear, _}
 import uk.gov.hmrc.selfassessmentapi.repositories._
 import uk.gov.hmrc.selfassessmentapi.repositories.domain._
@@ -53,8 +53,6 @@ class UnearnedIncomeMongoRepository(implicit mongo: () => DB)
   override def indexes: Seq[Index] = Seq(
     Index(Seq(("saUtr", Ascending), ("taxYear", Ascending)), name = Some("ui_utr_taxyear"), unique = false),
     Index(Seq(("saUtr", Ascending), ("taxYear", Ascending), ("sourceId", Ascending)), name = Some("ui_utr_taxyear_sourceid"), unique = true),
-    Index(Seq(("saUtr", Ascending), ("taxYear", Ascending), ("sourceId", Ascending), ("savings.summaryId", Ascending)), name = Some("ui_utr_taxyear_source_savingsid"), unique = true),
-    Index(Seq(("saUtr", Ascending), ("taxYear", Ascending), ("sourceId", Ascending), ("dividends.summaryId", Ascending)), name = Some("ui_utr_taxyear_source_dividendsid"), unique = true),
     Index(Seq(("saUtr", Ascending), ("taxYear", Ascending), ("sourceId", Ascending), ("benefits.summaryId", Ascending)), name = Some("ui_utr_taxyear_source_benefitsid"), unique = true),
     Index(Seq(("lastModifiedDateTime", Ascending)), name = Some("ui_last_modified"), unique = false))
 
@@ -92,46 +90,6 @@ class UnearnedIncomeMongoRepository(implicit mongo: () => DB)
         modifiers
       )
     } yield result.nonEmpty
-  }
-
-  object SavingsIncomeRepository extends SummaryRepository[SavingsIncome] {
-    override def create(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, income: SavingsIncome): Future[Option[SummaryId]] =
-      self.createSummary(saUtr, taxYear, sourceId, UnearnedIncomesSavingsIncomeSummary.toMongoSummary(income))
-
-    override def findById(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Option[SavingsIncome]] =
-      self.findSummaryById[SavingsIncome](saUtr, taxYear, sourceId, (se: UnearnedIncome) => se.savings.find(_.summaryId == id).map(_.toSavingsIncome))
-
-    override def update(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, income: SavingsIncome): Future[Boolean] =
-      self.updateSummary(saUtr, taxYear, sourceId, UnearnedIncomesSavingsIncomeSummary.toMongoSummary(income, Some(id)), (se: UnearnedIncome) => se.savings.exists(_.summaryId == id))
-
-    override def delete(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Boolean] =
-      self.deleteSummary(saUtr, taxYear, sourceId, id, UnearnedIncomesSavingsIncomeSummary.arrayName, (se: UnearnedIncome) => se.savings.exists(_.summaryId == id))
-
-    override def list(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Option[Seq[SavingsIncome]]] =
-      self.listSummaries[SavingsIncome](saUtr, taxYear, sourceId, (se: UnearnedIncome) => se.savings.map(_.toSavingsIncome))
-
-    override def listAsJsonItem(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] =
-      list(saUtr, taxYear,sourceId).map(_.getOrElse(Seq()).map(income => JsonItem(income.id.get.toString, toJson(income))))
-  }
-
-  object DividendRepository extends SummaryRepository[Dividend] {
-    override def create(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, expense: Dividend): Future[Option[SummaryId]] =
-      self.createSummary(saUtr, taxYear, sourceId, UnearnedIncomesDividendSummary.toMongoSummary(expense))
-
-    override def findById(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Option[Dividend]] =
-      self.findSummaryById[Dividend](saUtr, taxYear, sourceId, (se: UnearnedIncome) => se.dividends.find(_.summaryId == id).map(_.toDividend))
-
-    override def update(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, expense: Dividend): Future[Boolean] =
-      self.updateSummary(saUtr, taxYear, sourceId, UnearnedIncomesDividendSummary.toMongoSummary(expense, Some(id)), (se: UnearnedIncome) => se.dividends.exists(_.summaryId == id))
-
-    override def delete(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Boolean] =
-      self.deleteSummary(saUtr, taxYear, sourceId, id, UnearnedIncomesDividendSummary.arrayName, (se: UnearnedIncome) => se.dividends.exists(_.summaryId == id))
-
-    override def list(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Option[Seq[Dividend]]] =
-      self.listSummaries[Dividend](saUtr, taxYear, sourceId, (se: UnearnedIncome) => se.dividends.map(_.toDividend))
-
-    override def listAsJsonItem(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] =
-      list(saUtr, taxYear,sourceId).map(_.getOrElse(Seq()).map(expense => JsonItem(expense.id.get.toString, toJson(expense))))
   }
 
   object BenefitRepository extends SummaryRepository[Benefit] {

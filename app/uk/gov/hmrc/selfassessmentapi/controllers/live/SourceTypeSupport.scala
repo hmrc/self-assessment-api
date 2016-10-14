@@ -18,13 +18,15 @@ package uk.gov.hmrc.selfassessmentapi.controllers.live
 
 import uk.gov.hmrc.play.http.NotImplementedException
 import uk.gov.hmrc.selfassessmentapi.controllers.SourceHandler
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{SourceType, SourceTypes}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.SourceType
+import uk.gov.hmrc.selfassessmentapi.controllers.api.SourceTypes._
+import uk.gov.hmrc.selfassessmentapi.controllers.live.dividend.DividendSourceHandler
 import uk.gov.hmrc.selfassessmentapi.controllers.live.employment.EmploymentSourceHandler
 import uk.gov.hmrc.selfassessmentapi.controllers.live.furnishedholidaylettings.FurnishedHolidayLettingsSourceHandler
 import uk.gov.hmrc.selfassessmentapi.controllers.live.selfemployment.SelfEmploymentSourceHandler
 import uk.gov.hmrc.selfassessmentapi.controllers.live.ukproperty.UKPropertySourceHandler
 import uk.gov.hmrc.selfassessmentapi.controllers.live.unearnedincome.UnearnedIncomeSourceHandler
-import SourceTypes._
+import uk.gov.hmrc.selfassessmentapi.controllers.live.bank.BankSourceHandler
 
 trait SourceTypeSupport extends uk.gov.hmrc.selfassessmentapi.controllers.SourceTypeSupport {
   def sourceHandler(sourceType: SourceType): SourceHandler[_] = sourceType match {
@@ -33,6 +35,8 @@ trait SourceTypeSupport extends uk.gov.hmrc.selfassessmentapi.controllers.Source
     case FurnishedHolidayLettings => FurnishedHolidayLettingsSourceHandler
     case Employments => EmploymentSourceHandler
     case UKProperties => UKPropertySourceHandler
+    case Dividends => DividendSourceHandler
+    case Banks => BankSourceHandler
     case _ => throw new NotImplementedException(s"${sourceType.name} is not implemented")
   }
 }

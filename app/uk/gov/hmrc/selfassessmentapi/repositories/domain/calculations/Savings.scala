@@ -18,16 +18,16 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain.calculations
 
 import uk.gov.hmrc.selfassessmentapi.controllers._
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
-import uk.gov.hmrc.selfassessmentapi.controllers.api.unearnedincome.SavingsIncomeType
+import uk.gov.hmrc.selfassessmentapi.controllers.api.bank.InterestType
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.TaxBand._
-import uk.gov.hmrc.selfassessmentapi.repositories.domain.{IncomeTax, UnearnedIncome, TaxBand}
+import uk.gov.hmrc.selfassessmentapi.repositories.domain.{SelfAssessment => _, _}
 
 object Savings {
 
   object TotalTaxPaid {
     def apply(selfAssessment: SelfAssessment): BigDecimal = {
-      selfAssessment.unearnedIncomes.map { income =>
-        RoundUpToPennies(TaxedInterest(income) * 0.25)
+      selfAssessment.banks.map { bank =>
+        RoundUpToPennies(TaxedInterest(bank) * 0.25)
       }.sum
     }
   }
@@ -45,21 +45,21 @@ object Savings {
   }
 
   private object Interest {
-    def apply(income: UnearnedIncome, `type`: SavingsIncomeType.Value) = income.savings.filter(_.`type` == `type`).map(_.amount).sum
+    def apply(bank: Bank, `type`: InterestType.Value) = bank.interests.filter(_.`type` == `type`).map(_.amount).sum
   }
 
   private object TaxedInterest {
-    def apply(mongoUnearnedIncome: UnearnedIncome) = Interest(mongoUnearnedIncome, SavingsIncomeType.InterestFromBanksTaxed)
+    def apply(bank: Bank) = Interest(bank, InterestType.Taxed)
   }
 
   private object UntaxedInterest {
-    def apply(mongoUnearnedIncome: UnearnedIncome) = Interest(mongoUnearnedIncome, SavingsIncomeType.InterestFromBanksUntaxed)
+    def apply(bank: Bank) = Interest(bank, InterestType.Untaxed)
   }
 
   object Incomes {
     def apply(selfAssessment: SelfAssessment): Seq[InterestFromUKBanksAndBuildingSocieties] =
-      selfAssessment.unearnedIncomes.map { income =>
-        new InterestFromUKBanksAndBuildingSocieties(income.sourceId, RoundDown(TaxedInterest(income) * 100/80 + UntaxedInterest(income)))
+      selfAssessment.banks.map { bank =>
+        new InterestFromUKBanksAndBuildingSocieties(bank.sourceId, RoundDown(TaxedInterest(bank) * 100/80 + UntaxedInterest(bank)))
       }
   }
 
