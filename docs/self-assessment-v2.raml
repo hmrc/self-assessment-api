@@ -141,9 +141,6 @@ schemas:
     # Only some adjustments apply to certain sources of income.
     #
     # includedNonTaxableProfits = Income, receipts and other profits included in business income or expenses but not taxable as business profits (SA103f - Incr.)
-    # privateUseAdjustment = FHL UK - Private use ajustment (SA105 - Incr.)
-    # privateUseAdjustment = "EEA UK - Private use ajustment (SA105 - Incr.)
-    # privateUseAdjustment = Property - Private use ajustment (SA105 - Incr.)
   - Adjustments: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "Adjustments",
@@ -187,6 +184,10 @@ schemas:
   # PremiumsOfLeaseGrant = Property - Premiums for the grant of a lease – from box E on the Working Sheet (SA105 - Incr.)
   # ReversePremiums = Property - Reverse premiums and inducements (SA105 - Incr.)
   # BalancingCharge = Property - Balancing charges (SA105 - Incr.)
+  # PrivateUseAdjustment = FHL UK - Private use ajustment (SA105 - Incr.)
+  # PrivateUseAdjustment = "EEA UK - Private use ajustment (SA105 - Incr.)
+  # PrivateUseAdjustment = Property - Private use ajustment (SA105 - Incr.)
+  # GoodsAndServicesOwnUse = Goods and services for your own use (SA103f - Incr.)
   - Income: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A summary of income transactions taken from a ledger",
@@ -207,7 +208,9 @@ schemas:
               "RentIncome",
               "PremiumsOfLeaseGrant",
               "ReversePremiums",
-              "BalancingCharge"
+              "BalancingCharge",
+              "PrivateUseAdjustment",
+              "GoodsAndServicesOwnUse"
             ]
           },
           "amount": {"$ref": "Money"},
@@ -219,8 +222,6 @@ schemas:
         "additionalProperties": false
       }
   # Only some categories are allowed for some source type and summary type.
-  #
-  # GoodsAndServicesOwnUse = Goods and services for your own use (SA103f - Incr.)
   - Deduction: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A summary of deductions (e.g. expenses) transactions taken from a ledger",
@@ -246,8 +247,7 @@ schemas:
               "RepairsAndMaintenance",
               "StaffCosts",
               "TravelAndSubsistence",
-              "TravelCosts",
-              "GoodsAndServicesOwnUse"
+              "TravelCosts"
             ]
           },
           "amount": {"$ref": "Money"},
@@ -446,6 +446,26 @@ schemas:
         "required": ["income", "incomeTaxCalculations", "taxDeducted", "totalTaxDue", "totalTaxOverpaid"],
         "additionalProperties": false
       }
+
+traits:
+  - taxYearQueryParameters:
+      queryParameters:
+        taxYear:
+          type: string
+          example: 2017-18
+          required: true
+  # We're not completely clear on what headers will be needed yet.
+  - softwarePackageHeaders:
+      headers:
+        X-SubmitterId:
+          type: string
+        X-SoftwarePackageId:
+          type: string
+        X-SoftwarePackageName:
+          type: string
+        X-SoftwarePackageVersion:
+          type: string
+
 /self-assessments/nino/{nino}:
   uriParameters:
     nino:
@@ -533,6 +553,7 @@ schemas:
                   }
       put:
         description: Update a source of income
+        is: [ softwarePackageHeaders ]
         body:
           application/json:
             schema: Source
@@ -555,6 +576,7 @@ schemas:
                   schema: Allowances
         put:
           description: Set allowances for a souce of income
+          is: [ softwarePackageHeaders ]
           body:
             application/json:
               schema: Allowances
@@ -573,6 +595,7 @@ schemas:
                   schema: Adjustments
         put:
           description: Set adjustments for a source of income
+          is: [ softwarePackageHeaders ]
           body:
             application/json:
               schema: Adjustments
@@ -581,6 +604,7 @@ schemas:
       /incomes:
         get:
           description: List incomes for a source of income
+          is: [ taxYearQueryParameters ]
           responses:
             200:
               body:
@@ -595,6 +619,7 @@ schemas:
                     }
         post:
           description: Create a income for a source
+          is: [ softwarePackageHeaders ]
           body:
             application/json:
               schema: Income
@@ -625,6 +650,7 @@ schemas:
                       }
           put:
             description: Update income
+            is: [ softwarePackageHeaders ]
             body:
               application/json:
                 schema: Income
@@ -633,6 +659,7 @@ schemas:
       /deductions:
         get:
           description: List deductions for a source of income
+          is: [ taxYearQueryParameters ]
           responses:
             200:
               body:
@@ -648,6 +675,7 @@ schemas:
                     }
         post:
           description: Create an deduction for a source
+          is: [ softwarePackageHeaders ]
           body:
             application/json:
               schema: Deduction
@@ -678,6 +706,7 @@ schemas:
                       }
           put:
             description: Update deduction
+            is: [ softwarePackageHeaders ]
             body:
               application/json:
                 schema: Deduction
@@ -686,6 +715,7 @@ schemas:
       /benefits:
         get:
           description: List benefits for a source of income
+          is: [ taxYearQueryParameters ]
           responses:
             200:
               body:
@@ -700,6 +730,7 @@ schemas:
                     }
         post:
           description: Create an benefit for a source
+          is: [ softwarePackageHeaders ]
           body:
             application/json:
               schema: Benefit
@@ -730,6 +761,7 @@ schemas:
                       }
           put:
             description: Update benefit
+            is: [ softwarePackageHeaders ]
             body:
               application/json:
                 schema: Benefit
@@ -743,6 +775,7 @@ schemas:
           schema: NonFinancial
     put:
       description: Set non-financial data
+      is: [ softwarePackageHeaders ]
       body:
         application/json:
           schema: NonFinancial
@@ -769,6 +802,7 @@ schemas:
                 }
     put:
       description: Updated charitable givings for a tax year
+      is: [ softwarePackageHeaders ]
       body:
         application/json:
           schema: CharitableGiving
@@ -792,29 +826,35 @@ schemas:
       description: Get student loans for a tax year
     put:
       description: Updated student loans for a tax year
+      is: [ softwarePackageHeaders ]
   /blind-person-allowances/{taxYear}:
     get:
       description: Get blind person allowances for a tax year
     put:
       description: Updated blind person allowances for a tax year
+      is: [ softwarePackageHeaders ]
   /child-benefits/{taxYear}:
     get:
       description: Get child benefits for a tax year
     put:
       description: Updated child benefits for a tax year
+      is: [ softwarePackageHeaders ]
   /taxes-refunded-or-set-off/{taxYear}:
     get:
       description: Get taxes refunded or set off for a tax year
     put:
       description: Updated taxes refunded or set off for a tax year
+      is: [ softwarePackageHeaders ]
   /pension-contributions/{taxYear}:
     get:
       description: Get pension contributions for a tax year
     put:
       description: Updated pension contributions for a tax year
+      is: [ softwarePackageHeaders ]
   /declarations:
     post:
       description: Create a declaration
+      is: [ softwarePackageHeaders ]
       body:
         application/json:
           schema: Declaration
@@ -834,6 +874,7 @@ schemas:
                 }
     get:
       description: List declarations
+      is: [ taxYearQueryParameters ]
       responses:
         200:
           body:
