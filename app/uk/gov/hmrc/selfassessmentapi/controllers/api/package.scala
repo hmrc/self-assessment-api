@@ -45,6 +45,10 @@ package object api {
     MAX_MONETARY_AMOUNT))(_ <= maxAmount)
 
   object Sum {
+    def apply(values: BigDecimal*) = values.sum
+  }
+
+  object SumOptionals {
     def apply(values: Option[BigDecimal]*) = values.flatten.sum
   }
 

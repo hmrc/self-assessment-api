@@ -27,7 +27,7 @@ case class Allowances(annualInvestmentAllowance: Option[BigDecimal] = None,
                       wearAndTearAllowance: Option[BigDecimal] = None
                      ) {
 
-  def total: BigDecimal = Sum(annualInvestmentAllowance, businessPremisesRenovationAllowance, otherCapitalAllowance, wearAndTearAllowance)
+  def total: BigDecimal = SumOptionals(annualInvestmentAllowance, businessPremisesRenovationAllowance, otherCapitalAllowance, wearAndTearAllowance)
 }
 
 object Allowances {

@@ -107,21 +107,7 @@ class SelfEmploymentMongoRepository(implicit mongo: () => DB)
       )
     ).getOrElse(Seq("$set" -> BSONDocument("allowances" -> BSONNull)))
 
-    val adjustmentsModifiers = selfEmployment.adjustments.map(adjustments =>
-      Seq(
-        "$set" -> BSONDocument("adjustments" -> BSONDocument(Seq(
-          "accountingAdjustment" -> adjustments.accountingAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONNull),
-          "averagingAdjustment" -> adjustments.averagingAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONNull),
-          "basisAdjustment" -> adjustments.basisAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONNull),
-          "includedNonTaxableProfits" -> adjustments.includedNonTaxableProfits.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONNull),
-          "lossBroughtForward" -> adjustments.lossBroughtForward.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONNull),
-          "outstandingBusinessIncome" -> adjustments.outstandingBusinessIncome.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONNull),
-          "overlapReliefUsed" -> adjustments.overlapReliefUsed.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONNull)
-        )))
-      )
-    ).getOrElse(Seq("$set" -> BSONDocument("adjustments" -> BSONNull)))
-
-    val modifiers = BSONDocument(baseModifiers ++ allowancesModifiers ++ adjustmentsModifiers)
+    val modifiers = BSONDocument(baseModifiers ++ allowancesModifiers)
 
     for {
       result <- atomicUpdate(
@@ -129,6 +115,53 @@ class SelfEmploymentMongoRepository(implicit mongo: () => DB)
         modifiers
       )
     } yield result.nonEmpty
+  }
+
+  def createAdjustments(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, adjustments: Adjustments): Future[Boolean] = {
+    val modifiers = BSONDocument(
+      "$set" -> BSONDocument("adjustments" -> BSONDocument(Seq(
+        "accountingAdjustment" -> BSONDouble(adjustments.accountingAdjustment.doubleValue()),
+        "averagingAdjustment" -> BSONDouble(adjustments.averagingAdjustment.doubleValue()),
+        "basisAdjustment" -> BSONDouble(adjustments.basisAdjustment.doubleValue()),
+        "includedNonTaxableProfits" -> BSONDouble(adjustments.includedNonTaxableProfits.doubleValue()),
+        "lossBroughtForward" -> BSONDouble(adjustments.lossBroughtForward.doubleValue()),
+        "outstandingBusinessIncome" -> BSONDouble(adjustments.outstandingBusinessIncome.doubleValue()),
+        "overlapReliefUsed" -> BSONDouble(adjustments.overlapReliefUsed.doubleValue())
+      ))))
+
+    for {
+      result <- atomicUpdate(
+        BSONDocument("saUtr" -> BSONString(saUtr.toString), "taxYear" -> BSONString(taxYear.toString), "sourceId" -> BSONString(sourceId)),
+        modifiers
+      )
+    } yield result.nonEmpty
+  }
+
+  def updateAdjustments(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, adjustments: Adjustments): Future[Boolean] = {
+    val modifiers = BSONDocument(
+      "$set" -> BSONDocument("adjustments" -> BSONDocument(Seq(
+        "accountingAdjustment" -> BSONDouble(adjustments.accountingAdjustment.doubleValue()),
+        "averagingAdjustment" -> BSONDouble(adjustments.averagingAdjustment.doubleValue()),
+        "basisAdjustment" -> BSONDouble(adjustments.basisAdjustment.doubleValue()),
+        "includedNonTaxableProfits" -> BSONDouble(adjustments.includedNonTaxableProfits.doubleValue()),
+        "lossBroughtForward" -> BSONDouble(adjustments.lossBroughtForward.doubleValue()),
+        "outstandingBusinessIncome" -> BSONDouble(adjustments.outstandingBusinessIncome.doubleValue()),
+        "overlapReliefUsed" -> BSONDouble(adjustments.overlapReliefUsed.doubleValue())
+      ))))
+
+    for {
+      result <- atomicUpdate(
+        BSONDocument("saUtr" -> BSONString(saUtr.toString), "taxYear" -> BSONString(taxYear.toString), "sourceId" -> BSONString(sourceId)),
+        modifiers
+      )
+    } yield result.nonEmpty
+  }
+
+  def findAdjustments(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Option[Adjustments]] = {
+    findMongoObjectById(saUtr, taxYear, sourceId).map {
+      case Some(selfEmployment) => selfEmployment.adjustments
+      case None => None
+    }
   }
 
   object IncomeRepository extends SummaryRepository[Income] {
@@ -212,6 +245,4 @@ class SelfEmploymentMongoRepository(implicit mongo: () => DB)
     override def listAsJsonItem(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] =
       list(saUtr, taxYear,sourceId).map(_.getOrElse(Seq()).map(goodsAndServicesOwnUse => JsonItem(goodsAndServicesOwnUse.id.get.toString, toJson(goodsAndServicesOwnUse))))
   }
-
-
 }

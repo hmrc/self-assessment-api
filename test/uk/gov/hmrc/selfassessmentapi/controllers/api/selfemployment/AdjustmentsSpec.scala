@@ -24,14 +24,7 @@ class AdjustmentsSpec extends JsonSpec {
 
   "format" should {
     "round trip valid Adjustments json" in {
-      roundTripJson(Adjustments(
-        includedNonTaxableProfits = Some(BigDecimal(10.00)),
-        basisAdjustment = Some(BigDecimal(10.00)),
-        overlapReliefUsed = Some(BigDecimal(10.00)),
-        accountingAdjustment = Some(BigDecimal(10.00)),
-        averagingAdjustment = Some(BigDecimal(10.00)),
-        lossBroughtForward = Some(BigDecimal(10.00)),
-        outstandingBusinessIncome = Some(BigDecimal(10.00))))
+      roundTripJson(Adjustments.example)
     }
   }
 
@@ -43,47 +36,47 @@ class AdjustmentsSpec extends JsonSpec {
     }
 
     "reject negative includedNonTaxableProfits" in {
-      val se = Adjustments(includedNonTaxableProfits = Some(BigDecimal(-10.00)))
+      val se = Adjustments(includedNonTaxableProfits = BigDecimal(-10.00))
      validateNegative(se, "/includedNonTaxableProfits")
     }
 
     "reject negative overlapReliefUsed" in {
-      val se = Adjustments(overlapReliefUsed = Some(BigDecimal(-10.00)))
+      val se = Adjustments(overlapReliefUsed = BigDecimal(-10.00))
      validateNegative(se, "/overlapReliefUsed")
     }
 
     "reject negative accountingAdjustment" in {
-      val se = Adjustments(accountingAdjustment = Some(BigDecimal(-10.00)))
+      val se = Adjustments(accountingAdjustment = BigDecimal(-10.00))
      validateNegative(se, "/accountingAdjustment")
     }
 
     "not reject negative averagingAdjustment" in {
-      val se = Adjustments(averagingAdjustment = Some(BigDecimal(-10.00)))
+      val se = Adjustments(averagingAdjustment = BigDecimal(-10.00))
      assertValidationPasses[Adjustments](se)
     }
 
     "not reject positive averagingAdjustment" in {
-      val se = Adjustments(averagingAdjustment = Some(BigDecimal(10.00)))
+      val se = Adjustments(averagingAdjustment = BigDecimal(10.00))
      assertValidationPasses[Adjustments](se)
     }
 
     "reject negative lossBroughtForward" in {
-      val se = Adjustments(lossBroughtForward = Some(BigDecimal(-10.00)))
+      val se = Adjustments(lossBroughtForward = BigDecimal(-10.00))
      validateNegative(se, "/lossBroughtForward")
     }
 
     "reject negative outstandingBusinessIncome" in {
-      val se = Adjustments(outstandingBusinessIncome = Some(BigDecimal(-10.00)))
+      val se = Adjustments(outstandingBusinessIncome = BigDecimal(-10.00))
      validateNegative(se, "/outstandingBusinessIncome")
     }
 
     "not reject negative basisAdjustment" in {
-      val se = Adjustments(basisAdjustment = Some(BigDecimal(-10.00)))
+      val se = Adjustments(basisAdjustment = BigDecimal(-10.00))
       assertValidationPasses[Adjustments](se)
     }
 
     "not reject positive basisAdjustment" in {
-      val se = Adjustments(basisAdjustment = Some(BigDecimal(10.00)))
+      val se = Adjustments(basisAdjustment = BigDecimal(10.00))
       assertValidationPasses[Adjustments](se)
     }
 

@@ -60,7 +60,7 @@ object SelfEmployment {
 
     def totalAllowances(selfEmployment: domain.SelfEmployment) = {
       selfEmployment.allowances.map { a =>
-        Sum(CapAt(a.annualInvestmentAllowance, annualInvestmentAllowanceThreshold),
+        SumOptionals(CapAt(a.annualInvestmentAllowance, annualInvestmentAllowanceThreshold),
             a.capitalAllowanceMainPool,
             a.capitalAllowanceSpecialRatePool,
             a.businessPremisesRenovationAllowance,
@@ -93,7 +93,7 @@ object SelfEmployment {
 
   object LossBroughtForward {
     def apply(selfEmployment: domain.SelfEmployment) =
-      ValueOrZero(selfEmployment.adjustments.flatMap(_.lossBroughtForward))
+      ValueOrZero(selfEmployment.adjustments.map(_.lossBroughtForward))
   }
 
   object TotalLossBroughtForward {

@@ -48,21 +48,8 @@ object SourceType {
       PositiveMonetaryFieldDescription(name, "enhancedCapitalAllowance", "100% capital allowance can be claimed for eligible capital purchases", optional = true),
       PositiveMonetaryFieldDescription(name, "allowancesOnSales",
         """If the business ceases, any balance left in the relevant pool can be claimed after
-          |either the selling price or market value has been deducted from the pool balance, as a balancing allowance instead of claiming a WDA""".stripMargin, optional = true),
-      FullFieldDescription(name, "adjustments", "Object", "Adjustments for this self-employment", optional = true),
-      PositiveMonetaryFieldDescription(name, "includedNonTaxableProfits", "For income, receipts and other profits that have been included in business turnover but are not taxable as business profits", optional = true),
-      MonetaryFieldDescription(name, "basisAdjustment",
-        """Tax is paid on the profits of the basis period for the tax year.
-          |If the basis period is not the same as the accounting period, an adjustment is needed to arrive at the profit or loss for the basis period""".stripMargin, optional = true),
-      PositiveMonetaryFieldDescription(name, "overlapReliefUsed", "When eligible, overlap relief can claimed if the business has overlap profits", optional = true),
-      PositiveMonetaryFieldDescription(name, "accountingAdjustment", "If accounting practice has changed (from cash to accrual) an adjustment may be required", optional = true),
-      MonetaryFieldDescription(name, "averagingAdjustment", "If an averaging claim changes the amount of the profit, an adjustment is required. Cannot be used if using cash basis", optional = true),
-      PositiveMonetaryFieldDescription(name, "lossBroughtForward",
-        """If a loss was made in the previous or earlier tax years, this can be used against the profits from this tax year.
-           The loss claimed cannot be more than the adjusted profit for this tax year
-        """.stripMargin, optional = true),
-      PositiveMonetaryFieldDescription(name, "outstandingBusinessIncome", """For other business income that hasn’t been included such as rebates received and non arm’s length reverse premiums""", optional = true)
-    )
+          |either the selling price or market value has been deducted from the pool balance, as a balancing allowance instead of claiming a WDA""".stripMargin, optional = true)
+      )
   }
 
 }

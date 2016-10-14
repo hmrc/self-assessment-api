@@ -21,33 +21,33 @@ import play.api.libs.json.Reads._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
 
-case class Adjustments(includedNonTaxableProfits: Option[BigDecimal] = None,
-                       basisAdjustment: Option[BigDecimal] = None,
-                       overlapReliefUsed: Option[BigDecimal] = None,
-                       accountingAdjustment: Option[BigDecimal] = None,
-                       averagingAdjustment: Option[BigDecimal] = None,
-                       lossBroughtForward: Option[BigDecimal] = None,
-                       outstandingBusinessIncome: Option[BigDecimal] = None)
+case class Adjustments(includedNonTaxableProfits: BigDecimal = 0,
+                       basisAdjustment: BigDecimal = 0,
+                       overlapReliefUsed: BigDecimal = 0,
+                       accountingAdjustment: BigDecimal = 0,
+                       averagingAdjustment: BigDecimal = 0,
+                       lossBroughtForward: BigDecimal = 0,
+                       outstandingBusinessIncome: BigDecimal = 0)
 
 object Adjustments {
   implicit val writes = Json.writes[Adjustments]
 
   implicit val reads: Reads[Adjustments] = (
-    (__ \ "includedNonTaxableProfits").readNullable[BigDecimal](positiveAmountValidator("includedNonTaxableProfits")) and
-      (__ \ "basisAdjustment").readNullable[BigDecimal](amountValidator("basisAdjustment")) and
-      (__ \ "overlapReliefUsed").readNullable[BigDecimal](positiveAmountValidator("overlapReliefUsed")) and
-      (__ \ "accountingAdjustment").readNullable[BigDecimal](positiveAmountValidator("accountingAdjustment")) and
-      (__ \ "averagingAdjustment").readNullable[BigDecimal](amountValidator("averagingAdjustment")) and
-      (__ \ "lossBroughtForward").readNullable[BigDecimal](positiveAmountValidator("lossBroughtForward")) and
-      (__ \ "outstandingBusinessIncome").readNullable[BigDecimal](positiveAmountValidator("outstandingBusinessIncome"))
+    (__ \ "includedNonTaxableProfits").read[BigDecimal](positiveAmountValidator("includedNonTaxableProfits")) and
+      (__ \ "basisAdjustment").read[BigDecimal](amountValidator("basisAdjustment")) and
+      (__ \ "overlapReliefUsed").read[BigDecimal](positiveAmountValidator("overlapReliefUsed")) and
+      (__ \ "accountingAdjustment").read[BigDecimal](positiveAmountValidator("accountingAdjustment")) and
+      (__ \ "averagingAdjustment").read[BigDecimal](amountValidator("averagingAdjustment")) and
+      (__ \ "lossBroughtForward").read[BigDecimal](positiveAmountValidator("lossBroughtForward")) and
+      (__ \ "outstandingBusinessIncome").read[BigDecimal](positiveAmountValidator("outstandingBusinessIncome"))
     ) (Adjustments.apply _)
 
-  lazy val example = Adjustments(
-    includedNonTaxableProfits = Some(BigDecimal(50.00)),
-    basisAdjustment = Some(BigDecimal(20.10)),
-    overlapReliefUsed = Some(BigDecimal(500.00)),
-    accountingAdjustment = Some(BigDecimal(10.50)),
-    averagingAdjustment = Some(BigDecimal(-400.99)),
-    lossBroughtForward = Some(BigDecimal(10000.00)),
-    outstandingBusinessIncome = Some(BigDecimal(50.00)))
+  val example = Adjustments(
+    includedNonTaxableProfits = BigDecimal(50.00),
+    basisAdjustment = BigDecimal(20.10),
+    overlapReliefUsed = BigDecimal(500.00),
+    accountingAdjustment = BigDecimal(10.50),
+    averagingAdjustment = BigDecimal(-400.99),
+    lossBroughtForward = BigDecimal(10000.00),
+    outstandingBusinessIncome = BigDecimal(50.00))
 }
