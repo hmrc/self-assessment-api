@@ -100,7 +100,12 @@ schemas:
         },
         "additionalProperties": false
       }
-    # only some adjustments apply to certain sources of income
+    # Only some adjustments apply to certain sources of income.
+    #
+    # includedNonTaxableProfits = Income, receipts and other profits included in business income or expenses but not taxable as business profits (SA103f - Incr.)
+    # privateUseAdjustment = FHL UK - Private use ajustment (SA105 - Incr.)
+    # privateUseAdjustment = "EEA UK - Private use ajustment (SA105 - Incr.)
+    # privateUseAdjustment = Property - Private use ajustment (SA105 - Incr.)
   - Adjustments: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "Adjustments",
@@ -123,7 +128,27 @@ schemas:
           "$ref": "Source"
         }
       }
-    # only some categories are allowed for some source type and summary type
+  # Only some categories are allowed for some source type and summary type.
+  #
+  # Taxed = Taxed UK interest (SA100 - Incr.)
+  # Untaxed = Untaxed UK interest (SA100 - Incr.)
+  # N/A = Untaxed foreign interest (up to £2,000) (SA100 - Incr.)
+  #       This field is removed.
+  # FromUKCompanies = Dividends from UK companies (SA100 - Incr.)
+  # FromOtherUKSources = Other Dividends (SA100 - Incr.)
+  # Turnover = Your turnover (SA103f - Incr.)
+  # Other = Any other business income (not in your turnover) (SA103f - Incr.)
+  # Other = Any other business income (SA103f - Incr.)
+  # BalancingChargeBPRA = Balancing charge on sale or cessation of business use (SA103f - Annual)
+  # BalancingChargeOther = Balancing charge on sales of other assets or on the cessation of business use (SA103f - Incr.)
+  # Any = FHL UK - Income (SA105 - Incr.)
+  # Any = FHL EEA - Income (SA105 - Incr.)
+  # BalancingCharge = FHL UK - Balancing Charges (SA105 - Incr.)
+  # BalancingCharge = EEA UK - Balancing Charges (SA105 - Incr.)
+  # RentIncome = Property - Total rents and other income from property (SA105 - Incr.)
+  # PremiumsOfLeaseGrant = Property - Premiums for the grant of a lease – from box E on the Working Sheet (SA105 - Incr.)
+  # ReversePremiums = Property - Reverse premiums and inducements (SA105 - Incr.)
+  # BalancingCharge = Property - Balancing charges (SA105 - Incr.)
   - Income: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A summary of income transactions taken from a ledger",
@@ -132,8 +157,19 @@ schemas:
           "category": {
             "type": "string",
             "enum": [
+              "Taxed",
+              "Untaxed",
+              "FromUKCompanies",
+              "FromOtherUKSources",
               "Turnover",
-              "Other"
+              "Other",
+              "BalancingChargeBPRA",
+              "BalancingChargeOther",
+              "Any",
+              "RentIncome",
+              "PremiumsOfLeaseGrant",
+              "ReversePremiums",
+              "BalancingCharge"
             ]
           },
           "amount": {"$ref": "Money"},
@@ -144,6 +180,9 @@ schemas:
         "required": ["id", "category", "amount", "from", "to"],
         "additionalProperties": false
       }
+  # Only some categories are allowed for some source type and summary type.
+  #
+  # GoodsAndServicesOwnUse = Goods and services for your own use (SA103f - Incr.)
   - Deduction: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A summary of deductions (e.g. expenses) transactions taken from a ledger",
@@ -169,7 +208,8 @@ schemas:
               "RepairsAndMaintenance",
               "StaffCosts",
               "TravelAndSubsistence",
-              "TravelCosts"
+              "TravelCosts",
+              "GoodsAndServicesOwnUse"
             ]
           },
           "amount": {"$ref": "Money"},
