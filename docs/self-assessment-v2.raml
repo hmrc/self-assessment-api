@@ -77,9 +77,21 @@ schemas:
   - NonFinancial: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "properties": {
-            "businessDetailsChanged": {"type": "boolean", "default": false},
-            "totalProfitLessThan5965": {"type": "boolean", "default": false},
-            "exemptFromClass4Nics": {"type": "boolean", "default": false}
+            "businessDetailsChangedRecently": {
+              "title": "Have your business details changed in the last 12 months?",
+              "type": "boolean",
+              "default": false
+            },
+            "payClass2Nics": {
+              "title": "Are your total profits for this tax year are less than £5,965 and have you chosen to pay Class 2 NIC's voluntarily?",
+              "type": "boolean",
+              "default": false
+            },
+            "exemptFromPayingClass4Nics": {
+              "title": "Are you are excempted from paying Class 4 NIC's?",
+              "type": "boolean",
+              "default": false
+            }
         },
         "additionalProperties": false
       }
@@ -402,7 +414,7 @@ schemas:
           - uk-properties
           - furnished-holiday-lettings
           - dividends
-          - savings
+          - banks
           - benefits
           - others
         required: true
