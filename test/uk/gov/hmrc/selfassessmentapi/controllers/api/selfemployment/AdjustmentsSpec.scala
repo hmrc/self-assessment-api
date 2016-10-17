@@ -24,14 +24,7 @@ class AdjustmentsSpec extends JsonSpec {
 
   "format" should {
     "round trip valid Adjustments json" in {
-      roundTripJson(Adjustments(
-        includedNonTaxableProfits = Some(BigDecimal(10.00)),
-        basisAdjustment = Some(BigDecimal(10.00)),
-        overlapReliefUsed = Some(BigDecimal(10.00)),
-        accountingAdjustment = Some(BigDecimal(10.00)),
-        averagingAdjustment = Some(BigDecimal(10.00)),
-        lossBroughtForward = Some(BigDecimal(10.00)),
-        outstandingBusinessIncome = Some(BigDecimal(10.00))))
+      roundTripJson(Adjustments.example)
     }
   }
 

@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.controllers.definition
 
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{FeatureSwitchedTaxYearProperties, SourceType, SourceTypes}
 import uk.gov.hmrc.selfassessmentapi.controllers.definition.APIStatus.APIStatus
 import uk.gov.hmrc.selfassessmentapi.controllers.definition.AuthType._
@@ -158,13 +159,14 @@ class SelfAssessmentApiDefinition(apiContext: String, apiStatus: APIStatus) {
         authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
       Endpoint(uriPattern = uri, endpointName = s"Retrieve All ${sourceType.documentationName}", method = GET,
         authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName =  resolveGroupName(sourceType))
-    )  ++ updateEndpoint ++  summaryEndpoints(sourceType)
+    )  ++ updateEndpoint ++  summaryEndpoints(sourceType) ++ propertyEndpoints(sourceType)
   }
 
   private lazy val summaryEndpoints : SourceType => Seq[Endpoint]  = { sourceType =>
     Helpers.enabledSummaries(sourceType).toSeq.flatMap { summaryType =>
       val uri: String = s"/{utr}/{tax-year}/${sourceType.name}/{${sourceType.name}-id}/${summaryType.name}"
       val uriWithId: String = s"$uri/{${summaryType.name}-id}"
+
       Seq(
         Endpoint(uriPattern = uri, endpointName = s"Create ${sourceType.documentationName} ${summaryType.documentationName}", method = POST,
           authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
@@ -176,6 +178,19 @@ class SelfAssessmentApiDefinition(apiContext: String, apiStatus: APIStatus) {
           authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
         Endpoint(uriPattern = uri, endpointName = s"Retrieve All ${sourceType.documentationName} ${summaryType.documentationName}", method = GET,
           authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName =  resolveGroupName(sourceType))
+      )
+    }
+  }
+
+  private lazy val propertyEndpoints: SourceType => Seq[Endpoint] = { sourceType =>
+    Helpers.enabledYearProperties(sourceType).toSeq.flatMap { propType =>
+      val uri: String = s"/{utr}/{tax-year}/${sourceType.name}/{${sourceType.name}-id}/${propType.name}"
+
+      Seq(
+        Endpoint(uriPattern = uri, endpointName = s"Retrieve ${sourceType.documentationName} ${propType.documentationName}", method = GET,
+          authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName = resolveGroupName(sourceType)),
+        Endpoint(uriPattern = uri, endpointName = s"Update ${sourceType.documentationName} ${propType.documentationName}", method = PUT,
+          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName = resolveGroupName(sourceType))
       )
     }
   }

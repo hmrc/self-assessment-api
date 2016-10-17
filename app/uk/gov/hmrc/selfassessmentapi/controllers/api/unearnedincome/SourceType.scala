@@ -28,6 +28,8 @@ object SourceType {
     override val name: String = "unearned-incomes"
     override val documentationName = "Unearned Incomes"
     override val summaryTypes : Set[SummaryType]= Set(Benefits)
+    override val propertyTypes: Set[YearPropertyType] = Set.empty
+
     override def example(sourceId: Option[SourceId] = None): JsValue = toJson(UnearnedIncome.example(sourceId))
 
     override def description(action: String): String = s"$action an unearned income"

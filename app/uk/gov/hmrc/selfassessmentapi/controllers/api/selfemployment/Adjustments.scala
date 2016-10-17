@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment
 
+import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
@@ -32,7 +33,7 @@ case class Adjustments(includedNonTaxableProfits: Option[BigDecimal] = None,
 object Adjustments {
   implicit val writes = Json.writes[Adjustments]
 
-  implicit val reads: Reads[Adjustments] = (
+  implicit val reads: Reads[Adjustments] = onlyFields(classOf[Adjustments].getDeclaredFields.map(_.getName)) andThen (
     (__ \ "includedNonTaxableProfits").readNullable[BigDecimal](positiveAmountValidator("includedNonTaxableProfits")) and
       (__ \ "basisAdjustment").readNullable[BigDecimal](amountValidator("basisAdjustment")) and
       (__ \ "overlapReliefUsed").readNullable[BigDecimal](positiveAmountValidator("overlapReliefUsed")) and
@@ -42,7 +43,13 @@ object Adjustments {
       (__ \ "outstandingBusinessIncome").readNullable[BigDecimal](positiveAmountValidator("outstandingBusinessIncome"))
     ) (Adjustments.apply _)
 
-  lazy val example = Adjustments(
+  private def onlyFields(allowed: Seq[String]): Reads[JsObject] = {
+    Reads.filter(
+      ValidationError("Unknown adjustment")
+    )(_.keys.forall(allowed.contains))
+  }
+
+  val example = Adjustments(
     includedNonTaxableProfits = Some(BigDecimal(50.00)),
     basisAdjustment = Some(BigDecimal(20.10)),
     overlapReliefUsed = Some(BigDecimal(500.00)),

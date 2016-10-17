@@ -30,6 +30,7 @@ object SourceType {
     override def example(sourceId: Option[SourceId] = None): JsValue = toJson(UKProperty.example(sourceId))
 
     override val summaryTypes: Set[SummaryType] = Set(Incomes, Expenses, TaxesPaid, BalancingCharges, PrivateUseAdjustments)
+    override val propertyTypes: Set[YearPropertyType] = Set.empty
     override val title = "Sample UK property"
 
     override def description(action: String) = s"$action a UK property"

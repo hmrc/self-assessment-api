@@ -18,10 +18,15 @@ package uk.gov.hmrc.selfassessmentapi.controllers.api
 
 import play.api.libs.json.JsValue
 
-trait SourceType extends Documentable {
+/**
+  * Represents source year property types.
+  * (i.e. only one per source, as opposed to summaries, which may have multiple)
+  */
+trait YearPropertyType {
   val name: String
   val documentationName: String
-  def example(id: Option[SourceId] = None): JsValue
-  val summaryTypes: Set[SummaryType]
-  val propertyTypes: Set[YearPropertyType]
+  def example(id: Option[SummaryId]): JsValue
+  val title: String
+  def description(action: String): String
+  val fieldDescriptions:Seq[FieldDescription]
 }

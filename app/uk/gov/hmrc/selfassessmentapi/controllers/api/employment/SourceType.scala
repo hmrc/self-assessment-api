@@ -27,6 +27,8 @@ object SourceType {
     override val name: String = "employments"
     override val documentationName = "Employments"
     override val summaryTypes : Set[SummaryType] = Set(Incomes, Benefits, Expenses, UkTaxesPaid)
+    override val propertyTypes: Set[YearPropertyType] = Set.empty
+
     override def example(sourceId: Option[SourceId] = None) = toJson(Employment.example(sourceId))
 
     override def description(action: String): String =  s"$action an employment"

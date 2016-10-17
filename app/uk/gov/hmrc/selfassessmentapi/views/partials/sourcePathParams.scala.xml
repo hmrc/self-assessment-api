@@ -2,7 +2,7 @@
 @import uk.gov.hmrc.selfassessmentapi.controllers.api._
 @import uk.gov.hmrc.selfassessmentapi.views.Helpers._
 
-@(saUtr: SaUtr, taxYear: TaxYear, sourceType : SourceType, summaryType: Option[SummaryType], sourceId: Option[SourceId], summaryId: Option[SummaryId])
+@(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, summaryType: Option[SummaryType], sourceId: Option[SourceId], summaryId: Option[SummaryId])
 <section id="path-parameters">
     <title>Path Parameters</title>
     <table>

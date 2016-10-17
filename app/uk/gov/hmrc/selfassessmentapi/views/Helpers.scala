@@ -38,8 +38,18 @@ object Helpers extends HalSupport with Links {
   def enabledSummaries(sourceType: SourceType): Set[SummaryType] =
     sourceType.summaryTypes.filter(summary => featureSwitch.isEnabled(sourceType, summary.name))
 
+  def enabledYearProperties(sourceType: SourceType): Set[YearPropertyType] = {
+    sourceType.propertyTypes.filter(prop => featureSwitch.isEnabled(sourceType, prop.name))
+  }
+
   def sourceTypeAndSummaryTypeResponse(utr: SaUtr, taxYear: TaxYear,  sourceId: SourceId, summaryId: SummaryId) =
     sourceTypeAndSummaryTypeIdResponse(obj(), utr, taxYear, SourceTypes.SelfEmployments, sourceId, selfemployment.SummaryTypes.Incomes, summaryId)
+
+  def sourceTypeAndPropertyTypeResponse(utr: SaUtr, taxYear: TaxYear, sourceType: SourceType, propertyType: YearPropertyType, sourceId: SourceId, jsValue: Option[JsValue]) = {
+    val jsObj = jsValue.getOrElse(obj())
+    val hal = halResource(jsObj, Set(HalLink("self", sourceTypeAndSummaryTypeHref(utr, taxYear, sourceType, sourceId, propertyType.name))))
+    prettyPrint(hal.json)
+  }
 
   def sourceTypeAndSummaryTypeIdResponse(jsValue: JsValue, utr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, summaryType: SummaryType, summaryId: SummaryId) = {
     val hal = halResource(jsValue, Set(HalLink("self", sourceTypeAndSummaryTypeIdHref(utr, taxYear, sourceType, sourceId, summaryType.name, summaryId))))

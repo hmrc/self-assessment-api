@@ -27,7 +27,7 @@ object Deductions {
     retirementAnnuityContract = Some(Deductions.RetirementAnnuityContract(selfAssessment)))
 
   object LossBroughtForward {
-    def apply(selfEmployment: domain.SelfEmployment): BigDecimal = selfEmployment.adjustments.flatMap(_.lossBroughtForward).getOrElse(0)
+    def apply(selfEmployment: domain.SelfEmployment): BigDecimal = selfEmployment.adjustments.flatMap(_.lossBroughtForward).getOrElse(BigDecimal(0))
   }
 
   object IncomeTaxRelief {

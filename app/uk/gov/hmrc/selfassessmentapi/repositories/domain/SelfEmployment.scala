@@ -216,10 +216,9 @@ case class SelfEmployment(id: BSONObjectID,
   def toSelfEmployment = selfemployment.SelfEmployment(
     id = Some(sourceId),
     commencementDate = commencementDate,
-    allowances = allowances,
-    adjustments = adjustments)
+    allowances = allowances)
 
-  lazy val outstandingBusinessIncome = ValueOrZero(adjustments.flatMap(_.outstandingBusinessIncome))
+  lazy val outstandingBusinessIncome: BigDecimal = adjustments.flatMap(_.outstandingBusinessIncome).getOrElse(BigDecimal(0))
 }
 
 object SelfEmployment {
@@ -244,7 +243,6 @@ object SelfEmployment {
       lastModifiedDateTime = now,
       createdDateTime = now,
       commencementDate = se.commencementDate,
-      allowances = se.allowances,
-      adjustments = se.adjustments)
+      allowances = se.allowances)
   }
 }
