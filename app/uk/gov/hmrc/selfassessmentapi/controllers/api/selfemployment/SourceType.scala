@@ -29,7 +29,9 @@ object SourceType {
 
     override def example(sourceId: Option[SourceId] = None): JsValue = toJson(SelfEmployment.example(sourceId))
 
-    override val summaryTypes: Set[SummaryType] = Set(Incomes, Expenses, GoodsAndServicesOwnUses, BalancingCharges, SummaryTypes.Adjustments)
+    override val summaryTypes: Set[SummaryType] = Set(Incomes, Expenses, GoodsAndServicesOwnUses, BalancingCharges)
+
+    override val propertyTypes: Set[YearPropertyType] = Set(YearPropertyType.Adjustments)
 
     override val title = "Sample self-employments"
 

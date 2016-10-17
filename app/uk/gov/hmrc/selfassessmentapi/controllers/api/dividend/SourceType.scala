@@ -27,6 +27,7 @@ object SourceType {
     override val name = "dividends"
     override val documentationName = "Dividends"
     override val summaryTypes: Set[SummaryType] = Set(Incomes)
+    override val propertyTypes: Set[YearPropertyType] = Set.empty
     override val title = "Sample dividends"
 
     override def description(action: String) = s"$action a dividend income"

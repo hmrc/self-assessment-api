@@ -159,7 +159,7 @@ class SelfAssessmentApiDefinition(apiContext: String, apiStatus: APIStatus) {
         authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
       Endpoint(uriPattern = uri, endpointName = s"Retrieve All ${sourceType.documentationName}", method = GET,
         authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName =  resolveGroupName(sourceType))
-    )  ++ updateEndpoint ++  summaryEndpoints(sourceType)
+    )  ++ updateEndpoint ++  summaryEndpoints(sourceType) ++ propertyEndpoints(sourceType)
   }
 
   private lazy val summaryEndpoints : SourceType => Seq[Endpoint]  = { sourceType =>
@@ -167,26 +167,33 @@ class SelfAssessmentApiDefinition(apiContext: String, apiStatus: APIStatus) {
       val uri: String = s"/{utr}/{tax-year}/${sourceType.name}/{${sourceType.name}-id}/${summaryType.name}"
       val uriWithId: String = s"$uri/{${summaryType.name}-id}"
 
-      val deleteEndpoint = summaryType match {
-        case selfemployment.SummaryTypes.Adjustments => Nil
-        case _ => Seq(Endpoint(uriPattern = uriWithId, endpointName = s"Delete ${sourceType.documentationName} ${summaryType.documentationName}", method = DELETE,
-          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)))
-      }
-
-      val retrieveAllEndpoint = summaryType match {
-        case selfemployment.SummaryTypes.Adjustments => Nil
-        case _ => Seq(Endpoint(uriPattern = uri, endpointName = s"Retrieve All ${sourceType.documentationName} ${summaryType.documentationName}", method = GET,
-            authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName =  resolveGroupName(sourceType)))
-      }
-
       Seq(
         Endpoint(uriPattern = uri, endpointName = s"Create ${sourceType.documentationName} ${summaryType.documentationName}", method = POST,
           authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
         Endpoint(uriPattern = uriWithId, endpointName = s"Retrieve ${sourceType.documentationName} ${summaryType.documentationName}", method = GET,
           authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName =  resolveGroupName(sourceType)),
         Endpoint(uriPattern = uriWithId, endpointName = s"Update ${sourceType.documentationName} ${summaryType.documentationName}", method = PUT,
-          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType))
-      ) ++ deleteEndpoint ++ retrieveAllEndpoint
+          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
+        Endpoint(uriPattern = uriWithId, endpointName = s"Delete ${sourceType.documentationName} ${summaryType.documentationName}", method = DELETE,
+          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
+        Endpoint(uriPattern = uri, endpointName = s"Retrieve All ${sourceType.documentationName} ${summaryType.documentationName}", method = GET,
+          authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName =  resolveGroupName(sourceType))
+      )
+    }
+  }
+
+  private lazy val propertyEndpoints: SourceType => Seq[Endpoint] = { sourceType =>
+    Helpers.enabledYearProperties(sourceType).toSeq.flatMap { propType =>
+      val uri: String = s"/{utr}/{tax-year}/${sourceType.name}/{${sourceType.name}-id}/${propType.name}"
+
+      Seq(
+        Endpoint(uriPattern = uri, endpointName = s"Create ${sourceType.documentationName} ${propType.documentationName}", method = POST,
+          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName = resolveGroupName(sourceType)),
+        Endpoint(uriPattern = uri, endpointName = s"Retrieve ${sourceType.documentationName} ${propType.documentationName}", method = GET,
+          authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName = resolveGroupName(sourceType)),
+        Endpoint(uriPattern = uri, endpointName = s"Update ${sourceType.documentationName} ${propType.documentationName}", method = PUT,
+          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName = resolveGroupName(sourceType))
+      )
     }
   }
 
