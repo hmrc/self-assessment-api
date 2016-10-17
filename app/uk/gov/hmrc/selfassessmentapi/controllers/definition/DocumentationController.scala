@@ -22,7 +22,6 @@ import play.twirl.api.Xml
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
-import uk.gov.hmrc.selfassessmentapi.controllers.definition.Documentation.EndpointDocumentation
 import uk.gov.hmrc.selfassessmentapi.controllers.definition.JsonFormatters._
 import uk.gov.hmrc.selfassessmentapi.controllers.{BaseController, Links}
 import uk.gov.hmrc.selfassessmentapi.views.Helpers
@@ -95,7 +94,6 @@ object Documentation extends BaseController with Links {
   private lazy val yearPropertiesDocumentation: SourceType => Seq[EndpointDocumentation] = { sourceType =>
     Helpers.enabledYearProperties(sourceType).toSeq.flatMap { propType =>
       Seq(
-        EndpointDocumentation(s"Create ${sourceType.documentationName} ${propType.documentationName}", uk.gov.hmrc.selfassessmentapi.views.xml.createYearProperty(utr, taxYear, sourceType, propType, sourceId)),
         EndpointDocumentation(s"Retrieve ${sourceType.documentationName} ${propType.documentationName}", uk.gov.hmrc.selfassessmentapi.views.xml.readYearProperty(utr, taxYear, sourceType, propType, sourceId)),
         EndpointDocumentation(s"Update ${sourceType.documentationName} ${propType.documentationName}", uk.gov.hmrc.selfassessmentapi.views.xml.updateYearProperty(utr, taxYear, sourceType, propType, sourceId))
       )

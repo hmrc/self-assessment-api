@@ -42,4 +42,26 @@ object YearPropertyType {
       PositiveMonetaryFieldDescription("self-employments", "outstandingBusinessIncome", """For other business income that hasn’t been included such as rebates received and non arm’s length reverse premiums""", optional = true)
     )
   }
+
+  case object Allowances extends YearPropertyType {
+    override val name: String = "allowances"
+    override val documentationName: String = "Allowances"
+    override def example(id: Option[SummaryId]): JsValue = toJson(selfemployment.Allowances.example)
+    override val title: String = "Sample self-employment allowance"
+    override def description(action: String): String = s"$action a allowance for the specified source"
+    override val fieldDescriptions = Seq(
+      PositiveMonetaryFieldDescription("self-employments", "annualInvestmentAllowance", "Annual Investment Allowance of up to £200,000 can be claimed for purchases of equipment (but not cars) on or after 6 April 2014", optional = true),
+      PositiveMonetaryFieldDescription("self-employments", "capitalAllowanceMainPool",
+        """Writing down allowance of 18% can be claimed on the final balance of main pool costs.
+          |If the final balance before claiming WDA is £1,000 or less, a small pool allowance can be claimed for the full amount instead of the WDA""".stripMargin, optional = true),
+      PositiveMonetaryFieldDescription("self-employments", "capitalAllowanceSpecialRatePool",
+        """Writing down allowance of 8% can be claimed on the final balance of the special rate pool costs.
+          |If the final balance before claiming WDA is £1,000 or less, a small pool allowance can be claimed for the full amount instead of the WDA""".stripMargin, optional = true),
+      PositiveMonetaryFieldDescription("self-employments", "businessPremisesRenovationAllowance", "When eligible, BPRA can be claimed for the cost of renovating or repairing unused business premises", optional = true),
+      PositiveMonetaryFieldDescription("self-employments", "enhancedCapitalAllowance", "100% capital allowance can be claimed for eligible capital purchases", optional = true),
+      PositiveMonetaryFieldDescription("self-employments", "allowancesOnSales",
+        """If the business ceases, any balance left in the relevant pool can be claimed after
+          |either the selling price or market value has been deducted from the pool balance, as a balancing allowance instead of claiming a WDA""".stripMargin, optional = true)
+    )
+  }
 }

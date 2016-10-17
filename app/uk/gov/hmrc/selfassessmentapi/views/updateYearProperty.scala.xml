@@ -14,7 +14,7 @@
     @partials.sourcePathParams(saUtr, taxYear, sourceType, None, Some(sourceId), None)
     @partials.requestHeaders(true)
     @partials.authorisation(true)
-    @partials.propertyWriteRequest("PUT", saUtr, taxYear, sourceType, propertyType, sourceId)
+    @partials.yearPropertyWriteRequest("PUT", saUtr, taxYear, sourceType, propertyType, sourceId)
     <section id="sample-response">
         <title>Sample Response</title>
         <httpStatus>200 (OK)</httpStatus>

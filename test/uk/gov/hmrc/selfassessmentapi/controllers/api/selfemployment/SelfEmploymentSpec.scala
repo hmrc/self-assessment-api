@@ -26,22 +26,7 @@ class SelfEmploymentSpec extends JsonSpec {
   "format" should {
     "round trip valid SelfEmployment json" in {
       roundTripJson(SelfEmployment(
-        commencementDate = new LocalDate(2016, 4, 22),
-        allowances = Some(Allowances(annualInvestmentAllowance = Some(BigDecimal(10))))))
+        commencementDate = new LocalDate(2016, 4, 22)))
     }
-  }
-
-  "validate" should {
-    "reject invalid allowances" in {
-
-      val se = SelfEmployment(
-        commencementDate = new LocalDate(2016, 4, 22),
-        allowances = Some(Allowances(annualInvestmentAllowance = Some(BigDecimal(-10)))))
-
-      assertValidationError[SelfEmployment](
-        se,
-        Map("/allowances/annualInvestmentAllowance" -> INVALID_MONETARY_AMOUNT), "Expected valid self-employment")
-    }
-
   }
 }

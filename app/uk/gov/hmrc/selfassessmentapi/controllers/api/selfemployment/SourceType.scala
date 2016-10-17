@@ -31,28 +31,13 @@ object SourceType {
 
     override val summaryTypes: Set[SummaryType] = Set(Incomes, Expenses, GoodsAndServicesOwnUses, BalancingCharges)
 
-    override val propertyTypes: Set[YearPropertyType] = Set(YearPropertyType.Adjustments)
+    override val propertyTypes: Set[YearPropertyType] = Set(YearPropertyType.Adjustments, YearPropertyType.Allowances)
 
     override val title = "Sample self-employments"
 
     override def description(action: String) = s"$action a self-employment"
 
     override val fieldDescriptions = Seq(
-      FullFieldDescription(name, "commencementDate", "Date", "Date in yyyy-dd-mm format"),
-      FullFieldDescription(name, "allowances", "Object", "Allowances claimed for this self-employment", optional = true),
-      PositiveMonetaryFieldDescription(name, "annualInvestmentAllowance", "Annual Investment Allowance of up to £200,000 can be claimed for purchases of equipment (but not cars) on or after 6 April 2014", optional = true),
-      PositiveMonetaryFieldDescription(name, "capitalAllowanceMainPool",
-        """Writing down allowance of 18% can be claimed on the final balance of main pool costs.
-          |If the final balance before claiming WDA is £1,000 or less, a small pool allowance can be claimed for the full amount instead of the WDA""".stripMargin, optional = true),
-      PositiveMonetaryFieldDescription(name, "capitalAllowanceSpecialRatePool",
-        """Writing down allowance of 8% can be claimed on the final balance of the special rate pool costs.
-          |If the final balance before claiming WDA is £1,000 or less, a small pool allowance can be claimed for the full amount instead of the WDA""".stripMargin, optional = true),
-      PositiveMonetaryFieldDescription(name, "businessPremisesRenovationAllowance", "When eligible, BPRA can be claimed for the cost of renovating or repairing unused business premises", optional = true),
-      PositiveMonetaryFieldDescription(name, "enhancedCapitalAllowance", "100% capital allowance can be claimed for eligible capital purchases", optional = true),
-      PositiveMonetaryFieldDescription(name, "allowancesOnSales",
-        """If the business ceases, any balance left in the relevant pool can be claimed after
-          |either the selling price or market value has been deducted from the pool balance, as a balancing allowance instead of claiming a WDA""".stripMargin, optional = true)
-      )
+      FullFieldDescription(name, "commencementDate", "Date", "Date in yyyy-dd-mm format"))
   }
-
 }

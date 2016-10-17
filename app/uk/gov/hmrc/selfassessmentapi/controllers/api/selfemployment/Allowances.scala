@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment
 
+import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
@@ -48,7 +49,7 @@ object Allowances {
 
   implicit val writes = Json.writes[Allowances]
 
-  implicit val reads: Reads[Allowances] = (
+  implicit val reads: Reads[Allowances] = onlyFields(classOf[Allowances].getDeclaredFields.map(_.getName)) andThen (
       (__ \ "annualInvestmentAllowance").readNullable[BigDecimal](positiveAmountValidator("annualInvestmentAllowance")) and
       (__ \ "capitalAllowanceMainPool").readNullable[BigDecimal](positiveAmountValidator("capitalAllowanceMainPool")) and
       (__ \ "capitalAllowanceSpecialRatePool").readNullable[BigDecimal](positiveAmountValidator("capitalAllowanceSpecialRatePool")) and
@@ -56,4 +57,10 @@ object Allowances {
       (__ \ "enhancedCapitalAllowance").readNullable[BigDecimal](positiveAmountValidator("enhancedCapitalAllowance")) and
       (__ \ "allowancesOnSales").readNullable[BigDecimal](positiveAmountValidator("allowancesOnSales"))
     ) (Allowances.apply _)
+
+  private def onlyFields(allowed: Seq[String]): Reads[JsObject] = {
+    Reads.filter(
+      ValidationError("Unknown adjustment")
+    )(_.keys.forall(allowed.contains))
+  }
 }

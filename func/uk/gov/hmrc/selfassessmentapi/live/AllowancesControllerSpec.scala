@@ -1,20 +1,19 @@
 package uk.gov.hmrc.selfassessmentapi.live
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment.{Adjustments, SelfEmployment}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment.{Allowances, SelfEmployment}
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
-class AdjustmentsControllerSpec extends BaseFunctionalSpec {
+class AllowancesControllerSpec extends BaseFunctionalSpec {
   private val invalidJson =
     """
       |{
-      |  "includedNonTaxableProfits" : 50,
-      |  "basisAdjustment": 20.5,
-      |  "overlapReliefUsed": 10.5,
-      |  "accountingAdjustment": 22.2,
-      |  "averagingAdjustment": 15.5,
-      |  "lossBroughtForward": 13,
-      |  "outstandingBusinessOopsySpelling": 12
+      |  "annualInvestmentAllowance" : 50,
+      |  "capitalAllowanceMainPool": 20.5,
+      |  "capitalAllowanceSpecialRatePool": 10.5,
+      |  "businessPremisesRenovationAllowance": 22.2,
+      |  "enhancedCapitalAllowance": 15.5,
+      |  "allowancesOnSaleeeeeeees": 13
       |}
     """.stripMargin
 
@@ -28,11 +27,11 @@ class AdjustmentsControllerSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(201)
         .when()
-        .put(s"/$saUtr/$taxYear/self-employments/%sourceId%/adjustments", Some(Json.toJson(Adjustments.example)))
+        .put(s"/$saUtr/$taxYear/self-employments/%sourceId%/allowances", Some(Json.toJson(Allowances.example)))
         .thenAssertThat()
         .statusIs(200)
         .when()
-        .put(s"/$saUtr/$taxYear/self-employments/%sourceId%/adjustments", Some(Json.toJson(Adjustments.example)))
+        .put(s"/$saUtr/$taxYear/self-employments/%sourceId%/allowances", Some(Json.toJson(Allowances.example)))
         .thenAssertThat()
         .statusIs(200)
     }
@@ -45,18 +44,18 @@ class AdjustmentsControllerSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(201)
         .when()
-        .put(s"/$saUtr/$taxYear/self-employments/%sourceId%/adjustments", Some(Json.toJson(Adjustments.example)))
+        .put(s"/$saUtr/$taxYear/self-employments/%sourceId%/allowances", Some(Json.toJson(Allowances.example)))
         .thenAssertThat()
         .statusIs(200)
         .when()
-        .put(s"/$saUtr/$taxYear/self-employments/%sourceId%/adjustments", Some(Json.parse(invalidJson)))
+        .put(s"/$saUtr/$taxYear/self-employments/%sourceId%/allowances", Some(Json.parse(invalidJson)))
         .thenAssertThat()
         .statusIs(400)
     }
   }
 
   "find" should {
-    "return code 200 when requested for a adjustments that exists" in {
+    "return code 200 when requested for a allowance that exists" in {
       given()
         .userIsAuthorisedForTheResource(saUtr)
         .when()
@@ -64,17 +63,17 @@ class AdjustmentsControllerSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(201)
         .when()
-        .put(s"/$saUtr/$taxYear/self-employments/%sourceId%/adjustments", Some(Json.toJson(Adjustments.example)))
+        .put(s"/$saUtr/$taxYear/self-employments/%sourceId%/allowances", Some(Json.toJson(Allowances.example)))
         .thenAssertThat()
         .statusIs(200)
         .when()
-        .get(s"/$saUtr/$taxYear/self-employments/%sourceId%/adjustments")
+        .get(s"/$saUtr/$taxYear/self-employments/%sourceId%/allowances")
         .thenAssertThat()
         .statusIs(200)
-        .bodyIsLike(Json.toJson(Adjustments.example).toString)
+        .bodyIsLike(Json.toJson(Allowances.example).toString)
     }
 
-    "return code 200 when requested for a adjustments that does not exist (i.e. return adjustment with all 0s)" in {
+    "return code 200 when requested for a allowance that does not exist (i.e. return allowance with all 0s)" in {
       given()
         .userIsAuthorisedForTheResource(saUtr)
         .when()
@@ -82,10 +81,10 @@ class AdjustmentsControllerSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(201)
         .when()
-        .get(s"/$saUtr/$taxYear/self-employments/%sourceId%/adjustments")
+        .get(s"/$saUtr/$taxYear/self-employments/%sourceId%/allowances")
         .thenAssertThat()
         .statusIs(200)
-        .bodyIsLike(Json.toJson(Adjustments()).toString)
+        .bodyIsLike(Json.toJson(Allowances()).toString)
     }
   }
 }

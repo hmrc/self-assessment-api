@@ -21,7 +21,7 @@ import play.api.mvc._
 import play.api.mvc.hal._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment.{Adjustments, SourceType}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment.Allowances
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{SourceId, SourceTypes, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.controllers.controllers.validate
 import uk.gov.hmrc.selfassessmentapi.controllers.{BaseController, GenericErrorResult, Links, ValidationErrorResult}
@@ -29,26 +29,24 @@ import uk.gov.hmrc.selfassessmentapi.repositories.live.SelfEmploymentRepository
 
 import scala.concurrent.Future
 
-object AdjustmentsController extends BaseController with Links {
+object AllowancesController extends BaseController with Links {
   override val context: String = AppContext.apiGatewayLinkContext
 
   val repository = SelfEmploymentRepository()
 
   def update(utr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Action[JsValue] = Action.async(parse.json) { request =>
-    validate[Adjustments, Boolean](request.body)(_ => Future.successful(true)) match {
+    validate[Allowances, Boolean](request.body)(_ => Future.successful(true)) match {
       case Left(errorResult) => Future.successful {
         errorResult match {
           case GenericErrorResult(message) => BadRequest(Json.toJson(invalidRequest(message)))
           case ValidationErrorResult(errors) => BadRequest(Json.toJson(invalidRequest(errors)))
         }
       }
-      case Right(_) => Future.successful(Ok(sourceIdHref(utr, taxYear, SourceType.SelfEmployments, sourceId)))
+      case Right(_) => Future.successful(Ok(sourceIdHref(utr, taxYear, SourceTypes.SelfEmployments, sourceId)))
     }
   }
 
-  def find(utr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Action[AnyContent] = Action.async { _ =>
-    Future.successful {
-      Ok(halResource(Json.toJson(Adjustments.example), sourceLinks(utr, taxYear, SourceTypes.SelfEmployments, sourceId)))
-    }
+  def find(utr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Action[AnyContent] = Action.async {
+    Future.successful(Ok(halResource(Json.toJson(Allowances()), sourceLinks(utr, taxYear, SourceTypes.SelfEmployments, sourceId))))
   }
 }

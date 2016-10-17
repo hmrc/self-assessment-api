@@ -89,49 +89,14 @@ class SelfEmploymentMongoRepository(implicit mongo: () => DB)
     update is however partial so we should only update the fields provided and not override the summary arrays.
    */
   override def update(saUtr: SaUtr, taxYear: TaxYear, id: SourceId, selfEmployment: api.selfemployment.SelfEmployment): Future[Boolean] = {
-    val baseModifiers = Seq(
+    val modifiers = BSONDocument(Seq(
       "$set" -> BSONDocument("commencementDate" -> BSONDateTime(selfEmployment.commencementDate.toDateTimeAtStartOfDay(DateTimeZone.UTC).getMillis)),
       modifierStatementLastModified
-    )
-
-    val allowancesModifiers = selfEmployment.allowances.map(allowances =>
-      Seq(
-        "$set" -> BSONDocument("allowances" -> BSONDocument(Seq(
-          "annualInvestmentAllowance" -> allowances.annualInvestmentAllowance.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONNull),
-          "capitalAllowanceMainPool" -> allowances.capitalAllowanceMainPool.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONNull),
-          "capitalAllowanceSpecialRatePool" -> allowances.capitalAllowanceSpecialRatePool.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONNull),
-          "businessPremisesRenovationAllowance" -> allowances.businessPremisesRenovationAllowance.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONNull),
-          "enhancedCapitalAllowance" -> allowances.enhancedCapitalAllowance.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONNull),
-          "allowancesOnSales" -> allowances.allowancesOnSales.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONNull)
-        )))
-      )
-    ).getOrElse(Seq("$set" -> BSONDocument("allowances" -> BSONNull)))
-
-    val modifiers = BSONDocument(baseModifiers ++ allowancesModifiers)
+    ))
 
     for {
       result <- atomicUpdate(
         BSONDocument("saUtr" -> BSONString(saUtr.toString), "taxYear" -> BSONString(taxYear.toString), "sourceId" -> BSONString(id)),
-        modifiers
-      )
-    } yield result.nonEmpty
-  }
-
-  def createAdjustments(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, adjustments: Adjustments): Future[Boolean] = {
-    val modifiers = BSONDocument(
-      "$set" -> BSONDocument("adjustments" -> BSONDocument(Seq(
-        "accountingAdjustment" -> adjustments.accountingAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
-        "averagingAdjustment" -> adjustments.averagingAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
-        "basisAdjustment" -> adjustments.basisAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
-        "includedNonTaxableProfits" -> adjustments.includedNonTaxableProfits.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
-        "lossBroughtForward" -> adjustments.lossBroughtForward.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
-        "outstandingBusinessIncome" -> adjustments.outstandingBusinessIncome.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
-        "overlapReliefUsed" -> adjustments.overlapReliefUsed.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0))
-      ))))
-
-    for {
-      result <- atomicUpdate(
-        BSONDocument("saUtr" -> BSONString(saUtr.toString), "taxYear" -> BSONString(taxYear.toString), "sourceId" -> BSONString(sourceId)),
         modifiers
       )
     } yield result.nonEmpty
@@ -160,6 +125,32 @@ class SelfEmploymentMongoRepository(implicit mongo: () => DB)
   def findAdjustments(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Option[Adjustments]] = {
     findMongoObjectById(saUtr, taxYear, sourceId).map {
       case Some(selfEmployment) => selfEmployment.adjustments
+      case None => None
+    }
+  }
+
+  def updateAllowances(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, allowances: Allowances): Future[Boolean] = {
+    val modifiers = BSONDocument(
+        "$set" -> BSONDocument("allowances" -> BSONDocument(Seq(
+          "annualInvestmentAllowance" -> allowances.annualInvestmentAllowance.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+          "capitalAllowanceMainPool" -> allowances.capitalAllowanceMainPool.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+          "capitalAllowanceSpecialRatePool" -> allowances.capitalAllowanceSpecialRatePool.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+          "businessPremisesRenovationAllowance" -> allowances.businessPremisesRenovationAllowance.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+          "enhancedCapitalAllowance" -> allowances.enhancedCapitalAllowance.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+          "allowancesOnSales" -> allowances.allowancesOnSales.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0))
+        ))))
+
+    for {
+      result <- atomicUpdate(
+        BSONDocument("saUtr" -> BSONString(saUtr.toString), "taxYear" -> BSONString(taxYear.toString), "sourceId" -> BSONString(sourceId)),
+        modifiers
+      )
+    } yield result.nonEmpty
+  }
+
+  def findAllowances(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Option[Allowances]] = {
+    findMongoObjectById(saUtr, taxYear, sourceId).map {
+      case Some(selfEmployment) => selfEmployment.allowances
       case None => None
     }
   }
