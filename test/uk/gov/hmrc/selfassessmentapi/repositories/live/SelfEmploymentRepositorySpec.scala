@@ -395,7 +395,7 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
   }
 
   "updateAdjustments" should {
-    "set each adjustment to None if not provided" in {
+    "set each adjustment to Some(0) if not provided" in {
       val adjustments = Adjustments.example
       val updatedAdjustments = Adjustments()
 
@@ -405,7 +405,8 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
       await(selfEmploymentRepository.updateAdjustments(saUtr, taxYear, sourceId, updatedAdjustments))
 
       val newAdjustments = await(selfEmploymentRepository.findAdjustments(saUtr, taxYear, sourceId))
-      newAdjustments shouldBe Some(updatedAdjustments)
+      val expectedAdjustments = Adjustments(Some(0), Some(0), Some(0), Some(0), Some(0), Some(0), Some(0))
+      newAdjustments shouldBe Some(expectedAdjustments)
     }
   }
 

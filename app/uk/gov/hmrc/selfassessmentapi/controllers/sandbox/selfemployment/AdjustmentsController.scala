@@ -65,7 +65,7 @@ object AdjustmentsController extends BaseController with Links {
             case ValidationErrorResult(errors) => BadRequest(Json.toJson(invalidRequest(errors)))
           }
         }
-      case Right(id) => Future.successful(Ok(sourceIdHref(utr, taxYear, SourceType.SelfEmployments, sourceId)))
+      case Right(_) => Future.successful(Ok(sourceIdHref(utr, taxYear, SourceType.SelfEmployments, sourceId)))
     }
   }
 

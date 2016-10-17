@@ -27,7 +27,7 @@ object Deductions {
     retirementAnnuityContract = Some(Deductions.RetirementAnnuityContract(selfAssessment)))
 
   object LossBroughtForward {
-    def apply(selfEmployment: domain.SelfEmployment): BigDecimal = selfEmployment.adjustments.map(_.lossBroughtForward).getOrElse(0)
+    def apply(selfEmployment: domain.SelfEmployment): BigDecimal = selfEmployment.adjustments.flatMap(_.lossBroughtForward).getOrElse(BigDecimal(0))
   }
 
   object IncomeTaxRelief {
@@ -66,14 +66,14 @@ object Deductions {
   object RetirementAnnuityContract {
     def apply(selfAssessment: SelfAssessment): BigDecimal =
       ValueOrZero(getPensionContribution(selfAssessment).map ( pensionContribution =>
-        RoundUp(SumOptionals(pensionContribution.employerScheme, pensionContribution.overseasPension, pensionContribution.retirementAnnuity))
+        RoundUp(Sum(pensionContribution.employerScheme, pensionContribution.overseasPension, pensionContribution.retirementAnnuity))
       ))
   }
 
   object PensionContribution {
     def apply(selfAssessment: SelfAssessment): BigDecimal =
       ValueOrZero(getPensionContribution(selfAssessment).map(pensionContribution =>
-        SumOptionals(pensionContribution.employerScheme, pensionContribution.overseasPension, pensionContribution.retirementAnnuity,
+        Sum(pensionContribution.employerScheme, pensionContribution.overseasPension, pensionContribution.retirementAnnuity,
           pensionContribution.ukRegisteredPension)
       ))
   }

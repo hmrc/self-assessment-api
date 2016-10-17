@@ -8,9 +8,17 @@ class AdjustmentsControllerSpec extends BaseFunctionalSpec {
   private val invalidJson =
     """
       |{
-      |"hello":23
+      |  "includedNonTaxableProfits" : 50,
+      |  "basisAdjustment": 20.5,
+      |  "overlapReliefUsed": 10.5,
+      |  "accountingAdjustment": 22.2,
+      |  "averagingAdjustment": 15.5,
+      |  "lossBroughtForward": 13,
+      |  "outstandingBusinessOopsySpelling": 12
       |}
     """.stripMargin
+
+
 
   "create" should {
     "return code 201 when provided with a valid JSON" in {

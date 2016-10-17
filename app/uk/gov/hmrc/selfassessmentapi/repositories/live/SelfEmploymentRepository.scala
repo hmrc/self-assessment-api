@@ -120,13 +120,13 @@ class SelfEmploymentMongoRepository(implicit mongo: () => DB)
   def createAdjustments(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, adjustments: Adjustments): Future[Boolean] = {
     val modifiers = BSONDocument(
       "$set" -> BSONDocument("adjustments" -> BSONDocument(Seq(
-        "accountingAdjustment" -> BSONDouble(adjustments.accountingAdjustment.doubleValue()),
-        "averagingAdjustment" -> BSONDouble(adjustments.averagingAdjustment.doubleValue()),
-        "basisAdjustment" -> BSONDouble(adjustments.basisAdjustment.doubleValue()),
-        "includedNonTaxableProfits" -> BSONDouble(adjustments.includedNonTaxableProfits.doubleValue()),
-        "lossBroughtForward" -> BSONDouble(adjustments.lossBroughtForward.doubleValue()),
-        "outstandingBusinessIncome" -> BSONDouble(adjustments.outstandingBusinessIncome.doubleValue()),
-        "overlapReliefUsed" -> BSONDouble(adjustments.overlapReliefUsed.doubleValue())
+        "accountingAdjustment" -> adjustments.accountingAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+        "averagingAdjustment" -> adjustments.averagingAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+        "basisAdjustment" -> adjustments.basisAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+        "includedNonTaxableProfits" -> adjustments.includedNonTaxableProfits.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+        "lossBroughtForward" -> adjustments.lossBroughtForward.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+        "outstandingBusinessIncome" -> adjustments.outstandingBusinessIncome.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+        "overlapReliefUsed" -> adjustments.overlapReliefUsed.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0))
       ))))
 
     for {
@@ -140,13 +140,13 @@ class SelfEmploymentMongoRepository(implicit mongo: () => DB)
   def updateAdjustments(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, adjustments: Adjustments): Future[Boolean] = {
     val modifiers = BSONDocument(
       "$set" -> BSONDocument("adjustments" -> BSONDocument(Seq(
-        "accountingAdjustment" -> BSONDouble(adjustments.accountingAdjustment.doubleValue()),
-        "averagingAdjustment" -> BSONDouble(adjustments.averagingAdjustment.doubleValue()),
-        "basisAdjustment" -> BSONDouble(adjustments.basisAdjustment.doubleValue()),
-        "includedNonTaxableProfits" -> BSONDouble(adjustments.includedNonTaxableProfits.doubleValue()),
-        "lossBroughtForward" -> BSONDouble(adjustments.lossBroughtForward.doubleValue()),
-        "outstandingBusinessIncome" -> BSONDouble(adjustments.outstandingBusinessIncome.doubleValue()),
-        "overlapReliefUsed" -> BSONDouble(adjustments.overlapReliefUsed.doubleValue())
+        "accountingAdjustment" -> adjustments.accountingAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+        "averagingAdjustment" -> adjustments.averagingAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+        "basisAdjustment" -> adjustments.basisAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+        "includedNonTaxableProfits" -> adjustments.includedNonTaxableProfits.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+        "lossBroughtForward" -> adjustments.lossBroughtForward.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+        "outstandingBusinessIncome" -> adjustments.outstandingBusinessIncome.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
+        "overlapReliefUsed" -> adjustments.overlapReliefUsed.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0))
       ))))
 
     for {

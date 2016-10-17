@@ -31,7 +31,7 @@ case class Allowances(annualInvestmentAllowance: Option[BigDecimal] = None,
   private val maxAnnualInvestmentAllowance = 200000
 
   def total = {
-    SumOptionals(CapAt(annualInvestmentAllowance, maxAnnualInvestmentAllowance), capitalAllowanceMainPool, capitalAllowanceSpecialRatePool,
+    Sum(CapAt(annualInvestmentAllowance, maxAnnualInvestmentAllowance), capitalAllowanceMainPool, capitalAllowanceSpecialRatePool,
       businessPremisesRenovationAllowance, enhancedCapitalAllowance, allowancesOnSales)
   }
 }

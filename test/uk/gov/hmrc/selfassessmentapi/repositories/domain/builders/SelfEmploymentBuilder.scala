@@ -64,13 +64,13 @@ case class SelfEmploymentBuilder(objectID: BSONObjectID = BSONObjectID.generate)
                       accountingAdjustment: BigDecimal = 0) = {
     selfEmployment = selfEmployment.copy(
       adjustments = selfEmployment.adjustments.map(
-        _.copy(outstandingBusinessIncome = outstandingBusinessIncome,
-               lossBroughtForward = lossBroughtForward,
-               averagingAdjustment = averagingAdjustment,
-               overlapReliefUsed = overlapReliefUsed,
-               basisAdjustment = basisAdjustment,
-               includedNonTaxableProfits = includedNonTaxableProfits,
-               accountingAdjustment = accountingAdjustment)))
+        _.copy(outstandingBusinessIncome = Some(outstandingBusinessIncome),
+               lossBroughtForward = Some(lossBroughtForward),
+               averagingAdjustment = Some(averagingAdjustment),
+               overlapReliefUsed = Some(overlapReliefUsed),
+               basisAdjustment = Some(basisAdjustment),
+               includedNonTaxableProfits = Some(includedNonTaxableProfits),
+               accountingAdjustment = Some(accountingAdjustment))))
 
     this
   }

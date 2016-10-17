@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.controllers.definition
 
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{FeatureSwitchedTaxYearProperties, SourceType, SourceTypes}
 import uk.gov.hmrc.selfassessmentapi.controllers.definition.APIStatus.APIStatus
 import uk.gov.hmrc.selfassessmentapi.controllers.definition.AuthType._
@@ -165,18 +166,27 @@ class SelfAssessmentApiDefinition(apiContext: String, apiStatus: APIStatus) {
     Helpers.enabledSummaries(sourceType).toSeq.flatMap { summaryType =>
       val uri: String = s"/{utr}/{tax-year}/${sourceType.name}/{${sourceType.name}-id}/${summaryType.name}"
       val uriWithId: String = s"$uri/{${summaryType.name}-id}"
+
+      val deleteEndpoint = summaryType match {
+        case selfemployment.SummaryTypes.Adjustments => Nil
+        case _ => Seq(Endpoint(uriPattern = uriWithId, endpointName = s"Delete ${sourceType.documentationName} ${summaryType.documentationName}", method = DELETE,
+          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)))
+      }
+
+      val retrieveAllEndpoint = summaryType match {
+        case selfemployment.SummaryTypes.Adjustments => Nil
+        case _ => Seq(Endpoint(uriPattern = uri, endpointName = s"Retrieve All ${sourceType.documentationName} ${summaryType.documentationName}", method = GET,
+            authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName =  resolveGroupName(sourceType)))
+      }
+
       Seq(
         Endpoint(uriPattern = uri, endpointName = s"Create ${sourceType.documentationName} ${summaryType.documentationName}", method = POST,
           authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
         Endpoint(uriPattern = uriWithId, endpointName = s"Retrieve ${sourceType.documentationName} ${summaryType.documentationName}", method = GET,
           authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName =  resolveGroupName(sourceType)),
         Endpoint(uriPattern = uriWithId, endpointName = s"Update ${sourceType.documentationName} ${summaryType.documentationName}", method = PUT,
-          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
-        Endpoint(uriPattern = uriWithId, endpointName = s"Delete ${sourceType.documentationName} ${summaryType.documentationName}", method = DELETE,
-          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
-        Endpoint(uriPattern = uri, endpointName = s"Retrieve All ${sourceType.documentationName} ${summaryType.documentationName}", method = GET,
-          authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName =  resolveGroupName(sourceType))
-      )
+          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType))
+      ) ++ deleteEndpoint ++ retrieveAllEndpoint
     }
   }
 
