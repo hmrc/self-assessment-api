@@ -117,26 +117,6 @@ class SelfEmploymentMongoRepository(implicit mongo: () => DB)
     } yield result.nonEmpty
   }
 
-  def createAdjustments(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, adjustments: Adjustments): Future[Boolean] = {
-    val modifiers = BSONDocument(
-      "$set" -> BSONDocument("adjustments" -> BSONDocument(Seq(
-        "accountingAdjustment" -> adjustments.accountingAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
-        "averagingAdjustment" -> adjustments.averagingAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
-        "basisAdjustment" -> adjustments.basisAdjustment.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
-        "includedNonTaxableProfits" -> adjustments.includedNonTaxableProfits.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
-        "lossBroughtForward" -> adjustments.lossBroughtForward.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
-        "outstandingBusinessIncome" -> adjustments.outstandingBusinessIncome.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0)),
-        "overlapReliefUsed" -> adjustments.overlapReliefUsed.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONDouble(0))
-      ))))
-
-    for {
-      result <- atomicUpdate(
-        BSONDocument("saUtr" -> BSONString(saUtr.toString), "taxYear" -> BSONString(taxYear.toString), "sourceId" -> BSONString(sourceId)),
-        modifiers
-      )
-    } yield result.nonEmpty
-  }
-
   def updateAdjustments(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, adjustments: Adjustments): Future[Boolean] = {
     val modifiers = BSONDocument(
       "$set" -> BSONDocument("adjustments" -> BSONDocument(Seq(

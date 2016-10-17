@@ -381,27 +381,14 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
     }
   }
 
-  "createAdjustment" should {
-    "create an adjustment with the provided data" in {
-      val adjustments = Adjustments.example
-
-      val sourceId = await(selfEmploymentRepository.create(saUtr, taxYear, selfEmployment()))
-      await(selfEmploymentRepository.createAdjustments(saUtr, taxYear, sourceId, adjustments))
-
-      val result = await(selfEmploymentRepository.findAdjustments(saUtr, taxYear, sourceId))
-
-      result shouldBe Some(adjustments)
-    }
-  }
-
   "updateAdjustments" should {
-    "set each adjustment to Some(0) if not provided" in {
+    "should overwrite the previous adjustments object" in {
       val adjustments = Adjustments.example
       val updatedAdjustments = Adjustments()
 
       val sourceId = await(selfEmploymentRepository.create(saUtr, taxYear, selfEmployment()))
 
-      await(selfEmploymentRepository.createAdjustments(saUtr, taxYear, sourceId, adjustments))
+      await(selfEmploymentRepository.updateAdjustments(saUtr, taxYear, sourceId, adjustments))
       await(selfEmploymentRepository.updateAdjustments(saUtr, taxYear, sourceId, updatedAdjustments))
 
       val newAdjustments = await(selfEmploymentRepository.findAdjustments(saUtr, taxYear, sourceId))
@@ -415,7 +402,7 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
       val adjustments = Adjustments.example
 
       val sourceId = await(selfEmploymentRepository.create(saUtr, taxYear, selfEmployment()))
-      await(selfEmploymentRepository.createAdjustments(saUtr, taxYear, sourceId, adjustments))
+      await(selfEmploymentRepository.updateAdjustments(saUtr, taxYear, sourceId, adjustments))
 
       val result = await(selfEmploymentRepository.findAdjustments(saUtr, taxYear, sourceId))
 

@@ -187,8 +187,6 @@ class SelfAssessmentApiDefinition(apiContext: String, apiStatus: APIStatus) {
       val uri: String = s"/{utr}/{tax-year}/${sourceType.name}/{${sourceType.name}-id}/${propType.name}"
 
       Seq(
-        Endpoint(uriPattern = uri, endpointName = s"Create ${sourceType.documentationName} ${propType.documentationName}", method = POST,
-          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName = resolveGroupName(sourceType)),
         Endpoint(uriPattern = uri, endpointName = s"Retrieve ${sourceType.documentationName} ${propType.documentationName}", method = GET,
           authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName = resolveGroupName(sourceType)),
         Endpoint(uriPattern = uri, endpointName = s"Update ${sourceType.documentationName} ${propType.documentationName}", method = PUT,

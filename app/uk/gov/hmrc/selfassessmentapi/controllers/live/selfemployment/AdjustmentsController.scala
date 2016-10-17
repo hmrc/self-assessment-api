@@ -35,21 +35,6 @@ object AdjustmentsController extends BaseController with Links {
 
   val repository = SelfEmploymentRepository()
 
-  def create(utr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Action[JsValue] = Action.async(parse.json) { request =>
-    validate[Adjustments, Boolean](request.body) {
-      repository.createAdjustments(utr, taxYear, sourceId, _)
-    } match {
-      case Left(errorResult) =>
-        Future.successful {
-          errorResult match {
-            case GenericErrorResult(message) => BadRequest(Json.toJson(invalidRequest(message)))
-            case ValidationErrorResult(errors) => BadRequest(Json.toJson(invalidRequest(errors)))
-          }
-        }
-      case Right(_) => Future.successful(Created(Json.toJson(sourceTypeAndSummaryTypeHref(utr, taxYear, SourceType.SelfEmployments, sourceId, "adjustments"))))
-    }
-  }
-
   def update(utr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Action[JsValue] = Action.async(parse.json) { request =>
     validate[Adjustments, Boolean](request.body) { adjustments =>
       repository.updateAdjustments(utr, taxYear, sourceId, adjustments)

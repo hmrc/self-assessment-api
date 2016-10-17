@@ -28,51 +28,27 @@ import uk.gov.hmrc.selfassessmentapi.controllers.{BaseController, GenericErrorRe
 import uk.gov.hmrc.selfassessmentapi.repositories.live.SelfEmploymentRepository
 
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 
 object AdjustmentsController extends BaseController with Links {
   override val context: String = AppContext.apiGatewayLinkContext
 
   val repository = SelfEmploymentRepository()
 
-  def create(utr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Action[JsValue] = Action.async(parse.json) { request =>
-    val result = validate[Adjustments, Boolean](request.body) {
-      repository.createAdjustments(utr, taxYear, sourceId, _)
-    }
-
-    result match {
-      case Left(errorResult) =>
-        Future.successful {
-          errorResult match {
-            case GenericErrorResult(message) => BadRequest(Json.toJson(invalidRequest(message)))
-            case ValidationErrorResult(errors) => BadRequest(Json.toJson(invalidRequest(errors)))
-          }
-        }
-      case Right(_) => Future.successful(Created(sourceTypeAndSummaryTypeHref(utr, taxYear, SourceType.SelfEmployments, sourceId, "adjustments")))
-    }
-  }
-
   def update(utr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Action[JsValue] = Action.async(parse.json) { request =>
-    val result = validate[Adjustments, Boolean](request.body) { adjustments =>
-      repository.updateAdjustments(utr, taxYear, sourceId, adjustments)
-    }
-
-    result match {
-      case Left(errorResult) =>
-        Future.successful {
-          errorResult match {
-            case GenericErrorResult(message) => BadRequest(Json.toJson(invalidRequest(message)))
-            case ValidationErrorResult(errors) => BadRequest(Json.toJson(invalidRequest(errors)))
-          }
+    validate[Adjustments, Boolean](request.body)(_ => Future.successful(true)) match {
+      case Left(errorResult) => Future.successful {
+        errorResult match {
+          case GenericErrorResult(message) => BadRequest(Json.toJson(invalidRequest(message)))
+          case ValidationErrorResult(errors) => BadRequest(Json.toJson(invalidRequest(errors)))
         }
+      }
       case Right(_) => Future.successful(Ok(sourceIdHref(utr, taxYear, SourceType.SelfEmployments, sourceId)))
     }
   }
 
   def find(utr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Action[AnyContent] = Action.async { _ =>
-    repository.findAdjustments(utr, taxYear, sourceId).map {
-      case Some(adjustment) => Ok(halResource(Json.toJson(adjustment), sourceLinks(utr, taxYear, SourceTypes.SelfEmployments, sourceId)))
-      case None => Ok(halResource(Json.toJson(Adjustments()), sourceLinks(utr, taxYear, SourceTypes.SelfEmployments, sourceId)))
+    Future.successful {
+      Ok(halResource(Json.toJson(Adjustments.example), sourceLinks(utr, taxYear, SourceTypes.SelfEmployments, sourceId)))
     }
   }
 }
