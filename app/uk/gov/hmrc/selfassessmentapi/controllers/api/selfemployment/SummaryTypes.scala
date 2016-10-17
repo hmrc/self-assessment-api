@@ -75,7 +75,7 @@ object SummaryTypes {
   case object Adjustments extends SummaryType {
     override val name: String = "adjustments"
     override val documentationName: String = "Adjustments"
-    override def example(id: Option[SummaryId]): JsValue = toJson(Adjustments.example())
+    override def example(id: Option[SummaryId]): JsValue = toJson(selfemployment.Adjustments.example)
     override val title: String = "Sample self-employment adjustment"
     override def description(action: String): String = s"$action a adjustment for the specified source"
     override val fieldDescriptions = Seq(
