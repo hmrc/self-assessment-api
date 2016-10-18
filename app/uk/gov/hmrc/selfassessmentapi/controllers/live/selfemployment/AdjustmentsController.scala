@@ -53,7 +53,7 @@ object AdjustmentsController extends BaseController with Links {
   def find(utr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Action[AnyContent] = Action.async {
     repository.findAdjustments(utr, taxYear, sourceId).map {
       case Some(adjustment) => Ok(halResource(Json.toJson(adjustment), sourceLinks(utr, taxYear, SourceTypes.SelfEmployments, sourceId)))
-      case None => Ok(halResource(Json.toJson(Adjustments()), sourceLinks(utr, taxYear, SourceTypes.SelfEmployments, sourceId)))
+      case None => Ok(halResource(Json.toJson(Adjustments(0, 0, 0, 0, 0, 0, 0)), sourceLinks(utr, taxYear, SourceTypes.SelfEmployments, sourceId)))
     }
   }
 }

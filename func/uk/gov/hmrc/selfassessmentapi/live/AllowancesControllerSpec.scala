@@ -84,7 +84,7 @@ class AllowancesControllerSpec extends BaseFunctionalSpec {
         .get(s"/$saUtr/$taxYear/self-employments/%sourceId%/allowances")
         .thenAssertThat()
         .statusIs(200)
-        .bodyIsLike(Json.toJson(Allowances()).toString)
+        .bodyIsLike(Json.toJson(Allowances(0, 0, 0, 0, 0, 0)).toString)
     }
   }
 }

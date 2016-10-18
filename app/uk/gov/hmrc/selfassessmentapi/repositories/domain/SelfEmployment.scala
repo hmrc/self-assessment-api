@@ -208,16 +208,16 @@ case class SelfEmployment(id: BSONObjectID,
     val allowances = this.allowances.map(_.total)
     val adjustments = this.adjustments.map { a => Sum(a.includedNonTaxableProfits, a.overlapReliefUsed) }
 
-    Sum(expenses, allowances, adjustments)
+    SumOptionals(expenses, allowances, adjustments)
   }
 
-  def lossBroughtForward = adjustments.flatMap(_.lossBroughtForward).getOrElse(BigDecimal(0))
+  def lossBroughtForward = adjustments.map(_.lossBroughtForward).getOrElse(BigDecimal(0))
 
   def toSelfEmployment = selfemployment.SelfEmployment(
     id = Some(sourceId),
     commencementDate = commencementDate)
 
-  lazy val outstandingBusinessIncome: BigDecimal = adjustments.flatMap(_.outstandingBusinessIncome).getOrElse(BigDecimal(0))
+  lazy val outstandingBusinessIncome: BigDecimal = adjustments.map(_.outstandingBusinessIncome).getOrElse(BigDecimal(0))
 }
 
 object SelfEmployment {

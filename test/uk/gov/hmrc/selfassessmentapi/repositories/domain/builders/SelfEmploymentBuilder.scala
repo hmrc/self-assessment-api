@@ -34,8 +34,8 @@ case class SelfEmploymentBuilder(objectID: BSONObjectID = BSONObjectID.generate)
                    now,
                    now,
                    now.toLocalDate,
-                   Some(Allowances()),
-                   Some(Adjustments()))
+                   Some(Allowances(0, 0, 0, 0, 0, 0)),
+                   Some(Adjustments(0, 0, 0, 0, 0, 0, 0)))
 
   def withAllowances(allowancesOnSales: BigDecimal,
                      enhancedCapitalAllowance: BigDecimal,
@@ -45,12 +45,12 @@ case class SelfEmploymentBuilder(objectID: BSONObjectID = BSONObjectID.generate)
                      annualInvestmentAllowance: BigDecimal) = {
     selfEmployment = selfEmployment.copy(
       allowances = selfEmployment.allowances.map(
-        _.copy(allowancesOnSales = Some(allowancesOnSales),
-               enhancedCapitalAllowance = Some(enhancedCapitalAllowance),
-               businessPremisesRenovationAllowance = Some(businessPremisesRenovationAllowance),
-               capitalAllowanceSpecialRatePool = Some(capitalAllowanceSpecialRatePool),
-               capitalAllowanceMainPool = Some(capitalAllowanceMainPool),
-               annualInvestmentAllowance = Some(annualInvestmentAllowance))))
+        _.copy(allowancesOnSales = allowancesOnSales,
+               enhancedCapitalAllowance = enhancedCapitalAllowance,
+               businessPremisesRenovationAllowance = businessPremisesRenovationAllowance,
+               capitalAllowanceSpecialRatePool = capitalAllowanceSpecialRatePool,
+               capitalAllowanceMainPool = capitalAllowanceMainPool,
+               annualInvestmentAllowance = annualInvestmentAllowance)))
 
     this
   }
@@ -64,13 +64,13 @@ case class SelfEmploymentBuilder(objectID: BSONObjectID = BSONObjectID.generate)
                       accountingAdjustment: BigDecimal = 0) = {
     selfEmployment = selfEmployment.copy(
       adjustments = selfEmployment.adjustments.map(
-        _.copy(outstandingBusinessIncome = Some(outstandingBusinessIncome),
-               lossBroughtForward = Some(lossBroughtForward),
-               averagingAdjustment = Some(averagingAdjustment),
-               overlapReliefUsed = Some(overlapReliefUsed),
-               basisAdjustment = Some(basisAdjustment),
-               includedNonTaxableProfits = Some(includedNonTaxableProfits),
-               accountingAdjustment = Some(accountingAdjustment))))
+        _.copy(outstandingBusinessIncome = outstandingBusinessIncome,
+               lossBroughtForward = lossBroughtForward,
+               averagingAdjustment = averagingAdjustment,
+               overlapReliefUsed = overlapReliefUsed,
+               basisAdjustment = basisAdjustment,
+               includedNonTaxableProfits = includedNonTaxableProfits,
+               accountingAdjustment = accountingAdjustment)))
 
     this
   }

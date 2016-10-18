@@ -53,7 +53,7 @@ object AllowancesController extends BaseController with Links {
   def find(utr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Action[AnyContent] = Action.async {
     repository.findAllowances(utr, taxYear, sourceId).map {
       case Some(adjustment) => Ok(halResource(Json.toJson(adjustment), sourceLinks(utr, taxYear, SourceTypes.SelfEmployments, sourceId)))
-      case None => Ok(halResource(Json.toJson(Allowances()), sourceLinks(utr, taxYear, SourceTypes.SelfEmployments, sourceId)))
+      case None => Ok(halResource(Json.toJson(Allowances(0, 0, 0, 0, 0, 0)), sourceLinks(utr, taxYear, SourceTypes.SelfEmployments, sourceId)))
     }
   }
 }

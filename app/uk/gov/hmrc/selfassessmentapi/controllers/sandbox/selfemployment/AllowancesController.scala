@@ -47,6 +47,6 @@ object AllowancesController extends BaseController with Links {
   }
 
   def find(utr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Action[AnyContent] = Action.async {
-    Future.successful(Ok(halResource(Json.toJson(Allowances()), sourceLinks(utr, taxYear, SourceTypes.SelfEmployments, sourceId))))
+    Future.successful(Ok(halResource(Json.toJson(Allowances(0, 0, 0, 0, 0, 0)), sourceLinks(utr, taxYear, SourceTypes.SelfEmployments, sourceId))))
   }
 }

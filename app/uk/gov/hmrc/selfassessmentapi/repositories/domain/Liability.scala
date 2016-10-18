@@ -79,7 +79,7 @@ case class Liability(id: BSONObjectID,
                            incomeTaxRelief = allowancesAndReliefs.incomeTaxRelief.getOrElse(0),
                            personalAllowance = allowancesAndReliefs.personalAllowance.getOrElse(0),
                            retirementAnnuityContract = allowancesAndReliefs.retirementAnnuityContract.getOrElse(0),
-                           total = Sum(allowancesAndReliefs.incomeTaxRelief,
+                           total = SumOptionals(allowancesAndReliefs.incomeTaxRelief,
                                        allowancesAndReliefs.personalAllowance,
                                        allowancesAndReliefs.retirementAnnuityContract)
                          )),

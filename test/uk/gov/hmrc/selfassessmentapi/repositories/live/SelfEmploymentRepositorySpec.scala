@@ -140,13 +140,6 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
     "return true when the self employment exists and has been updated" in {
       val source = selfEmployment()
 
-      val allowances = Allowances(annualInvestmentAllowance = Some(BigDecimal(10.00)),
-                                  capitalAllowanceMainPool = Some(BigDecimal(20.00)),
-                                  capitalAllowanceSpecialRatePool = Some(BigDecimal(30.00)),
-                                  businessPremisesRenovationAllowance = Some(BigDecimal(50.00)),
-                                  enhancedCapitalAllowance = Some(BigDecimal(60.00)),
-                                  allowancesOnSales = Some(BigDecimal(70.00)))
-
       val updatedSource = source.copy(
         commencementDate = source.commencementDate.minusMonths(1))
 
@@ -362,7 +355,7 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
   "updateAdjustments" should {
     "should overwrite the previous adjustments object" in {
       val adjustments = Adjustments.example
-      val updatedAdjustments = Adjustments()
+      val updatedAdjustments = Adjustments(0, 0, 0, 0, 0, 0, 0)
 
       val sourceId = await(selfEmploymentRepository.create(saUtr, taxYear, selfEmployment()))
 
@@ -370,8 +363,7 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
       await(selfEmploymentRepository.updateAdjustments(saUtr, taxYear, sourceId, updatedAdjustments))
 
       val newAdjustments = await(selfEmploymentRepository.findAdjustments(saUtr, taxYear, sourceId))
-      val expectedAdjustments = Adjustments(Some(0), Some(0), Some(0), Some(0), Some(0), Some(0), Some(0))
-      newAdjustments shouldBe Some(expectedAdjustments)
+      newAdjustments shouldBe Some(updatedAdjustments)
     }
   }
 
@@ -398,7 +390,7 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
   "updateAllowances" should {
     "should overwrite the previous allowances object" in {
       val allowances = Allowances.example
-      val updatedAllowances = Allowances()
+      val updatedAllowances = Allowances(0, 0, 0, 0, 0, 0)
 
       val sourceId = await(selfEmploymentRepository.create(saUtr, taxYear, selfEmployment()))
 
@@ -406,8 +398,7 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
       await(selfEmploymentRepository.updateAllowances(saUtr, taxYear, sourceId, updatedAllowances))
 
       val newAllowances = await(selfEmploymentRepository.findAllowances(saUtr, taxYear, sourceId))
-      val expectedAllowances = Allowances(Some(0), Some(0), Some(0), Some(0), Some(0), Some(0))
-      newAllowances shouldBe Some(expectedAllowances)
+      newAllowances shouldBe Some(updatedAllowances)
     }
   }
 
