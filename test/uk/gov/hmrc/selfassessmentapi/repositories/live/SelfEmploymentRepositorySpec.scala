@@ -18,18 +18,19 @@ package uk.gov.hmrc.selfassessmentapi.repositories.live
 
 import java.util.UUID
 
+import org.scalatest.BeforeAndAfterEach
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
 import uk.gov.hmrc.selfassessmentapi.controllers.api.JsonMarshaller
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment._
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.{SelfEmployment, SelfEmploymentIncomeSummary}
 import uk.gov.hmrc.selfassessmentapi.repositories.SummaryRepository
-import uk.gov.hmrc.support.BaseFunctionalSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SelfEmploymentRepositorySpec extends BaseFunctionalSpec {
+class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach {
 
   private val selfEmploymentRepository = new SelfEmploymentMongoRepository
   private val summariesMap: Map[JsonMarshaller[_], SummaryRepository[_]] = Map(
@@ -351,7 +352,7 @@ class SelfEmploymentRepositorySpec extends BaseFunctionalSpec {
   }
 }
 
-class SelfEmploymentAdjustmentsRepositorySpec extends BaseFunctionalSpec {
+class SelfEmploymentAdjustmentsRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach {
 
   val selfEmploymentRepository = new SelfEmploymentMongoRepository()
   val adjustmentsRepository = selfEmploymentRepository.AdjustmentsRepository
@@ -398,7 +399,7 @@ class SelfEmploymentAdjustmentsRepositorySpec extends BaseFunctionalSpec {
   }
 }
 
-class SelfEmploymentAllowancesRepositorySpec extends BaseFunctionalSpec {
+class SelfEmploymentAllowancesRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach {
 
   val selfEmploymentRepository = new SelfEmploymentMongoRepository()
   val allowancesRepository = selfEmploymentRepository.AllowancesRepository

@@ -45,8 +45,6 @@ class EmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfter
     await(mongoRepository.ensureIndexes)
   }
 
-  val saUtr = generateSaUtr()
-
   def employment(): Employment = Employment.example()
 
   "delete by Id" should {

@@ -38,8 +38,6 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
     await(mongoRepository.ensureIndexes)
   }
 
-  val saUtr = generateSaUtr()
-
   "touch" should {
     "create self assessment record if it does not exists" in {
       await(mongoRepository.touch(saUtr, taxYear))

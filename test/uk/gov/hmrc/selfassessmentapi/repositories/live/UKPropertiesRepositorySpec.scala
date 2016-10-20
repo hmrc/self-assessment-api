@@ -44,8 +44,6 @@ class UKPropertiesRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAft
     await(mongoRepository.ensureIndexes)
   }
 
-  val saUtr = generateSaUtr()
-
   def ukProperty(): UKProperty = UKProperty.example()
 
   "round trip" should {

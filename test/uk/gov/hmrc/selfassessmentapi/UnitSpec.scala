@@ -25,6 +25,7 @@ import scala.concurrent.duration._
 trait UnitSpec extends uk.gov.hmrc.play.test.UnitSpec with TestUtils {
 
   override implicit val defaultTimeout: FiniteDuration = 30 seconds
+  protected val saUtr = generateSaUtr()
 
   case class Print(value: BigDecimal) {
     def as(name: String) = {

@@ -20,8 +20,6 @@ import scala.util.matching.Regex
 
 trait BaseFunctionalSpec extends TestApplication {
 
-  protected val saUtr = generateSaUtr()
-
   class Assertions(request: String, response: HttpResponse)(implicit urlPathVariables: mutable.Map[String, String]) extends
     UrlInterpolation {
 

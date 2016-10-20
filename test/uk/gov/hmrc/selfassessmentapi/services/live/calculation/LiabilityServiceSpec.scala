@@ -35,7 +35,6 @@ import scala.concurrent.Future
 
 class LiabilityServiceSpec extends UnitSpec with MockitoSugar {
 
-  private val saUtr = generateSaUtr()
   private val liabilityRepo = mock[LiabilityMongoRepository]
   private val employmentRepo = mock[EmploymentMongoRepository]
   private val selfEmploymentRepo = mock[SelfEmploymentMongoRepository]
