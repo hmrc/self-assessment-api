@@ -141,6 +141,16 @@ schemas:
           "$ref": "Source"
         }
       }
+  - Income: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "A summary of income transactions taken from a ledger",
+        "properties": {
+          "amount": {"$ref": "Money"},
+          "taxDeducted": {"$ref": "Money", "default": 0}
+        },
+        "required": ["amount"],
+        "additionalProperties": false
+      }
   # Only some categories are allowed for some source type and summary type.
   #
   # Taxed = Taxed UK interest (SA100 - Incr.)
@@ -166,37 +176,26 @@ schemas:
   # PrivateUseAdjustment = "EEA UK - Private use ajustment (SA105 - Incr.)
   # PrivateUseAdjustment = Property - Private use ajustment (SA105 - Incr.)
   # GoodsAndServicesOwnUse = Goods and services for your own use (SA103f - Incr.)
-  - Income: |
+  - Incomes: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A summary of income transactions taken from a ledger",
         "properties": {
-          "id": {"type": "string"},
-          "category": {
-            "type": "string",
-            "enum": [
-              "Taxed",
-              "Untaxed",
-              "FromUKCompanies",
-              "FromOtherUKSources",
-              "Turnover",
-              "Other",
-              "BalancingChargeBPRA",
-              "BalancingChargeOther",
-              "Any",
-              "RentIncome",
-              "PremiumsOfLeaseGrant",
-              "ReversePremiums",
-              "BalancingCharge",
-              "PrivateUseAdjustment",
-              "GoodsAndServicesOwnUse"
-            ]
-          },
-          "amount": {"$ref": "Money"},
-          "taxDeducted": {"$ref": "Money", "default": 0},
-          "from": {"type": "string"},
-          "to": {"type": "string"}
+          "taxedUk": {"$ref": "Income"},
+          "untaxed": {"$ref": "Income"},
+          "fromUKCompanies": {"$ref": "Income"},
+          "fromOtherUKSources": {"$ref": "Income"},
+          "turnover": {"$ref": "Income"},
+          "other": {"$ref": "Income"},
+          "balancingChargeBPRA": {"$ref": "Income"},
+          "balancingChargeOther": {"$ref": "Income"},
+          "any": {"$ref": "Income"},
+          "rentIncome": {"$ref": "Income"},
+          "premiumsOfLeaseGrant": {"$ref": "Income"},
+          "reversePremiums": {"$ref": "Income"},
+          "balancingCharge": {"$ref": "Income"},
+          "privateUseAdjustment": {"$ref": "Income"},
+          "goodsAndServicesOwnUse": {"$ref": "Income"}
         },
-        "required": ["id", "category", "amount", "from", "to"],
         "additionalProperties": false
       }
   # Only some categories are allowed for some source type and summary type.
@@ -204,61 +203,50 @@ schemas:
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A summary of deductions (e.g. expenses) transactions taken from a ledger",
         "properties": {
-          "id": {"type": "string"},
-          "category": {
-            "type": "string",
-            "enum": [
-              "AdminCosts",
-              "AdvertisingCosts",
-              "BadDebt",
-              "CISPayments",
-              "CoGBought",
-              "CostOfServices",
-              "Depreciation",
-              "FinancialCosts",
-              "FixedDeductions",
-              "Interest",
-              "MaintenanceCosts",
-              "Other",
-              "PremisesRunningCosts",
-              "ProfessionalFees",
-              "RepairsAndMaintenance",
-              "StaffCosts",
-              "TravelAndSubsistence",
-              "TravelCosts"
-            ]
-          },
           "amount": {"$ref": "Money"},
-          "disallowableAmount": {"$ref": "Money", "default": 0},
-          "from": {"type": "string"},
-          "to": {"type": "string"}
+          "disallowableAmount": {"$ref": "Money", "default": 0}
         },
-        "required": ["id", "category", "amount", "from", "to"],
+        "required": ["amount"],
         "additionalProperties": false
       }
-  - Benefit: |
+  - Deductions: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "A summary of deductions (e.g. expenses) transactions taken from a ledger",
+        "properties": {
+          "adminCosts": {"$ref": "Deduction"},
+          "advertisingCosts": {"$ref": "Deduction"},
+          "badDebt": {"$ref": "Deduction"},
+          "cisPayments": {"$ref": "Deduction"},
+          "coGBought": {"$ref": "Deduction"},
+          "costOfServices": {"$ref": "Deduction"},
+          "depreciation": {"$ref": "Deduction"},
+          "financialCosts": {"$ref": "Deduction"},
+          "fixedDeductions": {"$ref": "Deduction"},
+          "interest": {"$ref": "Deduction"},
+          "maintenanceCosts": {"$ref": "Deduction"},
+          "other": {"$ref": "Deduction"},
+          "premisesRunningCosts": {"$ref": "Deduction"},
+          "professionalFees": {"$ref": "Deduction"},
+          "repairsAndMaintenance": {"$ref": "Deduction"},
+          "staffCosts": {"$ref": "Deduction"},
+          "travelAndSubsistence": {"$ref": "Deduction"},
+          "travelCosts": {"$ref": "Deduction"}
+        },
+        "additionalProperties": false
+      }
+  - Benefits: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A summary of benefit transactions taken from a ledger",
         "properties": {
-          "id": {"type": "string"},
-          "category": {
-            "type": "string",
-            "enum": [
-              "Accommodation",
-              "CompanyVehicle",
-              "ExpensesPayments",
-              "Fuel",
-              "GoodsProvidedByEmployer",
-              "Other",
-              "PrivateInsurance",
-              "VouchersCCAndExcessMileage"
-            ]
-          },
-          "amount": {"$ref": "Money"},
-          "from": {"type": "string"},
-          "to": {"type": "string"}
+          "accommodation": {"$ref": "Money"},
+          "companyVehicle": {"$ref": "Money"},
+          "expensesPayments": {"$ref": "Money"},
+          "fuel": {"$ref": "Money"},
+          "goodsProvidedByEmployer": {"$ref": "Money"},
+          "other": {"$ref": "Money"},
+          "privateInsurance": {"$ref": "Money"},
+          "vouchersCCAndExcessMileage": {"$ref": "Money"}
         },
-        "required": ["id", "category", "from", "to"],
         "additionalProperties": false
       }
   - SelfEmploymentIncome: |
@@ -344,7 +332,7 @@ schemas:
         "required": ["nonSavings", "savings", "dividends", "total"],
         "additionalProperties": false
       }
-  - Deductions: |
+  - DeductionsSummary: |
       { "$schema": "http://json-schema.org/schema",
         "properties": {
             "incomeTaxRelief": {"$ref": "Money"},
@@ -359,7 +347,7 @@ schemas:
       { "$schema": "http://json-schema.org/schema",
         "properties": {
             "incomes": {"$ref": "IncomeFromSources"},
-            "deductions": {"$ref": "Deductions"},
+            "deductions": {"$ref": "DeductionsSummary"},
             "totalIncomeOnWhichTaxIsDue": {"$ref": "Money"}
         },
         "required": ["incomes", "totalIncomeOnWhichTaxIsDue"],
@@ -596,170 +584,68 @@ traits:
               200:
           /incomes:
             get:
-              description: List incomes for a source of income
+              description: Get incomes for a source of income
               is: [ taxYearQueryParameters ]
               responses:
                 200:
                   body:
                     application/json:
+                      schema: Incomes
                       example: |
                         {
-                          "id": 3,
-                          "type": "Turnover",
-                          "amount": 10.20,
-                          "from": "2016-07-01",
-                          "to": "2016-08-01"
+                          "turnover": {"amount": 10.20},
+                          "other": {"amount": 10.20}
                         }
-            post:
-              description: Create a income for a source
+            put:
+              description: Update incomes for a source
               is: [ softwarePackageHeaders ]
               body:
                 application/json:
-                  schema: Income
+                  schema: Incomes
               responses:
-                201:
-                  headers:
-                    Location:
-                      example: "./3"
-            /{summaryId}:
-              uriParameters:
-                  summaryId:
-                    type: string
-                    required: true
-              get:
-                description: Get income
-                responses:
-                  200:
-                    body:
-                      application/json:
-                        schema: Income
-                        example: |
-                          {
-                            "id": 3,
-                            "type": "Turnover",
-                            "amount": 10.20,
-                            "from": "2016-07-01",
-                            "to": "2016-08-01"
-                          }
-              put:
-                description: Update income
-                is: [ softwarePackageHeaders ]
-                body:
-                  application/json:
-                    schema: Income
-                responses:
-                  204:
+                200:
           /deductions:
             get:
-              description: List deductions for a source of income
+              description: Get deductions for a source of income
               is: [ taxYearQueryParameters ]
               responses:
                 200:
                   body:
                     application/json:
+                      schema: Deductions
                       example: |
                         {
-                          "id": 3,
-                          "type": "Rent",
-                          "amount": 10.20,
-                          "disallowableAmount": 0,
-                          "from": "2016-07-01",
-                          "to": "2016-08-01"
+                          "rent": {"amount": 10.20, "disallowableAmount": 0}
                         }
-            post:
-              description: Create an deduction for a source
+            put:
+              description: Update deductions for a source
               is: [ softwarePackageHeaders ]
               body:
                 application/json:
-                  schema: Deduction
+                  schema: Deductions
               responses:
-                201:
-                  headers:
-                    Location:
-                      example: "./3"
-            /{summaryId}:
-              uriParameters:
-                summaryId:
-                  type: string
-                  required: true
-              get:
-                description: Get a deduction
-                responses:
-                  200:
-                    body:
-                      application/json:
-                        schema: Deduction
-                        example: |
-                          {
-                            "id": 3,
-                            "type": "Rent",
-                            "amount": 10.20,
-                            "from": "2016-07-01",
-                            "to": "2016-08-01"
-                          }
-              put:
-                description: Update deduction
-                is: [ softwarePackageHeaders ]
-                body:
-                  application/json:
-                    schema: Deduction
-                responses:
-                  204:
+                200:
           /benefits:
             get:
-              description: List benefits for a source of income
+              description: Get benefits for a source of income
               is: [ taxYearQueryParameters ]
               responses:
                 200:
                   body:
                     application/json:
+                      schema: Benefits
                       example: |
                         {
-                          "id": 3,
-                          "type": "PrivateInsurance",
-                          "amount": 10.20,
-                          "from": "2016-07-01",
-                          "to": "2016-08-01"
+                          "privateInsurance": {"amount": 10.20}
                         }
-            post:
-              description: Create an benefit for a source
+            put:
+              description: Update benefits for a source
               is: [ softwarePackageHeaders ]
               body:
                 application/json:
-                  schema: Benefit
+                  schema: Benefits
               responses:
-                201:
-                  headers:
-                    Location:
-                      example: "./3"
-            /{summaryId}:
-              uriParameters:
-                summaryId:
-                  type: string
-                  required: true
-              get:
-                description: Get a benefit
-                responses:
-                  200:
-                    body:
-                      application/json:
-                        schema: Benefit
-                        example: |
-                          {
-                            "id": 3,
-                            "type": "PrivateInsurance",
-                            "amount": 10.20,
-                            "from": "2016-07-01",
-                            "to": "2016-08-01"
-                          }
-              put:
-                description: Update benefit
-                is: [ softwarePackageHeaders ]
-                body:
-                  application/json:
-                    schema: Benefit
-                responses:
-                  204:
+                200:
   /non-financials/{taxYear}:
     get:
       description: Get non-financial data
