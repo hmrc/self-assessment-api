@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers
 
+import play.api.hal.HalLink
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Request
 import play.api.mvc.hal._
@@ -25,8 +26,6 @@ import uk.gov.hmrc.selfassessmentapi.controllers.api.{SourceId, SourceType, TaxY
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-
-
 
 trait AnnualSummaryController extends BaseController with Links with SourceTypeSupport {
   override val context: String = AppContext.apiGatewayLinkContext
@@ -46,13 +45,13 @@ trait AnnualSummaryController extends BaseController with Links with SourceTypeS
             case ValidationErrorResult(errors) => BadRequest(Json.toJson(invalidRequest(errors)))
           }
         }
-      case Right(id) => Future.successful(Ok(Json.toJson(sourceTypeAndSummaryTypeHref(saUtr, taxYear, sourceType, sourceId, annualSummaryTypeName))))
+      case Right(id) => Future.successful(Ok(halResource(Json.obj(), Set(HalLink("self", s"/$saUtr/${sourceType.name}/$sourceId/$taxYear/$annualSummaryTypeName")))))
     }
   }
 
   def findAnnualSummary(saUtr: SaUtr, taxYear: TaxYear, sourceType: SourceType, sourceId: SourceId, annualSummaryTypeName: String) = {
     handler(sourceType, annualSummaryTypeName).find(saUtr, taxYear, sourceId) map {
-      case Some(summary) => Ok(halResource(Json.toJson(summary), sourceLinks(saUtr, taxYear, sourceType, sourceId)))
+      case Some(summary) => Ok(halResource(Json.toJson(summary), Set(HalLink("self", s"/$saUtr/${sourceType.name}/$sourceId/$taxYear/$annualSummaryTypeName"))))
       case None => notFound
     }
   }
