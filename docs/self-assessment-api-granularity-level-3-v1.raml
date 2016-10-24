@@ -18,7 +18,7 @@ documentation:
 
       * A **Source Of Income** is something that can provide income to a taxpayer. This might be UK property, or an employment for example.
       * A **Summary** is the sum of transactions from a ledger. These are grouped by type (e.g. income or expenses), and by category (e.g. salary or rent).
-      * A **Declaration** is created to declare that the source and summary information sent so far for the tax year are correct.
+      * A **Period** is created to declare that the source and summary information sent so far for the tax year are correct.
 
   - title: Workflow
     content: |
@@ -30,7 +30,7 @@ documentation:
       1. Update any **summaries** that need amending.
       1. Update any **sources** for the the current tax year, e.g. set allowances, adjustments, reliefs.
       1. Update any once per year details.
-      1. Create a **declaration** to confirm the quartely update is complete
+      1. Create a **period** to confirm the quartely update is complete
       1. Request a **liability** calculation.
       1. Wait for the calculation to complete.
       1. Get the liability and display it to your user.
@@ -55,6 +55,16 @@ schemas:
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "A monetary amount in UK pounds sterling",
         "type": "number"
+      }
+  - Period: |
+      { "$schema": "http://json-schema.org/schema",
+        "type": "object",
+        "title": "A period of time.",
+        "properties": {
+          "to": {"type": "string"}
+        },
+        "required": ["to"],
+        "additionalProperties": false
       }
   - NonFinancial: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
@@ -246,15 +256,6 @@ schemas:
           "to": {"type": "string"}
         },
         "required": ["id", "category", "from", "to"],
-        "additionalProperties": false
-      }
-  - Declaration: |
-      { "$schema": "http://json-schema.org/draft-04/schema#",
-        "title": "A declaration that the data is up to date",
-        "properties": {
-            "to": {"type": "string"}
-        },
-        "required": ["to"],
         "additionalProperties": false
       }
   - SelfEmploymentIncome: |
@@ -713,13 +714,13 @@ traits:
       body:
         application/json:
           schema: NonFinancial
-  /declarations:
+  /periods:
     post:
-      description: Create a declaration
+      description: Create a period
       is: [ softwarePackageHeaders ]
       body:
         application/json:
-          schema: Declaration
+          schema: Period
       responses:
         201:
           body:
@@ -735,7 +736,7 @@ traits:
                   }
                 }
     get:
-      description: List declarations
+      description: List periods
       is: [ taxYearQueryParameters ]
       responses:
         200:
@@ -745,7 +746,7 @@ traits:
                 [
                   {
                     "id": "0001",
-                    "date": "2016-09-29",
+                    "to": "2016-09-29",
                     "_links": {
                       "liability": "..."
                     }

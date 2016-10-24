@@ -292,15 +292,6 @@ schemas:
         },
         "additionalProperties": false
       }
-  - Declaration: |
-      { "$schema": "http://json-schema.org/draft-04/schema#",
-        "title": "A declaration that the data is up to date",
-        "properties": {
-            "to": {"type": "string"}
-        },
-        "required": ["to"],
-        "additionalProperties": false
-      }
   - SelfEmploymentIncome: |
          { "$schema": "http://json-schema.org/schema",
             "properties": {
@@ -854,13 +845,13 @@ traits:
     put:
       description: Updated pension contributions for a tax year
       is: [ softwarePackageHeaders ]
-  /declarations:
+  /periods:
     post:
-      description: Create a declaration
+      description: Create a periods
       is: [ softwarePackageHeaders ]
       body:
         application/json:
-          schema: Declaration
+          schema: Period
       responses:
         201:
           body:
@@ -876,7 +867,7 @@ traits:
                   }
                 }
     get:
-      description: List declarations
+      description: List periods
       is: [ taxYearQueryParameters ]
       responses:
         200:
@@ -886,7 +877,7 @@ traits:
                 [
                   {
                     "id": "0001",
-                    "date": "2016-09-29",
+                    "to": "2016-09-29",
                     "_links": {
                       "liability": "..."
                     }
