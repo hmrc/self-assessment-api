@@ -14,24 +14,28 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.controllers.api.dividend
+package uk.gov.hmrc.selfassessmentapi.repositories.sandbox
 
-import play.api.libs.json.JsValue
 import play.api.libs.json.Json._
+import play.api.libs.json.Writes
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
-import uk.gov.hmrc.selfassessmentapi.controllers.api.dividend.SummaryTypes.Incomes
+import uk.gov.hmrc.selfassessmentapi.repositories.AnnualSummaryRepository
 
-object SourceType {
+import scala.concurrent.Future
 
-  case object Dividends extends SourceType {
-    override val name = "dividends"
-    override val documentationName = "Dividends"
-    override val summaryTypes: Set[SummaryType] = Set(Incomes)
-    override val propertyTypes: Set[AnnualSummaryType] = Set.empty
-    override val title = "Sample dividends"
+trait SandboxAnnualSummaryRepository[T] extends AnnualSummaryRepository[T] {
+  def example: T
 
-    override def description(action: String) = s"$action a dividend income"
-    override def example(sourceId: Option[SourceId] = None): JsValue = toJson(Dividend.example(sourceId))
+  implicit val writes: Writes[T]
+
+  private def exampleJson() = toJson(example)
+
+  override def find(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Option[T]] = {
+    Future.successful(Some(example))
   }
 
+  override def createOrUpdate(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, summary: T): Future[Boolean] = {
+    Future.successful(true)
+  }
 }

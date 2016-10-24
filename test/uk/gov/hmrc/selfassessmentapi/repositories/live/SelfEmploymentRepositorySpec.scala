@@ -26,27 +26,25 @@ import uk.gov.hmrc.selfassessmentapi.controllers.api.JsonMarshaller
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment._
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.{SelfEmployment, SelfEmploymentIncomeSummary}
-import uk.gov.hmrc.selfassessmentapi.repositories.{SourceRepository, SummaryRepository}
+import uk.gov.hmrc.selfassessmentapi.repositories.SummaryRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach {
 
-  private val mongoRepository = new SelfEmploymentMongoRepository
-  private val selfEmploymentRepository: SourceRepository[selfemployment.SelfEmployment] = mongoRepository
+  private val selfEmploymentRepository = new SelfEmploymentMongoRepository
   private val summariesMap: Map[JsonMarshaller[_], SummaryRepository[_]] = Map(
-    Income -> mongoRepository.IncomeRepository,
-    Expense -> mongoRepository.ExpenseRepository,
-    BalancingCharge -> mongoRepository.BalancingChargeRepository,
-    GoodsAndServicesOwnUse -> mongoRepository.GoodsAndServicesOwnUseRepository
+    Income -> selfEmploymentRepository.IncomeRepository,
+    Expense -> selfEmploymentRepository.ExpenseRepository,
+    BalancingCharge -> selfEmploymentRepository.BalancingChargeRepository,
+    GoodsAndServicesOwnUse -> selfEmploymentRepository.GoodsAndServicesOwnUseRepository
   )
 
   override def beforeEach() {
-    await(mongoRepository.drop)
-    await(mongoRepository.ensureIndexes)
+    super.beforeEach()
+    await(selfEmploymentRepository.drop)
+    await(selfEmploymentRepository.ensureIndexes)
   }
-
-  val saUtr = generateSaUtr()
 
   def selfEmployment(): selfemployment.SelfEmployment = selfemployment.SelfEmployment.example()
 
@@ -141,66 +139,8 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
     "return true when the self employment exists and has been updated" in {
       val source = selfEmployment()
 
-      val allowances = Allowances(annualInvestmentAllowance = Some(BigDecimal(10.00)),
-                                  capitalAllowanceMainPool = Some(BigDecimal(20.00)),
-                                  capitalAllowanceSpecialRatePool = Some(BigDecimal(30.00)),
-                                  businessPremisesRenovationAllowance = Some(BigDecimal(50.00)),
-                                  enhancedCapitalAllowance = Some(BigDecimal(60.00)),
-                                  allowancesOnSales = Some(BigDecimal(70.00)))
-
-      val adjustments = Adjustments(includedNonTaxableProfits = Some(BigDecimal(10.00)),
-                                    basisAdjustment = Some(BigDecimal(20.00)),
-                                    overlapReliefUsed = Some(BigDecimal(30.00)),
-                                    accountingAdjustment = Some(BigDecimal(40.00)),
-                                    averagingAdjustment = Some(BigDecimal(50.00)),
-                                    lossBroughtForward = Some(BigDecimal(60.00)),
-                                    outstandingBusinessIncome = Some(BigDecimal(70.00)))
-
       val updatedSource = source.copy(
-        commencementDate = source.commencementDate.minusMonths(1),
-        allowances = Some(allowances),
-        adjustments = Some(adjustments)
-      )
-
-      verifyUpdate(source, updatedSource)
-    }
-
-    "set allowances to None if not provided" in {
-      val source = selfEmployment()
-
-      val updatedSource = source.copy(
-        allowances = None
-      )
-
-      verifyUpdate(source, updatedSource)
-    }
-
-    "set each allowance to None if not provided" in {
-      val source = selfEmployment()
-
-      val updatedSource = source.copy(
-        allowances = Some(Allowances())
-      )
-
-      verifyUpdate(source, updatedSource)
-    }
-
-    "set adjustments to None if not provided" in {
-      val source = selfEmployment()
-
-      val updatedSource = source.copy(
-        adjustments = None
-      )
-
-      verifyUpdate(source, updatedSource)
-    }
-
-    "set each adjustment to None if not provided" in {
-      val source = selfEmployment()
-
-      val updatedSource = source.copy(
-        adjustments = Some(Adjustments())
-      )
+        commencementDate = source.commencementDate.minusMonths(1))
 
       verifyUpdate(source, updatedSource)
     }
@@ -214,11 +154,11 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
       val source = SelfEmployment
         .create(saUtr, taxYear, selfEmployment())
         .copy(incomes = Seq(SelfEmploymentIncomeSummary(BSONObjectID.generate.stringify, IncomeType.Turnover, 10)))
-      await(mongoRepository.insert(source))
-      val found = await(mongoRepository.findById(saUtr, taxYear, source.sourceId)).get
+      await(selfEmploymentRepository.insert(source))
+      val found = await(selfEmploymentRepository.findById(saUtr, taxYear, source.sourceId)).get
       await(selfEmploymentRepository.update(saUtr, taxYear, source.sourceId, found))
 
-      val found1 = await(mongoRepository.findById(source.id))
+      val found1 = await(selfEmploymentRepository.findById(source.id))
 
       found1.get.incomes should not be empty
     }
@@ -226,10 +166,10 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
     "update last modified" in {
       val source = selfEmployment()
       val sourceId = await(selfEmploymentRepository.create(saUtr, taxYear, source))
-      val found = await(mongoRepository.findById(BSONObjectID(sourceId)))
+      val found = await(selfEmploymentRepository.findById(BSONObjectID(sourceId)))
       await(selfEmploymentRepository.update(saUtr, taxYear, sourceId, source))
 
-      val found1 = await(mongoRepository.findById(BSONObjectID(sourceId)))
+      val found1 = await(selfEmploymentRepository.findById(BSONObjectID(sourceId)))
 
       // Added the equals clauses as it was failing locally once, can fail if the test runs faster and has the same time for create and update
       found1.get.lastModifiedDateTime.isEqual(found.get.lastModifiedDateTime) || found1.get.lastModifiedDateTime
@@ -410,5 +350,98 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
       }
     }
   }
+}
 
+class SelfEmploymentAdjustmentsRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach {
+
+  val selfEmploymentRepository = new SelfEmploymentMongoRepository()
+  val adjustmentsRepository = selfEmploymentRepository.AdjustmentsRepository
+
+  "createOrUpdate self employment adjustments" should {
+    "create an adjustment object if one does not yet exist" in {
+      val sourceId = await(selfEmploymentRepository.create(saUtr, taxYear, selfemployment.SelfEmployment.example()))
+
+      await(adjustmentsRepository.createOrUpdate(saUtr, taxYear, sourceId, Adjustments.example()))
+      val result = await(adjustmentsRepository.find(saUtr, taxYear, sourceId))
+
+      result shouldBe Some(Adjustments.example())
+    }
+
+    "overwrite an existing adjustment object if one already exists" in {
+      val sourceId = await(selfEmploymentRepository.create(saUtr, taxYear, selfemployment.SelfEmployment.example()))
+      val updatedAdjustment = Adjustments(55, 123.5, 11, 324, 432, 500, 200)
+
+      await(adjustmentsRepository.createOrUpdate(saUtr, taxYear, sourceId, Adjustments.example()))
+      await(adjustmentsRepository.createOrUpdate(saUtr, taxYear, sourceId, updatedAdjustment))
+      val result = await(adjustmentsRepository.find(saUtr, taxYear, sourceId))
+
+      result shouldBe Some(updatedAdjustment)
+    }
+  }
+
+  "find self employment adjustments" should {
+    "return an adjustment if one already exists" in {
+      val sourceId = await(selfEmploymentRepository.create(saUtr, taxYear, selfemployment.SelfEmployment.example()))
+
+      await(adjustmentsRepository.createOrUpdate(saUtr, taxYear, sourceId, Adjustments.example()))
+      val result = await(adjustmentsRepository.find(saUtr, taxYear, sourceId))
+
+      result shouldBe Some(Adjustments.example())
+    }
+
+    "return None is no adjustment exists" in {
+      val sourceId = await(selfEmploymentRepository.create(saUtr, taxYear, selfemployment.SelfEmployment.example()))
+
+      val result = await(adjustmentsRepository.find(saUtr, taxYear, sourceId))
+
+      result shouldBe None
+    }
+  }
+}
+
+class SelfEmploymentAllowancesRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach {
+
+  val selfEmploymentRepository = new SelfEmploymentMongoRepository()
+  val allowancesRepository = selfEmploymentRepository.AllowancesRepository
+
+  "createOrUpdate self employment allowances" should {
+    "create an allowance object if one does not yet exist" in {
+      val sourceId = await(selfEmploymentRepository.create(saUtr, taxYear, selfemployment.SelfEmployment.example()))
+
+      await(allowancesRepository.createOrUpdate(saUtr, taxYear, sourceId, Allowances.example()))
+      val result = await(allowancesRepository.find(saUtr, taxYear, sourceId))
+
+      result shouldBe Some(Allowances.example())
+    }
+
+    "overwrite an existing allowance object if one already exists" in {
+      val sourceId = await(selfEmploymentRepository.create(saUtr, taxYear, selfemployment.SelfEmployment.example()))
+      val updatedAllowances = Allowances(55, 123.5, 11, 324, 432, 500)
+
+      await(allowancesRepository.createOrUpdate(saUtr, taxYear, sourceId, Allowances.example()))
+      await(allowancesRepository.createOrUpdate(saUtr, taxYear, sourceId, updatedAllowances))
+      val result = await(allowancesRepository.find(saUtr, taxYear, sourceId))
+
+      result shouldBe Some(updatedAllowances)
+    }
+  }
+
+  "find self employment allowances" should {
+    "return an allowance if one already exists" in {
+      val sourceId = await(selfEmploymentRepository.create(saUtr, taxYear, selfemployment.SelfEmployment.example()))
+
+      await(allowancesRepository.createOrUpdate(saUtr, taxYear, sourceId, Allowances.example()))
+      val result = await(allowancesRepository.find(saUtr, taxYear, sourceId))
+
+      result shouldBe Some(Allowances.example())
+    }
+
+    "return None is no allowance exists" in {
+      val sourceId = await(selfEmploymentRepository.create(saUtr, taxYear, selfemployment.SelfEmployment.example()))
+
+      val result = await(allowancesRepository.find(saUtr, taxYear, sourceId))
+
+      result shouldBe None
+    }
+  }
 }

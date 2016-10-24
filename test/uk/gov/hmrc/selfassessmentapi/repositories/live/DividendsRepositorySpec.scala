@@ -37,8 +37,6 @@ class DividendsRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterE
     await(mongoRepository.ensureIndexes)
   }
 
-  val saUtr = generateSaUtr()
-
   def dividend() = Dividend.example()
 
   "delete by Id" should {

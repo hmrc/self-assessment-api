@@ -20,7 +20,7 @@ import uk.gov.hmrc.selfassessmentapi.controllers.api.SourceTypes.Benefits
 import uk.gov.hmrc.selfassessmentapi.controllers.api.benefit.SummaryTypes.Incomes
 import uk.gov.hmrc.selfassessmentapi.controllers.api.benefit.{Benefit, _}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{SummaryType, _}
-import uk.gov.hmrc.selfassessmentapi.controllers.{SourceHandler, SummaryHandler}
+import uk.gov.hmrc.selfassessmentapi.controllers.{AnnualSummaryHandler, SourceHandler, SummaryHandler}
 import uk.gov.hmrc.selfassessmentapi.repositories.sandbox.{SandboxSourceRepository, SandboxSummaryRepository}
 
 object BenefitSourceHandler extends SourceHandler(Benefit, Benefits.name) {
@@ -32,6 +32,8 @@ object BenefitSourceHandler extends SourceHandler(Benefit, Benefits.name) {
       }, Income, Incomes.name))
       case _ => None
     }
+
+  override def annualSummaryHandler(annualSummaryType: AnnualSummaryType): Option[AnnualSummaryHandler[_]] = None
 
   override val repository = new SandboxSourceRepository[Benefit] {
     override implicit val writes = Benefit.writes

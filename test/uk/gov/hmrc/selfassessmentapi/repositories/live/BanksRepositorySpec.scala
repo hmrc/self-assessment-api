@@ -30,7 +30,6 @@ class BanksRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach 
   private val repo = new BanksMongoRepository()
   private val interestRepo = repo.InterestRepository
 
-  private val saUtr = generateSaUtr()
   private def saving = Bank.example()
 
   override def beforeEach(): Unit = {

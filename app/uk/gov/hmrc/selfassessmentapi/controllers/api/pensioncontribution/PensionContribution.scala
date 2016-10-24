@@ -46,7 +46,7 @@ case class PensionContribution(ukRegisteredPension: Option[BigDecimal] = None,
                                pensionSavings: Option[PensionSaving] = None) {
 
   def retirementAnnuityContract: BigDecimal = {
-    Sum(retirementAnnuity, employerScheme, overseasPension)
+    SumOptionals(retirementAnnuity, employerScheme, overseasPension)
   }
 }
 
@@ -76,7 +76,7 @@ object PensionContribution extends JsonMarshaller[PensionContribution] {
   }
 
   private def sumOfAllContributions(contribution: PensionContribution): BigDecimal = {
-    Sum(contribution.ukRegisteredPension, contribution.retirementAnnuity,
+    SumOptionals(contribution.ukRegisteredPension, contribution.retirementAnnuity,
       contribution.employerScheme, contribution.overseasPension)
   }
 

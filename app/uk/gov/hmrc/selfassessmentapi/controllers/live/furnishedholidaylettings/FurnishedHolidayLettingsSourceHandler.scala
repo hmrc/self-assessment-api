@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.controllers.live.furnishedholidaylettings
 
 import uk.gov.hmrc.play.http.NotImplementedException
 import uk.gov.hmrc.selfassessmentapi.controllers.api.SummaryType
-import uk.gov.hmrc.selfassessmentapi.controllers.{SourceHandler, SummaryHandler}
+import uk.gov.hmrc.selfassessmentapi.controllers.{AnnualSummaryHandler, SourceHandler, SummaryHandler}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.SourceType.FurnishedHolidayLettings
 import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.SummaryTypes.{BalancingCharges, Expenses, Incomes, PrivateUseAdjustments}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings._
@@ -35,6 +35,12 @@ object FurnishedHolidayLettingsSourceHandler extends SourceHandler(FurnishedHoli
       case BalancingCharges => Some(SummaryHandler(SummaryRepositoryWrapper(FurnishedHolidayLettingsRepository().BalancingChargeRepository), BalancingCharge, BalancingCharges.name))
       case PrivateUseAdjustments => Some(SummaryHandler(SummaryRepositoryWrapper(FurnishedHolidayLettingsRepository().PrivateUseAdjustmentRepository), PrivateUseAdjustment, PrivateUseAdjustments.name))
       case _ => throw new NotImplementedException(s"${FurnishedHolidayLettings.name} ${summaryType.name} is not implemented")
+    }
+  }
+
+  override def annualSummaryHandler(annualSummaryType: AnnualSummaryType): Option[AnnualSummaryHandler[_]] = {
+    annualSummaryType match {
+      case _ => throw new NotImplementedException(s"${FurnishedHolidayLettings.name} ${annualSummaryType.name} is not implemented")
     }
   }
 

@@ -38,8 +38,6 @@ class BenefitsRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEa
     await(mongoRepository.ensureIndexes)
   }
 
-  val saUtr = generateSaUtr()
-
   def benefit(): Benefit = Benefit.example()
 
   "delete by Id" should {

@@ -57,5 +57,4 @@ trait HalSupport {
       case None => allLinks
     }
   }
-
 }

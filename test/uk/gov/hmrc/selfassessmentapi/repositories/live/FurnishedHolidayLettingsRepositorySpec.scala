@@ -45,8 +45,6 @@ class FurnishedHolidayLettingsRepositorySpec extends MongoEmbeddedDatabase with 
     await(mongoRepository.ensureIndexes)
   }
 
-  val saUtr = generateSaUtr()
-
   def furnishedHolidayLetting(): FurnishedHolidayLetting = FurnishedHolidayLetting.example()
 
   "round trip" should {

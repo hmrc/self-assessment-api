@@ -48,7 +48,6 @@ class DeleteExpiredDataServiceSpec extends MongoEmbeddedDatabase with MockitoSug
   private val bankRepo = new BanksMongoRepository
   private val jobRepo = new JobHistoryMongoRepository
 
-  private val saUtr = generateSaUtr()
   private val saUtr2 = generateSaUtr()
   private val saUtr3 = generateSaUtr()
   private val lastModifiedDate = DateTime.now().minusWeeks(1)

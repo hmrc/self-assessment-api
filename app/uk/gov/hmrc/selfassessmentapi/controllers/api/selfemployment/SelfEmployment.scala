@@ -26,9 +26,7 @@ import ErrorCode.{apply => _, _}
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
 
 case class SelfEmployment(id: Option[SourceId] = None,
-                          commencementDate: LocalDate,
-                          allowances: Option[Allowances] = None,
-                          adjustments: Option[Adjustments] = None)
+                          commencementDate: LocalDate)
 
 object SelfEmployment extends JsonMarshaller[SelfEmployment]{
 
@@ -38,15 +36,11 @@ object SelfEmployment extends JsonMarshaller[SelfEmployment]{
 
   implicit val reads: Reads[SelfEmployment] = (
     Reads.pure(None) and
-      (__ \ "commencementDate").read[LocalDate](commencementDateValidator) and
-      (__ \ "allowances").readNullable[Allowances] and
-      (__ \ "adjustments").readNullable[Adjustments]
+      (__ \ "commencementDate").read[LocalDate](commencementDateValidator)
     ) (SelfEmployment.apply _)
 
 
   override def example(id: Option[String]) = SelfEmployment(
     id,
-    commencementDate = LocalDate.parse("2016-01-01"),
-    allowances = Some(Allowances.example),
-    adjustments = Some(Adjustments.example))
+    commencementDate = LocalDate.parse("2016-01-01"))
 }

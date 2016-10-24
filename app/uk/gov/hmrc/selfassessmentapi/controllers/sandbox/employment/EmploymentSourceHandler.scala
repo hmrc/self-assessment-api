@@ -16,12 +16,11 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers.sandbox.employment
 
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{SummaryType, SourceTypes}
-import uk.gov.hmrc.selfassessmentapi.controllers.{SourceHandler, SummaryHandler}
+import uk.gov.hmrc.selfassessmentapi.controllers.api._
+import uk.gov.hmrc.selfassessmentapi.controllers.{AnnualSummaryHandler, SourceHandler, SummaryHandler}
 import SourceTypes.Employments
 import uk.gov.hmrc.selfassessmentapi.controllers.api.employment._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.employment.SummaryTypes._
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{SourceId, SummaryId}
 import uk.gov.hmrc.selfassessmentapi.repositories.sandbox.{SandboxSourceRepository, SandboxSummaryRepository}
 
 object EmploymentSourceHandler extends SourceHandler(Employment, Employments.name) {
@@ -51,6 +50,8 @@ object EmploymentSourceHandler extends SourceHandler(Employment, Employments.nam
       case _ => None
     }
   }
+
+  override def annualSummaryHandler(annualSummaryType: AnnualSummaryType): Option[AnnualSummaryHandler[_]] = None
 
   override val repository = new SandboxSourceRepository[Employment] {
     override implicit val writes = Employment.writes

@@ -17,8 +17,8 @@
 package uk.gov.hmrc.selfassessmentapi.controllers.live.employment
 
 import uk.gov.hmrc.play.http.NotImplementedException
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{SummaryType, SourceTypes}
-import uk.gov.hmrc.selfassessmentapi.controllers.{SourceHandler, SummaryHandler}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.{AnnualSummaryType, SourceTypes, SummaryType}
+import uk.gov.hmrc.selfassessmentapi.controllers.{AnnualSummaryHandler, SourceHandler, SummaryHandler}
 import SourceTypes._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.employment._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.employment.SummaryTypes.{Benefits, Expenses, Incomes, UkTaxesPaid}
@@ -36,6 +36,12 @@ object EmploymentSourceHandler extends SourceHandler(Employment, Employments.nam
       case Benefits => Some(SummaryHandler(SummaryRepositoryWrapper(EmploymentRepository().BenefitRepository), Benefit, Benefits.name))
       case UkTaxesPaid => Some(SummaryHandler(SummaryRepositoryWrapper(EmploymentRepository().UkTaxPaidRepository), UkTaxPaid, UkTaxesPaid.name))
       case _ => throw new NotImplementedException(s"${Employments.name} ${summaryType.name} is not implemented")
+    }
+  }
+
+  override def annualSummaryHandler(annualSummaryType: AnnualSummaryType): Option[AnnualSummaryHandler[_]] = {
+    annualSummaryType match {
+      case _ => throw new NotImplementedException(s"${Employments.name} ${annualSummaryType.name} is not implemented")
     }
   }
 }

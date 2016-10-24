@@ -26,7 +26,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class LiabilityRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach {
 
   private val repository = new LiabilityMongoRepository()
-  private val saUtr = generateSaUtr()
 
   override def beforeEach() {
     await(repository.drop)

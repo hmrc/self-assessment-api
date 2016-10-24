@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.controllers.live.ukproperty
 
 import uk.gov.hmrc.play.http.NotImplementedException
 import uk.gov.hmrc.selfassessmentapi.controllers.api.SummaryType
-import uk.gov.hmrc.selfassessmentapi.controllers.{SourceHandler, SummaryHandler}
+import uk.gov.hmrc.selfassessmentapi.controllers.{AnnualSummaryHandler, SourceHandler, SummaryHandler}
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.ukproperty.SourceType.UKProperties
 import uk.gov.hmrc.selfassessmentapi.controllers.api.ukproperty.SummaryTypes._
@@ -36,6 +36,12 @@ object UKPropertySourceHandler extends SourceHandler(UKProperty, UKProperties.na
       case PrivateUseAdjustments => Some(SummaryHandler(SummaryRepositoryWrapper(UKPropertiesRepository().PrivateUseAdjustmentRepository), PrivateUseAdjustment, PrivateUseAdjustments.name))
       case TaxesPaid => Some(SummaryHandler(SummaryRepositoryWrapper(UKPropertiesRepository().TaxPaidRepository), TaxPaid, TaxesPaid.name))
       case _ => throw new NotImplementedException(s"${UKProperties.name} ${summaryType.name} is not implemented")
+    }
+  }
+
+  override def annualSummaryHandler(annualSummaryType: AnnualSummaryType): Option[AnnualSummaryHandler[_]] = {
+    annualSummaryType match {
+      case _ => throw new NotImplementedException(s"${UKProperties.name} ${annualSummaryType.name} is not implemented")
     }
   }
 

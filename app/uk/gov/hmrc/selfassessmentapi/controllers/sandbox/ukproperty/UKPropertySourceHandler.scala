@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers.sandbox.ukproperty
 
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{SummaryType, SourceTypes}
-import uk.gov.hmrc.selfassessmentapi.controllers.{SourceHandler, SummaryHandler}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.{SourceTypes, SummaryType}
+import uk.gov.hmrc.selfassessmentapi.controllers.{AnnualSummaryHandler, SourceHandler, SummaryHandler}
 import SourceTypes.UKProperties
 import uk.gov.hmrc.selfassessmentapi.controllers.api.ukproperty.SummaryTypes._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.ukproperty.{Income, _}
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{_}
+import uk.gov.hmrc.selfassessmentapi.controllers.api._
 import uk.gov.hmrc.selfassessmentapi.repositories.sandbox.{SandboxSourceRepository, SandboxSummaryRepository}
 
 object UKPropertySourceHandler extends SourceHandler(UKProperty, UKProperties.name) {
@@ -51,6 +51,8 @@ object UKPropertySourceHandler extends SourceHandler(UKProperty, UKProperties.na
       case _ => None
     }
   }
+
+  override def annualSummaryHandler(annualSummaryType: AnnualSummaryType): Option[AnnualSummaryHandler[_]] = None
 
   override val repository = new SandboxSourceRepository[UKProperty] {
     override implicit val writes = UKProperty.writes

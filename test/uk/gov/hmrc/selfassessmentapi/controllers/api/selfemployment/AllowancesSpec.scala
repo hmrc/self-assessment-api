@@ -25,12 +25,12 @@ class AllowancesSpec extends JsonSpec {
   "format" should {
     "round trip valid Allowances json" in {
       roundTripJson(Allowances(
-        annualInvestmentAllowance = Some(BigDecimal(10.00)),
-        capitalAllowanceMainPool = Some(BigDecimal(10.00)),
-        capitalAllowanceSpecialRatePool = Some(BigDecimal(10.00)),
-        businessPremisesRenovationAllowance = Some(BigDecimal(10.00)),
-        enhancedCapitalAllowance = Some(BigDecimal(10.00)),
-        allowancesOnSales = Some(BigDecimal(10.00))))
+        annualInvestmentAllowance = BigDecimal(10.00),
+        capitalAllowanceMainPool = BigDecimal(10.00),
+        capitalAllowanceSpecialRatePool = BigDecimal(10.00),
+        businessPremisesRenovationAllowance = BigDecimal(10.00),
+        enhancedCapitalAllowance = BigDecimal(10.00),
+        allowancesOnSales = BigDecimal(10.00)))
     }
   }
 
@@ -42,32 +42,74 @@ class AllowancesSpec extends JsonSpec {
     }
 
     "reject negative annualInvestmentAllowance" in {
-      val se = Allowances(annualInvestmentAllowance = Some(BigDecimal(-10.00)))
+      val se = Allowances(
+        annualInvestmentAllowance = BigDecimal(-10.00),
+        capitalAllowanceMainPool = 0,
+        businessPremisesRenovationAllowance = 0,
+        capitalAllowanceSpecialRatePool = 0,
+        enhancedCapitalAllowance = 0,
+        allowancesOnSales = 0)
+
      validateNegative(se, "/annualInvestmentAllowance")
     }
 
     "reject negative capitalAllowanceMainPool" in {
-      val se = Allowances(capitalAllowanceMainPool = Some(BigDecimal(-10.00)))
+      val se = Allowances(
+        annualInvestmentAllowance = 0,
+        capitalAllowanceMainPool = BigDecimal(-10.00),
+        businessPremisesRenovationAllowance = 0,
+        capitalAllowanceSpecialRatePool = 0,
+        enhancedCapitalAllowance = 0,
+        allowancesOnSales = 0)
+
      validateNegative(se, "/capitalAllowanceMainPool")
     }
 
     "reject negative capitalAllowanceSpecialRatePool" in {
-      val se = Allowances(capitalAllowanceSpecialRatePool = Some(BigDecimal(-10.00)))
+      val se = Allowances(
+        annualInvestmentAllowance = 0,
+        capitalAllowanceMainPool = 0,
+        businessPremisesRenovationAllowance = 0,
+        capitalAllowanceSpecialRatePool = BigDecimal(-10.00),
+        enhancedCapitalAllowance = 0,
+        allowancesOnSales = 0)
+
      validateNegative(se, "/capitalAllowanceSpecialRatePool")
     }
 
     "reject negative businessPremisesRenovationAllowance" in {
-      val se = Allowances(businessPremisesRenovationAllowance = Some(BigDecimal(-10.00)))
+      val se = Allowances(
+        annualInvestmentAllowance = 0,
+        capitalAllowanceMainPool = 0,
+        businessPremisesRenovationAllowance = BigDecimal(-10.00),
+        capitalAllowanceSpecialRatePool = 0,
+        enhancedCapitalAllowance = 0,
+        allowancesOnSales = 0)
+
      validateNegative(se, "/businessPremisesRenovationAllowance")
     }
 
     "reject negative enhancedCapitalAllowance" in {
-      val se = Allowances(enhancedCapitalAllowance = Some(BigDecimal(-10.00)))
+      val se = Allowances(
+        annualInvestmentAllowance = 0,
+        capitalAllowanceMainPool = 0,
+        businessPremisesRenovationAllowance = 0,
+        capitalAllowanceSpecialRatePool = 0,
+        enhancedCapitalAllowance = BigDecimal(-10.00),
+        allowancesOnSales = 0)
+
      validateNegative(se, "/enhancedCapitalAllowance")
     }
 
     "reject negative allowancesOnSales" in {
-      val se = Allowances(allowancesOnSales = Some(BigDecimal(-10.00)))
+      val se = Allowances(
+        annualInvestmentAllowance = 0,
+        capitalAllowanceMainPool = 0,
+        businessPremisesRenovationAllowance = 0,
+        capitalAllowanceSpecialRatePool = 0,
+        enhancedCapitalAllowance = 0,
+        allowancesOnSales = BigDecimal(-10.00))
+
      validateNegative(se, "/allowancesOnSales")
     }
 
