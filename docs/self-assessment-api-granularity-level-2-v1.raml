@@ -61,9 +61,12 @@ schemas:
         "type": "object",
         "title": "A period of time.",
         "properties": {
-          "to": {"type": "string"}
+          "id": {"type": "string"},
+          "from": {"type": "string"},
+          "to": {"type": "string"},
+          "complete": {"type": "boolean", "default": false}
         },
-        "required": ["to"],
+        "required": ["from", "to", "complete"],
         "additionalProperties": false
       }
   - NonFinancial: |
@@ -536,172 +539,227 @@ traits:
               schema: Adjustments
           responses:
             204:
-      /incomes:
+      /periods:
+        post:
+          description: Create a period
+          is: [ softwarePackageHeaders ]
+          body:
+            application/json:
+              schema: Period
+              example: |
+                {
+                  "from": "2016-09-01",
+                  "to": "2016-09-29"
+                }
+          responses:
+            201:
         get:
-          description: List incomes for a source of income
+          description: List periods
           is: [ taxYearQueryParameters ]
           responses:
             200:
               body:
                 application/json:
                   example: |
-                    {
-                      "id": 3,
-                      "type": "Turnover",
-                      "amount": 10.20,
-                      "from": "2016-07-01",
-                      "to": "2016-08-01"
-                    }
-        post:
-          description: Create a income for a source
-          is: [ softwarePackageHeaders ]
-          body:
-            application/json:
-              schema: Income
-          responses:
-            201:
-              headers:
-                Location:
-                  example: "./3"
-        /{summaryId}:
-          uriParameters:
-              summaryId:
-                type: string
-                required: true
+                    [
+                      {
+                        "id": "0001",
+                        "from": "2016-09-01",
+                        "to": "2016-09-29"
+                      }
+                    ]
+        /{periodId}:
           get:
-            description: Get income
+            description: Get a period
             responses:
               200:
+                body:
+                  application/json:
+                    schema: Period
+                    example: |
+                      {
+                        "id": "0001",
+                        "from": "2016-09-01",
+                        "to": "2016-09-29"
+                      }
+          patch:
+            description: Complete the period
+            is: [ softwarePackageHeaders ]
+            body:
+              application/json:
+                schema: Period
+                example: |
+                  {
+                    "completed": true
+                  }
+            responses:
+              200:
+          /incomes:
+            get:
+              description: List incomes for a source of income
+              is: [ taxYearQueryParameters ]
+              responses:
+                200:
+                  body:
+                    application/json:
+                      example: |
+                        {
+                          "id": 3,
+                          "type": "Turnover",
+                          "amount": 10.20,
+                          "from": "2016-07-01",
+                          "to": "2016-08-01"
+                        }
+            post:
+              description: Create a income for a source
+              is: [ softwarePackageHeaders ]
+              body:
+                application/json:
+                  schema: Income
+              responses:
+                201:
+                  headers:
+                    Location:
+                      example: "./3"
+            /{summaryId}:
+              uriParameters:
+                  summaryId:
+                    type: string
+                    required: true
+              get:
+                description: Get income
+                responses:
+                  200:
+                    body:
+                      application/json:
+                        schema: Income
+                        example: |
+                          {
+                            "id": 3,
+                            "type": "Turnover",
+                            "amount": 10.20,
+                            "from": "2016-07-01",
+                            "to": "2016-08-01"
+                          }
+              put:
+                description: Update income
+                is: [ softwarePackageHeaders ]
                 body:
                   application/json:
                     schema: Income
-                    example: |
-                      {
-                        "id": 3,
-                        "type": "Turnover",
-                        "amount": 10.20,
-                        "from": "2016-07-01",
-                        "to": "2016-08-01"
-                      }
-          put:
-            description: Update income
-            is: [ softwarePackageHeaders ]
-            body:
-              application/json:
-                schema: Income
-            responses:
-              204:
-      /deductions:
-        get:
-          description: List deductions for a source of income
-          is: [ taxYearQueryParameters ]
-          responses:
-            200:
+                responses:
+                  204:
+          /deductions:
+            get:
+              description: List deductions for a source of income
+              is: [ taxYearQueryParameters ]
+              responses:
+                200:
+                  body:
+                    application/json:
+                      example: |
+                        {
+                          "id": 3,
+                          "type": "Rent",
+                          "amount": 10.20,
+                          "disallowableAmount": 0,
+                          "from": "2016-07-01",
+                          "to": "2016-08-01"
+                        }
+            post:
+              description: Create an deduction for a source
+              is: [ softwarePackageHeaders ]
               body:
                 application/json:
-                  example: |
-                    {
-                      "id": 3,
-                      "type": "Rent",
-                      "amount": 10.20,
-                      "disallowableAmount": 0,
-                      "from": "2016-07-01",
-                      "to": "2016-08-01"
-                    }
-        post:
-          description: Create an deduction for a source
-          is: [ softwarePackageHeaders ]
-          body:
-            application/json:
-              schema: Deduction
-          responses:
-            201:
-              headers:
-                Location:
-                  example: "./3"
-        /{summaryId}:
-          uriParameters:
-            summaryId:
-              type: string
-              required: true
-          get:
-            description: Get a deduction
-            responses:
-              200:
+                  schema: Deduction
+              responses:
+                201:
+                  headers:
+                    Location:
+                      example: "./3"
+            /{summaryId}:
+              uriParameters:
+                summaryId:
+                  type: string
+                  required: true
+              get:
+                description: Get a deduction
+                responses:
+                  200:
+                    body:
+                      application/json:
+                        schema: Deduction
+                        example: |
+                          {
+                            "id": 3,
+                            "type": "Rent",
+                            "amount": 10.20,
+                            "from": "2016-07-01",
+                            "to": "2016-08-01"
+                          }
+              put:
+                description: Update deduction
+                is: [ softwarePackageHeaders ]
                 body:
                   application/json:
                     schema: Deduction
-                    example: |
-                      {
-                        "id": 3,
-                        "type": "Rent",
-                        "amount": 10.20,
-                        "from": "2016-07-01",
-                        "to": "2016-08-01"
-                      }
-          put:
-            description: Update deduction
-            is: [ softwarePackageHeaders ]
-            body:
-              application/json:
-                schema: Deduction
-            responses:
-              204:
-      /benefits:
-        get:
-          description: List benefits for a source of income
-          is: [ taxYearQueryParameters ]
-          responses:
-            200:
+                responses:
+                  204:
+          /benefits:
+            get:
+              description: List benefits for a source of income
+              is: [ taxYearQueryParameters ]
+              responses:
+                200:
+                  body:
+                    application/json:
+                      example: |
+                        {
+                          "id": 3,
+                          "type": "PrivateInsurance",
+                          "amount": 10.20,
+                          "from": "2016-07-01",
+                          "to": "2016-08-01"
+                        }
+            post:
+              description: Create an benefit for a source
+              is: [ softwarePackageHeaders ]
               body:
                 application/json:
-                  example: |
-                    {
-                      "id": 3,
-                      "type": "PrivateInsurance",
-                      "amount": 10.20,
-                      "from": "2016-07-01",
-                      "to": "2016-08-01"
-                    }
-        post:
-          description: Create an benefit for a source
-          is: [ softwarePackageHeaders ]
-          body:
-            application/json:
-              schema: Benefit
-          responses:
-            201:
-              headers:
-                Location:
-                  example: "./3"
-        /{summaryId}:
-          uriParameters:
-            summaryId:
-              type: string
-              required: true
-          get:
-            description: Get a benefit
-            responses:
-              200:
+                  schema: Benefit
+              responses:
+                201:
+                  headers:
+                    Location:
+                      example: "./3"
+            /{summaryId}:
+              uriParameters:
+                summaryId:
+                  type: string
+                  required: true
+              get:
+                description: Get a benefit
+                responses:
+                  200:
+                    body:
+                      application/json:
+                        schema: Benefit
+                        example: |
+                          {
+                            "id": 3,
+                            "type": "PrivateInsurance",
+                            "amount": 10.20,
+                            "from": "2016-07-01",
+                            "to": "2016-08-01"
+                          }
+              put:
+                description: Update benefit
+                is: [ softwarePackageHeaders ]
                 body:
                   application/json:
                     schema: Benefit
-                    example: |
-                      {
-                        "id": 3,
-                        "type": "PrivateInsurance",
-                        "amount": 10.20,
-                        "from": "2016-07-01",
-                        "to": "2016-08-01"
-                      }
-          put:
-            description: Update benefit
-            is: [ softwarePackageHeaders ]
-            body:
-              application/json:
-                schema: Benefit
-            responses:
-              204:
+                responses:
+                  204:
   /non-financials/{taxYear}:
     get:
       description: Get non-financial data
@@ -714,44 +772,6 @@ traits:
       body:
         application/json:
           schema: NonFinancial
-  /periods:
-    post:
-      description: Create a period
-      is: [ softwarePackageHeaders ]
-      body:
-        application/json:
-          schema: Period
-      responses:
-        201:
-          body:
-            application/json:
-              example: |
-                {
-                  "_links": {
-                    "liability": "..."
-                  },
-                  "_embedded": {
-                    "liability": {
-                    }
-                  }
-                }
-    get:
-      description: List periods
-      is: [ taxYearQueryParameters ]
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                [
-                  {
-                    "id": "0001",
-                    "to": "2016-09-29",
-                    "_links": {
-                      "liability": "..."
-                    }
-                  }
-                ]
   /liabilites/{id}:
       uriParameters:
         id:
