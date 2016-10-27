@@ -17,10 +17,13 @@
 package uk.gov.hmrc.selfassessmentapi.jobs
 
 import play.Logger
+import play.api.Play.current
+import play.modules.reactivemongo.ReactiveMongoPlugin
+import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.play.scheduling.ExclusiveScheduledJob
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.repositories.live.{LiabilityMongoRepository, LiabilityRepository}
-import uk.gov.hmrc.selfassessmentapi.repositories.{JobHistoryMongoRepository, JobHistoryRepository}
+import uk.gov.hmrc.selfassessmentapi.repositories.live._
+import uk.gov.hmrc.selfassessmentapi.repositories.{JobHistoryRepository, SelfAssessmentRepository}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -28,46 +31,68 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object DropMongoCollectionJob extends ExclusiveScheduledJob {
 
-  override val name = "DropMongoCollectionJob"
+  override val name = "DropMongoCollectionsJob"
 
   override lazy val initialDelay = AppContext.dropMongoCollectionJob.getMilliseconds("initialDelay").getOrElse(throw new IllegalStateException("Config key not found: initialDelay")) millisecond
 
   override lazy val interval = AppContext.dropMongoCollectionJob.getMilliseconds("interval").getOrElse(throw new IllegalStateException("Config key not found: interval")) millisecond
 
-  private lazy val dropMongoCollection = new DropMongoLiabilityCollection(LiabilityRepository(), JobHistoryRepository())
+  private val reposToBeCreated = Seq(EmploymentRepository(), SelfEmploymentRepository(), FurnishedHolidayLettingsRepository(), BanksRepository(),
+    BenefitsRepository(), DividendRepository(), LiabilityRepository(), SelfAssessmentRepository(), JobHistoryRepository(), UKPropertiesRepository())
+
+  private lazy val dropMongoCollection = new RecreateMongoDatabase(reposToBeCreated)
 
   override lazy val isRunning = super.isRunning.flatMap(isRunning => if (isRunning) Future(true) else dropMongoCollection.isLatestJobInProgress)
 
   override def executeInMutex(implicit ec: ExecutionContext): Future[Result] = {
-    dropMongoCollection.dropMongoCollection().map { msg =>
+    dropMongoCollection.dropAndRecreateMongoDatabase().map { msg =>
       Logger.info(s"Finished $name.")
       Result(msg)
     }
   }
 
 
-  private class DropMongoLiabilityCollection(repo: LiabilityMongoRepository, jobRepo: JobHistoryMongoRepository) {
+  private class RecreateMongoDatabase(reposToBeCreated: Seq[ReactiveRepository[_, _]]) {
+    private val jobRepo = JobHistoryRepository()
 
     def isLatestJobInProgress: Future[Boolean] = {
       jobRepo.isLatestJobInProgress
     }
 
-    def dropMongoCollection(): Future[String] = {
-      Logger.info(s"Starting $name drop the mongo liability collection.")
+    def dropAndRecreateMongoDatabase(): Future[String] = {
+      Logger.info(s"Starting $name drop the mongo database and created collections.")
 
       jobRepo.startJob().flatMap { job =>
-        repo.drop.map { status =>
-          jobRepo.completeJob(job.jobNumber, 0)
-          if (status)
-            s"$name Completed. Dropped the mongo liability collection successfully."
-          else
-            s"$name Completed. Could not drop the mongo liability collection."
-        }.recover {
-          case ex: Throwable =>
-            jobRepo.abortJob(job.jobNumber)
-            Logger.warn(ex.getMessage)
-            ex.getMessage
+        val dropDB = for {
+          _ <- ReactiveMongoPlugin.mongoConnector.db().drop()
+        } yield true
+
+        dropDB.flatMap { dropDB =>
+
+          val result = Future.sequence {
+            reposToBeCreated.map { repo =>
+              for {
+                status <- repo.ensureIndexes
+              } yield status
+            }
+          }
+
+          result.map { resultSeq =>
+            jobRepo.completeJob(job.jobNumber, 0)
+            val status = resultSeq.flatten.forall(_ == true)
+            if (dropDB && status)
+              s"$name Completed. Dropped the mongo database and created collections successfully."
+            else
+              s"$name Completed. Could not drop the mongo database and create collections."
+          }.recover {
+            case ex: Throwable =>
+              jobRepo.abortJob(job.jobNumber)
+              Logger.warn(ex.getMessage)
+              ex.getMessage
+          }
+
         }
+
       }
 
     }
