@@ -816,33 +816,53 @@ traits:
   /student-loans/{taxYear}:
     get:
       description: Get student loans for a tax year
+      responses:
+        200:
     put:
       description: Updated student loans for a tax year
       is: [ softwarePackageHeaders ]
+      responses:
+        204:
   /blind-person-allowances/{taxYear}:
     get:
       description: Get blind person allowances for a tax year
+      responses:
+        200:
     put:
       description: Updated blind person allowances for a tax year
       is: [ softwarePackageHeaders ]
+      responses:
+        204:
   /child-benefits/{taxYear}:
     get:
       description: Get child benefits for a tax year
+      responses:
+        200:
     put:
       description: Updated child benefits for a tax year
       is: [ softwarePackageHeaders ]
+      responses:
+        204:
   /taxes-refunded-or-set-off/{taxYear}:
     get:
       description: Get taxes refunded or set off for a tax year
+      responses:
+        200:
     put:
       description: Updated taxes refunded or set off for a tax year
       is: [ softwarePackageHeaders ]
+      responses:
+        204:
   /pension-contributions/{taxYear}:
     get:
       description: Get pension contributions for a tax year
+      responses:
+        200:
     put:
       description: Updated pension contributions for a tax year
       is: [ softwarePackageHeaders ]
+      responses:
+        204:
   /periods:
     post:
       description: Create a periods
