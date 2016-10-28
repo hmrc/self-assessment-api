@@ -57,7 +57,7 @@ schemas:
         "type": "number"
       }
   - Period: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema",
         "type": "object",
         "title": "A period of time.",
         "properties": {
@@ -259,7 +259,7 @@ schemas:
         "additionalProperties": false
       }
   - SelfEmploymentIncome: |
-         { "$schema": "http://json-schema.org/schema",
+         { "$schema": "http://json-schema.org/draft-04/schema",
             "properties": {
                 "sourceId": {"type": "string"},
                 "taxableProfit": {"$ref": "Money"},
@@ -269,7 +269,7 @@ schemas:
             "additionalProperties": false
          }
   - UkPropertyIncome: |
-         { "$schema": "http://json-schema.org/schema",
+         { "$schema": "http://json-schema.org/draft-04/schema",
             "properties": {
                 "sourceId": {"type": "string"},
                 "profit": {"$ref": "Money"}
@@ -278,7 +278,7 @@ schemas:
             "additionalProperties": false
          }
   - FurnishedHolidayLettingIncome: |
-         { "$schema": "http://json-schema.org/schema",
+         { "$schema": "http://json-schema.org/draft-04/schema",
             "properties": {
                 "sourceId": {"type": "string"},
                 "profit": {"$ref": "Money"}
@@ -287,7 +287,7 @@ schemas:
             "additionalProperties": false
          }
   - NonSavingsIncomes: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema",
         "properties": {
             "selfEmployment": {"type": "array", "items": {"$ref": "SelfEmploymentIncome"}},
             "ukProperties": {"type": "array", "items": {"$ref": "UkPropertyIncome"}},
@@ -297,7 +297,7 @@ schemas:
         "additionalProperties": false
       }
   - InterestFromUKBanksAndBuildingSocieties: |
-         { "$schema": "http://json-schema.org/schema",
+         { "$schema": "http://json-schema.org/draft-04/schema",
             "properties": {
                 "sourceId": {"type": "string"},
                 "totalInterest": {"$ref": "Money"}
@@ -306,7 +306,7 @@ schemas:
             "additionalProperties": false
          }
   - SavingsIncomes: |
-        { "$schema": "http://json-schema.org/schema",
+        { "$schema": "http://json-schema.org/draft-04/schema",
             "properties": {
                 "fromUKBanksAndBuildingSocieties": {"type": "array", "items": {"$ref": "InterestFromUKBanksAndBuildingSocieties"}}
             },
@@ -314,7 +314,7 @@ schemas:
             "additionalProperties": false
          }
   - DividendsFromUKSources: |
-        { "$schema": "http://json-schema.org/schema",
+        { "$schema": "http://json-schema.org/draft-04/schema",
             "properties": {
                 "sourceId": {"type": "string"},
                 "totalDividend": {"$ref": "Money"}
@@ -323,7 +323,7 @@ schemas:
             "additionalProperties": false
          }
   - DividendsIncomes: |
-        { "$schema": "http://json-schema.org/schema",
+        { "$schema": "http://json-schema.org/draft-04/schema",
             "properties": {
                 "fromUKSources": {"type": "array", "items": {"$ref": "DividendsFromUKSources"}}
             },
@@ -331,7 +331,7 @@ schemas:
             "additionalProperties": false
          }
   - IncomeFromSources: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema",
         "properties": {
             "nonSavings": {"$ref": "NonSavingsIncomes"},
             "savings": {"$ref": "SavingsIncomes"},
@@ -342,7 +342,7 @@ schemas:
         "additionalProperties": false
       }
   - Deductions: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema",
         "properties": {
             "incomeTaxRelief": {"$ref": "Money"},
             "personalAllowance": {"$ref": "Money"},
@@ -353,7 +353,7 @@ schemas:
         "additionalProperties": false
       }
   - IncomeSummary: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema",
         "properties": {
             "incomes": {"$ref": "IncomeFromSources"},
             "deductions": {"$ref": "Deductions"},
@@ -363,7 +363,7 @@ schemas:
         "additionalProperties": false
       }
   - TaxBandSummary: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema",
         "properties": {
             "taxBand": {"type": "string"},
             "taxableAmount": {"$ref": "Money"},
@@ -374,7 +374,7 @@ schemas:
         "additionalProperties": false
       }
   - IncomeTaxCalculations: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema",
         "properties": {
             "nonSavings": {"type": "array", "items": {"$ref": "TaxBandSummary"}},
             "savings": {"type": "array", "items": {"$ref": "TaxBandSummary"}},
@@ -385,7 +385,7 @@ schemas:
         "additionalProperties": false
       }
   - TaxDeducted: |
-      { "$schema": "http://json-schema.org/schema",
+      { "$schema": "http://json-schema.org/draft-04/schema",
         "properties": {
             "interestFromUk": {"$ref": "Money"}
         },
