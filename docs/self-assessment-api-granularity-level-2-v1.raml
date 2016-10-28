@@ -649,15 +649,19 @@ traits:
   /non-financials/{taxYear}:
     get:
       description: Get non-financial data
-      body:
-        application/json:
-          schema: NonFinancial
+      responses:
+        200:
+          body:
+            application/json:
+              schema: NonFinancial
     put:
       description: Set non-financial data
       is: [ softwarePackageHeaders ]
       body:
         application/json:
           schema: NonFinancial
+      responses:
+        204:
   /liabilites/{id}:
       uriParameters:
         id:
