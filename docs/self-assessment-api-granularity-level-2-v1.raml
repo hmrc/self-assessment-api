@@ -2,7 +2,11 @@
 title: Self Assessment
 version: v1
 mediaType: application/json
-baseUri: https://api.service.hmrc.gov.uk
+baseUri: https://api.service.hmrc.gov.uk/self-assessments/nino/{nino}
+baseUriParameters:
+  nino:
+    type: string
+    displayName: National Insurance Number
 securitySchemes:
   - oauth_2_0: !include security.raml
 protocols:
@@ -417,419 +421,414 @@ traits:
         X-SoftwarePackageVersion:
           type: string
 
-/self-assessments/nino/{nino}:
+/{sourceType}:
   uriParameters:
-    nino:
+    sourceType:
+      displayName: The source of income.
       type: string
-      displayName: National Insurance Number
-  /{sourceType}:
+      enum:
+        - self-employment
+        - uk-properties
+        - furnished-holiday-lettings
+        - dividends
+        - banks
+        - others
+      required: true
+  get:
+    description: List sources of income
+    responses:
+      200:
+        body:
+          application/json:
+            schema: Sources
+            example: |
+              [
+                {
+                  "id": 2
+                }
+              ]
+  post:
+    description: Create a new source of income
+    body:
+      application/json:
+        schema: Source
+        example: |
+          {
+          }
+    responses:
+      201:
+        headers:
+          Location:
+            example: "./2"
+  /{sourceId}:
     uriParameters:
-      sourceType:
-        displayName: The source of income.
+      sourceId:
         type: string
-        enum:
-          - self-employment
-          - uk-properties
-          - furnished-holiday-lettings
-          - dividends
-          - banks
-          - others
         required: true
     get:
-      description: List sources of income
+      description: Get a source of income
       responses:
         200:
           body:
             application/json:
-              schema: Sources
+              schema: Source
               example: |
-                [
-                  {
-                    "id": 2
-                  }
-                ]
-    post:
-      description: Create a new source of income
+                {
+                  "id": "0001"
+                }
+    put:
+      description: Update a source of income
+      is: [ softwarePackageHeaders ]
       body:
         application/json:
           schema: Source
-          example: |
-            {
-            }
       responses:
-        201:
-          headers:
-            Location:
-              example: "./2"
-    /{sourceId}:
+        204:
+    delete:
+      description: Delete a source of income
+      responses:
+        204:
+    /allowances/{taxYear}:
       uriParameters:
-        sourceId:
+        taxYear:
           type: string
-          required: true
       get:
-        description: Get a source of income
+        description: Get allowances for a source of income
         responses:
           200:
             body:
               application/json:
-                schema: Source
-                example: |
-                  {
-                    "id": "0001"
-                  }
+                schema: Allowances
       put:
-        description: Update a source of income
+        description: Set allowances for a souce of income
         is: [ softwarePackageHeaders ]
         body:
           application/json:
-            schema: Source
+            schema: Allowances
         responses:
           204:
-      delete:
-        description: Delete a source of income
+    /adjustments/{taxYear}:
+      uriParameters:
+        taxYear:
+          type: string
+      get:
+        description: Get adjustments for a source of income
+        responses:
+          200:
+            body:
+              application/json:
+                schema: Adjustments
+      put:
+        description: Set adjustments for a source of income
+        is: [ softwarePackageHeaders ]
+        body:
+          application/json:
+            schema: Adjustments
         responses:
           204:
-      /allowances/{taxYear}:
-        uriParameters:
-          taxYear:
-            type: string
+    /periods:
+      post:
+        description: Create a period
+        is: [ softwarePackageHeaders ]
+        body:
+          application/json:
+            schema: Period
+            example: |
+              {
+                "from": "2016-09-01",
+                "to": "2016-09-29"
+              }
+        responses:
+          201:
+      get:
+        description: List periods
+        is: [ taxYearQueryParameters ]
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  [
+                    {
+                      "id": "0001",
+                      "from": "2016-09-01",
+                      "to": "2016-09-29"
+                    }
+                  ]
+      /{periodId}:
         get:
-          description: Get allowances for a source of income
+          description: Get a period
           responses:
             200:
               body:
                 application/json:
-                  schema: Allowances
-        put:
-          description: Set allowances for a souce of income
-          is: [ softwarePackageHeaders ]
-          body:
-            application/json:
-              schema: Allowances
-          responses:
-            204:
-      /adjustments/{taxYear}:
-        uriParameters:
-          taxYear:
-            type: string
-        get:
-          description: Get adjustments for a source of income
-          responses:
-            200:
-              body:
-                application/json:
-                  schema: Adjustments
-        put:
-          description: Set adjustments for a source of income
-          is: [ softwarePackageHeaders ]
-          body:
-            application/json:
-              schema: Adjustments
-          responses:
-            204:
-      /periods:
-        post:
-          description: Create a period
+                  schema: Period
+                  example: |
+                    {
+                      "id": "0001",
+                      "from": "2016-09-01",
+                      "to": "2016-09-29"
+                    }
+        patch:
+          description: Complete the period
           is: [ softwarePackageHeaders ]
           body:
             application/json:
               schema: Period
               example: |
                 {
-                  "from": "2016-09-01",
-                  "to": "2016-09-29"
+                  "completed": true
                 }
           responses:
-            201:
-        get:
-          description: List periods
-          is: [ taxYearQueryParameters ]
-          responses:
             200:
-              body:
-                application/json:
-                  example: |
-                    [
-                      {
-                        "id": "0001",
-                        "from": "2016-09-01",
-                        "to": "2016-09-29"
-                      }
-                    ]
-        /{periodId}:
+        /incomes:
           get:
-            description: Get a period
+            description: Get incomes for a source of income
+            is: [ taxYearQueryParameters ]
             responses:
               200:
                 body:
                   application/json:
-                    schema: Period
+                    schema: Incomes
                     example: |
                       {
-                        "id": "0001",
-                        "from": "2016-09-01",
-                        "to": "2016-09-29"
+                        "turnover": {"amount": 10.20},
+                        "other": {"amount": 10.20}
                       }
-          patch:
-            description: Complete the period
+          put:
+            description: Update incomes for a source
             is: [ softwarePackageHeaders ]
             body:
               application/json:
-                schema: Period
-                example: |
-                  {
-                    "completed": true
-                  }
+                schema: Incomes
             responses:
               200:
-          /incomes:
-            get:
-              description: Get incomes for a source of income
-              is: [ taxYearQueryParameters ]
-              responses:
-                200:
-                  body:
-                    application/json:
-                      schema: Incomes
-                      example: |
-                        {
-                          "turnover": {"amount": 10.20},
-                          "other": {"amount": 10.20}
-                        }
-            put:
-              description: Update incomes for a source
-              is: [ softwarePackageHeaders ]
-              body:
-                application/json:
-                  schema: Incomes
-              responses:
-                200:
-          /deductions:
-            get:
-              description: Get deductions for a source of income
-              is: [ taxYearQueryParameters ]
-              responses:
-                200:
-                  body:
-                    application/json:
-                      schema: Deductions
-                      example: |
-                        {
-                          "rent": {"amount": 10.20, "disallowableAmount": 0}
-                        }
-            put:
-              description: Update deductions for a source
-              is: [ softwarePackageHeaders ]
-              body:
-                application/json:
-                  schema: Deductions
-              responses:
-                200:
-          /benefits:
-            get:
-              description: Get benefits for a source of income
-              is: [ taxYearQueryParameters ]
-              responses:
-                200:
-                  body:
-                    application/json:
-                      schema: Benefits
-                      example: |
-                        {
-                          "privateInsurance": {"amount": 10.20}
-                        }
-            put:
-              description: Update benefits for a source
-              is: [ softwarePackageHeaders ]
-              body:
-                application/json:
-                  schema: Benefits
-              responses:
-                200:
-  /non-financials/{taxYear}:
+        /deductions:
+          get:
+            description: Get deductions for a source of income
+            is: [ taxYearQueryParameters ]
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: Deductions
+                    example: |
+                      {
+                        "rent": {"amount": 10.20, "disallowableAmount": 0}
+                      }
+          put:
+            description: Update deductions for a source
+            is: [ softwarePackageHeaders ]
+            body:
+              application/json:
+                schema: Deductions
+            responses:
+              200:
+        /benefits:
+          get:
+            description: Get benefits for a source of income
+            is: [ taxYearQueryParameters ]
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: Benefits
+                    example: |
+                      {
+                        "privateInsurance": {"amount": 10.20}
+                      }
+          put:
+            description: Update benefits for a source
+            is: [ softwarePackageHeaders ]
+            body:
+              application/json:
+                schema: Benefits
+            responses:
+              200:
+/non-financials/{taxYear}:
+  get:
+    description: Get non-financial data
+    responses:
+      200:
+        body:
+          application/json:
+            schema: NonFinancial
+  put:
+    description: Set non-financial data
+    is: [ softwarePackageHeaders ]
+    body:
+      application/json:
+        schema: NonFinancial
+    responses:
+      204:
+/liabilites/{id}:
+    uriParameters:
+      id:
+        displayName: The liability ID
     get:
-      description: Get non-financial data
+      description: Get a liability
       responses:
         200:
           body:
             application/json:
-              schema: NonFinancial
-    put:
-      description: Set non-financial data
-      is: [ softwarePackageHeaders ]
+              schema: Liability
+              example: |
+                {
+                  "income" : {
+                    "incomes" : {
+                      "nonSavings" : {
+                        "employment" : [ ],
+                        "selfEmployment" : [ {
+                          "sourceId" : "self-employment-1",
+                          "taxableProfit" : 8200,
+                          "profit" : 10000
+                        }, {
+                          "sourceId" : "self-employment-2",
+                          "taxableProfit" : 25000,
+                          "profit" : 28000
+                        } ],
+                        "ukProperties" : [ {
+                          "sourceId" : "property1",
+                          "profit" : 2000
+                        }, {
+                          "sourceId" : "property2",
+                          "profit" : 1500
+                        } ],
+                        "furnishedHolidayLettings" : [ {
+                          "sourceId" : "furnished-holiday-letting-1",
+                          "profit" : 8200
+                        }, {
+                          "sourceId" : "furnished-holiday-letting-2",
+                          "profit" : 25000
+                        } ]
+                      },
+                      "savings" : {
+                        "fromUKBanksAndBuildingSocieties" : [ {
+                          "sourceId" : "interest-income-1",
+                          "totalInterest" : 100
+                        }, {
+                          "sourceId" : "interest-income-2",
+                          "totalInterest" : 200
+                        } ]
+                      },
+                      "dividends" : {
+                        "fromUKSources" : [ {
+                          "sourceId" : "dividend-income-1",
+                          "totalDividend" : 1000
+                        }, {
+                          "sourceId" : "dividend-income-2",
+                          "totalDividend" : 2000
+                        } ]
+                      },
+                      "total" : 93039
+                    },
+                    "deductions" : {
+                      "incomeTaxRelief" : 5000,
+                      "personalAllowance" : 9440,
+                      "retirementAnnuityContract" : 10000,
+                      "total" : 24440
+                    },
+                    "totalIncomeOnWhichTaxIsDue" : 80000
+                  },
+                  "incomeTaxCalculations" : {
+                    "nonSavings" : [ {
+                      "taxBand" : "basicRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "20%",
+                      "tax" : 2000
+                    }, {
+                      "taxBand" : "higherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "40%",
+                      "tax" : 4000
+                    }, {
+                      "taxBand" : "additionalHigherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "45%",
+                      "tax" : 4500
+                    } ],
+                    "savings" : [ {
+                      "taxBand" : "startingRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "0%",
+                      "tax" : 0
+                    }, {
+                      "taxBand" : "nilRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "0%",
+                      "tax" : 0
+                    }, {
+                      "taxBand" : "basicRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "20%",
+                      "tax" : 2000
+                    }, {
+                      "taxBand" : "higherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "40%",
+                      "tax" : 4000
+                    }, {
+                      "taxBand" : "additionalHigherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "45%",
+                      "tax" : 4500
+                    } ],
+                    "dividends" : [ {
+                      "taxBand" : "nilRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "0%",
+                      "tax" : 0
+                    }, {
+                      "taxBand" : "basicRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "20%",
+                      "tax" : 2000
+                    }, {
+                      "taxBand" : "higherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "40%",
+                      "tax" : 4000
+                    }, {
+                      "taxBand" : "additionalHigherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "45%",
+                      "tax" : 4500
+                    } ],
+                    "total" : 31500
+                  },
+                  "otherCharges" : {
+                    "pensionSavings" : [ {
+                      "taxBand" : "basicRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "20%",
+                      "tax" : 2000
+                    }, {
+                      "taxBand" : "higherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "40%",
+                      "tax" : 4000
+                    }, {
+                      "taxBand" : "additionalHigherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "45%",
+                      "tax" : 4500
+                    } ],
+                    "total" : 10500
+                  },
+                  "taxDeducted" : {
+                    "interestFromUk" : 0,
+                    "taxPaidByPensionScheme" : 10500,
+                    "fromUkProperties" : [ ],
+                    "fromEmployments" : [ ],
+                    "total" : 0
+                  },
+                  "totalTaxDue" : 25796.95,
+                  "totalTaxOverpaid" : 0
+                }
+    patch:
+      description: Correct/challenge the total tax due
       body:
         application/json:
-          schema: NonFinancial
+          schema: Liability
       responses:
-        204:
-  /liabilites/{id}:
-      uriParameters:
-        id:
-          displayName: The liability ID
-      get:
-        description: Get a liability
-        responses:
-          200:
-            body:
-              application/json:
-                schema: Liability
-                example: |
-                  {
-                    "income" : {
-                      "incomes" : {
-                        "nonSavings" : {
-                          "employment" : [ ],
-                          "selfEmployment" : [ {
-                            "sourceId" : "self-employment-1",
-                            "taxableProfit" : 8200,
-                            "profit" : 10000
-                          }, {
-                            "sourceId" : "self-employment-2",
-                            "taxableProfit" : 25000,
-                            "profit" : 28000
-                          } ],
-                          "ukProperties" : [ {
-                            "sourceId" : "property1",
-                            "profit" : 2000
-                          }, {
-                            "sourceId" : "property2",
-                            "profit" : 1500
-                          } ],
-                          "furnishedHolidayLettings" : [ {
-                            "sourceId" : "furnished-holiday-letting-1",
-                            "profit" : 8200
-                          }, {
-                            "sourceId" : "furnished-holiday-letting-2",
-                            "profit" : 25000
-                          } ]
-                        },
-                        "savings" : {
-                          "fromUKBanksAndBuildingSocieties" : [ {
-                            "sourceId" : "interest-income-1",
-                            "totalInterest" : 100
-                          }, {
-                            "sourceId" : "interest-income-2",
-                            "totalInterest" : 200
-                          } ]
-                        },
-                        "dividends" : {
-                          "fromUKSources" : [ {
-                            "sourceId" : "dividend-income-1",
-                            "totalDividend" : 1000
-                          }, {
-                            "sourceId" : "dividend-income-2",
-                            "totalDividend" : 2000
-                          } ]
-                        },
-                        "total" : 93039
-                      },
-                      "deductions" : {
-                        "incomeTaxRelief" : 5000,
-                        "personalAllowance" : 9440,
-                        "retirementAnnuityContract" : 10000,
-                        "total" : 24440
-                      },
-                      "totalIncomeOnWhichTaxIsDue" : 80000
-                    },
-                    "incomeTaxCalculations" : {
-                      "nonSavings" : [ {
-                        "taxBand" : "basicRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "20%",
-                        "tax" : 2000
-                      }, {
-                        "taxBand" : "higherRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "40%",
-                        "tax" : 4000
-                      }, {
-                        "taxBand" : "additionalHigherRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "45%",
-                        "tax" : 4500
-                      } ],
-                      "savings" : [ {
-                        "taxBand" : "startingRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "0%",
-                        "tax" : 0
-                      }, {
-                        "taxBand" : "nilRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "0%",
-                        "tax" : 0
-                      }, {
-                        "taxBand" : "basicRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "20%",
-                        "tax" : 2000
-                      }, {
-                        "taxBand" : "higherRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "40%",
-                        "tax" : 4000
-                      }, {
-                        "taxBand" : "additionalHigherRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "45%",
-                        "tax" : 4500
-                      } ],
-                      "dividends" : [ {
-                        "taxBand" : "nilRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "0%",
-                        "tax" : 0
-                      }, {
-                        "taxBand" : "basicRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "20%",
-                        "tax" : 2000
-                      }, {
-                        "taxBand" : "higherRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "40%",
-                        "tax" : 4000
-                      }, {
-                        "taxBand" : "additionalHigherRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "45%",
-                        "tax" : 4500
-                      } ],
-                      "total" : 31500
-                    },
-                    "otherCharges" : {
-                      "pensionSavings" : [ {
-                        "taxBand" : "basicRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "20%",
-                        "tax" : 2000
-                      }, {
-                        "taxBand" : "higherRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "40%",
-                        "tax" : 4000
-                      }, {
-                        "taxBand" : "additionalHigherRate",
-                        "taxableAmount" : 10000,
-                        "chargedAt" : "45%",
-                        "tax" : 4500
-                      } ],
-                      "total" : 10500
-                    },
-                    "taxDeducted" : {
-                      "interestFromUk" : 0,
-                      "taxPaidByPensionScheme" : 10500,
-                      "fromUkProperties" : [ ],
-                      "fromEmployments" : [ ],
-                      "total" : 0
-                    },
-                    "totalTaxDue" : 25796.95,
-                    "totalTaxOverpaid" : 0
-                  }
-      patch:
-        description: Correct/challenge the total tax due
-        body:
-          application/json:
-            schema: Liability
-        responses:
-          200:
+        200:
