@@ -2,7 +2,7 @@
 title: Self Assessment
 version: v1
 mediaType: application/json
-baseUri: https://api.service.hmrc.gov.uk/self-assessments/nino/{nino}
+baseUri: "https://api.service.hmrc.gov.uk/self-assessments/nino/{nino}"
 baseUriParameters:
   nino:
     type: string
@@ -89,9 +89,9 @@ schemas:
         "properties": {
           "allowances": {"$ref": "Allowances"},
           "adjustments": {"$ref": "Adjustments"},
-          "nonFiniancials": {"$ref": "NonFinancials"}
+          "nonFinancial": {"$ref": "NonFinancial"}
         },
-        "required": ["allowances", "adjustments", "nonFinancials"],
+        "required": ["allowances", "adjustments", "nonFinancial"],
         "additionalProperties": false
       }
   - Sources: |
