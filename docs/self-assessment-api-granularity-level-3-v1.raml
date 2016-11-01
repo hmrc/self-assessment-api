@@ -670,50 +670,9 @@ traits:
               schema: Benefit
           responses:
             204:
-/periods:
-  post:
-    description: Create a period
-    is: [ softwarePackageHeaders ]
-    body:
-      application/json:
-        schema: Period
-    responses:
-      201:
-        body:
-          application/json:
-            example: |
-              {
-                "_links": {
-                  "liability": "..."
-                },
-                "_embedded": {
-                  "liability": {
-                  }
-                }
-              }
-  get:
-    description: List periods
-    is: [ taxYearQueryParameters ]
-    responses:
-      200:
-        body:
-          application/json:
-            example: |
-              [
-                {
-                  "id": "0001",
-                  "to": "2016-09-29",
-                  "_links": {
-                    "liability": "..."
-                  }
-                }
-              ]
-/liabilites/{id}:
-    uriParameters:
-      id:
-        displayName: The liability ID
-    get:
-      description: Get a liability
+/liabilites:
+    post:
+      description: Create a liability
       responses:
         200:
           body:

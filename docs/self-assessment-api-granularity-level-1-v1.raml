@@ -17,18 +17,6 @@ schemas:
         "title": "A monetary amount in UK pounds sterling",
         "type": "number"
       }
-  - Period: |
-      { "$schema": "http://json-schema.org/draft-04/schema",
-        "type": "object",
-        "title": "A period of time.",
-        "properties": {
-          "id": {"type": "string"},
-          "from": {"type": "string"},
-          "to": {"type": "string"}
-        },
-        "required": ["from", "to"],
-        "additionalProperties": false
-      }
   - NonFinancial: |
       { "$schema": "http://json-schema.org/draft-04/schema#",
         "properties": {
@@ -92,6 +80,18 @@ schemas:
           "outstandingBusinessIncome": {"$ref": "Money", "default": 0},
           "overlapReliefUsed": {"$ref": "Money", "default": 0}
         },
+        "additionalProperties": false
+      }
+  - AnnualizedSummary: |
+      { "$schema": "http://json-schema.org/draft-04/schema",
+        "type": "object",
+        "title": "A summary of data from a period of time.",
+        "properties": {
+          "allowances": {"$ref": "Allowances"},
+          "adjustments": {"$ref": "Adjustments"},
+          "nonFiniancials": {"$ref": "NonFinancials"}
+        },
+        "required": ["allowances", "adjustments", "nonFinancials"],
         "additionalProperties": false
       }
   - Sources: |
@@ -207,6 +207,20 @@ schemas:
           "privateInsurance": {"$ref": "Money"},
           "vouchersCCAndExcessMileage": {"$ref": "Money"}
         },
+        "additionalProperties": false
+      }
+  - Period: |
+      { "$schema": "http://json-schema.org/draft-04/schema",
+        "type": "object",
+        "title": "A summary of data from a period of time.",
+        "properties": {
+          "id": {"type": "string"},
+          "from": {"type": "string"},
+          "incomes": {"$ref": "Incomes"},
+          "deductions": {"$ref": "Deductions"},
+          "benefits": {"$ref": "Benefits"}
+        },
+        "required": ["from", "to", "incomes", "deductions", "benefits"],
         "additionalProperties": false
       }
   - SelfEmploymentIncome: |
@@ -444,60 +458,24 @@ traits:
       description: Delete a source of income
       responses:
         204:
-    /allowances/{taxYear}:
+    /{taxYear}:
       uriParameters:
         taxYear:
           type: string
+      put:
+        description: Set annualized summaries
+        body:
+          application/json:
+            schema: AnnualizedSummary
+        responses:
+          201:
       get:
-        description: Get allowances for a source of income
+        description: Get annualized summaries
         responses:
           200:
             body:
               application/json:
-                schema: Allowances
-      put:
-        description: Set allowances for a souce of income
-        is: [ softwarePackageHeaders ]
-        body:
-          application/json:
-            schema: Allowances
-        responses:
-          204:
-    /adjustments/{taxYear}:
-      uriParameters:
-        taxYear:
-          type: string
-      get:
-        description: Get adjustments for a source of income
-        responses:
-          200:
-            body:
-              application/json:
-                schema: Adjustments
-      put:
-        description: Set adjustments for a source of income
-        is: [ softwarePackageHeaders ]
-        body:
-          application/json:
-            schema: Adjustments
-        responses:
-          204:
-    /non-financials/{taxYear}:
-      get:
-        description: Get non-financial data
-        responses:
-          200:
-            body:
-              application/json:
-                schema: NonFinancial
-      put:
-        description: Set non-financial data
-        is: [ softwarePackageHeaders ]
-        body:
-          application/json:
-            schema: NonFinancial
-        responses:
-          204:
+                schema: AnnualizedSummary
     /periods:
       post:
         description: Create a period
@@ -508,7 +486,17 @@ traits:
             example: |
               {
                 "from": "2016-09-01",
-                "to": "2016-09-29"
+                "to": "2016-09-29",
+                "incomes": {
+                  "turnover": {"amount": 10.20},
+                  "other": {"amount": 10.20}
+                },
+                "deductions": {
+                  "rent": {"amount": 10.20, "disallowableAmount": 0}
+                },
+                "benefits": {
+                  "privateInsurance": {"amount": 10.20}
+                }
               }
         responses:
           201:
@@ -527,76 +515,13 @@ traits:
               body:
                 application/json:
                   schema: Period
-                  example: |
-                    {
-                      "id": "0001",
-                      "from": "2016-09-01",
-                      "to": "2016-09-29"
-                    }
-        /incomes:
-          get:
-            description: Get incomes for a source of income
-            is: [ taxYearQueryParameters ]
-            responses:
-              200:
-                body:
-                  application/json:
-                    schema: Incomes
-                    example: |
-                      {
-                        "turnover": {"amount": 10.20},
-                        "other": {"amount": 10.20}
-                      }
-          put:
-            description: Update incomes for a source
-            is: [ softwarePackageHeaders ]
-            body:
-              application/json:
-                schema: Incomes
-            responses:
-              200:
-        /deductions:
-          get:
-            description: Get deductions for a source of income
-            is: [ taxYearQueryParameters ]
-            responses:
-              200:
-                body:
-                  application/json:
-                    schema: Deductions
-                    example: |
-                      {
-                        "rent": {"amount": 10.20, "disallowableAmount": 0}
-                      }
-          put:
-            description: Update deductions for a source
-            is: [ softwarePackageHeaders ]
-            body:
-              application/json:
-                schema: Deductions
-            responses:
-              200:
-        /benefits:
-          get:
-            description: Get benefits for a source of income
-            is: [ taxYearQueryParameters ]
-            responses:
-              200:
-                body:
-                  application/json:
-                    schema: Benefits
-                    example: |
-                      {
-                        "privateInsurance": {"amount": 10.20}
-                      }
-          put:
-            description: Update benefits for a source
-            is: [ softwarePackageHeaders ]
-            body:
-              application/json:
-                schema: Benefits
-            responses:
-              200:
+        put:
+          description: Amend period
+          body:
+            application/json:
+              schema: Period
+          responses:
+            204:
 /liabilites:
     post:
       description: Create a liability
