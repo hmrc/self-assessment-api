@@ -592,6 +592,18 @@ traits:
             schema: Adjustments
         responses:
           204:
+    /non-financials/{taxYear}:
+      get:
+        description: Get non-financial data
+        body:
+          application/json:
+            schema: NonFinancial
+      put:
+        description: Set non-financial data
+        is: [ softwarePackageHeaders ]
+        body:
+          application/json:
+            schema: NonFinancial
     /incomes:
       get:
         description: List incomes for a source of income
@@ -758,18 +770,6 @@ traits:
               schema: Benefit
           responses:
             204:
-/non-financials/{taxYear}:
-  get:
-    description: Get non-financial data
-    body:
-      application/json:
-        schema: NonFinancial
-  put:
-    description: Set non-financial data
-    is: [ softwarePackageHeaders ]
-    body:
-      application/json:
-        schema: NonFinancial
 /charitable-givings/{taxYear}:
   get:
     description: Get charitable givings for a tax year
