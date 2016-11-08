@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Error",
+  "type": "object",
+  "properties": {
+    "code": {
+      "title": "Machine readable code",
+      "type": "string"
+    },
+    "message": {
+      "title": "Human readable message",
+      "type": "string"
+    }
+  },
+  "required": [
+    "code",
+    "message"
+  ],
+  "additionalProperties": false
+}

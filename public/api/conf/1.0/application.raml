@@ -10,6 +10,12 @@ mediaType: application/json
 documentation:
   - title: Overview
     content: !include docs/overview.md
+  - title: Self Employment
+    content: !include docs/self-employment.md
+
+schemas:
+  - Error: !include schemas/Error.json
+  - SelfEmployment: !include schemas/self-employment/SelfEmployment.json
 
 /self-assessment:
   /nino/{nino}:
@@ -18,3 +24,61 @@ documentation:
         displayName: National Insurance Number
         type: string
         required: true
+    /self-employments:
+      description: Self Employments
+      post:
+        description: Create a self-employment source of income
+        body:
+          application/json:
+            schema: SelfEmployment
+            example: !include examples/self-employment/CreateSelfEmployment.json
+        responses:
+          201:
+            body:
+              application/json:
+                example: !include examples/self-employment/CreatedSelfEmployment.json
+          400:
+            body:
+              application/json:
+                schema: Error
+                example: !include examples/errors/INVALID_ACCOUNTING_PERIOD.json
+      get:
+        description: List self-employment sources of income
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/self-employment/ListSelfEmployment.json
+      /{selfEmploymentId}:
+        description: Self Employment
+        uriParameters:
+          selfEmploymentId:
+            displayName: Self Employment ID
+            description: An identifier for the self-employmment, unique to the customer
+            type: string
+        get:
+          description: Get a self-employment source of income
+          responses:
+            200:
+              body:
+                application/json:
+                  schema: SelfEmployment
+                  example: !include examples/self-employment/SelfEmployment.json
+        put:
+          description: Update a self-employment source of income, e.g. to change accounting period
+          body:
+            application/json:
+              schema: SelfEmployment
+              example: !include examples/self-employment/SelfEmployment.json
+          responses:
+            204:
+            400:
+              body:
+                application/json:
+                  schema: Error
+                  example: !include ./examples/errors/INVALID_ACCOUNTING_PERIOD.json
+        delete:
+          description: Delete a self-employment source of income
+          responses:
+            204:
+              
