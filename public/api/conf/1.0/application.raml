@@ -1,0 +1,16 @@
+#%RAML 0.8
+---
+
+title: Self Assessment
+version: 1.0
+protocols: [ HTTPS ]
+baseUri: https://api.service.hmrc.gov.uk/
+mediaType: application/json
+
+/self-assessment:
+  /nino/{nino}:
+    uriParameters:
+      nino:
+        displayName: National Insurance Number
+        type: string
+        required: true
