@@ -32,19 +32,11 @@ class LiabilitySpec extends UnitSpec {
 
     "map to liability" in {
 
-      val liability = new Liability(BSONObjectID.generate, "", saUtr = SaUtr(""), taxYear = TaxYear(""),
-        employmentIncome = Seq(
-          EmploymentIncome(sourceId = "eId1",
-            pay = 100,
-            benefitsAndExpenses = 50,
-            allowableExpenses = 50,
-            total = 100),
-          EmploymentIncome(sourceId = "eId2",
-            pay = 200,
-            benefitsAndExpenses = 100,
-            allowableExpenses = 100,
-            total = 200)
-        ),
+      val liability = new Liability(
+        BSONObjectID.generate,
+        "",
+        saUtr = SaUtr(""),
+        taxYear = TaxYear(""),
         selfEmploymentIncome = Seq(
           SelfEmploymentIncome(sourceId = "seId1", taxableProfit = 10, profit = 20),
           SelfEmploymentIncome(sourceId = "seId2", taxableProfit = 20, profit = 40)
@@ -61,11 +53,15 @@ class LiabilitySpec extends UnitSpec {
         ukDividendsIncome = Seq(DividendsFromUKSources("divId1", totalDividend = 100)),
         totalIncomeReceived = 1000,
         totalTaxableIncome = 4000,
-        allowancesAndReliefs = AllowancesAndReliefs(personalAllowance = Some(3000), incomeTaxRelief = Some(2000), retirementAnnuityContract = Some(1000)),
-        taxDeducted = repositories.domain.TaxDeducted(
-          interestFromUk = 50,
-          deductionFromUkProperties = Seq(TaxPaidForUkProperty(sourceId = "propTaxPaid", taxPaid = 30)),
-          ukTaxesPaidForEmployments = Seq(api.UkTaxPaidForEmployment(sourceId = "empTaxPaid", taxPaid = 20))),
+        allowancesAndReliefs = AllowancesAndReliefs(personalAllowance = Some(3000),
+                                                    incomeTaxRelief = Some(2000),
+                                                    retirementAnnuityContract = Some(1000)),
+        taxDeducted =
+          repositories.domain.TaxDeducted(interestFromUk = 50,
+                                          deductionFromUkProperties =
+                                            Seq(TaxPaidForUkProperty(sourceId = "propTaxPaid", taxPaid = 30)),
+                                          ukTaxesPaidForEmployments =
+                                            Seq(api.UkTaxPaidForEmployment(sourceId = "empTaxPaid", taxPaid = 20))),
         nonSavingsTaxBandSummary = Seq(
           TaxBandSummary("basicRate", taxableAmount = 100, chargedAt = "20%", tax = 20),
           TaxBandSummary("higherRate", taxableAmount = 100, chargedAt = "40%", tax = 40),
@@ -93,43 +89,36 @@ class LiabilitySpec extends UnitSpec {
           totalTaxOverPaid = 0,
           pensionSavingsCharges = 0,
           taxPaidByPensionScheme = 0
-        )
-      )
+        ))
 
       val liabilityDto = liability.toLiability
 
-      liabilityDto.income.incomes.nonSavings.employment should contain theSameElementsAs Seq(EmploymentIncome(sourceId = "eId1",
-                                                                                              pay = 100,
-                                                                                              benefitsAndExpenses = 50,
-                                                                                              allowableExpenses = 50,
-                                                                                              total = 100),
-                                                                                            EmploymentIncome(sourceId = "eId2",
-                                                                                              pay = 200,
-                                                                                              benefitsAndExpenses = 100,
-                                                                                              allowableExpenses = 100,
-                                                                                              total = 200))
+      liabilityDto.income.incomes.nonSavings.selfEmployment should contain theSameElementsAs Seq(
+        SelfEmploymentIncome("seId1", taxableProfit = 10, profit = 20),
+        SelfEmploymentIncome("seId2", taxableProfit = 20, profit = 40))
 
-      liabilityDto.income.incomes.nonSavings.selfEmployment should contain theSameElementsAs Seq(SelfEmploymentIncome("seId1", taxableProfit = 10, profit = 20),
-                                                                      SelfEmploymentIncome("seId2", taxableProfit = 20, profit = 40))
+      liabilityDto.income.incomes.nonSavings.ukProperties should contain theSameElementsAs Seq(
+        UkPropertyIncome("property1", profit = 2000))
 
-      liabilityDto.income.incomes.nonSavings.ukProperties should contain theSameElementsAs Seq(UkPropertyIncome("property1", profit = 2000))
+      liabilityDto.income.incomes.nonSavings.furnishedHolidayLettings should contain theSameElementsAs Seq(
+        FurnishedHolidayLettingIncome("fhlId1", 20),
+        FurnishedHolidayLettingIncome("fhlId2", 40))
 
-      liabilityDto.income.incomes.nonSavings.furnishedHolidayLettings should contain theSameElementsAs Seq(FurnishedHolidayLettingIncome("fhlId1", 20),
-                                                                                                            FurnishedHolidayLettingIncome("fhlId2", 40))
-
-      liabilityDto.income.incomes.savings shouldBe SavingsIncomes(fromUKBanksAndBuildingSocieties = Seq(
+      liabilityDto.income.incomes.savings shouldBe SavingsIncomes(
+        fromUKBanksAndBuildingSocieties = Seq(
           InterestFromUKBanksAndBuildingSocieties("interestId1", totalInterest = 20),
           InterestFromUKBanksAndBuildingSocieties("interestId2", totalInterest = 40)
-        )
-      )
+        ))
 
-      liabilityDto.income.incomes.dividends shouldBe DividendsIncomes(fromUKSources = Seq(DividendsFromUKSources("divId1", totalDividend = 100)))
+      liabilityDto.income.incomes.dividends shouldBe DividendsIncomes(
+        fromUKSources = Seq(DividendsFromUKSources("divId1", totalDividend = 100)))
 
       liabilityDto.income.incomes.total shouldBe 1000
 
-      liabilityDto.income.deductions.get shouldBe api.Deductions(personalAllowance = 3000, incomeTaxRelief = 2000,
-                                                        retirementAnnuityContract = 1000,
-                                                        total = 6000)
+      liabilityDto.income.deductions.get shouldBe api.Deductions(personalAllowance = 3000,
+                                                                 incomeTaxRelief = 2000,
+                                                                 retirementAnnuityContract = 1000,
+                                                                 total = 6000)
 
       liabilityDto.income.totalIncomeOnWhichTaxIsDue shouldBe 4000
 
@@ -152,8 +141,8 @@ class LiabilitySpec extends UnitSpec {
       )
 
       liabilityDto.taxDeducted.interestFromUk shouldBe 50
-      liabilityDto.taxDeducted.fromEmployments shouldBe Seq(api.UkTaxPaidForEmployment(sourceId = "empTaxPaid", taxPaid = 20))
-      liabilityDto.taxDeducted.fromUkProperties shouldBe Seq(TaxPaidForUkProperty(sourceId = "propTaxPaid", taxPaid = 30))
+      liabilityDto.taxDeducted.fromUkProperties shouldBe Seq(
+        TaxPaidForUkProperty(sourceId = "propTaxPaid", taxPaid = 30))
 
       liabilityDto.taxDeducted.total shouldBe 100
 
@@ -165,60 +154,36 @@ class LiabilitySpec extends UnitSpec {
   }
 
   "FunctionalLiability.create" should {
-    "correctly compute values for employments" in {
-
-      val employment = EmploymentBuilder()
-        .withSalary(20000).withOtherIncome(2500.50)
-        .withTravelAndSubsistenceExpense(500.50).withProfessionalFeesExpense(250.52)
-        .withAccommodationBenefit(1000).withPrivateInsuranceBenefit(200)
-        .withUkTaxPaid(500.25)
-        .create()
-
-      ComputeLiabilityFor(employments = Seq(employment))
-        .andAssertThat()
-        .personalAllowanceIs(11000)
-        .nonSavings()
-          .basicRateBandSummaryIs(11949, 2389.8)
-          .higherRateBandSummaryIs(0,0)
-          .additionalHigherRateBandSummaryIs(0,0)
-        .totalIncomeReceivedIs(22949)
-        .totalIncomeTaxIs(2389.8)
-        .totalTaxDueIs(1889.55)
-
-    }
-
     "correctly compute values for self-employments" in {
 
       val selfEmployment = SelfEmploymentBuilder()
-          .withAllowances(
-            annualInvestmentAllowance = 23000.22,
-            capitalAllowanceMainPool = 200.75,
-            capitalAllowanceSpecialRatePool = 12.50,
-            businessPremisesRenovationAllowance = 10000.72,
-            enhancedCapitalAllowance = 123.45,
-            allowancesOnSales = 50.50)
-          .withAdjustments(
-            includedNonTaxableProfits = 100.25,
-            basisAdjustment = 50.50,
-            overlapReliefUsed = 12.50,
-            averagingAdjustment = 100.23,
-            lossBroughtForward = 500.05,
-            outstandingBusinessIncome = 123.45,
-            accountingAdjustment = 0)
-          .withTurnover(200000.22)
-          .withPremisesRunningCosts((12334.56, 0))
-          .withBpraBalancingCharges(500.25)
-          .goodsAndServicesOwnUse(200.02)
-          .create()
+        .withAllowances(annualInvestmentAllowance = 23000.22,
+                        capitalAllowanceMainPool = 200.75,
+                        capitalAllowanceSpecialRatePool = 12.50,
+                        businessPremisesRenovationAllowance = 10000.72,
+                        enhancedCapitalAllowance = 123.45,
+                        allowancesOnSales = 50.50)
+        .withAdjustments(includedNonTaxableProfits = 100.25,
+                         basisAdjustment = 50.50,
+                         overlapReliefUsed = 12.50,
+                         averagingAdjustment = 100.23,
+                         lossBroughtForward = 500.05,
+                         outstandingBusinessIncome = 123.45,
+                         accountingAdjustment = 0)
+        .withTurnover(200000.22)
+        .withPremisesRunningCosts((12334.56, 0))
+        .withBpraBalancingCharges(500.25)
+        .goodsAndServicesOwnUse(200.02)
+        .create()
 
       ComputeLiabilityFor(selfEmployments = Seq(selfEmployment))
         .andAssertThat()
         .personalAllowanceIs(0)
         .incomeTaxReliefIs(501)
         .nonSavings()
-          .basicRateBandSummaryIs(32000, 6400)
-          .higherRateBandSummaryIs(118000,47200)
-          .additionalHigherRateBandSummaryIs(4638,2087.1)
+        .basicRateBandSummaryIs(32000, 6400)
+        .higherRateBandSummaryIs(118000, 47200)
+        .additionalHigherRateBandSummaryIs(4638, 2087.1)
         .totalIncomeReceivedIs(155139)
         .totalTaxableIncomeIs(154638)
         .totalIncomeTaxIs(55687.10)
@@ -230,9 +195,9 @@ class LiabilitySpec extends UnitSpec {
 
       val ukProperty = UKPropertyBuilder(rentARoomRelief = 500.25)
         .withAllowances(annualInvestmentAllowance = 200,
-          otherCapitalAllowance=123.45,
-          wearAndTearAllowance=12.25,
-          businessPremisesRenovationAllowance = 0)
+                        otherCapitalAllowance = 123.45,
+                        wearAndTearAllowance = 12.25,
+                        businessPremisesRenovationAllowance = 0)
         .lossBroughtForward(500)
         .withRentIncomes(175000)
         .withPremisesRunningCosts(243.34)
@@ -257,11 +222,7 @@ class LiabilitySpec extends UnitSpec {
 
     "correctly compute values for savings" in {
 
-      val bank = BankBuilder()
-        .withUntaxedInterest(150000.73)
-        .withTaxedInterest(5000.23)
-        .create()
-
+      val bank = BankBuilder().withUntaxedInterest(150000.73).withTaxedInterest(5000.23).create()
 
       ComputeLiabilityFor(banks = Seq(bank))
         .andAssertThat()
@@ -281,10 +242,7 @@ class LiabilitySpec extends UnitSpec {
 
     "correctly compute values for dividends" in {
 
-      val dividends = DividendBuilder()
-        .withUKDividends(75000.33)
-        .withOtherUKDividends(125000.25)
-        .create()
+      val dividends = DividendBuilder().withUKDividends(75000.33).withOtherUKDividends(125000.25).create()
 
       ComputeLiabilityFor(dividends = Seq(dividends))
         .andAssertThat()
@@ -304,7 +262,8 @@ class LiabilitySpec extends UnitSpec {
     "correctly compute values for furnished holiday lettings" in {
       import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings._
 
-      val furnishedHolidayLetting = FurnishedHolidayLettingBuilder(capitalAllowance = 123.45, location = PropertyLocationType.UK)
+      val furnishedHolidayLetting =
+        FurnishedHolidayLettingBuilder(capitalAllowance = 123.45, location = PropertyLocationType.UK)
           .lossBroughtForward(500.50)
           .incomes(15250.50)
           .withPremisesRunningCosts(1250.25)
@@ -329,29 +288,20 @@ class LiabilitySpec extends UnitSpec {
     "correctly compute values for a whole self assessment" in {
       import uk.gov.hmrc.selfassessmentapi.controllers.api._
 
-      val employments = EmploymentBuilder()
-        .withSalary(20000).withOtherIncome(2500.50)
-        .withTravelAndSubsistenceExpense(500.50).withProfessionalFeesExpense(250.52)
-        .withAccommodationBenefit(1000).withPrivateInsuranceBenefit(200)
-        .withUkTaxPaid(500.25)
-        .create()
-
       val selfEmployments = SelfEmploymentBuilder()
-        .withAllowances(
-          annualInvestmentAllowance = 23000.22,
-          capitalAllowanceMainPool = 200.75,
-          capitalAllowanceSpecialRatePool = 12.50,
-          businessPremisesRenovationAllowance = 10000.72,
-          enhancedCapitalAllowance = 123.45,
-          allowancesOnSales = 50.50)
-        .withAdjustments(
-          includedNonTaxableProfits = 100.25,
-          basisAdjustment = 50.50,
-          overlapReliefUsed = 12.50,
-          averagingAdjustment = 100.23,
-          lossBroughtForward = 500.05,
-          outstandingBusinessIncome = 123.45,
-          accountingAdjustment = 0)
+        .withAllowances(annualInvestmentAllowance = 23000.22,
+                        capitalAllowanceMainPool = 200.75,
+                        capitalAllowanceSpecialRatePool = 12.50,
+                        businessPremisesRenovationAllowance = 10000.72,
+                        enhancedCapitalAllowance = 123.45,
+                        allowancesOnSales = 50.50)
+        .withAdjustments(includedNonTaxableProfits = 100.25,
+                         basisAdjustment = 50.50,
+                         overlapReliefUsed = 12.50,
+                         averagingAdjustment = 100.23,
+                         lossBroughtForward = 500.05,
+                         outstandingBusinessIncome = 123.45,
+                         accountingAdjustment = 0)
         .withTurnover(200000.22)
         .withPremisesRunningCosts((12334.56, 0))
         .withBpraBalancingCharges(500.25)
@@ -359,11 +309,10 @@ class LiabilitySpec extends UnitSpec {
         .create()
 
       val ukProperties = UKPropertyBuilder(rentARoomRelief = 500.25)
-        .withAllowances(
-          annualInvestmentAllowance = 200,
-          otherCapitalAllowance = 123.45,
-          wearAndTearAllowance = 12.25,
-          businessPremisesRenovationAllowance = 0)
+        .withAllowances(annualInvestmentAllowance = 200,
+                        otherCapitalAllowance = 123.45,
+                        wearAndTearAllowance = 12.25,
+                        businessPremisesRenovationAllowance = 0)
         .lossBroughtForward(500)
         .withRentIncomes(175000)
         .withPremisesRunningCosts(243.34)
@@ -372,7 +321,9 @@ class LiabilitySpec extends UnitSpec {
         .taxesPaid(12500.56)
         .create()
 
-      val furnishedHolidayLetting = FurnishedHolidayLettingBuilder(capitalAllowance = 123.45, location = furnishedholidaylettings.PropertyLocationType.UK)
+      val furnishedHolidayLetting = FurnishedHolidayLettingBuilder(capitalAllowance = 123.45,
+                                                                   location =
+                                                                     furnishedholidaylettings.PropertyLocationType.UK)
         .lossBroughtForward(500.50)
         .incomes(15250.50)
         .withPremisesRunningCosts(1250.25)
@@ -380,64 +331,54 @@ class LiabilitySpec extends UnitSpec {
         .privateUseAdjustments(750.65)
         .create()
 
-      val dividends = DividendBuilder()
-        .withUKDividends(75000.33)
-        .withOtherUKDividends(125000.25)
-        .create()
+      val dividends = DividendBuilder().withUKDividends(75000.33).withOtherUKDividends(125000.25).create()
 
-      val bank = BankBuilder()
-        .withUntaxedInterest(150000.73)
-        .withTaxedInterest(5000.23)
-        .create()
+      val bank = BankBuilder().withUntaxedInterest(150000.73).withTaxedInterest(5000.23).create()
 
-      ComputeLiabilityFor(
-        employments = Seq(employments),
-        selfEmployments = Seq(selfEmployments),
-        ukProperties = Seq(ukProperties),
-        dividends = Seq(dividends),
-        furnishedHolidayLettings = Seq(furnishedHolidayLetting),
-        banks = Seq(bank))
+      ComputeLiabilityFor(selfEmployments = Seq(selfEmployments),
+                          ukProperties = Seq(ukProperties),
+                          dividends = Seq(dividends),
+                          furnishedHolidayLettings = Seq(furnishedHolidayLetting),
+                          banks = Seq(bank))
         .andAssertThat()
         .personalAllowanceIs(0)
         .incomeTaxReliefIs(1502)
         .nonSavings()
-          .basicRateBandSummaryIs(32000, 6400)
-          .higherRateBandSummaryIs(118000, 47200)
-          .additionalHigherRateBandSummaryIs(215608.96, 97024.03)
+        .basicRateBandSummaryIs(32000, 6400)
+        .higherRateBandSummaryIs(118000, 47200)
+        .additionalHigherRateBandSummaryIs(192659.96, 86696.98)
         .savings()
-          .startingRateBandSummaryIs(0)
-          .nilRateBandSummaryIs(0)
-          .basicRateBandSummaryIs(0, 0)
-          .higherRateBandSummaryIs(0, 0)
-          .additionalHigherRateBandSummaryIs(156251, 70312.95)
+        .startingRateBandSummaryIs(0)
+        .nilRateBandSummaryIs(0)
+        .basicRateBandSummaryIs(0, 0)
+        .higherRateBandSummaryIs(0, 0)
+        .additionalHigherRateBandSummaryIs(156251, 70312.95)
         .dividends()
-          .nilRateBandSummaryIs(5000)
-          .basicRateBandSummaryIs(0, 0)
-          .higherRateBandSummaryIs(0, 0)
-          .additionalHigherRateBandSummaryIs(195000, 74295)
-        .totalIncomeReceivedIs(723361.96)
-        .totalTaxableIncomeIs(721859.96)
-        .totalIncomeTaxIs(295231.98)
-        .totalTaxDueIs(280981.11)
+        .nilRateBandSummaryIs(5000)
+        .basicRateBandSummaryIs(0, 0)
+        .higherRateBandSummaryIs(0, 0)
+        .additionalHigherRateBandSummaryIs(195000, 74295)
+        .totalIncomeReceivedIs(700412.96)
+        .totalTaxableIncomeIs(698910.96)
+        .totalIncomeTaxIs(284904.93)
+        .totalTaxDueIs(271154.31)
     }
 
     "correctly compute a liability when taxable non-savings income is less than zero" in {
       val selfEmployments = SelfEmploymentBuilder()
-        .withAllowances(
-          annualInvestmentAllowance = 2300.22,
-          capitalAllowanceMainPool = 200.75,
-          capitalAllowanceSpecialRatePool = 12.50,
-          businessPremisesRenovationAllowance = 1000.72,
-          enhancedCapitalAllowance = 123.45,
-          allowancesOnSales = 50.50)
-        .withAdjustments(
-          includedNonTaxableProfits = 100.25,
-          basisAdjustment = 50.50,
-          overlapReliefUsed = 12.50,
-          averagingAdjustment = 100.23,
-          lossBroughtForward = 5000.05,
-          outstandingBusinessIncome = 123.45,
-          accountingAdjustment = 0)
+        .withAllowances(annualInvestmentAllowance = 2300.22,
+                        capitalAllowanceMainPool = 200.75,
+                        capitalAllowanceSpecialRatePool = 12.50,
+                        businessPremisesRenovationAllowance = 1000.72,
+                        enhancedCapitalAllowance = 123.45,
+                        allowancesOnSales = 50.50)
+        .withAdjustments(includedNonTaxableProfits = 100.25,
+                         basisAdjustment = 50.50,
+                         overlapReliefUsed = 12.50,
+                         averagingAdjustment = 100.23,
+                         lossBroughtForward = 5000.05,
+                         outstandingBusinessIncome = 123.45,
+                         accountingAdjustment = 0)
         .withTurnover(30000.22)
         .withPremisesRunningCosts((12334.56, 0))
         .withBpraBalancingCharges(500.25)
@@ -445,11 +386,10 @@ class LiabilitySpec extends UnitSpec {
         .create()
 
       val ukProperties = UKPropertyBuilder(rentARoomRelief = 500.25)
-        .withAllowances(
-          annualInvestmentAllowance = 200,
-          otherCapitalAllowance = 123.45,
-          wearAndTearAllowance = 12.25,
-          businessPremisesRenovationAllowance = 0)
+        .withAllowances(annualInvestmentAllowance = 200,
+                        otherCapitalAllowance = 123.45,
+                        wearAndTearAllowance = 12.25,
+                        businessPremisesRenovationAllowance = 0)
         .lossBroughtForward(3000)
         .withRentIncomes(3000)
         .withPremisesRunningCosts(243.34)
@@ -458,7 +398,9 @@ class LiabilitySpec extends UnitSpec {
         .taxesPaid(12500.56)
         .create()
 
-      val furnishedHolidayLetting = FurnishedHolidayLettingBuilder(capitalAllowance = 123.45, location = furnishedholidaylettings.PropertyLocationType.UK)
+      val furnishedHolidayLetting = FurnishedHolidayLettingBuilder(capitalAllowance = 123.45,
+                                                                   location =
+                                                                     furnishedholidaylettings.PropertyLocationType.UK)
         .lossBroughtForward(0.50)
         .incomes(1525.50)
         .withPremisesRunningCosts(1250.25)
@@ -466,15 +408,12 @@ class LiabilitySpec extends UnitSpec {
         .privateUseAdjustments(750.65)
         .create()
 
-      val bank = BankBuilder()
-        .withUntaxedInterest(2000.73, 2000.23)
-        .create
+      val bank = BankBuilder().withUntaxedInterest(2000.73, 2000.23).create
 
-      ComputeLiabilityFor(
-        selfEmployments = Seq(selfEmployments),
-        ukProperties = Seq(ukProperties),
-        banks = Seq(bank),
-        furnishedHolidayLettings = Seq(furnishedHolidayLetting))
+      ComputeLiabilityFor(selfEmployments = Seq(selfEmployments),
+                          ukProperties = Seq(ukProperties),
+                          banks = Seq(bank),
+                          furnishedHolidayLettings = Seq(furnishedHolidayLetting))
         .andAssertThat()
         .personalAllowanceIs(11000)
         .incomeTaxReliefIs(8002)
@@ -502,14 +441,22 @@ class LiabilitySpec extends UnitSpec {
   }
 }
 
-case class ComputeLiabilityFor(employments: Seq[Employment] = Nil, selfEmployments: Seq[SelfEmployment] = Nil,
-                               ukProperties: Seq[UKProperties] = Nil, benefits: Seq[Benefits] = Nil,
+case class ComputeLiabilityFor(selfEmployments: Seq[SelfEmployment] = Nil,
+                               ukProperties: Seq[UKProperties] = Nil,
+                               benefits: Seq[Benefits] = Nil,
                                furnishedHolidayLettings: Seq[FurnishedHolidayLettings] = Nil,
-                               dividends: Seq[Dividend] = Nil, banks: Seq[Bank] = Nil) {
-  def andAssertThat() = LiabilityResultAssertions(Liability.create(SaUtr("123456789"), TaxYear("2016-17"),
-    api.SelfAssessment(employments = employments, selfEmployments = selfEmployments, ukProperties = ukProperties,
-                       benefits = benefits, furnishedHolidayLettings = furnishedHolidayLettings,
-                       dividends = dividends, banks = banks)))
+                               dividends: Seq[Dividend] = Nil,
+                               banks: Seq[Bank] = Nil) {
+  def andAssertThat() =
+    LiabilityResultAssertions(
+      Liability.create(SaUtr("123456789"),
+                       TaxYear("2016-17"),
+                       api.SelfAssessment(selfEmployments = selfEmployments,
+                                          ukProperties = ukProperties,
+                                          benefits = benefits,
+                                          furnishedHolidayLettings = furnishedHolidayLettings,
+                                          dividends = dividends,
+                                          banks = banks)))
 }
 
 case class LiabilityResultAssertions(liability: Liability) extends Matchers {
@@ -555,17 +502,20 @@ case class LiabilityResultAssertions(liability: Liability) extends Matchers {
     val additionalHigherRateCharge = "45%"
 
     def additionalHigherRateBandSummaryIs(amount: BigDecimal, tax: BigDecimal) = {
-      taxBandSummaries.find(_.taxBand == "additionalHigherRate") shouldBe Some(TaxBandSummary("additionalHigherRate", amount, additionalHigherRateCharge, tax))
+      taxBandSummaries.find(_.taxBand == "additionalHigherRate") shouldBe Some(
+        TaxBandSummary("additionalHigherRate", amount, additionalHigherRateCharge, tax))
       LiabilityResultAssertions.this
     }
 
     def higherRateBandSummaryIs(amount: BigDecimal, tax: BigDecimal) = {
-      taxBandSummaries.find(_.taxBand == "higherRate") shouldBe Some(TaxBandSummary("higherRate", amount, higherRateCharge, tax))
+      taxBandSummaries.find(_.taxBand == "higherRate") shouldBe Some(
+        TaxBandSummary("higherRate", amount, higherRateCharge, tax))
       this
     }
 
     def basicRateBandSummaryIs(amount: BigDecimal, tax: BigDecimal) = {
-      taxBandSummaries.find(_.taxBand == "basicRate") shouldBe Some(TaxBandSummary("basicRate", amount, basicRateCharge, tax))
+      taxBandSummaries.find(_.taxBand == "basicRate") shouldBe Some(
+        TaxBandSummary("basicRate", amount, basicRateCharge, tax))
       this
     }
   }
@@ -600,6 +550,3 @@ case class LiabilityResultAssertions(liability: Liability) extends Matchers {
     }
   }
 }
-
-
-

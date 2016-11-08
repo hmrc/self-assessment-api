@@ -21,6 +21,6 @@ import uk.gov.hmrc.selfassessmentapi.repositories._
 
 object TaxDeducted {
   def apply(selfAssessment: SelfAssessment) =
-    domain.TaxDeducted(interestFromUk = Savings.TotalTaxPaid(selfAssessment), deductionFromUkProperties = UKProperty.TaxesPaid(selfAssessment),
-      ukTaxesPaidForEmployments = Employment.TaxesPaid(selfAssessment))
+    domain.TaxDeducted(interestFromUk = Savings.TotalTaxPaid(selfAssessment),
+                       deductionFromUkProperties = UKProperty.TaxesPaid(selfAssessment))
 }

@@ -21,7 +21,11 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.prop.Tables.Table
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.controllers.api
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{InterestFromUKBanksAndBuildingSocieties, SelfAssessment, TaxBandSummary}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.{
+  InterestFromUKBanksAndBuildingSocieties,
+  SelfAssessment,
+  TaxBandSummary
+}
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.builders._
 
 class SavingsSpec extends UnitSpec {
@@ -31,25 +35,17 @@ class SavingsSpec extends UnitSpec {
     "calculate rounded down interest when there are multiple interest of both taxed and unTaxed from uk banks and building societies from" +
       " multiple benefit sources" in {
 
-      val banksOne = BankBuilder()
-        .withTaxedInterest(100.50)
-        .withUntaxedInterest(200.50)
-        .create()
+      val banksOne = BankBuilder().withTaxedInterest(100.50).withUntaxedInterest(200.50).create()
 
-      val banksTwo = BankBuilder()
-        .withTaxedInterest(300.99)
-        .withUntaxedInterest(400.99)
-        .create()
+      val banksTwo = BankBuilder().withTaxedInterest(300.99).withUntaxedInterest(400.99).create()
 
       Savings.Incomes(SelfAssessment(banks = Seq(banksOne, banksTwo))) should contain theSameElementsAs
         Seq(api.InterestFromUKBanksAndBuildingSocieties(sourceId = banksOne.sourceId, BigDecimal(326)),
-          api.InterestFromUKBanksAndBuildingSocieties(sourceId = banksTwo.sourceId, BigDecimal(777)))
+            api.InterestFromUKBanksAndBuildingSocieties(sourceId = banksTwo.sourceId, BigDecimal(777)))
     }
 
     "calculate interest when there is one taxed interest from uk banks and building societies from a single benefit source" in {
-      val bank = BankBuilder()
-        .withTaxedInterest(100)
-        .create()
+      val bank = BankBuilder().withTaxedInterest(100).create()
 
       Savings.Incomes(SelfAssessment(banks = Seq(bank))) should contain theSameElementsAs
         Seq(api.InterestFromUKBanksAndBuildingSocieties(bank.sourceId, BigDecimal(125)))
@@ -57,9 +53,7 @@ class SavingsSpec extends UnitSpec {
     }
 
     "calculate interest when there are multiple taxed interest from uk banks and building societies from a single benefit source" in {
-      val bank = BankBuilder()
-        .withTaxedInterest(100, 200)
-        .create()
+      val bank = BankBuilder().withTaxedInterest(100, 200).create()
 
       Savings.Incomes(SelfAssessment(banks = Seq(bank))) should contain theSameElementsAs
         Seq(api.InterestFromUKBanksAndBuildingSocieties(bank.sourceId, BigDecimal(375)))
@@ -67,18 +61,14 @@ class SavingsSpec extends UnitSpec {
 
     "calculate round down interest when there is one taxed interest from uk banks and building societies from a single benefit source income " +
       "source" in {
-      val bank = BankBuilder()
-        .withTaxedInterest(100.50)
-        .create()
+      val bank = BankBuilder().withTaxedInterest(100.50).create()
 
       Savings.Incomes(SelfAssessment(banks = Seq(bank))) should contain theSameElementsAs
         Seq(api.InterestFromUKBanksAndBuildingSocieties(bank.sourceId, BigDecimal(125)))
     }
 
     "calculate round down interest when there are multiple taxed interest from uk banks and building societies from a single bank source" in {
-      val bank = BankBuilder()
-        .withTaxedInterest(100.90, 200.99)
-        .create()
+      val bank = BankBuilder().withTaxedInterest(100.90, 200.99).create()
 
       Savings.Incomes(SelfAssessment(banks = Seq(bank))) should contain theSameElementsAs
         Seq(api.InterestFromUKBanksAndBuildingSocieties(bank.sourceId, BigDecimal(377)))
@@ -86,9 +76,7 @@ class SavingsSpec extends UnitSpec {
     }
 
     "calculate interest when there is one unTaxed interest from uk banks and building societies from a single bank source" in {
-      val bank = BankBuilder()
-        .withUntaxedInterest(100)
-        .create()
+      val bank = BankBuilder().withUntaxedInterest(100).create()
 
       Savings.Incomes(SelfAssessment(banks = Seq(bank))) should contain theSameElementsAs
         Seq(InterestFromUKBanksAndBuildingSocieties(bank.sourceId, BigDecimal(100)))
@@ -96,28 +84,21 @@ class SavingsSpec extends UnitSpec {
     }
 
     "calculate interest when there are multiple unTaxed interest from uk banks and building societies" in {
-      val bank = BankBuilder()
-        .withUntaxedInterest(100, 200)
-        .create()
+      val bank = BankBuilder().withUntaxedInterest(100, 200).create()
 
       Savings.Incomes(SelfAssessment(banks = Seq(bank))) should contain theSameElementsAs
         Seq(api.InterestFromUKBanksAndBuildingSocieties(bank.sourceId, BigDecimal(300)))
     }
 
-
     "calculate rounded down interest when there is one unTaxed interest from uk banks and building societies" in {
-      val bank = BankBuilder()
-        .withUntaxedInterest(100.50)
-        .create()
+      val bank = BankBuilder().withUntaxedInterest(100.50).create()
 
       Savings.Incomes(SelfAssessment(banks = Seq(bank))) should contain theSameElementsAs
         Seq(api.InterestFromUKBanksAndBuildingSocieties(bank.sourceId, BigDecimal(100)))
     }
 
     "calculate rounded down interest when there are multiple unTaxed interest from uk banks and building societies" in {
-      val bank = BankBuilder()
-        .withUntaxedInterest(100.50, 200.99)
-        .create()
+      val bank = BankBuilder().withUntaxedInterest(100.50, 200.99).create()
 
       Savings.Incomes(SelfAssessment(banks = Seq(bank))) should contain theSameElementsAs
         Seq(api.InterestFromUKBanksAndBuildingSocieties(bank.sourceId, BigDecimal(301)))
@@ -145,7 +126,7 @@ class SavingsSpec extends UnitSpec {
   }
 
   "Savings.PersonalSavingsAllowance" should {
-    def generate(lowerLimit: Int, upperLimit: Int) = for {value <- Gen.chooseNum(lowerLimit, upperLimit)} yield value
+    def generate(lowerLimit: Int, upperLimit: Int) = for { value <- Gen.chooseNum(lowerLimit, upperLimit) } yield value
 
     "be zero when the total income on which tax is due is zero" in {
       Savings.PersonalAllowance(totalTaxableIncome = 0) shouldBe 0
@@ -153,46 +134,57 @@ class SavingsSpec extends UnitSpec {
 
     "be 1000 when the total income on which tax is due is less than equal to 32000 " in {
       Savings.PersonalAllowance(totalTaxableIncome = 1) shouldBe 1000
-      generate(1, 32000) map { randomNumber => Savings.PersonalAllowance(totalTaxableIncome = randomNumber) shouldBe 1000 }
+      generate(1, 32000) map { randomNumber =>
+        Savings.PersonalAllowance(totalTaxableIncome = randomNumber) shouldBe 1000
+      }
       Savings.PersonalAllowance(totalTaxableIncome = 32000) shouldBe 1000
     }
 
     "be 1000 when the total income on which tax is due is greater than 32000 and ukPensionContributions is present" in {
-      generate(1, 35000) map {
-        randomNumber => Savings.PersonalAllowance(totalTaxableIncome = randomNumber, ukPensionContributions = 3500) shouldBe 1000
+      generate(1, 35000) map { randomNumber =>
+        Savings.PersonalAllowance(totalTaxableIncome = randomNumber, ukPensionContributions = 3500) shouldBe 1000
       }
       Savings.PersonalAllowance(totalTaxableIncome = 33000, ukPensionContributions = 3000) shouldBe 1000
     }
 
     "be 500 when the total income on which tax is due is greater than 150000 but less than 150000 + ukPensionContributions " in {
-      generate(150001, 153000) map {
-        randomNumber => Savings.PersonalAllowance(totalTaxableIncome = randomNumber, ukPensionContributions = 3500) shouldBe 500
+      generate(150001, 153000) map { randomNumber =>
+        Savings.PersonalAllowance(totalTaxableIncome = randomNumber, ukPensionContributions = 3500) shouldBe 500
       }
     }
 
     "be 500 when the total income on which tax is due is greater than 32000 but less than equal to 150000" in {
       Savings.PersonalAllowance(totalTaxableIncome = 32001) shouldBe 500
-      generate(32001, 150000) map { randomNumber => Savings.PersonalAllowance(totalTaxableIncome = randomNumber) shouldBe 500 }
+      generate(32001, 150000) map { randomNumber =>
+        Savings.PersonalAllowance(totalTaxableIncome = randomNumber) shouldBe 500
+      }
       Savings.PersonalAllowance(totalTaxableIncome = 150000) shouldBe 500
     }
 
     "be 0 when the total income on which tax is due is greater than 150000" in {
       Savings.PersonalAllowance(totalTaxableIncome = 150001) shouldBe 0
-      generate(150001, Int.MaxValue) map { randomNumber => Savings.PersonalAllowance(totalTaxableIncome = randomNumber) shouldBe 0 }
+      generate(150001, Int.MaxValue) map { randomNumber =>
+        Savings.PersonalAllowance(totalTaxableIncome = randomNumber) shouldBe 0
+      }
     }
   }
 
   "Savings.TotalTaxableIncome" should {
     "be equal to TotalSavingsIncomes - ((PersonalAllowance + IncomeTaxRelief) - ProfitsFromSelfEmployments) if ProfitsFromSelfEmployments" +
       " < (PersonalAllowance + IncomeTaxRelief) " in {
-      Savings.TotalTaxableIncome(totalSavingsIncome = 5000, totalDeduction = 4000, totalNonSavingsIncome = 2000) shouldBe 3000
-      Savings.TotalTaxableIncome(totalSavingsIncome = 5000, totalDeduction = 4000, totalNonSavingsIncome = 3999) shouldBe 4999
+      Savings
+        .TotalTaxableIncome(totalSavingsIncome = 5000, totalDeduction = 4000, totalNonSavingsIncome = 2000) shouldBe 3000
+      Savings
+        .TotalTaxableIncome(totalSavingsIncome = 5000, totalDeduction = 4000, totalNonSavingsIncome = 3999) shouldBe 4999
     }
 
     "be equal to TotalSavingsIncomes if ProfitsFromSelfEmployments >= (PersonalAllowance + IncomeTaxRelief) " in {
-      Savings.TotalTaxableIncome(totalSavingsIncome = 5000, totalDeduction = 4000, totalNonSavingsIncome = 4000) shouldBe 5000
-      Savings.TotalTaxableIncome(totalSavingsIncome = 5000, totalDeduction = 4000, totalNonSavingsIncome = 4001) shouldBe 5000
-      Savings.TotalTaxableIncome(totalSavingsIncome = 5000, totalDeduction = 4000, totalNonSavingsIncome = 4500) shouldBe 5000
+      Savings
+        .TotalTaxableIncome(totalSavingsIncome = 5000, totalDeduction = 4000, totalNonSavingsIncome = 4000) shouldBe 5000
+      Savings
+        .TotalTaxableIncome(totalSavingsIncome = 5000, totalDeduction = 4000, totalNonSavingsIncome = 4001) shouldBe 5000
+      Savings
+        .TotalTaxableIncome(totalSavingsIncome = 5000, totalDeduction = 4000, totalNonSavingsIncome = 4500) shouldBe 5000
     }
   }
 
@@ -204,27 +196,18 @@ class SavingsSpec extends UnitSpec {
 
     "be 0 if sum of all taxed interests is 0" in {
 
-      val saving = BankBuilder()
-        .withTaxedInterest(0, 0)
-        .withUntaxedInterest(0)
-        .create()
+      val saving = BankBuilder().withTaxedInterest(0, 0).withUntaxedInterest(0).create()
 
       Savings.TotalTaxPaid(SelfAssessment(banks = Seq(saving))) shouldBe 0
     }
 
     "be equal to Sum(Taxed Interest) * 100/80 - Sum(Taxed Interest)" in {
 
-      val savingOne = BankBuilder()
-        .withTaxedInterest(100, 200, 2000)
-        .withUntaxedInterest(500)
-        .create()
+      val savingOne = BankBuilder().withTaxedInterest(100, 200, 2000).withUntaxedInterest(500).create()
 
       Savings.TotalTaxPaid(SelfAssessment(banks = Seq(savingOne))) shouldBe 575
 
-      val savingTwo = BankBuilder()
-        .withTaxedInterest(400, 700, 5800)
-        .withUntaxedInterest(500)
-        .create()
+      val savingTwo = BankBuilder().withTaxedInterest(400, 700, 5800).withUntaxedInterest(500).create()
 
       Savings.TotalTaxPaid(SelfAssessment(banks = Seq(savingTwo))) shouldBe 1725
 
@@ -232,31 +215,19 @@ class SavingsSpec extends UnitSpec {
 
     "be equal to RoundUpToPennies(RoundUp(Sum(Taxed Interest)) * 100/80 - Sum(Taxed Interest))" in {
 
-      val savingOne = BankBuilder()
-        .withTaxedInterest(786.78, 456.76, 2000.56)
-        .withUntaxedInterest(1000.56)
-        .create()
+      val savingOne = BankBuilder().withTaxedInterest(786.78, 456.76, 2000.56).withUntaxedInterest(1000.56).create()
 
       Savings.TotalTaxPaid(SelfAssessment(banks = Seq(savingOne))) shouldBe 811.03
 
-      val savingTwo = BankBuilder()
-        .withTaxedInterest(1000.78, 999.22, 3623.67)
-        .withUntaxedInterest(2000.56)
-        .create()
+      val savingTwo = BankBuilder().withTaxedInterest(1000.78, 999.22, 3623.67).withUntaxedInterest(2000.56).create()
 
       Savings.TotalTaxPaid(SelfAssessment(banks = Seq(savingTwo))) shouldBe 1405.92
     }
 
     "be equal to RoundUpToPennies(RoundUp(Sum(Taxed Interest)) * 100/80 - Sum(Taxed Interest)) for multiple bank sources" in {
-      val savingOne = BankBuilder()
-        .withTaxedInterest(786.78)
-        .withUntaxedInterest(2500.00)
-        .create()
+      val savingOne = BankBuilder().withTaxedInterest(786.78).withUntaxedInterest(2500.00).create()
 
-      val savingTwo = BankBuilder()
-        .withTaxedInterest(456.76, 2000.56)
-        .withUntaxedInterest(2500.00)
-        .create()
+      val savingTwo = BankBuilder().withTaxedInterest(456.76, 2000.56).withUntaxedInterest(2500.00).create()
 
       Savings.TotalTaxPaid(SelfAssessment(banks = Seq(savingOne, savingTwo))) shouldBe 811.03
     }
@@ -264,10 +235,10 @@ class SavingsSpec extends UnitSpec {
 
   "Savings.IncomeTaxBandSummary" should {
     "be calculated when NonSavingsIncome = 0 and TaxableSavingIncome falls within BasicRate band" in {
-      Savings.IncomeTaxBandSummary(SelfAssessmentBuilder()
-        .withSavings(BankBuilder().withUntaxedInterest(42999))
-        .create()
-      ) should contain theSameElementsInOrderAs
+      Savings.IncomeTaxBandSummary(
+        SelfAssessmentBuilder()
+          .withSavings(BankBuilder().withUntaxedInterest(42999))
+          .create()) should contain theSameElementsInOrderAs
         Seq(
           TaxBandSummary("startingRate", 5000.0, "0%", 0.0),
           TaxBandSummary("nilRate", 1000.0, "0%", 0.0),
@@ -278,10 +249,10 @@ class SavingsSpec extends UnitSpec {
     }
 
     "be calculated when NonSavingsIncome = 0 and TaxableSavingIncome is spread over Basic and Higher Rate band" in {
-      Savings.IncomeTaxBandSummary(SelfAssessmentBuilder()
-        .withSavings(BankBuilder().withUntaxedInterest(43001))
-        .create()
-      ) should contain theSameElementsInOrderAs
+      Savings.IncomeTaxBandSummary(
+        SelfAssessmentBuilder()
+          .withSavings(BankBuilder().withUntaxedInterest(43001))
+          .create()) should contain theSameElementsInOrderAs
         Seq(
           TaxBandSummary("startingRate", 5000.0, "0%", 0.0),
           TaxBandSummary("nilRate", 500.00, "0%", 0.0),
@@ -292,10 +263,10 @@ class SavingsSpec extends UnitSpec {
     }
 
     "be calculated when NonSavingsIncome = 0 and TaxableSavingIncome is spread over Basic, Higher and Additional Higher Rate band" in {
-      Savings.IncomeTaxBandSummary(SelfAssessmentBuilder()
-        .withSavings(BankBuilder().withUntaxedInterest(150001))
-        .create()
-      ) should contain theSameElementsInOrderAs
+      Savings.IncomeTaxBandSummary(
+        SelfAssessmentBuilder()
+          .withSavings(BankBuilder().withUntaxedInterest(150001))
+          .create()) should contain theSameElementsInOrderAs
         Seq(
           TaxBandSummary("startingRate", 5000.0, "0%", 0.0),
           TaxBandSummary("nilRate", 0.0, "0%", 0.0),
@@ -307,68 +278,64 @@ class SavingsSpec extends UnitSpec {
 
     "be calculated when NonSavingsIncome > 0 and TaxableSavingIncome falls within BasicRate band" in {
 
-      Savings.IncomeTaxBandSummary(SelfAssessmentBuilder()
-        .withSavings(BankBuilder().withUntaxedInterest(30999))
-        .withEmployments(EmploymentBuilder().withSalary(5500))
-        .withSelfEmployments(SelfEmploymentBuilder().withTurnover(5500))
-        .create()
-      ) should contain theSameElementsInOrderAs
+      Savings.IncomeTaxBandSummary(
+        SelfAssessmentBuilder()
+          .withSavings(BankBuilder().withUntaxedInterest(30999))
+          .withSelfEmployments(SelfEmploymentBuilder().withTurnover(5500))
+          .create()) should contain theSameElementsInOrderAs
         Seq(
           TaxBandSummary("startingRate", 5000.0, "0%", 0.0),
           TaxBandSummary("nilRate", 1000.0, "0%", 0.0),
-          TaxBandSummary("basicRate", 24999.0, "20%", 4999.8),
+          TaxBandSummary("basicRate", 19499.0, "20%", 3899.8),
           TaxBandSummary("higherRate", 0.0, "40%", 0.0),
           TaxBandSummary("additionalHigherRate", 0.0, "45%", 0.0)
         )
     }
 
     "be calculated when NonSavingsIncome > 0 and TaxableSavingIncome is spread over Basic and Higher Rate band" in {
-      Savings.IncomeTaxBandSummary(SelfAssessmentBuilder()
-        .withSavings(BankBuilder().withUntaxedInterest(31001))
-        .withEmployments(EmploymentBuilder().withSalary(6000))
-        .withSelfEmployments(SelfEmploymentBuilder().withTurnover(6000))
-        .create()
-      ) should contain theSameElementsInOrderAs
+      Savings.IncomeTaxBandSummary(
+        SelfAssessmentBuilder()
+          .withSavings(BankBuilder().withUntaxedInterest(31001))
+          .withSelfEmployments(SelfEmploymentBuilder().withTurnover(6000))
+          .create()) should contain theSameElementsInOrderAs
         Seq(
-          TaxBandSummary("startingRate", 4000.0, "0%", 0.0),
-          TaxBandSummary("nilRate", 500.0, "0%", 0.0),
-          TaxBandSummary("basicRate", 26500.0, "20%", 5300.0),
-          TaxBandSummary("higherRate", 1.0, "40%", 0.4),
+          TaxBandSummary("startingRate", 5000.0, "0%", 0.0),
+          TaxBandSummary("nilRate", 1000.0, "0%", 0.0),
+          TaxBandSummary("basicRate", 20001.0, "20%", 4000.20),
+          TaxBandSummary("higherRate", 0.0, "40%", 0.0),
           TaxBandSummary("additionalHigherRate", 0.0, "45%", 0.0)
         )
     }
 
     "be calculated when NonSavingsIncome > 0 and TaxableSavingIncome is spread over Basic, Higher and Additional Higher Rate band" in {
 
-      Savings.IncomeTaxBandSummary(SelfAssessmentBuilder()
-        .withSavings(BankBuilder().withUntaxedInterest(149001))
-        .withEmployments(EmploymentBuilder().withSalary(500))
-        .withSelfEmployments(SelfEmploymentBuilder().withTurnover(500))
-        .create()
-      ) should contain theSameElementsInOrderAs
+      Savings.IncomeTaxBandSummary(
+        SelfAssessmentBuilder()
+          .withSavings(BankBuilder().withUntaxedInterest(149001))
+          .withSelfEmployments(SelfEmploymentBuilder().withTurnover(500))
+          .create()) should contain theSameElementsInOrderAs
         Seq(
-          TaxBandSummary("startingRate", 4000.0, "0%", 0.0),
-          TaxBandSummary("nilRate", 0.0, "0%", 0.0),
-          TaxBandSummary("basicRate", 27000.0, "20%", 5400.0),
-          TaxBandSummary("higherRate", 118000.0, "40%", 47200.0),
-          TaxBandSummary("additionalHigherRate", 1.0, "45%", 0.45)
+          TaxBandSummary("startingRate", 4500.00, "0%", 0.00),
+          TaxBandSummary("nilRate", 500.00, "0%", 0.00),
+          TaxBandSummary("basicRate", 26500.00, "20%", 5300.00),
+          TaxBandSummary("higherRate", 117501.00, "40%", 47000.40),
+          TaxBandSummary("additionalHigherRate", 0.00, "45%", 0.00)
         )
     }
 
     "be calculated when NonSavingsIncome > 0 and TaxableSavingIncome is spread over Basic, Higher and Additional Higher Rate band and ukPensionContributions are present" in {
-      Savings.IncomeTaxBandSummary(SelfAssessmentBuilder()
-        .withSavings(BankBuilder().withUntaxedInterest(149001))
-        .withEmployments(EmploymentBuilder().withSalary(500))
-        .withSelfEmployments(SelfEmploymentBuilder().withTurnover(500))
-        .withTaxYearProperties(TaxYearPropertiesBuilder().withPensionContributions().ukRegisteredPension(500))
-        .create()
-      ) should contain theSameElementsInOrderAs
+      Savings.IncomeTaxBandSummary(
+        SelfAssessmentBuilder()
+          .withSavings(BankBuilder().withUntaxedInterest(149001))
+          .withSelfEmployments(SelfEmploymentBuilder().withTurnover(500))
+          .withTaxYearProperties(TaxYearPropertiesBuilder().withPensionContributions().ukRegisteredPension(500))
+          .create()) should contain theSameElementsInOrderAs
         Seq(
-          TaxBandSummary("startingRate", 4000.0, "0%", 0.0),
-          TaxBandSummary("nilRate", 500.0, "0%", 0.0),
-          TaxBandSummary("basicRate", 27000.0, "20%", 5400.0),
-          TaxBandSummary("higherRate", 117501.00, "40%", 47000.40),
-          TaxBandSummary("additionalHigherRate", 0, "45%", 0.0)
+          TaxBandSummary("startingRate", 4500.00, "0%", 0.00),
+          TaxBandSummary("nilRate", 500.00, "0%", 0.00),
+          TaxBandSummary("basicRate", 27000.00, "20%", 5400.00),
+          TaxBandSummary("higherRate", 117001.00, "40%", 46800.40),
+          TaxBandSummary("additionalHigherRate", 0.00, "45%", 0.00)
         )
     }
   }
@@ -376,8 +343,14 @@ class SavingsSpec extends UnitSpec {
   "Savings.IncomeTaxBandSummary" should {
     "be allocated to correct tax bands" in {
       val inputs = Table(
-        ("TotalProfitFromSelfEmployments", "TotalSavingsIncome", "UkPensionContribution", "StartingRateAmount", "NilRateAmount", "BasicRateTaxAmount",
-          "HigherRateTaxAmount", "AdditionalHigherRateAmount"),
+        ("TotalProfitFromSelfEmployments",
+         "TotalSavingsIncome",
+         "UkPensionContribution",
+         "StartingRateAmount",
+         "NilRateAmount",
+         "BasicRateTaxAmount",
+         "HigherRateTaxAmount",
+         "AdditionalHigherRateAmount"),
         ("8000", "12000", "0", "5000", "1000", "3000", "0", "0"),
         ("5000", "6000", "0", "0", "0", "0", "0", "0"),
         ("5000", "7000", "0", "1000", "0", "0", "0", "0"),
@@ -401,22 +374,26 @@ class SavingsSpec extends UnitSpec {
         ("14000", "8000", "5000", "2000", "1000", "5000", "0", "0")
       )
 
-      TableDrivenPropertyChecks.forAll(inputs) { (totalProfitFromSelfEmployments: String, totalSavingsIncome: String, ukPensionContributions: String,
-                                                  startingRateAmount: String, nilRateAmount: String, basicRateTaxAmount: String,
-                                                  higherRateTaxAmount: String, additionalHigherRateAmount: String) =>
+      TableDrivenPropertyChecks.forAll(inputs) {
+        (totalProfitFromSelfEmployments: String, totalSavingsIncome: String, ukPensionContributions: String,
+         startingRateAmount: String, nilRateAmount: String, basicRateTaxAmount: String, higherRateTaxAmount: String,
+         additionalHigherRateAmount: String) =>
+          val bandAllocations = Savings.IncomeTaxBandSummary(SelfAssessmentBuilder()
+            .withSavings(BankBuilder().withUntaxedInterest(totalSavingsIncome.toInt))
+            .withSelfEmployments(SelfEmploymentBuilder().withTurnover(totalProfitFromSelfEmployments.toInt))
+            .withTaxYearProperties(
+              TaxYearPropertiesBuilder().withPensionContributions().ukRegisteredPension(ukPensionContributions.toInt))
+            .create())
 
-        val bandAllocations = Savings.IncomeTaxBandSummary(SelfAssessmentBuilder()
-          .withSavings(BankBuilder().withUntaxedInterest(totalSavingsIncome.toInt))
-          .withSelfEmployments(SelfEmploymentBuilder().withTurnover(totalProfitFromSelfEmployments.toInt))
-          .withTaxYearProperties(TaxYearPropertiesBuilder().withPensionContributions().ukRegisteredPension(ukPensionContributions.toInt))
-          .create()
-        )
+          println(bandAllocations)
+          println("====================================================================================")
 
-        println(bandAllocations)
-        println("====================================================================================")
-
-        bandAllocations.map(_.taxableAmount) should contain theSameElementsInOrderAs Seq(startingRateAmount.toInt, nilRateAmount.toInt, basicRateTaxAmount.toInt,
-          higherRateTaxAmount.toInt, additionalHigherRateAmount.toInt)
+          bandAllocations.map(_.taxableAmount) should contain theSameElementsInOrderAs Seq(
+            startingRateAmount.toInt,
+            nilRateAmount.toInt,
+            basicRateTaxAmount.toInt,
+            higherRateTaxAmount.toInt,
+            additionalHigherRateAmount.toInt)
       }
     }
   }
@@ -424,7 +401,7 @@ class SavingsSpec extends UnitSpec {
   "SavingsIncomeTax" should {
     "be equal to" in {
       val inputs = Table(
-        ("NonSavingsIncome", "SavingsIncome","UkPensionContribution", "SavingsIncomeTax"),
+        ("NonSavingsIncome", "SavingsIncome", "UkPensionContribution", "SavingsIncomeTax"),
         ("0", "12000", "0", "0"),
         ("0", "17001", "0", "0.2"),
         ("0", "17005", "0", "1"),
@@ -450,31 +427,30 @@ class SavingsSpec extends UnitSpec {
         ("11000", "160000", "30000", "53700")
       )
 
-      TableDrivenPropertyChecks.forAll(inputs) { (nonSavingsIncome: String, savingsIncome: String, ukPensionContributions: String, savingsIncomeTax: String) =>
+      TableDrivenPropertyChecks.forAll(inputs) {
+        (nonSavingsIncome: String, savingsIncome: String, ukPensionContributions: String, savingsIncomeTax: String) =>
+          val nonSavings = BigDecimal(nonSavingsIncome.toInt)
+          val savings = BigDecimal(savingsIncome.toInt)
+          val ukPensionContribs = BigDecimal(ukPensionContributions.toInt)
 
-        val nonSavings = BigDecimal(nonSavingsIncome.toInt)
-        val savings = BigDecimal(savingsIncome.toInt)
-        val ukPensionContribs = BigDecimal(ukPensionContributions.toInt)
+          Print(savings).as("savings")
+          Print(nonSavings).as("nonSavings")
+          Print(ukPensionContribs).as("ukPensionContributions")
 
-        Print(savings).as("savings")
-        Print(nonSavings).as("nonSavings")
-        Print(ukPensionContribs).as("ukPensionContributions")
+          val savingsIncomeBandAllocation = Savings.IncomeTaxBandSummary(
+            SelfAssessmentBuilder()
+              .withSavings(BankBuilder().withUntaxedInterest(savings))
+              .withSelfEmployments(SelfEmploymentBuilder().withTurnover(nonSavings))
+              .withTaxYearProperties(
+                TaxYearPropertiesBuilder().withPensionContributions().ukRegisteredPension(ukPensionContribs))
+              .create())
 
+          println(savingsIncomeBandAllocation)
+          println("==============================")
 
-        val savingsIncomeBandAllocation = Savings.IncomeTaxBandSummary(SelfAssessmentBuilder()
-          .withSavings(BankBuilder().withUntaxedInterest(savings))
-          .withSelfEmployments(SelfEmploymentBuilder().withTurnover(nonSavings))
-          .withTaxYearProperties(TaxYearPropertiesBuilder().withPensionContributions().ukRegisteredPension(ukPensionContribs))
-          .create()
-        )
-
-        println(savingsIncomeBandAllocation)
-        println("==============================")
-
-        Savings.IncomeTax(savingsIncomeBandAllocation) shouldBe BigDecimal(savingsIncomeTax.toDouble)
+          Savings.IncomeTax(savingsIncomeBandAllocation) shouldBe BigDecimal(savingsIncomeTax.toDouble)
       }
     }
   }
-
 
 }

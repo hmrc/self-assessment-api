@@ -22,15 +22,14 @@ import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.SourceTypes._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{ErrorCode, LiabilityId, SelfAssessment, SourceType, SourceTypes, TaxYear, _}
 import uk.gov.hmrc.selfassessmentapi.controllers.{api, LiabilityError => _, LiabilityErrors => _}
-import uk.gov.hmrc.selfassessmentapi.repositories.domain.{Benefits, Employment, Liability, SelfEmployment, _}
+import uk.gov.hmrc.selfassessmentapi.repositories.domain.{Benefits, Liability, SelfEmployment, _}
 import uk.gov.hmrc.selfassessmentapi.repositories.live._
 import uk.gov.hmrc.selfassessmentapi.services.live.TaxYearPropertiesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class LiabilityService(employmentRepo: EmploymentMongoRepository,
-                       selfEmploymentRepo: SelfEmploymentMongoRepository,
+class LiabilityService(selfEmploymentRepo: SelfEmploymentMongoRepository,
                        benefitsRepo: BenefitsMongoRepository,
                        furnishedHolidayLettingsRepo: FurnishedHolidayLettingsMongoRepository,
                        liabilityRepo: LiabilityMongoRepository,
@@ -56,7 +55,6 @@ class LiabilityService(employmentRepo: EmploymentMongoRepository,
 
   def calculate(saUtr: SaUtr, taxYear: TaxYear): Future[Either[LiabilityCalculationErrorId, LiabilityId]] = {
     for {
-      employments <- if (isSourceEnabled(Employments)) employmentRepo.findAll(saUtr, taxYear) else Future.successful(Seq[Employment]())
       selfEmployments <- if (isSourceEnabled(SelfEmployments)) selfEmploymentRepo.findAll(saUtr, taxYear) else Future.successful(Seq[SelfEmployment]())
       benefits <- if (isSourceEnabled(SourceTypes.Benefits)) benefitsRepo.findAll(saUtr, taxYear) else Future.successful(Seq[Benefits]())
       ukProperties <- if (isSourceEnabled(SourceTypes.UKProperties)) ukPropertiesRepo.findAll(saUtr, taxYear) else Future.successful(Seq[UKProperties]())
@@ -64,7 +62,7 @@ class LiabilityService(employmentRepo: EmploymentMongoRepository,
       banks <- if (isSourceEnabled(SourceTypes.Banks)) savingsRepo.findAll(saUtr, taxYear) else Future.successful(Seq[Bank]())
       furnishedHolidayLettings <- if (isSourceEnabled(SourceTypes.FurnishedHolidayLettings)) furnishedHolidayLettingsRepo.findAll(saUtr, taxYear) else Future.successful(Seq[FurnishedHolidayLettings]())
       taxYearProperties <- taxYearPropertiesService.findTaxYearProperties(saUtr, taxYear)
-      liability = Liability.create(saUtr, taxYear, SelfAssessment(employments = employments, selfEmployments = selfEmployments,
+      liability = Liability.create(saUtr, taxYear, SelfAssessment(selfEmployments = selfEmployments,
         ukProperties = ukProperties, benefits = benefits, furnishedHolidayLettings = furnishedHolidayLettings,
         dividends = dividends, banks = banks, taxYearProperties = taxYearProperties))
       liability <- liabilityRepo.save(LiabilityOrError(liability))
@@ -81,8 +79,7 @@ class LiabilityService(employmentRepo: EmploymentMongoRepository,
 
 object LiabilityService {
 
-  private lazy val service = new LiabilityService(EmploymentRepository(),
-                                                  SelfEmploymentRepository(),
+  private lazy val service = new LiabilityService(SelfEmploymentRepository(),
                                                   BenefitsRepository(),
                                                   FurnishedHolidayLettingsRepository(),
                                                   LiabilityRepository(),

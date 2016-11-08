@@ -23,26 +23,32 @@ import uk.gov.hmrc.selfassessmentapi.repositories.domain.{IncomeTax, TaxBand}
 object NonSavings {
 
   object TotalTaxableIncome {
-    def apply(totalIncome: BigDecimal, totalDeductions: BigDecimal): BigDecimal = PositiveOrZero(totalIncome - totalDeductions)
+    def apply(totalIncome: BigDecimal, totalDeductions: BigDecimal): BigDecimal =
+      PositiveOrZero(totalIncome - totalDeductions)
 
-    def apply(selfAssessment: SelfAssessment): BigDecimal = apply(TotalIncome(selfAssessment), Deductions.Total(selfAssessment))
+    def apply(selfAssessment: SelfAssessment): BigDecimal =
+      apply(TotalIncome(selfAssessment), Deductions.Total(selfAssessment))
   }
 
   object TotalIncome {
-    def apply(selfEmploymentProfits: BigDecimal, ukPropertyProfits: BigDecimal, employmentProfits: BigDecimal,
+    def apply(selfEmploymentProfits: BigDecimal,
+              ukPropertyProfits: BigDecimal,
               furnishedHolidayLettingProfits: BigDecimal): BigDecimal = {
-      selfEmploymentProfits + ukPropertyProfits + employmentProfits + furnishedHolidayLettingProfits
+      selfEmploymentProfits + ukPropertyProfits + furnishedHolidayLettingProfits
     }
 
-    def apply(selfAssessment: SelfAssessment): BigDecimal = apply(SelfEmployment.TotalProfit(selfAssessment), UKProperty.TotalProfit(selfAssessment),
-      Employment.TotalProfit(selfAssessment), FurnishedHolidayLetting.TotalProfit(selfAssessment))
+    def apply(selfAssessment: SelfAssessment): BigDecimal =
+      apply(SelfEmployment.TotalProfit(selfAssessment),
+            UKProperty.TotalProfit(selfAssessment),
+            FurnishedHolidayLetting.TotalProfit(selfAssessment))
   }
 
   object IncomeTaxBandSummary {
     def apply(selfAssessment: SelfAssessment): Seq[TaxBandSummary] =
       apply(NonSavings.TotalTaxableIncome(selfAssessment), Deductions.TotalUkPensionContributions(selfAssessment))
 
-    private def apply(totalNonSavingsTaxableIncome: BigDecimal, ukPensionContributions: BigDecimal = 0): Seq[TaxBandSummary] = {
+    private def apply(totalNonSavingsTaxableIncome: BigDecimal,
+                      ukPensionContributions: BigDecimal = 0): Seq[TaxBandSummary] = {
       val basicTaxBand = TaxBand.BasicTaxBand(additionsToUpperBound = ukPensionContributions)
       val higherTaxBand = TaxBand.HigherTaxBand(basicTaxBand, additionsToUpperBound = ukPensionContributions)
       Seq(basicTaxBand, higherTaxBand, TaxBand.AdditionalHigherTaxBand(higherTaxBand)).map { taxBand =>

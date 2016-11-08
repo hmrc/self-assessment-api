@@ -1,10 +1,12 @@
 
 ## [0.65.0] (https://github.com/hmrc/self-assessment-api/releases/tag/v0.65.0) Release Candidate. Not Yet Released to Production.
 
-* Removed 'Unearned Income' Source
-   * 'savings' summary is now 'Banks' Income Source. Change made based on feedback from TPV's.
-   * 'dividends' summary now 'Dividends' Income Source. Change made based on feedback from TPV's.
-   * 'benefits' summary now 'Benefits' Source
+* Removed 'Employments' source and its summaries
+
+* Removed 'Unearned Income' source
+   * 'savings' summary is now 'Banks' Income source. Change made based on feedback from TPV's.
+   * 'dividends' summary now 'Dividends' Income source. Change made based on feedback from TPV's.
+   * 'benefits' summary now 'Benefits' source
 
 ## [0.61.0] (https://github.com/hmrc/self-assessment-api/releases/tag/v0.61.0) 10-Oct-2016
 

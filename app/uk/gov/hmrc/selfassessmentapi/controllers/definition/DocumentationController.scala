@@ -68,7 +68,7 @@ object Documentation extends BaseController with Links {
 
   private lazy val sourceAndSummaryDocumentation = Helpers.enabledSourceTypes.toSeq.flatMap { sourceType =>
     val updateEndpoint =  sourceType match  {
-      case SourceTypes.Employments | SourceTypes.Benefits | SourceTypes.Banks | SourceTypes.Dividends =>  Nil
+      case SourceTypes.Benefits | SourceTypes.Banks | SourceTypes.Dividends =>  Nil
       case _ => Seq(EndpointDocumentation(s"Update ${sourceType.documentationName}", uk.gov.hmrc.selfassessmentapi.views.xml.updateSource(utr, taxYear, sourceType, sourceId)))
     }
     Seq(

@@ -31,13 +31,11 @@ object DividendsFromUKSources {
   implicit val format = Json.format[DividendsFromUKSources]
 }
 
-case class NonSavingsIncomes(employment: Seq[EmploymentIncome],
-                             selfEmployment: Seq[SelfEmploymentIncome],
+case class NonSavingsIncomes(selfEmployment: Seq[SelfEmploymentIncome],
                              ukProperties: Seq[UkPropertyIncome],
                              furnishedHolidayLettings: Seq[FurnishedHolidayLettingIncome])
 
 object NonSavingsIncomes {
-  implicit val employmentIncomeFormats = Json.format[EmploymentIncome]
   implicit val furnishedHolidayLettingIncomeFormats = Json.format[FurnishedHolidayLettingIncome]
   implicit val selfEmploymentIncomeFormats = Json.format[SelfEmploymentIncome]
   implicit val ukPropertyIncomeFormats = Json.format[UkPropertyIncome]
@@ -114,7 +112,6 @@ object TaxPaidForUkProperty {
 case class TaxDeducted(interestFromUk: BigDecimal,
                        taxPaidByPensionScheme: BigDecimal,
                        fromUkProperties: Seq[TaxPaidForUkProperty],
-                       fromEmployments: Seq[UkTaxPaidForEmployment],
                        total: BigDecimal)
 
 object TaxDeducted {
@@ -142,7 +139,6 @@ object Liability {
         income = IncomeSummary(
             incomes = IncomeFromSources(
                 nonSavings = NonSavingsIncomes(
-                    employment = exampleEmploymentIncomes,
                     selfEmployment = exampleSelfEmploymentIncomes,
                     ukProperties = exampleUkPropertiesIncomes,
                     furnishedHolidayLettings = exampleFurnishedHolidayLettingIncomes
@@ -197,19 +193,11 @@ object Liability {
             interestFromUk = 0,
             taxPaidByPensionScheme = 10500,
             fromUkProperties = Nil,
-            fromEmployments = exampleUkTaxPaidForEmployment,
             total = 0
         ),
         totalTaxDue = 25796.95,
         totalTaxOverpaid = 0
     )
-
-  private def exampleEmploymentIncomes = {
-    if (FeatureSwitch(AppContext.featureSwitch).isEnabled(SourceTypes.Employments))
-      Seq(EmploymentIncome("employment-1", 1000, 500, 250, 1250),
-          EmploymentIncome("employment-2", 2000, 1000, 500, 2500))
-    else Seq()
-  }
 
   private def exampleFurnishedHolidayLettingIncomes = {
     if (FeatureSwitch(AppContext.featureSwitch).isEnabled(SourceTypes.FurnishedHolidayLettings))
@@ -241,12 +229,6 @@ object Liability {
   private def exampleDividendsFromUKSources = {
     if (FeatureSwitch(AppContext.featureSwitch).isEnabled(SourceTypes.Benefits))
       Seq(DividendsFromUKSources("dividend-income-1", 1000), DividendsFromUKSources("dividend-income-2", 2000))
-    else Seq()
-  }
-
-  private def exampleUkTaxPaidForEmployment = {
-    if (FeatureSwitch(AppContext.featureSwitch).isEnabled(SourceTypes.Employments))
-      Seq(UkTaxPaidForEmployment("employment-1", 4000), UkTaxPaidForEmployment("employment-2", 5000))
     else Seq()
   }
 

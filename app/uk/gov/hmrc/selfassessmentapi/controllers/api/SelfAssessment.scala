@@ -20,8 +20,7 @@ import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.Pr
 import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.PropertyLocationType.PropertyLocationType
 import uk.gov.hmrc.selfassessmentapi.repositories.domain._
 
-case class SelfAssessment(employments: Seq[Employment] = Seq(),
-                          selfEmployments: Seq[SelfEmployment] = Seq(),
+case class SelfAssessment(selfEmployments: Seq[SelfEmployment] = Seq(),
                           benefits: Seq[Benefits] = Seq(),
                           dividends: Seq[Dividend] = Seq(),
                           ukProperties: Seq[UKProperties] = Seq(),

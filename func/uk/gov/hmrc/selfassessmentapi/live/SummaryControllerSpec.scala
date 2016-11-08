@@ -33,9 +33,7 @@ class SummaryControllerSpec extends BaseFunctionalSpec {
     }
   }
 
-  val invalidAmountTestData: Set[SummaryType] = Set(GoodsAndServicesOwnUses) ++
-      FurnishedHolidayLettings.summaryTypes ++ Employments.summaryTypes ++
-      UKProperties.summaryTypes
+  val invalidAmountTestData: Set[SummaryType] = Set(GoodsAndServicesOwnUses) ++ FurnishedHolidayLettings.summaryTypes ++ UKProperties.summaryTypes
 
   private def invalidRequestBody(summaryType: SummaryType) = {
     if (invalidAmountTestData.contains(summaryType)) {
@@ -54,7 +52,6 @@ class SummaryControllerSpec extends BaseFunctionalSpec {
   }
 
   private val implementedSummaries = Map[SourceType, Set[SummaryType]](
-    Employments -> Employments.summaryTypes,
     SelfEmployments -> SelfEmployments.summaryTypes,
     Benefits -> Benefits.summaryTypes,
     FurnishedHolidayLettings -> FurnishedHolidayLettings.summaryTypes,

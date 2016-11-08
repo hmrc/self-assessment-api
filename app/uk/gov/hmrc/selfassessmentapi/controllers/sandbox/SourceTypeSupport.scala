@@ -17,15 +17,14 @@
 package uk.gov.hmrc.selfassessmentapi.controllers.sandbox
 
 import uk.gov.hmrc.selfassessmentapi.controllers.SourceHandler
+import uk.gov.hmrc.selfassessmentapi.controllers.api.SourceTypes._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{SourceType, SourceTypes}
-import uk.gov.hmrc.selfassessmentapi.controllers.sandbox.employment.EmploymentSourceHandler
+import uk.gov.hmrc.selfassessmentapi.controllers.sandbox.bank.BankSourceHandler
+import uk.gov.hmrc.selfassessmentapi.controllers.sandbox.benefit.BenefitSourceHandler
+import uk.gov.hmrc.selfassessmentapi.controllers.sandbox.dividend.DividendSourceHandler
 import uk.gov.hmrc.selfassessmentapi.controllers.sandbox.furnishedholidaylettings.FurnishedHolidayLettingsSourceHandler
 import uk.gov.hmrc.selfassessmentapi.controllers.sandbox.selfemployment.SelfEmploymentSourceHandler
 import uk.gov.hmrc.selfassessmentapi.controllers.sandbox.ukproperty.UKPropertySourceHandler
-import uk.gov.hmrc.selfassessmentapi.controllers.sandbox.benefit.BenefitSourceHandler
-import uk.gov.hmrc.selfassessmentapi.controllers.sandbox.bank.BankSourceHandler
-import SourceTypes._
-import uk.gov.hmrc.selfassessmentapi.controllers.sandbox.dividend.DividendSourceHandler
 
 trait SourceTypeSupport extends uk.gov.hmrc.selfassessmentapi.controllers.SourceTypeSupport {
 
@@ -33,7 +32,6 @@ trait SourceTypeSupport extends uk.gov.hmrc.selfassessmentapi.controllers.Source
     case SelfEmployments => SelfEmploymentSourceHandler
     case FurnishedHolidayLettings => FurnishedHolidayLettingsSourceHandler
     case UKProperties => UKPropertySourceHandler
-    case Employments => EmploymentSourceHandler
     case Benefits => BenefitSourceHandler
     case Dividends => DividendSourceHandler
     case Banks => BankSourceHandler

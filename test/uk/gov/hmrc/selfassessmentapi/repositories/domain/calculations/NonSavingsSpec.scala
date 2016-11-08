@@ -25,9 +25,10 @@ import uk.gov.hmrc.selfassessmentapi.repositories.domain.builders._
 class NonSavingsSpec extends UnitSpec {
 
   "NonSavings.TotalIncome" should {
-    "be selfEmploymentProfits + employmentProfits + ukPropertyProfits + furnishedHolidayLettingProfits" in {
-      NonSavings.TotalIncome(selfEmploymentProfits = 1000, employmentProfits = 2000, ukPropertyProfits = 500,
-        furnishedHolidayLettingProfits = 200) shouldBe 3700
+    "be selfEmploymentProfits + ukPropertyProfits + furnishedHolidayLettingProfits" in {
+      NonSavings.TotalIncome(selfEmploymentProfits = 1000,
+                             ukPropertyProfits = 500,
+                             furnishedHolidayLettingProfits = 200) shouldBe 1700
     }
   }
 
@@ -132,7 +133,6 @@ class NonSavingsSpec extends UnitSpec {
     "be calculated tax for NonSavingsIncome > 150000" in {
       NonSavings.IncomeTaxBandSummary(
         SelfAssessmentBuilder()
-          .withEmployments(EmploymentBuilder().withSalary(10000))
           .withSelfEmployments(SelfEmploymentBuilder().withTurnover(120001))
           .withFurnishedHolidayLettings(FurnishedHolidayLettingBuilder().incomes(10000))
           .withUkProperties(UKPropertyBuilder().withRentIncomes(10000))
@@ -140,8 +140,8 @@ class NonSavingsSpec extends UnitSpec {
       ) should contain theSameElementsAs
         Seq(
           TaxBandSummary("basicRate", 32000.00, "20%", 6400.00),
-          TaxBandSummary("higherRate", 118000.00, "40%", 47200.00),
-          TaxBandSummary("additionalHigherRate", 1, "45%", 0.45)
+          TaxBandSummary("higherRate", 108001.00, "40%", 43200.40),
+          TaxBandSummary("additionalHigherRate", 0.00, "45%", 0.00)
         )
 
     }
@@ -149,7 +149,6 @@ class NonSavingsSpec extends UnitSpec {
     "be calculated tax for NonSavingsIncome > 150000 and pension contributions" in {
       NonSavings.IncomeTaxBandSummary(
         SelfAssessmentBuilder()
-          .withEmployments(EmploymentBuilder().withSalary(10000))
           .withSelfEmployments(SelfEmploymentBuilder().withTurnover(120003))
           .withFurnishedHolidayLettings(FurnishedHolidayLettingBuilder().incomes(10000))
           .withUkProperties(UKPropertyBuilder().withRentIncomes(10000))
@@ -158,13 +157,12 @@ class NonSavingsSpec extends UnitSpec {
       ) should contain theSameElementsAs
         Seq(
           TaxBandSummary("basicRate", 32100.00, "20%", 6420.00),
-          TaxBandSummary("higherRate", 117903.00, "40%", 47161.20),
-          TaxBandSummary("additionalHigherRate", 0, "45%", 0.00)
+          TaxBandSummary("higherRate", 107903.00, "40%", 43161.20),
+          TaxBandSummary("additionalHigherRate", 0.00, "45%", 0.00)
         )
 
       NonSavings.IncomeTaxBandSummary(
         SelfAssessmentBuilder()
-          .withEmployments(EmploymentBuilder().withSalary(10000))
           .withSelfEmployments(SelfEmploymentBuilder().withTurnover(130000))
           .withFurnishedHolidayLettings(FurnishedHolidayLettingBuilder().incomes(10000))
           .withUkProperties(UKPropertyBuilder().withRentIncomes(10000))
@@ -173,8 +171,8 @@ class NonSavingsSpec extends UnitSpec {
       ) should contain theSameElementsAs
         Seq(
           TaxBandSummary("basicRate", 33000.00, "20%", 6600.00),
-          TaxBandSummary("higherRate", 118000.00, "40%", 47200.00),
-          TaxBandSummary("additionalHigherRate", 9000, "45%", 4050)
+          TaxBandSummary("higherRate", 117000.00, "40%", 46800.00),
+          TaxBandSummary("additionalHigherRate", 0.00, "45%", 0.00)
         )
     }
 
@@ -184,23 +182,26 @@ class NonSavingsSpec extends UnitSpec {
     "be equal to" in {
       val inputs = Table(
         ("TotalTaxableProfits", "UkPensionContributions", "NonSavingsIncomeTax"),
-        ("31001", "1000", "4000.20"),
-        ("42999", "1000", "6399.80"),
-        ("44001", "0", "6800.40"),
-        ("44001", "1000", "6600.40"),
-        ("100002", "0", "29201.20"),
-        ("160003", "0", "58101.35"),
-        ("160003", "10000", "55601.35")
+        ("31001", "1000", "0"),
+        ("42999", "1000", "0"),
+        ("44001", "0", "0"),
+        ("44001", "1000", "0"),
+        ("100002", "0", "0"),
+        ("160003", "0", "0"),
+        ("160003", "10000", "0")
       )
-      TableDrivenPropertyChecks.forAll(inputs) { (totalTaxableProfits: String, ukPensionContributions: String, nonSavingsIncomeTax: String) =>
-        NonSavings.IncomeTax(
-          NonSavings.IncomeTaxBandSummary(
-            SelfAssessmentBuilder()
-              .withEmployments(EmploymentBuilder().withSalary(totalTaxableProfits.toInt))
-              .withTaxYearProperties(TaxYearPropertiesBuilder().withPensionContributions().ukRegisteredPension(ukPensionContributions.toInt))
-              .create()
-          )
-        ) shouldBe BigDecimal(nonSavingsIncomeTax.toDouble)
+      TableDrivenPropertyChecks.forAll(inputs) {
+        (totalTaxableProfits: String, ukPensionContributions: String, nonSavingsIncomeTax: String) =>
+          NonSavings.IncomeTax(
+            NonSavings.IncomeTaxBandSummary(
+              SelfAssessmentBuilder()
+                .withTaxYearProperties(
+                  TaxYearPropertiesBuilder()
+                    .withPensionContributions()
+                    .ukRegisteredPension(ukPensionContributions.toInt))
+                .create()
+            )
+          ) shouldBe BigDecimal(nonSavingsIncomeTax.toDouble)
       }
     }
   }

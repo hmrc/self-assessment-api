@@ -26,10 +26,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
-class DeleteExpiredDataService(saRepo: SelfAssessmentMongoRepository, seRepo: SelfEmploymentMongoRepository,
-                               benRepo : BenefitsMongoRepository, empRepo: EmploymentMongoRepository,
-                               fhlRepo: FurnishedHolidayLettingsMongoRepository, ukPropertyRepo: UKPropertiesMongoRepository,
-                               divRepo: DividendMongoRepository, bankRepo: BanksMongoRepository, jobRepo: JobHistoryMongoRepository) {
+class DeleteExpiredDataService(saRepo: SelfAssessmentMongoRepository,
+                               seRepo: SelfEmploymentMongoRepository,
+                               benRepo: BenefitsMongoRepository,
+                               fhlRepo: FurnishedHolidayLettingsMongoRepository,
+                               ukPropertyRepo: UKPropertiesMongoRepository,
+                               divRepo: DividendMongoRepository,
+                               bankRepo: BanksMongoRepository,
+                               jobRepo: JobHistoryMongoRepository) {
 
   def deleteExpiredData(lastModifiedDate: DateTime): Future[Int] = {
     Logger.info(s"Deleting records older than lastModifiedDate : $lastModifiedDate ")
@@ -53,7 +57,6 @@ class DeleteExpiredDataService(saRepo: SelfAssessmentMongoRepository, seRepo: Se
         saRepo.delete(record.saUtr, record.taxYear)
         seRepo.delete(record.saUtr, record.taxYear)
         benRepo.delete(record.saUtr, record.taxYear)
-        empRepo.delete(record.saUtr, record.taxYear)
         fhlRepo.delete(record.saUtr, record.taxYear)
         divRepo.delete(record.saUtr, record.taxYear)
         bankRepo.delete(record.saUtr, record.taxYear)
@@ -68,8 +71,13 @@ class DeleteExpiredDataService(saRepo: SelfAssessmentMongoRepository, seRepo: Se
 }
 
 object DeleteExpiredDataService {
-  def apply() = new DeleteExpiredDataService(SelfAssessmentRepository(), SelfEmploymentRepository(),
-                                             BenefitsRepository(), EmploymentRepository(),
-                                             FurnishedHolidayLettingsRepository(), UKPropertiesRepository(),
-                                             DividendRepository(), BanksRepository(), JobHistoryRepository())
+  def apply() =
+    new DeleteExpiredDataService(SelfAssessmentRepository(),
+                                 SelfEmploymentRepository(),
+                                 BenefitsRepository(),
+                                 FurnishedHolidayLettingsRepository(),
+                                 UKPropertiesRepository(),
+                                 DividendRepository(),
+                                 BanksRepository(),
+                                 JobHistoryRepository())
 }

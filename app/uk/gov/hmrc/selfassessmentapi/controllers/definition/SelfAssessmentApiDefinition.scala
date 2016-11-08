@@ -32,53 +32,53 @@ class SelfAssessmentApiDefinition(apiContext: String, apiStatus: APIStatus) {
 
   val firstEndpoints: Seq[Endpoint] = {
     Seq(Endpoint(
-      uriPattern = "/",
-      endpointName = "Resolve Taxpayer",
-      method = GET,
-      authType = USER,
-      throttlingTier = UNLIMITED,
-      scope = Some(readScope),
-      groupName = Taxpayer
-    ),
-    Endpoint(
-      uriPattern = "/{utr}",
-      endpointName = "Discover Tax Years",
-      method = GET,
-      authType = USER,
-      throttlingTier = UNLIMITED,
-      scope = Some(readScope),
-      groupName = Taxpayer
-    ),
-    Endpoint(
-      uriPattern = "/{utr}/{tax-year}",
-      endpointName = "Discover Tax Year",
-      method = GET,
-      authType = USER,
-      throttlingTier = UNLIMITED,
-      scope = Some(readScope),
-      groupName = Taxpayer
-    ))
+          uriPattern = "/",
+          endpointName = "Resolve Taxpayer",
+          method = GET,
+          authType = USER,
+          throttlingTier = UNLIMITED,
+          scope = Some(readScope),
+          groupName = Taxpayer
+        ),
+        Endpoint(
+          uriPattern = "/{utr}",
+          endpointName = "Discover Tax Years",
+          method = GET,
+          authType = USER,
+          throttlingTier = UNLIMITED,
+          scope = Some(readScope),
+          groupName = Taxpayer
+        ),
+        Endpoint(
+          uriPattern = "/{utr}/{tax-year}",
+          endpointName = "Discover Tax Year",
+          method = GET,
+          authType = USER,
+          throttlingTier = UNLIMITED,
+          scope = Some(readScope),
+          groupName = Taxpayer
+        ))
   }
 
   private val lastEndpoints: Seq[Endpoint] = {
     Seq(Endpoint(
-      uriPattern = "/{utr}/{tax-year}/liability",
-      endpointName = "Request Liability",
-      method = POST,
-      authType = USER,
-      throttlingTier = UNLIMITED,
-      scope = Some(writeScope),
-      groupName = Liability
-    ),
-    Endpoint(
-      uriPattern = "/{utr}/{tax-year}/liability",
-      endpointName = "Retrieve Liability",
-      method = GET,
-      authType = USER,
-      throttlingTier = UNLIMITED,
-      scope = Some(readScope),
-      groupName = Liability
-    ))
+          uriPattern = "/{utr}/{tax-year}/liability",
+          endpointName = "Request Liability",
+          method = POST,
+          authType = USER,
+          throttlingTier = UNLIMITED,
+          scope = Some(writeScope),
+          groupName = Liability
+        ),
+        Endpoint(
+          uriPattern = "/{utr}/{tax-year}/liability",
+          endpointName = "Retrieve Liability",
+          method = GET,
+          authType = USER,
+          throttlingTier = UNLIMITED,
+          scope = Some(readScope),
+          groupName = Liability
+        ))
   }
 
   private val switchedEndpoints = {
@@ -94,12 +94,10 @@ class SelfAssessmentApiDefinition(apiContext: String, apiStatus: APIStatus) {
           groupName = Taxpayer
         )
       )
-    }
-    else Seq()
+    } else Seq()
   }
 
   private val allEndpoints = firstEndpoints ++ switchedEndpoints ++ sourceAndSummaryEndpoints ++ lastEndpoints
-
 
   val definition: Definition =
     Definition(
@@ -131,8 +129,7 @@ class SelfAssessmentApiDefinition(apiContext: String, apiStatus: APIStatus) {
       )
     )
 
-  private lazy val resolveGroupName : SourceType => GroupName = {
-    case SourceTypes.Employments => Employments
+  private lazy val resolveGroupName: SourceType => GroupName = {
     case SourceTypes.SelfEmployments => SelfEmployments
     case SourceTypes.UKProperties => UKProperties
     case SourceTypes.FurnishedHolidayLettings => FurnishedHolidayLettings
@@ -144,54 +141,107 @@ class SelfAssessmentApiDefinition(apiContext: String, apiStatus: APIStatus) {
   private lazy val sourceAndSummaryEndpoints = Helpers.enabledSourceTypes.toSeq.flatMap { sourceType =>
     val uri: String = s"/{utr}/{tax-year}/${sourceType.name}"
     val uriWithId: String = s"$uri/{${sourceType.name}-id}"
-    val updateEndpoint =  sourceType match  {
-      case SourceTypes.Employments | SourceTypes.Benefits | SourceTypes.Banks | SourceTypes.Dividends =>  Nil
-      case _ => Seq(Endpoint(uriPattern = uriWithId, endpointName = s"Update ${sourceType.documentationName}", method = PUT,
-        authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)))
+    val updateEndpoint = sourceType match {
+      case SourceTypes.Benefits | SourceTypes.Banks | SourceTypes.Dividends => Nil
+      case _ =>
+        Seq(
+          Endpoint(uriPattern = uriWithId,
+                   endpointName = s"Update ${sourceType.documentationName}",
+                   method = PUT,
+                   authType = USER,
+                   throttlingTier = UNLIMITED,
+                   scope = Some(writeScope),
+                   groupName = resolveGroupName(sourceType)))
     }
     Seq(
-      Endpoint(uriPattern = uri, endpointName = s"Create ${sourceType.documentationName}", method = POST,
-        authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
-      Endpoint(uriPattern = uriWithId, endpointName = s"Retrieve ${sourceType.documentationName}", method = GET,
-        authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName =  resolveGroupName(sourceType))
+      Endpoint(uriPattern = uri,
+               endpointName = s"Create ${sourceType.documentationName}",
+               method = POST,
+               authType = USER,
+               throttlingTier = UNLIMITED,
+               scope = Some(writeScope),
+               groupName = resolveGroupName(sourceType)),
+      Endpoint(uriPattern = uriWithId,
+               endpointName = s"Retrieve ${sourceType.documentationName}",
+               method = GET,
+               authType = USER,
+               throttlingTier = UNLIMITED,
+               scope = Some(readScope),
+               groupName = resolveGroupName(sourceType))
     ) ++ updateEndpoint ++
-    Seq(
-      Endpoint(uriPattern = uriWithId, endpointName = s"Delete ${sourceType.documentationName}", method = DELETE,
-        authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
-      Endpoint(uriPattern = uri, endpointName = s"Retrieve All ${sourceType.documentationName}", method = GET,
-        authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName =  resolveGroupName(sourceType))
-    )  ++ summaryEndpoints(sourceType)
+      Seq(
+        Endpoint(uriPattern = uriWithId,
+                 endpointName = s"Delete ${sourceType.documentationName}",
+                 method = DELETE,
+                 authType = USER,
+                 throttlingTier = UNLIMITED,
+                 scope = Some(writeScope),
+                 groupName = resolveGroupName(sourceType)),
+        Endpoint(uriPattern = uri,
+                 endpointName = s"Retrieve All ${sourceType.documentationName}",
+                 method = GET,
+                 authType = USER,
+                 throttlingTier = UNLIMITED,
+                 scope = Some(readScope),
+                 groupName = resolveGroupName(sourceType))
+      ) ++ summaryEndpoints(sourceType)
   }
 
-  private lazy val summaryEndpoints : SourceType => Seq[Endpoint]  = { sourceType =>
+  private lazy val summaryEndpoints: SourceType => Seq[Endpoint] = { sourceType =>
     Helpers.enabledSummaries(sourceType).toSeq.flatMap { summaryType =>
       val uri: String = s"/{utr}/{tax-year}/${sourceType.name}/{${sourceType.name}-id}/${summaryType.name}"
       val uriWithId: String = s"$uri/{${summaryType.name}-id}"
       Seq(
-        Endpoint(uriPattern = uri, endpointName = s"Create ${sourceType.documentationName} ${summaryType.documentationName}", method = POST,
-          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
-        Endpoint(uriPattern = uriWithId, endpointName = s"Retrieve ${sourceType.documentationName} ${summaryType.documentationName}", method = GET,
-          authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName =  resolveGroupName(sourceType)),
-        Endpoint(uriPattern = uriWithId, endpointName = s"Update ${sourceType.documentationName} ${summaryType.documentationName}", method = PUT,
-          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
-        Endpoint(uriPattern = uriWithId, endpointName = s"Delete ${sourceType.documentationName} ${summaryType.documentationName}", method = DELETE,
-          authType = USER, throttlingTier = UNLIMITED, scope = Some(writeScope), groupName =  resolveGroupName(sourceType)),
-        Endpoint(uriPattern = uri, endpointName = s"Retrieve All ${sourceType.documentationName} ${summaryType.documentationName}", method = GET,
-          authType = USER, throttlingTier = UNLIMITED, scope = Some(readScope), groupName =  resolveGroupName(sourceType))
+        Endpoint(uriPattern = uri,
+                 endpointName = s"Create ${sourceType.documentationName} ${summaryType.documentationName}",
+                 method = POST,
+                 authType = USER,
+                 throttlingTier = UNLIMITED,
+                 scope = Some(writeScope),
+                 groupName = resolveGroupName(sourceType)),
+        Endpoint(uriPattern = uriWithId,
+                 endpointName = s"Retrieve ${sourceType.documentationName} ${summaryType.documentationName}",
+                 method = GET,
+                 authType = USER,
+                 throttlingTier = UNLIMITED,
+                 scope = Some(readScope),
+                 groupName = resolveGroupName(sourceType)),
+        Endpoint(uriPattern = uriWithId,
+                 endpointName = s"Update ${sourceType.documentationName} ${summaryType.documentationName}",
+                 method = PUT,
+                 authType = USER,
+                 throttlingTier = UNLIMITED,
+                 scope = Some(writeScope),
+                 groupName = resolveGroupName(sourceType)),
+        Endpoint(uriPattern = uriWithId,
+                 endpointName = s"Delete ${sourceType.documentationName} ${summaryType.documentationName}",
+                 method = DELETE,
+                 authType = USER,
+                 throttlingTier = UNLIMITED,
+                 scope = Some(writeScope),
+                 groupName = resolveGroupName(sourceType)),
+        Endpoint(uriPattern = uri,
+                 endpointName = s"Retrieve All ${sourceType.documentationName} ${summaryType.documentationName}",
+                 method = GET,
+                 authType = USER,
+                 throttlingTier = UNLIMITED,
+                 scope = Some(readScope),
+                 groupName = resolveGroupName(sourceType))
       )
     }
   }
 
-
   private def buildWhiteListingAccess(): Option[Access] = {
     val featureSwitch = FeatureSwitch(AppContext.featureSwitch)
     featureSwitch.isWhiteListingEnabled match {
-      case true =>  Some(Access("PRIVATE", featureSwitch.whiteListedApplicationIds))
+      case true => Some(Access("PRIVATE", featureSwitch.whiteListedApplicationIds))
       case false => None
     }
   }
 }
 
-object PublishedSelfAssessmentApiDefinition extends SelfAssessmentApiDefinition(AppContext.apiGatewayRegistrationContext, APIStatus.PUBLISHED)
+object PublishedSelfAssessmentApiDefinition
+    extends SelfAssessmentApiDefinition(AppContext.apiGatewayRegistrationContext, APIStatus.PUBLISHED)
 
-object PrototypedSelfAssessmentApiDefinition extends SelfAssessmentApiDefinition(AppContext.apiGatewayRegistrationContext, APIStatus.PROTOTYPED)
+object PrototypedSelfAssessmentApiDefinition
+    extends SelfAssessmentApiDefinition(AppContext.apiGatewayRegistrationContext, APIStatus.PROTOTYPED)

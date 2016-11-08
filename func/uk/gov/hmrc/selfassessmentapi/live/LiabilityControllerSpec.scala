@@ -1,10 +1,6 @@
 package uk.gov.hmrc.selfassessmentapi.live
 
-import play.api.libs.json.Json.toJson
 import play.api.test.FakeApplication
-import uk.gov.hmrc.selfassessmentapi.controllers.api.ErrorCode
-import uk.gov.hmrc.selfassessmentapi.controllers.api.employment.SourceType.Employments
-import uk.gov.hmrc.selfassessmentapi.controllers.api.employment.UkTaxPaid
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class LiabilityControllerSpec extends BaseFunctionalSpec {
@@ -55,33 +51,6 @@ class LiabilityControllerSpec extends BaseFunctionalSpec {
         .get(s"/$saUtr/$taxYear/liability")
         .thenAssertThat()
         .statusIs(200)
-    }
-
-    "return an HTTP 403 response if an error occurred in the liability calculation" in {
-
-      given()
-        .userIsAuthorisedForTheResource(saUtr)
-        .when()
-        .post(s"/$saUtr/$taxYear/employments", Some(Employments.example()))
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .post(s"/$saUtr/$taxYear/employments/%sourceId%/uk-taxes-paid", Some(toJson(UkTaxPaid.example().copy(amount = -1000))))
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .post(s"/$saUtr/$taxYear/employments/%sourceId%/uk-taxes-paid", Some(toJson(UkTaxPaid.example().copy(amount = -2000))))
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .post(s"/$saUtr/$taxYear/liability")
-        .thenAssertThat()
-        .statusIs(202)
-        .when()
-        .get(s"/$saUtr/$taxYear/liability")
-        .thenAssertThat()
-        .statusIs(403)
-        .bodyIsError(ErrorCode.LIABILITY_CALCULATION_ERROR.toString)
     }
   }
 }

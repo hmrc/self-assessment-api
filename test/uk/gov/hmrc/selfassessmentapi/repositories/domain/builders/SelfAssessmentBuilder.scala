@@ -27,11 +27,6 @@ class SelfAssessmentBuilder {
     this
   }
 
-  def withEmployments(employments: EmploymentBuilder*) = {
-    selfAssessment = selfAssessment.copy(employments = employments.map(_.create()))
-    this
-  }
-
   def withFurnishedHolidayLettings(furnishedHolidayLettings: FurnishedHolidayLettingBuilder*) = {
     selfAssessment = selfAssessment.copy(furnishedHolidayLettings = furnishedHolidayLettings.map(_.create()))
     this

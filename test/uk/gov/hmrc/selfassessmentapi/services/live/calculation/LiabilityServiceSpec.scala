@@ -37,7 +37,6 @@ class LiabilityServiceSpec extends UnitSpec with MockitoSugar {
 
   private val saUtr = generateSaUtr()
   private val liabilityRepo = mock[LiabilityMongoRepository]
-  private val employmentRepo = mock[EmploymentMongoRepository]
   private val selfEmploymentRepo = mock[SelfEmploymentMongoRepository]
   private val benefitRepo = mock[BenefitsMongoRepository]
   private val ukPropertyRepo = mock[UKPropertiesMongoRepository]
@@ -46,8 +45,7 @@ class LiabilityServiceSpec extends UnitSpec with MockitoSugar {
   private val banksRepo = mock[BanksMongoRepository]
   private val taxYearPropertiesService = mock[TaxYearPropertiesService]
   private val featureSwitch = mock[FeatureSwitch]
-  private val service = new LiabilityService(employmentRepo,
-                                             selfEmploymentRepo,
+  private val service = new LiabilityService(selfEmploymentRepo,
                                              benefitRepo,
                                              furnishedHolidayLettingsRepo,
                                              liabilityRepo,
@@ -68,23 +66,6 @@ class LiabilityServiceSpec extends UnitSpec with MockitoSugar {
         Future.successful(arg)
       }
     })
-
-    "not get employment sources from repository when Employment source is switched on" in {
-      when(featureSwitch.isEnabled(Employments)).thenReturn(true)
-      when(employmentRepo.findAll(saUtr, taxYear)).thenReturn(Seq())
-
-      await(service.calculate(saUtr, taxYear))
-
-      verify(employmentRepo).findAll(saUtr, taxYear)
-    }
-
-    "not get employment sources from repository when Employment source is switched off" in {
-      when(featureSwitch.isEnabled(Employments)).thenReturn(false)
-
-      await(service.calculate(saUtr, taxYear))
-
-      verifyNoMoreInteractions(employmentRepo)
-    }
 
     "get self employment sources from repository when Self Employment source is switched on" in {
       when(featureSwitch.isEnabled(SelfEmployments)).thenReturn(true)
