@@ -1,0 +1,4 @@
+{
+  "code": "INVALID_ACCOUNTING_PERIOD",
+  "message": "The accounting period is invalid, from dat must be before to date"
+}
