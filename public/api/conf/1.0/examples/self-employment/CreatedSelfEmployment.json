@@ -1,7 +1,0 @@
-{
-  "_links": {
-    "self": {
-      "href": "/self-assessment/nino/{nino}/self-employments/{selfEmploymentId}"
-    }
-  }
-}

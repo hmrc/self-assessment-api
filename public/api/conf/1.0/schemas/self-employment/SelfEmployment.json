@@ -3,6 +3,11 @@
   "title": "Self-employment source of income",
   "type": "object",
   "properties": {
+    "id": {
+      "title": "ID",
+      "description": "Unique identifier",
+      "type": "string"
+    },
     "commencementDate": {
       "title": "Business start date",
       "description": "Business start date, ISO-8601, YYYY-MM-DD",
