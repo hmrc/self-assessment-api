@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Created response",
+  "type": "object",
+  "definitions": {
+    "properties": {
+      "id": {
+        "title": "ID",
+        "description": "Unique identifier",
+        "type": "string"
+      },
+      "_links": {
+        "title": "Links",
+        "type": "object"
+      }
+    },
+    "required": [
+      "id"
+    ],
+    "additionalProperties": false
+  }
+}

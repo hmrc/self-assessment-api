@@ -1,0 +1,78 @@
+{
+  "_embedded": {
+    "periodSummaries": [
+      {
+        "id": "{periodSummaryId}",
+        "from": "06-04-2016",
+        "to": "05-07-2016",
+        "incomes": {
+          "turnover": 100,
+          "other": 100
+        },
+        "expenses": {
+          "coGBought": {
+            "amount": 100,
+            "disallowableAmount": 50
+          },
+          "cisPaymentsToSubcontractors": {
+            "amount": 100,
+            "disallowableAmount": 50
+          },
+          "staffCosts": {
+            "amount": 100,
+            "disallowableAmount": 50
+          },
+          "travelCosts": {
+            "amount": 100,
+            "disallowableAmount": 50
+          },
+          "premisesRunningCosts": {
+            "amount": 100,
+            "disallowableAmount": 50
+          },
+          "maintenanceCosts": {
+            "amount": 100,
+            "disallowableAmount": 50
+          },
+          "adminCosts": {
+            "amount": 100,
+            "disallowableAmount": 50
+          },
+          "advertisingCosts": {
+            "amount": 100,
+            "disallowableAmount": 50
+          },
+          "interest": {
+            "amount": 100,
+            "disallowableAmount": 50
+          },
+          "financialCharges": {
+            "amount": 100,
+            "disallowableAmount": 50
+          },
+          "badDebt": {
+            "amount": 100,
+            "disallowableAmount": 50
+          },
+          "professionalFees": {
+            "amount": 100,
+            "disallowableAmount": 50
+          },
+          "depreciation": {
+            "amount": 100,
+            "disallowableAmount": 50
+          },
+          "other": {
+            "amount": 100,
+            "disallowableAmount": 50
+          }
+        },
+        "balancingCharges": {
+          "bpra": 100,
+          "other": 100
+        },
+        "goodsAndServicesOwnUse": 100
+      }
+    ]
+  }
+}

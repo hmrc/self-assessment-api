@@ -1,0 +1,130 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "type": "object",
+  "title": "Period summary for self-employment",
+  "properties": {
+    "id": {
+      "title": "ID",
+      "description": "Unique identifier",
+      "type": "string"
+    },
+    "from": {
+      "title": "From date",
+      "description": "ISO-8601, YYYY-MM-DD",
+      "type": "string"
+    },
+    "to": {
+      "title": "To date",
+      "description": "ISO-8601, YYYY-MM-DD",
+      "type": "string"
+    },
+    "incomes": {
+      "type": "object",
+      "properties": {
+        "turnover": {
+          "title": "Turnover",
+          "description": "The taxings, fees, sales or money earned by your business",
+          "type": "number"
+        },
+        "other": {
+          "title": "Other",
+          "description": "Any other business income not included in turnover",
+          "type": "number"
+        }
+      }
+    },
+    "expenses": {
+      "type": "object",
+      "properties": {
+        "coGBought": {
+          "title": "Cost of goods bought",
+          "description": "Cost of goods bough for resale or goods used",
+          "$ref": "../Expense.json"
+        },
+        "cisPaymentsToSubcontractors": {
+          "title": "Construction industry - payments to subcontractors",
+          "$ref": "../Expense.json"
+        },
+        "staffCosts": {
+          "title": "Staff costs",
+          "description": "Wages, salaries and other staff costs",
+          "$ref": "../Expense.json"
+        },
+        "travelCosts": {
+          "title": "Travel costs",
+          "description": "Car, van and travel expenses",
+          "$ref": "../Expense.json"
+        },
+        "premisesRunningCosts": {
+          "title": "Premisis running costs",
+          "description": "Rent, rates, power and insurance costs",
+          "$ref": "../Expense.json"
+        },
+        "maintenanceCosts": {
+          "title": "Maintenance costs",
+          "description": "Repairs and renewals of property and equipment",
+          "$ref": "../Expense.json"
+        },
+        "adminCosts": {
+          "title": "Admin costs",
+          "description": "Phone, fax, stationery and other office costs",
+          "$ref": "../Expense.json"
+        },
+        "advertisingCosts": {
+          "title": "Advertising costs",
+          "description": "Advertising and business entertainment costs",
+          "$ref": "../Expense.json"
+        },
+        "interest": {
+          "title": "Interest on bank and other loans",
+          "description": "",
+          "$ref": "../Expense.json"
+        },
+        "financialCharges": {
+          "title": "Financial charges",
+          "description": "Bank, credit cord and other financial charges",
+          "$ref": "../Expense.json"
+        },
+        "badDebt": {
+          "title": "Bad debt",
+          "description": "Irrecoverable debts written off",
+          "$ref": "../Expense.json"
+        },
+        "professionalFees": {
+          "title": "Professional fees",
+          "description": "Accountancy, legal and other professional fees",
+          "$ref": "../Expense.json"
+        },
+        "depreciation": {
+          "title": "Depreciation",
+          "description": "Depreciation and loss/profit on sales of assets",
+          "$ref": "../Expense.json"
+        },
+        "other": {
+          "title": "Other",
+          "description": "Other business expenses",
+          "$ref": "../Expense.json"
+        }
+      }
+    },
+    "balancingCharges": {
+      "type": "object",
+      "properties": {
+        "bpra": {
+          "title": "BPRA",
+          "description": "Balancing charge on sale or cessation of business use (only where Business Premisis Renovation Allowance has been claimed)",
+          "type": "number"
+        },
+        "other": {
+          "title": "Other",
+          "description": "Balancing charge on sale or cessation of business use (where you have disposed of assets for more than their tax value)",
+          "type": "number"
+        }
+      }
+    },
+    "goodsAndServicesOwnUse": {
+      "title": "Goods and services own use",
+      "type": "number"
+    }
+  }
+}

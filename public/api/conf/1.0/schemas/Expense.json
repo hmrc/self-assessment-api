@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Expense",
+  "type": "object",
+  "definitions": {
+    "properties": {
+      "amount": {
+        "description": "The total amount of expense",
+        "type": "number"
+      },
+      "disallowableAmount": {
+        "description": "Any disallowable amount",
+        "type": "number",
+        "default": 0
+      }
+    },
+    "required": [
+      "amount"
+    ],
+    "additionalProperties": false
+  }
+}
