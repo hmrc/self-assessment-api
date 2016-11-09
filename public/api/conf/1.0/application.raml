@@ -15,7 +15,9 @@ documentation:
 
 schemas:
   - Error: !include schemas/Error.json
+  - HasId: !include schemas/HasId.json
   - SelfEmployment: !include schemas/self-employment/SelfEmployment.json
+  - SelfEmployments: !include schemas/self-employment/SelfEmployments.json
 
 /self-assessment:
   /ni/{nino}:
@@ -39,10 +41,9 @@ schemas:
                 example: /self-assessment/nino/{nino}/self-employments/{selfEmploymentId}
             body:
               application/json:
+                schema: HasId
                 example: !include examples/self-employment/CreateSelfEmploymentResponse.json
           400:
-            description: |
-              Client error
             body:
               application/json:
                 schema: Error
@@ -53,6 +54,7 @@ schemas:
           200:
             body:
               application/json:
+                schema: SelfEmployments
                 example: !include examples/self-employment/ListSelfEmploymentsResponse.json
       /{selfEmploymentId}:
         description: Self Employment
