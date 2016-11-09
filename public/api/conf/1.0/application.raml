@@ -34,6 +34,9 @@ schemas:
             example: !include examples/self-employment/CreateSelfEmploymentRequest.json
         responses:
           201:
+            headers:
+              Location:
+                example: /self-assessment/nino/{nino}/self-employments/{selfEmploymentId}
             body:
               application/json:
                 example: !include examples/self-employment/CreateSelfEmploymentResponse.json
