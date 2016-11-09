@@ -32,7 +32,7 @@ schemas:
         body:
           application/json:
             schema: SelfEmployment
-            example: !include examples/self-employment/CreateSelfEmploymentRequest.json
+            example: !include examples/self-employment/SelfEmployment.json
         responses:
           201:
             headers:
@@ -50,7 +50,7 @@ schemas:
             body:
               application/json:
                 schema: SelfEmployments
-                example: !include examples/self-employment/ListSelfEmploymentsResponse.json
+                example: !include examples/self-employment/SelfEmployments.json
       /{selfEmploymentId}:
         description: Self Employment
         uriParameters:
@@ -65,13 +65,13 @@ schemas:
               body:
                 application/json:
                   schema: SelfEmployment
-                  example: !include examples/self-employment/GetSelfEmploymentResponse.json
+                  example: !include examples/self-employment/SelfEmployment.json
         put:
           description: Update a self-employment source of income, e.g. to change accounting period
           body:
             application/json:
               schema: SelfEmployment
-              example: !include examples/self-employment/UpdateSelfEmploymentRequest.json
+              example: !include examples/self-employment/SelfEmployment.json
           responses:
             204:
             400:
