@@ -1,25 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Self-employment sources of income",
-  "type": "object",
-  "properties": {
-    "_embedded": {
-      "type": "object",
-      "properties": {
-        "selfEmployments": {
-          "type": "array",
-          "enum": {
-            "$ref": "SelfEmployment.json"
-          }
-        },
-        "required": [
-          "selfEmployments"
-        ]
-      }
-    }
+  "type": "array",
+  "enum": {
+    "$ref": "SelfEmployment.json"
   },
-  "required": [
-    "_embedded"
-  ],
   "additionalProperties": false
 }
