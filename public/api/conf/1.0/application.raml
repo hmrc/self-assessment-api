@@ -41,7 +41,11 @@ schemas:
             body:
               application/json:
                 schema: Error
-                example: !include examples/errors/INVALID_ACCOUNTING_PERIOD.json
+          400:
+            body:
+              application/json:
+                schema: Error
+                example: !include examples/errors/TOO_MANY_SOURCES.json
       get:
         description: List self-employment sources of income
         responses:
