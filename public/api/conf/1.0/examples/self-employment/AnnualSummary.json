@@ -1,0 +1,24 @@
+{
+  "adjustments": {
+    "includedNonTaxableProfits": 500,
+    "basisAdjustment": 500,
+    "overlapReliefUsed": 500,
+    "accountingAdjustment": 500,
+    "averagingAdjustment": 500,
+    "lossBroughtForward": 500,
+    "outstandingBusinessIncome": 500
+  },
+  "allowances": {
+    "annualInvestmentAllowance": 500,
+    "capitalAllowanceMainPool": 500,
+    "capitalAllowanceSpecialRatePool": 500,
+    "businessPremisesRenovationAllowance": 500,
+    "enhancedCapitalAllowance": 500,
+    "allowancesOnSales": 500
+  },
+  "nonFinancials": {
+    "businessDetailsChangedRecently": false,
+    "payClass2Nics": false,
+    "exemptFromPayingClass4Nics": false
+  }
+}

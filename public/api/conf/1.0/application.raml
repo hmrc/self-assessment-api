@@ -17,6 +17,7 @@ schemas:
   - Error: !include schemas/Error.json
   - SelfEmployment: !include schemas/self-employment/SelfEmployment.json
   - SelfEmployments: !include schemas/self-employment/SelfEmployments.json
+  - SelfEmploymentAnnualSummary: !include schemas/self-employment/AnnualSummary.json
 
 /self-assessment:
   /nino/{nino}:
@@ -79,3 +80,28 @@ schemas:
                 application/json:
                   schema: Error
                   example: !include ./examples/errors/INVALID_ACCOUNTING_PERIOD.json
+        /{taxYear}:
+          uriParameters:
+            taxYear:
+              type: string
+              example: 2016-17
+          put:
+            description: Updated annual summary
+            body:
+              application/json:
+                schema: SelfEmploymentAnnualSummary
+                example: !include ./examples/self-employment/AnnualSummary.json
+            responses:
+              204:
+              400:
+                body:
+                  application/json:
+                    schema: Error
+          get:
+            description: Get annual summary
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: SelfEmploymentAnnualSummary
+                    example: !include ./examples/self-employment/AnnualSummary.json
