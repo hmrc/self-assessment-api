@@ -8,7 +8,12 @@
           "to": "2018-04-05"
         },
         "accountingType": "CASH",
-        "commencementDate": "2016-01-01"
+        "commencementDate": "2016-01-01",
+        "_links": {
+          "self": {
+            "href": "/self-assessment/nino/{nino}/self-employments/{selfEmploymentId}"
+          }
+        }
       }
     ]
   },
