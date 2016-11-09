@@ -3,14 +3,9 @@
   "title": "Self-employment source of income",
   "type": "object",
   "properties": {
-    "id": {
-      "title": "The unique identifier",
-      "description": "An identifier for the self-employmment source of income, unique to the customer",
-      "type": "string"
-    },
     "commencementDate": {
       "title": "Business start date",
-      "description": "Business start date, ISO-8601",
+      "description": "Business start date, ISO-8601, YYYY-MM-DD",
       "type": "string"
     },
     "accountingPeriod": {
@@ -18,7 +13,7 @@
     },
     "accountingType": {
       "title": "Accounting type",
-      "description": "If you used the cash basis, money actually received and paid out, to calculate your income and expenses, or accrual basis",
+      "description": "CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUAL.",
       "type": "string",
       "enum": [
         "CASH",
