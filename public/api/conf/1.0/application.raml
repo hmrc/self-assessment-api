@@ -87,7 +87,7 @@ schemas:
           body:
             application/json:
               schema: SelfEmploymentPeriod
-              example: !include examples/self-employment/CreatePeriodRequest.json
+              example: !include examples/self-employment/Period.json
           responses:
             201:
               headers:
@@ -104,7 +104,7 @@ schemas:
               body:
                 application/json:
                   schema: SelfEmploymentPeriods
-                  example: !include examples/self-employment/ListPeriodsResponse.json
+                  example: !include examples/self-employment/Periods.json
         /{periodId}:
           uriParameters:
             periodId:
@@ -116,3 +116,9 @@ schemas:
                 body:
                   application/json:
                     schema: SelfEmploymentPeriod
+          put:
+            description: Updated the period
+            body:
+              application/json:
+                schema: SelfEmploymentPeriod
+                example: !include examples/self-employment/Period.json

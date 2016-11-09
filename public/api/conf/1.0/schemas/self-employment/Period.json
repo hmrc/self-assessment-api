@@ -20,7 +20,7 @@
     },
     "_embedded": {
       "title": "Embedded",
-      "description": "The following resources are be embedded",
+      "description": "The following resources are embedded",
       "type": "object",
       "properties": {
         "incomes": {
