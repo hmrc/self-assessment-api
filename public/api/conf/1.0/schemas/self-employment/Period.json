@@ -19,26 +19,32 @@
       "type": "string"
     },
     "_embedded": {
-      "incomes": {
-        "$ref": "Incomes.json"
+      "title": "Embedded",
+      "description": "The following resources are be embedded",
+      "type": "object",
+      "properties": {
+        "incomes": {
+          "$ref": "Incomes.json"
+        },
+        "expeneses": {
+          "$ref": "Expenses.json"
+        },
+        "balancingCharges": {
+          "$ref": "BalancingCharges.json"
+        },
+        "goodsAndServicesOwnUse": {
+          "title": "Goods and services own use",
+          "type": "number",
+          "minimum": 0,
+          "default": 0
+        }
       },
-      "expeneses": {
-        "$ref": "Expenses.json"
-      },
-      "balancingCharges": {
-        "$ref": "BalancingCharges.json"
-      },
-      "goodsAndServicesOwnUse": {
-        "title": "Goods and services own use",
-        "type": "number",
-        "minimum": 0,
-        "default": 0
-      }
+      "additonalProperties": false
     }
   },
   "required": [
     "from",
-    "to",
-    "_embedded"
-  ]
+    "to"
+  ],
+  "additonalProperties": false
 }

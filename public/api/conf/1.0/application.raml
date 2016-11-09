@@ -89,10 +89,10 @@ schemas:
               schema: SelfEmploymentPeriod
               example: !include examples/self-employment/CreatePeriodRequest.json
           responses:
-            200:
+            201:
               headers:
                 Location:
-                  example: /self-assessment/nino/{nino}/self-employments/{selfEmploymentId}/periods/{periodSummaryId}
+                  example: /self-assessment/nino/{nino}/self-employments/{selfEmploymentId}/periods/{periodId}
             400:
               body:
                 application/json:
@@ -105,3 +105,14 @@ schemas:
                 application/json:
                   schema: SelfEmploymentPeriods
                   example: !include examples/self-employment/ListPeriodsResponse.json
+        /{periodId}:
+          uriParameters:
+            periodId:
+              type: string
+          get:
+            description: Get the period
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: SelfEmploymentPeriod
