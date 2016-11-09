@@ -1,25 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Period summaries",
-  "type": "object",
-  "properties": {
-    "_embedded": {
-      "type": "object",
-      "properties": {
-        "periodSummaries": {
-          "type": "array",
-          "enum": {
-            "$ref": "PeriodSummary.json"
-          }
-        },
-        "required": [
-          "periodSummaries"
-        ]
-      }
-    }
+  "type": "array",
+  "enum": {
+    "$ref": "PeriodSummary.json"
   },
-  "required": [
-    "_embedded"
-  ],
   "additionalProperties": false
 }
