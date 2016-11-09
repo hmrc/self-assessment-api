@@ -10,6 +10,8 @@ mediaType: application/json
 documentation:
   - title: Overview
     content: !include docs/overview.md
+  - title: Furnished Holiday Lettings
+    content: !include docs/furnished-holiday-lettings.md
 
 schemas:
   - Error: !include schemas/Error.json
@@ -21,3 +23,11 @@ schemas:
         displayName: National Insurance Number
         type: string
         required: true
+    /furnished-holiday-lettings/{propertyLocationType}/baseUriParameters:
+      uriParameters:
+        propertyLocationType:
+          description: The type of location, either UK, or European Economic Area (EEA)
+          type: string
+          enum:
+            - UK
+            - EEA
