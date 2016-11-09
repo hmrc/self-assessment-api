@@ -31,12 +31,12 @@ schemas:
         body:
           application/json:
             schema: SelfEmployment
-            example: !include examples/self-employment/SelfEmployment.json
+            example: !include examples/self-employment/CreateSelfEmploymentRequest.json
         responses:
           201:
             body:
               application/json:
-                example: !include examples/self-employment/CreatedSelfEmployment.json
+                example: !include examples/self-employment/CreateSelfEmploymentResponse.json
           400:
             description: |
               Client error
@@ -50,7 +50,7 @@ schemas:
           200:
             body:
               application/json:
-                example: !include examples/self-employment/ListSelfEmployment.json
+                example: !include examples/self-employment/RetrieveAllSelfEmploymentsResponse.json
       /{selfEmploymentId}:
         description: Self Employment
         uriParameters:
@@ -65,13 +65,13 @@ schemas:
               body:
                 application/json:
                   schema: SelfEmployment
-                  example: !include examples/self-employment/SelfEmployment.json
+                  example: !include examples/self-employment/RetrieveSelfEmploymentResponse.json
         put:
           description: Update a self-employment source of income, e.g. to change accounting period
           body:
             application/json:
               schema: SelfEmployment
-              example: !include examples/self-employment/SelfEmployment.json
+              example: !include examples/self-employment/UpdateSelfEmploymentRequest.json
           responses:
             204:
             400:
