@@ -3,20 +3,20 @@
   "title": "Accounting period",
   "type": "object",
   "properties": {
-    "from": {
+    "start": {
       "title": "Start date",
-      "title": "Date your books or accounts start - the beginning of your accounting period ISO-8601",
+      "description": "Date your books or accounts start - the beginning of your accounting period ISO-8601",
       "type": "string"
     },
-    "to": {
+    "end": {
       "title": "End date",
       "description": "Date your books or accounts are made up to or the end of your accounting period, ISO-8601",
       "type": "string"
     }
   },
   "required": [
-    "from",
-    "to"
+    "start",
+    "end"
   ],
   "additionalProperties": false
 }
