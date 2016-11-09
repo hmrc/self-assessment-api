@@ -17,8 +17,8 @@ schemas:
   - Error: !include schemas/Error.json
   - SelfEmployment: !include schemas/self-employment/SelfEmployment.json
   - SelfEmployments: !include schemas/self-employment/SelfEmployments.json
-  - SelfEmploymentPeriodSummary: !include schemas/self-employment/PeriodSummary.json
-  - SelfEmploymentPeriodSummaries: !include schemas/self-employment/PeriodSummaries.json
+  - SelfEmploymentPeriod: !include schemas/self-employment/Period.json
+  - SelfEmploymentPeriods: !include schemas/self-employment/Periods.json
 
 /self-assessment:
   /nino/{nino}:
@@ -81,27 +81,27 @@ schemas:
                 application/json:
                   schema: Error
                   example: !include ./examples/errors/INVALID_ACCOUNTING_PERIOD.json
-      /period-summaries:
+      /periods:
         post:
-          description: Create a period summary
+          description: Create a period
           body:
             application/json:
-              schema: SelfEmploymentPeriodSummary
-              example: !include examples/self-employment/CreatePeriodSummaryRequest.json
+              schema: SelfEmploymentPeriod
+              example: !include examples/self-employment/CreatePeriodRequest.json
           responses:
             200:
               headers:
                 Location:
-                  example: /self-assessment/nino/{nino}/self-employments/{selfEmploymentId}/period-summaries/{periodSummaryId}
+                  example: /self-assessment/nino/{nino}/self-employments/{selfEmploymentId}/periods/{periodSummaryId}
             400:
               body:
                 application/json:
                   schema: Error
         get:
-          description: List period summaries
+          description: List period
           responses:
             200:
               body:
                 application/json:
-                  schema: SelfEmploymentPeriodSummaries
-                  example: !include examples/self-employment/ListPeriodSummariesResponse.json
+                  schema: SelfEmploymentPeriods
+                  example: !include examples/self-employment/ListPeriodsResponse.json

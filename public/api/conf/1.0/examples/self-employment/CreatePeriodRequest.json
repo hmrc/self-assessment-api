@@ -1,8 +1,7 @@
-[
-  {
-    "id": "{periodSummaryId}",
-    "from": "06-04-2016",
-    "to": "05-07-2016",
+{
+  "from": "2016-04-06",
+  "to": "2016-07-04",
+  "_embedded": {
     "incomes": {
       "turnover": 100,
       "other": 100
@@ -71,4 +70,4 @@
     },
     "goodsAndServicesOwnUse": 100
   }
-]
+}

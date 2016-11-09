@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Period summaries",
+  "title": "Periods",
   "type": "array",
   "enum": {
-    "$ref": "PeriodSummary.json"
+    "$ref": "Period.json"
   },
   "additionalProperties": false
 }
