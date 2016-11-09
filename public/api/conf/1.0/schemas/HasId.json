@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Has ID",
+  "description": "Has an identifier",
+  "type": "object",
+  "definitions": {
+    "properties": {
+      "id": {
+        "title": "ID",
+        "description": "Unique identifier",
+        "type": "stringn"
+      }
+    },
+    "required": [
+      "id"
+    ],
+    "additionalProperties": false
+  }
+}
