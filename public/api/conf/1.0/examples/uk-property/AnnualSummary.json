@@ -1,0 +1,11 @@
+{
+  "adjustments": {
+    "lossBroughtForward": 100.25
+  },
+  "allowances": {
+    "annualInvestmentAllowance": 100.25,
+    "businessPremisesRenovationAllowance": 100.25,
+    "otherCapitalAllowance": 100.25,
+    "wearAndTearAllowance": 100.25
+  }
+}

@@ -17,6 +17,7 @@ schemas:
   - Error: !include schemas/Error.json
   - UkPropertyPeriod: !include schemas/uk-property/Period.json
   - UkPropertyPeriods: !include schemas/uk-property/Periods.json
+  - UkPropertyAnnualSummary: !include schemas/uk-property/AnnualSummary.json
 
 /self-assessment:
   /ni/{nino}:
@@ -25,47 +26,74 @@ schemas:
         displayName: National Insurance Number
         type: string
         required: true
-    /uk-properties/periods:
-      post:
-        description: Create period
-        body:
-          application/json:
-            schema: UkPropertyPeriod
-            example: !include examples/uk-property/Period.json
-        responses:
-          201:
-            headers:
-              Location:
-                example: /self-assessment/nino/{nino}/uk-properties/periods/{periodId}
-          400:
-            body:
-              application/json:
-                schema: Error
-                example: !include examples/uk-property/errors/Period_INVALID_REQUEST.json
-      get:
-        description: List periods
-        responses:
-          200:
-            body:
-              application/json:
-                schema: UkPropertyPeriods
-                example: !include examples/uk-property/Periods.json
-      /{periodId}:
-        uriParameters:
-          periodId:
-            displayName: Period ID
-            type: string
-        get:
-          description: Get period
-          responses:
-            200:
-              body:
-                application/json:
-                  schema: UkPropertyPeriod
-                  example: !include examples/uk-property/Period.json
-        put:
-          description: Update period
+    /uk-properties:
+      /periods:
+        post:
+          description: Create period
           body:
             application/json:
               schema: UkPropertyPeriod
               example: !include examples/uk-property/Period.json
+          responses:
+            201:
+              headers:
+                Location:
+                  example: /self-assessment/nino/{nino}/uk-properties/periods/{periodId}
+            400:
+              body:
+                application/json:
+                  schema: Error
+                  example: !include examples/uk-property/errors/Period_INVALID_REQUEST.json
+        get:
+          description: List periods
+          responses:
+            200:
+              body:
+                application/json:
+                  schema: UkPropertyPeriods
+                  example: !include examples/uk-property/Periods.json
+        /{periodId}:
+          uriParameters:
+            periodId:
+              displayName: Period ID
+              type: string
+          get:
+            description: Get period
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: UkPropertyPeriod
+                    example: !include examples/uk-property/Period.json
+          put:
+            description: Update period
+            body:
+              application/json:
+                schema: UkPropertyPeriod
+                example: !include examples/uk-property/Period.json
+      /{taxYear}:
+          uriParameters:
+            taxYear:
+              type: string
+              example: 2016-17
+          put:
+            description: Updated annual summary
+            body:
+              application/json:
+                schema: UkPropertyAnnualSummary
+                example: !include ./examples/uk-property/AnnualSummary.json
+            responses:
+              204:
+              400:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/uk-property/errors/AnnualSummary_INVALID_REQUEST.json
+          get:
+            description: Get annual summary
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: UkPropertyAnnualSummary
+                    example: !include ./examples/uk-property/AnnualSummary.json
