@@ -1,0 +1,16 @@
+{
+  "code": "INVALID_REQUEST",
+  "message": "Invalid request",
+  "errors": [
+    {
+      "code": "INVALID_MONETARY_AMOUNT",
+      "message": "turnover should be non-negative number up to 2 decimal values",
+      "path": "/incomes/turnover"
+    },
+    {
+      "code": "INVALID_MONETARY_AMOUNT",
+      "message": "adminCosts should be non-negative number up to 2 decimal values",
+      "path": "/expenses/adminCosts"
+    }
+  ]
+}
