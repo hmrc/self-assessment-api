@@ -1,0 +1,41 @@
+{
+  "from": "2016-04-06",
+  "to": "2016-07-04",
+  "_embedded": {
+    "incomes": {
+      "rentIncome": {
+        "amount": 100.25,
+        "taxDeducted": 100.25
+      },
+      "premiumsOfLeaseGrant": 100.25,
+      "reversePremiums": 100.25
+    },
+    "expenses": {
+      "premisesRunningCosts": {
+        "amount": 100.25,
+        "disallowableAmount": 50.25
+      },
+      "repairsAndMaintenance": {
+        "amount": 100.25,
+        "disallowableAmount": 50.25
+      },
+      "financialCosts": {
+        "amount": 100.25,
+        "disallowableAmount": 50.25
+      },
+      "professionalFees": {
+        "amount": 100.25,
+        "disallowableAmount": 50.25
+      },
+      "costOfServices": {
+        "amount": 100.25,
+        "disallowableAmount": 50.25
+      },
+      "other": {
+        "amount": 100.25,
+        "disallowableAmount": 50.25
+      }
+    },
+    "balancingCharge": 100.25
+  }
+}
