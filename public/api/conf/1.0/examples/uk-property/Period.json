@@ -11,30 +11,12 @@
       "reversePremiums": 100.25
     },
     "expenses": {
-      "premisesRunningCosts": {
-        "amount": 100.25,
-        "disallowableAmount": 50.25
-      },
-      "repairsAndMaintenance": {
-        "amount": 100.25,
-        "disallowableAmount": 50.25
-      },
-      "financialCosts": {
-        "amount": 100.25,
-        "disallowableAmount": 50.25
-      },
-      "professionalFees": {
-        "amount": 100.25,
-        "disallowableAmount": 50.25
-      },
-      "costOfServices": {
-        "amount": 100.25,
-        "disallowableAmount": 50.25
-      },
-      "other": {
-        "amount": 100.25,
-        "disallowableAmount": 50.25
-      }
+      "premisesRunningCosts": 100.25,
+      "repairsAndMaintenance": 100.25,
+      "financialCosts": 100.25,
+      "professionalFees": 100.25,
+      "costOfServices": 100.25,
+      "other": 100.25
     },
     "balancingCharge": 100.25
   }
