@@ -7,6 +7,9 @@ protocols: [ HTTPS ]
 baseUri: https://api.service.hmrc.gov.uk/
 mediaType: application/json
 
+schemas:
+  - Error: !include schemas/Error.json
+
 /self-assessment:
   /nino/{nino}:
     uriParameters:
