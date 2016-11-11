@@ -83,7 +83,7 @@ schemas:
                   example: !include ./examples/errors/INVALID_ACCOUNTING_PERIOD.json
       /periods:
         post:
-          description: Create a period
+          description: Create period
           body:
             application/json:
               schema: SelfEmploymentPeriod
@@ -98,7 +98,7 @@ schemas:
                 application/json:
                   schema: Error
         get:
-          description: List period
+          description: List periods
           responses:
             200:
               body:
@@ -110,14 +110,15 @@ schemas:
             periodId:
               type: string
           get:
-            description: Get the period
+            description: Get period
             responses:
               200:
                 body:
                   application/json:
                     schema: SelfEmploymentPeriod
+                    example: !include examples/self-employment/Period.json
           put:
-            description: Updated the period
+            description: Update period
             body:
               application/json:
                 schema: SelfEmploymentPeriod
