@@ -10,13 +10,12 @@ mediaType: application/json
 documentation:
   - title: Overview
     content: !include docs/overview.md
-  - title: Bank
-    content: !include docs/bank.md
+  - title: Bank Interest
+    content: !include docs/bank-interest.md
 
 schemas:
   - Error: !include schemas/Error.json
-  - Bank: !include schemas/bank/Bank.json
-  - Banks: !include schemas/bank/Banks.json
+  - BankInterest: !include schemas/bank/BankInterest.json
 
 /self-assessment:
   /ni/{nino}:
@@ -25,38 +24,24 @@ schemas:
         displayName: National Insurance Number
         type: string
         required: true
-    /banks:
-       displayName: Banks
-       description: Banks
-       post:
-         description: Create a bank source of income
-         body:
-           application/json:
-             schema: Bank
-             example: !include examples/bank/Bank.json
-         responses:
-           201:
-             headers:
-               Location:
-                 example: /self-assessment/nino/{nino}/banks/{bankId}
-           400:
-             body:
-               application/json:
-                 schema: Error
-                 example: !include examples/errors/TOO_MANY_SOURCES.json
+    /bank-interest/{taxYear}:
+       displayName: Bank Interest
+       uriParameters:
+         taxYear:
+           displayName: Tax year
+           description: Tax year, e.g. 2017-18
+           type: string
        get:
-         description: List bank sources of income
+         description: Get bank interest
          responses:
            200:
              body:
                application/json:
-                 schema: Banks
-                 example: !include examples/bank/Banks.json
-       /{bankId}:
-         displayName: Bank
-         description: Bank
-         uriParameters:
-           bankId:
-             displayName: Bank ID
-             description: An identifier for the bank, unique to the customer
-             type: string
+                 schema: BankInterest
+                 example: !include examples/bank/BankInterest.json
+       put:
+         description: Update bank interest
+         body:
+           application/json:
+             schema: BankInterest
+             example: !include examples/bank/BankInterest.json
