@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "Period",
+  "properties": {
+    "id": {
+      "title": "ID",
+      "description": "Unique identifier",
+      "type": "string"
+    },
+    "from": {
+      "title": "From date",
+      "description": "ISO-8601, YYYY-MM-DD",
+      "type": "string"
+    },
+    "to": {
+      "title": "To date",
+      "description": "ISO-8601, YYYY-MM-DD",
+      "type": "string"
+    },
+    "_embedded": {
+      "title": "Embedded",
+      "description": "The following resources are embedded",
+      "type": "object",
+      "properties": {
+        "incomes": {
+          "$ref": "Incomes.json"
+        },
+        "expenses": {
+          "$ref": "Expenses.json"
+        },
+        "balancingCharge": {
+          "title": "Balancing charge",
+          "type": "number",
+          "minimum": 0,
+          "default": 0
+        },
+        "privateUseAdjustment": {
+          "title": "Private use adjustment",
+          "type": "number",
+          "minimum": 0,
+          "default": 0
+        }
+      },
+      "additonalProperties": false
+    }
+  },
+  "required": [
+    "from",
+    "to"
+  ],
+  "additonalProperties": false
+}

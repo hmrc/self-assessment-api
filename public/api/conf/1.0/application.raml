@@ -15,6 +15,8 @@ documentation:
 
 schemas:
   - Error: !include schemas/Error.json
+  - FurnishedHolidayLettingPeriod: !include schemas/furnished-holiday-letting/Period.json
+  - FurnishedHolidayLettingPeriods: !include schemas/furnished-holiday-letting/Periods.json
 
 /self-assessment:
   /ni/{nino}:
@@ -23,11 +25,56 @@ schemas:
         displayName: National Insurance Number
         type: string
         required: true
-    /furnished-holiday-lettings/{propertyLocationType}/baseUriParameters:
+    /furnished-holiday-lettings/{propertyLocationType}:
       uriParameters:
         propertyLocationType:
+          displayName: Property location type
           description: The type of location, either UK, or European Economic Area (EEA)
           type: string
           enum:
             - UK
             - EEA
+      /periods:
+        post:
+          description: Create period
+          body:
+            application/json:
+              schema: FurnishedHolidayLettingPeriod
+              example: !include examples/furnished-holiday-lettings/Period.json
+          responses:
+            201:
+              headers:
+                Location:
+                  example: /self-assessment/nino/{nino}/furnished-holiday-lettings/{propertyLocationType}/periods/{periodId}
+            400:
+              body:
+                application/json:
+                  schema: Error
+                  example: !include examples/furnished-holiday-lettings/errors/Period_INVALID_REQUEST.json
+        get:
+          description: List periods
+          responses:
+            200:
+              body:
+                application/json:
+                  schema: FurnishedHolidayLettingPeriods
+                  example: !include examples/furnished-holiday-lettings/Periods.json
+        /{periodId}:
+          uriParameters:
+            periodId:
+              displayName: Period ID
+              type: string
+          get:
+            description: Get period
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: FurnishedHolidayLettingPeriod
+                    example: !include examples/furnished-holiday-lettings/Period.json
+          put:
+            description: Update period
+            body:
+              application/json:
+                schema: FurnishedHolidayLettingPeriod
+                example: !include examples/furnished-holiday-lettings/Period.json

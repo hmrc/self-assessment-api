@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "Incomes",
+  "properties": {
+    "any": {
+      "title": "Any",
+      "description": "The amount of rent and any income for services provided to tenants",
+      "type": "number",
+      "minimum": 0,
+      "default": 0
+    }
+  },
+  "additionalProperties": false
+}
