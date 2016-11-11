@@ -29,7 +29,14 @@
         "expenses": {
           "$ref": "Expenses.json"
         },
+        "privateUseAdjustment": {
+          "title": "Private use adjustment",
+          "type": "number",
+          "minimum": 0,
+          "default": 0
+        },
         "balancingCharge": {
+          "title": "Balancing charge",
           "type": "number",
           "minimum": 0
         }

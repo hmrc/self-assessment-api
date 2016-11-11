@@ -8,6 +8,14 @@
     },
     "adjustments": {
       "$ref": "Adjustments.json"
+    },
+    "rentARoomRelief": {
+      "title": "Rent a room relief",
+      "description": "Rent a room exempt allowance",
+      "type": "number",
+      "minimum": 0,
+      "default": 0
+
     }
   },
   "required": [
