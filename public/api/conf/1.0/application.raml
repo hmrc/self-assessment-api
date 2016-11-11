@@ -10,9 +10,13 @@ mediaType: application/json
 documentation:
   - title: Overview
     content: !include docs/overview.md
+  - title: Bank
+    content: !include docs/bank.md
 
 schemas:
   - Error: !include schemas/Error.json
+  - Bank: !include schemas/bank/Bank.json
+  - Banks: !include schemas/bank/Banks.json
 
 /self-assessment:
   /ni/{nino}:
@@ -21,3 +25,38 @@ schemas:
         displayName: National Insurance Number
         type: string
         required: true
+    /banks:
+       displayName: Banks
+       description: Banks
+       post:
+         description: Create a bank source of income
+         body:
+           application/json:
+             schema: Bank
+             example: !include examples/bank/Bank.json
+         responses:
+           201:
+             headers:
+               Location:
+                 example: /self-assessment/nino/{nino}/banks/{bankId}
+           400:
+             body:
+               application/json:
+                 schema: Error
+                 example: !include examples/errors/TOO_MANY_SOURCES.json
+       get:
+         description: List bank sources of income
+         responses:
+           200:
+             body:
+               application/json:
+                 schema: Banks
+                 example: !include examples/bank/Banks.json
+       /{bankId}:
+         displayName: Bank
+         description: Bank
+         uriParameters:
+           bankId:
+             displayName: Bank ID
+             description: An identifier for the bank, unique to the customer
+             type: string
