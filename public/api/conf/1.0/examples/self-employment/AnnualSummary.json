@@ -1,20 +1,20 @@
 {
   "adjustments": {
-    "includedNonTaxableProfits": 500,
-    "basisAdjustment": 500,
-    "overlapReliefUsed": 500,
-    "accountingAdjustment": 500,
-    "averagingAdjustment": 500,
-    "lossBroughtForward": 500,
-    "outstandingBusinessIncome": 500
+    "includedNonTaxableProfits": 500.25,
+    "basisAdjustment": 500.25,
+    "overlapReliefUsed": 500.25,
+    "accountingAdjustment": 500.25,
+    "averagingAdjustment": 500.25,
+    "lossBroughtForward": 500.25,
+    "outstandingBusinessIncome": 500.25
   },
   "allowances": {
-    "annualInvestmentAllowance": 500,
-    "capitalAllowanceMainPool": 500,
-    "capitalAllowanceSpecialRatePool": 500,
-    "businessPremisesRenovationAllowance": 500,
-    "enhancedCapitalAllowance": 500,
-    "allowancesOnSales": 500
+    "annualInvestmentAllowance": 500.25,
+    "capitalAllowanceMainPool": 500.25,
+    "capitalAllowanceSpecialRatePool": 500.25,
+    "businessPremisesRenovationAllowance": 500.25,
+    "enhancedCapitalAllowance": 500.25,
+    "allowancesOnSales": 500.25
   },
   "nonFinancials": {
     "businessDetailsChangedRecently": false,
