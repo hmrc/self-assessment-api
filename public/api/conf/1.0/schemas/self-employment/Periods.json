@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Periods",
   "type": "array",
-  "enum": {
+  "items": {
     "$ref": "Period.json"
   },
   "additionalProperties": false
