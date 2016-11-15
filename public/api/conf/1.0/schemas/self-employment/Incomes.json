@@ -7,15 +7,13 @@
       "title": "Turnover",
       "description": "The takings, fees, sales or money earned by your business",
       "type": "number",
-      "minimum": 0,
-      "default": 0
+      "minimum": 0
     },
     "other": {
       "title": "Other",
       "description": "Any other business income not included in turnover",
       "type": "number",
-      "minimum": 0,
-      "default": 0
+      "minimum": 0
     }
   },
   "additionalProperties": false

@@ -13,8 +13,7 @@
       "title": "Disallowable amount",
       "description": "Any expense or partial expense that cannot be claimed for tax purposes",
       "type": "number",
-      "minimum": 0,
-      "default": 0
+      "minimum": 0
     }
   },
   "required": [

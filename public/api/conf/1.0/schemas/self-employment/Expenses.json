@@ -6,113 +6,71 @@
     "coGBought": {
       "title": "Cost of goods bought",
       "description": "Cost of goods bought for resale or goods used",
-      "$ref": "../Expense.json",
-      "default": {
-        "amount": 0
-      }
+      "$ref": "../Expense.json"
     },
     "cisPaymentsToSubcontractors": {
       "title": "Construction industry - payments to subcontractors",
-      "$ref": "../Expense.json",
-      "default": {
-        "amount": 0
-      }
+      "$ref": "../Expense.json"
     },
     "staffCosts": {
       "title": "Staff costs",
       "description": "Wages, salaries and other staff costs",
-      "$ref": "../Expense.json",
-      "default": {
-        "amount": 0
-      }
+      "$ref": "../Expense.json"
     },
     "travelCosts": {
       "title": "Travel costs",
       "description": "Car, van and travel expenses",
-      "$ref": "../Expense.json",
-      "default": {
-        "amount": 0
-      }
+      "$ref": "../Expense.json"
     },
     "premisesRunningCosts": {
       "title": "Premises running costs",
       "description": "Rent, rates, power and insurance costs",
-      "$ref": "../Expense.json",
-      "default": {
-        "amount": 0
-      }
+      "$ref": "../Expense.json"
     },
     "maintenanceCosts": {
       "title": "Maintenance costs",
       "description": "Repairs and renewals of property and equipment",
-      "$ref": "../Expense.json",
-      "default": {
-        "amount": 0
-      }
+      "$ref": "../Expense.json"
     },
     "adminCosts": {
       "title": "Admin costs",
       "description": "Phone, fax, stationery and other office costs",
-      "$ref": "../Expense.json",
-      "default": {
-        "amount": 0
-      }
+      "$ref": "../Expense.json"
     },
     "advertisingCosts": {
       "title": "Advertising costs",
       "description": "Advertising and business entertainment costs",
-      "$ref": "../Expense.json",
-      "default": {
-        "amount": 0
-      }
+      "$ref": "../Expense.json"
     },
     "interest": {
       "title": "Interest",
       "description": "Interest on bank and other loans",
-      "$ref": "../Expense.json",
-      "default": {
-        "amount": 0
-      }
+      "$ref": "../Expense.json"
     },
     "financialCharges": {
       "title": "Financial charges",
       "description": "Bank, credit card and other financial charges",
-      "$ref": "../Expense.json",
-      "default": {
-        "amount": 0
-      }
+      "$ref": "../Expense.json"
     },
     "badDebt": {
       "title": "Bad debt",
       "description": "Irrecoverable debts written off",
-      "$ref": "../Expense.json",
-      "default": {
-        "amount": 0
-      }
+      "$ref": "../Expense.json"
     },
     "professionalFees": {
       "title": "Professional fees",
       "description": "Accountancy, legal and other professional fees",
-      "$ref": "../Expense.json",
-      "default": {
-        "amount": 0
-      }
+      "$ref": "../Expense.json"
     },
     "depreciation": {
       "title": "Depreciation",
       "description": "Depreciation and loss/profit on sales of assets",
-      "$ref": "../Expense.json",
-      "default": {
-        "amount": 0
-      }
+      "$ref": "../Expense.json"
     },
     "other": {
       "title": "Other",
       "description": "Other business expenses",
-      "$ref": "../Expense.json",
-      "default": {
-        "amount": 0
-      }
+      "$ref": "../Expense.json"
     }
   },
   "additionalProperties": false
