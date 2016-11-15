@@ -7,8 +7,7 @@
       "title": "Loss brought forward",
       "description": "Loss brought forward from earlier years set off against this year’s profits",
       "type": "number",
-      "minimum": 0,
-      "default": 0
+      "minimum": 0
     }
   },
   "additionalProperties": false
