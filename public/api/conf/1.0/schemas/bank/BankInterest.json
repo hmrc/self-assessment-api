@@ -7,15 +7,13 @@
       "title": "Taxed",
       "description": "Taxed UK interest etc - the net amount after tax has been taken off",
       "type": "number",
-      "minimum": 0,
-      "default": 0
+      "minimum": 0
     },
     "untaxed": {
       "title": "Untaxed",
       "description": "Untaxed UK interest etc - amounts which have not had tax taken off",
       "type": "number",
-      "minimum": 0,
-      "default": 0
+      "minimum": 0
     }
   },
   "additionalProperties": false
