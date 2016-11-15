@@ -6,15 +6,13 @@
     "amount": {
       "title": "Amount",
       "type": "number",
-      "minimum": 0,
-      "default": 0
+      "minimum": 0
     },
     "taxDeducted": {
       "title": "Tax deducted",
       "description": "Tax taken of any income",
       "type": "number",
-      "minimum": 0,
-      "default": 0
+      "minimum": 0
     }
   },
   "additionalProperties": false

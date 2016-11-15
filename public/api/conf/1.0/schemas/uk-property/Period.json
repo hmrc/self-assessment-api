@@ -31,8 +31,7 @@
         },
         "balancingCharge": {
           "type": "number",
-          "minimum": 0,
-          "default": 0
+          "minimum": 0
         }
       },
       "additonalProperties": false
