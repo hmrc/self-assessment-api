@@ -7,29 +7,25 @@
       "title": "Premises running costs",
       "description": "Rent paid, repairs, insurance and cost of services provided",
       "type": "number",
-      "minimum": 0,
-      "default": 0
+      "minimum": 0
     },
     "financialCosts": {
       "title": "Financial costs",
       "description": "Loan interest and other financial costs",
       "type": "number",
-      "minimum": 0,
-      "default": 0
+      "minimum": 0
     },
     "professionalFees": {
       "title": "Professional fees",
       "description": "Legal, management and other professional fees",
       "type": "number",
-      "minimum": 0,
-      "default": 0
+      "minimum": 0
     },
     "other": {
       "title": "Other",
       "description": "Other allowable property expenses",
       "type": "number",
-      "minimum": 0,
-      "default": 0
+      "minimum": 0
     }
   },
   "additionalProperties": false

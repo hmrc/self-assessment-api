@@ -32,14 +32,12 @@
         "balancingCharge": {
           "title": "Balancing charge",
           "type": "number",
-          "minimum": 0,
-          "default": 0
+          "minimum": 0
         },
         "privateUseAdjustment": {
           "title": "Private use adjustment",
           "type": "number",
-          "minimum": 0,
-          "default": 0
+          "minimum": 0
         }
       },
       "additonalProperties": false
