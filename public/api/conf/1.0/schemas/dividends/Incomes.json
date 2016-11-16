@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "Incomes",
+  "properties": {
+    "fromUKCompanies": {
+      "title": "From UK companies",
+      "description": "From UK companies - the net amount, do not include tax credit",
+      "type": "number",
+      "minimum": 0
+    },
+    "fromOtherUKSources": {
+      "title": "From other UK sources",
+      "description": "Other dividends - the net amount, do not include the tax credit",
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}
