@@ -15,7 +15,8 @@ documentation:
 
 schemas:
   - Error: !include schemas/Error.json
-  - BankInterest: !include schemas/bank/BankInterest.json
+  - BankAccountPeriod: !include schemas/bank-account/Period.json
+  - BankAccountPeriods: !include schemas/bank-account/Periods.json
 
 /self-assessment:
   /ni/{nino}:
@@ -24,24 +25,48 @@ schemas:
         displayName: National Insurance Number
         type: string
         required: true
-    /bank-interest/{taxYear}:
-       displayName: Bank Interest
-       uriParameters:
-         taxYear:
-           displayName: Tax year
-           description: Tax year, e.g. 2017-18
-           type: string
+    /bank-account/periods:
+       displayName: Bank Account Interest
+       post:
+         description: Create period
+         body:
+           application/json:
+             schema: BankAccountPeriod
+             example: !include examples/bank-account/Period.json
+         responses:
+           201:
+             headers:
+               Location:
+                 example: /self-assessment/nino/{nino}/bank-account/periods/{periodId}
+           400:
+             body:
+               application/json:
+                 schema: Error
+                 example: !include examples/bank-account/errors/Period_INVALID_REQUEST.json
        get:
-         description: Get bank interest
+         description: List periods
          responses:
            200:
              body:
                application/json:
-                 schema: BankInterest
-                 example: !include examples/bank/BankInterest.json
-       put:
-         description: Update bank interest
-         body:
-           application/json:
-             schema: BankInterest
-             example: !include examples/bank/BankInterest.json
+                 schema: BankAccountPeriods
+                 example: !include examples/bank-account/Periods.json
+       /{periodId}:
+         uriParameters:
+           periodId:
+             displayName: Period ID
+             type: string
+         get:
+           description: Get period
+           responses:
+             200:
+               body:
+                 application/json:
+                   schema: BankAccountPeriod
+                   example: !include examples/bank-account/Period.json
+         put:
+           description: Update period
+           body:
+             application/json:
+               schema: BankAccountPeriod
+               example: !include examples/bank-account/Period.json
