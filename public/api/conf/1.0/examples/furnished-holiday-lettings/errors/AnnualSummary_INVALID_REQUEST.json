@@ -1,0 +1,16 @@
+{
+  "code": "INVALID_REQUEST",
+  "message": "Invalid request",
+  "errors": [
+    {
+      "code": "INVALID_MONETARY_AMOUNT",
+      "message": "capitalAllowances should be non-negative number up to 2 decimal values",
+      "path": "/allowances/capitalAllowances"
+    },
+    {
+      "code": "INVALID_MONETARY_AMOUNT",
+      "message": "lossBroughtForward should be non-negative number up to 2 decimal values",
+      "path": "/adjustments/lossBroughtForward"
+    }
+  ]
+}

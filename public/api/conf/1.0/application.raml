@@ -17,6 +17,7 @@ schemas:
   - Error: !include schemas/Error.json
   - FurnishedHolidayLettingPeriod: !include schemas/furnished-holiday-letting/Period.json
   - FurnishedHolidayLettingPeriods: !include schemas/furnished-holiday-letting/Periods.json
+  - FurnishedHolidayLettingAnnualSummary: !include schemas/furnished-holiday-letting/AnnualSummary.json
 
 /self-assessment:
   /ni/{nino}:
@@ -78,3 +79,29 @@ schemas:
               application/json:
                 schema: FurnishedHolidayLettingPeriod
                 example: !include examples/furnished-holiday-lettings/Period.json
+      /{taxYear}:
+          uriParameters:
+            taxYear:
+              type: string
+              example: 2016-17
+          put:
+            description: Updated annual summary
+            body:
+              application/json:
+                schema: FurnishedHolidayLettingAnnualSummary
+                example: !include ./examples/furnished-holiday-lettings/AnnualSummary.json
+            responses:
+              204:
+              400:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/furnished-holiday-lettings/errors/AnnualSummary_INVALID_REQUEST.json
+          get:
+            description: Get annual summary
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: FurnishedHolidayLettingAnnualSummary
+                    example: !include ./examples/furnished-holiday-lettings/AnnualSummary.json
