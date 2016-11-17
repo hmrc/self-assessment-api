@@ -15,8 +15,7 @@ documentation:
 
 schemas:
   - Error: !include schemas/Error.json
-  - DividendPeriod: !include schemas/dividends/Period.json
-  - DividendPeriods: !include schemas/dividends/Periods.json
+  - DividendsAnnualSummary: !include schemas/dividends/AnnualSummary.json
 
 /self-assessment:
   /ni/{nino}:
@@ -25,48 +24,30 @@ schemas:
         displayName: National Insurance Number
         type: string
         required: true
-    /dividends/periods:
-       displayName: Dividends
-       post:
-         description: Create period
-         body:
-           application/json:
-             schema: DividendPeriod
-             example: !include examples/dividends/Period.json
-         responses:
-           201:
-             headers:
-               Location:
-                 example: /self-assessment/nino/{nino}/dividends/periods/{periodId}
-           400:
-             body:
-               application/json:
-                 schema: Error
-                 example: !include examples/dividends/errors/Period_INVALID_REQUEST.json
-       get:
-         description: List periods
-         responses:
-           200:
-             body:
-               application/json:
-                 schema: DividendPeriods
-                 example: !include examples/dividends/Periods.json
-       /{periodId}:
-         uriParameters:
-           periodId:
-             displayName: Period ID
-             type: string
-         get:
-           description: Get period
-           responses:
-             200:
-               body:
-                 application/json:
-                   schema: DividendPeriod
-                   example: !include examples/dividends/Period.json
-         put:
-           description: Update period
+    /dividends/{taxYear}:
+     uriParameters:
+       taxYear:
+         displayName: Tax Year
+         type: string
+         example: 2016-17
+     put:
+       description: Update annual summary
+       body:
+         application/json:
+           schema: DividendsAnnualSummary
+           example: !include examples/dividends/AnnualSummary.json
+       responses:
+         204:
+         400:
            body:
              application/json:
-               schema: DividendPeriod
-               example: !include examples/dividends/Period.json
+               schema: Error
+               example: !include examples/dividends/errors/AnnualSummary_INVALID_REQUEST.json
+     get:
+       description: Get annual summary
+       responses:
+         200:
+           body:
+             application/json:
+               schema: DividendsAnnualSummary
+               example: !include examples/dividends/AnnualSummary.json

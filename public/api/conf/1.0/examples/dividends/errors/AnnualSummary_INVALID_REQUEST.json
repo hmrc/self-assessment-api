@@ -5,12 +5,12 @@
     {
       "code": "INVALID_MONETARY_AMOUNT",
       "message": "fromUKCompanies should be non-negative number up to 2 decimal values",
-      "path": "/_embedded/incomes/fromUKCompanies"
+      "path": "/incomes/fromUKCompanies"
     },
     {
       "code": "INVALID_MONETARY_AMOUNT",
       "message": "fromOtherUKSources should be non-negative number up to 2 decimal values",
-      "path": "/_embedded/expenses/fromOtherUKSources"
+      "path": "/incomes/fromOtherUKSources"
     }
   ]
 }
