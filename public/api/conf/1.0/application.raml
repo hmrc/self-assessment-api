@@ -10,9 +10,12 @@ mediaType: application/json
 documentation:
   - title: Overview
     content: !include docs/overview.md
+  - title: Savings
+    content: !include docs/savings.md
 
 schemas:
   - Error: !include schemas/Error.json
+  - SavingsAnnualSummary: !include schemas/savings/AnnualSummary.json
 
 /self-assessment:
   /ni/{nino}:
@@ -21,3 +24,30 @@ schemas:
         displayName: National Insurance Number
         type: string
         required: true
+    /savings/{taxYear}:
+       displayName: Savings
+       uriParameters:
+         taxYear:
+           type: string
+           example: 2016-17
+       put:
+         description: Update annual summary
+         body:
+           application/json:
+             schema: SavingsAnnualSummary
+             example: !include examples/savings/AnnualSummary.json
+         responses:
+           204:
+           400:
+             body:
+               application/json:
+                 schema: Error
+                 example: !include examples/savings/errors/AnnualSummary_INVALID_REQUEST.json
+       get:
+         description: Get annual summary
+         responses:
+           200:
+             body:
+               application/json:
+                 schema: SavingsAnnualSummary
+                 example: !include examples/savings/AnnualSummary.json
