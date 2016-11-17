@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Liability",
+  "type": "object",
+  "properties": {
+    "totalTaxDue": {
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "totalTaxDue"
+  ],
+  "additionalProperties": false
+}

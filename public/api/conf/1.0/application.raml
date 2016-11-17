@@ -10,9 +10,12 @@ mediaType: application/json
 documentation:
   - title: Overview
     content: !include docs/overview.md
+  - title: Liability
+    content: !include docs/liability.md
 
 schemas:
   - Error: !include schemas/Error.json
+  - Liability: !include schemas/liability/Liability.json
 
 /self-assessment:
   /ni/{nino}:
@@ -21,3 +24,33 @@ schemas:
         displayName: National Insurance Number
         type: string
         required: true
+    /liabilities/{taxYear}:
+      uriParameters:
+        taxYear:
+          displayName: Tax Year
+          type: string
+          example: 2016-17
+      post:
+        description: Create liability
+        responses:
+          201:
+            headers:
+              Location:
+                example: /self-assessment/ni/{nino}/liabilities/{liabilityId}
+          400:
+            body:
+              application/json:
+                schema: Error
+                example: !include examples/liability/errors/GENERIC.json
+      /{liabilityId}:
+        uriParameters:
+          liabilityId:
+            type: string
+        get:
+          description: Get liability
+          responses:
+            200:
+              body:
+                application/json:
+                  schema: Liability
+                  example: !include examples/liability/Liability.json
