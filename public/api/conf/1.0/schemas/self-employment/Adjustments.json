@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Allowances",
+  "type": "object",
+  "properties": {
+    "includedNonTaxableProfits": {
+      "title": "Included not-taxable profits",
+      "description": "Income, receipts and other profits included in business income or expenses but not taxable as business profits",
+      "type": "number",
+      "minimum": 0
+    },
+    "basisAdjustment": {
+      "title": "Basis adjustment",
+      "description": "If your basis period is not the same as your accounting period, enter the adjustment needed to arrive at the profit or loss for the basis period – if the adjustment needs to be taken off the profit figure, this should be negative",
+      "type": "number"
+    },
+    "overlapReliefUsed": {
+      "title": "Overlap relief used",
+      "description": "Overlap relief used this year",
+      "type": "number",
+      "minimum": 0
+    },
+    "accountingAdjustment": {
+      "title": "Accounting adjustment",
+      "description": "Adjustment for change of accounting practice",
+      "type": "number",
+      "minimum": 0
+    },
+    "averagingAdjustment": {
+      "title": "Averaging adjustment",
+      "description": "Averaging adjustment (only for farmers, market gardeners and creators of literary or artistic works)\n– if the adjustment needs to be taken off the profit figure, this should be negative",
+      "type": "number"
+    },
+    "lossBroughtForward": {
+      "title": "Loss brought forward",
+      "description": "Loss brought forward from earlier years set off against this year’s profits",
+      "type": "number",
+      "minimum": 0
+    },
+    "outstandingBusinessIncome": {
+      "title": "Outstanding business income",
+      "description": "Any other business income not included in other fields",
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}
