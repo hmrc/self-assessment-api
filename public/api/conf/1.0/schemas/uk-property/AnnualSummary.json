@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Annual summary",
+  "type": "object",
+  "properties": {
+    "allowances": {
+      "$ref": "Allowances.json"
+    },
+    "adjustments": {
+      "$ref": "Adjustments.json"
+    },
+    "rentARoomRelief": {
+      "title": "Rent a room relief",
+      "description": "Rent a room exempt allowance",
+      "type": "number",
+      "minimum": 0
+
+    }
+  },
+  "required": [
+    "allowances",
+    "adjustments"
+  ],
+  "additionalProperties": false
+}
