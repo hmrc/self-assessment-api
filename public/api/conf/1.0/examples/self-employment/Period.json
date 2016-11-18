@@ -1,0 +1,71 @@
+{
+  "from": "2016-04-06",
+  "to": "2016-07-04",
+  "incomes": {
+    "turnover": 100.25,
+    "other": 100.25
+  },
+  "expenses": {
+    "coGBought": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    },
+    "cisPaymentsToSubcontractors": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    },
+    "staffCosts": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    },
+    "travelCosts": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    },
+    "premisesRunningCosts": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    },
+    "maintenanceCosts": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    },
+    "adminCosts": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    },
+    "advertisingCosts": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    },
+    "interest": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    },
+    "financialCharges": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    },
+    "badDebt": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    },
+    "professionalFees": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    },
+    "depreciation": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    },
+    "other": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    }
+  },
+  "balancingCharges": {
+    "bpra": 100.25,
+    "other": 100.25
+  },
+  "goodsAndServicesOwnUse": 100.25
+}

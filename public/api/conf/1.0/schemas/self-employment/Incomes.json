@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "Incomes",
+  "properties": {
+    "turnover": {
+      "title": "Turnover",
+      "description": "The takings, fees, sales or money earned by your business",
+      "type": "number",
+      "minimum": 0
+    },
+    "other": {
+      "title": "Other",
+      "description": "Any other business income not included in turnover",
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}
