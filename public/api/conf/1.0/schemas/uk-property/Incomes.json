@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "Incomes",
+  "description": "Do not include furnished holiday lettings, Real Estate Investment Trust or Property Authorised Investment Funds dividends/distributions here",
+  "properties": {
+    "rentIncome": {
+      "title": "rentIncome",
+      "description": "Total rents and other income from property",
+      "$ref": "../Income.json"
+    },
+    "premiumsOfLeaseGrant": {
+      "title": "Premiums of lease grant",
+      "type": "number",
+      "minimum": 0
+    },
+    "reversePremiums": {
+      "title": "Reverse premiums",
+      "description": "Reverse premiums and inducements",
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}
