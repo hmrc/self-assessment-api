@@ -16,6 +16,7 @@ documentation:
 schemas:
   - Error: !include schemas/Error.json
   - Liability: !include schemas/liability/Liability.json
+  - Liabilities: !include schemas/liability/Liabilities.json
 
 /self-assessment:
   /ni/{nino}:
@@ -24,14 +25,16 @@ schemas:
         displayName: National Insurance Number
         type: string
         required: true
-    /liabilities/{taxYear}:
-      uriParameters:
-        taxYear:
-          displayName: Tax Year
-          type: string
-          example: 2016-17
+    /liabilities:
       post:
         description: Create liability
+        queryParameters:
+          taxYear:
+            displayName: Tax Year
+            description: The tax year that you want the liability created for
+            type: string
+            example: 2016-17
+            required: true
         responses:
           201:
             headers:
@@ -42,6 +45,20 @@ schemas:
               application/json:
                 schema: Error
                 example: !include examples/liability/errors/GENERIC.json
+      get:
+        description: List liabilities
+        queryParameters:
+          taxYear:
+            displayName: Tax Year
+            type: string
+            example: 2016-17
+            required: true
+        responses:
+          200:
+            body:
+              application/json:
+                schema: Liabilities
+                example: !include examples/liability/Liabilities.json
       /{liabilityId}:
         uriParameters:
           liabilityId:
