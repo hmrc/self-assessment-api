@@ -1,17 +1,15 @@
 {
   "from": "2016-04-06",
   "to": "2016-07-04",
-  "_embedded": {
-    "incomes": {
-      "any": 100.25
-    },
-    "expenses": {
-      "premisesRunningCosts": 100.25,
-      "financialCosts": 100.25,
-      "professionalFees": 100.25,
-      "other": 100.25
-    },
-    "balancingCharge": 100.25,
-    "privateUseAdjustment": 100.25
-  }
+  "incomes": {
+    "any": 100.25
+  },
+  "expenses": {
+    "premisesRunningCosts": 100.25,
+    "financialCosts": 100.25,
+    "professionalFees": 100.25,
+    "other": 100.25
+  },
+  "balancingCharge": 100.25,
+  "privateUseAdjustment": 100.25
 }
