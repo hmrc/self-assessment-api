@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Allowances",
+  "type": "object",
+  "properties": {
+    "annualInvestmentAllowance": {
+      "title": "Annual investment allowance",
+      "type": "number",
+      "minimum": 0
+    },
+    "capitalAllowanceMainPool": {
+      "title": "Capital allowance main pool",
+      "description": "Capital allowances at 18% on equipment, including cars with lower CO2 emissions",
+      "type": "number",
+      "minimum": 0
+    },
+    "capitalAllowanceSpecialRatePool": {
+      "title": "Capital allowance special rate pool",
+      "description": "Capital allowances at 8% on equipment, including cars with higher CO2 emissions",
+      "type": "number",
+      "minimum": 0
+    },
+    "businessPremisesRenovationAllowance": {
+      "title": "Business Premises Renovation Allowance",
+      "type": "number",
+      "minimum": 0
+    },
+    "enhancedCapitalAllowance": {
+      "title": "Enhanced capital allowance",
+      "description": "100% and other enhanced capital allowances",
+      "type": "number",
+      "minimum": 0
+    },
+    "allowancesOnSales": {
+      "title": "Allowances on sales",
+      "description": "Allowances on sale or cessation of business use (where you have disposed of assets for less than their tax value)",
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}

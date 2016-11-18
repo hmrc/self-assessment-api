@@ -1,0 +1,16 @@
+{
+  "code": "INVALID_REQUEST",
+  "message": "Invalid request",
+  "errors": [
+    {
+      "code": "INVALID_MONETARY_AMOUNT",
+      "message": "annualInvestmentAllowance should be non-negative number up to 2 decimal values",
+      "path": "/allowances/annualInvestmentAllowance"
+    },
+    {
+      "code": "INVALID_MONETARY_AMOUNT",
+      "message": "averagingAdjustment should be non-negative number up to 2 decimal values",
+      "path": "/adjustments/averagingAdjustment"
+    }
+  ]
+}
