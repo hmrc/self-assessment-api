@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "Period",
+  "properties": {
+    "id": {
+      "title": "ID",
+      "description": "Unique identifier",
+      "type": "string"
+    },
+    "from": {
+      "title": "From date",
+      "description": "ISO-8601, YYYY-MM-DD",
+      "type": "string"
+    },
+    "to": {
+      "title": "To date",
+      "description": "ISO-8601, YYYY-MM-DD",
+      "type": "string"
+    },
+    "incomes": {
+      "$ref": "Incomes.json"
+    },
+    "expenses": {
+      "$ref": "Expenses.json"
+    },
+    "balancingCharge": {
+      "title": "Balancing charge",
+      "type": "number",
+      "minimum": 0
+    },
+    "privateUseAdjustment": {
+      "title": "Private use adjustment",
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "from",
+    "to"
+  ],
+  "additonalProperties": false
+}
