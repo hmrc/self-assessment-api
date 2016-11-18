@@ -127,10 +127,22 @@ schemas:
                   body:
                     application/json:
                       schema: Error
-                      example: !include examples/errors/NOT_FOUND.json                      
+                      example: !include examples/errors/NOT_FOUND.json
             put:
               description: Update period
               body:
                 application/json:
                   schema: SelfEmploymentPeriod
                   example: !include examples/self-employment/Period.json
+              responses:
+                204:
+                400:
+                  body:
+                    application/json:
+                      schema: Error
+                      example: !include examples/errors/INVALID_REQUEST.json
+                404:
+                  body:
+                    application/json:
+                      schema: Error
+                      example: !include examples/errors/NOT_FOUND.json
