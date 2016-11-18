@@ -25,9 +25,9 @@ schemas:
         displayName: National Insurance Number
         type: string
         required: true
-    /furnished-holiday-lettings/{propertyLocation}:
+    /furnished-holiday-lettings/{location}:
       uriParameters:
-        propertyLocation:
+        location:
           displayName: Property location
           description: The location, either UK, or European Economic Area (EEA)
           type: string
@@ -45,7 +45,7 @@ schemas:
             201:
               headers:
                 Location:
-                  example: /self-assessment/nino/{nino}/furnished-holiday-lettings/{propertyLocation}/periods/{periodId}
+                  example: /self-assessment/nino/{nino}/furnished-holiday-lettings/{location}/periods/{periodId}
             400:
               body:
                 application/json:
