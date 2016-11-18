@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Self-employment source of income",
+  "type": "object",
+  "properties": {
+    "id": {
+      "title": "ID",
+      "description": "Unique identifier",
+      "type": "string"
+    },
+    "commencementDate": {
+      "title": "Business start date",
+      "description": "Business start date, ISO-8601, YYYY-MM-DD",
+      "type": "string"
+    },
+    "accountingPeriod": {
+      "$ref": "../AccountingPeriod.json"
+    },
+    "accountingType": {
+      "title": "Accounting type",
+      "description": "CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUAL.",
+      "type": "string",
+      "enum": [
+        "CASH",
+        "ACCRUAL"
+      ]
+    }
+  },
+  "required": [
+    "commencementDate",
+    "accountingPeriod",
+    "accountingType"
+  ],
+  "additionalProperties": false
+}
