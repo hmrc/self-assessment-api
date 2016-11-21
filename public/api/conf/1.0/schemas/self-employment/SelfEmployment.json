@@ -8,6 +8,43 @@
       "description": "Unique identifier",
       "type": "string"
     },
+    "name": {
+      "title": "Business name",
+      "description": "The business name - unless it is your own name, in which case, put your own name",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 28
+    },
+    "description": {
+      "title": "Description of the business",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 42
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "line_1": {
+          "title": "Line 1",
+          "description": "First line of your business address - unless you work from home",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 28
+        },
+          "postcode": {
+            "title": "Postcode",
+            "description": "Postcode of your business address",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8
+          }
+      },
+      "required": [
+        "line_1",
+        "postcode"
+      ],
+      "additionalProperties": false
+    },
     "commencementDate": {
       "title": "Business start date",
       "description": "Business start date, ISO-8601, YYYY-MM-DD",
@@ -24,9 +61,20 @@
         "CASH",
         "ACCRUAL"
       ]
+    },
+    "basisPeriod": {
+      "$ref": "../BasisPeriod.json"
+    },
+    "specialArrangmentsApply": {
+      "title": "Special arrangments apply",
+      "description": "If special arrangements apply",
+      "type": "boolean"
     }
   },
   "required": [
+    "name",
+    "description",
+    "postcode",
     "commencementDate",
     "accountingPeriod",
     "accountingType"

@@ -1,17 +1,17 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Accounting period",
+  "title": "Basis period",
   "type": "object",
   "properties": {
     "start": {
       "title": "Start date",
-      "description": "Date your books or accounts start - the beginning of your accounting period",
+      "description": "Date your basis period began",
       "type": "string",
       "format": "date"
     },
     "end": {
       "title": "End date",
-      "description": "Date your books or accounts are made up to or the end of your accounting period",
+      "description": "Date your basis period ended",
       "type": "string",
       "format": "date"
     }
