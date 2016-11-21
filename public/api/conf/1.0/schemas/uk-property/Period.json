@@ -10,13 +10,13 @@
     },
     "from": {
       "title": "From date",
-      "description": "ISO-8601, YYYY-MM-DD",
-      "type": "string"
+      "type": "string",
+      "format": "date"
     },
     "to": {
       "title": "To date",
-      "description": "ISO-8601, YYYY-MM-DD",
-      "type": "string"
+      "type": "string",
+      "format": "date"
     },
     "incomes": {
       "$ref": "Incomes.json"

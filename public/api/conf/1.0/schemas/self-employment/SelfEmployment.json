@@ -47,8 +47,9 @@
     },
     "commencementDate": {
       "title": "Business start date",
-      "description": "Business start date, ISO-8601, YYYY-MM-DD",
-      "type": "string"
+      "description": "Business start date",
+      "type": "string",
+      "format": "date"
     },
     "accountingPeriod": {
       "$ref": "../AccountingPeriod.json"
