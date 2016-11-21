@@ -30,8 +30,7 @@
     "goodsAndServicesOwnUse": {
       "title": "Goods and services own use",
       "type": "number",
-      "minimum": 0,
-      "default": 0
+      "minimum": 0
     }
   },
   "required": [
