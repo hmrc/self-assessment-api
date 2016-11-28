@@ -1,0 +1,10 @@
+{
+  "code": "BUSINESS_ERROR",
+  "message": "Business error",
+  "errors": [
+    {
+      "code": "OVERLAPPING_PERIOD",
+      "message": "Periods must not overlap"
+    }
+  ]
+}
