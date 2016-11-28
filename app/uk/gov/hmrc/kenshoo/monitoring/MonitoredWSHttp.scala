@@ -52,7 +52,7 @@ trait MonitoredWSHttp extends WSHttp with HttpAPIMonitor {
     }
   }
 
-  def monitorRequestsWithBodyIfUrlPatternIsKnown[A](method: String, url: String)(func: => Future[HttpResponse])(implicit rds: Writes[A], hc: HeaderCarrier) = {
+  def monitorRequestsWithBodyIfUrlPatternIsKnown[A: Writes](method: String, url: String)(func: => Future[HttpResponse])(implicit hc: HeaderCarrier) = {
     apiNames.nameFor(method, url) match {
       case None =>
         Logger.debug(s"ConsumedAPI-Not-Monitored: $method-$url")
@@ -68,7 +68,7 @@ trait MonitoredWSHttp extends WSHttp with HttpAPIMonitor {
     }
   }
 
-  override def doPost[A](url: String, body: A, headers: Seq[(String, String)])(implicit rds: Writes[A], hc: HeaderCarrier): Future[HttpResponse] = {
+  override def doPost[A: Writes](url: String, body: A, headers: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     monitorRequestsWithBodyIfUrlPatternIsKnown("POST", url) {
       super.doPost(url, body, headers)
     }
@@ -80,7 +80,7 @@ trait MonitoredWSHttp extends WSHttp with HttpAPIMonitor {
     }
   }
 
-  override def doPut[A](url: String, body: A)(implicit rds: Writes[A], hc: HeaderCarrier): Future[HttpResponse] = {
+  override def doPut[A : Writes](url: String, body: A)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     monitorRequestsWithBodyIfUrlPatternIsKnown("PUT", url) {
       super.doPut(url, body)
     }
