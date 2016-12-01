@@ -1,9 +1,0 @@
-{
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Liabilities",
-  "type": "array",
-  "items": {
-    "$ref": "Liability.json"
-  },
-  "additionalProperties": false
-}
