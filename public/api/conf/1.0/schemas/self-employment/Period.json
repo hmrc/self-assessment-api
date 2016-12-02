@@ -21,16 +21,8 @@
     "incomes": {
       "$ref": "Incomes.json"
     },
-    "expeneses": {
+    "expenses": {
       "$ref": "Expenses.json"
-    },
-    "balancingCharges": {
-      "$ref": "BalancingCharges.json"
-    },
-    "goodsAndServicesOwnUse": {
-      "title": "Goods and services own use",
-      "type": "number",
-      "minimum": 0
     }
   },
   "required": [

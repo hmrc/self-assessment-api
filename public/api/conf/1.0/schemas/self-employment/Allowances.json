@@ -14,6 +14,11 @@
       "type": "number",
       "minimum": 0
     },
+    "zeroEmissionGoodsVehicleAllowance": {
+      "title": "Zero emission goods vehicle allowance",
+      "type": "number",
+      "minimum": 0
+    },
     "capitalAllowanceSpecialRatePool": {
       "title": "Capital allowance special rate pool",
       "description": "Capital allowances at 8% on equipment, including cars with higher CO2 emissions",

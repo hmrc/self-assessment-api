@@ -42,6 +42,23 @@
       "description": "Any other business income not included in other fields",
       "type": "number",
       "minimum": 0
+    },
+    "balancingChargeBPRA": {
+      "title": "Balancing charge BPRA",
+      "description": "Balancing charge on sale or cessation of business use (only where Business Premises Renovation Allowance has been claimed)",
+      "type": "number",
+      "minimum": 0
+    },
+    "balancingChargeOther": {
+      "title": "Balancing charge Other",
+      "description": "Balancing charge on sale or cessation of business use (where you have disposed of assets for more than their tax value)",
+      "type": "number",
+      "minimum": 0
+    },
+    "goodsAndServicesOwnUse": {
+      "title": "Goods and services own use",
+      "type": "number",
+      "minimum": 0
     }
   },
   "additionalProperties": false

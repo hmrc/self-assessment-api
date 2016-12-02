@@ -62,10 +62,5 @@
       "amount": 100.25,
       "disallowableAmount": 50.25
     }
-  },
-  "balancingCharges": {
-    "bpra": 100.25,
-    "other": 100.25
-  },
-  "goodsAndServicesOwnUse": 100.25
+  }
 }
