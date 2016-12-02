@@ -39,7 +39,7 @@ schemas:
     /self-employments:
       description: Self Employments
       post:
-        description: Create a self-employment source of income
+        description: Registier a self-employment business
         body:
           application/json:
             schema: SelfEmployment
@@ -55,22 +55,22 @@ schemas:
                 schema: Error
                 example: !include examples/errors/TOO_MANY_SOURCES.json
       get:
-        description: List self-employment sources of income
+        description: List self-employment businesses
         responses:
           200:
             body:
               application/json:
                 schema: SelfEmployments
                 example: !include examples/self-employment/SelfEmployments.json
-      /{selfEmploymentId}:
-        description: Self Employment
+      /{businessId}:
+        description: Self Employment Business
         uriParameters:
-          selfEmploymentId:
-            displayName: Self Employment ID
-            description: An identifier for the self-employmment, unique to the customer
+          businessId:
+            displayName: Business ID
+            description: An identifier for the self-employmment business, unique to the customer
             type: string
         get:
-          description: Get a self-employment source of income
+          description: Get a self-employment business
           responses:
             200:
               body:
@@ -83,7 +83,7 @@ schemas:
                   schema: Error
                   example: !include examples/errors/NOT_FOUND.json
         put:
-          description: Update a self-employment source of income, e.g. to change accounting period
+          description: Update a self-employment business, e.g. to change accounting period
           body:
             application/json:
               schema: SelfEmployment
@@ -182,6 +182,11 @@ schemas:
                     schema: SelfEmploymentAnnualSummary
                     example: !include ./examples/self-employment/AnnualSummary.json
     /properties/uk:
+      displayName: UK Property
+      post:
+        description: Register UK property business
+        responses:
+          204:
       /other:
         /periods:
           post:
