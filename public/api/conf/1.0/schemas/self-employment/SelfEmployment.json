@@ -75,7 +75,6 @@
   "required": [
     "name",
     "description",
-    "postcode",
     "commencementDate",
     "accountingPeriod",
     "accountingType"
