@@ -8,4 +8,16 @@ Here, the developer can provide the following data:
 * Balancing Charges
 * Tax Allowances
 * Adjustments
-* This section does not include Furnished Holiday Lettings (see below for FHL details)
+
+## Furnished Holiday Lettings
+
+This sections allows API developers to provide data relating to taxpayer’s income from Furnished Holiday Lettings (FHL) in the UK.
+
+Here, the developer can provide the following data:
+
+* FHL Income
+* FHL Expenses
+* FHL Private Use adjustment
+* FHL Balancing Charges
+* FHL Capital Allowances
+* FHL Adjustments
