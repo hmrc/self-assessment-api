@@ -3,7 +3,7 @@
   "title": "Obligations",
   "type": "array",
   "items": {
-    "$ref": "Obligations.json"
+    "$ref": "Obligation.json"
   },
   "additionalProperties": false
 }
