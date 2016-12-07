@@ -42,6 +42,7 @@ schemas:
         type: string
         required: true
     /obligations:
+      displayName: Obligations
       get:
         description: Get obligations
         responses:
@@ -70,9 +71,11 @@ schemas:
               Location:
                 example: /self-assessment/ni/{nino}/calculations/{calculationId}; rel="calculation"
     /calculations/{calculationId}:
+      displayName: Calculation
       uriParameters:
         calculationId:
           type: string
+          displayName: Calculation ID
       get:
         description: Get calculation
         responses:
@@ -88,9 +91,9 @@ schemas:
                 example: !include examples/obligation/errors/GENERIC.json
 
     /self-employments:
-      description: Self Employments
+      displayName: Self Employment Businesses
       post:
-        description: Registier a self-employment business
+        description: Register a self-employment business
         body:
           application/json:
             schema: SelfEmployment
@@ -114,7 +117,7 @@ schemas:
                 schema: SelfEmployments
                 example: !include examples/self-employment/SelfEmployments.json
       /{businessId}:
-        description: Self Employment Business
+        displayName: Self Employment Business
         uriParameters:
           businessId:
             displayName: Business ID
@@ -128,11 +131,6 @@ schemas:
                 application/json:
                   schema: SelfEmployment
                   example: !include examples/self-employment/SelfEmployment.json
-            404:
-              body:
-                application/json:
-                  schema: Error
-                  example: !include examples/errors/NOT_FOUND.json
         put:
           description: Update a self-employment business, e.g. to change accounting period
           body:
@@ -147,6 +145,7 @@ schemas:
                   schema: Error
                   example: !include ./examples/errors/INVALID_ACCOUNTING_PERIOD.json
         /periods:
+          displayName: Periods
           post:
             description: Create period
             body:
@@ -172,6 +171,7 @@ schemas:
                     schema: SelfEmploymentPeriods
                     example: !include examples/self-employment/Periods.json
           /{periodId}:
+            displayName: Period
             uriParameters:
               periodId:
                 type: string
@@ -183,11 +183,6 @@ schemas:
                     application/json:
                       schema: SelfEmploymentPeriod
                       example: !include examples/self-employment/Period.json
-                404:
-                  body:
-                    application/json:
-                      schema: Error
-                      example: !include examples/errors/NOT_FOUND.json
             put:
               description: Update period
               body:
@@ -201,15 +196,11 @@ schemas:
                     application/json:
                       schema: Error
                       example: !include examples/errors/INVALID_REQUEST.json
-                404:
-                  body:
-                    application/json:
-                      schema: Error
-                      example: !include examples/errors/NOT_FOUND.json
         /{taxYear}:
           uriParameters:
             taxYear:
               type: string
+              displayName: Tax Year
               example: 2016-17
           put:
             description: Update annual summary
@@ -233,13 +224,15 @@ schemas:
                     schema: SelfEmploymentAnnualSummary
                     example: !include ./examples/self-employment/AnnualSummary.json
     /properties/uk:
-      displayName: UK Property
+      displayName: UK Property Business
       post:
         description: Register UK property business
         responses:
           204:
       /other:
+        displayName: Other
         /periods:
+          displayName: Periods
           post:
             description: Create period
             body:
@@ -290,16 +283,13 @@ schemas:
                     application/json:
                       schema: Error
                       example: !include examples/uk-property/errors/Period_INVALID_REQUEST.json
-                404:
-                  body:
-                    application/json:
-                      schema: Error
-                      example: !include examples/errors/NOT_FOUND.json
         /{taxYear}:
+            displayName: Annual Summary
             uriParameters:
               taxYear:
                 type: string
                 example: 2016-17
+                displayName: Tax Year
             put:
               description: Update annual summary
               body:
@@ -322,6 +312,7 @@ schemas:
                       schema: UkPropertyAnnualSummary
                       example: !include ./examples/uk-property/AnnualSummary.json
       /furnished-holiday-lettings:
+        displayName: Furnish Holiday Lettings
         /periods:
           post:
             description: Create period
@@ -348,6 +339,7 @@ schemas:
                     schema: FurnishedHolidayLettingPeriods
                     example: !include examples/furnished-holiday-lettings/Periods.json
           /{periodId}:
+            displayName: Period
             uriParameters:
               periodId:
                 displayName: Period ID
@@ -374,9 +366,11 @@ schemas:
                       schema: Error
                       example: !include examples/furnished-holiday-lettings/errors/Period_INVALID_REQUEST.json
         /{taxYear}:
+            displayName: Annual Summary
             uriParameters:
               taxYear:
                 type: string
+                displayName: Tax Year
                 example: 2016-17
             put:
               description: Update annual summary

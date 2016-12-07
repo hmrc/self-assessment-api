@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Self-employment source of income",
+  "title": "Self-employment business",
   "type": "object",
   "properties": {
     "id": {
