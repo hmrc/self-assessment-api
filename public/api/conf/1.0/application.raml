@@ -20,6 +20,7 @@ schemas:
   - SelfEmployment: !include schemas/self-employment/SelfEmployment.json
   - SelfEmployments: !include schemas/self-employment/SelfEmployments.json
   - SelfEmploymentPeriod: !include schemas/self-employment/Period.json
+  - SelfEmploymentPeriodUpdate: !include schemas/self-employment/UpdatePeriod.json
   - SelfEmploymentPeriods: !include schemas/self-employment/Periods.json
   - SelfEmploymentAnnualSummary: !include schemas/self-employment/AnnualSummary.json
   - UkPropertyPeriod: !include schemas/uk-property/Period.json
@@ -141,8 +142,8 @@ schemas:
               description: Update period
               body:
                 application/json:
-                  schema: SelfEmploymentPeriod
-                  example: !include examples/self-employment/Period.json
+                  schema: SelfEmploymentPeriodUpdate
+                  example: !include examples/self-employment/UpdatePeriod.json
               responses:
                 204:
                 400:
