@@ -1,0 +1,6 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Obligation",
+    "type": "object",
+    "additionalProperties": false
+}
