@@ -1,0 +1,10 @@
+{
+  "code": "FAILURE",
+  "message": "Failed to compute liability",
+  "errors": [
+    {
+      "code": "CROSS_FIELD_VALIDATION",
+      "message": "Something was wrong with the data, information here"
+    }
+  ]
+}

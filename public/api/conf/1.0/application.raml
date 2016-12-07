@@ -14,6 +14,8 @@ documentation:
     content: !include docs/self-employment.md
   - title: UK Property Business
     content: !include docs/uk-property.md
+  - title: Obligations
+    content: !include docs/obligation.md
 
 schemas:
   - Error: !include schemas/Error.json
@@ -29,6 +31,8 @@ schemas:
   - FurnishedHolidayLettingPeriod: !include schemas/furnished-holiday-letting/Period.json
   - FurnishedHolidayLettingPeriods: !include schemas/furnished-holiday-letting/Periods.json
   - FurnishedHolidayLettingAnnualSummary: !include schemas/furnished-holiday-letting/AnnualSummary.json
+  - Calculation: !include schemas/obligation/Calculation.json
+  - Obligation: !include schemas/obligation/Obligation.json
 
 /self-assessment:
   /ni/{nino}:
@@ -37,6 +41,7 @@ schemas:
         displayName: National Insurance Number
         type: string
         required: true
+<<<<<<< HEAD
     /self-employments:
       description: Self Employments
       post:
@@ -50,17 +55,45 @@ schemas:
             headers:
               Location:
                 example: /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}
+=======
+    /obligations:
+      post:
+        description: Create oblications
+        queryParameters:
+          taxYear:
+            displayName: Tax Year
+            description: The tax year that you want the obligations created for
+            type: string
+            example: 2016-17
+            required: true
+        responses:
+          202:
+            headers:
+              Location:
+                example: /self-assessment/ni/{nino}/calculations/{calculationId}; rel="calculation"
+>>>>>>> MTDSA-699-liability
           400:
             body:
               application/json:
                 schema: Error
+<<<<<<< HEAD
                 example: !include examples/errors/TOO_MANY_SOURCES.json
       get:
         description: List self-employment businesses
+=======
+                example: !include examples/obligation/errors/GENERIC.json
+    /calculations/{calculationId}:
+      uriParameters:
+        calculationId:
+          type: string
+      get:
+        description: Get calculation
+>>>>>>> MTDSA-699-liability
         responses:
           200:
             body:
               application/json:
+<<<<<<< HEAD
                 schema: SelfEmployments
                 example: !include examples/self-employment/SelfEmployments.json
       /{businessId}:
@@ -349,3 +382,7 @@ schemas:
                     application/json:
                       schema: FurnishedHolidayLettingAnnualSummary
                       example: !include ./examples/furnished-holiday-lettings/AnnualSummary.json
+=======
+                schema: Calculation
+                example: !include examples/obligation/Calculation.json
+>>>>>>> MTDSA-699-liability
