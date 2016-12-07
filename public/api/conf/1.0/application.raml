@@ -32,6 +32,7 @@ schemas:
   - FurnishedHolidayLettingPeriods: !include schemas/furnished-holiday-letting/Periods.json
   - FurnishedHolidayLettingAnnualSummary: !include schemas/furnished-holiday-letting/AnnualSummary.json
   - Calculation: !include schemas/obligation/Calculation.json
+  - Obligations: !include schemas/obligation/Obligations.json
 
 /self-assessment:
   /ni/{nino}:
@@ -41,6 +42,19 @@ schemas:
         type: string
         required: true
     /obligations:
+      get:
+        description: Get obligations
+        responses:
+          200:
+            body:
+              application/json:
+                schema: Obligations
+                example: !include examples/obligation/Obligations.json
+          400:
+            body:
+              application/json:
+                schema: Error
+                example: !include examples/obligation/errors/GENERIC.json
       post:
         description: Create oblications
         queryParameters:
