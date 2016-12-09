@@ -1,0 +1,10 @@
+{
+  "code": "BUSINESS_ERROR",
+  "message": "Business validation error",
+  "errors": [
+    {
+      "code": "ALREADY_EXISTS",
+      "message": "Furnished Holiday Lettings business already exists"
+    }
+  ]
+}

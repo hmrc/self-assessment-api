@@ -1,0 +1,9 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "UK Properties businesses",
+  "type": "array",
+  "items": {
+    "$ref": "UKProperty.json"
+  },
+  "additionalProperties": false
+}

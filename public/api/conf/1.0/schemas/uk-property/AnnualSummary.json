@@ -15,6 +15,15 @@
       "type": "number",
       "minimum": 0
 
+    },
+    "privateUseAdjustment": {
+        "title": "Private use adjustment",
+        "type": "number",
+        "minimum": 0
+    },
+    "balancingCharge": {
+        "type": "number",
+        "minimum": 0
     }
   },
   "required": [
