@@ -2,5 +2,21 @@
     "$schema": "http://json-schema.org/draft-04/schema#",
     "title": "Obligation",
     "type": "object",
+    "properties": {
+      "start": {
+        "title": "Start date",
+        "type": "string",
+        "format": "date"
+      },
+      "end": {
+        "title": "End date",
+        "type": "string",
+        "format": "date"
+      }
+    },
+    "required": [
+      "start",
+      "end"
+    ],
     "additionalProperties": false
 }

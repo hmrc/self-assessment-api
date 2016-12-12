@@ -56,15 +56,8 @@ schemas:
               application/json:
                 schema: Error
                 example: !include examples/obligation/errors/GENERIC.json
-      post:
-        description: Create obligations
-        queryParameters:
-          taxYear:
-            displayName: Tax Year
-            description: The tax year that you want the obligations created for
-            type: string
-            example: 2016-17
-            required: true
+      put:
+        description: Meet obligations
         responses:
           202:
             headers:
