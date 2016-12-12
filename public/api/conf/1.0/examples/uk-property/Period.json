@@ -16,7 +16,5 @@
     "professionalFees": 100.25,
     "costOfServices": 100.25,
     "other": 100.25
-  },
-  "privateUseAdjustment": 100.25,
-  "balancingCharge": 100.25
+  }
 }

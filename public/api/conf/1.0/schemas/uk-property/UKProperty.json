@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "UK Properties Business",
+  "type": "object",
+  "properties": {
+    "id": {
+      "title": "ID",
+      "description": "Unique identifier",
+      "type": "string"
+    },
+    "propertiesType": {
+      "title": "Properties business type",
+      "description": "FHL if it's a furnished-holiday-letting business, otherwise OTHER",
+      "type": "string",
+      "enum": [
+        "FHL",
+        "OTHER"
+      ]
+    },
+    "accountingPeriod": {
+      "$ref": "../AccountingPeriod.json"
+    },
+    "accountingType": {
+      "title": "Accounting type",
+      "description": "CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUAL.",
+      "type": "string",
+      "enum": [
+        "CASH",
+        "ACCRUAL"
+      ]
+    }
+  },
+  "required": [
+    "propertiesType",
+    "accountingType"
+  ],
+  "additionalProperties": false
+}

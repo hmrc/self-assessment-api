@@ -8,5 +8,7 @@
     "otherCapitalAllowance": 100.25,
     "wearAndTearAllowance": 100.25
   },
-  "rentARoomRelief": 100.25
+  "rentARoomRelief": 100.25,
+  "privateUseAdjustment": 100.25,
+  "balancingCharge": 100.25
 }
