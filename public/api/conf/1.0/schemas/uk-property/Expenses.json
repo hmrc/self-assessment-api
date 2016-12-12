@@ -7,37 +7,37 @@
       "title": "Premises running costs",
       "description": "Rent, rates, insurance, ground rents etc",
       "type": "number",
-      "minimun": 0
+      "minimum": 0
     },
     "repairsAndMaintenance": {
       "title": "Repairs and maintenance",
       "description": "Property repairs and maintenace",
       "type": "number",
-      "minimun": 0
+      "minimum": 0
     },
     "financialCosts": {
       "title": "Financial costs",
-      "description": "Loan interest and other finacial costs",
+      "description": "Loan interest and other financial costs",
       "type": "number",
-      "minimun": 0
+      "minimum": 0
     },
     "professionalFees": {
       "title": "Professional fees",
       "description": "Legal, management and other professional fees",
       "type": "number",
-      "minimun": 0
+      "minimum": 0
     },
     "costOfServices": {
       "title": "Cost of services",
       "description": "Cost of services provided, including wages",
       "type": "number",
-      "minimun": 0
+      "minimum": 0
     },
     "other": {
       "title": "Other",
       "description": "Other allowable property expenses",
       "type": "number",
-      "minimun": 0
+      "minimum": 0
     }
   },
   "additionalProperties": false
