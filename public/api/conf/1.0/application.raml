@@ -28,9 +28,6 @@ schemas:
   - UkPropertyPeriod: !include schemas/uk-property/Period.json
   - UkPropertyPeriods: !include schemas/uk-property/Periods.json
   - UkPropertyAnnualSummary: !include schemas/uk-property/AnnualSummary.json
-  - FurnishedHolidayLettingPeriod: !include schemas/furnished-holiday-letting/Period.json
-  - FurnishedHolidayLettingPeriods: !include schemas/furnished-holiday-letting/Periods.json
-  - FurnishedHolidayLettingAnnualSummary: !include schemas/furnished-holiday-letting/AnnualSummary.json
   - Calculation: !include schemas/obligation/Calculation.json
   - Obligations: !include schemas/obligation/Obligations.json
 
@@ -177,7 +174,7 @@ schemas:
                       schema: SelfEmploymentPeriod
                       example: !include examples/self-employment/Period.json
             put:
-              description: Update period
+              description: Amend period
               body:
                 application/json:
                   schema: SelfEmploymentPeriodUpdate
@@ -216,14 +213,20 @@ schemas:
                   application/json:
                     schema: SelfEmploymentAnnualSummary
                     example: !include ./examples/self-employment/AnnualSummary.json
-    /properties/uk:
+    /uk-properties:
       displayName: UK Property Business
       post:
         description: Register UK property business
         responses:
           204:
-      /other:
-        displayName: Other
+      /{propertyType}:
+        uriParameters:
+          propertyType:
+            displayName: Property type
+            type: string
+            enum:
+              - furnished-holiday-lettings
+              - other
         /periods:
           displayName: Periods
           post:
@@ -264,7 +267,7 @@ schemas:
                       schema: UkPropertyPeriod
                       example: !include examples/uk-property/Period.json
             put:
-              description: Update period
+              description: Amend period
               body:
                 application/json:
                   schema: UkPropertyPeriod
@@ -304,85 +307,3 @@ schemas:
                     application/json:
                       schema: UkPropertyAnnualSummary
                       example: !include ./examples/uk-property/AnnualSummary.json
-      /furnished-holiday-lettings:
-        displayName: Furnish Holiday Lettings
-        /periods:
-          post:
-            description: Create period
-            body:
-              application/json:
-                schema: FurnishedHolidayLettingPeriod
-                example: !include examples/furnished-holiday-lettings/Period.json
-            responses:
-              201:
-                headers:
-                  Location:
-                    example: /self-assessment/ni/{nino}/furnished-holiday-lettings/{location}/periods/{periodId}
-              400:
-                body:
-                  application/json:
-                    schema: Error
-                    example: !include examples/furnished-holiday-lettings/errors/Period_INVALID_REQUEST.json
-          get:
-            description: List periods
-            responses:
-              200:
-                body:
-                  application/json:
-                    schema: FurnishedHolidayLettingPeriods
-                    example: !include examples/furnished-holiday-lettings/Periods.json
-          /{periodId}:
-            displayName: Period
-            uriParameters:
-              periodId:
-                displayName: Period ID
-                type: string
-            get:
-              description: Get period
-              responses:
-                200:
-                  body:
-                    application/json:
-                      schema: FurnishedHolidayLettingPeriod
-                      example: !include examples/furnished-holiday-lettings/Period.json
-            put:
-              description: Update period
-              body:
-                application/json:
-                  schema: FurnishedHolidayLettingPeriod
-                  example: !include examples/furnished-holiday-lettings/Period.json
-              responses:
-                204:
-                400:
-                  body:
-                    application/json:
-                      schema: Error
-                      example: !include examples/furnished-holiday-lettings/errors/Period_INVALID_REQUEST.json
-        /{taxYear}:
-            displayName: Annual Summary
-            uriParameters:
-              taxYear:
-                type: string
-                displayName: Tax Year
-                example: 2016-17
-            put:
-              description: Update annual summary
-              body:
-                application/json:
-                  schema: FurnishedHolidayLettingAnnualSummary
-                  example: !include ./examples/furnished-holiday-lettings/AnnualSummary.json
-              responses:
-                204:
-                400:
-                  body:
-                    application/json:
-                      schema: Error
-                      example: !include examples/furnished-holiday-lettings/errors/AnnualSummary_INVALID_REQUEST.json
-            get:
-              description: Get annual summary
-              responses:
-                200:
-                  body:
-                    application/json:
-                      schema: FurnishedHolidayLettingAnnualSummary
-                      example: !include ./examples/furnished-holiday-lettings/AnnualSummary.json
