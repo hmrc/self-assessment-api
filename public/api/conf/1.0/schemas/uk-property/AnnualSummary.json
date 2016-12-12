@@ -18,10 +18,13 @@
     },
     "privateUseAdjustment": {
         "title": "Private use adjustment",
+        "description": "Private use adjustment",
         "type": "number",
         "minimum": 0
     },
     "balancingCharge": {
+        "title": "Balancing Charge",
+        "description": "Balancing charge on sale or cessation of business use",
         "type": "number",
         "minimum": 0
     }
