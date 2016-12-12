@@ -29,7 +29,7 @@ schemas:
   UkPropertyPeriod: !include schemas/uk-property/Period.json
   UkPropertyPeriods: !include schemas/uk-property/Periods.json
   UkPropertyAnnualSummary: !include schemas/uk-property/AnnualSummary.json
-  Calculation: !include schemas/obligation/Calculation.json
+  Liability: !include schemas/liability/Liability.json
   Obligations: !include schemas/obligation/Obligations.json
 
 /self-assessment:
@@ -49,37 +49,39 @@ schemas:
               application/json:
                 schema: Obligations
                 example: !include examples/obligation/Obligations.json
-          400:
-            body:
-              application/json:
-                schema: Error
-                example: !include examples/obligation/errors/GENERIC.json
-      put:
-        description: Meet obligations
+    /liabilities:
+      displayName: Liability
+      post:
+        description: Create liability
         responses:
           202:
             headers:
               Location:
-                example: /self-assessment/ni/{nino}/calculations/{calculationId}; rel="calculation"
-    /calculations/{calculationId}:
-      displayName: Calculation
-      uriParameters:
-        calculationId:
-          type: string
-          displayName: Calculation ID
-      get:
-        description: Get calculation
-        responses:
-          200:
-            body:
-              application/json:
-                schema: Calculation
-                example: !include examples/obligation/Calculation.json
+                example: /self-assessment/ni/{nino}/liabilities/{liabilityId}
           400:
             body:
               application/json:
                 schema: Error
-                example: !include examples/obligation/errors/GENERIC.json
+                example: !include examples/liability/errors/GENERIC.json
+      /{liabilityId}:
+        displayName: Liability
+        uriParameters:
+          liabilityId:
+            type: string
+            displayName: Liability ID
+        get:
+          description: Get calculation
+          responses:
+            200:
+              body:
+                application/json:
+                  schema: Liability
+                  example: !include examples/liability/Liability.json
+            400:
+              body:
+                application/json:
+                  schema: Error
+                  example: !include examples/liability/errors/GENERIC.json
 
     /self-employments:
       displayName: Self Employment Businesses
