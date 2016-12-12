@@ -99,6 +99,14 @@ schemas:
               application/json:
                 schema: Error
                 example: !include examples/errors/TOO_MANY_SOURCES.json
+          409:
+            headers:
+              Location:
+                example: /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}
+            body:
+              application/json:
+                schema: Error
+                example: !include examples/errors/CONFLICT.json
       get:
         description: List self-employment businesses
         responses:
@@ -107,11 +115,11 @@ schemas:
               application/json:
                 schema: SelfEmployments
                 example: !include examples/self-employment/SelfEmployments.json
-      /{businessId}:
+      /{selfEmploymentId}:
         displayName: Self Employment Business
         uriParameters:
-          businessId:
-            displayName: Business ID
+          selfEmploymentId:
+            displayName: Self-employment ID
             description: An identifier for the self-employmment business, unique to the customer
             type: string
         get:
@@ -217,7 +225,7 @@ schemas:
     /uk-properties:
       displayName: UK Property Business
       post:
-        description: Register UK property business
+        description: Register a UK property business
         body:
           application/json:
             schema: UkProperty
@@ -227,6 +235,19 @@ schemas:
             headers:
               Location:
                 example: /self-assessment/ni/{nino}/uk-properties
+          400:
+            body:
+              application/json:
+                schema: Error
+                example: !include examples/errors/INVALID_ACCOUNTING_PERIOD.json
+          409:
+            headers:
+              Location:
+                example: /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}
+            body:
+              application/json:
+                schema: Error
+                example: !include examples/errors/CONFLICT.json
       get:
         description: Get UK property business
         responses:
