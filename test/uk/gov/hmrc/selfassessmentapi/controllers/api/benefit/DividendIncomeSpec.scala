@@ -34,9 +34,9 @@ class DividendIncomeSpec extends JsonSpec {
   "validate" should {
     "reject amounts with more than 2 decimal values" in {
       Seq(BigDecimal(1000.123), BigDecimal(1000.1234), BigDecimal(1000.12345), BigDecimal(1000.123456789)).foreach { testAmount =>
-        assertValidationError[DividendIncome](
+        assertValidationErrorWithCode(
           DividendIncome(`type` = FromUKCompanies, amount = testAmount),
-          Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected invalid dividend with more than 2 decimal places")
+          "/amount", INVALID_MONETARY_AMOUNT)
       }
     }
 
@@ -48,14 +48,14 @@ class DividendIncomeSpec extends JsonSpec {
           |}
         """.stripMargin)
 
-      assertValidationError[DividendIncome](
-        json, Map("/type" -> NO_VALUE_FOUND), "should fail with invalid type")
+      assertValidationErrorsWithCode[DividendIncome](
+        json, Map("/type" -> INVALID_VALUE))
     }
 
     "reject negative amount" in {
       val seIncome = DividendIncome(`type` = FromUKCompanies, amount = BigDecimal(-1000.12))
-      assertValidationError[DividendIncome](
-        seIncome, Map("/amount" -> INVALID_MONETARY_AMOUNT), "should fail with INVALID_MONETARY_AMOUNT error")
+      assertValidationErrorWithCode[DividendIncome](
+        seIncome, "/amount", INVALID_MONETARY_AMOUNT)
     }
   }
 }

@@ -16,13 +16,12 @@
 
 package uk.gov.hmrc.selfassessmentapi.services.live.calculation
 
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi._
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
-import uk.gov.hmrc.selfassessmentapi.controllers.api.SourceTypes._
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{ErrorCode, LiabilityId, SelfAssessment, SourceType, SourceTypes, TaxYear, _}
+import uk.gov.hmrc.selfassessmentapi.controllers.api.{ErrorCode, LiabilityId, SelfAssessment, TaxYear, _}
 import uk.gov.hmrc.selfassessmentapi.controllers.{api, LiabilityError => _, LiabilityErrors => _}
-import uk.gov.hmrc.selfassessmentapi.repositories.domain.{Benefits, Liability, SelfEmployment, _}
+import uk.gov.hmrc.selfassessmentapi.repositories.domain.{Liability, _}
 import uk.gov.hmrc.selfassessmentapi.repositories.live._
 import uk.gov.hmrc.selfassessmentapi.services.live.TaxYearPropertiesService
 
@@ -39,9 +38,9 @@ class LiabilityService(selfEmploymentRepo: SelfEmploymentMongoRepository,
                        dividendsRepo: DividendMongoRepository,
                        featureSwitch: FeatureSwitch) {
 
-  def find(saUtr: SaUtr, taxYear: TaxYear): Future[Option[Either[controllers.LiabilityErrors, api.Liability]]] = {
+  def find(nino: Nino, taxYear: TaxYear): Future[Option[Either[controllers.LiabilityErrors, api.Liability]]] = {
     liabilityRepo
-      .findBy(saUtr, taxYear)
+      .findBy(nino, taxYear)
       .map(_.map {
         case calculationError: LiabilityErrors =>
           Left(
@@ -53,16 +52,16 @@ class LiabilityService(selfEmploymentRepo: SelfEmploymentMongoRepository,
       })
   }
 
-  def calculate(saUtr: SaUtr, taxYear: TaxYear): Future[Either[LiabilityCalculationErrorId, LiabilityId]] = {
+  def calculate(nino: Nino, taxYear: TaxYear): Future[Either[LiabilityCalculationErrorId, LiabilityId]] = {
     for {
-      selfEmployments <- if (isSourceEnabled(SelfEmployments)) selfEmploymentRepo.findAll(saUtr, taxYear) else Future.successful(Seq[SelfEmployment]())
-      benefits <- if (isSourceEnabled(SourceTypes.Benefits)) benefitsRepo.findAll(saUtr, taxYear) else Future.successful(Seq[Benefits]())
-      ukProperties <- if (isSourceEnabled(SourceTypes.UKProperties)) ukPropertiesRepo.findAll(saUtr, taxYear) else Future.successful(Seq[UKProperties]())
-      dividends <- if (isSourceEnabled(SourceTypes.Dividends)) dividendsRepo.findAll(saUtr, taxYear) else Future.successful(Seq[Dividend]())
-      banks <- if (isSourceEnabled(SourceTypes.Banks)) savingsRepo.findAll(saUtr, taxYear) else Future.successful(Seq[Bank]())
-      furnishedHolidayLettings <- if (isSourceEnabled(SourceTypes.FurnishedHolidayLettings)) furnishedHolidayLettingsRepo.findAll(saUtr, taxYear) else Future.successful(Seq[FurnishedHolidayLettings]())
-      taxYearProperties <- taxYearPropertiesService.findTaxYearProperties(saUtr, taxYear)
-      liability = Liability.create(saUtr, taxYear, SelfAssessment(selfEmployments = selfEmployments,
+      selfEmployments <- selfEmploymentRepo.findAll(nino, taxYear)
+      benefits <- benefitsRepo.findAll(nino, taxYear)
+      ukProperties <- ukPropertiesRepo.findAll(nino, taxYear)
+      dividends <- dividendsRepo.findAll(nino, taxYear)
+      banks <- savingsRepo.findAll(nino, taxYear)
+      furnishedHolidayLettings <- furnishedHolidayLettingsRepo.findAll(nino, taxYear)
+      taxYearProperties <- taxYearPropertiesService.findTaxYearProperties(nino, taxYear)
+      liability = Liability.create(nino, taxYear, SelfAssessment(selfEmployments = selfEmployments,
         ukProperties = ukProperties, benefits = benefits, furnishedHolidayLettings = furnishedHolidayLettings,
         dividends = dividends, banks = banks, taxYearProperties = taxYearProperties))
       liability <- liabilityRepo.save(LiabilityOrError(liability))
@@ -73,7 +72,6 @@ class LiabilityService(selfEmploymentRepo: SelfEmploymentMongoRepository,
       }
   }
 
-  private[calculation] def isSourceEnabled(sourceType: SourceType) = featureSwitch.isEnabled(sourceType)
 
 }
 

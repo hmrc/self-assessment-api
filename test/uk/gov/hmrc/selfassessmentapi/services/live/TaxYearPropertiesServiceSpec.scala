@@ -21,7 +21,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.config.FeatureSwitch
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{TaxYear, TaxYearProperties}
@@ -31,6 +31,7 @@ import uk.gov.hmrc.selfassessmentapi.controllers.api.childbenefit.ChildBenefits
 import uk.gov.hmrc.selfassessmentapi.controllers.api.pensioncontribution.PensionContributions
 import uk.gov.hmrc.selfassessmentapi.controllers.api.studentsloan.StudentLoans
 import uk.gov.hmrc.selfassessmentapi.controllers.api.taxrefundedorsetoff.TaxRefundedOrSetOffs
+import uk.gov.hmrc.selfassessmentapi.controllers.util.NinoGenerator
 import uk.gov.hmrc.selfassessmentapi.repositories.SelfAssessmentMongoRepository
 
 import scala.concurrent.Future
@@ -58,9 +59,9 @@ class TaxYearPropertiesServiceSpec extends UnitSpec with MockitoSugar with Befor
       when(mockFeatureSwitch.isEnabled(TaxRefundedOrSetOffs)).thenReturn(false)
       when(mockFeatureSwitch.isEnabled(ChildBenefits)).thenReturn(false)
 
-      when(mockSaRepository.findTaxYearProperties(any[SaUtr], any[TaxYear])).thenReturn(Future.successful(Some(taxYearProperties)))
+      when(mockSaRepository.findTaxYearProperties(any[Nino], any[TaxYear])).thenReturn(Future.successful(Some(taxYearProperties)))
 
-      val actualProperties = await(service.findTaxYearProperties(generateSaUtr(), taxYear))
+      val actualProperties = await(service.findTaxYearProperties(NinoGenerator().nextNino(), taxYear))
 
       actualProperties.flatMap(_.studentLoan) shouldBe TaxYearProperties.example().studentLoan
       actualProperties.flatMap(_.blindPerson) shouldBe TaxYearProperties.example().blindPerson
@@ -71,7 +72,7 @@ class TaxYearPropertiesServiceSpec extends UnitSpec with MockitoSugar with Befor
 
   "TaxYearPropertiesService.updateTaxYearProperties" should {
     "update the tax year properties when the provided TaxYearProperties object contains no disabled features" in {
-      val saUtr = generateSaUtr()
+      val nino = NinoGenerator().nextNino()
 
       when(mockFeatureSwitch.isEnabled(PensionContributions)).thenReturn(true)
       when(mockFeatureSwitch.isEnabled(CharitableGivings)).thenReturn(true)
@@ -82,9 +83,9 @@ class TaxYearPropertiesServiceSpec extends UnitSpec with MockitoSugar with Befor
 
       val onlySwitchedOnProperties = taxYearProperties.copy(childBenefit = None).copy(taxRefundedOrSetOff = None)
 
-      await(service.updateTaxYearProperties(saUtr, taxYear, onlySwitchedOnProperties))
+      await(service.updateTaxYearProperties(nino, taxYear, onlySwitchedOnProperties))
 
-      verify(mockSaRepository, times(1)).updateTaxYearProperties(saUtr, taxYear, onlySwitchedOnProperties)
+      verify(mockSaRepository, times(1)).updateTaxYearProperties(nino, taxYear, onlySwitchedOnProperties)
     }
 
     "not update the tax year properties when the provided TaxYearProperties object contains disabled features" in {
@@ -95,9 +96,9 @@ class TaxYearPropertiesServiceSpec extends UnitSpec with MockitoSugar with Befor
       when(mockFeatureSwitch.isEnabled(TaxRefundedOrSetOffs)).thenReturn(false)
       when(mockFeatureSwitch.isEnabled(ChildBenefits)).thenReturn(false)
 
-      await(service.updateTaxYearProperties(generateSaUtr(), taxYear, taxYearProperties)) shouldBe false
+      await(service.updateTaxYearProperties(NinoGenerator().nextNino(), taxYear, taxYearProperties)) shouldBe false
 
-      verify(mockSaRepository, times(0)).updateTaxYearProperties(any[SaUtr], any[TaxYear], any[TaxYearProperties])
+      verify(mockSaRepository, times(0)).updateTaxYearProperties(any[Nino], any[TaxYear], any[TaxYearProperties])
     }
   }
 }

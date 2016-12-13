@@ -10,7 +10,7 @@ trait UrlInterpolation {
   }
 
   def interpolated(path: String)(implicit urlPathVariables: mutable.Map[String, String]): String = {
-    interpolate(interpolate(interpolate(path, "sourceId"), "summaryId"), "liabilityId")
+    interpolate(interpolate(path, "sourceLocation"), "periodLocation")
   }
 
   private def interpolate(path: String, pathVariable: String)(implicit pathVariablesValues: mutable.Map[String, String]): String = {

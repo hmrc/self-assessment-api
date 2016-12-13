@@ -31,7 +31,6 @@ object AppContext extends ServicesConfig {
   lazy val desUrl: String = baseUrl("des")
   lazy val registrationEnabled: Boolean = current.configuration.getBoolean(s"$env.microservice.services.service-locator.enabled").getOrElse(true)
   lazy val featureSwitch = current.configuration.getConfig(s"$env.feature-switch")
-  lazy val sourceLimits = current.configuration.getConfig(s"$env.source-limits")
   lazy val updateTaxYearPropertiesEnabled: Boolean = current.configuration.getBoolean(s"update-tax-year-properties.enabled").getOrElse(true)
   lazy val authEnabled: Boolean = current.configuration.getBoolean(s"auth.enabled").getOrElse(true)
   lazy val auditEnabled: Boolean = current.configuration.getBoolean(s"audit.enabled").getOrElse(true)

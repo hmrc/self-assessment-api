@@ -19,12 +19,13 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json.{Format, Json}
 import reactivemongo.bson.{BSONDocument, BSONDouble, BSONObjectID, BSONString}
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.selfassessmentapi.controllers.api.ukproperty.ExpenseType.ExpenseType
 import uk.gov.hmrc.selfassessmentapi.controllers.api.ukproperty.IncomeType.IncomeType
 import uk.gov.hmrc.selfassessmentapi.controllers.api.ukproperty._
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
+import uk.gov.hmrc.selfassessmentapi.resources.models.properties.{Adjustments, Allowances}
 
 case class UKPropertiesIncomeSummary(summaryId: SummaryId,
                                      `type`: IncomeType,
@@ -170,7 +171,7 @@ object UKPropertiesTaxPaidSummary {
 
 case class UKProperties(id: BSONObjectID,
                         sourceId: SourceId,
-                        saUtr: SaUtr,
+                        nino: Nino,
                         taxYear: TaxYear,
                         lastModifiedDateTime: DateTime = DateTime.now(DateTimeZone.UTC),
                         createdDateTime: DateTime = DateTime.now(DateTimeZone.UTC),
@@ -214,12 +215,12 @@ object UKProperties {
     Format(Json.reads[UKProperties], Json.writes[UKProperties])
   })
 
-  def create(saUtr: SaUtr, taxYear: TaxYear, ukp: UKProperty): UKProperties = {
+  def create(nino: Nino, taxYear: TaxYear, ukp: UKProperty): UKProperties = {
     val id = BSONObjectID.generate
     UKProperties(
       id = id,
       sourceId = id.stringify,
-      saUtr = saUtr,
+      nino = nino,
       taxYear = taxYear,
       rentARoomRelief = ukp.rentARoomRelief,
       allowances = ukp.allowances,

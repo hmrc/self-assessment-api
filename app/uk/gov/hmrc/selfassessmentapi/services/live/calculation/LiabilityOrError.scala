@@ -25,7 +25,7 @@ object LiabilityOrError {
     liability.taxDeducted.ukTaxesPaidForEmployments match {
       case taxesPaidForEmployments if allTaxPaidAreNegative(taxesPaidForEmployments) =>
         LiabilityErrors.create(
-          liability.saUtr,
+          liability.nino,
           liability.taxYear,
           errors = Seq(
             LiabilityError(INVALID_EMPLOYMENT_TAX_PAID,

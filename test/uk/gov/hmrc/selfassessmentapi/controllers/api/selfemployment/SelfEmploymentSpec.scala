@@ -17,9 +17,9 @@
 package uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment
 
 import org.joda.time.LocalDate
-import uk.gov.hmrc.selfassessmentapi.controllers.api.ErrorCode
-import ErrorCode._
-import uk.gov.hmrc.selfassessmentapi.controllers.api.JsonSpec
+import uk.gov.hmrc.selfassessmentapi.resources.models.ErrorCode._
+import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
+import uk.gov.hmrc.selfassessmentapi.resources.models.selfemployment.{Adjustments, Allowances}
 
 class SelfEmploymentSpec extends JsonSpec {
 
@@ -38,9 +38,9 @@ class SelfEmploymentSpec extends JsonSpec {
         commencementDate = new LocalDate(2016, 4, 22),
         allowances = Some(Allowances(annualInvestmentAllowance = Some(BigDecimal(-10)))))
 
-      assertValidationError[SelfEmployment](
+      assertValidationErrorWithCode(
         se,
-        Map("/allowances/annualInvestmentAllowance" -> INVALID_MONETARY_AMOUNT), "Expected valid self-employment")
+        "/allowances/annualInvestmentAllowance", INVALID_MONETARY_AMOUNT)
     }
 
     "reject invalid adjustments" in {
@@ -48,9 +48,9 @@ class SelfEmploymentSpec extends JsonSpec {
         commencementDate = new LocalDate(2016, 4, 22),
         adjustments = Some(Adjustments(lossBroughtForward = Some(BigDecimal(-10)))))
 
-      assertValidationError[SelfEmployment](
+      assertValidationErrorWithCode(
         se,
-        Map("/adjustments/lossBroughtForward" -> INVALID_MONETARY_AMOUNT), "Expected valid self-employment")
+        "/adjustments/lossBroughtForward", INVALID_MONETARY_AMOUNT)
     }
 
   }

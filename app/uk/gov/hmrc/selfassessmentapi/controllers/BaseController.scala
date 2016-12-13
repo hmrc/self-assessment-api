@@ -27,7 +27,7 @@ import uk.gov.hmrc.selfassessmentapi.controllers.api.ErrorCode._
 import scala.concurrent.Future
 
 trait BaseController
-  extends uk.gov.hmrc.play.microservice.controller.BaseController with HalSupport {
+  extends uk.gov.hmrc.play.microservice.controller.BaseController {
 
   val context: String
 

@@ -16,40 +16,61 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers.api
 
+import play.api.data.validation.ValidationError
 import play.api.libs.json._
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.selfassessmentapi.controllers.api.ErrorCode._
+import uk.gov.hmrc.selfassessmentapi.controllers.api.ErrorCode.ErrorCode
 
 trait JsonSpec extends UnitSpec {
 
-  def roundTripJson[T](json: T)(implicit format: Format[T]) = {
+  def roundTripJson[T](json: T)(implicit format: Format[T]): Unit = {
     val write = Json.toJson(json)
     val read = write.validate[T]
     read.asOpt shouldEqual Some(json)
   }
 
+  def assertJsonIs[T](input: T, expectedOutput: T)(implicit format: Format[T]): Unit = {
+    val write = Json.toJson(input)
+    val read = write.validate[T]
+
+    read.asOpt shouldEqual Some(expectedOutput)
+  }
+
   def assertValidationPasses[T](o: T)(implicit format: Format[T]): Unit = {
-    val json = Json.toJson(o)(format)
-    json.validate[T](format).fold(
+    val json = Json.toJson(o)
+    json.validate[T].fold(
       invalid => fail(invalid.seq.mkString(", ")),
       valid =>  valid shouldEqual o
     )
   }
 
-  def assertValidationError[T](o: T, expectedErrors: Map[String, ErrorCode])(implicit format: Format[T]): Unit = {
-    assertValidationError(o, expectedErrors, s"Validation errors expected for fields: ${expectedErrors.toSeq}, but no validation errors were returned")
+  def assertValidationErrorWithCode[T : Format](obj: T, path: String, error: ErrorCode): Unit =
+    assertValidationErrorsWithCode[T](Json.toJson(obj), Map(path -> error))
+
+  def assertValidationErrorWithMessage[T : Format](obj: T, path: String, message: String): Unit =
+    assertValidationErrorsWithMessage[T](Json.toJson(obj), Map(path -> message))
+
+  def assertValidationErrorsWithCode[T : Format](value: JsValue, pathAndCode: Map[String, ErrorCode]): Unit = {
+    val expectedError = pathAndCode.map { case (path, code) => path -> Seq(ValidationError("", Seq(code))) }.toSeq
+
+    value.validate[T].asEither match {
+      case Left(errs) => errs.map {
+        case (p, e) => p.toString -> e.map(x => ValidationError("", x.args))
+      } should contain theSameElementsAs expectedError
+      case Right(_) =>
+        fail(s"Provided object passed json validation. Was expected to fail for the paths: ${expectedError}")
+    }
   }
 
-  def assertValidationError[T](o: T, expectedErrors: Map[String, ErrorCode], failureMessage: String)(implicit format: Format[T]): Unit = {
-    val json = Json.toJson(o)(format)
-    assertValidationError[T](json, expectedErrors, failureMessage)
-  }
+  def assertValidationErrorsWithMessage[T : Format](value: JsValue, pathAndMessage: Map[String, String]): Unit = {
+    val expectedError = pathAndMessage.map { case (path, msg) => path -> Seq(ValidationError(msg)) }
 
-  def assertValidationError[T](json: JsValue, expectedErrors: Map[String, ErrorCode], failureMessage: String)(implicit format: Format[T]): Unit = {
-    json.validate[T](format).fold(
-      invalid =>  invalid.flatMap(x => x._2.map(error => x._1.toString -> error.args.head)) should contain theSameElementsAs expectedErrors,
-      valid => fail(failureMessage)
-    )
+    value.validate[T].asEither match {
+      case Left(errs) => errs.map {
+        case (p, e) => p.toString -> e.map(x => ValidationError(x.message))
+      } should contain theSameElementsAs expectedError
+      case Right(_) =>
+        fail(s"Provided object passed json validation. Was expected to fail for the paths: ${expectedError.keys}")
+    }
   }
-
 }

@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json.{Format, Json}
 import reactivemongo.bson.{BSONDocument, BSONDouble, BSONObjectID, BSONString}
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.selfassessmentapi.controllers.api.benefit.Income
 import uk.gov.hmrc.selfassessmentapi.controllers.api.benefit.BenefitType.BenefitType
@@ -64,7 +64,7 @@ object BenefitIncomeSummary {
 
 case class Benefits(id: BSONObjectID,
                     sourceId: SourceId,
-                    saUtr: SaUtr,
+                    nino: Nino,
                     taxYear: TaxYear,
                     lastModifiedDateTime: DateTime,
                     createdDateTime: DateTime,
@@ -83,16 +83,15 @@ object Benefits {
     Format(Json.reads[Benefits], Json.writes[Benefits])
   })
 
-  def create(saUtr: SaUtr, taxYear: TaxYear, se: benefit.Benefit): Benefits = {
+  def create(nino: Nino, taxYear: TaxYear, se: benefit.Benefit): Benefits = {
     val id = BSONObjectID.generate
     val now = DateTime.now(DateTimeZone.UTC)
     Benefits(
       id = id,
       sourceId = id.stringify,
-      saUtr = saUtr,
+      nino = nino,
       taxYear = taxYear,
       lastModifiedDateTime = now,
-      createdDateTime = now
-      )
+      createdDateTime = now)
   }
 }

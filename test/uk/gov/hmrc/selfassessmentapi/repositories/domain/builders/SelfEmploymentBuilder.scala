@@ -21,7 +21,9 @@ import uk.gov.hmrc.selfassessmentapi.TestUtils._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment.BalancingChargeType.BalancingChargeType
 import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment.IncomeType.IncomeType
 import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment.{SelfEmployment => _, _}
+import uk.gov.hmrc.selfassessmentapi.controllers.util.NinoGenerator
 import uk.gov.hmrc.selfassessmentapi.repositories.domain._
+import uk.gov.hmrc.selfassessmentapi.resources.models.selfemployment.{Adjustments, Allowances}
 
 case class SelfEmploymentBuilder(objectID: BSONObjectID = BSONObjectID.generate) {
   def create() = selfEmployment
@@ -29,7 +31,7 @@ case class SelfEmploymentBuilder(objectID: BSONObjectID = BSONObjectID.generate)
   private var selfEmployment: SelfEmployment =
     SelfEmployment(id = objectID,
                    sourceId = objectID.stringify,
-                   generateSaUtr(),
+                   NinoGenerator().nextNino(),
                    taxYear,
                    now,
                    now,
@@ -45,7 +47,7 @@ case class SelfEmploymentBuilder(objectID: BSONObjectID = BSONObjectID.generate)
                      annualInvestmentAllowance: BigDecimal) = {
     selfEmployment = selfEmployment.copy(
       allowances = selfEmployment.allowances.map(
-        _.copy(allowancesOnSales = Some(allowancesOnSales),
+        _.copy(allowanceOnSales = Some(allowancesOnSales),
                enhancedCapitalAllowance = Some(enhancedCapitalAllowance),
                businessPremisesRenovationAllowance = Some(businessPremisesRenovationAllowance),
                capitalAllowanceSpecialRatePool = Some(capitalAllowanceSpecialRatePool),

@@ -21,6 +21,7 @@ import uk.gov.hmrc.selfassessmentapi.TestUtils._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.ExpenseType._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.PropertyLocationType
 import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.PropertyLocationType.PropertyLocationType
+import uk.gov.hmrc.selfassessmentapi.controllers.util.NinoGenerator
 import uk.gov.hmrc.selfassessmentapi.repositories.domain._
 
 case class FurnishedHolidayLettingBuilder(capitalAllowance: BigDecimal = 0,
@@ -30,7 +31,7 @@ case class FurnishedHolidayLettingBuilder(capitalAllowance: BigDecimal = 0,
   private val objectID = BSONObjectID.generate
 
   private var furnishedHolidayLetting: FurnishedHolidayLettings =
-    FurnishedHolidayLettings(objectID, objectID.stringify, generateSaUtr(), taxYear, now, now, location, allowances = Some(Allowances(Some(capitalAllowance))))
+    FurnishedHolidayLettings(objectID, objectID.stringify, NinoGenerator().nextNino(), taxYear, now, now, location, allowances = Some(Allowances(Some(capitalAllowance))))
 
   def lossBroughtForward(amount: BigDecimal) = {
     furnishedHolidayLetting = furnishedHolidayLetting.copy(adjustments = Some(Adjustments(lossBroughtForward = Some(amount))))

@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json.{Format, Json}
 import reactivemongo.bson.{BSONDocument, BSONDouble, BSONObjectID, BSONString}
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{TaxYear, _}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.bank.Interest
@@ -53,7 +53,7 @@ object BankInterestSummary {
 
 case class Bank(id: BSONObjectID,
                 sourceId: SourceId,
-                saUtr: SaUtr,
+                nino: Nino,
                 taxYear: TaxYear,
                 lastModifiedDateTime: DateTime,
                 createdDateTime: DateTime,
@@ -72,10 +72,10 @@ object Bank {
     Format(Json.reads[Bank], Json.writes[Bank])
   })
 
-  def create(saUtr: SaUtr, taxYear: TaxYear) = {
+  def create(nino: Nino, taxYear: TaxYear) = {
     val id = BSONObjectID.generate
     val now = DateTime.now(DateTimeZone.UTC)
 
-    Bank(id, id.stringify, saUtr, taxYear, now, now)
+    Bank(id, id.stringify, nino, taxYear, now, now)
   }
 }

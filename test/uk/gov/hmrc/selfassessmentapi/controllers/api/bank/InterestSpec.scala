@@ -33,28 +33,29 @@ class InterestSpec extends JsonSpec {
   "validate" should {
     "reject amounts with more than 2 decimal values" in {
       Seq(BigDecimal(1000.123), BigDecimal(1000.1234), BigDecimal(1000.12345), BigDecimal(1000.123456789)).foreach { testAmount =>
-        assertValidationError[Interest](
+        assertValidationErrorWithCode(
           Interest(`type` = Taxed, amount = testAmount),
-          Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected invalid income with more than 2 decimal places")
+          "/amount", INVALID_MONETARY_AMOUNT)
       }
     }
 
     "reject invalid Income type" in {
       val json = Json.parse(
         """
-          |{ "type": "FOO",
-          |"amount" : 10000.45
+          |{
+          |  "type": "FOO",
+          |  "amount" : 10000.45
           |}
         """.stripMargin)
 
-      assertValidationError[Interest](
-        json, Map("/type" -> NO_VALUE_FOUND), "should fail with invalid type")
+      assertValidationErrorsWithCode[Interest](
+        json, Map("/type" -> INVALID_VALUE))
     }
 
     "reject negative amount" in {
       val seIncome = Interest(`type` = Taxed, amount = BigDecimal(-1000.12))
-      assertValidationError[Interest](
-        seIncome, Map("/amount" -> INVALID_MONETARY_AMOUNT), "should fail with INVALID_MONETARY_AMOUNT error")
+      assertValidationErrorWithCode(
+        seIncome, "/amount", INVALID_MONETARY_AMOUNT)
     }
   }
 }

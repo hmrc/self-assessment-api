@@ -22,8 +22,6 @@ import uk.gov.hmrc.selfassessmentapi.controllers.api.ErrorCode
 import ErrorCode.ErrorCode
 
 
-case object ErrorSaUtrInvalid extends ErrorResponse(400, "SA_UTR_INVALID", "The provided SA UTR is invalid")
-
 case object ErrorNotImplemented extends ErrorResponse(501, "NOT_IMPLEMENTED", "The resource is not implemented")
 
 case object ErrorFeatureSwitched extends ErrorResponse(400, "INVALID_REQUEST", "The provided JSON object contains disabled properties")

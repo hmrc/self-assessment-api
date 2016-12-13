@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain
 import org.joda.time.DateTime
 import play.api.libs.json.{JsValue, Json}
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.selfassessmentapi.controllers._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.ErrorCode._
@@ -39,7 +39,7 @@ object TaxesCalculated {
 
 case class Liability(id: BSONObjectID,
                      liabilityId: LiabilityId,
-                     saUtr: SaUtr,
+                     nino: Nino,
                      taxYear: TaxYear,
                      selfEmploymentIncome: Seq[SelfEmploymentIncome],
                      ukPropertyIncome: Seq[UkPropertyIncome],
@@ -109,14 +109,14 @@ object Liability {
   implicit val taxDeductedFormats = Json.format[TaxDeducted]
   implicit val liabilityFormats = Json.format[Liability]
 
-  def create(saUtr: SaUtr,
+  def create(nino: Nino,
              taxYear: TaxYear,
              selfAssessment: api.SelfAssessment,
              createdDateTime: DateTime = DateTime.now()) = {
     val id = BSONObjectID.generate
     new Liability(id = id,
                   liabilityId = id.stringify,
-                  saUtr = saUtr,
+                  nino = nino,
                   taxYear = taxYear,
                   selfEmploymentIncome = calculations.SelfEmployment.Incomes(selfAssessment),
                   furnishedHolidayLettingsIncome = FurnishedHolidayLetting.Incomes(selfAssessment),
@@ -169,7 +169,7 @@ object LiabilityError {
 
 case class LiabilityErrors(id: BSONObjectID,
                            liabilityCalculationErrorId: LiabilityCalculationErrorId,
-                           override val saUtr: SaUtr,
+                           override val nino: Nino,
                            override val taxYear: TaxYear,
                            errors: Seq[LiabilityError])
     extends LiabilityResult
@@ -179,11 +179,11 @@ object LiabilityErrors {
   implicit val BSONObjectIDFormat = ReactiveMongoFormats.objectIdFormats
   implicit val calculationErrorsFormats = Json.format[LiabilityErrors]
 
-  def create(saUtr: SaUtr, taxYear: TaxYear, errors: Seq[LiabilityError]): LiabilityErrors = {
+  def create(nino: Nino, taxYear: TaxYear, errors: Seq[LiabilityError]): LiabilityErrors = {
     val id = BSONObjectID.generate
     LiabilityErrors(id = id,
                     liabilityCalculationErrorId = id.stringify,
-                    saUtr = saUtr,
+                    nino = nino,
                     taxYear = taxYear,
                     errors = errors)
   }
@@ -191,7 +191,7 @@ object LiabilityErrors {
 
 sealed trait LiabilityResult {
 
-  def saUtr: SaUtr
+  def nino: Nino
 
   def taxYear: TaxYear
 

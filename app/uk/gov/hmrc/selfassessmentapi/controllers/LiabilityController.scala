@@ -17,12 +17,12 @@
 package uk.gov.hmrc.selfassessmentapi.controllers
 
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.controllers.api.TaxYear
 
-trait LiabilityController extends BaseController with Links {
+trait LiabilityController extends BaseController {
 
-  def requestLiability(utr: SaUtr, taxYear: TaxYear): Action[AnyContent]
-  def retrieveLiability(utr: SaUtr, taxYear: TaxYear) : Action[AnyContent]
+  def requestLiability(nino: Nino, taxYear: TaxYear): Action[AnyContent]
+  def retrieveLiability(nino: Nino, taxYear: TaxYear) : Action[AnyContent]
 
 }

@@ -31,16 +31,16 @@ class TaxRefundedOrSetOffSpec extends JsonSpec {
   "validate" should {
     "reject amounts with more than 2 decimal values" in {
       val testAmount = BigDecimal(1000.123)
-      assertValidationError[TaxRefundedOrSetOff](
+      assertValidationErrorWithCode(
         TaxRefundedOrSetOff(amount = testAmount),
-        Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected invalid amount with more than 2 decimal places")
+        "/amount", INVALID_MONETARY_AMOUNT)
     }
 
     "reject negative amount" in {
       val testAmount = BigDecimal(-1000.123)
-      assertValidationError[TaxRefundedOrSetOff](
+      assertValidationErrorWithCode(
         TaxRefundedOrSetOff(amount = testAmount),
-        Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected negative amount")
+        "/amount", INVALID_MONETARY_AMOUNT)
     }
   }
 

@@ -48,19 +48,19 @@ trait TestApplication extends UnitSpec with Matchers with OneServerPerSuite with
     stubFor(post(urlPathEqualTo("/registration")).willReturn(aResponse().withStatus(200)))
   }
 
-  override def beforeAll = {
-    super.beforeAll
+  override def beforeAll() = {
+    super.beforeAll()
     baseBeforeAll()
   }
 
-  override def afterAll = {
-    super.afterAll
+  override def afterAll() = {
+    super.afterAll()
     wireMockServer.stop()
   }
 
 
-  override def beforeEach = {
-    clearMongoCollections
+  override def beforeEach() = {
+    clearMongoCollections()
     WireMock.reset()
   }
 

@@ -143,7 +143,7 @@ object FurnishedHolidayLettingsPrivateUseAdjustmentSummary {
 
 case class FurnishedHolidayLettings(id: BSONObjectID,
                                     sourceId: SourceId,
-                                    saUtr: SaUtr,
+                                    nino: Nino,
                                     taxYear: TaxYear,
                                     lastModifiedDateTime: DateTime,
                                     createdDateTime: DateTime,
@@ -176,13 +176,13 @@ object FurnishedHolidayLettings {
     Format(Json.reads[FurnishedHolidayLettings], Json.writes[FurnishedHolidayLettings])
   })
 
-  def create(saUtr: SaUtr, taxYear: TaxYear, fhl: FurnishedHolidayLetting): FurnishedHolidayLettings = {
+  def create(nino: Nino, taxYear: TaxYear, fhl: FurnishedHolidayLetting): FurnishedHolidayLettings = {
     val id = BSONObjectID.generate
     val now = DateTime.now(DateTimeZone.UTC)
     FurnishedHolidayLettings(
       id = id,
       sourceId = id.stringify,
-      saUtr = saUtr,
+      nino = nino,
       taxYear = taxYear,
       lastModifiedDateTime = now,
       createdDateTime = now,

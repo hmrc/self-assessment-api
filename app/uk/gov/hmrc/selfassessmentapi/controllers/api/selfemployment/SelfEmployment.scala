@@ -21,9 +21,9 @@ import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.controllers.api.{JsonMarshaller, ErrorCode}
-import ErrorCode.{apply => _, _}
-import uk.gov.hmrc.selfassessmentapi.controllers.api._
+import uk.gov.hmrc.selfassessmentapi.controllers.api.ErrorCode._
+import uk.gov.hmrc.selfassessmentapi.controllers.api.{JsonMarshaller, _}
+import uk.gov.hmrc.selfassessmentapi.resources.models.selfemployment.{Adjustments, Allowances}
 
 case class SelfEmployment(id: Option[SourceId] = None,
                           commencementDate: LocalDate,
@@ -34,7 +34,7 @@ object SelfEmployment extends JsonMarshaller[SelfEmployment]{
 
   implicit val writes = Json.writes[SelfEmployment]
 
-  def commencementDateValidator = Reads.of[LocalDate].filter(ValidationError("commencement date should be in the past", COMMENCEMENT_DATE_NOT_IN_THE_PAST))(_.isBefore(LocalDate.now()))
+  def commencementDateValidator = Reads.of[LocalDate].filter(ValidationError("commencement date should be in the past", DATE_NOT_IN_THE_PAST))(_.isBefore(LocalDate.now()))
 
   implicit val reads: Reads[SelfEmployment] = (
     Reads.pure(None) and

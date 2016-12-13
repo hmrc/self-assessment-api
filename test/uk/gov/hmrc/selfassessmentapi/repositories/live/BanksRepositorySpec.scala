@@ -22,6 +22,7 @@ import org.scalatest.BeforeAndAfterEach
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
 import uk.gov.hmrc.selfassessmentapi.controllers.api.bank.{Bank, Interest}
+import uk.gov.hmrc.selfassessmentapi.controllers.util.NinoGenerator
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -30,7 +31,7 @@ class BanksRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach 
   private val repo = new BanksMongoRepository()
   private val interestRepo = repo.InterestRepository
 
-  private val saUtr = generateSaUtr()
+  private val nino = NinoGenerator().nextNino()
   private def saving = Bank.example()
 
   override def beforeEach(): Unit = {
@@ -40,14 +41,14 @@ class BanksRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach 
 
   "deleteById" should {
     "return true when a bank is deleted" in {
-      val id = await(repo.create(saUtr, taxYear, saving))
-      val result = await(repo.delete(saUtr, taxYear, id))
+      val id = await(repo.create(nino, taxYear, saving))
+      val result = await(repo.delete(nino, taxYear, id))
 
       result shouldEqual true
     }
 
     "return false when a bank is not deleted" in {
-      val result = await(repo.delete(saUtr, taxYear, "madeUpID"))
+      val result = await(repo.delete(nino, taxYear, "madeUpID"))
       result shouldEqual false
     }
   }
@@ -57,24 +58,24 @@ class BanksRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach 
       for {
         n <- 1 to 10
         source = saving
-        id = await(repo.create(saUtr, taxYear, source))
+        id = await(repo.create(nino, taxYear, source))
       } yield source.copy(id = Some(id))
 
 
-      await(repo.delete(saUtr, taxYear))
+      await(repo.delete(nino, taxYear))
 
-      val result = await(repo.list(saUtr, taxYear))
+      val result = await(repo.list(nino, taxYear))
 
       result shouldBe empty
     }
 
     "not delete banks for different utrs and tax years" in {
-      val saUtr2 = generateSaUtr()
-      await(repo.create(saUtr, taxYear, saving))
-      val source2 = await(repo.create(saUtr2, taxYear, saving))
+      val nino2 = NinoGenerator().nextNino()
+      await(repo.create(nino, taxYear, saving))
+      val source2 = await(repo.create(nino2, taxYear, saving))
 
-      await(repo.delete(saUtr, taxYear))
-      val result = await(repo.list(saUtr2, taxYear))
+      await(repo.delete(nino, taxYear))
+      val result = await(repo.list(nino2, taxYear))
 
       result.flatMap(_.id) should contain theSameElementsAs Seq(source2)
     }
@@ -85,34 +86,34 @@ class BanksRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach 
       val sources = for {
         n <- 1 to 10
         source = saving
-        id = await(repo.create(saUtr, taxYear, source))
+        id = await(repo.create(nino, taxYear, source))
       } yield source.copy(id = Some(id))
 
 
-      val result = await(repo.list(saUtr, taxYear))
+      val result = await(repo.list(nino, taxYear))
       result should contain theSameElementsAs sources
     }
 
     "not include banks for different utr" in {
-      val source1 = await(repo.create(saUtr, taxYear, saving))
-      await(repo.create(generateSaUtr(), taxYear, saving))
+      val source1 = await(repo.create(nino, taxYear, saving))
+      await(repo.create(NinoGenerator().nextNino(), taxYear, saving))
 
-      val result = await(repo.list(saUtr, taxYear))
+      val result = await(repo.list(nino, taxYear))
       result.flatMap(_.id) should contain theSameElementsAs Seq(source1)
     }
   }
 
   "update" should {
     "return false when the bank does not exist" in {
-      val result = await(repo.update(saUtr, taxYear, UUID.randomUUID().toString, saving))
+      val result = await(repo.update(nino, taxYear, UUID.randomUUID().toString, saving))
       result shouldEqual false
     }
 
     "update the last modified attribute" in {
       val source = saving
-      val sourceId = await(repo.create(saUtr, taxYear, source))
+      val sourceId = await(repo.create(nino, taxYear, source))
       val firstResult = await(repo.findById(BSONObjectID(sourceId)))
-      await(repo.update(saUtr, taxYear, sourceId, source))
+      await(repo.update(nino, taxYear, sourceId, source))
 
       val secondResult = await(repo.findById(BSONObjectID(sourceId)))
 
@@ -124,29 +125,29 @@ class BanksRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach 
 
   "create bank interest" should {
     "add an interest to an empty list when source exists and return id" in {
-      val sourceId = await(repo.create(saUtr, taxYear, saving))
-      val summaryId = await(interestRepo.create(saUtr, taxYear, sourceId, Interest.example()))
+      val sourceId = await(repo.create(nino, taxYear, saving))
+      val summaryId = await(interestRepo.create(nino, taxYear, sourceId, Interest.example()))
       summaryId.isDefined shouldEqual true
 
-      val result = await(interestRepo.list(saUtr, taxYear, sourceId))
+      val result = await(interestRepo.list(nino, taxYear, sourceId))
       result.isDefined shouldEqual true
 
       result.get.headOption shouldEqual Some(Interest.example(id = summaryId))
     }
 
     "add an interest to the existing list when source exists and return id" in {
-        val sourceId = await(repo.create(saUtr, taxYear, saving))
-        val summaryId = await(interestRepo.create(saUtr, taxYear, sourceId, Interest.example()))
-        val summaryId1 = await(interestRepo.create(saUtr, taxYear, sourceId, Interest.example()))
+        val sourceId = await(repo.create(nino, taxYear, saving))
+        val summaryId = await(interestRepo.create(nino, taxYear, sourceId, Interest.example()))
+        val summaryId1 = await(interestRepo.create(nino, taxYear, sourceId, Interest.example()))
 
-        val summaries = await(interestRepo.list(saUtr, taxYear, sourceId))
+        val summaries = await(interestRepo.list(nino, taxYear, sourceId))
 
         val result = summaries.get
         result should contain theSameElementsAs Seq(Interest.example(id = summaryId), Interest.example(id = summaryId1))
     }
 
     "return none when source bank does not exist" in {
-      val summaryId = await(interestRepo.create(saUtr, taxYear, BSONObjectID.generate.stringify, Interest.example()))
+      val summaryId = await(interestRepo.create(nino, taxYear, BSONObjectID.generate.stringify, Interest.example()))
       summaryId shouldEqual None
     }
   }
@@ -154,18 +155,18 @@ class BanksRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach 
   "findById bank interest" should {
     "return none if the source does not exist" in {
       await(interestRepo
-          .findById(saUtr, taxYear, BSONObjectID.generate.stringify, BSONObjectID.generate.stringify)) shouldEqual None
+          .findById(nino, taxYear, BSONObjectID.generate.stringify, BSONObjectID.generate.stringify)) shouldEqual None
     }
 
     "return none if the summary does not exist" in {
-      val sourceId = await(repo.create(saUtr, taxYear, saving))
-      await(interestRepo.findById(saUtr, taxYear, sourceId, BSONObjectID.generate.stringify)) shouldEqual None
+      val sourceId = await(repo.create(nino, taxYear, saving))
+      await(interestRepo.findById(nino, taxYear, sourceId, BSONObjectID.generate.stringify)) shouldEqual None
     }
 
     "return the summary if found" in {
-      val sourceId = await(repo.create(saUtr, taxYear, saving))
-      val summaryId = await(interestRepo.create(saUtr, taxYear, sourceId, Interest.example())).get
-      val found = await(interestRepo.findById(saUtr, taxYear, sourceId, summaryId))
+      val sourceId = await(repo.create(nino, taxYear, saving))
+      val summaryId = await(interestRepo.create(nino, taxYear, sourceId, Interest.example())).get
+      val found = await(interestRepo.findById(nino, taxYear, sourceId, summaryId))
 
       found shouldEqual Some(Interest.example(id = Some(summaryId)))
     }
@@ -173,64 +174,64 @@ class BanksRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach 
 
   "list bank interest" should {
     "return empty list when source has no summaries" in {
-      val sourceId = await(repo.create(saUtr, taxYear, saving))
-      await(interestRepo.list(saUtr, taxYear, sourceId)) shouldEqual Some(Seq.empty)
+      val sourceId = await(repo.create(nino, taxYear, saving))
+      await(interestRepo.list(nino, taxYear, sourceId)) shouldEqual Some(Seq.empty)
     }
 
     "return none when source does not exist" in {
-      await(interestRepo.list(saUtr, taxYear, BSONObjectID.generate.stringify)) shouldEqual None
+      await(interestRepo.list(nino, taxYear, BSONObjectID.generate.stringify)) shouldEqual None
     }
   }
 
   "delete bank interest" should {
     "return true when the summary has been deleted" in {
-      val sourceId = await(repo.create(saUtr, taxYear, saving))
-      val summaryId = await(interestRepo.create(saUtr, taxYear, sourceId, Interest.example())).get
-      await(interestRepo.delete(saUtr, taxYear, sourceId, summaryId)) shouldEqual true
+      val sourceId = await(repo.create(nino, taxYear, saving))
+      val summaryId = await(interestRepo.create(nino, taxYear, sourceId, Interest.example())).get
+      await(interestRepo.delete(nino, taxYear, sourceId, summaryId)) shouldEqual true
     }
 
     "only delete the specified summary" in {
-      val sourceId = await(repo.create(saUtr, taxYear, saving))
-      val summaryId = await(interestRepo.create(saUtr, taxYear, sourceId, Interest.example())).get
-      val summaryId1 = await(interestRepo.create(saUtr, taxYear, sourceId, Interest.example()))
-      await(interestRepo.delete(saUtr, taxYear, sourceId, summaryId))
+      val sourceId = await(repo.create(nino, taxYear, saving))
+      val summaryId = await(interestRepo.create(nino, taxYear, sourceId, Interest.example())).get
+      val summaryId1 = await(interestRepo.create(nino, taxYear, sourceId, Interest.example()))
+      await(interestRepo.delete(nino, taxYear, sourceId, summaryId))
 
-      val result = await(interestRepo.list(saUtr, taxYear, sourceId)).get
+      val result = await(interestRepo.list(nino, taxYear, sourceId)).get
       result.size shouldEqual 1
       result.head shouldEqual Interest.example(id = summaryId1)
     }
 
     "return false when the source bank does not exist" in {
-      await(interestRepo.delete(saUtr, taxYear, BSONObjectID.generate.stringify, BSONObjectID.generate.stringify)) shouldEqual false
+      await(interestRepo.delete(nino, taxYear, BSONObjectID.generate.stringify, BSONObjectID.generate.stringify)) shouldEqual false
     }
 
     "return false when the summary does not exist" in {
-      val sourceId = await(repo.create(saUtr, taxYear, saving))
-      await(interestRepo.delete(saUtr, taxYear, sourceId, BSONObjectID.generate.stringify)) shouldEqual false
+      val sourceId = await(repo.create(nino, taxYear, saving))
+      await(interestRepo.delete(nino, taxYear, sourceId, BSONObjectID.generate.stringify)) shouldEqual false
     }
   }
 
 
   "update bank interest" should {
     "return true when the income has been updated" in {
-      val sourceId = await(repo.create(saUtr, taxYear, saving))
-      val summaryId = await(interestRepo.create(saUtr, taxYear, sourceId, Interest.example()))
+      val sourceId = await(repo.create(nino, taxYear, saving))
+      val summaryId = await(interestRepo.create(nino, taxYear, sourceId, Interest.example()))
       summaryId.isDefined shouldEqual true
 
-      await(interestRepo.update(saUtr, taxYear, sourceId, summaryId.get, Interest.example())) shouldEqual true
+      await(interestRepo.update(nino, taxYear, sourceId, summaryId.get, Interest.example())) shouldEqual true
 
-      val result = await(interestRepo.findById(saUtr, taxYear, sourceId, summaryId.get))
+      val result = await(interestRepo.findById(nino, taxYear, sourceId, summaryId.get))
       result shouldEqual Some(Interest.example(id = Some(summaryId.get)))
     }
 
     "only update the specified interest summary" in {
-      val sourceId = await(repo.create(saUtr, taxYear, saving))
-      val summaryId1 = await(interestRepo.create(saUtr, taxYear, sourceId, Interest.example())).get
-      val summaryId2 = await(interestRepo.create(saUtr, taxYear, sourceId, Interest.example())).get
+      val sourceId = await(repo.create(nino, taxYear, saving))
+      val summaryId1 = await(interestRepo.create(nino, taxYear, sourceId, Interest.example())).get
+      val summaryId2 = await(interestRepo.create(nino, taxYear, sourceId, Interest.example())).get
 
-      await(interestRepo.update(saUtr, taxYear, sourceId, summaryId2, Interest.example())) shouldEqual true
+      await(interestRepo.update(nino, taxYear, sourceId, summaryId2, Interest.example())) shouldEqual true
 
-      val result = await(interestRepo.list(saUtr, taxYear, sourceId))
+      val result = await(interestRepo.list(nino, taxYear, sourceId))
       result.isDefined shouldEqual true
 
       result.get should contain theSameElementsAs
@@ -239,13 +240,13 @@ class BanksRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach 
 
     "return false when the source bank does not exist" in {
       await(
-        interestRepo.update(saUtr, taxYear, BSONObjectID.generate.stringify, BSONObjectID.generate.stringify, Interest.example())) shouldEqual false
+        interestRepo.update(nino, taxYear, BSONObjectID.generate.stringify, BSONObjectID.generate.stringify, Interest.example())) shouldEqual false
     }
 
     "return false when the interest summary does not exist" in {
-      val sourceId = await(repo.create(saUtr, taxYear, saving))
+      val sourceId = await(repo.create(nino, taxYear, saving))
 
-      await(interestRepo.update(saUtr, taxYear, sourceId, BSONObjectID.generate.stringify, Interest.example())) shouldEqual false
+      await(interestRepo.update(nino, taxYear, sourceId, BSONObjectID.generate.stringify, Interest.example())) shouldEqual false
     }
   }
 }

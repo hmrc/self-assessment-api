@@ -19,11 +19,11 @@ package uk.gov.hmrc.selfassessmentapi.repositories
 import org.joda.time.{DateTime, LocalDate}
 import org.scalatest.BeforeAndAfterEach
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{TaxYearProperties, UkCountryCodes}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.pensioncontribution.{PensionContribution, PensionSaving}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.studentsloan.StudentLoanPlanType
+import uk.gov.hmrc.selfassessmentapi.controllers.util.NinoGenerator
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.SelfAssessment
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -38,30 +38,30 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
     await(mongoRepository.ensureIndexes)
   }
 
-  val saUtr = generateSaUtr()
+  val nino = NinoGenerator().nextNino()
 
   "touch" should {
     "create self assessment record if it does not exists" in {
-      await(mongoRepository.touch(saUtr, taxYear))
+      await(mongoRepository.touch(nino, taxYear))
 
-      val sa = await(mongoRepository.findBy(saUtr, taxYear))
+      val sa = await(mongoRepository.findBy(nino, taxYear))
 
       sa match {
         case Some(created) =>
-          await(mongoRepository.touch(saUtr, taxYear))
-          val updated = await(mongoRepository.findBy(saUtr, taxYear)).get
+          await(mongoRepository.touch(nino, taxYear))
+          val updated = await(mongoRepository.findBy(nino, taxYear)).get
           updated.createdDateTime shouldEqual created.createdDateTime
         case None => fail("SA not created")
       }
     }
 
     "update last modified if it does exist" in {
-      val sa1 = SelfAssessment(BSONObjectID.generate, saUtr, taxYear, DateTime.now().minusMonths(1), DateTime.now().minusWeeks(1))
+      val sa1 = SelfAssessment(BSONObjectID.generate, nino, taxYear, DateTime.now().minusMonths(1), DateTime.now().minusWeeks(1))
 
       await(mongoRepository.insert(sa1))
-      await(mongoRepository.touch(saUtr, taxYear))
+      await(mongoRepository.touch(nino, taxYear))
 
-      val sa = await(mongoRepository.findBy(saUtr, taxYear))
+      val sa = await(mongoRepository.findBy(nino, taxYear))
 
       sa match {
         case Some(updated) => updated.lastModifiedDateTime.isAfter(sa1.lastModifiedDateTime) shouldEqual true
@@ -72,26 +72,25 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
 
   "findBy" should {
     "return records matching utr and tax year" in {
-      val utr2: SaUtr = generateSaUtr()
-      val sa1 = SelfAssessment(BSONObjectID.generate, saUtr, taxYear, DateTime.now(), DateTime.now())
-      val sa2 = SelfAssessment(BSONObjectID.generate, utr2, taxYear, DateTime.now(), DateTime.now())
+      val sa1 = SelfAssessment(BSONObjectID.generate, nino, taxYear, DateTime.now(), DateTime.now())
+      val sa2 = SelfAssessment(BSONObjectID.generate, NinoGenerator().nextNino(), taxYear, DateTime.now(), DateTime.now())
 
       await(mongoRepository.insert(sa1))
       await(mongoRepository.insert(sa2))
 
 
-      val records = await(mongoRepository.findBy(saUtr, taxYear))
+      val records = await(mongoRepository.findBy(nino, taxYear))
 
       records.size shouldBe 1
-      records.head.saUtr shouldEqual sa1.saUtr
+      records.head.nino shouldEqual sa1.nino
     }
   }
 
   "findOlderThan" should {
     "return records modified older than the lastModifiedDate" in {
-      val sa1 = SelfAssessment(BSONObjectID.generate, saUtr, taxYear, DateTime.now().minusMonths(1), DateTime.now().minusMonths(1))
-      val sa2 = SelfAssessment(BSONObjectID.generate, generateSaUtr(), taxYear, DateTime.now().minusWeeks(2), DateTime.now().minusWeeks(2))
-      val sa3 = SelfAssessment(BSONObjectID.generate, generateSaUtr(), taxYear, DateTime.now().minusDays(1), DateTime.now().minusDays(1))
+      val sa1 = SelfAssessment(BSONObjectID.generate, nino, taxYear, DateTime.now().minusMonths(1), DateTime.now().minusMonths(1))
+      val sa2 = SelfAssessment(BSONObjectID.generate, NinoGenerator().nextNino(), taxYear, DateTime.now().minusWeeks(2), DateTime.now().minusWeeks(2))
+      val sa3 = SelfAssessment(BSONObjectID.generate, NinoGenerator().nextNino(), taxYear, DateTime.now().minusDays(1), DateTime.now().minusDays(1))
 
       await(mongoRepository.insert(sa1))
       await(mongoRepository.insert(sa2))
@@ -100,35 +99,35 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
       val records = await(mongoRepository.findOlderThan(DateTime.now().minusWeeks(1)))
 
       records.size shouldBe 2
-      records.head.saUtr shouldEqual sa1.saUtr
-      records.last.saUtr shouldEqual sa2.saUtr
+      records.head.nino shouldEqual sa1.nino
+      records.last.nino shouldEqual sa2.nino
     }
   }
 
   "delete" should {
     "only delete records matching utr and tax year" in {
-      val utr2: SaUtr = generateSaUtr()
-      val sa1 = SelfAssessment(BSONObjectID.generate, saUtr, taxYear, DateTime.now(), DateTime.now())
-      val sa2 = SelfAssessment(BSONObjectID.generate, utr2, taxYear, DateTime.now(), DateTime.now())
+      val nino2 = NinoGenerator().nextNino()
+      val sa1 = SelfAssessment(BSONObjectID.generate, nino, taxYear, DateTime.now(), DateTime.now())
+      val sa2 = SelfAssessment(BSONObjectID.generate, nino2, taxYear, DateTime.now(), DateTime.now())
 
       await(mongoRepository.insert(sa1))
       await(mongoRepository.insert(sa2))
 
-      await(mongoRepository.delete(saUtr, taxYear))
+      await(mongoRepository.delete(nino, taxYear))
 
-      val records = await(mongoRepository.findBy(utr2, taxYear))
+      val records = await(mongoRepository.findBy(nino2, taxYear))
 
       records.size shouldBe 1
-      records.head.saUtr shouldEqual sa2.saUtr
+      records.head.nino shouldEqual sa2.nino
     }
   }
 
   "findTaxYearProperties" should {
     "return tax year properties matching utr and tax year" in {
       val taxYearProps = TaxYearProperties(pensionContributions = Some(PensionContribution(ukRegisteredPension = Some(10000.00))))
-      val sa = SelfAssessment(BSONObjectID.generate, saUtr, taxYear, DateTime.now(), DateTime.now(), Some(taxYearProps))
+      val sa = SelfAssessment(BSONObjectID.generate, nino, taxYear, DateTime.now(), DateTime.now(), Some(taxYearProps))
       await(mongoRepository.insert(sa))
-      val records = await(mongoRepository.findTaxYearProperties(saUtr, taxYear))
+      val records = await(mongoRepository.findTaxYearProperties(nino, taxYear))
       records.size shouldBe 1
       records shouldEqual Some(taxYearProps)
     }
@@ -137,14 +136,14 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
   "updateTaxYearProperties" should {
     "update the pension contribution for tax year properties matching utr and tax year" in {
       val taxYearProps1 = TaxYearProperties(pensionContributions = Some(PensionContribution(ukRegisteredPension = Some(10000.00))))
-      val sa = SelfAssessment(BSONObjectID.generate, saUtr, taxYear, DateTime.now(), DateTime.now(), Some(taxYearProps1))
+      val sa = SelfAssessment(BSONObjectID.generate, nino, taxYear, DateTime.now(), DateTime.now(), Some(taxYearProps1))
       await(mongoRepository.insert(sa))
       val taxYearProps2 = TaxYearProperties(pensionContributions = Some(PensionContribution(ukRegisteredPension = Some(50000.00),
         pensionSavings = Some(PensionSaving(Some(500.00), Some(500.00))))))
 
-      await(mongoRepository.updateTaxYearProperties(saUtr, taxYear, taxYearProps2))
+      await(mongoRepository.updateTaxYearProperties(nino, taxYear, taxYearProps2))
 
-      val records = await(mongoRepository.findTaxYearProperties(saUtr, taxYear))
+      val records = await(mongoRepository.findTaxYearProperties(nino, taxYear))
       records shouldEqual Some(taxYearProps2)
     }
 
@@ -166,7 +165,7 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
         .create()
 
       val selfAssessment =
-        SelfAssessment(BSONObjectID.generate, saUtr, taxYear, now, now, Some(charGivingsBefore))
+        SelfAssessment(BSONObjectID.generate, nino, taxYear, now, now, Some(charGivingsBefore))
 
       await(mongoRepository.insert(selfAssessment))
 
@@ -187,9 +186,9 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
         .create()
 
 
-      await(mongoRepository.updateTaxYearProperties(saUtr, taxYear, charGivingsAfter))
+      await(mongoRepository.updateTaxYearProperties(nino, taxYear, charGivingsAfter))
 
-      val records = await(mongoRepository.findTaxYearProperties(saUtr, taxYear))
+      val records = await(mongoRepository.findTaxYearProperties(nino, taxYear))
       records shouldEqual Some(charGivingsAfter)
     }
 
@@ -202,7 +201,7 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
           wantsSpouseToUseSurplusAllowance = true)
         .create()
 
-      val selfAssessment = SelfAssessment(BSONObjectID.generate, saUtr, taxYear, now, now, Some(blindPersonBefore))
+      val selfAssessment = SelfAssessment(BSONObjectID.generate, nino, taxYear, now, now, Some(blindPersonBefore))
 
       await(mongoRepository.insert(selfAssessment))
 
@@ -214,9 +213,9 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
           wantsSpouseToUseSurplusAllowance = false)
         .create()
 
-      await(mongoRepository.updateTaxYearProperties(saUtr, taxYear, blindPersonAfter))
+      await(mongoRepository.updateTaxYearProperties(nino, taxYear, blindPersonAfter))
 
-      val records = await(mongoRepository.findTaxYearProperties(saUtr, taxYear))
+      val records = await(mongoRepository.findTaxYearProperties(nino, taxYear))
       records shouldEqual Some(blindPersonAfter)
     }
 
@@ -227,7 +226,7 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
           deductedByEmployers = 20.20)
         .create()
 
-      val selfAssessment = SelfAssessment(BSONObjectID.generate, saUtr, taxYear, now, now, Some(studentLoanBefore))
+      val selfAssessment = SelfAssessment(BSONObjectID.generate, nino, taxYear, now, now, Some(studentLoanBefore))
 
       await(mongoRepository.insert(selfAssessment))
 
@@ -237,9 +236,9 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
           deductedByEmployers = 100.50)
         .create()
 
-      await(mongoRepository.updateTaxYearProperties(saUtr, taxYear, studentLoanAfter))
+      await(mongoRepository.updateTaxYearProperties(nino, taxYear, studentLoanAfter))
 
-      val records = await(mongoRepository.findTaxYearProperties(saUtr, taxYear))
+      val records = await(mongoRepository.findTaxYearProperties(nino, taxYear))
       records shouldEqual Some(studentLoanAfter)
     }
 
@@ -248,7 +247,7 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
         .withTaxRefundedOrSetOff(500)
         .create()
 
-      val selfAssessment = SelfAssessment(BSONObjectID.generate, saUtr, taxYear, now, now, Some(taxRefundedBefore))
+      val selfAssessment = SelfAssessment(BSONObjectID.generate, nino, taxYear, now, now, Some(taxRefundedBefore))
 
       await(mongoRepository.insert(selfAssessment))
 
@@ -256,9 +255,9 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
         .withTaxRefundedOrSetOff(20.20)
         .create()
 
-      await(mongoRepository.updateTaxYearProperties(saUtr, taxYear, taxRefundedAfter))
+      await(mongoRepository.updateTaxYearProperties(nino, taxYear, taxRefundedAfter))
 
-      val records = await(mongoRepository.findTaxYearProperties(saUtr, taxYear))
+      val records = await(mongoRepository.findTaxYearProperties(nino, taxYear))
       records shouldEqual Some(taxRefundedAfter)
     }
 
@@ -270,7 +269,7 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
           dateBenefitStopped = now.toLocalDate)
         .create()
 
-      val selfAssessment = SelfAssessment(BSONObjectID.generate, saUtr, taxYear, now, now, Some(childBenefitBefore))
+      val selfAssessment = SelfAssessment(BSONObjectID.generate, nino, taxYear, now, now, Some(childBenefitBefore))
 
       await(mongoRepository.insert(selfAssessment))
 
@@ -281,9 +280,9 @@ class SelfAssessmentRepositorySpec extends MongoEmbeddedDatabase with BeforeAndA
           dateBenefitStopped = new LocalDate(2012, 12, 12))
         .create()
 
-      await(mongoRepository.updateTaxYearProperties(saUtr, taxYear, childBenefitAfter))
+      await(mongoRepository.updateTaxYearProperties(nino, taxYear, childBenefitAfter))
 
-      val records = await(mongoRepository.findTaxYearProperties(saUtr, taxYear))
+      val records = await(mongoRepository.findTaxYearProperties(nino, taxYear))
       records shouldEqual Some(childBenefitAfter)
     }
   }

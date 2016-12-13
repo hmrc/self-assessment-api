@@ -17,7 +17,6 @@
 package uk.gov.hmrc.selfassessmentapi.controllers.api
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
 
 case class InterestFromUKBanksAndBuildingSocieties(sourceId: String, totalInterest: BigDecimal)
 
@@ -200,36 +199,26 @@ object Liability {
     )
 
   private def exampleFurnishedHolidayLettingIncomes = {
-    if (FeatureSwitch(AppContext.featureSwitch).isEnabled(SourceTypes.FurnishedHolidayLettings))
       Seq(FurnishedHolidayLettingIncome("furnished-holiday-letting-1", 8200),
           FurnishedHolidayLettingIncome("furnished-holiday-letting-2", 25000))
-    else Seq()
   }
 
   private def exampleSelfEmploymentIncomes = {
-    if (FeatureSwitch(AppContext.featureSwitch).isEnabled(SourceTypes.SelfEmployments))
       Seq(SelfEmploymentIncome("self-employment-1", 8200, 10000),
           SelfEmploymentIncome("self-employment-2", 25000, 28000))
-    else Seq()
   }
 
   private def exampleUkPropertiesIncomes = {
-    if (FeatureSwitch(AppContext.featureSwitch).isEnabled(SourceTypes.UKProperties))
       Seq(UkPropertyIncome("property1", profit = 2000), UkPropertyIncome("property2", profit = 1500))
-    else Seq()
   }
 
   private def exampleInterestFromUKBanksAndBuildingSocieties = {
-    if (FeatureSwitch(AppContext.featureSwitch).isEnabled(SourceTypes.Benefits))
       Seq(InterestFromUKBanksAndBuildingSocieties("interest-income-1", 100),
           InterestFromUKBanksAndBuildingSocieties("interest-income-2", 200))
-    else Seq()
   }
 
   private def exampleDividendsFromUKSources = {
-    if (FeatureSwitch(AppContext.featureSwitch).isEnabled(SourceTypes.Benefits))
       Seq(DividendsFromUKSources("dividend-income-1", 1000), DividendsFromUKSources("dividend-income-2", 2000))
-    else Seq()
   }
 
 }

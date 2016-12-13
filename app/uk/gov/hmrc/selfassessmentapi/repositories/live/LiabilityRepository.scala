@@ -21,7 +21,7 @@ import reactivemongo.api.DB
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.selfassessmentapi.controllers.api.TaxYear
@@ -43,16 +43,16 @@ class LiabilityMongoRepository(implicit mongo: () => DB)
 
   override def indexes: Seq[Index] =
     Seq(
-        Index(Seq(("data.saUtr", Ascending), ("data.taxYear", Ascending)),
-              name = Some("liabilities_utr_taxyear"),
+        Index(Seq(("data.nino", Ascending), ("data.taxYear", Ascending)),
+              name = Some("liabilities_nino_taxyear"),
               unique = true))
 
   def save[T <: LiabilityResult](liabilityResult: T): Future[T] = {
-    val selector = BSONDocument("data.saUtr" -> liabilityResult.saUtr.value, "data.taxYear" -> liabilityResult.taxYear.value)
+    val selector = BSONDocument("data.nino" -> liabilityResult.nino.value, "data.taxYear" -> liabilityResult.taxYear.value)
     collection.update(selector, liabilityResult, upsert = true).map(_ => liabilityResult)
   }
 
-  def findBy(saUtr: SaUtr, taxYear: TaxYear): Future[Option[LiabilityResult]] = {
-    find("data.saUtr" -> saUtr.value, "data.taxYear" -> taxYear.value).map(_.headOption)
+  def findBy(nino: Nino, taxYear: TaxYear): Future[Option[LiabilityResult]] = {
+    find("data.nino" -> nino.value, "data.taxYear" -> taxYear.value).map(_.headOption)
   }
 }

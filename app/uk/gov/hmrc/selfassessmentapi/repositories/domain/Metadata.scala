@@ -17,11 +17,11 @@
 package uk.gov.hmrc.selfassessmentapi.repositories.domain
 
 import org.joda.time.DateTime
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{SourceId, TaxYear}
 
 trait SelfAssessmentMetadata {
-  val saUtr: SaUtr
+  val nino: Nino
   val taxYear: TaxYear
   val lastModifiedDateTime: DateTime
   val createdDateTime: DateTime

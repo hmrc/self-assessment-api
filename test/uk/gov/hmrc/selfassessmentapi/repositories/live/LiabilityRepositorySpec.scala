@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.repositories.live
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
 import uk.gov.hmrc.selfassessmentapi.controllers.api.SelfAssessment
+import uk.gov.hmrc.selfassessmentapi.controllers.util.NinoGenerator
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.Liability
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,7 +27,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class LiabilityRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach {
 
   private val repository = new LiabilityMongoRepository()
-  private val saUtr = generateSaUtr()
+  private val nino = NinoGenerator().nextNino()
 
   override def beforeEach() {
     await(repository.drop)
@@ -36,14 +37,14 @@ class LiabilityRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterE
   "save" should {
 
     "create new liability if there is no liability for given utr and tax year" in {
-      val liability = Liability.create(saUtr, taxYear, SelfAssessment())
+      val liability = Liability.create(nino, taxYear, SelfAssessment())
       await(repository.save(liability))
 
       await(repository.findAll()) shouldBe List(liability)
     }
 
     "replace current liability if there is liability for given utr and tax year" in {
-      val liability = Liability.create(saUtr, taxYear, SelfAssessment())
+      val liability = Liability.create(nino, taxYear, SelfAssessment())
       await(repository.save(liability))
 
       val updatedLiability = liability.copy(totalIncomeReceived = 100)
@@ -53,10 +54,10 @@ class LiabilityRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterE
     }
 
     "not replace liability for a different utr and tax year" in {
-      val liability = Liability.create(generateSaUtr(), taxYear, SelfAssessment())
+      val liability = Liability.create(NinoGenerator().nextNino(), taxYear, SelfAssessment())
       await(repository.save(liability))
 
-      val anotherLiability = Liability.create(generateSaUtr(), taxYear, SelfAssessment())
+      val anotherLiability = Liability.create(NinoGenerator().nextNino(), taxYear, SelfAssessment())
       await(repository.save(anotherLiability))
 
       await(repository.findAll()) shouldBe List(liability, anotherLiability)
@@ -67,17 +68,17 @@ class LiabilityRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterE
 
     "return liability for given utr and tax year" in {
 
-      val liability = Liability.create(saUtr, taxYear, SelfAssessment())
+      val liability = Liability.create(nino, taxYear, SelfAssessment())
       await(repository.save(liability))
 
-      await(repository.findBy(saUtr, taxYear)) shouldBe Some(liability)
+      await(repository.findBy(nino, taxYear)) shouldBe Some(liability)
     }
 
     "return None if there is no liability for given utr and tax year" in {
-      val anotherLiability = Liability.create(generateSaUtr(), taxYear, SelfAssessment())
+      val anotherLiability = Liability.create(NinoGenerator().nextNino(), taxYear, SelfAssessment())
       await(repository.save(anotherLiability))
 
-      await(repository.findBy(saUtr, taxYear)) shouldBe None
+      await(repository.findBy(nino, taxYear)) shouldBe None
     }
   }
 }

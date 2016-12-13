@@ -54,13 +54,13 @@ class DeleteExpiredDataService(saRepo: SelfAssessmentMongoRepository,
   private def deleteRecords(records: Seq[SelfAssessment]): Future[Unit] =
     Future.successful {
       records.foreach { record =>
-        saRepo.delete(record.saUtr, record.taxYear)
-        seRepo.delete(record.saUtr, record.taxYear)
-        benRepo.delete(record.saUtr, record.taxYear)
-        fhlRepo.delete(record.saUtr, record.taxYear)
-        divRepo.delete(record.saUtr, record.taxYear)
-        bankRepo.delete(record.saUtr, record.taxYear)
-        ukPropertyRepo.delete(record.saUtr, record.taxYear)
+        saRepo.delete(record.nino, record.taxYear)
+        seRepo.delete(record.nino, record.taxYear)
+        benRepo.delete(record.nino, record.taxYear)
+        fhlRepo.delete(record.nino, record.taxYear)
+        divRepo.delete(record.nino, record.taxYear)
+        bankRepo.delete(record.nino, record.taxYear)
+        ukPropertyRepo.delete(record.nino, record.taxYear)
       }
     }
 

@@ -37,9 +37,9 @@ class FurnishedHolidayLettingsSpec extends JsonSpec {
         val fhl = FurnishedHolidayLetting(None, PropertyLocationType.UK,
           Some(Allowances(Some(amount))),
           Some(Adjustments(Some(BigDecimal(500.00)))))
-          assertValidationError[FurnishedHolidayLetting](
+        assertValidationErrorWithCode(
           fhl,
-          Map("/allowances/capitalAllowance" -> INVALID_MONETARY_AMOUNT), "Expected invalid furnished-holiday-lettings")
+          "/allowances/capitalAllowance", INVALID_MONETARY_AMOUNT)
       }
     }
 
@@ -48,9 +48,9 @@ class FurnishedHolidayLettingsSpec extends JsonSpec {
         val fhl = FurnishedHolidayLetting(None, PropertyLocationType.UK,
           Some(Allowances(Some(BigDecimal(500.00)))),
           Some(Adjustments(Some(amount))))
-          assertValidationError[FurnishedHolidayLetting](
+        assertValidationErrorWithCode(
           fhl,
-          Map("/adjustments/lossBroughtForward" -> INVALID_MONETARY_AMOUNT), "Expected invalid furnished-holiday-lettings")
+          "/adjustments/lossBroughtForward", INVALID_MONETARY_AMOUNT)
       }
     }
 

@@ -31,16 +31,16 @@ class PrivateUseAdjustmentSpec extends JsonSpec {
   "validate" should {
     "reject amounts with more than 2 decimal values" in {
       Seq(BigDecimal(1000.123), BigDecimal(1000.12456), BigDecimal(1000.123454), BigDecimal(1000.123456789)).foreach { testAmount =>
-        assertValidationError[PrivateUseAdjustment](
+        assertValidationErrorWithCode(
           PrivateUseAdjustment(amount = testAmount),
-          Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected invalid amount with more than 2 decimal places")
+          "/amount", INVALID_MONETARY_AMOUNT)
       }
     }
 
     "reject negative amount" in {
-      assertValidationError[PrivateUseAdjustment](
+      assertValidationErrorWithCode(
         PrivateUseAdjustment(amount = BigDecimal(-1000.13)),
-        Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected negative amount")
+        "/amount", INVALID_MONETARY_AMOUNT)
     }
   }
 }

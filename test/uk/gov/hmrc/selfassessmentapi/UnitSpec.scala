@@ -17,8 +17,8 @@
 package uk.gov.hmrc.selfassessmentapi
 
 import org.joda.time.{DateTime, DateTimeZone}
-import uk.gov.hmrc.domain.SaUtrGenerator
 import uk.gov.hmrc.selfassessmentapi.controllers.api.TaxYear
+import uk.gov.hmrc.selfassessmentapi.controllers.util.NinoGenerator
 
 import scala.concurrent.duration._
 
@@ -35,10 +35,9 @@ trait UnitSpec extends uk.gov.hmrc.play.test.UnitSpec with TestUtils {
 }
 
 trait TestUtils {
+  private val ninoGenerator = NinoGenerator()
 
-  private val saUtrGenerator = new SaUtrGenerator()
-
-  def generateSaUtr() = saUtrGenerator.nextSaUtr
+  def generateNino = ninoGenerator.nextNino()
 
   def now = DateTime.now(DateTimeZone.UTC)
 

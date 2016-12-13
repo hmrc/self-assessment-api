@@ -1,0 +1,23 @@
+{
+  "adjustments": {
+    "includedNonTaxableProfits": 500.25,
+    "basisAdjustment": 500.25,
+    "overlapReliefUsed": 500.25,
+    "accountingAdjustment": 500.25,
+    "averagingAdjustment": 500.25,
+    "lossBroughtForward": 500.25,
+    "outstandingBusinessIncome": 500.25,
+    "balancingChargeBPRA": 500.25,
+    "balancingChargeOther": 500.25,
+    "goodsAndServicesOwnUse": 500.25
+  },
+  "allowances": {
+    "annualInvestmentAllowance": 500.25,
+    "capitalAllowanceMainPool": 500.25,
+    "capitalAllowanceSpecialRatePool": 500.25,
+    "zeroEmissionGoodsVehicleAllowance": 500.25,
+    "businessPremisesRenovationAllowance": 500.25,
+    "enhancedCapitalAllowance": 500.25,
+    "allowanceOnSales": 500.25
+  }
+}

@@ -18,10 +18,10 @@ package uk.gov.hmrc.selfassessmentapi.repositories
 
 import play.api.libs.json.Format
 import reactivemongo.bson.{BSONDocument, BSONString}
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.mongo.AtomicUpdate
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
-import uk.gov.hmrc.selfassessmentapi.repositories.domain.{Summary, SourceMetadata}
+import uk.gov.hmrc.selfassessmentapi.repositories.domain.{SourceMetadata, Summary}
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -31,7 +31,7 @@ trait TypedSourceSummaryRepository[A <: SourceMetadata, ID <: Any] extends Typed
 
   implicit val domainFormatImplicit: Format[A]
 
-  def createSummary(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, summary: Summary): Future[Option[SummaryId]] = {
+  def createSummary(nino: Nino, taxYear: TaxYear, sourceId: SourceId, summary: Summary): Future[Option[SummaryId]] = {
     val modifiers = BSONDocument(Seq(
       modifierStatementLastModified,
       "$push" -> BSONDocument(summary.arrayName -> summary.toBsonDocument)
@@ -39,23 +39,23 @@ trait TypedSourceSummaryRepository[A <: SourceMetadata, ID <: Any] extends Typed
 
     for {
       result <- atomicUpdate(
-        BSONDocument("saUtr" -> BSONString(saUtr.toString), "taxYear" -> BSONString(taxYear.toString), "sourceId" -> BSONString(sourceId)),
+        BSONDocument("nino" -> BSONString(nino.toString), "taxYear" -> BSONString(taxYear.toString), "sourceId" -> BSONString(sourceId)),
         modifiers
       )
     } yield result.map(x => summary.summaryId)
   }
 
-  def updateSummary(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, summary: Summary, exists: A => Boolean): Future[Boolean] = {
+  def updateSummary(nino: Nino, taxYear: TaxYear, sourceId: SourceId, summary: Summary, exists: A => Boolean): Future[Boolean] = {
     lazy val modifiers = BSONDocument(Seq(
       modifierStatementLastModified,
       "$set" -> BSONDocument(summary.arrayName+".$" -> summary.toBsonDocument)
     ))
 
-    findMongoObjectById(saUtr, taxYear, sourceId).flatMap { mongoObjectOption =>
+    findMongoObjectById(nino, taxYear, sourceId).flatMap { mongoObjectOption =>
       mongoObjectOption.map { y =>
         if (exists(y))
           atomicUpdate(
-            BSONDocument("saUtr" -> BSONString(saUtr.toString), "taxYear" -> BSONString(taxYear.toString), "sourceId" -> BSONString(sourceId), s"${summary.arrayName}.summaryId" -> BSONString(summary.summaryId)),
+            BSONDocument("nino" -> BSONString(nino.toString), "taxYear" -> BSONString(taxYear.toString), "sourceId" -> BSONString(sourceId), s"${summary.arrayName}.summaryId" -> BSONString(summary.summaryId)),
             modifiers
           ).map(_.isDefined)
         else
@@ -65,17 +65,17 @@ trait TypedSourceSummaryRepository[A <: SourceMetadata, ID <: Any] extends Typed
   }
 
 
-  def deleteSummary(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, arrayName: String, exists: A => Boolean): Future[Boolean] = {
+  def deleteSummary(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, arrayName: String, exists: A => Boolean): Future[Boolean] = {
     lazy val modifiers = BSONDocument(Seq(
       modifierStatementLastModified,
       "$pull" -> BSONDocument(arrayName -> BSONDocument("summaryId" -> id))
     ))
 
-    findMongoObjectById(saUtr, taxYear, sourceId).flatMap { mongoObjectOption =>
+    findMongoObjectById(nino, taxYear, sourceId).flatMap { mongoObjectOption =>
       mongoObjectOption.map { y =>
         if(exists(y))
           atomicUpdate(
-            BSONDocument("saUtr" -> BSONString(saUtr.toString), "taxYear" -> BSONString(taxYear.toString), "sourceId" -> BSONString(sourceId)),
+            BSONDocument("nino" -> BSONString(nino.toString), "taxYear" -> BSONString(taxYear.toString), "sourceId" -> BSONString(sourceId)),
             modifiers
           ).map(_.isDefined)
         else
@@ -85,10 +85,10 @@ trait TypedSourceSummaryRepository[A <: SourceMetadata, ID <: Any] extends Typed
   }
 
 
-  def listSummaries[U](saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, finder: A => Seq[U]): Future[Option[Seq[U]]] =
-    for(option <- findMongoObjectById(saUtr, taxYear, sourceId)) yield option.map(finder)
+  def listSummaries[U](nino: Nino, taxYear: TaxYear, sourceId: SourceId, finder: A => Seq[U]): Future[Option[Seq[U]]] =
+    for(option <- findMongoObjectById(nino, taxYear, sourceId)) yield option.map(finder)
 
-  def findSummaryById[U](saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, finder: A => Option[U]): Future[Option[U]] =
-    for(option <- findMongoObjectById(saUtr, taxYear, sourceId)) yield option.flatMap(finder)
+  def findSummaryById[U](nino: Nino, taxYear: TaxYear, sourceId: SourceId, finder: A => Option[U]): Future[Option[U]] =
+    for(option <- findMongoObjectById(nino, taxYear, sourceId)) yield option.flatMap(finder)
 
 }

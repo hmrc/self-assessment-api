@@ -22,7 +22,7 @@ import reactivemongo.api.DB
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.{BSONDocument, BSONDouble, BSONNull, BSONObjectID, BSONString}
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.mongo.{AtomicUpdate, ReactiveRepository}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.ukproperty._
@@ -50,41 +50,41 @@ class UKPropertiesMongoRepository(implicit mongo: () => DB)
   self =>
 
   override def indexes: Seq[Index] = Seq(
-    Index(Seq(("saUtr", Ascending), ("taxYear", Ascending)), name = Some("ukp_utr_taxyear"), unique = false),
-    Index(Seq(("saUtr", Ascending), ("taxYear", Ascending), ("sourceId", Ascending)), name = Some("ukp_utr_taxyear_sourceid"), unique = true),
-    Index(Seq(("saUtr", Ascending), ("taxYear", Ascending), ("sourceId", Ascending), ("incomes.summaryId", Ascending)), name = Some("ukp_utr_taxyear_source_incomesid"), unique = true),
-    Index(Seq(("saUtr", Ascending), ("taxYear", Ascending), ("sourceId", Ascending), ("expenses.summaryId", Ascending)), name = Some("ukp_utr_taxyear_source_expensesid"), unique = true),
-    Index(Seq(("saUtr", Ascending), ("taxYear", Ascending), ("sourceId", Ascending), ("balancingCharges.summaryId", Ascending)), name = Some("ukp_utr_taxyear_source_balancingchargesid"), unique = true),
-    Index(Seq(("saUtr", Ascending), ("taxYear", Ascending), ("sourceId", Ascending), ("privateUseAdjustment.summaryId", Ascending)), name = Some("ukp_utr_taxyear_source_privateuseadjustmentid"), unique = true),
+    Index(Seq(("nino", Ascending), ("taxYear", Ascending)), name = Some("ukp_nino_taxyear"), unique = false),
+    Index(Seq(("nino", Ascending), ("taxYear", Ascending), ("sourceId", Ascending)), name = Some("ukp_nino_taxyear_sourceid"), unique = true),
+    Index(Seq(("nino", Ascending), ("taxYear", Ascending), ("sourceId", Ascending), ("incomes.summaryId", Ascending)), name = Some("ukp_nino_taxyear_source_incomesid"), unique = true),
+    Index(Seq(("nino", Ascending), ("taxYear", Ascending), ("sourceId", Ascending), ("expenses.summaryId", Ascending)), name = Some("ukp_nino_taxyear_source_expensesid"), unique = true),
+    Index(Seq(("nino", Ascending), ("taxYear", Ascending), ("sourceId", Ascending), ("balancingCharges.summaryId", Ascending)), name = Some("ukp_nino_taxyear_source_balancingchargesid"), unique = true),
+    Index(Seq(("nino", Ascending), ("taxYear", Ascending), ("sourceId", Ascending), ("privateUseAdjustment.summaryId", Ascending)), name = Some("ukp_nino_taxyear_source_privateuseadjustmentid"), unique = true),
     Index(Seq(("lastModifiedDateTime", Ascending)), name = Some("ukp_last_modified"), unique = false))
 
 
-  override def create(saUtr: SaUtr, taxYear: TaxYear, ukp: UKProperty): Future[SourceId] = {
-    val mongoSe = UKProperties.create(saUtr, taxYear, ukp)
+  override def create(nino: Nino, taxYear: TaxYear, ukp: UKProperty): Future[SourceId] = {
+    val mongoSe = UKProperties.create(nino, taxYear, ukp)
     insert(mongoSe).map(_ => mongoSe.sourceId)
   }
 
-  override def findById(saUtr: SaUtr, taxYear: TaxYear, id: SourceId): Future[Option[UKProperty]] = {
-    for (option <- findMongoObjectById(saUtr, taxYear, id)) yield option.map(_.toUKProperties)
+  override def findById(nino: Nino, taxYear: TaxYear, id: SourceId): Future[Option[UKProperty]] = {
+    for (option <- findMongoObjectById(nino, taxYear, id)) yield option.map(_.toUKProperties)
   }
 
-  override def list(saUtr: SaUtr, taxYear: TaxYear): Future[Seq[UKProperty]] = {
-    findAll(saUtr, taxYear).map(_.map(_.toUKProperties))
+  override def list(nino: Nino, taxYear: TaxYear): Future[Seq[UKProperty]] = {
+    findAll(nino, taxYear).map(_.map(_.toUKProperties))
   }
 
-  override def listAsJsonItem(saUtr: SaUtr, taxYear: TaxYear): Future[Seq[JsonItem]] = {
-    list(saUtr, taxYear).map(_.map(ukp => JsonItem(ukp.id.get.toString, toJson(ukp))))
+  override def listAsJsonItem(nino: Nino, taxYear: TaxYear): Future[Seq[JsonItem]] = {
+    list(nino, taxYear).map(_.map(ukp => JsonItem(ukp.id.get.toString, toJson(ukp))))
   }
 
-  def findAll(saUtr: SaUtr, taxYear: TaxYear): Future[Seq[UKProperties]] = {
-    find("saUtr" -> saUtr.utr, "taxYear" -> taxYear.taxYear)
+  def findAll(nino: Nino, taxYear: TaxYear): Future[Seq[UKProperties]] = {
+    find("nino" -> nino.nino, "taxYear" -> taxYear.taxYear)
   }
 
   /*
     We need to perform updates manually as we are using one collection per source and it includes the arrays of summaries. This
     update is however partial so we should only update the fields provided and not override the summary arrays.
    */
-  override def update(saUtr: SaUtr, taxYear: TaxYear, id: SourceId, ukProperty: UKProperty): Future[Boolean] = {
+  override def update(nino: Nino, taxYear: TaxYear, id: SourceId, ukProperty: UKProperty): Future[Boolean] = {
     val baseModifiers = Seq(
       "$set" -> BSONDocument("rentARoomRelief" -> ukProperty.rentARoomRelief.map(x => BSONDouble(x.doubleValue())).getOrElse(BSONNull).asInstanceOf[BSONDouble]),
       modifierStatementLastModified
@@ -113,113 +113,113 @@ class UKPropertiesMongoRepository(implicit mongo: () => DB)
 
     for {
       result <- atomicUpdate(
-        BSONDocument("saUtr" -> BSONString(saUtr.toString), "taxYear" -> BSONString(taxYear.toString), "sourceId" -> BSONString(id)),
+        BSONDocument("nino" -> BSONString(nino.toString), "taxYear" -> BSONString(taxYear.toString), "sourceId" -> BSONString(id)),
         modifiers
       )
     } yield result.nonEmpty
   }
 
   object IncomeRepository extends SummaryRepository[Income] {
-    override def create(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, income: Income): Future[Option[SummaryId]] =
-      self.createSummary(saUtr, taxYear, sourceId, UKPropertiesIncomeSummary.toMongoSummary(income))
+    override def create(nino: Nino, taxYear: TaxYear, sourceId: SourceId, income: Income): Future[Option[SummaryId]] =
+      self.createSummary(nino, taxYear, sourceId, UKPropertiesIncomeSummary.toMongoSummary(income))
 
-    override def findById(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Option[Income]] =
-      self.findSummaryById[Income](saUtr, taxYear, sourceId, (ukp: UKProperties) => ukp.incomes.find(_.summaryId == id).map(_.toIncome))
+    override def findById(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Option[Income]] =
+      self.findSummaryById[Income](nino, taxYear, sourceId, (ukp: UKProperties) => ukp.incomes.find(_.summaryId == id).map(_.toIncome))
 
-    override def update(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, income: Income): Future[Boolean] =
-      self.updateSummary(saUtr, taxYear, sourceId, UKPropertiesIncomeSummary.toMongoSummary(income, Some(id)), (ukp: UKProperties) => ukp.incomes.exists(_.summaryId == id))
+    override def update(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, income: Income): Future[Boolean] =
+      self.updateSummary(nino, taxYear, sourceId, UKPropertiesIncomeSummary.toMongoSummary(income, Some(id)), (ukp: UKProperties) => ukp.incomes.exists(_.summaryId == id))
 
-    override def delete(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Boolean] =
-      self.deleteSummary(saUtr, taxYear, sourceId, id, UKPropertiesIncomeSummary.arrayName, (ukp: UKProperties) => ukp.incomes.exists(_.summaryId == id))
+    override def delete(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Boolean] =
+      self.deleteSummary(nino, taxYear, sourceId, id, UKPropertiesIncomeSummary.arrayName, (ukp: UKProperties) => ukp.incomes.exists(_.summaryId == id))
 
-    override def list(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Option[Seq[Income]]] =
-      self.listSummaries[Income](saUtr, taxYear, sourceId, (ukp: UKProperties) => ukp.incomes.map(_.toIncome))
+    override def list(nino: Nino, taxYear: TaxYear, sourceId: SourceId): Future[Option[Seq[Income]]] =
+      self.listSummaries[Income](nino, taxYear, sourceId, (ukp: UKProperties) => ukp.incomes.map(_.toIncome))
 
-    override def listAsJsonItem(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] =
-      list(saUtr, taxYear, sourceId).map(_.getOrElse(Seq()).map(income => JsonItem(income.id.get.toString, toJson(income))))
+    override def listAsJsonItem(nino: Nino, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] =
+      list(nino, taxYear, sourceId).map(_.getOrElse(Seq()).map(income => JsonItem(income.id.get.toString, toJson(income))))
   }
 
   object ExpenseRepository extends SummaryRepository[Expense] {
-    override def create(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, expense: Expense): Future[Option[SummaryId]] =
-      self.createSummary(saUtr, taxYear, sourceId, UKPropertiesExpenseSummary.toMongoSummary(expense))
+    override def create(nino: Nino, taxYear: TaxYear, sourceId: SourceId, expense: Expense): Future[Option[SummaryId]] =
+      self.createSummary(nino, taxYear, sourceId, UKPropertiesExpenseSummary.toMongoSummary(expense))
 
-    override def findById(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Option[Expense]] =
-      self.findSummaryById[Expense](saUtr, taxYear, sourceId, (ukp: UKProperties) => ukp.expenses.find(_.summaryId == id).map(_.toExpense))
+    override def findById(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Option[Expense]] =
+      self.findSummaryById[Expense](nino, taxYear, sourceId, (ukp: UKProperties) => ukp.expenses.find(_.summaryId == id).map(_.toExpense))
 
-    override def update(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, expense: Expense): Future[Boolean] =
-      self.updateSummary(saUtr, taxYear, sourceId, UKPropertiesExpenseSummary.toMongoSummary(expense, Some(id)), (ukp: UKProperties) => ukp.expenses.exists(_.summaryId == id))
+    override def update(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, expense: Expense): Future[Boolean] =
+      self.updateSummary(nino, taxYear, sourceId, UKPropertiesExpenseSummary.toMongoSummary(expense, Some(id)), (ukp: UKProperties) => ukp.expenses.exists(_.summaryId == id))
 
-    override def delete(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Boolean] =
-      self.deleteSummary(saUtr, taxYear, sourceId, id, UKPropertiesExpenseSummary.arrayName, (ukp: UKProperties) => ukp.expenses.exists(_.summaryId == id))
+    override def delete(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Boolean] =
+      self.deleteSummary(nino, taxYear, sourceId, id, UKPropertiesExpenseSummary.arrayName, (ukp: UKProperties) => ukp.expenses.exists(_.summaryId == id))
 
-    override def list(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Option[Seq[Expense]]] =
-      self.listSummaries[Expense](saUtr, taxYear, sourceId, (ukp: UKProperties) => ukp.expenses.map(_.toExpense))
+    override def list(nino: Nino, taxYear: TaxYear, sourceId: SourceId): Future[Option[Seq[Expense]]] =
+      self.listSummaries[Expense](nino, taxYear, sourceId, (ukp: UKProperties) => ukp.expenses.map(_.toExpense))
 
-    override def listAsJsonItem(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] =
-      list(saUtr, taxYear, sourceId).map(_.getOrElse(Seq()).map(expense => JsonItem(expense.id.get.toString, toJson(expense))))
+    override def listAsJsonItem(nino: Nino, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] =
+      list(nino, taxYear, sourceId).map(_.getOrElse(Seq()).map(expense => JsonItem(expense.id.get.toString, toJson(expense))))
   }
 
   object BalancingChargeRepository extends SummaryRepository[BalancingCharge] {
-    override def create(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, balancingCharge: BalancingCharge): Future[Option[SummaryId]] =
-      self.createSummary(saUtr, taxYear, sourceId, UKPropertiesBalancingChargeSummary.toMongoSummary(balancingCharge))
+    override def create(nino: Nino, taxYear: TaxYear, sourceId: SourceId, balancingCharge: BalancingCharge): Future[Option[SummaryId]] =
+      self.createSummary(nino, taxYear, sourceId, UKPropertiesBalancingChargeSummary.toMongoSummary(balancingCharge))
 
-    override def findById(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Option[BalancingCharge]] =
-      self.findSummaryById[BalancingCharge](saUtr, taxYear, sourceId, (ukp: UKProperties) => ukp.balancingCharges.find(_.summaryId == id).map(_.toBalancingCharge))
+    override def findById(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Option[BalancingCharge]] =
+      self.findSummaryById[BalancingCharge](nino, taxYear, sourceId, (ukp: UKProperties) => ukp.balancingCharges.find(_.summaryId == id).map(_.toBalancingCharge))
 
-    override def update(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, balancingCharge: BalancingCharge): Future[Boolean] =
-      self.updateSummary(saUtr, taxYear, sourceId, UKPropertiesBalancingChargeSummary.toMongoSummary(balancingCharge, Some(id)),
+    override def update(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, balancingCharge: BalancingCharge): Future[Boolean] =
+      self.updateSummary(nino, taxYear, sourceId, UKPropertiesBalancingChargeSummary.toMongoSummary(balancingCharge, Some(id)),
         (ukp: UKProperties) => ukp.balancingCharges.exists(_.summaryId == id))
 
-    override def delete(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Boolean] =
-      self.deleteSummary(saUtr, taxYear, sourceId, id, UKPropertiesBalancingChargeSummary.arrayName, (ukp: UKProperties) => ukp.balancingCharges.exists(_.summaryId == id))
+    override def delete(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Boolean] =
+      self.deleteSummary(nino, taxYear, sourceId, id, UKPropertiesBalancingChargeSummary.arrayName, (ukp: UKProperties) => ukp.balancingCharges.exists(_.summaryId == id))
 
-    override def list(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Option[Seq[BalancingCharge]]] =
-      self.listSummaries[BalancingCharge](saUtr, taxYear, sourceId, (ukp: UKProperties) => ukp.balancingCharges.map(_.toBalancingCharge))
+    override def list(nino: Nino, taxYear: TaxYear, sourceId: SourceId): Future[Option[Seq[BalancingCharge]]] =
+      self.listSummaries[BalancingCharge](nino, taxYear, sourceId, (ukp: UKProperties) => ukp.balancingCharges.map(_.toBalancingCharge))
 
-    override def listAsJsonItem(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] =
-      list(saUtr, taxYear, sourceId).map(_.getOrElse(Seq()).map(balancingCharge => JsonItem(balancingCharge.id.get.toString, toJson(balancingCharge))))
+    override def listAsJsonItem(nino: Nino, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] =
+      list(nino, taxYear, sourceId).map(_.getOrElse(Seq()).map(balancingCharge => JsonItem(balancingCharge.id.get.toString, toJson(balancingCharge))))
   }
 
   object PrivateUseAdjustmentRepository extends SummaryRepository[PrivateUseAdjustment] {
-    override def create(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, goodsAndServicesOwnUse: PrivateUseAdjustment): Future[Option[SummaryId]] =
-      self.createSummary(saUtr, taxYear, sourceId, UKPropertiesPrivateUseAdjustmentSummary.toMongoSummary(goodsAndServicesOwnUse))
+    override def create(nino: Nino, taxYear: TaxYear, sourceId: SourceId, goodsAndServicesOwnUse: PrivateUseAdjustment): Future[Option[SummaryId]] =
+      self.createSummary(nino, taxYear, sourceId, UKPropertiesPrivateUseAdjustmentSummary.toMongoSummary(goodsAndServicesOwnUse))
 
-    override def findById(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Option[PrivateUseAdjustment]] =
-      self.findSummaryById[PrivateUseAdjustment](saUtr, taxYear, sourceId, (ukp: UKProperties) => ukp.privateUseAdjustment.find(_.summaryId == id).map(_.toGoodsAndServicesOwnUse))
+    override def findById(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Option[PrivateUseAdjustment]] =
+      self.findSummaryById[PrivateUseAdjustment](nino, taxYear, sourceId, (ukp: UKProperties) => ukp.privateUseAdjustment.find(_.summaryId == id).map(_.toGoodsAndServicesOwnUse))
 
-    override def update(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, goodsAndServicesOwnUse: PrivateUseAdjustment): Future[Boolean] =
-      self.updateSummary(saUtr, taxYear, sourceId, UKPropertiesPrivateUseAdjustmentSummary.toMongoSummary(goodsAndServicesOwnUse, Some(id)),
+    override def update(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, goodsAndServicesOwnUse: PrivateUseAdjustment): Future[Boolean] =
+      self.updateSummary(nino, taxYear, sourceId, UKPropertiesPrivateUseAdjustmentSummary.toMongoSummary(goodsAndServicesOwnUse, Some(id)),
         (ukp: UKProperties) => ukp.privateUseAdjustment.exists(_.summaryId == id))
 
-    override def delete(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Boolean] =
-      self.deleteSummary(saUtr, taxYear, sourceId, id, UKPropertiesPrivateUseAdjustmentSummary.arrayName, (ukp: UKProperties) => ukp.privateUseAdjustment.exists(_.summaryId == id))
+    override def delete(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Boolean] =
+      self.deleteSummary(nino, taxYear, sourceId, id, UKPropertiesPrivateUseAdjustmentSummary.arrayName, (ukp: UKProperties) => ukp.privateUseAdjustment.exists(_.summaryId == id))
 
-    override def list(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Option[Seq[PrivateUseAdjustment]]] =
-      self.listSummaries[PrivateUseAdjustment](saUtr, taxYear, sourceId, (ukp: UKProperties) => ukp.privateUseAdjustment.map(_.toGoodsAndServicesOwnUse))
+    override def list(nino: Nino, taxYear: TaxYear, sourceId: SourceId): Future[Option[Seq[PrivateUseAdjustment]]] =
+      self.listSummaries[PrivateUseAdjustment](nino, taxYear, sourceId, (ukp: UKProperties) => ukp.privateUseAdjustment.map(_.toGoodsAndServicesOwnUse))
 
-    override def listAsJsonItem(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] =
-      list(saUtr, taxYear, sourceId).map(_.getOrElse(Seq()).map(privateUseAdjustment => JsonItem(privateUseAdjustment.id.get.toString, toJson(privateUseAdjustment))))
+    override def listAsJsonItem(nino: Nino, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] =
+      list(nino, taxYear, sourceId).map(_.getOrElse(Seq()).map(privateUseAdjustment => JsonItem(privateUseAdjustment.id.get.toString, toJson(privateUseAdjustment))))
   }
 
   object TaxPaidRepository extends SummaryRepository[TaxPaid] {
-    override def create(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, goodsAndServicesOwnUse: TaxPaid): Future[Option[SummaryId]] =
-      self.createSummary(saUtr, taxYear, sourceId, UKPropertiesTaxPaidSummary.toMongoSummary(goodsAndServicesOwnUse))
+    override def create(nino: Nino, taxYear: TaxYear, sourceId: SourceId, goodsAndServicesOwnUse: TaxPaid): Future[Option[SummaryId]] =
+      self.createSummary(nino, taxYear, sourceId, UKPropertiesTaxPaidSummary.toMongoSummary(goodsAndServicesOwnUse))
 
-    override def findById(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Option[TaxPaid]] =
-      self.findSummaryById[TaxPaid](saUtr, taxYear, sourceId, (ukp: UKProperties) => ukp.taxesPaid.find(_.summaryId == id).map(_.toTaxPaid))
+    override def findById(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Option[TaxPaid]] =
+      self.findSummaryById[TaxPaid](nino, taxYear, sourceId, (ukp: UKProperties) => ukp.taxesPaid.find(_.summaryId == id).map(_.toTaxPaid))
 
-    override def update(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, goodsAndServicesOwnUse: TaxPaid): Future[Boolean] =
-      self.updateSummary(saUtr, taxYear, sourceId, UKPropertiesTaxPaidSummary.toMongoSummary(goodsAndServicesOwnUse, Some(id)),
+    override def update(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, goodsAndServicesOwnUse: TaxPaid): Future[Boolean] =
+      self.updateSummary(nino, taxYear, sourceId, UKPropertiesTaxPaidSummary.toMongoSummary(goodsAndServicesOwnUse, Some(id)),
         (ukp: UKProperties) => ukp.taxesPaid.exists(_.summaryId == id))
 
-    override def delete(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Boolean] =
-      self.deleteSummary(saUtr, taxYear, sourceId, id, UKPropertiesTaxPaidSummary.arrayName, (ukp: UKProperties) => ukp.taxesPaid.exists(_.summaryId == id))
+    override def delete(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Boolean] =
+      self.deleteSummary(nino, taxYear, sourceId, id, UKPropertiesTaxPaidSummary.arrayName, (ukp: UKProperties) => ukp.taxesPaid.exists(_.summaryId == id))
 
-    override def list(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Option[Seq[TaxPaid]]] =
-      self.listSummaries[TaxPaid](saUtr, taxYear, sourceId, (ukp: UKProperties) => ukp.taxesPaid.map(_.toTaxPaid))
+    override def list(nino: Nino, taxYear: TaxYear, sourceId: SourceId): Future[Option[Seq[TaxPaid]]] =
+      self.listSummaries[TaxPaid](nino, taxYear, sourceId, (ukp: UKProperties) => ukp.taxesPaid.map(_.toTaxPaid))
 
-    override def listAsJsonItem(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] =
-      list(saUtr, taxYear, sourceId).map(_.getOrElse(Seq()).map(privateUseAdjustment => JsonItem(privateUseAdjustment.id.get.toString, toJson(privateUseAdjustment))))
+    override def listAsJsonItem(nino: Nino, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] =
+      list(nino, taxYear, sourceId).map(_.getOrElse(Seq()).map(privateUseAdjustment => JsonItem(privateUseAdjustment.id.get.toString, toJson(privateUseAdjustment))))
   }
 
 }

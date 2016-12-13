@@ -1,0 +1,227 @@
+#%RAML 1.0
+---
+
+title: Self Assessment
+version: 1.0
+protocols: [ HTTPS ]
+baseUri: https://api.service.hmrc.gov.uk/
+mediaType: application/json
+
+uses:
+  sec: http://api-documentation-raml-frontend.service/api-documentation/assets/common/modules/securitySchemes.raml
+  headers: http://api-documentation-raml-frontend.service/api-documentation/assets/common/modules/headers.raml
+  annotations: http://api-documentation-raml-frontend.service/api-documentation/assets/common/modules/annotations.raml
+
+documentation:
+  - title: Overview
+    content: !include docs/overview.md
+  - title: Versioning
+    content: !include http://api-documentation-raml-frontend.service/api-documentation/assets/common/docs/versioning.md
+  - title: Errors
+    content: !include http://api-documentation-raml-frontend.service/api-documentation/assets/common/docs/errors.md
+
+schemas:
+  Error: !include schemas/Error.json
+  SelfEmployment: !include schemas/self-employment/SelfEmployment.json
+  SelfEmployments: !include schemas/self-employment/SelfEmployments.json
+  SelfEmploymentPeriod: !include schemas/self-employment/Period.json
+  SelfEmploymentPeriodUpdate: !include schemas/self-employment/UpdatePeriod.json
+  SelfEmploymentPeriods: !include schemas/self-employment/Periods.json
+  SelfEmploymentAnnualSummary: !include schemas/self-employment/AnnualSummary.json
+
+
+/self-assessment:
+  /ni/{nino}:
+    uriParameters:
+      nino:
+        description: National Insurance Number
+        type: string
+    /self-employments:
+      (annotations.group):
+          name: Self employment
+          description: !include docs/self-employment.md
+      post:
+        displayName: Create self employment
+        description: Create a self-employment source of income
+        is: [headers.acceptHeader]
+        (annotations.scope): "write:self-assessment"
+        securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
+        body:
+          application/json:
+            schema: SelfEmployment
+            example: !include examples/self-employment/SelfEmployment.json
+        responses:
+          201:
+            headers:
+              Location:
+                example: /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}
+          400:
+            body:
+              application/json:
+                schema: Error
+                example: !include examples/errors/TOO_MANY_SOURCES.json
+      get:
+        displayName: Get all self employments
+        description: List all self-employments sources of income
+        is: [headers.acceptHeader]
+        (annotations.scope): "read:self-assessment"
+        securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
+        responses:
+          200:
+            body:
+              application/json:
+                schema: SelfEmployments
+                example: !include examples/self-employment/SelfEmployments.json
+      /{selfEmploymentId}:
+        description: Self Employment
+        uriParameters:
+          selfEmploymentId:
+            displayName: Self Employment ID
+            description: An identifier for the self-employmment, unique to the customer
+            type: string
+        get:
+          displayName: Get self employment
+          description: Get a self-employment source of income
+          is: [headers.acceptHeader]
+          (annotations.scope): "read:self-assessment"
+          securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
+          responses:
+            200:
+              body:
+                application/json:
+                  schema: SelfEmployment
+                  example: !include examples/self-employment/SelfEmployment.json
+            404:
+              body:
+                application/json:
+                  schema: Error
+                  example: !include examples/errors/NOT_FOUND.json
+        put:
+          displayName: Update self employment
+          description: Update a self-employment source of income, e.g. to change accounting period
+          is: [headers.acceptHeader]
+          (annotations.scope): "write:self-assessment"
+          securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
+          body:
+            application/json:
+              schema: SelfEmployment
+              example: !include examples/self-employment/SelfEmployment.json
+          responses:
+            204:
+            400:
+              body:
+                application/json:
+                  schema: Error
+                  example: !include ./examples/errors/INVALID_ACCOUNTING_PERIOD.json
+        /periods:
+          post:
+            displayName: Create self employment period
+            description: Create a self employment period
+            is: [headers.acceptHeader]
+            (annotations.scope): "write:self-assessment"
+            securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
+            body:
+              application/json:
+                schema: SelfEmploymentPeriod
+                example: !include examples/self-employment/Period.json
+            responses:
+              201:
+                headers:
+                  Location:
+                    example: /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}/periods/{periodId}
+              400:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/INVALID_REQUEST.json
+          get:
+            displayName: Get all self employment periods
+            description: List all self employment periods
+            is: [headers.acceptHeader]
+            (annotations.scope): "read:self-assessment"
+            securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: SelfEmploymentPeriods
+                    example: !include examples/self-employment/Periods.json
+          /{periodId}:
+            uriParameters:
+              periodId:
+                description: An identifier for the period
+                type: string
+            get:
+              displayName: Get self employment period
+              description: Get a self employment period
+              is: [headers.acceptHeader]
+              (annotations.scope): "read:self-assessment"
+              securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
+              responses:
+                200:
+                  body:
+                    application/json:
+                      schema: SelfEmploymentPeriod
+                      example: !include examples/self-employment/Period.json
+                404:
+                  body:
+                    application/json:
+                      schema: Error
+                      example: !include examples/errors/NOT_FOUND.json
+            put:
+              displayName: Update self employment period
+              description: Update a self employment period
+              is: [headers.acceptHeader]
+              (annotations.scope): "write:self-assessment"
+              securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
+              body:
+                application/json:
+                  schema: SelfEmploymentPeriodUpdate
+                  example: !include examples/self-employment/UpdatePeriod.json
+              responses:
+                204:
+                400:
+                  body:
+                    application/json:
+                      schema: Error
+                      example: !include examples/errors/INVALID_REQUEST.json
+                404:
+                  body:
+                    application/json:
+                      schema: Error
+                      example: !include examples/errors/NOT_FOUND.json
+        /{taxYear}:
+          uriParameters:
+            taxYear:
+              description: The tax year the data applies to
+              type: string
+              example: 2016-17
+          put:
+            displayName: Update self employment annual summary
+            description: Update a self employment annual summary
+            is: [headers.acceptHeader]
+            (annotations.scope): "write:self-assessment"
+            securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
+            body:
+              application/json:
+                schema: SelfEmploymentAnnualSummary
+                example: !include ./examples/self-employment/AnnualSummary.json
+            responses:
+              204:
+              400:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/AnnualSummary_INVALID_REQUEST.json
+          get:
+            displayName: Get self employment annual summary
+            description: Get a self employment annual summary
+            is: [headers.acceptHeader]
+            (annotations.scope): "read:self-assessment"
+            securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: SelfEmploymentAnnualSummary
+                    example: !include ./examples/self-employment/AnnualSummary.json

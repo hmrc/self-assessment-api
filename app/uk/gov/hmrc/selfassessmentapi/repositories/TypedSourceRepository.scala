@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.repositories
 
 import org.joda.time.{DateTime, DateTimeZone}
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.mongo.Repository
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.SourceMetadata
@@ -35,15 +35,15 @@ trait TypedSourceRepository[A <: SourceMetadata, ID <: Any] extends Repository[A
   def isInsertion(suppliedId: BSONObjectID, returned: A): Boolean =
     suppliedId.equals(BSONObjectID(returned.sourceId))
 
-  def findMongoObjectById(saUtr: SaUtr, taxYear: TaxYear, id: SourceId): Future[Option[A]] = {
-    find("saUtr" -> saUtr.utr, "taxYear" -> taxYear.taxYear, "sourceId" -> id).map(_.headOption)
+  def findMongoObjectById(nino: Nino, taxYear: TaxYear, id: SourceId): Future[Option[A]] = {
+    find("nino" -> nino.nino, "taxYear" -> taxYear.taxYear, "sourceId" -> id).map(_.headOption)
   }
 
-  def delete(saUtr: SaUtr, taxYear: TaxYear, id: SourceId): Future[Boolean] = {
-    for (option <- remove("saUtr" -> saUtr.utr, "taxYear" -> taxYear.taxYear, "sourceId" -> id)) yield option.n == 1
+  def delete(nino: Nino, taxYear: TaxYear, id: SourceId): Future[Boolean] = {
+    for (option <- remove("nino" -> nino.nino, "taxYear" -> taxYear.taxYear, "sourceId" -> id)) yield option.n == 1
   }
 
-  def delete(saUtr: SaUtr, taxYear: TaxYear): Future[Boolean] = {
-    for (option <- remove("saUtr" -> saUtr.utr, "taxYear" -> taxYear.taxYear)) yield option.n > 0
+  def delete(nino: Nino, taxYear: TaxYear): Future[Boolean] = {
+    for (option <- remove("nino" -> nino.nino, "taxYear" -> taxYear.taxYear)) yield option.n > 0
   }
 }

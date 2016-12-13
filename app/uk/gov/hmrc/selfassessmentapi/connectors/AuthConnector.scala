@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.auth.microservice.connectors.ConfidenceLevel
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet}
 import uk.gov.hmrc.selfassessmentapi.LoggingService
@@ -30,14 +30,14 @@ trait AuthConnector {
   val http: HttpGet
   val loggingService: LoggingService
 
-  def saUtr(confidenceLevel: ConfidenceLevel)(implicit hc: HeaderCarrier): Future[Option[SaUtr]] = {
+  def nino(confidenceLevel: ConfidenceLevel)(implicit hc: HeaderCarrier): Future[Option[Nino]] = {
     http.GET(s"$serviceUrl/auth/authority") map {
       resp =>
         val json = resp.json
         val cl = (json \ "confidenceLevel").as[Int]
         if (cl >= confidenceLevel.level) {
-          val utr = (json \ "accounts" \ "sa" \ "utr").asOpt[String]
-          utr.map(SaUtr(_))
+          val nino = (json \ "accounts" \ "paye" \ "nino").asOpt[String]
+          nino.map(Nino(_))
         } else
           None
     } recover {

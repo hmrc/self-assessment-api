@@ -47,39 +47,34 @@ class ExpenseSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
       Seq(BigDecimal(1000.123), BigDecimal(1000.1234), BigDecimal(1000.12345), BigDecimal(1000.123456789)).foreach {
         testAmount =>
           val seExpense = Expense(`type` = CISPaymentsToSubcontractors, amount = testAmount, disallowableAmount = 0)
-          assertValidationError[Expense](seExpense,
-                                         Map("/amount" -> INVALID_MONETARY_AMOUNT),
-                                         "Expected invalid self-employment-income")
+          assertValidationErrorWithCode(seExpense,
+                                         "/amount", INVALID_MONETARY_AMOUNT)
       }
     }
 
     "reject negative monetary amounts" in {
       Seq(BigDecimal(-1000.12), BigDecimal(-10.12)).foreach { testAmount =>
         val seExpense = Expense(`type` = CISPaymentsToSubcontractors, amount = testAmount, disallowableAmount = 0)
-        assertValidationError[Expense](seExpense,
-                                       Map("/amount" -> INVALID_MONETARY_AMOUNT),
-                                       "Expected invalid self-employment-income")
+        assertValidationErrorWithCode(seExpense,
+                                       "/amount", INVALID_MONETARY_AMOUNT)
       }
     }
 
     "reject negative amount" in {
       val seExpense = Expense(`type` = CISPaymentsToSubcontractors, amount = BigDecimal(-1000.12), disallowableAmount = 0)
-      assertValidationError[Expense](seExpense,
-                                     Map("/amount" -> INVALID_MONETARY_AMOUNT),
-                                     "Expected negative self-employment expense")
+      assertValidationErrorWithCode(seExpense,
+                                     "/amount", INVALID_MONETARY_AMOUNT)
     }
 
     "reject invalid Expense category" in {
-      val json = Json.parse("""
+      val json = """
           |{ "type": "BAZ",
           |"amount" : 10000.45,
           |"disallowableAmount": 0
           |}
-        """.stripMargin)
+        """.stripMargin
 
-      assertValidationError[Expense](json,
-                                     Map("/type" -> NO_VALUE_FOUND),
-                                     s"Expected expense type not in {${ExpenseType.values.mkString(", ")}}")
+      assertValidationErrorsWithCode[Expense](Json.parse(json), Map("/type" -> INVALID_VALUE))
     }
 
     val genExpenseWithInvalidDisallowableAmount = for {
@@ -90,9 +85,8 @@ class ExpenseSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
 
     "reject Expense with disallowable amount greater than total amount" in forAll(
       genExpenseWithInvalidDisallowableAmount) { expense =>
-      assertValidationError[Expense](expense,
-                                     Map("" -> INVALID_DISALLOWABLE_AMOUNT),
-                                     "Expected disallowable amount to be greater than total amount")
+      assertValidationErrorWithCode(expense,
+                                     "", INVALID_DISALLOWABLE_AMOUNT)
     }
 
     val genInvalidDepreciationExpense = for {
@@ -103,9 +97,8 @@ class ExpenseSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
 
     "reject Depreciation Expense where disallowable amount is different than total amount" in forAll(
       genInvalidDepreciationExpense) { expense =>
-      assertValidationError[Expense](expense,
-                                     Map("" -> DEPRECIATION_DISALLOWABLE_AMOUNT),
-                                     "Expected disallowable amount to be equal to the total amount")
+      assertValidationErrorWithCode(expense,
+                                     "", DEPRECIATION_DISALLOWABLE_AMOUNT)
     }
   }
 }

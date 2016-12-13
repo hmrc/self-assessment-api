@@ -1,0 +1,9 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Periods",
+  "type": "array",
+  "items": {
+    "$ref": "http://localhost:9001/api/conf/1.0/schemas/self-employment/Period.json"
+  },
+  "additionalProperties": false
+}

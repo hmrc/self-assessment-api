@@ -22,6 +22,7 @@ import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.furnishedholidaylettings.PropertyLocationType
 import uk.gov.hmrc.selfassessmentapi.controllers.definition.EnumJson
+import uk.gov.hmrc.selfassessmentapi.resources.models.properties.{Adjustments, Allowances}
 
 case class UKProperty(id: Option[SourceId] = None,
                       allowances: Option[Allowances] = None,

@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain.calculations
 
 import org.scalatest.Matchers
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.controllers._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.selfemployment.{SelfEmployment => _}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{Liability => _, SelfAssessment => _, _}
@@ -32,11 +32,7 @@ class LiabilitySpec extends UnitSpec {
 
     "map to liability" in {
 
-      val liability = new Liability(
-        BSONObjectID.generate,
-        "",
-        saUtr = SaUtr(""),
-        taxYear = TaxYear(""),
+      val liability = new Liability(BSONObjectID.generate, "", nino = Nino("AA123456A"), taxYear = TaxYear(""),
         selfEmploymentIncome = Seq(
           SelfEmploymentIncome(sourceId = "seId1", taxableProfit = 10, profit = 20),
           SelfEmploymentIncome(sourceId = "seId2", taxableProfit = 20, profit = 40)
@@ -449,7 +445,7 @@ case class ComputeLiabilityFor(selfEmployments: Seq[SelfEmployment] = Nil,
                                banks: Seq[Bank] = Nil) {
   def andAssertThat() =
     LiabilityResultAssertions(
-      Liability.create(SaUtr("123456789"),
+      Liability.create(Nino("AA123456A"),
                        TaxYear("2016-17"),
                        api.SelfAssessment(selfEmployments = selfEmployments,
                                           ukProperties = ukProperties,

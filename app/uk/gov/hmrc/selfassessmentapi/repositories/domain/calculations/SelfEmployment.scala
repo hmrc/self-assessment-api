@@ -65,7 +65,7 @@ object SelfEmployment {
             a.capitalAllowanceSpecialRatePool,
             a.businessPremisesRenovationAllowance,
             a.enhancedCapitalAllowance,
-            a.allowancesOnSales)
+            a.allowanceOnSales)
       }.sum
     }
   }

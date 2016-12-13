@@ -16,20 +16,20 @@
 
 package uk.gov.hmrc.selfassessmentapi.services
 
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{SourceId, TaxYear}
 
 import scala.concurrent.Future
 
 trait SourceService[T] {
 
-  def create(saUtr: SaUtr, taxYear: TaxYear, source: T) : Future[SourceId]
+  def create(nino: Nino, taxYear: TaxYear, source: T) : Future[SourceId]
 
-  def findById(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId) : Future[Option[T]]
+  def findById(nino: Nino, taxYear: TaxYear, sourceId: SourceId) : Future[Option[T]]
 
-  def list(saUtr: SaUtr, taxYear: TaxYear) : Future[Seq[T]]
+  def list(nino: Nino, taxYear: TaxYear) : Future[Seq[T]]
 
-  def update(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, source: T): Future[Boolean]
+  def update(nino: Nino, taxYear: TaxYear, sourceId: SourceId, source: T): Future[Boolean]
 
-  def delete(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Boolean]
+  def delete(nino: Nino, taxYear: TaxYear, sourceId: SourceId): Future[Boolean]
 }

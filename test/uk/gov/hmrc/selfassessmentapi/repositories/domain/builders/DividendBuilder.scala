@@ -19,11 +19,12 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain.builders
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.selfassessmentapi.TestUtils._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.dividend.DividendIncomeType._
-import uk.gov.hmrc.selfassessmentapi.repositories.domain.{DividendIncomeSummary, Dividend}
+import uk.gov.hmrc.selfassessmentapi.controllers.util.NinoGenerator
+import uk.gov.hmrc.selfassessmentapi.repositories.domain.{Dividend, DividendIncomeSummary}
 
 case class DividendBuilder(objectID: BSONObjectID = BSONObjectID.generate) {
 
-  private var mongoDividends: Dividend = Dividend(objectID, objectID.stringify, generateSaUtr(), taxYear, now, now)
+  private var mongoDividends: Dividend = Dividend(objectID, objectID.stringify, NinoGenerator().nextNino(), taxYear, now, now)
 
   private def withDividends(dividends: (DividendIncomeType, BigDecimal)*) = {
     mongoDividends = mongoDividends.copy(incomes = mongoDividends.incomes ++ dividends.map(dividend => DividendIncomeSummary("", dividend._1, dividend._2)))

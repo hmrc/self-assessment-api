@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Accounting period",
+  "type": "object",
+  "properties": {
+    "start": {
+      "title": "Start date",
+      "description": "Date your books or accounts start - the beginning of your accounting period",
+      "type": "string",
+      "format": "date"
+    },
+    "end": {
+      "title": "End date",
+      "description": "Date your books or accounts are made up to or the end of your accounting period",
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "start",
+    "end"
+  ],
+  "additionalProperties": false
+}

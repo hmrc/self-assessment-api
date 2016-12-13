@@ -31,14 +31,14 @@ class BalancingChargesSpec extends JsonSpec {
   "validate" should {
     "reject amounts with more than 2 decimal values" in {
       Seq(BigDecimal(1000.123), BigDecimal(1000.12456), BigDecimal(1000.123454), BigDecimal(1000.123456789)).foreach { amount =>
-        assertValidationError(BalancingCharge(amount = amount),
-          Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected invalid amount with more than 2 decimal places")
+        assertValidationErrorWithCode(BalancingCharge(amount = amount),
+          "/amount", INVALID_MONETARY_AMOUNT)
       }
     }
 
     "reject negative amount" in {
-      assertValidationError(BalancingCharge(amount = BigDecimal(-1000.13)),
-        Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected negative amount")
+      assertValidationErrorWithCode(BalancingCharge(amount = BigDecimal(-1000.13)),
+        "/amount", INVALID_MONETARY_AMOUNT)
     }
   }
 }

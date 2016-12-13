@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Annual summary",
+  "type": "object",
+  "properties": {
+    "allowances": {
+      "$ref": "http://localhost:9001/api/conf/1.0/schemas/self-employment/Allowances.json"
+    },
+    "adjustments": {
+      "$ref": "http://localhost:9001/api/conf/1.0/schemas/self-employment/Adjustments.json"
+    }
+  },
+  "required": [
+    "allowances",
+    "adjustments"
+  ],
+  "additionalProperties": false
+}

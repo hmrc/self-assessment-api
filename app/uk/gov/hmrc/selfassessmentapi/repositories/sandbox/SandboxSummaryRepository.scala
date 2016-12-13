@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.repositories.sandbox
 import play.api.libs.json.Json._
 import play.api.libs.json.Writes
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{SourceId, SummaryId, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.repositories.{JsonItem, SummaryRepository}
 
@@ -35,14 +35,14 @@ trait SandboxSummaryRepository[T] extends SummaryRepository[T] {
 
   private def generateId: String = BSONObjectID.generate.stringify
 
-  override def create(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, income: T) = Future.successful(Some(generateId))
+  override def create(nino: Nino, taxYear: TaxYear, sourceId: SourceId, income: T) = Future.successful(Some(generateId))
 
-  override def delete(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Boolean] = Future.successful(true)
+  override def delete(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Boolean] = Future.successful(true)
 
-  override def findById(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Option[T]] =
+  override def findById(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId): Future[Option[T]] =
     Future.successful(Some(example(Some(id))))
 
-  override def listAsJsonItem(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] = {
+  override def listAsJsonItem(nino: Nino, taxYear: TaxYear, sourceId: SourceId): Future[Seq[JsonItem]] = {
     def createJsonItem(summaryId: SummaryId) = JsonItem(summaryId, exampleJson(summaryId))
     Future.successful(
       Seq(
@@ -55,7 +55,7 @@ trait SandboxSummaryRepository[T] extends SummaryRepository[T] {
     )
   }
 
-  override def update(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, income: T) = Future.successful(true)
+  override def update(nino: Nino, taxYear: TaxYear, sourceId: SourceId, id: SummaryId, income: T) = Future.successful(true)
 
-  override def list(saUtr: SaUtr, taxYear: TaxYear, sourceId: SourceId): Future[Option[Seq[T]]] = ???
+  override def list(nino: Nino, taxYear: TaxYear, sourceId: SourceId): Future[Option[Seq[T]]] = ???
 }

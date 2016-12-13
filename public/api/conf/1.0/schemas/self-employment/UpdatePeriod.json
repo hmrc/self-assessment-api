@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "UpdatePeriod",
+  "properties": {
+    "incomes": {
+      "$ref": "http://localhost:9001/api/conf/1.0/schemas/self-employment/Incomes.json"
+    },
+    "expenses": {
+      "$ref": "http://localhost:9001/api/conf/1.0/schemas/self-employment/Expenses.json"
+    }
+  },
+  "additionalProperties": false
+}

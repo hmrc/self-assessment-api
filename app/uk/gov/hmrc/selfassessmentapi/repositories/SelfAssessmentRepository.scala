@@ -22,7 +22,7 @@ import reactivemongo.api.DB
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.{BSONBoolean, BSONDateTime, BSONDocument, BSONDouble, BSONElement, BSONInteger, BSONNull, BSONObjectID, BSONString, BSONValue, Producer}
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.mongo.{AtomicUpdate, ReactiveRepository}
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{TaxYear, TaxYearProperties}
@@ -46,15 +46,15 @@ class SelfAssessmentMongoRepository(implicit mongo: () => DB)
     with AtomicUpdate[SelfAssessment] {
 
   override def indexes: Seq[Index] = Seq(
-    Index(Seq(("saUtr", Ascending), ("taxYear", Ascending)), name = Some("sa_utr_taxyear"), unique = true),
+    Index(Seq(("nino", Ascending), ("taxYear", Ascending)), name = Some("sa_nino_taxyear"), unique = true),
     Index(Seq(("lastModifiedDateTime", Ascending)), name = Some("sa_last_modified"), unique = false))
 
 
-  def touch(saUtr: SaUtr, taxYear: TaxYear) = {
+  def touch(nino: Nino, taxYear: TaxYear) = {
 
     for {
       result <- atomicUpsert(
-        BSONDocument("saUtr" -> BSONString(saUtr.toString), "taxYear" -> BSONString(taxYear.toString)),
+        BSONDocument("nino" -> BSONString(nino.toString), "taxYear" -> BSONString(taxYear.toString)),
         touchModifier()
       )
     } yield ()
@@ -75,9 +75,9 @@ class SelfAssessmentMongoRepository(implicit mongo: () => DB)
     "lastModifiedDateTime" -> BSONDateTime(dateTime.getMillis)
 
 
-  def findBy(saUtr: SaUtr, taxYear: TaxYear): Future[Option[SelfAssessment]] = {
+  def findBy(nino: Nino, taxYear: TaxYear): Future[Option[SelfAssessment]] = {
     find(
-      "saUtr" -> BSONString(saUtr.toString), "taxYear" -> BSONString(taxYear.toString)
+      "nino" -> BSONString(nino.toString), "taxYear" -> BSONString(taxYear.toString)
     ).map(_.headOption)
   }
 
@@ -87,18 +87,18 @@ class SelfAssessmentMongoRepository(implicit mongo: () => DB)
     )
   }
 
-  def delete(saUtr: SaUtr, taxYear: TaxYear): Future[Boolean] = {
-    for (option <- remove("saUtr" -> saUtr.utr, "taxYear" -> taxYear.taxYear)) yield option.n > 0
+  def delete(nino: Nino, taxYear: TaxYear): Future[Boolean] = {
+    for (option <- remove("nino" -> nino.nino, "taxYear" -> taxYear.taxYear)) yield option.n > 0
   }
 
   def isInsertion(suppliedId: BSONObjectID, returned: SelfAssessment): Boolean = suppliedId.equals(returned.id)
 
-  def updateTaxYearProperties(saUtr: SaUtr, taxYear: TaxYear, taxYearProperties: TaxYearProperties): Future[Unit] = {
+  def updateTaxYearProperties(nino: Nino, taxYear: TaxYear, taxYearProperties: TaxYearProperties): Future[Unit] = {
     val now = DateTime.now(DateTimeZone.UTC)
 
     for {
       result <- atomicUpsert(
-        BSONDocument("saUtr" -> saUtr.utr, "taxYear" -> taxYear.taxYear),
+        BSONDocument("nino" -> nino.nino, "taxYear" -> taxYear.taxYear),
         BSONDocument(
           setOnInsert(now),
           "$set" -> constructTaxYearPropertiesBson(taxYearProperties, now)
@@ -199,9 +199,9 @@ class SelfAssessmentMongoRepository(implicit mongo: () => DB)
       ))).getOrElse("childBenefit" -> BSONNull)
   }
 
-  def findTaxYearProperties(saUtr: SaUtr, taxYear: TaxYear): Future[Option[TaxYearProperties]] = {
+  def findTaxYearProperties(nino: Nino, taxYear: TaxYear): Future[Option[TaxYearProperties]] = {
     for {
-      optionSa <- find("saUtr" -> saUtr.utr, "taxYear" -> taxYear.taxYear).map(_.headOption)
+      optionSa <- find("nino" -> nino.nino, "taxYear" -> taxYear.taxYear).map(_.headOption)
     } yield for {
       sa <- optionSa
       taxYearProperties <- sa.taxYearProperties

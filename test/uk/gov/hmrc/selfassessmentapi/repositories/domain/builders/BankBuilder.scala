@@ -20,9 +20,10 @@ import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.{Bank, BankInterestSummary}
 import uk.gov.hmrc.selfassessmentapi.TestUtils._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.bank.InterestType._
+import uk.gov.hmrc.selfassessmentapi.controllers.util.NinoGenerator
 
 case class BankBuilder(id: BSONObjectID = BSONObjectID.generate) {
-  private var bank = Bank(id, id.stringify, generateSaUtr(), taxYear, now, now)
+  private var bank = Bank(id, id.stringify, NinoGenerator().nextNino(), taxYear, now, now)
 
   private def withInterests(savings: (InterestType, BigDecimal)*) = {
     bank = bank.copy(interests = bank.interests ++ savings.map(saving => BankInterestSummary("", saving._1, saving._2)))

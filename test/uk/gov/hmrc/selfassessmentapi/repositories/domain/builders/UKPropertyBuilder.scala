@@ -19,12 +19,14 @@ package uk.gov.hmrc.selfassessmentapi.repositories.domain.builders
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.selfassessmentapi.TestUtils._
 import uk.gov.hmrc.selfassessmentapi.controllers.api.ukproperty.IncomeType.{PremiumsOfLeaseGrant, RentIncome, ReversePremiums}
+import uk.gov.hmrc.selfassessmentapi.controllers.util.NinoGenerator
 import uk.gov.hmrc.selfassessmentapi.repositories.domain.{UKPropertiesTaxPaidSummary, _}
+import uk.gov.hmrc.selfassessmentapi.resources.models.properties.{Adjustments, Allowances}
 
 case class UKPropertyBuilder(rentARoomRelief: BigDecimal = 0, objectID: BSONObjectID = BSONObjectID.generate) {
   import uk.gov.hmrc.selfassessmentapi.controllers.api.ukproperty._
 
-  private var ukProperties: UKProperties = UKProperties(objectID, objectID.stringify, generateSaUtr(), taxYear, now, now,
+  private var ukProperties: UKProperties = UKProperties(objectID, objectID.stringify, NinoGenerator().nextNino(), taxYear, now, now,
     Some(rentARoomRelief), Some(Allowances()), Some(Adjustments()))
 
   def withAllowances(annualInvestmentAllowance: BigDecimal, otherCapitalAllowance: BigDecimal,

@@ -7,44 +7,38 @@ import org.skyscreamer.jsonassert.JSONAssert.assertEquals
 import org.skyscreamer.jsonassert.JSONCompareMode.LENIENT
 import play.api.libs.json._
 import uk.gov.hmrc.api.controllers.ErrorNotFound
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.TestApplication
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureConfig}
 import uk.gov.hmrc.selfassessmentapi.controllers.ErrorNotImplemented
 import uk.gov.hmrc.selfassessmentapi.controllers.api.{SourceType, SourceTypes, SummaryType}
+import uk.gov.hmrc.selfassessmentapi.controllers.util.NinoGenerator
 
 import scala.collection.mutable
 import scala.util.matching.Regex
 
 trait BaseFunctionalSpec extends TestApplication {
 
-  protected val saUtr = generateSaUtr()
+  protected val nino = NinoGenerator().nextNino()
 
   class Assertions(request: String, response: HttpResponse)(implicit urlPathVariables: mutable.Map[String, String])
       extends UrlInterpolation {
+    def jsonBodyIsEmptyObject = response.json shouldBe Json.obj()
 
-    if (request.startsWith("POST") || request.startsWith("PUT")) {
-      Map("sourceId" -> sourceIdFromHal(), "summaryId" -> summaryIdFromHal()) foreach {
-        case (name, fn) =>
-          fn map { evaluatedValue =>
-            urlPathVariables += (name -> evaluatedValue)
-          }
-      }
+    def jsonBodyIsEmptyArray = response.json shouldBe JsArray()
+
+
+    def responseContainsHeader(name: String, pattern: Regex) = {
+      response.header(name).get should fullyMatch regex pattern
+      this
     }
 
-    def sourceIdFromHal() = {
-      getLinkFromBody("self") flatMap { link =>
-        s"/self-assessment/\\d+/$taxYear/[\\w-]+/(\\w+)".r findFirstMatchIn link map { firstMatch =>
-          firstMatch.group(1)
-        }
-      }
-    }
-
-    def summaryIdFromHal() = {
-      getLinkFromBody("self") flatMap { link =>
-        s"/self-assessment/\\d+/$taxYear/[\\w-]+/\\w+/[\\w-]+/(\\w+)".r findFirstMatchIn link map { firstMatch =>
-          firstMatch.group(1)
+    if (request.startsWith("POST")) {
+      response.header("Location").map { location =>
+        location.contains("/periods") match {
+          case true => urlPathVariables += ("periodLocation" -> location.replaceFirst("/self-assessment", ""))
+          case false => urlPathVariables += ("sourceLocation" -> location.replaceFirst("/self-assessment", ""))
         }
       }
     }
@@ -68,28 +62,27 @@ trait BaseFunctionalSpec extends TestApplication {
       this
     }
 
-    def bodyHasSummaryLinks(sourceType: SourceType, sourceId: String, saUtr: SaUtr, taxYear: String) = {
+    def bodyHasSummaryLinks(sourceType: SourceType, sourceId: String, nino: Nino, taxYear: String) = {
       sourceType.summaryTypes.foreach { summaryType =>
-        bodyHasLink(summaryType.name,
-                    s"/self-assessment/$saUtr/$taxYear/${sourceType.name}/$sourceId/${summaryType.name}".r)
+        bodyHasLink(summaryType.name, s"/self-assessment/ni/$nino/$taxYear/${sourceType.name}/$sourceId/${summaryType.name}".r)
       }
       this
     }
 
-    def bodyHasSummaryLinks(sourceType: SourceType, saUtr: SaUtr, taxYear: String) = {
+    def bodyHasSummaryLinks(sourceType: SourceType, nino: Nino, taxYear: String) = {
       sourceType.summaryTypes.foreach { summaryType =>
-        bodyHasLink(summaryType.name, s"/self-assessment/$saUtr/$taxYear/${sourceType.name}/.+/${summaryType.name}".r)
+        bodyHasLink(summaryType.name, s"/self-assessment/ni/$nino/$taxYear/${sourceType.name}/.+/${summaryType.name}".r)
       }
       this
     }
 
-    def bodyHasSummaryLink(sourceType: SourceType, summaryType: SummaryType, saUtr: SaUtr, taxYear: String) = {
-      bodyHasLink(summaryType.name, s"/self-assessment/$saUtr/$taxYear/${sourceType.name}/.+/${summaryType.name}".r)
+    def bodyHasSummaryLink(sourceType: SourceType, summaryType: SummaryType, nino: Nino, taxYear: String) = {
+      bodyHasLink(summaryType.name, s"/self-assessment/ni/$nino/$taxYear/${sourceType.name}/.+/${summaryType.name}".r)
       this
     }
 
-    def bodyDoesNotHaveSummaryLink(sourceType: SourceType, summaryType: SummaryType, saUtr: SaUtr, taxYear: String) = {
-      val hrefPattern = s"/self-assessment/$saUtr/$taxYear/${sourceType.name}/.+/${summaryType.name}".r
+    def bodyDoesNotHaveSummaryLink(sourceType: SourceType, summaryType: SummaryType, nino: Nino, taxYear: String) = {
+      val hrefPattern = s"/self-assessment/ni/$nino/$taxYear/${sourceType.name}/.+/${summaryType.name}".r
       getLinkFromBody(summaryType.name) match {
         case Some(href) =>
           hrefPattern findFirstIn href match {
@@ -101,20 +94,20 @@ trait BaseFunctionalSpec extends TestApplication {
       this
     }
 
-    def bodyHasLinksForAllSourceTypes(saUtr: SaUtr, taxYear: String) = {
+    def bodyHasLinksForAllSourceTypes(nino: Nino, taxYear: String) = {
       SourceTypes.types.foreach { sourceType =>
-        bodyHasLink(sourceType.name, s"/self-assessment/$saUtr/$taxYear/${sourceType.name}")
+        bodyHasLink(sourceType.name, s"/self-assessment/ni/$nino/$taxYear/${sourceType.name}")
       }
       this
     }
 
-    def bodyHasLinksForSourceType(sourceType: SourceType, saUtr: SaUtr, taxYear: String) = {
-      bodyHasLink(sourceType.name, s"/self-assessment/$saUtr/$taxYear/${sourceType.name}")
+    def bodyHasLinksForSourceType(sourceType: SourceType, nino: Nino, taxYear: String) = {
+      bodyHasLink(sourceType.name, s"/self-assessment/ni/$nino/$taxYear/${sourceType.name}")
       this
     }
 
-    def bodyDoesNotHaveLinksForSourceType(sourceType: SourceType, saUtr: SaUtr, taxYear: String) = {
-      val hrefPattern = s"/self-assessment/$saUtr/$taxYear/${sourceType.name}".r
+    def bodyDoesNotHaveLinksForSourceType(sourceType: SourceType, nino: Nino, taxYear: String) = {
+      val hrefPattern = s"/self-assessment/ni/$nino/$taxYear/${sourceType.name}".r
       getLinkFromBody(sourceType.name) match {
         case Some(href) =>
           hrefPattern findFirstIn href match {
@@ -126,14 +119,12 @@ trait BaseFunctionalSpec extends TestApplication {
       this
     }
 
-    def bodyHasLinksForEnabledSourceTypes(saUtr: SaUtr, taxYear: String) = {
+    def bodyHasLinksForEnabledSourceTypes(nino: Nino, taxYear: String) = {
       SourceTypes.types.filter { source =>
         AppContext.featureSwitch.exists { config =>
           FeatureConfig(config).isSourceEnabled(source.name)
         }
-      } foreach { sourceType =>
-        bodyHasLinksForSourceType(sourceType, saUtr, taxYear)
-      }
+      } foreach { sourceType => bodyHasLinksForSourceType(sourceType, nino, taxYear) }
       this
     }
 
@@ -315,7 +306,7 @@ trait BaseFunctionalSpec extends TestApplication {
       new BodyAssertions(myQuery(response.json).toOption, this)
     }
 
-    def body1(myQuery: JsValue => Seq[JsValue]) = {
+    def selectFields(myQuery: JsValue => Seq[JsValue]) = {
       new BodyListAssertions(myQuery(response.json), this)
     }
 
@@ -342,6 +333,20 @@ trait BaseFunctionalSpec extends TestApplication {
     }
 
     class BodyListAssertions(content: Seq[JsValue], assertions: Assertions) {
+      def isLength(n: Int) = {
+        content.size shouldBe n
+        this
+      }
+
+      def matches(matcher: Regex) = {
+        content.map(_.as[String]).forall {
+          case matcher(_*) => true
+          case _ => false
+        } shouldBe true
+
+        assertions
+      }
+
       def is(value: String*) = {
         content.map(con => con.as[String]) should contain theSameElementsAs value
         assertions
@@ -353,10 +358,12 @@ trait BaseFunctionalSpec extends TestApplication {
       implicit urlPathVariables: mutable.Map[String, String])
       extends UrlInterpolation {
 
-    assert(path.startsWith("/"), "please provide only a path starting with '/'")
+    private val interpolatedPath: String = interpolated(path)
+    assert(interpolatedPath.startsWith("/"), "please provide only a path starting with '/'")
+
+    val url = s"http://localhost:$port$interpolatedPath"
     var addAcceptHeader = true
     val hc = HeaderCarrier()
-    val url = s"http://localhost:$port$path"
 
     def withoutAcceptHeader() = {
       this.addAcceptHeader = false
@@ -367,18 +374,18 @@ trait BaseFunctionalSpec extends TestApplication {
       implicit val carrier =
         if (addAcceptHeader) hc.withExtraHeaders(("Accept", "application/vnd.hmrc.1.0+json")) else hc
 
-      withClue(s"Request $method ${interpolated(url)}") {
+      withClue(s"Request $method $url") {
         method match {
-          case "GET" => new Assertions(s"GET@$url", Http.get(interpolated(url)))
-          case "DELETE" => new Assertions(s"DELETE@$url", Http.delete(interpolated(url)))
+          case "GET" => new Assertions(s"GET@$url", Http.get(url))
+          case "DELETE" => new Assertions(s"DELETE@$url", Http.delete(url))
           case "POST" =>
             body match {
-              case Some(jsonBody) => new Assertions(s"POST@$url", Http.postJson(interpolated(url), jsonBody))
-              case None => new Assertions(s"POST@$url", Http.postEmpty(interpolated(url)))
+              case Some(jsonBody) => new Assertions(s"POST@$url", Http.postJson(url, jsonBody))
+              case None => new Assertions(s"POST@$url", Http.postEmpty(url))
             }
           case "PUT" =>
             val jsonBody = body.getOrElse(throw new RuntimeException("Body for PUT must be provided"))
-            new Assertions(s"PUT@$url", Http.putJson(interpolated(url), jsonBody))
+            new Assertions(s"PUT@$url", Http.putJson(url, jsonBody))
         }
       }
     }
@@ -401,12 +408,12 @@ trait BaseFunctionalSpec extends TestApplication {
 
   class HttpVerbs()(implicit urlPathVariables: mutable.Map[String, String] = mutable.Map()) {
 
-    def post(body: Some[JsValue]) = {
-      new HttpPostBodyWrapper("POST", body)
+    def post(body: JsValue) = {
+      new HttpPostBodyWrapper("POST", Some(body))
     }
 
-    def put(body: Some[JsValue]) = {
-      new HttpPutBodyWrapper("PUT", body)
+    def put(body: JsValue) = {
+      new HttpPutBodyWrapper("PUT", Some(body))
     }
 
     def get(path: String) = {
@@ -433,30 +440,26 @@ trait BaseFunctionalSpec extends TestApplication {
 
     def when() = new HttpVerbs()
 
-    def userIsNotAuthorisedForTheResource(utr: SaUtr) = {
-      stubFor(
-        get(urlPathEqualTo(s"/authorise/read/sa/$utr"))
-          .willReturn(aResponse().withStatus(401).withHeader("Content-Length", "0")))
-      stubFor(
-        get(urlPathEqualTo(s"/authorise/write/sa/$utr"))
-          .willReturn(aResponse().withStatus(401).withHeader("Content-Length", "0")))
+    def userIsNotAuthorisedForTheResource(nino: Nino) = {
+      stubFor(get(urlPathEqualTo(s"/authorise/read/paye/$nino")).willReturn(aResponse().withStatus(401).withHeader("Content-Length", "0")))
+      stubFor(get(urlPathEqualTo(s"/authorise/write/paye/$nino")).willReturn(aResponse().withStatus(401).withHeader("Content-Length", "0")))
       this
     }
 
-    def userIsAuthorisedForTheResource(utr: SaUtr) = {
-      stubFor(get(urlPathEqualTo(s"/authorise/read/sa/$utr")).willReturn(aResponse().withStatus(200)))
-      stubFor(get(urlPathEqualTo(s"/authorise/write/sa/$utr")).willReturn(aResponse().withStatus(200)))
+    def userIsAuthorisedForTheResource(nino: Nino) = {
+      stubFor(get(urlPathEqualTo(s"/authorise/read/paye/$nino")).willReturn(aResponse().withStatus(200)))
+      stubFor(get(urlPathEqualTo(s"/authorise/write/paye/$nino")).willReturn(aResponse().withStatus(200)))
       this
     }
 
-    def userIsEnrolledInSa(utr: SaUtr) = {
+    def userIsEnrolledInSa(nino: Nino) = {
       val json =
         s"""
            |{
            |    "accounts": {
-           |        "sa": {
-           |            "link": "/sa/individual/$utr",
-           |            "utr": "$utr"
+           |        "paye": {
+           |            "link": "/paye/$nino",
+           |            "nino": "$nino"
            |        }
            |    },
            |    "confidenceLevel": 500

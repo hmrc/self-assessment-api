@@ -15,26 +15,26 @@
  */
 
 package uk.gov.hmrc.selfassessmentapi.repositories
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.controllers.api._
 
 import scala.concurrent.Future
 
 trait SourceRepository[T] {
 
-  def create(saUtr: SaUtr, taxYear: TaxYear, source: T): Future[SourceId]
+  def create(nino: Nino, taxYear: TaxYear, source: T): Future[SourceId]
 
-  def findById(saUtr: SaUtr, taxYear: TaxYear, id: SourceId): Future[Option[T]]
+  def findById(nino: Nino, taxYear: TaxYear, id: SourceId): Future[Option[T]]
 
-  def update(saUtr: SaUtr, taxYear: TaxYear, id: SourceId, source: T): Future[Boolean]
+  def update(nino: Nino, taxYear: TaxYear, id: SourceId, source: T): Future[Boolean]
 
-  def delete(saUtr: SaUtr, taxYear: TaxYear, id: SourceId): Future[Boolean]
+  def delete(nino: Nino, taxYear: TaxYear, id: SourceId): Future[Boolean]
 
-  def delete(saUtr: SaUtr, taxYear: TaxYear): Future[Boolean]
+  def delete(nino: Nino, taxYear: TaxYear): Future[Boolean]
 
-  def list(saUtr: SaUtr, taxYear: TaxYear): Future[Seq[T]]
+  def list(nino: Nino, taxYear: TaxYear): Future[Seq[T]]
 
-  def listAsJsonItem(saUtr: SaUtr, taxYear: TaxYear): Future[Seq[JsonItem]]
+  def listAsJsonItem(nino: Nino, taxYear: TaxYear): Future[Seq[JsonItem]]
 }
 
 //todo feel free to implement this functionality in more scalaish way
@@ -42,29 +42,29 @@ case class SourceRepositoryWrapper[T](private val target: SourceRepository[T]) e
 
   lazy val selfAssessmentRepository = SelfAssessmentRepository()
 
-  override def create(saUtr: SaUtr, taxYear: TaxYear, source: T) : Future[SourceId] = {
-    selfAssessmentRepository.touch(saUtr, taxYear)
-    target.create(saUtr, taxYear, source)
+  override def create(nino: Nino, taxYear: TaxYear, source: T) : Future[SourceId] = {
+    selfAssessmentRepository.touch(nino, taxYear)
+    target.create(nino, taxYear, source)
   }
 
-  override def update(saUtr: SaUtr, taxYear: TaxYear, id: SourceId, source: T): Future[Boolean] = {
-    selfAssessmentRepository.touch(saUtr, taxYear)
-    target.update(saUtr, taxYear, id, source)
+  override def update(nino: Nino, taxYear: TaxYear, id: SourceId, source: T): Future[Boolean] = {
+    selfAssessmentRepository.touch(nino, taxYear)
+    target.update(nino, taxYear, id, source)
   }
 
-  override def findById(saUtr: SaUtr, taxYear: TaxYear, id: SourceId): Future[Option[T]] = target.findById(saUtr, taxYear, id)
+  override def findById(nino: Nino, taxYear: TaxYear, id: SourceId): Future[Option[T]] = target.findById(nino, taxYear, id)
 
-  override def delete(saUtr: SaUtr, taxYear: TaxYear, id: SourceId): Future[Boolean] = {
-    selfAssessmentRepository.touch(saUtr, taxYear)
-    target.delete(saUtr, taxYear, id)
+  override def delete(nino: Nino, taxYear: TaxYear, id: SourceId): Future[Boolean] = {
+    selfAssessmentRepository.touch(nino, taxYear)
+    target.delete(nino, taxYear, id)
   }
 
-  override def delete(saUtr: SaUtr, taxYear: TaxYear): Future[Boolean] = {
-    selfAssessmentRepository.touch(saUtr, taxYear)
-    target.delete(saUtr, taxYear)
+  override def delete(nino: Nino, taxYear: TaxYear): Future[Boolean] = {
+    selfAssessmentRepository.touch(nino, taxYear)
+    target.delete(nino, taxYear)
   }
 
-  override def list(saUtr: SaUtr, taxYear: TaxYear): Future[Seq[T]] = target.list(saUtr, taxYear)
+  override def list(nino: Nino, taxYear: TaxYear): Future[Seq[T]] = target.list(nino, taxYear)
 
-  override def listAsJsonItem(saUtr: SaUtr, taxYear: TaxYear): Future[Seq[JsonItem]] = target.listAsJsonItem(saUtr, taxYear)
+  override def listAsJsonItem(nino: Nino, taxYear: TaxYear): Future[Seq[JsonItem]] = target.listAsJsonItem(nino, taxYear)
 }

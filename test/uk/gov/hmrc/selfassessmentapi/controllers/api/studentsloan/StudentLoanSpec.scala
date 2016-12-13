@@ -31,17 +31,15 @@ class StudentLoanSpec extends JsonSpec {
   "validate" should {
 
     "reject amounts with more than 2 decimal values" in {
-      assertValidationError[StudentLoan](
+      assertValidationErrorWithCode(
         StudentLoan(planType = StudentLoanPlanType.Plan1, deductedByEmployers = Some(BigDecimal(1000.123))),
-        Map("/deductedByEmployers" -> INVALID_MONETARY_AMOUNT), "Expected validation error for deductedByEmployers for amount with more than 2 decimal places"
-      )
+        "/deductedByEmployers", INVALID_MONETARY_AMOUNT)
     }
 
     "reject negative amount" in {
-      assertValidationError[StudentLoan](
+      assertValidationErrorWithCode(
         StudentLoan(planType = StudentLoanPlanType.Plan1, deductedByEmployers = Some(BigDecimal(-1000.00))),
-        Map("/deductedByEmployers" -> INVALID_MONETARY_AMOUNT), "Expected validation error for deductedByEmployers for negative amount"
-      )
+        "/deductedByEmployers", INVALID_MONETARY_AMOUNT)
     }
 
     "accept a student loan without specifying the amount already deducted by employers" in {

@@ -32,19 +32,17 @@ class BalancingChargeSpec extends JsonSpec {
     "reject amounts with more than 2 decimal values" in {
       Seq(BigDecimal(1000.123), BigDecimal(1000.12456), BigDecimal(1000.123454), BigDecimal(1000.123456789)).foreach { testAmount =>
         val expense = BalancingCharge(amount = testAmount)
-        assertValidationError[BalancingCharge](
+        assertValidationErrorWithCode(
           expense,
-          Map("/amount" -> INVALID_MONETARY_AMOUNT),
-          "Expected invalid monetary amount")
+          "/amount", INVALID_MONETARY_AMOUNT)
       }
     }
 
     "reject negative amount" in {
       val expense = BalancingCharge(amount = BigDecimal(-1000.13))
-      assertValidationError[BalancingCharge](
+      assertValidationErrorWithCode(
         expense,
-        Map("/amount" -> INVALID_MONETARY_AMOUNT),
-        "Expected negative amount to be rejected")
+        "/amount", INVALID_MONETARY_AMOUNT)
     }
   }
 }

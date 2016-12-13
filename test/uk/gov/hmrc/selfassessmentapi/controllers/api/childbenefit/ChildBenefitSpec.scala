@@ -33,26 +33,26 @@ class ChildBenefitSpec extends JsonSpec {
     "reject amounts with more than 2 decimal values" in {
       Seq(BigDecimal(1000.123), BigDecimal(1000.12456), BigDecimal(1000.123454), BigDecimal(1000.123456789)).foreach { testAmount =>
         val expense = ChildBenefit(amount = testAmount, numberOfChildren = 3)
-        assertValidationError[ChildBenefit](
+        assertValidationErrorWithCode(
           expense,
-          Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected invalid amount in child benefit")
+          "/amount", INVALID_MONETARY_AMOUNT)
       }
     }
 
     "reject negative amount" in {
       val expense = ChildBenefit(amount = BigDecimal(-1000.13), numberOfChildren = 3)
-      assertValidationError[ChildBenefit](
+      assertValidationErrorWithCode(
         expense,
-        Map("/amount" -> INVALID_MONETARY_AMOUNT), "Expected negative amount in child benefit")
+        "/amount", INVALID_MONETARY_AMOUNT)
     }
 
     "reject zero and negative number of children" in {
       Seq(-2, -5).foreach {
         testNumber =>
           val expense = ChildBenefit(amount = BigDecimal(1000), numberOfChildren = testNumber)
-          assertValidationError[ChildBenefit](
+          assertValidationErrorWithCode(
             expense,
-            Map("/numberOfChildren" -> VALUE_BELOW_MINIMUM), "Expected zero or negative number of children")
+            "/numberOfChildren", VALUE_BELOW_MINIMUM)
       }
     }
 
@@ -60,9 +60,8 @@ class ChildBenefitSpec extends JsonSpec {
       Seq(BigDecimal(123.34), BigDecimal(1000.23)).foreach {
         testAmount =>
           val expense = ChildBenefit(amount = testAmount, numberOfChildren = 0)
-          assertValidationError[ChildBenefit](
-            expense,
-            Map("" -> VALUE_BELOW_MINIMUM), "Expected non zero amount and zero number of children")
+          assertValidationErrorWithCode(
+            expense, "", VALUE_BELOW_MINIMUM)
       }
     }
 
