@@ -8,6 +8,16 @@
       "description": "Loss brought forward from earlier years set off against this year’s profits",
       "type": "number",
       "minimum": 0
+    },
+    "privateUseAdjustment": {
+      "title": "Private use adjustment",
+      "type": "number",
+      "minimum": 0
+    },
+    "balancingCharge": {
+      "title": "Balancing charge",
+      "type": "number",
+      "minimum": 0
     }
   },
   "additionalProperties": false

@@ -1,14 +1,13 @@
 {
   "adjustments": {
-    "lossBroughtForward": 100.25
+    "lossBroughtForward": 100.25,
+    "privateUseAdjustment": 100.25,
+    "balancingCharge": 100.25
   },
   "allowances": {
     "annualInvestmentAllowance": 100.25,
     "businessPremisesRenovationAllowance": 100.25,
     "otherCapitalAllowance": 100.25,
     "wearAndTearAllowance": 100.25
-  },
-  "rentARoomRelief": 100.25,
-  "privateUseAdjustment": 100.25,
-  "balancingCharge": 100.25
+  }
 }
