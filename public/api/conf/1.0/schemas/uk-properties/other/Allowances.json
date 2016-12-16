@@ -14,15 +14,21 @@
       "type": "number",
       "minimum": 0
     },
-    "otherCapitalAllowance": {
-      "title": "Other Capital allowance",
-      "description": "All other capital allowances",
+    "costOfReplacingDomesticItems": {
+      "title": "Cost of Replacing Domestic Items",
+      "description": "Fill this!!",
       "type": "number",
       "minimum": 0
     },
-    "wearAndTearAllowance": {
-      "title": "Wear and tear allowance",
-      "description": "10% wear and tear allowance - for furnished residential accommodation only",
+    "zeroEmissionsGoodsVehicleAllowance": {
+      "title": "Zero Emissions Goods Vehicle Allowance",
+      "description": "Fill this!!",
+      "type": "number",
+      "minimum": 0
+    },
+    "otherCapitalAllowance": {
+      "title": "Other Capital allowance",
+      "description": "All other capital allowances",
       "type": "number",
       "minimum": 0
     }

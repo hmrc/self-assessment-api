@@ -8,21 +8,9 @@
       "type": "number",
       "minimum": 0
     },
-    "businessPremisesRenovationAllowance": {
-      "title": "Business premises renovation allowance",
-      "description": "(Assisted Areas only)",
-      "type": "number",
-      "minimum": 0
-    },
     "otherCapitalAllowance": {
       "title": "Other Capital allowance",
       "description": "All other capital allowances",
-      "type": "number",
-      "minimum": 0
-    },
-    "wearAndTearAllowance": {
-      "title": "Wear and tear allowance",
-      "description": "10% wear and tear allowance - for furnished residential accommodation only",
       "type": "number",
       "minimum": 0
     }

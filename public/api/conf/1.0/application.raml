@@ -350,7 +350,7 @@ schemas:
             description: Create period
             body:
               application/json:
-                schema: OtherUkPropertyPeriod
+                schema: FhlUkPropertyPeriod
                 example: !include examples/uk-properties/fhl/Period.json
             responses:
               201:
@@ -368,7 +368,7 @@ schemas:
               200:
                 body:
                   application/json:
-                    schema: OtherUkPropertyPeriods
+                    schema: FhlUkPropertyPeriods
                     example: !include examples/uk-properties/fhl/Periods.json
           /{periodId}:
             uriParameters:
@@ -381,13 +381,13 @@ schemas:
                 200:
                   body:
                     application/json:
-                      schema: OtherUkPropertyPeriod
+                      schema: FhlUkPropertyPeriod
                       example: !include examples/uk-properties/fhl/Period.json
             put:
               description: Amend period
               body:
                 application/json:
-                  schema: OtherUkPropertyPeriod
+                  schema: FhlUkPropertyPeriod
                   example: !include examples/uk-properties/fhl/Period.json
               responses:
                 204:
@@ -407,7 +407,7 @@ schemas:
               description: Update annual summary
               body:
                 application/json:
-                  schema: OtherUkPropertyAnnualSummary
+                  schema: FhlUkPropertyAnnualSummary
                   example: !include ./examples/uk-properties/fhl/AnnualSummary.json
               responses:
                 204:
@@ -422,5 +422,5 @@ schemas:
                 200:
                   body:
                     application/json:
-                      schema: OtherUkPropertyAnnualSummary
+                      schema: FhlUkPropertyAnnualSummary
                       example: !include ./examples/uk-properties/fhl/AnnualSummary.json

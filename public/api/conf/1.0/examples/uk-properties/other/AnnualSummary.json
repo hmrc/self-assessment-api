@@ -8,6 +8,7 @@
     "annualInvestmentAllowance": 100.25,
     "businessPremisesRenovationAllowance": 100.25,
     "otherCapitalAllowance": 100.25,
-    "wearAndTearAllowance": 100.25
+    "costOfReplacingDomesticItems": 100.25,
+    "zeroEmissionsGoodsVehicleAllowance": 100.25
   }
 }
