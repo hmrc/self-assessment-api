@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Adjustments",
+  "type": "object",
+  "properties": {
+    "lossBroughtForward": {
+      "title": "Loss brought forward",
+      "description": "Loss brought forward from earlier years set off against this year’s profits",
+      "type": "number",
+      "minimum": 0
+    },
+    "privateUseAdjustment": {
+      "title": "Private use adjustment",
+      "type": "number",
+      "minimum": 0
+    },
+    "balancingCharge": {
+      "title": "Balancing charge",
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}

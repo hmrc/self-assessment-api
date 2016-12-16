@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "Expenses",
+  "properties": {
+    "premisesRunningCosts": {
+      "title": "Premises running costs",
+      "description": "Rent, rates, insurance, ground rents etc",
+      "type": "number",
+      "minimum": 0
+    },
+    "repairsAndMaintenance": {
+      "title": "Repairs and maintenance",
+      "description": "Property repairs and maintenace",
+      "type": "number",
+      "minimum": 0
+    },
+    "financialCosts": {
+      "title": "Financial costs",
+      "description": "Loan interest and other financial costs",
+      "type": "number",
+      "minimum": 0
+    },
+    "professionalFees": {
+      "title": "Professional fees",
+      "description": "Legal, management and other professional fees",
+      "type": "number",
+      "minimum": 0
+    },
+    "costOfServices": {
+      "title": "Cost of services",
+      "description": "Cost of services provided, including wages",
+      "type": "number",
+      "minimum": 0
+    },
+    "other": {
+      "title": "Other",
+      "description": "Other allowable property expenses",
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}
