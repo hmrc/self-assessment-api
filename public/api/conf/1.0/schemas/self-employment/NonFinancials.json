@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Non-financials",
+  "type": "object",
+  "properties": {
+    "businessDetailsChangedRecently": {
+      "title": "Business details changed recently",
+      "description": "Have your business details changed in the last 12 months?",
+      "type": "boolean"
+    },
+    "payClass2Nics": {
+      "title": "Chosen to pay class-2 NICs",
+      "description": "Are your total profits for this tax year are less than £5,965 and have you chosen to pay Class 2 NIC's voluntarily?",
+      "type": "boolean"
+    },
+    "exemptFromPayingClass4Nics": {
+      "title": "Exempt from paying class-4 NICs",
+      "description": "Are you are excempted from paying Class 4 NIC's?",
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

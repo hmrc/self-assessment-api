@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Period",
+    "properties": {
+        "incomes": {
+            "$ref": "Incomes.json"
+        },
+        "expenses": {
+            "$ref": "Expenses.json"
+        }
+    },
+    "additonalProperties": false
+}

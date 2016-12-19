@@ -1,0 +1,455 @@
+#%RAML 1.0
+---
+
+title: Self Assessment
+version: 1.0
+protocols: [ HTTPS ]
+baseUri: https://api.service.hmrc.gov.uk/
+mediaType: application/json
+
+documentation:
+  - title: Overview
+    content: !include docs/overview.md
+  - title: Obligations
+    content: !include docs/obligation.md
+  - title: Self Employment Business
+    content: !include docs/self-employment.md
+  - title: UK Property Business
+    content: !include docs/uk-properties.md
+
+schemas:
+  Error: !include schemas/Error.json
+  SelfEmployment: !include schemas/self-employment/SelfEmployment.json
+  SelfEmployments: !include schemas/self-employment/SelfEmployments.json
+  SelfEmploymentPeriod: !include schemas/self-employment/Period.json
+  SelfEmploymentPeriodUpdate: !include schemas/self-employment/UpdatePeriod.json
+  SelfEmploymentPeriods: !include schemas/self-employment/Periods.json
+  SelfEmploymentAnnualSummary: !include schemas/self-employment/AnnualSummary.json
+  UkProperties: !include schemas/uk-properties/UkProperties.json
+  UkPropertyPeriod: !include schemas/uk-properties/Period.json
+  UkPropertyUpdatePeriod: !include schemas/uk-properties/UpdatePeriod.json
+  UkPropertyPeriods: !include schemas/uk-properties/Periods.json
+  OtherUkPropertyAnnualSummary: !include schemas/uk-properties/other/AnnualSummary.json
+  FhlUkPropertyAnnualSummary: !include schemas/uk-properties/fhl/AnnualSummary.json
+  Liability: !include schemas/liability/Liability.json
+  Obligations: !include schemas/obligation/Obligations.json
+
+/self-assessment:
+  /ni/{nino}:
+    uriParameters:
+      nino:
+        displayName: National Insurance Number
+        type: string
+        required: true
+    /obligations:
+      displayName: Obligations
+      get:
+        description: Get obligations
+        responses:
+          200:
+            body:
+              application/json:
+                schema: Obligations
+                example: !include examples/obligation/Obligations.json
+    /liabilities:
+      displayName: Liability
+      post:
+        description: Create liability
+        responses:
+          202:
+            headers:
+              Location:
+                example: /self-assessment/ni/{nino}/liabilities/{liabilityId}
+          400:
+            body:
+              application/json:
+                schema: Error
+                example: !include examples/liability/errors/GENERIC.json
+      /{liabilityId}:
+        displayName: Liability
+        uriParameters:
+          liabilityId:
+            type: string
+            displayName: Liability ID
+        get:
+          description: Get calculation
+          responses:
+            200:
+              body:
+                application/json:
+                  schema: Liability
+                  example: !include examples/liability/Liability.json
+            400:
+              body:
+                application/json:
+                  schema: Error
+                  example: !include examples/liability/errors/GENERIC.json
+
+    /self-employments:
+      displayName: Self Employment Businesses
+      post:
+        description: Register a self-employment business
+        body:
+          application/json:
+            schema: SelfEmployment
+            example: !include examples/self-employment/SelfEmployment.json
+        responses:
+          201:
+            headers:
+              Location:
+                example: /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}
+          400:
+            body:
+              application/json:
+                schema: Error
+                example: !include examples/errors/INVALID_ACCOUNTING_PERIOD.json
+          409:
+            headers:
+              Location:
+                example: /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}
+            body:
+              application/json:
+                schema: Error
+                example: !include examples/errors/CONFLICT.json
+      get:
+        description: List self-employment businesses
+        responses:
+          200:
+            body:
+              application/json:
+                schema: SelfEmployments
+                example: !include examples/self-employment/SelfEmployments.json
+      /{selfEmploymentId}:
+        displayName: Self Employment Business
+        uriParameters:
+          selfEmploymentId:
+            displayName: Self-employment ID
+            description: An identifier for the self-employmment business, unique to the customer
+            type: string
+        get:
+          description: Get a self-employment business
+          responses:
+            200:
+              body:
+                application/json:
+                  schema: SelfEmployment
+                  example: !include examples/self-employment/SelfEmployment.json
+        put:
+          description: Update a self-employment business, e.g. to change accounting period
+          body:
+            application/json:
+              schema: SelfEmployment
+              example: !include examples/self-employment/SelfEmployment.json
+          responses:
+            204:
+            400:
+              body:
+                application/json:
+                  schema: Error
+                  example: !include ./examples/errors/INVALID_ACCOUNTING_PERIOD.json
+        /periods:
+          displayName: Periods
+          post:
+            description: Create period
+            body:
+              application/json:
+                schema: SelfEmploymentPeriod
+                example: !include examples/self-employment/Period.json
+            responses:
+              201:
+                headers:
+                  Location:
+                    example: /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}/periods/{periodId}
+              400:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/INVALID_REQUEST.json
+              403:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/OVERLAPPING_PERIOD.json
+              409:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/CONFLICT.json
+          get:
+            description: List periods
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: SelfEmploymentPeriods
+                    example: !include examples/self-employment/Periods.json
+          /{periodId}:
+            displayName: Period
+            uriParameters:
+              periodId:
+                type: string
+            get:
+              description: Get period
+              responses:
+                200:
+                  body:
+                    application/json:
+                      schema: SelfEmploymentPeriod
+                      example: !include examples/self-employment/Period.json
+            put:
+              description: Amend period
+              body:
+                application/json:
+                  schema: SelfEmploymentPeriodUpdate
+                  example: !include examples/self-employment/UpdatePeriod.json
+              responses:
+                204:
+                400:
+                  body:
+                    application/json:
+                      schema: Error
+                      example: !include examples/errors/INVALID_REQUEST.json
+        /{taxYear}:
+          uriParameters:
+            taxYear:
+              type: string
+              displayName: Tax Year
+              example: 2016-17
+          put:
+            description: Update annual summary
+            body:
+              application/json:
+                schema: SelfEmploymentAnnualSummary
+                example: !include ./examples/self-employment/AnnualSummary.json
+            responses:
+              204:
+              400:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/AnnualSummary_INVALID_REQUEST.json
+          get:
+            description: Get annual summary
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: SelfEmploymentAnnualSummary
+                    example: !include ./examples/self-employment/AnnualSummary.json
+    /uk-properties:
+      displayName: UK Property Business
+      post:
+        description: Register a UK property business
+        body:
+          application/json:
+            schema: UkProperties
+            example: !include examples/uk-properties/UkProperties.json
+        responses:
+          201:
+            headers:
+              Location:
+                example: /self-assessment/ni/{nino}/uk-properties
+          400:
+            body:
+              application/json:
+                schema: Error
+                example: !include examples/errors/INVALID_ACCOUNTING_TYPE.json
+          409:
+            headers:
+              Location:
+                example: /self-assessment/ni/{nino}/uk-properties
+            body:
+              application/json:
+                schema: Error
+                example: !include examples/errors/CONFLICT.json
+      get:
+        description: Get UK property business
+        responses:
+          200:
+            body:
+              application/json:
+                schema: UkProperties
+                example: !include examples/uk-properties/UkProperties.json
+      /other:
+        /periods:
+          displayName: Periods
+          post:
+            description: Create period
+            body:
+              application/json:
+                schema: UkPropertyPeriod
+                example: !include examples/uk-properties/Period.json
+            responses:
+              201:
+                headers:
+                  Location:
+                    example: /self-assessment/ni/{nino}/uk-properties/{propertyType}/periods/{periodId}
+              400:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/uk-properties/errors/Period_INVALID_REQUEST.json
+              403:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/OVERLAPPING_PERIOD.json
+              409:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/CONFLICT.json
+          get:
+            description: List periods
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: UkPropertyPeriods
+                    example: !include examples/uk-properties/Periods.json
+          /{periodId}:
+            uriParameters:
+              periodId:
+                displayName: Period ID
+                type: string
+            get:
+              description: Get period
+              responses:
+                200:
+                  body:
+                    application/json:
+                      schema: UkPropertyPeriod
+                      example: !include examples/uk-properties/Period.json
+            put:
+              description: Amend period
+              body:
+                application/json:
+                  schema: UkPropertyPeriod
+                  example: !include examples/uk-properties/Period.json
+              responses:
+                204:
+                400:
+                  body:
+                    application/json:
+                      schema: Error
+                      example: !include examples/uk-properties/errors/Period_INVALID_REQUEST.json
+        /{taxYear}:
+            displayName: Annual Summary
+            uriParameters:
+              taxYear:
+                type: string
+                example: 2016-17
+                displayName: Tax Year
+            put:
+              description: Update annual summary
+              body:
+                application/json:
+                  schema: OtherUkPropertyAnnualSummary
+                  example: !include ./examples/uk-properties/other/AnnualSummary.json
+              responses:
+                204:
+                400:
+                  body:
+                    application/json:
+                      schema: Error
+                      example: !include examples/uk-properties/errors/AnnualSummary_INVALID_REQUEST.json
+            get:
+              description: Get annual summary
+              responses:
+                200:
+                  body:
+                    application/json:
+                      schema: OtherUkPropertyAnnualSummary
+                      example: !include ./examples/uk-properties/other/AnnualSummary.json
+
+      /furnished-holiday-letting:
+        /periods:
+          displayName: Periods
+          post:
+            description: Create period
+            body:
+              application/json:
+                schema: UkPropertyPeriod
+                example: !include examples/uk-properties/Period.json
+            responses:
+              201:
+                headers:
+                  Location:
+                    example: /self-assessment/ni/{nino}/uk-properties/{propertyType}/periods/{periodId}
+              400:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/uk-properties/errors/Period_INVALID_REQUEST.json
+              403:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/OVERLAPPING_PERIOD.json
+              409:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/CONFLICT.json
+          get:
+            description: List periods
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: UkPropertyPeriods
+                    example: !include examples/uk-properties/Periods.json
+          /{periodId}:
+            uriParameters:
+              periodId:
+                displayName: Period ID
+                type: string
+            get:
+              description: Get period
+              responses:
+                200:
+                  body:
+                    application/json:
+                      schema: UkPropertyPeriod
+                      example: !include examples/uk-properties/Period.json
+            put:
+              description: Amend period
+              body:
+                application/json:
+                  schema: UkPropertyUpdatePeriod
+                  example: !include examples/uk-properties/UpdatePeriod.json
+              responses:
+                204:
+                400:
+                  body:
+                    application/json:
+                      schema: Error
+                      example: !include examples/uk-properties/errors/Period_INVALID_REQUEST.json
+        /{taxYear}:
+            displayName: Annual Summary
+            uriParameters:
+              taxYear:
+                type: string
+                example: 2016-17
+                displayName: Tax Year
+            put:
+              description: Update annual summary
+              body:
+                application/json:
+                  schema: FhlUkPropertyAnnualSummary
+                  example: !include ./examples/uk-properties/fhl/AnnualSummary.json
+              responses:
+                204:
+                400:
+                  body:
+                    application/json:
+                      schema: Error
+                      example: !include examples/uk-properties/errors/AnnualSummary_INVALID_REQUEST.json
+            get:
+              description: Get annual summary
+              responses:
+                200:
+                  body:
+                    application/json:
+                      schema: FhlUkPropertyAnnualSummary
+                      example: !include ./examples/uk-properties/fhl/AnnualSummary.json

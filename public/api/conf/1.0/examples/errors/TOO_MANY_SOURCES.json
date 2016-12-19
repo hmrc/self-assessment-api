@@ -1,0 +1,10 @@
+{
+  "code": "BUSINESS_ERROR",
+  "message": "Business validation error",
+  "errors": [
+    {
+      "code": "TOO_MANY_SOURCES",
+      "message": "The maxiumum number of source of income have been created, you cannot create any more. The maxium number is 1."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "code": "INVALID_REQUEST",
+  "message": "Invalid request",
+  "errors": [
+    {
+      "code": "INVALID_ACCOUNTING_TYPE",
+      "message": "The accounting type is invalid, accountingType can either be 'CASH'or 'ACCURAL'",
+      "path": "/accountingType"
+    }
+  ]
+}

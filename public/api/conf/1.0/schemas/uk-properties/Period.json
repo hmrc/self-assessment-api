@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Period",
+    "properties": {
+        "id": {
+            "title": "ID",
+            "description": "Unique identifier",
+            "type": "string"
+        },
+        "from": {
+            "title": "From date",
+            "type": "string",
+            "format": "date"
+        },
+        "to": {
+            "title": "To date",
+            "type": "string",
+            "format": "date"
+        },
+        "incomes": {
+            "$ref": "Incomes.json"
+        },
+        "expenses": {
+            "$ref": "Expenses.json"
+        }
+    },
+    "required": [
+        "from",
+        "to"
+    ],
+    "additonalProperties": false
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "UK property business",
+  "type": "object",
+  "properties": {
+    "accountingType": {
+      "title": "Accounting type",
+      "description": "CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUAL.",
+      "type": "string",
+      "enum": [
+        "CASH",
+        "ACCRUAL"
+      ]
+    }
+  },
+  "required": [
+    "accountingType"
+  ],
+  "additionalProperties": false
+}

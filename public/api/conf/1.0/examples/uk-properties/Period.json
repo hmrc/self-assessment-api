@@ -1,0 +1,20 @@
+{
+  "from": "2016-04-06",
+  "to": "2016-07-04",
+  "incomes": {
+    "rentIncome": {
+      "amount": 100.25,
+      "taxDeducted": 100.25
+    },
+    "premiumsOfLeaseGrant": 100.25,
+    "reversePremiums": 100.25
+  },
+  "expenses": {
+    "premisesRunningCosts": 100.25,
+    "repairsAndMaintenance": 100.25,
+    "financialCosts": 100.25,
+    "professionalFees": 100.25,
+    "costOfServices": 100.25,
+    "other": 100.25
+  }
+}

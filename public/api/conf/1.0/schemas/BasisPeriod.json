@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Basis period",
+  "type": "object",
+  "properties": {
+    "start": {
+      "title": "Start date",
+      "description": "Date your basis period began",
+      "type": "string",
+      "format": "date"
+    },
+    "end": {
+      "title": "End date",
+      "description": "Date your basis period ended",
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "start",
+    "end"
+  ],
+  "additionalProperties": false
+}

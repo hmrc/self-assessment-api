@@ -1,0 +1,16 @@
+{
+  "code": "INVALID_REQUEST",
+  "message": "Invalid request",
+  "errors": [
+    {
+      "code": "INVALID_MONETARY_AMOUNT",
+      "message": "rentIncome should be non-negative number up to 2 decimal values",
+      "path": "/incomes/rentIncome"
+    },
+    {
+      "code": "INVALID_MONETARY_AMOUNT",
+      "message": "professionalFees should be non-negative number up to 2 decimal values",
+      "path": "/expenses/professionalFees"
+    }
+  ]
+}

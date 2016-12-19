@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Allowances",
+  "type": "object",
+  "properties": {
+    "annualInvestmentAllowance": {
+      "title": "Annual investment allowance",
+      "type": "number",
+      "minimum": 0
+    },
+    "businessPremisesRenovationAllowance": {
+      "title": "Business premises renovation allowance",
+      "description": "(Assisted Areas only)",
+      "type": "number",
+      "minimum": 0
+    },
+    "costOfReplacingDomesticItems": {
+      "title": "Cost of Replacing Domestic Items",
+      "description": "Fill this!!",
+      "type": "number",
+      "minimum": 0
+    },
+    "zeroEmissionsGoodsVehicleAllowance": {
+      "title": "Zero Emissions Goods Vehicle Allowance",
+      "description": "Fill this!!",
+      "type": "number",
+      "minimum": 0
+    },
+    "otherCapitalAllowance": {
+      "title": "Other Capital allowance",
+      "description": "All other capital allowances",
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}
