@@ -7,7 +7,7 @@
       "$ref": "Allowances.json"
     },
     "adjustments": {
-      "$ref": "Adjustments.json"
+      "$ref": "../Adjustments.json"
     }
   },
   "additionalProperties": false

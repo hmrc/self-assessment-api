@@ -3,9 +3,6 @@
   "title": "UK property business",
   "type": "object",
   "properties": {
-    "accountingPeriod": {
-      "$ref": "../AccountingPeriod.json"
-    },
     "accountingType": {
       "title": "Accounting type",
       "description": "CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUAL.",
@@ -17,7 +14,6 @@
     }
   },
   "required": [
-    "accountingPeriod",
     "accountingType"
   ],
   "additionalProperties": false

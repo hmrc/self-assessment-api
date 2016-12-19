@@ -7,7 +7,7 @@
     "rentIncome": {
       "title": "rentIncome",
       "description": "Total rents and other income from property",
-      "$ref": "../../Income.json"
+      "$ref": "../Income.json"
     },
     "premiumsOfLeaseGrant": {
       "title": "Premiums of lease grant",

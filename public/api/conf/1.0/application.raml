@@ -26,11 +26,10 @@ schemas:
   SelfEmploymentPeriods: !include schemas/self-employment/Periods.json
   SelfEmploymentAnnualSummary: !include schemas/self-employment/AnnualSummary.json
   UkProperties: !include schemas/uk-properties/UkProperties.json
-  OtherUkPropertyPeriod: !include schemas/uk-properties/other/Period.json
-  OtherUkPropertyPeriods: !include schemas/uk-properties/other/Periods.json
+  UkPropertyPeriod: !include schemas/uk-properties/Period.json
+  UkPropertyUpdatePeriod: !include schemas/uk-properties/UpdatePeriod.json
+  UkPropertyPeriods: !include schemas/uk-properties/Periods.json
   OtherUkPropertyAnnualSummary: !include schemas/uk-properties/other/AnnualSummary.json
-  FhlUkPropertyPeriod: !include schemas/uk-properties/fhl/Period.json
-  FhlUkPropertyPeriods: !include schemas/uk-properties/fhl/Periods.json
   FhlUkPropertyAnnualSummary: !include schemas/uk-properties/fhl/AnnualSummary.json
   Liability: !include schemas/liability/Liability.json
   Obligations: !include schemas/obligation/Obligations.json
@@ -103,7 +102,7 @@ schemas:
             body:
               application/json:
                 schema: Error
-                example: !include examples/errors/TOO_MANY_SOURCES.json
+                example: !include examples/errors/INVALID_ACCOUNTING_PERIOD.json
           409:
             headers:
               Location:
@@ -166,6 +165,16 @@ schemas:
                   application/json:
                     schema: Error
                     example: !include examples/errors/INVALID_REQUEST.json
+              403:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/OVERLAPPING_PERIOD.json
+              409:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/CONFLICT.json
           get:
             description: List periods
             responses:
@@ -244,11 +253,11 @@ schemas:
             body:
               application/json:
                 schema: Error
-                example: !include examples/errors/INVALID_ACCOUNTING_PERIOD.json
+                example: !include examples/errors/INVALID_ACCOUNTING_TYPE.json
           409:
             headers:
               Location:
-                example: /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}
+                example: /self-assessment/ni/{nino}/uk-properties
             body:
               application/json:
                 schema: Error
@@ -268,8 +277,8 @@ schemas:
             description: Create period
             body:
               application/json:
-                schema: OtherUkPropertyPeriod
-                example: !include examples/uk-properties/other/Period.json
+                schema: UkPropertyPeriod
+                example: !include examples/uk-properties/Period.json
             responses:
               201:
                 headers:
@@ -280,14 +289,24 @@ schemas:
                   application/json:
                     schema: Error
                     example: !include examples/uk-properties/errors/Period_INVALID_REQUEST.json
+              403:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/OVERLAPPING_PERIOD.json
+              409:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/CONFLICT.json
           get:
             description: List periods
             responses:
               200:
                 body:
                   application/json:
-                    schema: OtherUkPropertyPeriods
-                    example: !include examples/uk-properties/other/Periods.json
+                    schema: UkPropertyPeriods
+                    example: !include examples/uk-properties/Periods.json
           /{periodId}:
             uriParameters:
               periodId:
@@ -299,14 +318,14 @@ schemas:
                 200:
                   body:
                     application/json:
-                      schema: OtherUkPropertyPeriod
-                      example: !include examples/uk-properties/other/Period.json
+                      schema: UkPropertyPeriod
+                      example: !include examples/uk-properties/Period.json
             put:
               description: Amend period
               body:
                 application/json:
-                  schema: OtherUkPropertyPeriod
-                  example: !include examples/uk-properties/other/Period.json
+                  schema: UkPropertyPeriod
+                  example: !include examples/uk-properties/Period.json
               responses:
                 204:
                 400:
@@ -350,8 +369,8 @@ schemas:
             description: Create period
             body:
               application/json:
-                schema: FhlUkPropertyPeriod
-                example: !include examples/uk-properties/fhl/Period.json
+                schema: UkPropertyPeriod
+                example: !include examples/uk-properties/Period.json
             responses:
               201:
                 headers:
@@ -362,14 +381,24 @@ schemas:
                   application/json:
                     schema: Error
                     example: !include examples/uk-properties/errors/Period_INVALID_REQUEST.json
+              403:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/OVERLAPPING_PERIOD.json
+              409:
+                body:
+                  application/json:
+                    schema: Error
+                    example: !include examples/errors/CONFLICT.json
           get:
             description: List periods
             responses:
               200:
                 body:
                   application/json:
-                    schema: FhlUkPropertyPeriods
-                    example: !include examples/uk-properties/fhl/Periods.json
+                    schema: UkPropertyPeriods
+                    example: !include examples/uk-properties/Periods.json
           /{periodId}:
             uriParameters:
               periodId:
@@ -381,14 +410,14 @@ schemas:
                 200:
                   body:
                     application/json:
-                      schema: FhlUkPropertyPeriod
-                      example: !include examples/uk-properties/fhl/Period.json
+                      schema: UkPropertyPeriod
+                      example: !include examples/uk-properties/Period.json
             put:
               description: Amend period
               body:
                 application/json:
-                  schema: FhlUkPropertyPeriod
-                  example: !include examples/uk-properties/fhl/Period.json
+                  schema: UkPropertyUpdatePeriod
+                  example: !include examples/uk-properties/UpdatePeriod.json
               responses:
                 204:
                 400:
