@@ -26,12 +26,6 @@
       "type": "string",
       "format": "date"
     },
-    "cessationDate": {
-      "title": "Business cessation date",
-      "description": "Business cessation date",
-      "type": "string",
-      "format": "date"
-    },
     "tradingName": {
       "title": "Business trading name",
       "description": "Business trading name",

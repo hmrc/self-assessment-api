@@ -33,7 +33,6 @@ case class SelfEmployment(id: BSONObjectID,
                           accountingPeriod: AccountingPeriod,
                           accountingType: AccountingType,
                           commencementDate: LocalDate,
-                          cessationDate: Option[LocalDate],
                           tradingName: String,
                           businessDescription: String,
                           businessAddressLineOne: String,
@@ -49,7 +48,7 @@ case class SelfEmployment(id: BSONObjectID,
   def toModel(elideID: Boolean = false): selfemployment.SelfEmployment = {
     val id = if (elideID) None else Some(sourceId)
     selfemployment.SelfEmployment(
-      id, accountingPeriod, accountingType, commencementDate, cessationDate,
+      id, accountingPeriod, accountingType, commencementDate,
       tradingName, businessDescription, businessAddressLineOne, businessAddressLineTwo,
       businessAddressLineThree, businessAddressLineFour, businessPostcode)
   }

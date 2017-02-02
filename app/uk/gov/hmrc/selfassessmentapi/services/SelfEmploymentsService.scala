@@ -37,8 +37,8 @@ trait SelfEmploymentsMongoService {
     val newSelfEmployment =
       domain.SelfEmployment(id, id.stringify, nino, DateTime.now(DateTimeZone.UTC),
         selfEmployment.accountingPeriod, selfEmployment.accountingType, selfEmployment.commencementDate,
-        selfEmployment.cessationDate, selfEmployment.tradingName, selfEmployment.businessDescription,
-        selfEmployment.businessAddressLineOne, selfEmployment.businessAddressLineTwo, selfEmployment.businessAddressLineThree,
+        selfEmployment.tradingName, selfEmployment.businessDescription, selfEmployment.businessAddressLineOne,
+        selfEmployment.businessAddressLineTwo, selfEmployment.businessAddressLineThree,
         selfEmployment.businessAddressLineFour, selfEmployment.businessPostcode)
 
     mongoRepository.retrieveAll(nino).flatMap { selfEmployments =>

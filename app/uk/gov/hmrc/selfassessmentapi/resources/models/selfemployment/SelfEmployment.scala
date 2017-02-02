@@ -29,7 +29,6 @@ case class SelfEmployment(id: Option[SourceId] = None,
                           accountingPeriod: AccountingPeriod,
                           accountingType: AccountingType,
                           commencementDate: LocalDate,
-                          cessationDate: Option[LocalDate],
                           tradingName: String,
                           businessDescription: String,
                           businessAddressLineOne: String,
@@ -62,7 +61,6 @@ object SelfEmployment {
       (__ \ "accountingPeriod").read[AccountingPeriod] and
       (__ \ "accountingType").read[AccountingType] and
       (__ \ "commencementDate").read[LocalDate](commencementDateValidator) and
-      Reads.pure[Option[LocalDate]](None) and
       (__ \ "tradingName").read[String](lengthIsBetween(1, 105)) and
       (__ \ "businessDescription").read[String](validateSIC).map(_.take(35)) and // TODO: MTDSA-760 => Should this be a code instead?
       (__ \ "businessAddressLineOne").read[String](lengthIsBetween(1, 35)) and

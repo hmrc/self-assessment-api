@@ -142,8 +142,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
   "retrieve" should {
     "return code 200 when retrieving a self-employment resource that exists" in {
       val expectedSelfEmployment = Jsons.SelfEmployment(
-        businessDescription = "Boxes made of corrugated cardboard ",
-        cessationDate = None)
+        businessDescription = "Boxes made of corrugated cardboard ")
 
       given()
         .userIsAuthorisedForTheResource(nino)
@@ -176,7 +175,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
       val expectedBody =
         s"""
            |[
-           |  ${Jsons.SelfEmployment(businessDescription = "Boxes made of corrugated cardboard ", cessationDate = None).toString()}
+           |  ${Jsons.SelfEmployment(businessDescription = "Boxes made of corrugated cardboard ").toString()}
            |]
          """.stripMargin
 

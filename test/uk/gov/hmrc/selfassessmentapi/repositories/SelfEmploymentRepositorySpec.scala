@@ -37,7 +37,7 @@ class SelfEmploymentRepositorySpec extends MongoEmbeddedDatabase {
     val accountingPeriod = AccountingPeriod(LocalDate.parse("2017-04-01"), LocalDate.parse("2017-04-02"))
 
     SelfEmployment(id, id.stringify, nino, DateTime.now(DateTimeZone.UTC),
-      accountingPeriod, AccountingType.CASH, LocalDate.now, Some(LocalDate.now.plusDays(1)), "Acme Ltd.",
+      accountingPeriod, AccountingType.CASH, LocalDate.now, "Acme Ltd.",
       "Boxes made of corrugated cardboard (manufacture)", "1 Acme Rd.", Some("London"), Some("Greater London"), Some("United Kingdom"),
       "A9 9AA", Map.empty, Map.empty)
   }

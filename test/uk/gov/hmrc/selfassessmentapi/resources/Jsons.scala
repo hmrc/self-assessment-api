@@ -284,7 +284,6 @@ object Jsons {
               accPeriodEnd: String = "2018-04-05",
               accountingType: String = "CASH",
               commencementDate: String = s"${LocalDate.now.minusDays(1)}",
-              cessationDate: Option[String] = Some(s"${LocalDate.now.plusDays(1)}"),
               tradingName: String = "Acme Ltd",
               businessDescription: String = "Boxes made of corrugated cardboard (manufacture)",
               businessAddressLineOne: String = "1 Acme Rd.",
@@ -292,11 +291,6 @@ object Jsons {
               businessAddressLineThree: String = "Greater London",
               businessAddressLineFour: String = "United Kingdom",
               businessPostcode: String = "A9 9AA"): JsValue = {
-
-      val cessation = cessationDate.map(date =>
-        s"""
-           |  "cessationDate": "$date",
-         """.stripMargin).getOrElse("")
 
       Json.parse(s"""
            |{
@@ -306,7 +300,6 @@ object Jsons {
            |  },
            |  "accountingType": "$accountingType",
            |  "commencementDate": "$commencementDate",
-           |  $cessation
            |  "tradingName": "$tradingName",
            |  "businessDescription": "$businessDescription",
            |  "businessAddressLineOne": "$businessAddressLineOne",
