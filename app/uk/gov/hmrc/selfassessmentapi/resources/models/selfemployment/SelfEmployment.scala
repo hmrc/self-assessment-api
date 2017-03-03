@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources.models.selfemployment
 
 import org.joda.time.LocalDate
+import play.api.Logger
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -40,12 +41,21 @@ case class SelfEmployment(id: Option[SourceId] = None,
 
 object SelfEmployment {
 
+  private val logger = Logger(classOf[SelfEmployment])
+
   val commencementDateValidator: Reads[LocalDate] = Reads.of[LocalDate].filter(
     ValidationError("commencement date should be today or in the past", ErrorCode.DATE_NOT_IN_THE_PAST)
   )(date => date.isBefore(LocalDate.now()) || date.isEqual(LocalDate.now()))
 
-  private lazy val sicClassifications: Seq[String] =
-    Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("SICs.txt")).getLines.toIndexedSeq
+  private val sicClassifications: Seq[String] = {
+    val is = getClass.getClassLoader.getResourceAsStream("SICs.txt")
+
+    if (is == null) {
+      logger.error("SICs.txt could not be found on the classpath.")
+      throw new RuntimeException("Fatal error: SICs.txt not found")
+    }
+    else Source.fromInputStream(is).getLines.toIndexedSeq
+  }
 
   private def lengthIsBetween(minLength: Int, maxLength: Int): Reads[String] =
     Reads.of[String].filter(ValidationError(s"field length must be between $minLength and $maxLength characters", ErrorCode.INVALID_FIELD_LENGTH)
