@@ -26,7 +26,7 @@ import scala.concurrent.Future
 
 package object connectors {
   private def withDesHeaders(hc: HeaderCarrier): HeaderCarrier = {
-    val newHc = hc.copy(authorization = Some(Authorization(AppContext.desToken))).withExtraHeaders(
+    val newHc = hc.copy(authorization = Some(Authorization(s"Bearer ${AppContext.desToken}"))).withExtraHeaders(
       "Environment" -> AppContext.desEnv,
       "Accept" -> "application/vnd.hmrc.1.0+json",
       "Originator-Id" -> "DA_SDI"
