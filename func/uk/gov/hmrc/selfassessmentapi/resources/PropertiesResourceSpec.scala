@@ -57,7 +57,6 @@ class PropertiesResourceSpec extends BaseFunctionalSpec {
         .post(Jsons.Properties()).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
         .statusIs(404)
-        .bodyIsLike(Jsons.Errors.ninoNotFound)
     }
 
     "return code 500 when DES is experiencing issues" in {
@@ -124,7 +123,6 @@ class PropertiesResourceSpec extends BaseFunctionalSpec {
         .get(s"/ni/$nino/uk-properties")
         .thenAssertThat()
         .statusIs(404)
-        .bodyIsLike(Jsons.Errors.ninoNotFound)
     }
 
 

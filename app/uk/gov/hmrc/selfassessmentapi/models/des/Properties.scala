@@ -29,7 +29,7 @@ object Properties {
     }
   }
   implicit val writes: Writes[Properties] = new Writes[Properties] {
-    override def writes(o: Properties) = JsObject(Seq())
+    override def writes(o: Properties) = Json.obj()
   }
 
   implicit object MapperInstance extends Mapper[properties.Properties, Properties] {

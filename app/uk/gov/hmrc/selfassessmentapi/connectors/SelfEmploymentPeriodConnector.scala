@@ -19,8 +19,8 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.models.des.{Financials, SelfEmploymentPeriod}
-import uk.gov.hmrc.selfassessmentapi.models.{PeriodId, SourceId}
+import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriodicData, SelfEmploymentPeriod}
+import uk.gov.hmrc.selfassessmentapi.models.{des, Mapper, PeriodId, SourceId}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentPeriodResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -34,7 +34,7 @@ object SelfEmploymentPeriodConnector {
     fut.map(SelfEmploymentPeriodResponse(_))
 
   def create(nino: Nino, id: SourceId, selfEmploymentPeriod: SelfEmploymentPeriod)(implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
-    httpPost(baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries", selfEmploymentPeriod)
+    httpPost(baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries", Mapper[SelfEmploymentPeriod, des.SelfEmploymentPeriod].from(selfEmploymentPeriod))
 
   def get(nino: Nino, id: SourceId, periodId: PeriodId)(implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
     httpGet(baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries/$periodId")
@@ -42,7 +42,7 @@ object SelfEmploymentPeriodConnector {
   def getAll(nino: Nino, id: SourceId)(implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
     httpGet(baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries")
 
-  def update(nino: Nino, id: SourceId, periodId: PeriodId, update: Financials)(implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
-    httpPut(baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries/$periodId", update)
+  def update(nino: Nino, id: SourceId, periodId: PeriodId, update: SelfEmploymentPeriodicData)(implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
+    httpPut(baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries/$periodId", Mapper[SelfEmploymentPeriodicData, des.Financials].from(update))
 
 }

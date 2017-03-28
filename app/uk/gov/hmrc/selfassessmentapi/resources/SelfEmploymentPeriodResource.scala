@@ -38,7 +38,7 @@ object SelfEmploymentPeriodResource extends BaseController {
 
   def createPeriod(nino: Nino, sourceId: SourceId): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
     validate[SelfEmploymentPeriod, SelfEmploymentPeriodResponse](request.body) { period =>
-      connector.create(nino, sourceId, Mapper[SelfEmploymentPeriod, des.SelfEmploymentPeriod].from(period))
+      connector.create(nino, sourceId, period)
     } match {
       case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
       case Right(result) => result.map { response =>
@@ -54,7 +54,7 @@ object SelfEmploymentPeriodResource extends BaseController {
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def updatePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
     validate[SelfEmploymentPeriodicData, SelfEmploymentPeriodResponse](request.body) { period =>
-      connector.update(nino, id, periodId, Mapper[SelfEmploymentPeriodicData, Financials].from(period))
+      connector.update(nino, id, periodId, period)
     } match {
       case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
       case Right(result) => result.map { response =>
