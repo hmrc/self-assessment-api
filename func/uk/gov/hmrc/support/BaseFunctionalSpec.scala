@@ -384,53 +384,23 @@ trait BaseFunctionalSpec extends TestApplication {
     def when() = new HttpVerbs()
 
     def userIsNotAuthorisedForTheResource(nino: Nino): Givens = {
-      stubFor(get(urlPathEqualTo(s"/authorise/read/paye/$nino")).willReturn(aResponse().withStatus(401).withHeader("Content-Length", "0")))
-      stubFor(get(urlPathEqualTo(s"/authorise/write/paye/$nino")).willReturn(aResponse().withStatus(401).withHeader("Content-Length", "0")))
+      stubFor(post(urlPathEqualTo(s"/auth/authorise")).willReturn(aResponse().withStatus(401).withHeader("Content-Length", "0")))
       this
     }
 
     def userIsAuthorisedForTheResource(nino: Nino): Givens = {
-      stubFor(get(urlPathEqualTo(s"/authorise/read/paye/$nino")).willReturn(aResponse().withStatus(200)))
-      stubFor(get(urlPathEqualTo(s"/authorise/write/paye/$nino")).willReturn(aResponse().withStatus(200)))
+      stubFor(post(urlPathEqualTo(s"/auth/authorise")).willReturn(aResponse().withStatus(200).withBody(
+        """
+          |{
+          |  "internalId": "some-id",
+          |  "loginTimes": {
+          |     "currentLogin": "2016-11-27T09:00:00.000Z",
+          |     "previousLogin": "2016-11-01T12:00:00.000Z"
+          |  }
+          |}
+        """.stripMargin)))
       this
     }
-
-    def userIsEnrolledInSa(nino: Nino): Givens = {
-      val json =
-        s"""
-           |{
-           |    "accounts": {
-           |        "paye": {
-           |            "link": "/paye/$nino",
-           |            "nino": "$nino"
-           |        }
-           |    },
-           |    "confidenceLevel": 500
-           |}
-      """.stripMargin
-
-      stubFor(
-        get(urlPathEqualTo(s"/auth/authority"))
-          .willReturn(aResponse().withBody(json).withStatus(200).withHeader("Content-Type", "application/json")))
-      this
-    }
-
-    def userIsNotEnrolledInSa: Givens = {
-      val json =
-        s"""
-           |{
-           |    "accounts": {
-           |    },
-           |    "confidenceLevel": 500
-           |}
-      """.stripMargin
-
-      stubFor(
-        get(urlPathEqualTo(s"/auth/authority"))
-          .willReturn(aResponse().withBody(json).withStatus(200).withHeader("Content-Type", "application/json")))
-      this
-    }
-
 
     class Des(givens: Givens) {
       def isATeapotFor(nino: Nino): Givens = {
