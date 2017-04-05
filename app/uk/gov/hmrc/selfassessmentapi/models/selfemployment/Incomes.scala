@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models
+package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
-import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
+import play.api.libs.json.{Json, Reads, Writes}
+import uk.gov.hmrc.selfassessmentapi.models.SimpleIncome
 
-class SimpleIncomeSpec extends JsonSpec {
-  "SimpleIncome" should {
-    "round trip" in {
-      roundTripJson(SimpleIncome(500.55))
-    }
+case class Incomes(turnover: Option[SimpleIncome] = None, other: Option[SimpleIncome] = None)
 
-    "reject a negative amount" in {
-      assertValidationErrorWithCode(SimpleIncome(-20.20), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
-    }
-  }
+object Incomes {
+  implicit val writes: Writes[Incomes] = Json.writes[Incomes]
+  implicit val reads: Reads[Incomes] = Json.reads[Incomes]
 }
