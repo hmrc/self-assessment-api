@@ -18,8 +18,8 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
+import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, Expense, SimpleIncome}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
-import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, Expense, Income}
 
 class SelfEmploymentPeriodSpec extends JsonSpec {
   "SelfEmploymentPeriod" should {
@@ -34,13 +34,13 @@ class SelfEmploymentPeriodSpec extends JsonSpec {
     }
 
     "return a INVALID_MONETARY_AMOUNT error when income contains a negative value" in {
-      val period = SelfEmploymentPeriod(None, LocalDate.now.minusDays(1), LocalDate.now, SelfEmploymentPeriodicData(Map(IncomeType.Turnover -> Income(-5000, None)), Map.empty))
+      val period = SelfEmploymentPeriod(None, LocalDate.now.minusDays(1), LocalDate.now, SelfEmploymentPeriodicData(Map(IncomeType.Turnover -> SimpleIncome(-5000)), Map.empty))
 
       assertValidationErrorWithCode(period, "/incomes/turnover/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
     "return a INVALID_MONETARY_AMOUNT error when income amount contains more than 2 decimal places" in {
-      val period = SelfEmploymentPeriod(None, LocalDate.now.minusDays(1), LocalDate.now, SelfEmploymentPeriodicData(Map(IncomeType.Turnover -> Income(10.123, None)), Map.empty))
+      val period = SelfEmploymentPeriod(None, LocalDate.now.minusDays(1), LocalDate.now, SelfEmploymentPeriodicData(Map(IncomeType.Turnover -> SimpleIncome(10.123)), Map.empty))
 
       assertValidationErrorWithCode(period, "/incomes/turnover/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
     }

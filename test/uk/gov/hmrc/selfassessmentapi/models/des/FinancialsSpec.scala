@@ -17,8 +17,8 @@
 package uk.gov.hmrc.selfassessmentapi.models.des
 
 import uk.gov.hmrc.selfassessmentapi.models
-import uk.gov.hmrc.selfassessmentapi.models.{Expense, Income}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{ExpenseType, IncomeType}
+import uk.gov.hmrc.selfassessmentapi.models.{Expense, SimpleIncome}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
 class FinancialsSpec extends JsonSpec {
@@ -26,8 +26,8 @@ class FinancialsSpec extends JsonSpec {
     "correctly map a API self-employment update into a DES self-employment update" in {
       val apiUpdate = models.selfemployment.SelfEmploymentPeriodicData(
         incomes = Map(
-          IncomeType.Turnover -> Income(10.10, Some(10.10)),
-          IncomeType.Other -> Income(10.10, Some(10.10))),
+          IncomeType.Turnover -> SimpleIncome(10.10),
+          IncomeType.Other -> SimpleIncome(10.10)),
         expenses = Map(
           ExpenseType.CISPaymentsToSubcontractors -> Expense(10.10, Some(10.10)),
           ExpenseType.Depreciation -> Expense(10.10, Some(10.10)),

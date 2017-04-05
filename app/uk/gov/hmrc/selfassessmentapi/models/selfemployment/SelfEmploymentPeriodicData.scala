@@ -21,9 +21,9 @@ import play.api.data.validation.ValidationError
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.ExpenseType.ExpenseType
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.IncomeType.IncomeType
-import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, Expense, Income, PeriodicData}
+import uk.gov.hmrc.selfassessmentapi.models._
 
-case class SelfEmploymentPeriodicData(incomes: Map[IncomeType, Income], expenses: Map[ExpenseType, Expense]) extends PeriodicData
+case class SelfEmploymentPeriodicData(incomes: Map[IncomeType, SimpleIncome], expenses: Map[ExpenseType, Expense]) extends PeriodicData
 
 object SelfEmploymentPeriodicData {
   import uk.gov.hmrc.selfassessmentapi.domain.JsonFormatters.SelfEmploymentFormatters.{expenseTypeFormat, incomeTypeFormat}
@@ -31,7 +31,7 @@ object SelfEmploymentPeriodicData {
   implicit val writes: Writes[SelfEmploymentPeriodicData] = Json.writes[SelfEmploymentPeriodicData]
 
   implicit val reads: Reads[SelfEmploymentPeriodicData] = (
-      (__ \ "incomes").readNullable[Map[IncomeType, Income]] and
+      (__ \ "incomes").readNullable[Map[IncomeType, SimpleIncome]] and
       (__ \ "expenses").readNullable[Map[ExpenseType, Expense]](depreciationValidator)
     ) ((incomes, expenses) => {SelfEmploymentPeriodicData(incomes.getOrElse(Map.empty), expenses.getOrElse(Map.empty))})
 

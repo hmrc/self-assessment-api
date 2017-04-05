@@ -17,11 +17,10 @@
 package uk.gov.hmrc.selfassessmentapi.models.des
 
 import org.joda.time.LocalDate
-import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
-import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models
-import uk.gov.hmrc.selfassessmentapi.models.{Expense, Income}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{ExpenseType, IncomeType}
+import uk.gov.hmrc.selfassessmentapi.models.{Expense, SimpleIncome, des}
+import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
 class SelfEmploymentPeriodSpec extends JsonSpec {
   "from" should {
@@ -32,8 +31,8 @@ class SelfEmploymentPeriodSpec extends JsonSpec {
         to = LocalDate.parse("2018-04-05"),
         data = models.selfemployment.SelfEmploymentPeriodicData(
           incomes = Map(
-            IncomeType.Turnover -> Income(10.10, Some(10.10)),
-            IncomeType.Other -> Income(10.10, Some(10.10))),
+            IncomeType.Turnover -> SimpleIncome(10.10),
+            IncomeType.Other -> SimpleIncome(10.10)),
           expenses = Map(
             ExpenseType.CISPaymentsToSubcontractors -> Expense(10.10, Some(10.10)),
             ExpenseType.Depreciation -> Expense(10.10, Some(10.10)),

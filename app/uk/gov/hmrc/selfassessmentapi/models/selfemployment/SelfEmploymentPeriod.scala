@@ -20,10 +20,9 @@ import org.joda.time.LocalDate
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.models.des
-import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, _}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.ExpenseType.ExpenseType
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.IncomeType.IncomeType
+import uk.gov.hmrc.selfassessmentapi.models._
 
 case class SelfEmploymentPeriod(id: Option[String], from: LocalDate, to: LocalDate, data: SelfEmploymentPeriodicData) extends Period {
   def asSummary: PeriodSummary = PeriodSummary(id.getOrElse(""), from, to)
@@ -45,13 +44,13 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
     )
   }
 
-  private def incomes2Map(desPeriod: des.SelfEmploymentPeriod): Map[IncomeType, Income] = {
+  private def incomes2Map(desPeriod: des.SelfEmploymentPeriod): Map[IncomeType, SimpleIncome] = {
     val incomes = Seq(
-      IncomeType.Turnover -> desPeriod.financials.flatMap(_.incomes.flatMap(_.turnover.map(x => Income(x, None)))),
-      IncomeType.Other -> desPeriod.financials.flatMap(_.incomes.flatMap(_.other.map(x => Income(x, None))))
+      IncomeType.Turnover -> desPeriod.financials.flatMap(_.incomes.flatMap(_.turnover.map(x => SimpleIncome(x)))),
+      IncomeType.Other -> desPeriod.financials.flatMap(_.incomes.flatMap(_.other.map(x => SimpleIncome(x))))
     )
 
-    incomes.foldLeft(Map.empty[IncomeType, Income]) {
+    incomes.foldLeft(Map.empty[IncomeType, SimpleIncome]) {
       case (acc, (typ, amt)) => if (amt.isDefined) acc.updated(typ, amt.get) else acc
     }
   }
@@ -93,7 +92,7 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
   implicit val reads: Reads[SelfEmploymentPeriod] = (
     (__ \ "from").read[LocalDate] and
       (__ \ "to").read[LocalDate] and
-      (__ \ "incomes").readNullable[Map[IncomeType, Income]] and
+      (__ \ "incomes").readNullable[Map[IncomeType, SimpleIncome]] and
       (__ \ "expenses").readNullable[Map[ExpenseType, Expense]](depreciationValidator)
     ) (
     (from, to, income, expense) => {
