@@ -27,12 +27,15 @@ import uk.gov.hmrc.selfassessmentapi.models.{SourceType, TaxYear}
 object Binders {
 
   implicit def ninoBinder(implicit stringBinder: PathBindable[String]) = new PathBindable[Nino] {
+    val desNinoRegex = "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D]?$"
 
     def unbind(key: String, nino: Nino): String = stringBinder.unbind(key, nino.value)
 
     def bind(key: String, value: String): Either[String, Nino] = {
-      Nino.isValid(value) match {
-        case true => Right(Nino(value))
+      val sanitisedNino = value.replaceAll("\\s", "")
+
+      Nino.isValid(sanitisedNino) && sanitisedNino.matches(desNinoRegex) match {
+        case true => Right(Nino(sanitisedNino))
         case false => Left("ERROR_NINO_INVALID")
       }
     }
