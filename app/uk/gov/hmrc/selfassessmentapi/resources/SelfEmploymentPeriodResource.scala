@@ -25,7 +25,7 @@ import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.des.Financials
-import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodicData}
+import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentPeriodResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -55,8 +55,8 @@ object SelfEmploymentPeriodResource extends BaseController {
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def updatePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    validate[SelfEmploymentPeriodicData, SelfEmploymentPeriodResponse](request.body) { period =>
-      connector.update(nino, id, periodId, Financials.from(period))
+    validate[SelfEmploymentPeriodUpdate, SelfEmploymentPeriodResponse](request.body) { period =>
+      connector.update(nino, id, periodId, Financials.from(period.incomes, period.expenses))
     } match {
       case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
       case Right(result) => result.map { response =>

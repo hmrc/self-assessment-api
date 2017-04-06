@@ -16,21 +16,16 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
-import play.api.data.validation.ValidationError
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
-case class Income(amount: Amount, taxDeducted: Option[Amount])
-
-object Income {
-  implicit val reads: Reads[Income] = (
-    (__ \ "amount").read[Amount](nonNegativeAmountValidator) and
-      (__ \ "taxDeducted").readNullable[Amount](nonNegativeAmountValidator)
-    ) (Income.apply _)
-    .filter(ValidationError("Tax deducted must be equal to or less than amount", ErrorCode.INVALID_TAX_DEDUCTION_AMOUNT)) {
-      income => income.taxDeducted.forall(income.amount >= _)
+class SimpleIncomeSpec extends JsonSpec {
+  "SimpleIncome" should {
+    "round trip" in {
+      roundTripJson(SimpleIncome(500.55))
     }
 
-
-  implicit val writes: Writes[Income] = Json.writes[Income]
+    "reject a negative amount" in {
+      assertValidationErrorWithCode(SimpleIncome(-20.20), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+  }
 }

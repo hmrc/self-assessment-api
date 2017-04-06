@@ -17,11 +17,9 @@
 package uk.gov.hmrc.selfassessmentapi.models.des
 
 import org.joda.time.LocalDate
-import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
-import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models
-import uk.gov.hmrc.selfassessmentapi.models.{Expense, Income}
-import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{ExpenseType, IncomeType}
+import uk.gov.hmrc.selfassessmentapi.models.{Expense, SimpleIncome, des}
+import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
 class SelfEmploymentPeriodSpec extends JsonSpec {
   "from" should {
@@ -30,25 +28,25 @@ class SelfEmploymentPeriodSpec extends JsonSpec {
         id = Some("abc"),
         from = LocalDate.parse("2017-04-06"),
         to = LocalDate.parse("2018-04-05"),
-        data = models.selfemployment.SelfEmploymentPeriodicData(
-          incomes = Map(
-            IncomeType.Turnover -> Income(10.10, Some(10.10)),
-            IncomeType.Other -> Income(10.10, Some(10.10))),
-          expenses = Map(
-            ExpenseType.CISPaymentsToSubcontractors -> Expense(10.10, Some(10.10)),
-            ExpenseType.Depreciation -> Expense(10.10, Some(10.10)),
-            ExpenseType.CostOfGoodsBought -> Expense(10.10, Some(10.10)),
-            ExpenseType.ProfessionalFees -> Expense(10.10, Some(10.10)),
-            ExpenseType.BadDebt -> Expense(10.10, Some(10.10)),
-            ExpenseType.AdminCosts -> Expense(10.10, Some(10.10)),
-            ExpenseType.AdvertisingCosts -> Expense(10.10, Some(10.10)),
-            ExpenseType.FinancialCharges -> Expense(10.10, Some(10.10)),
-            ExpenseType.Interest -> Expense(10.10, Some(10.10)),
-            ExpenseType.MaintenanceCosts -> Expense(10.10, Some(10.10)),
-            ExpenseType.PremisesRunningCosts -> Expense(10.10, Some(10.10)),
-            ExpenseType.StaffCosts -> Expense(10.10, Some(10.10)),
-            ExpenseType.TravelCosts -> Expense(10.10, Some(10.10)),
-            ExpenseType.Other -> Expense(10.10, Some(10.10)))))
+        incomes = Some(models.selfemployment.Incomes(
+          turnover = Some(SimpleIncome(10.10)),
+          other = Some(SimpleIncome(10.10)))),
+        expenses = Some(models.selfemployment.Expenses(
+          cisPaymentsToSubcontractors = Some(Expense(10.10, Some(10.10))),
+          depreciation = Some(Expense(10.10, Some(10.10))),
+          costOfGoodsBought = Some(Expense(10.10, Some(10.10))),
+          professionalFees = Some(Expense(10.10, Some(10.10))),
+          badDebt = Some(Expense(10.10, Some(10.10))),
+          adminCosts = Some(Expense(10.10, Some(10.10))),
+          advertisingCosts = Some(Expense(10.10, Some(10.10))),
+          financialCharges = Some(Expense(10.10, Some(10.10))),
+          interest = Some(Expense(10.10, Some(10.10))),
+          maintenanceCosts = Some(Expense(10.10, Some(10.10))),
+          premisesRunningCosts = Some(Expense(10.10, Some(10.10))),
+          staffCosts = Some(Expense(10.10, Some(10.10))),
+          travelCosts = Some(Expense(10.10, Some(10.10))),
+          other = Some(Expense(10.10, Some(10.10)))
+        )))
 
       val desPeriod = des.SelfEmploymentPeriod.from(apiPeriod)
       val desIncomes = desPeriod.financials.get.incomes.get

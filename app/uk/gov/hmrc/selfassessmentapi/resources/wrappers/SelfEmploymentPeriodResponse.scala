@@ -54,7 +54,7 @@ class SelfEmploymentPeriodResponse(underlying: HttpResponse) {
 
   def period: Option[SelfEmploymentPeriod] = {
     json.asOpt[des.SelfEmploymentPeriod] match {
-      case Some(desPeriod) => Some(SelfEmploymentPeriod.from(desPeriod))
+      case Some(desPeriod) => Some(SelfEmploymentPeriod.from(desPeriod, elideId = true))
       case None => {
         logger.error("The response from DES does not match the expected self-employment period format.")
         None
