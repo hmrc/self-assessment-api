@@ -30,13 +30,14 @@ object Obligations {
   implicit val writes: Writes[Obligations] = Json.writes[Obligations]
 }
 
-case class Obligation(start: LocalDate, end: LocalDate, met: Boolean)
+case class Obligation(start: LocalDate, end: LocalDate, due: LocalDate, met: Boolean)
 
 object Obligation {
   def from(desObligation: des.ObligationDetail): Obligation = {
     Obligation(
       start = LocalDate.parse(desObligation.inboundCorrespondenceFromDate),
       end = LocalDate.parse(desObligation.inboundCorrespondenceToDate),
+      due = LocalDate.parse(desObligation.inboundCorrespondenceDueDate),
       met = desObligation.isFulfilled)
   }
 
