@@ -741,52 +741,6 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def obligationNotFoundFor(nino: Nino, id: String = "abc"): Givens = {
-          stubFor(get(urlEqualTo(s"/ni/$nino/self-employments/$id/obligations"))
-            .willReturn(
-              aResponse()
-                .withStatus(404)
-                .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.Errors.ninoNotFound)))
-
-          givens
-        }
-
-        def obligationTaxYearTooShort(nino: Nino, id: String = "abc"): Givens = {
-          stubFor(get(urlEqualTo(s"/ni/$nino/self-employments/$id/obligations"))
-            .willReturn(
-              aResponse()
-                .withStatus(400)
-                .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.Errors.invalidObligation)))
-
-          givens
-        }
-
-        def returnObligationsFor(nino: Nino, id: String = "abc"): Givens = {
-          stubFor(get(urlEqualTo(s"/ni/$nino/self-employments/$id/obligations"))
-            .willReturn(
-              aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.Obligations())))
-
-          givens
-        }
-
-        def receivesObligationsTestHeader(nino: Nino, headerValue: String, id: String = "abc"): Givens = {
-          stubFor(
-            get(urlEqualTo(s"/ni/$nino/self-employments/$id/obligations"))
-              .withHeader("Gov-Test-Scenario", matching(headerValue))
-              .willReturn(
-                aResponse()
-                  .withStatus(200)
-                  .withHeader("Content-Type", "application/json")
-                  .withBody(DesJsons.Obligations())))
-
-          givens
-        }
-
         def noneFor(nino: Nino): Givens = {
           stubFor(get(urlEqualTo(s"/registration/business-details/nino/$nino"))
             .willReturn(
@@ -853,6 +807,46 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
       }
+
+      object obligations {
+        def obligationNotFoundFor(nino: Nino): Givens = {
+          stubFor(get(urlEqualTo(s"/income-tax-self-assessment/obligation-data/$nino"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.notFound)))
+
+          givens
+        }
+
+        def returnObligationsFor(nino: Nino, id: String = "abc"): Givens = {
+          stubFor(get(urlEqualTo(s"/income-tax-self-assessment/obligation-data/$nino"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withHeader("CorrelationId", "abc")
+                .withBody(DesJsons.Obligations())))
+
+          givens
+        }
+
+        def receivesObligationsTestHeader(nino: Nino, headerValue: String, id: String = "abc"): Givens = {
+          stubFor(
+            get(urlEqualTo(s"/income-tax-self-assessment/obligation-data/$nino"))
+              .withHeader("Gov-Test-Scenario", matching(headerValue))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withHeader("CorrelationId", "abc")
+                  .withBody(DesJsons.Obligations())))
+
+          givens
+        }
+      }
+
     }
 
     def des() = new Des(this)

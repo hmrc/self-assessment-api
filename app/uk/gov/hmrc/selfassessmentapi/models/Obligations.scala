@@ -23,12 +23,23 @@ import play.api.libs.json.{Json, Writes}
 case class Obligations(obligations: Seq[Obligation])
 
 object Obligations {
+  def from(desObligations: Seq[des.Obligation]): Obligations = {
+    Obligations(desObligations.flatMap(_.details.map(Obligation.from)))
+  }
+
   implicit val writes: Writes[Obligations] = Json.writes[Obligations]
 }
 
 case class Obligation(start: LocalDate, end: LocalDate, met: Boolean)
 
 object Obligation {
+  def from(desObligation: des.ObligationDetail): Obligation = {
+    Obligation(
+      start = LocalDate.parse(desObligation.inboundCorrespondenceFromDate),
+      end = LocalDate.parse(desObligation.inboundCorrespondenceToDate),
+      met = desObligation.isFulfilled)
+  }
+
   implicit val localDateOrder: Ordering[LocalDate] = OrderingImplicits.LocalDateOrdering
   implicit val ordering: Ordering[Obligation] = Ordering.by(_.start)
 

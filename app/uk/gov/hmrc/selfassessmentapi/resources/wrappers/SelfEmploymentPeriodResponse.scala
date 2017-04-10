@@ -26,7 +26,7 @@ import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentPeriod
 
 class SelfEmploymentPeriodResponse(underlying: HttpResponse) {
 
-  private val logger: Logger = Logger(classOf[SelfEmploymentResponse])
+  private val logger: Logger = Logger(classOf[SelfEmploymentPeriodResponse])
 
   val status: Int = underlying.status
   def json: JsValue = underlying.json

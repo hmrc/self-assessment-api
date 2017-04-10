@@ -32,6 +32,6 @@ object SelfEmploymentObligationsConnector {
     fut.map(SelfEmploymentObligationsResponse(_))
 
   def get(nino: Nino, id: SourceId)(implicit hc: HeaderCarrier): Future[SelfEmploymentObligationsResponse] =
-    httpGet(baseUrl + s"/ni/$nino/self-employments/$id/obligations")
+    httpGet(baseUrl + s"/income-tax-self-assessment/obligation-data/$nino")
 
 }

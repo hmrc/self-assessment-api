@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.Logger
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.microservice.controller.BaseController
@@ -31,11 +32,10 @@ object SelfEmploymentObligationsResource extends BaseController {
   private lazy val featureSwitch = FeatureSwitchAction(SourceType.SelfEmployments, "obligations")
   private val connector = SelfEmploymentObligationsConnector
 
-  // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def retrieveObligations(nino: Nino, id: SourceId): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
     connector.get(nino, id).map { response =>
       response.status match {
-        case 200 => Ok(response.json)
+        case 200 => response.obligations(id).map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
         case 400 => BadRequest(Error.from(response.json))
         case 404 => NotFound
         case _ => unhandledResponse(response.status, logger)
