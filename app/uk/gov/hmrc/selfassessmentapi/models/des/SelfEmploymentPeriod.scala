@@ -19,7 +19,6 @@ package uk.gov.hmrc.selfassessmentapi.models.des
 import play.api.libs.json.{Json, Reads, Writes}
 import uk.gov.hmrc.selfassessmentapi.models
 import uk.gov.hmrc.selfassessmentapi.models.Mapper
-import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{ExpenseType, IncomeType, SelfEmploymentPeriodicData}
 
 case class SelfEmploymentPeriod(id: Option[String], from: String, to: String, financials: Option[Financials])
 
@@ -29,38 +28,13 @@ object SelfEmploymentPeriod {
 
   implicit object MapperInstance extends Mapper[models.selfemployment.SelfEmploymentPeriod, SelfEmploymentPeriod] {
     override def from(apiSePeriod: models.selfemployment.SelfEmploymentPeriod): SelfEmploymentPeriod = {
-      SelfEmploymentPeriod(
-        id = None,
-        from = apiSePeriod.from.toString,
-        to = apiSePeriod.to.toString,
-        financials = Some(
-          Financials(
-            incomes =
-              Some(
-                Incomes(turnover = apiSePeriod.data.incomes.get(IncomeType.Turnover).map(_.amount),
-                  other = apiSePeriod.data.incomes.get(IncomeType.Other).map(_.amount))),
-            deductions =
-              Some(
-                Deductions(
-                  costOfGoods = apiSePeriod.data.expenses.get(ExpenseType.CostOfGoodsBought).map(expense2Deduction),
-                  constructionIndustryScheme = apiSePeriod.data.expenses.get(ExpenseType.CISPaymentsToSubcontractors).map(expense2Deduction),
-                  staffCosts = apiSePeriod.data.expenses.get(ExpenseType.StaffCosts).map(expense2Deduction),
-                  travelCosts = apiSePeriod.data.expenses.get(ExpenseType.TravelCosts).map(expense2Deduction),
-                  premisesRunningCosts = apiSePeriod.data.expenses.get(ExpenseType.PremisesRunningCosts).map(expense2Deduction),
-                  maintenanceCosts = apiSePeriod.data.expenses.get(ExpenseType.MaintenanceCosts).map(expense2Deduction),
-                  adminCosts = apiSePeriod.data.expenses.get(ExpenseType.AdminCosts).map(expense2Deduction),
-                  advertisingCosts = apiSePeriod.data.expenses.get(ExpenseType.AdvertisingCosts).map(expense2Deduction),
-                  interest = apiSePeriod.data.expenses.get(ExpenseType.Interest).map(expense2Deduction),
-                  financialCharges = apiSePeriod.data.expenses.get(ExpenseType.FinancialCharges).map(expense2Deduction),
-                  badDebt = apiSePeriod.data.expenses.get(ExpenseType.BadDebt).map(expense2Deduction),
-                  professionalFees = apiSePeriod.data.expenses.get(ExpenseType.ProfessionalFees).map(expense2Deduction),
-                  depreciation = apiSePeriod.data.expenses.get(ExpenseType.Depreciation).map(expense2Deduction),
-                  other = apiSePeriod.data.expenses.get(ExpenseType.Other).map(expense2Deduction))))
-        )
-      )
+      SelfEmploymentPeriod(id = None,
+                           from = apiSePeriod.from.toString,
+                           to = apiSePeriod.to.toString,
+                           financials =
+                             Some(Mapper[models.selfemployment.SelfEmploymentPeriod, Financials].from(apiSePeriod)))
     }
   }
-
 }
 
 case class Financials(incomes: Option[Incomes], deductions: Option[Deductions])
@@ -69,34 +43,58 @@ object Financials {
   implicit val writes: Writes[Financials] = Json.writes[Financials]
   implicit val reads: Reads[Financials] = Json.reads[Financials]
 
-  implicit object MapperInstance extends Mapper[SelfEmploymentPeriodicData, Financials] {
-    override def from(apiPeriodData: SelfEmploymentPeriodicData): Financials = {
-      Financials(
-        incomes = Some(
-          Incomes(turnover = apiPeriodData.incomes.get(IncomeType.Turnover).map(_.amount),
-            other = apiPeriodData.incomes.get(IncomeType.Other).map(_.amount))),
-        deductions = Some(
-          Deductions(
-            costOfGoods = apiPeriodData.expenses.get(ExpenseType.CostOfGoodsBought).map(expense2Deduction),
-            constructionIndustryScheme =
-              apiPeriodData.expenses.get(ExpenseType.CISPaymentsToSubcontractors).map(expense2Deduction),
-            staffCosts = apiPeriodData.expenses.get(ExpenseType.StaffCosts).map(expense2Deduction),
-            travelCosts = apiPeriodData.expenses.get(ExpenseType.TravelCosts).map(expense2Deduction),
-            premisesRunningCosts = apiPeriodData.expenses.get(ExpenseType.PremisesRunningCosts).map(expense2Deduction),
-            maintenanceCosts = apiPeriodData.expenses.get(ExpenseType.MaintenanceCosts).map(expense2Deduction),
-            adminCosts = apiPeriodData.expenses.get(ExpenseType.AdminCosts).map(expense2Deduction),
-            advertisingCosts = apiPeriodData.expenses.get(ExpenseType.AdvertisingCosts).map(expense2Deduction),
-            interest = apiPeriodData.expenses.get(ExpenseType.Interest).map(expense2Deduction),
-            financialCharges = apiPeriodData.expenses.get(ExpenseType.FinancialCharges).map(expense2Deduction),
-            badDebt = apiPeriodData.expenses.get(ExpenseType.BadDebt).map(expense2Deduction),
-            professionalFees = apiPeriodData.expenses.get(ExpenseType.ProfessionalFees).map(expense2Deduction),
-            depreciation = apiPeriodData.expenses.get(ExpenseType.Depreciation).map(expense2Deduction),
-            other = apiPeriodData.expenses.get(ExpenseType.Other).map(expense2Deduction)
-          ))
-      )
-    }
+  implicit object MapperInstanceSEPeriod extends Mapper[models.selfemployment.SelfEmploymentPeriod, Financials] {
+    override def from(apiSePeriod: models.selfemployment.SelfEmploymentPeriod): Financials =
+      Financials(incomes = apiSePeriod.incomes.map(
+                   inc =>
+                     Incomes(
+                       turnover = inc.turnover.map(_.amount),
+                       other = inc.other.map(_.amount)
+                   )),
+                 deductions = apiSePeriod.expenses.map(
+                   exp =>
+                     Deductions(costOfGoods = exp.costOfGoodsBought.map(expense2Deduction),
+                                constructionIndustryScheme = exp.cisPaymentsToSubcontractors.map(expense2Deduction),
+                                staffCosts = exp.staffCosts.map(expense2Deduction),
+                                travelCosts = exp.travelCosts.map(expense2Deduction),
+                                premisesRunningCosts = exp.premisesRunningCosts.map(expense2Deduction),
+                                maintenanceCosts = exp.maintenanceCosts.map(expense2Deduction),
+                                adminCosts = exp.adminCosts.map(expense2Deduction),
+                                advertisingCosts = exp.advertisingCosts.map(expense2Deduction),
+                                interest = exp.interest.map(expense2Deduction),
+                                financialCharges = exp.financialCharges.map(expense2Deduction),
+                                badDebt = exp.badDebt.map(expense2Deduction),
+                                professionalFees = exp.professionalFees.map(expense2Deduction),
+                                depreciation = exp.depreciation.map(expense2Deduction),
+                                other = exp.other.map(expense2Deduction))))
   }
 
+  implicit object MapperInstanceSEPeriodUpdate
+      extends Mapper[models.selfemployment.SelfEmploymentPeriodUpdate, Financials] {
+    override def from(sePeriodUpdate: models.selfemployment.SelfEmploymentPeriodUpdate): Financials =
+      Financials(incomes = sePeriodUpdate.incomes.map(
+                   inc =>
+                     Incomes(
+                       turnover = inc.turnover.map(_.amount),
+                       other = inc.other.map(_.amount)
+                   )),
+                 deductions = sePeriodUpdate.expenses.map(
+                   exp =>
+                     Deductions(costOfGoods = exp.costOfGoodsBought.map(expense2Deduction),
+                                constructionIndustryScheme = exp.cisPaymentsToSubcontractors.map(expense2Deduction),
+                                staffCosts = exp.staffCosts.map(expense2Deduction),
+                                travelCosts = exp.travelCosts.map(expense2Deduction),
+                                premisesRunningCosts = exp.premisesRunningCosts.map(expense2Deduction),
+                                maintenanceCosts = exp.maintenanceCosts.map(expense2Deduction),
+                                adminCosts = exp.adminCosts.map(expense2Deduction),
+                                advertisingCosts = exp.advertisingCosts.map(expense2Deduction),
+                                interest = exp.interest.map(expense2Deduction),
+                                financialCharges = exp.financialCharges.map(expense2Deduction),
+                                badDebt = exp.badDebt.map(expense2Deduction),
+                                professionalFees = exp.professionalFees.map(expense2Deduction),
+                                depreciation = exp.depreciation.map(expense2Deduction),
+                                other = exp.other.map(expense2Deduction))))
+  }
 }
 
 case class Incomes(turnover: Option[BigDecimal], other: Option[BigDecimal])

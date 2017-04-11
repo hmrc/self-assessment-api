@@ -83,11 +83,7 @@
   "required": [
     "accountingPeriod",
     "accountingType",
-    "commencementDate",
-    "tradingName",
-    "businessDescription",
-    "businessAddressLineOne",
-    "businessPostcode"
+    "tradingName"
   ],
   "additionalProperties": false
 }

@@ -34,10 +34,12 @@ object SelfEmploymentObligationsResource extends BaseController {
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def retrieveObligations(nino: Nino, id: SourceId): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
     connector.get(nino, id).map { response =>
-      if (response.status == 200) Ok(response.json)
-      else if (response.status == 404) NotFound
-      else if (response.status == 400) BadRequest(Error.from(response.json))
-      else unhandledResponse(response.status, logger)
+      response.status match {
+        case 200 => Ok(response.json)
+        case 400 => BadRequest(Error.from(response.json))
+        case 404 => NotFound
+        case _ => unhandledResponse(response.status, logger)
+      }
     }
   }
 }

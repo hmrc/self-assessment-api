@@ -54,11 +54,11 @@ class SelfEmploymentPeriodResponse(underlying: HttpResponse) {
 
   def period: Option[SelfEmploymentPeriod] = {
     json.asOpt[des.SelfEmploymentPeriod] match {
-      case Some(desPeriod) => Some(Mapper[des.SelfEmploymentPeriod, SelfEmploymentPeriod].from(desPeriod))
-      case None => {
+      case Some(desPeriod) =>
+        Some(Mapper[des.SelfEmploymentPeriod, SelfEmploymentPeriod].from(desPeriod).copy(id = None))
+      case None =>
         logger.error("The response from DES does not match the expected self-employment period format.")
         None
-      }
     }
   }
 
@@ -66,10 +66,9 @@ class SelfEmploymentPeriodResponse(underlying: HttpResponse) {
     json.asOpt[Seq[des.SelfEmploymentPeriod]] match {
       case Some(desPeriods) =>
         desPeriods.map(period => Mapper[des.SelfEmploymentPeriod, SelfEmploymentPeriod].from(period).asSummary)
-      case None => {
+      case None =>
         logger.error("The response from DES does not match the expected self-employment period format.")
         Seq.empty
-      }
     }
   }
 }

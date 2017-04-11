@@ -19,8 +19,8 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriodicData, SelfEmploymentPeriod}
-import uk.gov.hmrc.selfassessmentapi.models.{des, Mapper, PeriodId, SourceId}
+import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodUpdate}
+import uk.gov.hmrc.selfassessmentapi.models.{Mapper, PeriodId, SourceId, des}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentPeriodResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -42,7 +42,7 @@ object SelfEmploymentPeriodConnector {
   def getAll(nino: Nino, id: SourceId)(implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
     httpGet(baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries")
 
-  def update(nino: Nino, id: SourceId, periodId: PeriodId, update: SelfEmploymentPeriodicData)(implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
-    httpPut(baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries/$periodId", Mapper[SelfEmploymentPeriodicData, des.Financials].from(update))
+  def update(nino: Nino, id: SourceId, periodId: PeriodId, update: SelfEmploymentPeriodUpdate)(implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
+    httpPut(baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries/$periodId", Mapper[SelfEmploymentPeriodUpdate, des.Financials].from(update))
 
 }

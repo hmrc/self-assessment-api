@@ -17,7 +17,6 @@
 package uk.gov.hmrc.selfassessmentapi.models.properties
 
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.models.des.Properties
 import uk.gov.hmrc.selfassessmentapi.models.{Mapper, des}
 
 case class Properties()

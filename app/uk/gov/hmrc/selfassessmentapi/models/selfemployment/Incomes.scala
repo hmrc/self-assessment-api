@@ -16,13 +16,12 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
-import uk.gov.hmrc.selfassessmentapi.models.EnumJson
+import play.api.libs.json.{Json, Reads, Writes}
+import uk.gov.hmrc.selfassessmentapi.models.SimpleIncome
 
-object IncomeType extends Enumeration {
-  type IncomeType = Value
+case class Incomes(turnover: Option[SimpleIncome] = None, other: Option[SimpleIncome] = None)
 
-  val Turnover = Value("turnover")
-  val Other = Value("other")
-
-  implicit val seIncomeTypes = EnumJson.enumFormat(IncomeType, Some("Self Employment Income type is invalid"))
+object Incomes {
+  implicit val writes: Writes[Incomes] = Json.writes[Incomes]
+  implicit val reads: Reads[Incomes] = Json.reads[Incomes]
 }

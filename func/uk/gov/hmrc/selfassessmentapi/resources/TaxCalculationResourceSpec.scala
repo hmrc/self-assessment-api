@@ -74,15 +74,14 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
         .statusIs(204)
     }
 
-    "return 400 when provided with an invalid calculation ID" in {
+    "return 404 when provided with an invalid calculation ID" in {
       given()
         .userIsAuthorisedForTheResource(nino)
         .des().taxCalculation.invalidCalculationIdFor(nino)
         .when()
         .get(s"/ni/$nino/calculations/abc")
         .thenAssertThat()
-        .statusIs(400)
-        .bodyIsLike(Jsons.Errors.invalidCalcId)
+        .statusIs(404)
     }
 
     "return 404 when attempting to retrieve a calculation using an invalid id" in {

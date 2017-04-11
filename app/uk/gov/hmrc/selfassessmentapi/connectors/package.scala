@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi
 
+import play.api.Logger
 import play.api.libs.json.Writes
 import uk.gov.hmrc.play.http.logging.Authorization
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpReads, HttpResponse}
@@ -25,10 +26,12 @@ import uk.gov.hmrc.selfassessmentapi.resources.GovTestScenarioHeader
 import scala.concurrent.Future
 
 package object connectors {
+  private val logger = Logger("connectors")
+
   private def withDesHeaders(hc: HeaderCarrier): HeaderCarrier = {
     val newHc = hc.copy(authorization = Some(Authorization(s"Bearer ${AppContext.desToken}"))).withExtraHeaders(
       "Environment" -> AppContext.desEnv,
-      "Accept" -> "application/vnd.hmrc.1.0+json",
+      "Accept" -> "application/json",
       "Originator-Id" -> "DA_SDI"
     )
 
@@ -41,6 +44,13 @@ package object connectors {
       .getOrElse(newHc)
   }
 
+  private def withAdditionalHeaders(url: String)(f: HeaderCarrier => Future[HttpResponse])
+                                   (implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    val newHc = withDesHeaders(hc)
+    logger.debug(s"URL:[$url] Headers:[${newHc.headers}]")
+    f(newHc)
+  }
+
   // http-verbs converts non-2xx statuses into exceptions. We don't want this, so here we define
   // our own reader that returns the raw response.
   private object NoExceptReads extends HttpReads[HttpResponse] {
@@ -48,14 +58,14 @@ package object connectors {
   }
 
   def httpGet(url: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    WSHttp.GET(url)(NoExceptReads, withDesHeaders(hc))
+    withAdditionalHeaders(url) { WSHttp.GET(url)(NoExceptReads, _) }
 
   def httpPost[T: Writes](url: String, elem: T)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    WSHttp.POST(url, elem)(implicitly[Writes[T]], NoExceptReads, withDesHeaders(hc))
+    withAdditionalHeaders(url) { WSHttp.POST(url, elem)(implicitly[Writes[T]], NoExceptReads, _) }
 
   def httpEmptyPost(url: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    WSHttp.POSTEmpty(url)(NoExceptReads, withDesHeaders(hc))
+    withAdditionalHeaders(url) { WSHttp.POSTEmpty(url)(NoExceptReads, _) }
 
   def httpPut[T: Writes](url: String, elem: T)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    WSHttp.PUT(url, elem)(implicitly[Writes[T]], NoExceptReads, withDesHeaders(hc))
+    withAdditionalHeaders(url) { WSHttp.PUT(url, elem)(implicitly[Writes[T]], NoExceptReads, _) }
 }

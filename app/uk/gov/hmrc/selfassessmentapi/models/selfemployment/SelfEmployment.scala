@@ -70,17 +70,12 @@ object SelfEmployment {
     )(date => date.isBefore(LocalDate.now()) || date.isEqual(LocalDate.now()))
 
   private def lengthIsBetween(minLength: Int, maxLength: Int): Reads[String] =
-    Reads
-      .of[String]
-      .filter(
-        ValidationError(s"field length must be between $minLength and $maxLength characters",
-                        ErrorCode.INVALID_FIELD_LENGTH))(name => name.length <= maxLength && name.length >= minLength)
+    Reads.of[String].filter(ValidationError(s"field length must be between $minLength and $maxLength characters", ErrorCode.INVALID_FIELD_LENGTH)
+    )(name => name.length <= maxLength && name.length >= minLength)
 
   private val validateSIC: Reads[String] =
-    Reads
-      .of[String]
-      .filter(ValidationError("business description must be a string that conforms to the UK SIC 2007 classifications",
-                              ErrorCode.INVALID_BUSINESS_DESCRIPTION))(name => sicClassifications.get.contains(name))
+    Reads.of[String].filter(ValidationError("business description must be a string that conforms to the UK SIC 2007 classifications", ErrorCode.INVALID_BUSINESS_DESCRIPTION)
+    )(name => sicClassifications.get.contains(name))
 
   private val validatePostcode: Reads[String] = Reads.of[String].filter(ValidationError("postcode must match \"^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$\"", ErrorCode.INVALID_POSTCODE)
     )(postcode => postcode.matches("^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$"))

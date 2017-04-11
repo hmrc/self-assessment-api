@@ -66,7 +66,7 @@ object SelfEmployment {
       (__ \ "accountingPeriodEndDate").read[String] and
       (__ \ "tradingName").read[String] and
       (__ \ "businessAddressDetails").readNullable[SelfEmploymentAddress] and
-      Reads.pure(None) and // typeOfBusiness - field currently missing from DES response.
+      (__ \ "typeOfBusiness").readNullable[String] and
       (__ \ "tradingStartDate").readNullable[String] and
       (__ \ "cashOrAccruals").read[String]
   )(SelfEmployment.apply _)

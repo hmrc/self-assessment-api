@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.mvc.PathBindable
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.models.{SourceType, TaxYear}
 
@@ -24,19 +24,19 @@ class BindersSpec extends UnitSpec {
 
   "ninoBinder.bind" should {
 
-    "return Right with a Nino instance for a valid utr string" in {
+    "return Right when provided with a NINO passes both domain and DES validation" in {
       val nino = generateNino
-      implicit val pathBindable = PathBindable.bindableString
 
       val result = Binders.ninoBinder.bind("nino", nino.nino)
       result shouldEqual Right(nino)
     }
 
-    "return Left for an ivalid nino string" in {
-      val nino = "invalid"
-      implicit val pathBindable = PathBindable.bindableString
+    "return Right containing a NINO with all spaces removed when provided with a valid NINO" in {
+      Binders.ninoBinder.bind("nino", "AA 99 99 99 A") shouldBe Right(Nino("AA999999A"))
+    }
 
-      val result = Binders.ninoBinder.bind("nino", nino)
+    "return Left for a NINO that fails domain validation" in {
+      val result = Binders.ninoBinder.bind("nino", "invalid")
       result shouldEqual Left("ERROR_NINO_INVALID")
     }
   }
@@ -44,25 +44,19 @@ class BindersSpec extends UnitSpec {
   "taxYear.bind" should {
 
     "return Right with a TaxYear instance for a valid tax year string" in {
-      val taxYear = "2017-18"
-      implicit val pathBindable = PathBindable.bindableString
+      val taxYear = TaxYear("2017-18")
 
-      val result = Binders.taxYearBinder.bind("taxYear", taxYear)
-      result shouldEqual Right(TaxYear(taxYear))
+      val result = Binders.taxYearBinder.bind("taxYear", taxYear.taxYear)
+      result shouldEqual Right(taxYear)
     }
 
     "return Left for an invalid taxYear string" in {
-      val taxYear = "invalid"
-      implicit val pathBindable = PathBindable.bindableString
-
-      val result = Binders.taxYearBinder.bind("taxYear", taxYear)
+      val result = Binders.taxYearBinder.bind("taxYear", "invalid")
       result shouldEqual Left("ERROR_TAX_YEAR_INVALID")
     }
   }
 
   "sourceType.bind" should {
-
-    implicit val pathBindable = PathBindable.bindableString
 
     "return Right with a Source Type instance for a self-employments" in {
       SourceType.values.foreach { `type` =>

@@ -312,20 +312,55 @@ object Jsons {
     def apply(accPeriodStart: String = "2017-04-06",
               accPeriodEnd: String = "2018-04-05",
               accountingType: String = "CASH",
-              commencementDate: String = "2017-01-01",
+              commencementDate: Option[String] = Some("2017-01-01"),
               cessationDate: Option[String] = Some("2017-01-02"),
               tradingName: String = "Acme Ltd",
-              businessDescription: String = "Accountancy services",
-              businessAddressLineOne: String = "1 Acme Rd.",
-              businessAddressLineTwo: String = "London",
-              businessAddressLineThree: String = "Greater London",
-              businessAddressLineFour: String = "United Kingdom",
-              businessPostcode: String = "A9 9AA"): JsValue = {
+              businessDescription: Option[String] = Some("Accountancy services"),
+              businessAddressLineOne: Option[String] = Some("1 Acme Rd."),
+              businessAddressLineTwo: Option[String] = Some("London"),
+              businessAddressLineThree: Option[String] = Some("Greater London"),
+              businessAddressLineFour: Option[String] = Some("United Kingdom"),
+              businessPostcode: Option[String] = Some("A9 9AA")): JsValue = {
 
       val cessation = cessationDate.map(date =>
         s"""
            |  "cessationDate": "$date",
          """.stripMargin).getOrElse("")
+
+      val commencement = commencementDate.map(date =>
+        s"""
+           |  "commencementDate": "$date",
+       """.stripMargin).getOrElse("")
+
+      val businessDesc = businessDescription.map(desc =>
+        s"""
+           |  "businessDescription": "$desc",
+       """.stripMargin).getOrElse("")
+
+      val addrOne = businessAddressLineOne.map(line =>
+        s"""
+           |  "businessAddressLineOne": "$line",
+       """.stripMargin).getOrElse("")
+
+      val addrTwo = businessAddressLineTwo.map(line =>
+        s"""
+           |  "businessAddressLineTwo": "$line",
+       """.stripMargin).getOrElse("")
+
+      val addrThree = businessAddressLineThree.map(line =>
+        s"""
+           |  "businessAddressLineThree": "$line",
+       """.stripMargin).getOrElse("")
+
+      val addrFour = businessAddressLineFour.map(line =>
+        s"""
+           |  "businessAddressLineFour": "$line",
+       """.stripMargin).getOrElse("")
+
+      val addrPostcode = businessPostcode.map(code =>
+        s"""
+           |  "businessPostcode": "$code",
+       """.stripMargin).getOrElse("")
 
       Json.parse(
         s"""
@@ -334,16 +369,16 @@ object Jsons {
            |    "start": "$accPeriodStart",
            |    "end": "$accPeriodEnd"
            |  },
-           |  "accountingType": "$accountingType",
-           |  "commencementDate": "$commencementDate",
            |  $cessation
-           |  "tradingName": "$tradingName",
-           |  "businessDescription": "$businessDescription",
-           |  "businessAddressLineOne": "$businessAddressLineOne",
-           |  "businessAddressLineTwo": "$businessAddressLineTwo",
-           |  "businessAddressLineThree": "$businessAddressLineThree",
-           |  "businessAddressLineFour": "$businessAddressLineFour",
-           |  "businessPostcode": "$businessPostcode"
+           |  $commencement
+           |  $businessDesc
+           |  $addrOne
+           |  $addrTwo
+           |  $addrThree
+           |  $addrFour
+           |  $addrPostcode
+           |  "accountingType": "$accountingType",
+           |  "tradingName": "$tradingName"
            |}
          """.stripMargin)
     }

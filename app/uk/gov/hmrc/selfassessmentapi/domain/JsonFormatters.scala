@@ -43,29 +43,7 @@ object JsonFormatters {
 
     import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentAnnualSummary
     import uk.gov.hmrc.selfassessmentapi.models.selfemployment.BalancingChargeType.BalancingChargeType
-    import uk.gov.hmrc.selfassessmentapi.models.selfemployment.ExpenseType.ExpenseType
-    import uk.gov.hmrc.selfassessmentapi.models.selfemployment.IncomeType.IncomeType
-    import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{BalancingChargeType, ExpenseType, IncomeType}
-
-    implicit def incomeTypeFormat[V: Format]: MapEnumFormat[IncomeType, V] = new MapEnumFormat[IncomeType, V] {
-      override def reads(json: JsValue): JsResult[Map[IncomeType, V]] = {
-        play.api.libs.json.Reads.mapReads[V].reads(json).flatMap { result =>
-          JsSuccess(result.map {
-            case (k, v) => IncomeType.withName(k) -> v
-          })
-        }
-      }
-    }
-
-    implicit def expenseTypeFormat[V: Format]: MapEnumFormat[ExpenseType, V] = new MapEnumFormat[ExpenseType, V] {
-      override def reads(json: JsValue): JsResult[Map[ExpenseType, V]] = {
-        play.api.libs.json.Reads.mapReads[V].reads(json).flatMap { result =>
-          JsSuccess(result.map {
-            case (k, v) => ExpenseType.withName(k) -> v
-          })
-        }
-      }
-    }
+    import uk.gov.hmrc.selfassessmentapi.models.selfemployment.BalancingChargeType
 
     implicit def balancingChargeTypeFormat[V: Format]: MapEnumFormat[BalancingChargeType, V] = new MapEnumFormat[BalancingChargeType, V] {
       override def reads(json: JsValue): JsResult[Map[BalancingChargeType, V]] = {

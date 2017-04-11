@@ -18,8 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.models
-import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, ErrorCode}
 import uk.gov.hmrc.selfassessmentapi.resources.{JsonSpec, Jsons}
 
 class SelfEmploymentSpec extends JsonSpec {
@@ -61,13 +60,13 @@ class SelfEmploymentSpec extends JsonSpec {
     }
 
     "return a error when providing an empty commencementDate" in {
-      val json = Jsons.SelfEmployment(commencementDate = "")
+      val json = Jsons.SelfEmployment(commencementDate = Some(""))
 
       assertValidationErrorsWithMessage[SelfEmployment](json, Map("/commencementDate" -> Seq("error.expected.jodadate.format")))
     }
 
     "return a error when providing an non-ISO (i.e. YYYY-MM-DD) commencementDate" in {
-      val json = Jsons.SelfEmployment(commencementDate = "01-01-2016")
+      val json = Jsons.SelfEmployment(commencementDate = Some("01-01-2016"))
 
       assertValidationErrorsWithMessage[SelfEmployment](json, Map("/commencementDate" -> Seq("error.expected.jodadate.format")))
     }
@@ -125,106 +124,65 @@ class SelfEmploymentSpec extends JsonSpec {
     }
 
     "return a error when providing an empty business description" in {
-      val json = Jsons.SelfEmployment(businessDescription = "")
+      val json = Jsons.SelfEmployment(businessDescription = Some(""))
 
       assertValidationErrorsWithCode[SelfEmployment](json, Map("/businessDescription" -> Seq(ErrorCode.INVALID_BUSINESS_DESCRIPTION)))
     }
 
     "return a error when providing a business description that does not conform to the UK SIC 2007 classifications" in {
-      val json = Jsons.SelfEmployment(businessDescription = "silly-business")
+      val json = Jsons.SelfEmployment(businessDescription = Some("silly-business"))
 
       assertValidationErrorsWithCode[SelfEmployment](json, Map("/businessDescription" -> Seq(ErrorCode.INVALID_BUSINESS_DESCRIPTION)))
     }
 
     "return a error when providing a first address line that is not between 1 and 35 characters in length" in {
-      val jsonOne = Jsons.SelfEmployment(businessAddressLineOne = "")
-      val jsonTwo = Jsons.SelfEmployment(businessAddressLineOne = "a" * 36)
+      val jsonOne = Jsons.SelfEmployment(businessAddressLineOne = Some(""))
+      val jsonTwo = Jsons.SelfEmployment(businessAddressLineOne = Some("a" * 36))
 
       assertValidationErrorsWithCode[SelfEmployment](jsonOne, Map("/businessAddressLineOne" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
       assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/businessAddressLineOne" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
     }
 
     "return a error when providing a second address line that is not between 1 and 35 characters in length" in {
-      val jsonOne = Jsons.SelfEmployment(businessAddressLineTwo = "")
-      val jsonTwo = Jsons.SelfEmployment(businessAddressLineTwo = "a" * 36)
+      val jsonOne = Jsons.SelfEmployment(businessAddressLineTwo = Some(""))
+      val jsonTwo = Jsons.SelfEmployment(businessAddressLineTwo = Some("a" * 36))
 
       assertValidationErrorsWithCode[SelfEmployment](jsonOne, Map("/businessAddressLineTwo" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
       assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/businessAddressLineTwo" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
     }
 
     "return a error when providing a third address line that is not between 1 and 35 characters in length" in {
-      val jsonOne = Jsons.SelfEmployment(businessAddressLineThree = "")
-      val jsonTwo = Jsons.SelfEmployment(businessAddressLineThree = "a" * 36)
+      val jsonOne = Jsons.SelfEmployment(businessAddressLineThree = Some(""))
+      val jsonTwo = Jsons.SelfEmployment(businessAddressLineThree = Some("a" * 36))
 
       assertValidationErrorsWithCode[SelfEmployment](jsonOne, Map("/businessAddressLineThree" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
       assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/businessAddressLineThree" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
     }
 
     "return a error when providing a fourth address line that is not between 1 and 35 characters in length" in {
-      val jsonOne = Jsons.SelfEmployment(businessAddressLineFour = "")
-      val jsonTwo = Jsons.SelfEmployment(businessAddressLineFour = "a" * 36)
+      val jsonOne = Jsons.SelfEmployment(businessAddressLineFour = Some(""))
+      val jsonTwo = Jsons.SelfEmployment(businessAddressLineFour = Some("a" * 36))
 
       assertValidationErrorsWithCode[SelfEmployment](jsonOne, Map("/businessAddressLineFour" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
       assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/businessAddressLineFour" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
     }
 
     "return a error when providing a postcode that is not between 1 and 10 characters in length" in {
-      val jsonOne = Jsons.SelfEmployment(businessPostcode = "")
-      val jsonTwo = Jsons.SelfEmployment(businessPostcode = "a" * 11)
+      val jsonOne = Jsons.SelfEmployment(businessPostcode = Some(""))
+      val jsonTwo = Jsons.SelfEmployment(businessPostcode = Some("a" * 11))
 
       assertValidationErrorsWithCode[SelfEmployment](jsonOne, Map("/businessPostcode" -> Seq(ErrorCode.INVALID_POSTCODE, ErrorCode.INVALID_FIELD_LENGTH)))
       assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/businessPostcode" -> Seq(ErrorCode.INVALID_POSTCODE, ErrorCode.INVALID_FIELD_LENGTH)))
     }
 
     "return an error when providing a postcode with an invalid format" in {
-      val jsonOne = Jsons.SelfEmployment(businessPostcode = "!?")
-      val jsonTwo = Jsons.SelfEmployment(businessPostcode = "a" * 9)
+      val jsonOne = Jsons.SelfEmployment(businessPostcode = Some("!?"))
+      val jsonTwo = Jsons.SelfEmployment(businessPostcode = Some("a" * 9))
 
       assertValidationErrorsWithCode[SelfEmployment](jsonOne, Map("/businessPostcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
       assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/businessPostcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
     }
   }
 
-  def createDesSelfEmployment(accountingType: String = "cash"): des.SelfEmployment = {
-    des.SelfEmployment(
-      incomeSourceId = Some("abc"),
-      accountingPeriodStartDate = "2017-01-04",
-      accountingPeriodEndDate = "2017-01-05",
-      tradingName = "Acme Ltd.",
-      addressDetails = Some(des.SelfEmploymentAddress(
-        addressLine1 = "1 Acme Rd.",
-        addressLine2 = Some("London"),
-        addressLine3 = Some("Greater London"),
-        addressLine4 = Some("United Kingdom"),
-        postalCode = Some("A9 9AA")
-      )),
-      typeOfBusiness = Some("Accountancy services"),
-      tradingStartDate = Some("2017-04-01"),
-      cashOrAccruals = accountingType)
-  }
 
-  "constructing a API SelfEmployment using the DES SelfEmployment" should {
-    "correctly map fields" in {
-      val selfEmployment = Mapper[des.SelfEmployment, Option[models.selfemployment.SelfEmployment]].from(createDesSelfEmployment()).get
-
-      selfEmployment.id shouldBe Some("abc")
-      selfEmployment.accountingPeriod shouldBe AccountingPeriod(LocalDate.parse("2017-01-04"), LocalDate.parse("2017-01-05"))
-      selfEmployment.tradingName shouldBe "Acme Ltd."
-      selfEmployment.businessAddressLineOne shouldBe "1 Acme Rd."
-      selfEmployment.businessAddressLineTwo shouldBe Some("London")
-      selfEmployment.businessAddressLineThree shouldBe Some("Greater London")
-      selfEmployment.businessAddressLineFour shouldBe Some("United Kingdom")
-      selfEmployment.businessPostcode shouldBe "A9 9AA"
-      selfEmployment.businessDescription shouldBe "Accountancy services"
-      selfEmployment.commencementDate shouldBe LocalDate.parse("2017-04-01")
-      selfEmployment.accountingType shouldBe AccountingType.CASH
-      selfEmployment.cessationDate shouldBe None
-    }
-
-    "correctly map the accrual accounting type" in {
-      val selfEmployment = Mapper[des.SelfEmployment, Option[models.selfemployment.SelfEmployment]].from(createDesSelfEmployment(accountingType = "accruals")).get
-
-      selfEmployment.accountingType shouldBe AccountingType.ACCRUAL
-    }
-  }
 }

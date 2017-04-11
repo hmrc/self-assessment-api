@@ -91,7 +91,7 @@ traits:
   /ni/{nino}:
     uriParameters:
       nino:
-        description: National Insurance Number
+        description: National Insurance Number. This should be provided without spaces (e.g. AA999999A), as spaces in NINOs will be forbidden in a future version of the API.
         type: string
     /self-employments:
       (annotations.group):
@@ -1500,7 +1500,3 @@ traits:
                       description: Invalid NINO
                       value:
                         code: NINO_INVALID
-                    invalidCalcId:
-                      description: Invalid calculation ID
-                      value:
-                        code: INVALID_CALCID

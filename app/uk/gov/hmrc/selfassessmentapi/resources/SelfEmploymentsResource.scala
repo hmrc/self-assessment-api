@@ -18,15 +18,12 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.Results.NotFound
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.api.controllers.ErrorNotFound
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentConnector
-import uk.gov.hmrc.selfassessmentapi.models._
-import uk.gov.hmrc.selfassessmentapi.models.Errors
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
+import uk.gov.hmrc.selfassessmentapi.models.{Errors, _}
 import uk.gov.hmrc.selfassessmentapi.models.des.Business
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmployment, SelfEmploymentUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentResponse
@@ -45,11 +42,13 @@ object SelfEmploymentsResource extends BaseController {
     } match {
       case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
       case Right(response) => response.map { response =>
-        if (response.status == 200) Created.withHeaders(LOCATION -> response.createLocationHeader(nino).getOrElse(""))
-        else if (response.status == 403) Forbidden(Json.toJson(Errors.businessError(Error(ErrorCode.TOO_MANY_SOURCES.toString, s"The maximum number of Self-Employment incomes sources is 1", ""))))
-        else if (response.status == 400 || response.status == 409) BadRequest(Error.from(response.json))
-        else if (response.status == 404) NotFound
-        else unhandledResponse(response.status, logger)
+        response.status match {
+          case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino).getOrElse(""))
+          case 400 | 409 => BadRequest(Error.from(response.json))
+          case 403 => Forbidden(Json.toJson(Errors.businessError(Error(ErrorCode.TOO_MANY_SOURCES.toString, s"The maximum number of Self-Employment incomes sources is 1", ""))))
+          case 404 => NotFound
+          case _ => unhandledResponse(response.status, logger)
+        }
       }
     }
   }
@@ -61,32 +60,35 @@ object SelfEmploymentsResource extends BaseController {
     } match {
       case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
       case Right(result) => result.map { response =>
-        if (response.status == 204) NoContent
-        else if (response.status == 400) BadRequest(Error.from(response.json))
-        else if (response.status == 404) NotFound
-        else unhandledResponse(response.status, logger)
+        response.status match {
+          case 204 => NoContent
+          case 400 => BadRequest(Error.from(response.json))
+          case 404 => NotFound
+          case _ => unhandledResponse(response.status, logger)
+        }
       }
     }
   }
 
   def retrieve(nino: Nino, id: SourceId): Action[AnyContent] = seFeatureSwitch.asyncFeatureSwitch { implicit request =>
     connector.get(nino).map { response =>
-      if (response.status == 200) response.selfEmployment(id) match {
-        case Some(se) => Ok(Json.toJson(se))
-        case None => NotFound
+      response.status match {
+        case 200 => response.selfEmployment(id).map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+        case 400 => BadRequest(Error.from(response.json))
+        case 404 => NotFound
+        case _ => unhandledResponse(response.status, logger)
       }
-      else if (response.status == 404) NotFound
-      else if (response.status == 400) BadRequest(Error.from(response.json))
-      else unhandledResponse(response.status, logger)
     }
   }
 
   def retrieveAll(nino: Nino): Action[AnyContent] = seFeatureSwitch.asyncFeatureSwitch { implicit request =>
     connector.get(nino).map { response =>
-      if (response.status == 200) Ok(Json.toJson(response.listSelfEmployment))
-      else if (response.status == 404) NotFound
-      else if (response.status == 400) BadRequest(Error.from(response.json))
-      else unhandledResponse(response.status, logger)
+      response.status match {
+        case 200 => Ok(Json.toJson(response.listSelfEmployment))
+        case 400 => BadRequest(Error.from(response.json))
+        case 404 => NotFound
+        case _ => unhandledResponse(response.status, logger)
+      }
     }
   }
 
