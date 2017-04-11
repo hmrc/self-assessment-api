@@ -713,6 +713,10 @@ traits:
                         description: income or expense is not a non-negative amount or up to 2 decimal places
                         value:
                           code: INVALID_MONETARY_AMOUNT
+                      invalidTaxDeducted:
+                        description: taxDeducted > amount
+                        value:
+                          code: INVALID_TAX_DEDUCTION_AMOUNT
               409:
                 body:
                   application/json:
@@ -812,6 +816,10 @@ traits:
                           description: income or expense is not a non-negative amount or up to 2 decimal places
                           value:
                             code: INVALID_MONETARY_AMOUNT
+                        invalidTaxDeducted:
+                          description: taxDeducted > amount
+                          value:
+                            code: INVALID_TAX_DEDUCTION_AMOUNT
                 404:
                   body:
                     application/json:
