@@ -16,12 +16,27 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
+import play.api.Logger
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.play.http.HttpResponse
+import uk.gov.hmrc.selfassessmentapi.models.{Obligations, SourceId, des}
 
 class SelfEmploymentObligationsResponse(underlying: HttpResponse) {
+
+  private val logger: Logger = Logger(classOf[SelfEmploymentObligationsResponse])
+
   val status: Int = underlying.status
   def json: JsValue = underlying.json
+
+  def obligations(id: SourceId): Option[Obligations] = {
+    json.asOpt[des.Obligations] match {
+      case Some(obs) => Some(Obligations.from(obs.selfEmploymentObligationsForId(id)))
+      case None => {
+        logger.error("The response from DES does not match the expected self-employment obligations format.")
+        None
+      }
+    }
+  }
 }
 
 object SelfEmploymentObligationsResponse {

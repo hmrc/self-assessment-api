@@ -236,30 +236,77 @@ object DesJsons {
   }
 
   object Obligations {
-    def apply(firstMet: Boolean = false, secondMet: Boolean = false,
-              thirdMet: Boolean = false, fourthMet: Boolean = false): String = {
+    def apply(id: String = "abc"): String = {
       s"""
          |{
          |  "obligations": [
          |    {
-         |      "start": "2017-04-06",
-         |      "end": "2017-07-05",
-         |      "met": $firstMet
+         |      "id": "$id",
+         |      "type": "ITSB",
+         |      "details": [
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2017-04-06",
+         |          "inboundCorrespondenceToDate": "2017-07-05",
+         |          "inboundCorrespondenceDueDate": "2017-08-05",
+         |          "periodKey": "004"
+         |        },
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2017-07-06",
+         |          "inboundCorrespondenceToDate": "2017-10-05",
+         |          "inboundCorrespondenceDueDate": "2017-11-05",
+         |          "periodKey": "004"
+         |        },
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2017-10-06",
+         |          "inboundCorrespondenceToDate": "2018-01-05",
+         |          "inboundCorrespondenceDueDate": "2018-02-05",
+         |          "periodKey": "004"
+         |        },
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2018-01-06",
+         |          "inboundCorrespondenceToDate": "2018-04-05",
+         |          "inboundCorrespondenceDueDate": "2018-05-06",
+         |          "periodKey": "004"
+         |        }
+         |      ]
          |    },
          |    {
-         |      "start": "2017-07-06",
-         |      "end": "2017-10-05",
-         |      "met": $secondMet
-         |    },
-         |    {
-         |      "start": "2017-10-06",
-         |      "end": "2018-01-05",
-         |      "met": $thirdMet
-         |    },
-         |    {
-         |      "start": "2018-01-06",
-         |      "end": "2018-04-05",
-         |      "met": $fourthMet
+         |      "id": "$id",
+         |      "type": "ITSP",
+         |      "details": [
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2017-04-06",
+         |          "inboundCorrespondenceToDate": "2017-07-05",
+         |          "inboundCorrespondenceDueDate": "2017-08-05",
+         |          "periodKey": "004"
+         |        },
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2017-07-06",
+         |          "inboundCorrespondenceToDate": "2017-10-05",
+         |          "inboundCorrespondenceDueDate": "2017-11-05",
+         |          "periodKey": "004"
+         |        },
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2017-10-06",
+         |          "inboundCorrespondenceToDate": "2018-01-05",
+         |          "inboundCorrespondenceDueDate": "2018-02-05",
+         |          "periodKey": "004"
+         |        },
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2018-01-06",
+         |          "inboundCorrespondenceToDate": "2018-04-05",
+         |          "inboundCorrespondenceDueDate": "2018-05-06",
+         |          "periodKey": "004"
+         |        }
+         |      ]
          |    }
          |  ]
          |}

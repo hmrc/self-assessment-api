@@ -49,10 +49,10 @@ trait PropertiesObligationsService {
                              thirdMet: Boolean = false, fourthMet: Boolean = false) = {
     Obligations(
       Seq(
-        Obligation(LocalDate.parse("2017-04-06"), LocalDate.parse("2017-07-05"), firstMet),
-        Obligation(LocalDate.parse("2017-07-06"), LocalDate.parse("2017-10-05"), secondMet),
-        Obligation(LocalDate.parse("2017-10-06"), LocalDate.parse("2018-01-05"), thirdMet),
-        Obligation(LocalDate.parse("2018-01-06"), LocalDate.parse("2018-04-05"), fourthMet)
+        Obligation(LocalDate.parse("2017-04-06"), LocalDate.parse("2017-07-05"), LocalDate.parse("2017-08-05"), firstMet),
+        Obligation(LocalDate.parse("2017-07-06"), LocalDate.parse("2017-10-05"), LocalDate.parse("2017-11-05"), secondMet),
+        Obligation(LocalDate.parse("2017-10-06"), LocalDate.parse("2018-01-05"), LocalDate.parse("2018-02-05"), thirdMet),
+        Obligation(LocalDate.parse("2018-01-06"), LocalDate.parse("2018-04-05"), LocalDate.parse("2018-05-06"), fourthMet)
       ).sorted
     )
   }

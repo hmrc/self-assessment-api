@@ -16,6 +16,12 @@
       "type": "string",
       "format": "date"
     },
+    "due": {
+      "title": "Due date",
+      "description": "The due date for this obligation period",
+      "type": "string",
+      "format": "date"
+    },
     "met": {
       "title": "Met",
       "description": "True if this obligation period has been met; false otherwise",
@@ -25,6 +31,7 @@
   "required": [
     "start",
     "end",
+    "due",
     "met"
   ],
   "additionalProperties": false
