@@ -277,6 +277,41 @@ object DesJsons {
          |}
       """.stripMargin
     }
+
+    def annualSummaryOtherProperties: String = {
+      s"""
+         {
+         |   "annualAdjustments": {
+         |      "lossBroughtForward": 0.0,
+         |      "balancingCharge": 0.0,
+         |      "privateUseAdjustment": 0.0
+         |   },
+         |   "annualAllowances": {
+         |      "annualInvestmentAllowance": 0.0,
+         |      "otherCapitalAllowance": 0.0,
+         |      "zeroEmissionGoodsVehicleAllowance": 0.0,
+         |      "businessPremisesRenovationAllowance": 0.0,
+         |      "costOfReplacingDomGoods": 0.0
+         |   }
+         |}
+      """.stripMargin
+    }
+
+    def annualSummaryFHLProperties: String = {
+      s"""
+         {
+         |   "annualAdjustments": {
+         |      "lossBroughtForward": 0.0,
+         |      "balancingCharge": 0.0,
+         |      "privateUseAdjustment": 0.0
+         |   },
+         |   "annualAllowances": {
+         |      "annualInvestmentAllowance": 0.0,
+         |      "otherCapitalAllowance": 0.0
+         |   }
+         |}
+      """.stripMargin
+    }
   }
 
   object Obligations {

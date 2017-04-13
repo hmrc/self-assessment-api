@@ -9,6 +9,7 @@ import play.api.libs.json._
 import uk.gov.hmrc.api.controllers.ErrorNotFound
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.{NinoGenerator, TestApplication}
 import uk.gov.hmrc.selfassessmentapi.models.{ErrorNotImplemented, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.DesJsons
@@ -911,6 +912,47 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def annualSummaryWillBeUpdatedFor(nino: Nino, propertyType : PropertyType,  taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)))
+
+          givens
+        }
+
+        def annualSummaryWillNotBeReturnedFor(nino: Nino, propertyType : PropertyType, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.ninoNotFound)))
+
+          givens
+        }
+
+        def annualSummaryWillBeReturnedFor(nino: Nino,  propertyType : PropertyType, taxYear: TaxYear = TaxYear("2017-18"), response : String = ""): Givens = {
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(response)))
+
+          givens
+        }
+
+        def noAnnualSummaryFor(nino: Nino,  propertyType : PropertyType, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(Json.obj().toString)))
+
+          givens
+        }
       }
 
     }

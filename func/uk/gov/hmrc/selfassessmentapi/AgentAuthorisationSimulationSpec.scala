@@ -230,40 +230,22 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .bodyIsError(ErrorCode.AGENT_NOT_AUTHORIZED.toString)
     }
 
-    "receive a HTTP 403 Unauthorized when they attempt to retrieve specific 'other' property periods" ignore {
+    "receive a HTTP 403 Unauthorized when they attempt to retrieve specific 'other' property periods" in {
       given()
         .userIsAuthorisedForTheResource(nino)
         .when()
-        .post(Jsons.Properties()).to(s"/ni/$nino/uk-properties")
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .post(Jsons.Properties.otherPeriod(fromDate = Some("2017-04-06"), toDate = Some("2018-04-05")))
-        .to(s"/ni/$nino/uk-properties/other/periods")
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .get(s"%periodLocation%")
+        .get(s"/ni/$nino/uk-properties/other/periods")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
         .statusIs(403)
         .bodyIsError(ErrorCode.AGENT_NOT_AUTHORIZED.toString)
     }
 
-    "receive a HTTP 403 Unauthorized when they attempt to retrieve specific 'fhl' property periods" ignore {
+    "receive a HTTP 403 Unauthorized when they attempt to retrieve specific 'fhl' property periods" in {
       given()
         .userIsAuthorisedForTheResource(nino)
         .when()
-        .post(Jsons.Properties()).to(s"/ni/$nino/uk-properties")
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .post(Jsons.Properties.fhlPeriod(fromDate = Some("2017-04-06"), toDate = Some("2018-04-05")))
-        .to(s"/ni/$nino/uk-properties/furnished-holiday-lettings/periods")
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .get(s"%periodLocation%")
+        .get(s"/ni/$nino/uk-properties/furnished-holiday-lettings/periods")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
         .statusIs(403)
@@ -279,13 +261,9 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .isBadRequest
     }
 
-    "receive an unmodified HTTP 400 when they attempt to update an annual summary with an invalid json" ignore {
+    "receive an unmodified HTTP 400 when they attempt to update an annual summary with an invalid json" in {
       given()
         .userIsAuthorisedForTheResource(nino)
-        .when()
-        .post(Jsons.Properties()).to(s"/ni/$nino/uk-properties")
-        .thenAssertThat()
-        .statusIs(201)
         .when()
         .put(Jsons.Properties.otherAnnualSummary(annualInvestmentAllowance = -100.1234))
         .at(s"/ni/$nino/uk-properties/other/$taxYear")
@@ -295,13 +273,9 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .bodyHasString("INVALID_MONETARY_AMOUNT")
     }
 
-    "receive an unmodified HTTP 400 when they attempt to create a periodic summary with an invalid json" ignore {
+    "receive an unmodified HTTP 400 when they attempt to create a periodic summary with an invalid json" in {
       given()
         .userIsAuthorisedForTheResource(nino)
-        .when()
-        .post(Jsons.Properties()).to(s"/ni/$nino/uk-properties")
-        .thenAssertThat()
-        .statusIs(201)
         .when()
         .post(Jsons.Properties.otherPeriod(rentIncome = -1000.123))
         .to(s"/ni/$nino/uk-properties/other/periods")
@@ -322,14 +296,9 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .isBadRequest
     }
 
-    "receive a modified HTTP 400 when they attempt to create more than one uk property business" ignore {
+    "receive a modified HTTP 400 when they attempt to create more than one uk property business" in {
       given()
         .userIsAuthorisedForTheResource(nino)
-        .when()
-        .post(Jsons.Properties())
-        .to(s"/ni/$nino/uk-properties")
-        .thenAssertThat()
-        .statusIs(201)
         .when()
         .post(Jsons.Properties())
         .to(s"/ni/$nino/uk-properties")

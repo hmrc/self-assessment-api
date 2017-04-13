@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.models.properties
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import uk.gov.hmrc.selfassessmentapi.models.des
 
 sealed trait PropertiesAnnualSummary
 
@@ -31,6 +32,27 @@ object OtherPropertiesAnnualSummary {
     (__ \ "allowances").readNullable[OtherPropertiesAllowances] and
       (__ \ "adjustments").readNullable[OtherPropertiesAdjustments]
     ) (OtherPropertiesAnnualSummary.apply _)
+
+  def from(summary: des.OtherPropertiesAnnualSummary): OtherPropertiesAnnualSummary = {
+    val allowances = for {
+      details <- summary.otherProperties
+      allow <- details.annualAllowances
+    } yield OtherPropertiesAllowances(
+      allow.annualInvestmentAllowance,
+      allow.businessPremisesRenovationAllowance,
+      allow.otherCapitalAllowance,
+      allow.costOfReplacingDomGoods,
+      allow.zeroEmissionGoodsVehicleAllowance)
+    val adjustments = for {
+      details <- summary.otherProperties
+      adj <- details.annualAdjustments
+    } yield OtherPropertiesAdjustments(
+      adj.lossBroughtForward,
+      adj.privateUseAdjustment,
+      adj.balancingCharge)
+    OtherPropertiesAnnualSummary(allowances, adjustments)
+  }
+
 }
 
 case class FHLPropertiesAnnualSummary(allowances: Option[FHLPropertiesAllowances],
@@ -43,4 +65,21 @@ object FHLPropertiesAnnualSummary {
     (__ \ "allowances").readNullable[FHLPropertiesAllowances] and
       (__ \ "adjustments").readNullable[FHLPropertiesAdjustments]
     ) (FHLPropertiesAnnualSummary.apply _)
+
+  def from(summary: des.FHLPropertiesAnnualSummary): FHLPropertiesAnnualSummary = {
+    val allowances = for {
+      details <- summary.furnishedHolidayLettings
+      allow <- details.annualAllowances
+    } yield FHLPropertiesAllowances(
+      allow.annualInvestmentAllowance,
+      allow.otherCapitalAllowance)
+    val adjustments = for {
+      details <- summary.furnishedHolidayLettings
+      adj <- details.annualAdjustments
+    } yield FHLPropertiesAdjustments(
+      adj.lossBroughtForward,
+      adj.privateUseAdjustment,
+      adj.balancingCharge)
+    FHLPropertiesAnnualSummary(allowances, adjustments)
+  }
 }
