@@ -36,26 +36,24 @@ case class SelfEmploymentRetrieve(id: Option[SourceId] = None,
 
 object SelfEmploymentRetrieve {
 
-  implicit object MapperInstance extends Mapper[des.SelfEmployment, Option[SelfEmploymentRetrieve]] {
-    override def from(desSelfEmployment: des.SelfEmployment): Option[SelfEmploymentRetrieve] =
-      for {
-        accountingType <- AccountingType.fromDes(desSelfEmployment.cashOrAccruals)
-      } yield
-        SelfEmploymentRetrieve(id = desSelfEmployment.incomeSourceId,
-                               accountingPeriod =
-                                 AccountingPeriod(start = LocalDate.parse(desSelfEmployment.accountingPeriodStartDate),
-                                                  end = LocalDate.parse(desSelfEmployment.accountingPeriodEndDate)),
-                               accountingType = accountingType,
-                               commencementDate = desSelfEmployment.tradingStartDate.map(LocalDate.parse),
-                               cessationDate = None,
-                               tradingName = desSelfEmployment.tradingName,
-                               businessDescription = desSelfEmployment.typeOfBusiness,
-                               businessAddressLineOne = desSelfEmployment.addressDetails.map(_.addressLine1),
-                               businessAddressLineTwo = desSelfEmployment.addressDetails.flatMap(_.addressLine2),
-                               businessAddressLineThree = desSelfEmployment.addressDetails.flatMap(_.addressLine3),
-                               businessAddressLineFour = desSelfEmployment.addressDetails.flatMap(_.addressLine4),
-                               businessPostcode = desSelfEmployment.addressDetails.flatMap(_.postalCode))
-  }
+  def from(desSelfEmployment: des.SelfEmployment): Option[SelfEmploymentRetrieve] =
+    for {
+      accountingType <- AccountingType.fromDes(desSelfEmployment.cashOrAccruals)
+    } yield
+      SelfEmploymentRetrieve(id = desSelfEmployment.incomeSourceId,
+                             accountingPeriod =
+                               AccountingPeriod(start = LocalDate.parse(desSelfEmployment.accountingPeriodStartDate),
+                                                end = LocalDate.parse(desSelfEmployment.accountingPeriodEndDate)),
+                             accountingType = accountingType,
+                             commencementDate = desSelfEmployment.tradingStartDate.map(LocalDate.parse),
+                             cessationDate = None,
+                             tradingName = desSelfEmployment.tradingName,
+                             businessDescription = desSelfEmployment.typeOfBusiness,
+                             businessAddressLineOne = desSelfEmployment.addressDetails.map(_.addressLine1),
+                             businessAddressLineTwo = desSelfEmployment.addressDetails.flatMap(_.addressLine2),
+                             businessAddressLineThree = desSelfEmployment.addressDetails.flatMap(_.addressLine3),
+                             businessAddressLineFour = desSelfEmployment.addressDetails.flatMap(_.addressLine4),
+                             businessPostcode = desSelfEmployment.addressDetails.flatMap(_.postalCode))
 
   implicit val writes: Writes[SelfEmploymentRetrieve] = Json.writes[SelfEmploymentRetrieve]
 }

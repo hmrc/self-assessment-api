@@ -27,30 +27,15 @@ import uk.gov.hmrc.selfassessmentapi.repositories.PropertiesRepository
 import uk.gov.hmrc.selfassessmentapi.models.ErrorCode._
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
-import uk.gov.hmrc.selfassessmentapi.models.properties.{FHLPeriodicData, FHLProperties, OtherPeriodicData, OtherProperties}
+import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
 
 
-trait PropertiesPeriodService[T <: Period, P <: PeriodicData] {
+trait PropertiesPeriodService[P <: Period, F <: Financials] {
   val repository: PropertiesRepository
 
-  val propertyOps: PropertyPeriodOps[T, P]
+  val propertyOps: PropertyPeriodOps[P, F]
 
-  def createPeriod(nino: Nino, period: T): Future[Either[Error, PeriodId]] = {
-    val periodId = BSONObjectID.generate.stringify
-
-    repository.retrieve(nino).flatMap {
-      case Some(property) => propertyOps.validatePeriod(period, property) match {
-        case Left(error) => Future.successful(Left(error))
-        case Right(validResource) => repository.update(nino, propertyOps.setPeriodsTo(periodId, period, validResource)).flatMap {
-          case true => Future.successful(Right(periodId))
-          case false => Future.successful(Left(Error(INTERNAL_ERROR.toString, "", "")))
-        }
-      }
-      case None => Future.successful(Left(Error(ErrorCode.NOT_FOUND.toString, s"Resource not found", "")))
-    }
-  }
-
-  def updatePeriod(nino: Nino, periodId: PeriodId, period: P): Future[Boolean] = {
+  def updatePeriod(nino: Nino, periodId: PeriodId, period: F): Future[Boolean] = {
     repository.retrieve(nino).flatMap {
       case Some(property) if propertyOps.periodExists(periodId, property) =>
         repository.update(nino, propertyOps.update(periodId, period, property))
@@ -58,7 +43,7 @@ trait PropertiesPeriodService[T <: Period, P <: PeriodicData] {
     }
   }
 
-  def retrievePeriod(nino: Nino, periodId: PeriodId): Future[Option[T]] = {
+  def retrievePeriod(nino: Nino, periodId: PeriodId): Future[Option[P]] = {
     repository.retrieve(nino).map {
       case Some(properties) => propertyOps.period(periodId, properties)
       case None => None
@@ -77,14 +62,14 @@ trait PropertiesPeriodService[T <: Period, P <: PeriodicData] {
   }
 }
 
-object OtherPropertiesPeriodService extends PropertiesPeriodService[OtherProperties, OtherPeriodicData] {
+object OtherPropertiesPeriodService extends PropertiesPeriodService[Other.Properties, Other.Financials] {
   override val repository: PropertiesRepository = PropertiesRepository()
-  override val propertyOps: PropertyPeriodOps[OtherProperties, OtherPeriodicData] =
-    implicitly[PropertyPeriodOps[OtherProperties, OtherPeriodicData]]
+  override val propertyOps: PropertyPeriodOps[Other.Properties, Other.Financials] =
+    implicitly[PropertyPeriodOps[Other.Properties, Other.Financials]]
 }
 
-object FHLPropertiesPeriodService extends PropertiesPeriodService[FHLProperties, FHLPeriodicData] {
+object FHLPropertiesPeriodService extends PropertiesPeriodService[FHL.Properties, FHL.Financials] {
   override val repository: PropertiesRepository = PropertiesRepository()
-  override val propertyOps: PropertyPeriodOps[FHLProperties, FHLPeriodicData] =
-    implicitly[PropertyPeriodOps[FHLProperties, FHLPeriodicData]]
+  override val propertyOps: PropertyPeriodOps[FHL.Properties, FHL.Financials] =
+    implicitly[PropertyPeriodOps[FHL.Properties, FHL.Financials]]
 }

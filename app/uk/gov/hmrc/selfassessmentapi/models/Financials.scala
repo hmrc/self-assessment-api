@@ -16,16 +16,4 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
-import uk.gov.hmrc.play.test.UnitSpec
-
-trait MapperSpec extends UnitSpec {
-
-  // test for lossy mapping between two product types: round trip mapping is possible for the smaller
-  // of the two product types
-  def roundTrip[A <: Product, B <: Product](a: A, b: B)(implicit ma: Mapper[A, B], mb: Mapper[B, A]): Unit = {
-    if (a.productArity < b.productArity)
-      (mb.from _ compose ma.from)(a) shouldEqual a
-    else (ma.from _ compose mb.from)(b) shouldEqual b
-  }
-
-}
+trait Financials

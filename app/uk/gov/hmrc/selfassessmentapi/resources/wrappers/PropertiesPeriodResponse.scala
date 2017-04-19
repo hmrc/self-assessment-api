@@ -20,31 +20,31 @@ import play.api.Logger
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.models.des
-import uk.gov.hmrc.selfassessmentapi.models.properties.Properties
+import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
+import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 
-class PropertiesResponse(underlying: HttpResponse) {
+class PropertiesPeriodResponse(underlying: HttpResponse) {
 
-  private val logger: Logger = Logger(classOf[PropertiesResponse])
+  private val logger: Logger = Logger(classOf[PropertiesPeriodResponse])
 
   val status: Int = underlying.status
 
   def json: JsValue = underlying.json
 
-  def createLocationHeader(nino: Nino): String = s"/self-assessment/ni/$nino/uk-properties"
+  def createLocationHeader(nino: Nino, id: PropertyType): String =
+    s"/self-assessment/ni/$nino/uk-properties/$id/periods"
 
-  def property: Option[Properties] = {
-    (json \ "propertyData").asOpt[des.properties.Properties] match {
-      case Some(property) =>
-        Some(Properties.from(property))
+  def containsOverlappingPeriod: Boolean = {
+    json.asOpt[DesError] match {
+      case Some(err) => err.code == DesErrorCode.INVALID_PERIOD
       case None =>
-        logger.error("The 'propertyData' field was not found in the response from DES")
-        None
+        logger.error("The response from DES does not match the expected error format.")
+        false
     }
   }
 
 }
 
-object PropertiesResponse {
-  def apply(response: HttpResponse): PropertiesResponse = new PropertiesResponse(response)
+object PropertiesPeriodResponse {
+  def apply(response: HttpResponse): PropertiesPeriodResponse = new PropertiesPeriodResponse(response)
 }

@@ -25,11 +25,11 @@ trait PropertiesBucket[T <: Period] extends PeriodValidator[T] {
   val annualSummaries: Map[TaxYear, PropertiesAnnualSummary]
 }
 
-case class FHLPropertiesBucket(periods: Map[PeriodId, FHLProperties],
-                               annualSummaries: Map[TaxYear, FHLPropertiesAnnualSummary]) extends PropertiesBucket[FHLProperties]
+case class FHLPropertiesBucket(periods: Map[PeriodId, FHL.Properties],
+                               annualSummaries: Map[TaxYear, FHLPropertiesAnnualSummary]) extends PropertiesBucket[FHL.Properties]
 
-case class OtherPropertiesBucket(periods: Map[PeriodId, OtherProperties],
-                                 annualSummaries: Map[TaxYear, OtherPropertiesAnnualSummary]) extends PropertiesBucket[OtherProperties]
+case class OtherPropertiesBucket(periods: Map[PeriodId, Other.Properties],
+                                 annualSummaries: Map[TaxYear, OtherPropertiesAnnualSummary]) extends PropertiesBucket[Other.Properties]
 
 object FHLPropertiesBucket {
   import uk.gov.hmrc.selfassessmentapi.domain.JsonFormatters.PropertiesFormatters.annualSummaryFHLMapFormat

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.models.des
 
 import uk.gov.hmrc.selfassessmentapi.models
-import uk.gov.hmrc.selfassessmentapi.models.{Expense, Mapper, SimpleIncome}
+import uk.gov.hmrc.selfassessmentapi.models.{Expense, SimpleIncome}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
 class FinancialsSpec extends JsonSpec {
@@ -44,7 +44,7 @@ class FinancialsSpec extends JsonSpec {
             other = Some(Expense(10.10, Some(10.10)))
           )))
 
-      val desUpdate = Mapper[models.selfemployment.SelfEmploymentPeriodUpdate, Financials].from(apiUpdate)
+      val desUpdate = Financials.from(apiUpdate)
       val desIncomes = desUpdate.incomes.get
       val desDeductions = desUpdate.deductions.get
 

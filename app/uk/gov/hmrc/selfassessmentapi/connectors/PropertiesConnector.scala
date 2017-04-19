@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.models.{des, Mapper}
+import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.properties.Properties
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
 
@@ -34,7 +34,7 @@ object PropertiesConnector {
     fut.map(PropertiesResponse(_))
 
   def create(nino: Nino, properties: Properties)(implicit hc: HeaderCarrier): Future[PropertiesResponse] =
-    httpPost(baseUrl + s"/income-tax-self-assessment/nino/$nino/properties", Mapper[Properties, des.Properties].from(properties))
+    httpPost(baseUrl + s"/income-tax-self-assessment/nino/$nino/properties", des.properties.Properties.from(properties))
 
   def retrieve(nino: Nino)(implicit hc: HeaderCarrier): Future[PropertiesResponse] =
     httpGet(baseUrl + s"/registration/business-details/nino/$nino")

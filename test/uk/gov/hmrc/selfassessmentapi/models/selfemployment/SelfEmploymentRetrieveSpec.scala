@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
 import org.joda.time.LocalDate
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
-import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, Mapper, des}
+import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, des}
 
 class SelfEmploymentRetrieveSpec extends UnitSpec {
   def createDesSelfEmployment(accountingType: String = "cash"): des.SelfEmployment = {
@@ -42,7 +42,7 @@ class SelfEmploymentRetrieveSpec extends UnitSpec {
   "constructing a API SelfEmploymentRetrieve using the DES SelfEmployment" should {
     "correctly map fields" in {
       val selfEmployment =
-        Mapper[des.SelfEmployment, Option[SelfEmploymentRetrieve]].from(createDesSelfEmployment()).get
+        SelfEmploymentRetrieve.from(createDesSelfEmployment()).get
 
       selfEmployment.id shouldBe Some("abc")
       selfEmployment.accountingPeriod shouldBe AccountingPeriod(LocalDate.parse("2017-01-04"),
@@ -60,9 +60,7 @@ class SelfEmploymentRetrieveSpec extends UnitSpec {
     }
 
     "correctly map the accrual accounting type" in {
-      val selfEmployment = Mapper[des.SelfEmployment, Option[SelfEmploymentRetrieve]]
-        .from(createDesSelfEmployment(accountingType = "accruals"))
-        .get
+      val selfEmployment = SelfEmploymentRetrieve.from(createDesSelfEmployment(accountingType = "accruals")).get
 
       selfEmployment.accountingType shouldBe AccountingType.ACCRUAL
     }

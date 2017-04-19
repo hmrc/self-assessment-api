@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.models.properties
 
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.models.{Mapper, des}
+import uk.gov.hmrc.selfassessmentapi.models.des.properties
 
 case class Properties()
 
@@ -34,8 +34,6 @@ object Properties {
     override def writes(o: Properties) = Json.obj()
   }
 
-  implicit object MapperInstance extends Mapper[des.Properties, Properties] {
-    override def from(desProperties: des.Properties): Properties = Properties()
-  }
+  def from(desProperties: properties.Properties): Properties = Properties()
 
 }

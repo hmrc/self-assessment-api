@@ -18,14 +18,14 @@ package uk.gov.hmrc.selfassessmentapi.models.des
 
 
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.models.properties
+import uk.gov.hmrc.selfassessmentapi.models
 
 sealed trait PropertiesAnnualSummary
 
 object PropertiesAnnualSummary {
-  def from(summary: properties.PropertiesAnnualSummary): PropertiesAnnualSummary = summary match {
-    case other: properties.OtherPropertiesAnnualSummary => OtherPropertiesAnnualSummary.from(other)
-    case fhl: properties.FHLPropertiesAnnualSummary => FHLPropertiesAnnualSummary.from(fhl)
+  def from(summary: models.properties.PropertiesAnnualSummary): PropertiesAnnualSummary = summary match {
+    case other: models.properties.OtherPropertiesAnnualSummary => OtherPropertiesAnnualSummary.from(other)
+    case fhl: models.properties.FHLPropertiesAnnualSummary => FHLPropertiesAnnualSummary.from(fhl)
   }
 }
 
@@ -35,7 +35,7 @@ object OtherPropertiesAnnualSummary {
   implicit val reads: Reads[OtherPropertiesAnnualSummary] = Json.reads[OtherPropertiesAnnualSummary]
   implicit val writes: Writes[OtherPropertiesAnnualSummary] = Json.writes[OtherPropertiesAnnualSummary]
 
-  def from(other: properties.OtherPropertiesAnnualSummary): OtherPropertiesAnnualSummary = {
+  def from(other: models.properties.OtherPropertiesAnnualSummary): OtherPropertiesAnnualSummary = {
     val allowances = other.allowances.map { allow =>
       OtherPropertiesAllowances(
         allow.annualInvestmentAllowance,
@@ -94,7 +94,7 @@ object FHLPropertiesAnnualSummary {
   implicit val reads: Reads[FHLPropertiesAnnualSummary] = Json.reads[FHLPropertiesAnnualSummary]
   implicit val writes: Writes[FHLPropertiesAnnualSummary] = Json.writes[FHLPropertiesAnnualSummary]
 
-  def from(fhl: properties.FHLPropertiesAnnualSummary): FHLPropertiesAnnualSummary = {
+  def from(fhl: models.properties.FHLPropertiesAnnualSummary): FHLPropertiesAnnualSummary = {
     val allowances = fhl.allowances.map { allow =>
       FHLPropertiesAllowances(
         allow.annualInvestmentAllowance,

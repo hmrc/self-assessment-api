@@ -24,7 +24,6 @@ import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors._
 import uk.gov.hmrc.selfassessmentapi.models._
-import uk.gov.hmrc.selfassessmentapi.models.des.Properties
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global

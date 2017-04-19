@@ -17,7 +17,6 @@
 package uk.gov.hmrc.selfassessmentapi.models.des
 
 import uk.gov.hmrc.selfassessmentapi.models
-import uk.gov.hmrc.selfassessmentapi.models.Mapper
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
 class SelfEmploymentUpdateSpec extends JsonSpec {
@@ -32,7 +31,7 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
                                                                businessAddressLineFour = None,
                                                                businessPostcode = "W11 7QT")
 
-    val desUpdate = Mapper[models.selfemployment.SelfEmploymentUpdate, SelfEmploymentUpdate].from(apiUpdate)
+    val desUpdate = SelfEmploymentUpdate.from(apiUpdate)
 
     "correctly map a API self-employment update into a DES self-employment update" in {
       desUpdate.tradingName shouldBe apiUpdate.tradingName

@@ -21,7 +21,7 @@ import uk.gov.hmrc.selfassessmentapi.models
 import uk.gov.hmrc.selfassessmentapi.models.{Expense, SimpleIncome, des, _}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
-class SelfEmploymentPeriodSpec extends JsonSpec with MapperSpec {
+class SelfEmploymentPeriodSpec extends JsonSpec {
   "from" should {
     "correctly map an API self-employment period to a DES self-employment period" in {
       val apiPeriod = models.selfemployment.SelfEmploymentPeriod(
@@ -48,9 +48,11 @@ class SelfEmploymentPeriodSpec extends JsonSpec with MapperSpec {
             other = Some(Expense(10.10, Some(10.10)))
           )))
 
-      val desPeriod = Mapper[models.selfemployment.SelfEmploymentPeriod, des.SelfEmploymentPeriod].from(apiPeriod)
+      val desPeriod = des.SelfEmploymentPeriod.from(apiPeriod)
 
-      roundTrip(apiPeriod, desPeriod)
+      (des.SelfEmploymentPeriod.from _ compose
+        models.selfemployment.SelfEmploymentPeriod.from)(desPeriod) shouldBe desPeriod
+
     }
   }
 }

@@ -1,6 +1,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.models.des.properties.FHL
 
 object DesJsons {
 
@@ -312,6 +313,17 @@ object DesJsons {
          |}
       """.stripMargin
     }
+
+    object Period {
+      def createResponse(id: String = "123456789012345"): String = {
+        s"""
+           |{
+           |   "transactionReference": "$id"
+           |}
+        """.stripMargin
+      }
+    }
+
   }
 
   object Obligations {

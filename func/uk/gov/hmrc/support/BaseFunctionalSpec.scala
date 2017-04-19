@@ -890,7 +890,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
 
-        def willReturnNone (nino: Nino): Givens = {
+        def willReturnNone(nino: Nino): Givens = {
           stubFor(get(urlEqualTo(s"/registration/business-details/nino/$nino"))
             .willReturn(
               aResponse()
@@ -912,7 +912,7 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def annualSummaryWillBeUpdatedFor(nino: Nino, propertyType : PropertyType,  taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+        def annualSummaryWillBeUpdatedFor(nino: Nino, propertyType: PropertyType, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
           stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
             .willReturn(
               aResponse()
@@ -921,7 +921,7 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def annualSummaryWillNotBeReturnedFor(nino: Nino, propertyType : PropertyType, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+        def annualSummaryWillNotBeReturnedFor(nino: Nino, propertyType: PropertyType, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
           stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
             .willReturn(
               aResponse()
@@ -932,7 +932,7 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def annualSummaryWillBeReturnedFor(nino: Nino,  propertyType : PropertyType, taxYear: TaxYear = TaxYear("2017-18"), response : String = ""): Givens = {
+        def annualSummaryWillBeReturnedFor(nino: Nino, propertyType: PropertyType, taxYear: TaxYear = TaxYear("2017-18"), response: String = ""): Givens = {
           stubFor(get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
             .willReturn(
               aResponse()
@@ -943,7 +943,7 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def noAnnualSummaryFor(nino: Nino,  propertyType : PropertyType, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+        def noAnnualSummaryFor(nino: Nino, propertyType: PropertyType, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
           stubFor(get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
             .willReturn(
               aResponse()
@@ -953,6 +953,41 @@ trait BaseFunctionalSpec extends TestApplication {
 
           givens
         }
+
+        def periodWillBeCreatedFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Properties.Period.createResponse())))
+
+          givens
+        }
+
+        def invalidPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.invalidPeriod)))
+
+          givens
+        }
+
+        def periodWillBeNotBeCreatedFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.notFound)))
+
+          givens
+        }
+
+
       }
 
     }

@@ -16,34 +16,32 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.des
 
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models
-import uk.gov.hmrc.selfassessmentapi.models.{AccountingType, Mapper}
+import uk.gov.hmrc.selfassessmentapi.models.AccountingType
 
 case class Business(businessDetails: Seq[SelfEmployment])
 
 object Business {
   implicit val writes: Writes[Business] = Json.writes[Business]
 
-  implicit object MapperInstance extends Mapper[models.selfemployment.SelfEmployment, Business] {
-    override def from(apiSelfEmployment: models.selfemployment.SelfEmployment): Business = {
-      Business(
-        Seq(
-          SelfEmployment(incomeSourceId = None,
-                         accountingPeriodStartDate = apiSelfEmployment.accountingPeriod.start.toString,
-                         accountingPeriodEndDate = apiSelfEmployment.accountingPeriod.end.toString,
-                         tradingName = apiSelfEmployment.tradingName,
-                         addressDetails = Some(
-                           SelfEmploymentAddress(addressLine1 = apiSelfEmployment.businessAddressLineOne,
-                                                 addressLine2 = apiSelfEmployment.businessAddressLineTwo,
-                                                 addressLine3 = apiSelfEmployment.businessAddressLineThree,
-                                                 addressLine4 = apiSelfEmployment.businessAddressLineFour,
-                                                 postalCode = Some(apiSelfEmployment.businessPostcode))),
-                         typeOfBusiness = Some(apiSelfEmployment.businessDescription),
-                         tradingStartDate = Some(apiSelfEmployment.commencementDate.toString),
-                         cashOrAccruals = AccountingType.toDes(apiSelfEmployment.accountingType))))
-    }
+  def from(apiSelfEmployment: models.selfemployment.SelfEmployment): Business = {
+    Business(
+      Seq(
+        SelfEmployment(incomeSourceId = None,
+                       accountingPeriodStartDate = apiSelfEmployment.accountingPeriod.start.toString,
+                       accountingPeriodEndDate = apiSelfEmployment.accountingPeriod.end.toString,
+                       tradingName = apiSelfEmployment.tradingName,
+                       addressDetails = Some(
+                         SelfEmploymentAddress(addressLine1 = apiSelfEmployment.businessAddressLineOne,
+                                               addressLine2 = apiSelfEmployment.businessAddressLineTwo,
+                                               addressLine3 = apiSelfEmployment.businessAddressLineThree,
+                                               addressLine4 = apiSelfEmployment.businessAddressLineFour,
+                                               postalCode = Some(apiSelfEmployment.businessPostcode))),
+                       typeOfBusiness = Some(apiSelfEmployment.businessDescription),
+                       tradingStartDate = Some(apiSelfEmployment.commencementDate.toString),
+                       cashOrAccruals = AccountingType.toDes(apiSelfEmployment.accountingType))))
   }
 
 }
@@ -71,22 +69,20 @@ object SelfEmployment {
       (__ \ "cashOrAccruals").read[String]
   )(SelfEmployment.apply _)
 
-  implicit object MapperInstance extends Mapper[models.selfemployment.SelfEmployment, SelfEmployment] {
-    override def from(apiSelfEmployment: models.selfemployment.SelfEmployment): SelfEmployment = {
-      SelfEmployment(incomeSourceId = None,
-                     accountingPeriodStartDate = apiSelfEmployment.accountingPeriod.start.toString,
-                     accountingPeriodEndDate = apiSelfEmployment.accountingPeriod.end.toString,
-                     tradingName = apiSelfEmployment.tradingName,
-                     addressDetails = Some(
-                       SelfEmploymentAddress(addressLine1 = apiSelfEmployment.businessAddressLineOne,
-                                             addressLine2 = apiSelfEmployment.businessAddressLineTwo,
-                                             addressLine3 = apiSelfEmployment.businessAddressLineThree,
-                                             addressLine4 = apiSelfEmployment.businessAddressLineFour,
-                                             postalCode = Some(apiSelfEmployment.businessPostcode))),
-                     typeOfBusiness = Some(apiSelfEmployment.businessDescription),
-                     tradingStartDate = Some(apiSelfEmployment.commencementDate.toString),
-                     cashOrAccruals = AccountingType.toDes(apiSelfEmployment.accountingType))
-    }
+  def from(apiSelfEmployment: models.selfemployment.SelfEmployment): SelfEmployment = {
+    SelfEmployment(incomeSourceId = None,
+                   accountingPeriodStartDate = apiSelfEmployment.accountingPeriod.start.toString,
+                   accountingPeriodEndDate = apiSelfEmployment.accountingPeriod.end.toString,
+                   tradingName = apiSelfEmployment.tradingName,
+                   addressDetails = Some(
+                     SelfEmploymentAddress(addressLine1 = apiSelfEmployment.businessAddressLineOne,
+                                           addressLine2 = apiSelfEmployment.businessAddressLineTwo,
+                                           addressLine3 = apiSelfEmployment.businessAddressLineThree,
+                                           addressLine4 = apiSelfEmployment.businessAddressLineFour,
+                                           postalCode = Some(apiSelfEmployment.businessPostcode))),
+                   typeOfBusiness = Some(apiSelfEmployment.businessDescription),
+                   tradingStartDate = Some(apiSelfEmployment.commencementDate.toString),
+                   cashOrAccruals = AccountingType.toDes(apiSelfEmployment.accountingType))
   }
 
 }

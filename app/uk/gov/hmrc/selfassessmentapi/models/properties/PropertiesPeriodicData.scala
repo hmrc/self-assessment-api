@@ -20,96 +20,154 @@ import org.joda.time.LocalDate
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import uk.gov.hmrc.selfassessmentapi.models
 import uk.gov.hmrc.selfassessmentapi.models._
-import uk.gov.hmrc.selfassessmentapi.models.properties.ExpenseType.ExpenseType
-import uk.gov.hmrc.selfassessmentapi.models.properties.FHLExpenseType.FHLExpenseType
-import uk.gov.hmrc.selfassessmentapi.models.properties.FHLIncomeType.FHLIncomeType
-import uk.gov.hmrc.selfassessmentapi.models.properties.IncomeType.IncomeType
 
-case class FHLProperties(from: LocalDate, to: LocalDate, data: FHLPeriodicData) extends Period
+object FHL {
 
-object FHLProperties extends PeriodValidator[FHLProperties] {
-  import uk.gov.hmrc.selfassessmentapi.domain.JsonFormatters.PropertiesFormatters.{fhlExpenseTypeFormat, fhlIncomeTypeFormat}
+  final case class Properties(from: LocalDate, to: LocalDate, financials: Financials) extends Period
 
-  implicit val writes = new Writes[FHLProperties] {
-    override def writes(o: FHLProperties): JsValue = {
-      Json.obj(
-        "from" -> o.from,
-        "to" -> o.to,
-        "incomes" -> o.data.incomes,
-        "expenses" -> o.data.expenses
-      )
+  object Properties extends PeriodValidator[Properties] {
+
+    implicit val writes = new Writes[Properties] {
+      override def writes(o: Properties): JsValue = {
+        Json.obj(
+          "from" -> o.from,
+          "to" -> o.to,
+          "incomes" -> o.financials.incomes,
+          "expenses" -> o.financials.expenses
+        )
+      }
     }
+
+    implicit val reads: Reads[Properties] = (
+      (__ \ "from").read[LocalDate] and
+        (__ \ "to").read[LocalDate] and
+        (__ \ "incomes").readNullable[Incomes] and
+        (__ \ "expenses").readNullable[Expenses]
+    )((from, to, incomes, expenses) => {
+      Properties(from, to, Financials(incomes, expenses))
+    }).filter(ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD))(
+      periodDateValidator)
+
   }
 
-  implicit val reads: Reads[FHLProperties] = (
-    (__ \ "from").read[LocalDate] and
-      (__ \ "to").read[LocalDate] and
-      (__ \ "incomes").readNullable[Map[FHLIncomeType, SimpleIncome]] and
-      (__ \ "expenses").readNullable[Map[FHLExpenseType, SimpleExpense]]
-  )((from, to, incomes, expenses) => {
-    FHLProperties(from, to, FHLPeriodicData(incomes.getOrElse(Map.empty), expenses.getOrElse(Map.empty)))
-  }).filter(ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD))(
-    periodDateValidator)
+  case class Income(amount: Amount)
 
-}
+  object Income {
+    implicit val reads: Reads[Income] = (__ \ "amount").read[Amount](nonNegativeAmountValidator).map(Income(_))
 
-case class OtherProperties(from: LocalDate, to: LocalDate, data: OtherPeriodicData) extends Period
-
-object OtherProperties extends PeriodValidator[OtherProperties] {
-  import uk.gov.hmrc.selfassessmentapi.domain.JsonFormatters.PropertiesFormatters.{expenseTypeFormat, incomeTypeFormat}
-
-  implicit val writes = new Writes[OtherProperties] {
-    override def writes(o: OtherProperties): JsValue = {
-      Json.obj(
-        "from" -> o.from,
-        "to" -> o.to,
-        "incomes" -> o.data.incomes,
-        "expenses" -> o.data.expenses
-      )
-    }
+    implicit val writes: Writes[Income] = Json.writes[Income]
   }
 
-  implicit val reads: Reads[OtherProperties] = (
-    (__ \ "from").read[LocalDate] and
-      (__ \ "to").read[LocalDate] and
-      (__ \ "incomes").readNullable[Map[IncomeType, Income]] and
-      (__ \ "expenses").readNullable[Map[ExpenseType, SimpleExpense]]
-  )((from, to, incomes, expenses) => {
-    OtherProperties(from, to, OtherPeriodicData(incomes.getOrElse(Map.empty), expenses.getOrElse(Map.empty)))
-  }).filter(ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD))(
-    periodDateValidator)
+  case class Incomes(rentIncome: Option[Income] = None)
 
+  object Incomes {
+    implicit val format: Format[Incomes] = Json.format[Incomes]
+  }
+
+  case class Expense(amount: Amount)
+
+  object Expense {
+    implicit val reads: Reads[Expense] = (__ \ "amount").read[Amount](nonNegativeAmountValidator).map(Expense(_))
+
+    implicit val writes: Writes[Expense] = Json.writes[Expense]
+  }
+
+  case class Expenses(premisesRunningCosts: Option[Expense] = None,
+                      repairsAndMaintenance: Option[Expense] = None,
+                      financialCosts: Option[Expense] = None,
+                      professionalFees: Option[Expense] = None,
+                      other: Option[Expense] = None)
+
+  object Expenses {
+    implicit val format: Format[Expenses] = Json.format[Expenses]
+  }
+
+  final case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None)
+      extends models.Financials
+
+  object Financials {
+    implicit val format: Format[Financials] =
+      Json.format[Financials]
+
+  }
 }
 
-case class FHLPeriodicData(incomes: Map[FHLIncomeType, SimpleIncome], expenses: Map[FHLExpenseType, SimpleExpense])
-    extends PeriodicData
+object Other {
+  final case class Properties(from: LocalDate, to: LocalDate, financials: Financials) extends Period
 
-object FHLPeriodicData {
-  import uk.gov.hmrc.selfassessmentapi.domain.JsonFormatters.PropertiesFormatters.{fhlExpenseTypeFormat, fhlIncomeTypeFormat}
+  object Properties extends PeriodValidator[Properties] {
 
-  implicit val writes: Writes[FHLPeriodicData] = Json.writes[FHLPeriodicData]
+    implicit val writes = new Writes[Properties] {
+      override def writes(o: Properties): JsValue = {
+        Json.obj(
+          "from" -> o.from,
+          "to" -> o.to,
+          "incomes" -> o.financials.incomes,
+          "expenses" -> o.financials.expenses
+        )
+      }
+    }
 
-  implicit val reads: Reads[FHLPeriodicData] = (
-    (__ \ "incomes").readNullable[Map[FHLIncomeType, SimpleIncome]] and
-      (__ \ "expenses").readNullable[Map[FHLExpenseType, SimpleExpense]]
-  )((incomes, expenses) => {
-    FHLPeriodicData(incomes.getOrElse(Map.empty), expenses.getOrElse(Map.empty))
-  })
-}
+    implicit val reads: Reads[Properties] = (
+      (__ \ "from").read[LocalDate] and
+        (__ \ "to").read[LocalDate] and
+        (__ \ "incomes").readNullable[Incomes] and
+        (__ \ "expenses").readNullable[Expenses]
+    )((from, to, incomes, expenses) => {
+      Properties(from, to, Financials(incomes, expenses))
+    }).filter(ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD))(
+      periodDateValidator)
+  }
 
-case class OtherPeriodicData(incomes: Map[IncomeType, Income], expenses: Map[ExpenseType, SimpleExpense])
-    extends PeriodicData
+  case class Income(amount: Amount, taxDeducted: Option[Amount])
 
-object OtherPeriodicData {
-  import uk.gov.hmrc.selfassessmentapi.domain.JsonFormatters.PropertiesFormatters.{expenseTypeFormat, incomeTypeFormat}
+  object Income {
+    implicit val reads: Reads[Income] = (
+      (__ \ "amount").read[Amount](nonNegativeAmountValidator) and
+        (__ \ "taxDeducted").readNullable[Amount](nonNegativeAmountValidator)
+    )(Income.apply _)
 
-  implicit val writes: Writes[OtherPeriodicData] = Json.writes[OtherPeriodicData]
+    implicit val writes: Writes[Income] = Json.writes[Income]
+  }
 
-  implicit val reads: Reads[OtherPeriodicData] = (
-    (__ \ "incomes").readNullable[Map[IncomeType, Income]] and
-      (__ \ "expenses").readNullable[Map[ExpenseType, SimpleExpense]]
-  )((incomes, expenses) => {
-    OtherPeriodicData(incomes.getOrElse(Map.empty), expenses.getOrElse(Map.empty))
-  })
+  case class Incomes(rentIncome: Option[Income] = None,
+                     premiumsOfLeaseGrant: Option[Income] = None,
+                     reversePremiums: Option[Income] = None)
+
+  object Incomes {
+
+    implicit val format: Format[Incomes] =
+      Json.format[Incomes]
+  }
+
+  case class Expense(amount: Amount)
+
+  object Expense {
+    implicit val reads: Reads[Expense] = (__ \ "amount").read[Amount](nonNegativeAmountValidator).map(Expense(_))
+
+    implicit val writes: Writes[Expense] = Json.writes[Expense]
+  }
+
+  case class Expenses(premisesRunningCosts: Option[Expense] = None,
+                      repairsAndMaintenance: Option[Expense] = None,
+                      financialCosts: Option[Expense] = None,
+                      professionalFees: Option[Expense] = None,
+                      costOfServices: Option[Expense] = None,
+                      other: Option[Expense] = None)
+
+  object Expenses {
+    implicit val format: Format[Expenses] = Json.format[Expenses]
+  }
+
+  final case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None)
+      extends models.Financials
+
+  object Financials {
+
+    implicit val format: Format[Financials] =
+      Json.format[Financials]
+  }
+
 }

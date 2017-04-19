@@ -33,16 +33,14 @@ case class SelfEmploymentPeriod(id: Option[String],
 
 object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
 
-  implicit object MapperInstance extends Mapper[des.SelfEmploymentPeriod, SelfEmploymentPeriod] {
-    override def from(desPeriod: des.SelfEmploymentPeriod): SelfEmploymentPeriod =
-      SelfEmploymentPeriod(
-        id = desPeriod.id,
-        from = LocalDate.parse(desPeriod.from),
-        to = LocalDate.parse(desPeriod.to),
-        incomes = fromDESIncomes(desPeriod),
-        expenses = fromDESExpenses(desPeriod)
-      )
-  }
+  def from(desPeriod: des.SelfEmploymentPeriod): SelfEmploymentPeriod =
+    SelfEmploymentPeriod(
+      id = desPeriod.id,
+      from = LocalDate.parse(desPeriod.from),
+      to = LocalDate.parse(desPeriod.to),
+      incomes = fromDESIncomes(desPeriod),
+      expenses = fromDESExpenses(desPeriod)
+    )
 
   private def fromDESIncomes(desPeriod: des.SelfEmploymentPeriod): Option[Incomes] = {
     desPeriod.financials.flatMap(_.incomes.map { incomes =>

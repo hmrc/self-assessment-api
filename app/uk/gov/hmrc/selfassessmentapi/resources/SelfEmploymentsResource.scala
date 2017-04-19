@@ -38,35 +38,42 @@ object SelfEmploymentsResource extends BaseController {
 
   def create(nino: Nino): Action[JsValue] = seFeatureSwitch.asyncJsonFeatureSwitch { implicit request =>
     validate[SelfEmployment, SelfEmploymentResponse](request.body) { selfEmployment =>
-      connector.create(nino, Mapper[SelfEmployment, Business].from(selfEmployment))
+      connector.create(nino, Business.from(selfEmployment))
     } match {
       case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-      case Right(response) => response.map { response =>
-        response.status match {
-          case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino).getOrElse(""))
-          case 400 | 409 => BadRequest(Error.from(response.json))
-          case 403 => Forbidden(Json.toJson(Errors.businessError(Error(ErrorCode.TOO_MANY_SOURCES.toString, s"The maximum number of Self-Employment incomes sources is 1", ""))))
-          case 404 => NotFound
-          case _ => unhandledResponse(response.status, logger)
+      case Right(response) =>
+        response.map { response =>
+          response.status match {
+            case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino).getOrElse(""))
+            case 400 | 409 => BadRequest(Error.from(response.json))
+            case 403 =>
+              Forbidden(
+                Json.toJson(
+                  Errors.businessError(Error(ErrorCode.TOO_MANY_SOURCES.toString,
+                                             s"The maximum number of Self-Employment incomes sources is 1",
+                                             ""))))
+            case 404 => NotFound
+            case _ => unhandledResponse(response.status, logger)
+          }
         }
-      }
     }
   }
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def update(nino: Nino, id: SourceId): Action[JsValue] = seFeatureSwitch.asyncJsonFeatureSwitch { implicit request =>
     validate[SelfEmploymentUpdate, SelfEmploymentResponse](request.body) { selfEmployment =>
-      connector.update(nino, Mapper[SelfEmploymentUpdate, des.SelfEmploymentUpdate].from(selfEmployment), id)
+      connector.update(nino, des.SelfEmploymentUpdate.from(selfEmployment), id)
     } match {
       case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-      case Right(result) => result.map { response =>
-        response.status match {
-          case 204 => NoContent
-          case 400 => BadRequest(Error.from(response.json))
-          case 404 => NotFound
-          case _ => unhandledResponse(response.status, logger)
+      case Right(result) =>
+        result.map { response =>
+          response.status match {
+            case 204 => NoContent
+            case 400 => BadRequest(Error.from(response.json))
+            case 404 => NotFound
+            case _ => unhandledResponse(response.status, logger)
+          }
         }
-      }
     }
   }
 
