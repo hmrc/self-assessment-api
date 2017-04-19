@@ -31,6 +31,7 @@ object DesJsons {
 
   object SelfEmployment {
     def apply(nino: Nino,
+              mtdId: String,
               id: String = "123456789012345",
               accPeriodStart: String = "2017-04-06",
               accPeriodEnd: String = "2018-04-05",
@@ -48,7 +49,7 @@ object DesJsons {
          |{
          |   "safeId": "XE00001234567890",
          |   "nino": "$nino",
-         |   "mtdbsa": "123456789012345",
+         |   "mtdbsa": "$mtdId",
          |   "propertyIncome": false,
          |   "businessData": [
          |      {

@@ -18,7 +18,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 404 when updating an annual summary for an invalid self-employment source" in {
       given()
         .userIsAuthorisedForTheResource(nino)
-        .des().ninoNotFoundFor(nino)
+        .des().selfEmployment.annualSummaryNotFoundFor(nino)
         .when()
         .put(Jsons.SelfEmployment.annualSummary()).at(s"/ni/$nino/self-employments/sillysource/$taxYear")
         .thenAssertThat()
@@ -49,7 +49,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 400 when provided with an invalid Originator-Id header" in {
       given()
         .userIsAuthorisedForTheResource(nino)
-        .des().invalidOriginatorIdFor(nino)
+        .des().selfEmployment.invalidOriginatorIdFor(nino)
         .when()
         .put(Jsons.SelfEmployment.annualSummary()).at(s"/ni/$nino/self-employments/abc/$taxYear")
         .thenAssertThat()

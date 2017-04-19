@@ -48,6 +48,7 @@ object Jsons {
     val invalidOriginatorId: String = errorWithMessage("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
     val internalServerError: String = errorWithMessage("INTERNAL_SERVER_ERROR", "An internal server error occurred")
     val invalidCalcId: String = errorWithMessage("INVALID_CALCID", "Submission has not passed validation")
+    val unauthorised: String = errorWithMessage("UNAUTHORIZED", "Bearer token is missing or not authorized")
 
     def invalidRequest(errors: (String, String)*): String = {
       s"""

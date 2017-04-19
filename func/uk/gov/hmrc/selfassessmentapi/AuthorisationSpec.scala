@@ -15,4 +15,16 @@ class AuthorisationSpec extends BaseFunctionalSpec {
         .contentTypeIsJson()
     }
   }
+
+  "if the user is authorised for the resource they" should {
+    "receive 200" in {
+      given()
+        .userIsAuthorisedForTheResource(nino)
+        .when()
+        .get(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(200)
+        .contentTypeIsJson()
+    }
+  }
 }
