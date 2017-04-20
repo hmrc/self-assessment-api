@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
+import org.joda.time.LocalDate
 import play.api.Logger
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.Nino
@@ -23,7 +24,7 @@ import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 
-class PropertiesPeriodResponse(underlying: HttpResponse) {
+class PropertiesPeriodResponse(underlying: HttpResponse, from: Option[LocalDate] = None, to: Option[LocalDate] = None) {
 
   private val logger: Logger = Logger(classOf[PropertiesPeriodResponse])
 
@@ -31,8 +32,15 @@ class PropertiesPeriodResponse(underlying: HttpResponse) {
 
   def json: JsValue = underlying.json
 
-  def createLocationHeader(nino: Nino, id: PropertyType): String =
-    s"/self-assessment/ni/$nino/uk-properties/$id/periods"
+  def getPeriodId: String = {
+    val locationHeader = for {
+      fromDate <- from
+      toDate <- to
+    } yield s"${fromDate}_$toDate"
+    locationHeader.get
+  }
+
+  def createLocationHeader(nino: Nino, id: PropertyType): String = s"/self-assessment/ni/$nino/uk-properties/$id/periods/$getPeriodId"
 
   def containsOverlappingPeriod: Boolean = {
     json.asOpt[DesError] match {
@@ -46,5 +54,5 @@ class PropertiesPeriodResponse(underlying: HttpResponse) {
 }
 
 object PropertiesPeriodResponse {
-  def apply(response: HttpResponse): PropertiesPeriodResponse = new PropertiesPeriodResponse(response)
+  def apply(response: HttpResponse, from: Option[LocalDate] = None, to: Option[LocalDate] = None): PropertiesPeriodResponse = new PropertiesPeriodResponse(response, from, to)
 }

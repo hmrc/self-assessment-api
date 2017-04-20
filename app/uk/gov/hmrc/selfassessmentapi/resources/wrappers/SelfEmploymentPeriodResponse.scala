@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
+import org.joda.time.LocalDate
 import play.api.Logger
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.Nino
@@ -24,22 +25,24 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentPeriod
 
-class SelfEmploymentPeriodResponse(underlying: HttpResponse) {
+class SelfEmploymentPeriodResponse(underlying: HttpResponse, from: Option[LocalDate] = None, to: Option[LocalDate] = None) {
 
   private val logger: Logger = Logger(classOf[SelfEmploymentResponse])
 
   val status: Int = underlying.status
+
   def json: JsValue = underlying.json
 
-  def createLocationHeader(nino: Nino, id: SourceId): Option[String] = {
-    (json \ "transactionReference").asOpt[String] match {
-      case Some(periodId) =>
-        Some(s"/self-assessment/ni/$nino/${SourceType.SelfEmployments.toString}/$id/periods/$periodId")
-      case None => {
-        logger.error("The 'transactionReference' field was not found in the response from DES.")
-        None
-      }
-    }
+  def getPeriodId: String = {
+    val locationHeader = for {
+      fromDate <- from
+      toDate <- to
+    } yield s"${fromDate}_$toDate"
+    locationHeader.get
+  }
+
+  def createLocationHeader(nino: Nino, id: SourceId): String = {
+    s"/self-assessment/ni/$nino/${SourceType.SelfEmployments.toString}/$id/periods/$getPeriodId"
   }
 
   def containsOverlappingPeriod: Boolean = {
@@ -74,5 +77,5 @@ class SelfEmploymentPeriodResponse(underlying: HttpResponse) {
 }
 
 object SelfEmploymentPeriodResponse {
-  def apply(response: HttpResponse): SelfEmploymentPeriodResponse = new SelfEmploymentPeriodResponse(response)
+  def apply(response: HttpResponse, from: Option[LocalDate] = None, to: Option[LocalDate] = None): SelfEmploymentPeriodResponse = new SelfEmploymentPeriodResponse(response, from, to)
 }

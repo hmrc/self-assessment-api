@@ -42,7 +42,7 @@ object SelfEmploymentPeriodResource extends BaseController {
       case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
       case Right(result) => result.map { response =>
         response.status match {
-          case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino, sourceId).getOrElse(""))
+          case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino, sourceId))
           case 400 if response.containsOverlappingPeriod => Forbidden(Error.asBusinessError(response.json))
           case 400 => BadRequest(Error.from(response.json))
           case 404 => NotFound

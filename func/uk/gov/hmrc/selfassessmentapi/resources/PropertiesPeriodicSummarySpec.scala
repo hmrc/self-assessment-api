@@ -11,7 +11,7 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
 
     for (propertyType <- Seq(PropertyType.OTHER, PropertyType.FHL)) {
 
-      s"return code 201 containing a location header pointing to the newly created property period for $propertyType" in {
+      s"return code 201 containing a location header containing from date and to date pointing to the newly created property period for $propertyType" in {
         given()
           .userIsAuthorisedForTheResource(nino)
           .des().properties.willBeCreatedFor(nino)
@@ -26,7 +26,7 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
           .to(s"%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(201)
-          .responseContainsHeader("Location", s"/self-assessment/ni/$nino/uk-properties/$propertyType/periods".r)
+          .responseContainsHeader("Location", s"/self-assessment/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05".r)
       }
 
       s"return code 400 when provided with an invalid period for $propertyType" in {

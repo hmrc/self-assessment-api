@@ -7,8 +7,7 @@ import uk.gov.hmrc.support.BaseFunctionalSpec
 class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
 
   "createPeriod" should {
-    "return code 201 containing a location header when creating a period" in {
-
+    "return code 201 containing a location header containing from date and to date when creating a period" in {
       val period = Jsons.SelfEmployment.period(
         fromDate = Some("2017-04-06"),
         toDate = Some("2017-07-04"))
@@ -25,7 +24,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .post(period).to(s"%sourceLocation%/periods")
         .thenAssertThat()
         .statusIs(201)
-        .responseContainsHeader("Location", s"/self-assessment/ni/$nino/self-employments/\\w+/periods/\\w+".r)
+        .responseContainsHeader("Location", s"/self-assessment/ni/$nino/self-employments/\\w+/periods/2017-04-06_2017-07-04".r)
     }
 
     "return code 400 when attempting to create a period with the 'from' and 'to' dates are in the incorrect order" in {

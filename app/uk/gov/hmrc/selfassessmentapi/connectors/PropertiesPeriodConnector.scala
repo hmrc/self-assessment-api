@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
+import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
@@ -30,18 +31,18 @@ object PropertiesPeriodConnector {
 
   private lazy val baseUrl: String = AppContext.desUrl
 
-  private implicit def httpResponse2PropertiesPeriodResponse(
-      fut: Future[HttpResponse]): Future[PropertiesPeriodResponse] =
-    fut.map(PropertiesPeriodResponse(_))
+  private def httpResponse2PropertiesPeriodResponse(fut: Future[HttpResponse], from: Option[LocalDate] = None,
+                                                    to: Option[LocalDate] = None): Future[PropertiesPeriodResponse] =
+    fut.map(PropertiesPeriodResponse(_, from, to))
 
   def createFHL(nino: Nino, properties: FHL.Properties)(implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-    httpPost(baseUrl + s"/income-store/nino/$nino/uk-properties/furnished-holiday-lettings/periodic-summaries",
-             des.properties.FHL.Properties.from(properties))
+    httpResponse2PropertiesPeriodResponse(httpPost(baseUrl + s"/income-store/nino/$nino/uk-properties/furnished-holiday-lettings/periodic-summaries",
+      des.properties.FHL.Properties.from(properties)), Some(properties.from), Some(properties.to))
 
   def createOther(nino: Nino, properties: Other.Properties)(
-      implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-    httpPost(baseUrl + s"/income-store/nino/$nino/uk-properties/other/periodic-summaries",
-             des.properties.Other.Properties.from(properties))
+    implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
+    httpResponse2PropertiesPeriodResponse(httpPost(baseUrl + s"/income-store/nino/$nino/uk-properties/other/periodic-summaries",
+      des.properties.Other.Properties.from(properties)), Some(properties.from), Some(properties.to))
 
   def retrieve(nino: Nino)(implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] = ???
 
