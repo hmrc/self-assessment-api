@@ -29,13 +29,12 @@ class SelfEmploymentObligationsResponse(underlying: HttpResponse) {
   def json: JsValue = underlying.json
 
   def obligations(id: SourceId): Option[Obligations] = {
-    json.asOpt[des.Obligations] match {
-      case Some(obs) => Some(Obligations.from(obs.selfEmploymentObligationsForId(id)))
-      case None => {
-        logger.error("The response from DES does not match the expected self-employment obligations format.")
-        None
-      }
-    }
+    val desObligations = json.asOpt[des.Obligations]
+    if (desObligations.isEmpty) logger.error("The response from DES does not match the expected self-employment obligations format.")
+
+    desObligations
+      .map(obs => Obligations.from(obs.selfEmploymentObligationsForId(id)))
+      .filter(_.obligations.nonEmpty)
   }
 }
 
