@@ -1,0 +1,760 @@
+#%RAML 0.8
+title: Self Assessment
+version: v1
+mediaType: application/json
+baseUri: "https://api.service.hmrc.gov.uk/self-assessments/nino/{nino}"
+baseUriParameters:
+  nino:
+    type: string
+    displayName: National Insurance Number
+securitySchemes:
+  - oauth_2_0: !include security.raml
+protocols:
+  - HTTPS
+schemas:
+  - Money: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "A monetary amount in UK pounds sterling",
+        "type": "number"
+      }
+  - Period: |
+      { "$schema": "http://json-schema.org/draft-04/schema",
+        "type": "object",
+        "title": "A period of time.",
+        "properties": {
+          "id": {"type": "string"},
+          "from": {"type": "string"},
+          "to": {"type": "string"}
+        },
+        "required": ["from", "to"],
+        "additionalProperties": false
+      }
+  - NonFinancial: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "properties": {
+            "businessDetailsChangedRecently": {
+              "title": "Have your business details changed in the last 12 months?",
+              "type": "boolean",
+              "default": false
+            },
+            "payClass2Nics": {
+              "title": "Are your total profits for this tax year are less than £5,965 and have you chosen to pay Class 2 NIC's voluntarily?",
+              "type": "boolean",
+              "default": false
+            },
+            "exemptFromPayingClass4Nics": {
+              "title": "Are you are excempted from paying Class 4 NIC's?",
+              "type": "boolean",
+              "default": false
+            }
+        },
+        "additionalProperties": false
+      }
+  - Source: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "A source of income",
+        "properties": {
+          "id": {"type": "string"}
+        },
+        "required": ["id"],
+        "additionalProperties": false
+      }
+    # only some allowances apply to certain sources of income
+  - Allowances: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "Allowances",
+        "properties": {
+          "allowancesOnSales": {"$ref": "Money", "default": 0},
+          "annualInvestmentAllowance": {"$ref": "Money", "default": 0},
+          "businessPremisesRenovationAllowance": {"$ref": "Money", "default": 0},
+          "capitalAllowanceMainPool": {"$ref": "Money", "default": 0},
+          "capitalAllowanceSpecialRatePool": {"$ref": "Money", "default": 0},
+          "captialAllowances": {"$ref": "Money", "default": 0},
+          "enhancedCapitalAllowance": {"$ref": "Money", "default": 0},
+          "restrictedCapitalAllowance": {"$ref": "Money", "default": 0},
+          "allowanceForSmallBalanceOfUnrelievedExpenditure": {"$ref": "Money", "default": 0}
+        },
+        "additionalProperties": false
+      }
+    # Only some adjustments apply to certain sources of income.
+    #
+    # includedNonTaxableProfits = Income, receipts and other profits included in business income or expenses but not taxable as business profits (SA103f - Incr.)
+  - Adjustments: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "Adjustments",
+        "properties": {
+          "accountingAdjustment": {"$ref": "Money", "default": 0},
+          "adjustmentToProfits": {"$ref": "Money", "default": 0},
+          "averagingAdjustment": {"$ref": "Money", "default": 0},
+          "basisAdjustment": {"$ref": "Money", "default": 0},
+          "includedNonTaxableProfits": {"$ref": "Money", "default": 0},
+          "lossBroughtForward": {"$ref": "Money", "default": 0},
+          "outstandingBusinessIncome": {"$ref": "Money", "default": 0},
+          "overlapReliefUsed": {"$ref": "Money", "default": 0}
+        },
+        "additionalProperties": false
+      }
+  - Sources: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "array",
+        "items": {
+          "$ref": "Source"
+        }
+      }
+  - Income: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "A summary of income transactions taken from a ledger",
+        "properties": {
+          "amount": {"$ref": "Money"},
+          "taxDeducted": {"$ref": "Money", "default": 0}
+        },
+        "required": ["amount"],
+        "additionalProperties": false
+      }
+  # Only some categories are allowed for some source type and summary type.
+  #
+  # Taxed = Taxed UK interest (SA100 - Incr.)
+  # Untaxed = Untaxed UK interest (SA100 - Incr.)
+  # N/A = Untaxed foreign interest (up to £2,000) (SA100 - Incr.)
+  #       This field is removed.
+  # FromUKCompanies = Dividends from UK companies (SA100 - Incr.)
+  # FromOtherUKSources = Other Dividends (SA100 - Incr.)
+  # Turnover = Your turnover (SA103f - Incr.)
+  # Other = Any other business income (not in your turnover) (SA103f - Incr.)
+  # Other = Any other business income (SA103f - Incr.)
+  # BalancingChargeBPRA = Balancing charge on sale or cessation of business use (SA103f - Annual)
+  # BalancingChargeOther = Balancing charge on sales of other assets or on the cessation of business use (SA103f - Incr.)
+  # Any = FHL UK - Income (SA105 - Incr.)
+  # Any = FHL EEA - Income (SA105 - Incr.)
+  # BalancingCharge = FHL UK - Balancing Charges (SA105 - Incr.)
+  # BalancingCharge = EEA UK - Balancing Charges (SA105 - Incr.)
+  # RentIncome = Property - Total rents and other income from property (SA105 - Incr.)
+  # PremiumsOfLeaseGrant = Property - Premiums for the grant of a lease – from box E on the Working Sheet (SA105 - Incr.)
+  # ReversePremiums = Property - Reverse premiums and inducements (SA105 - Incr.)
+  # BalancingCharge = Property - Balancing charges (SA105 - Incr.)
+  # PrivateUseAdjustment = FHL UK - Private use ajustment (SA105 - Incr.)
+  # PrivateUseAdjustment = "EEA UK - Private use ajustment (SA105 - Incr.)
+  # PrivateUseAdjustment = Property - Private use ajustment (SA105 - Incr.)
+  # GoodsAndServicesOwnUse = Goods and services for your own use (SA103f - Incr.)
+  - Incomes: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "A summary of income transactions taken from a ledger",
+        "properties": {
+          "taxedUk": {"$ref": "Income"},
+          "untaxed": {"$ref": "Income"},
+          "fromUKCompanies": {"$ref": "Income"},
+          "fromOtherUKSources": {"$ref": "Income"},
+          "turnover": {"$ref": "Income"},
+          "other": {"$ref": "Income"},
+          "balancingChargeBPRA": {"$ref": "Income"},
+          "balancingChargeOther": {"$ref": "Income"},
+          "any": {"$ref": "Income"},
+          "rentIncome": {"$ref": "Income"},
+          "premiumsOfLeaseGrant": {"$ref": "Income"},
+          "reversePremiums": {"$ref": "Income"},
+          "balancingCharge": {"$ref": "Income"},
+          "privateUseAdjustment": {"$ref": "Income"},
+          "goodsAndServicesOwnUse": {"$ref": "Income"}
+        },
+        "additionalProperties": false
+      }
+  # Only some categories are allowed for some source type and summary type.
+  - Deduction: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "A summary of deductions (e.g. expenses) transactions taken from a ledger",
+        "properties": {
+          "amount": {"$ref": "Money"},
+          "disallowableAmount": {"$ref": "Money", "default": 0}
+        },
+        "required": ["amount"],
+        "additionalProperties": false
+      }
+  - Deductions: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "A summary of deductions (e.g. expenses) transactions taken from a ledger",
+        "properties": {
+          "adminCosts": {"$ref": "Deduction"},
+          "advertisingCosts": {"$ref": "Deduction"},
+          "badDebt": {"$ref": "Deduction"},
+          "cisPayments": {"$ref": "Deduction"},
+          "coGBought": {"$ref": "Deduction"},
+          "costOfServices": {"$ref": "Deduction"},
+          "depreciation": {"$ref": "Deduction"},
+          "financialCosts": {"$ref": "Deduction"},
+          "fixedDeductions": {"$ref": "Deduction"},
+          "interest": {"$ref": "Deduction"},
+          "maintenanceCosts": {"$ref": "Deduction"},
+          "other": {"$ref": "Deduction"},
+          "premisesRunningCosts": {"$ref": "Deduction"},
+          "professionalFees": {"$ref": "Deduction"},
+          "repairsAndMaintenance": {"$ref": "Deduction"},
+          "staffCosts": {"$ref": "Deduction"},
+          "travelAndSubsistence": {"$ref": "Deduction"},
+          "travelCosts": {"$ref": "Deduction"}
+        },
+        "additionalProperties": false
+      }
+  - Benefits: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "A summary of benefit transactions taken from a ledger",
+        "properties": {
+          "accommodation": {"$ref": "Money"},
+          "companyVehicle": {"$ref": "Money"},
+          "expensesPayments": {"$ref": "Money"},
+          "fuel": {"$ref": "Money"},
+          "goodsProvidedByEmployer": {"$ref": "Money"},
+          "other": {"$ref": "Money"},
+          "privateInsurance": {"$ref": "Money"},
+          "vouchersCCAndExcessMileage": {"$ref": "Money"}
+        },
+        "additionalProperties": false
+      }
+  - SelfEmploymentIncome: |
+         { "$schema": "http://json-schema.org/draft-04/schema",
+            "properties": {
+                "sourceId": {"type": "string"},
+                "taxableProfit": {"$ref": "Money"},
+                "profit": {"$ref": "Money"}
+            },
+            "required": ["sourceId", "taxableProfit", "profit"],
+            "additionalProperties": false
+         }
+  - UkPropertyIncome: |
+         { "$schema": "http://json-schema.org/draft-04/schema",
+            "properties": {
+                "sourceId": {"type": "string"},
+                "profit": {"$ref": "Money"}
+            },
+            "required": ["sourceId", "profit"],
+            "additionalProperties": false
+         }
+  - FurnishedHolidayLettingIncome: |
+         { "$schema": "http://json-schema.org/draft-04/schema",
+            "properties": {
+                "sourceId": {"type": "string"},
+                "profit": {"$ref": "Money"}
+            },
+            "required": ["sourceId", "profit"],
+            "additionalProperties": false
+         }
+  - NonSavingsIncomes: |
+      { "$schema": "http://json-schema.org/draft-04/schema",
+        "properties": {
+            "selfEmployment": {"type": "array", "items": {"$ref": "SelfEmploymentIncome"}},
+            "ukProperties": {"type": "array", "items": {"$ref": "UkPropertyIncome"}},
+            "furnishedHolidayLettings": {"type": "array", "items": {"$ref": "FurnishedHolidayLettingIncome"}}
+        },
+        "required": ["selfEmployment", "ukProperties", "furnishedHolidayLettings"],
+        "additionalProperties": false
+      }
+  - InterestFromUKBanksAndBuildingSocieties: |
+         { "$schema": "http://json-schema.org/draft-04/schema",
+            "properties": {
+                "sourceId": {"type": "string"},
+                "totalInterest": {"$ref": "Money"}
+            },
+            "required": ["sourceId", "totalInterest"],
+            "additionalProperties": false
+         }
+  - SavingsIncomes: |
+        { "$schema": "http://json-schema.org/draft-04/schema",
+            "properties": {
+                "fromUKBanksAndBuildingSocieties": {"type": "array", "items": {"$ref": "InterestFromUKBanksAndBuildingSocieties"}}
+            },
+            "required": ["fromUKBanksAndBuildingSocieties"],
+            "additionalProperties": false
+         }
+  - DividendsFromUKSources: |
+        { "$schema": "http://json-schema.org/draft-04/schema",
+            "properties": {
+                "sourceId": {"type": "string"},
+                "totalDividend": {"$ref": "Money"}
+            },
+            "required": ["sourceId", "totalDividend"],
+            "additionalProperties": false
+         }
+  - DividendsIncomes: |
+        { "$schema": "http://json-schema.org/draft-04/schema",
+            "properties": {
+                "fromUKSources": {"type": "array", "items": {"$ref": "DividendsFromUKSources"}}
+            },
+            "required": ["fromUKSources"],
+            "additionalProperties": false
+         }
+  - IncomeFromSources: |
+      { "$schema": "http://json-schema.org/draft-04/schema",
+        "properties": {
+            "nonSavings": {"$ref": "NonSavingsIncomes"},
+            "savings": {"$ref": "SavingsIncomes"},
+            "dividends": {"$ref": "DividendsIncomes"},
+            "total": {"$ref": "Money"}
+        },
+        "required": ["nonSavings", "savings", "dividends", "total"],
+        "additionalProperties": false
+      }
+  - DeductionsSummary: |
+      { "$schema": "http://json-schema.org/draft-04/schema",
+        "properties": {
+            "incomeTaxRelief": {"$ref": "Money"},
+            "personalAllowance": {"$ref": "Money"},
+            "retirementAnnuityContract": {"$ref": "Money"},
+            "total": {"$ref": "Money"}
+        },
+        "required": ["incomeTaxRelief", "personalAllowance", "retirementAnnuityContract", "total"],
+        "additionalProperties": false
+      }
+  - IncomeSummary: |
+      { "$schema": "http://json-schema.org/draft-04/schema",
+        "properties": {
+            "incomes": {"$ref": "IncomeFromSources"},
+            "deductions": {"$ref": "DeductionsSummary"},
+            "totalIncomeOnWhichTaxIsDue": {"$ref": "Money"}
+        },
+        "required": ["incomes", "totalIncomeOnWhichTaxIsDue"],
+        "additionalProperties": false
+      }
+  - TaxBandSummary: |
+      { "$schema": "http://json-schema.org/draft-04/schema",
+        "properties": {
+            "taxBand": {"type": "string"},
+            "taxableAmount": {"$ref": "Money"},
+            "chargedAt": {"type": "string"},
+            "tax": {"$ref": "Money"}
+        },
+        "required": ["taxBand", "taxableAmount", "chargedAt", "tax"],
+        "additionalProperties": false
+      }
+  - IncomeTaxCalculations: |
+      { "$schema": "http://json-schema.org/draft-04/schema",
+        "properties": {
+            "nonSavings": {"type": "array", "items": {"$ref": "TaxBandSummary"}},
+            "savings": {"type": "array", "items": {"$ref": "TaxBandSummary"}},
+            "dividends": {"type": "array", "items": {"$ref": "TaxBandSummary"}},
+            "total": {"$ref": "Money"}
+        },
+        "required": ["nonSavings", "savings", "dividends","total"],
+        "additionalProperties": false
+      }
+  - TaxDeducted: |
+      { "$schema": "http://json-schema.org/draft-04/schema",
+        "properties": {
+            "interestFromUk": {"$ref": "Money"}
+        },
+        "required": ["interestFromUk"],
+        "additionalProperties": false
+      }
+  # See https://developer.service.hmrc.gov.uk/api-documentation/docs/api/self-assessment-api/1.0/Retrieve%20Liability
+  - Liability: |
+      { "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "A tax liability",
+        "properties": {
+          "income": {"$ref": "IncomeSummary"},
+          "incomeTaxCalculations": {"$ref": "IncomeTaxCalculations"},
+          "taxDeducted": {"$ref": "TaxDeducted"},
+          "totalTaxDue": {"$ref": "Money"},
+          "totalTaxOverpaid": {"$ref": "Money"}
+        },
+        "required": ["income", "incomeTaxCalculations", "taxDeducted", "totalTaxDue", "totalTaxOverpaid"],
+        "additionalProperties": false
+      }
+
+traits:
+  - taxYearQueryParameters:
+      queryParameters:
+        taxYear:
+          type: string
+          example: 2017-18
+          required: true
+  # We're not completely clear on what headers will be needed yet.
+  - softwarePackageHeaders:
+      headers:
+        X-SubmitterId:
+          type: string
+        X-SoftwarePackageId:
+          type: string
+        X-SoftwarePackageName:
+          type: string
+        X-SoftwarePackageVersion:
+          type: string
+
+/{sourceType}:
+  uriParameters:
+    sourceType:
+      displayName: The source of income.
+      type: string
+      enum:
+        - self-employment
+        - uk-properties
+        - furnished-holiday-lettings
+        - dividends
+        - banks
+        - others
+      required: true
+  get:
+    description: List sources of income
+    responses:
+      200:
+        body:
+          application/json:
+            schema: Sources
+            example: |
+              [
+                {
+                  "id": 2
+                }
+              ]
+  post:
+    description: Create a new source of income
+    body:
+      application/json:
+        schema: Source
+        example: |
+          {
+          }
+    responses:
+      201:
+        headers:
+          Location:
+            example: "./2"
+  /{sourceId}:
+    uriParameters:
+      sourceId:
+        type: string
+        required: true
+    get:
+      description: Get a source of income
+      responses:
+        200:
+          body:
+            application/json:
+              schema: Source
+              example: |
+                {
+                  "id": "0001"
+                }
+    put:
+      description: Update a source of income
+      is: [ softwarePackageHeaders ]
+      body:
+        application/json:
+          schema: Source
+      responses:
+        204:
+    delete:
+      description: Delete a source of income
+      responses:
+        204:
+    /allowances/{taxYear}:
+      uriParameters:
+        taxYear:
+          type: string
+      get:
+        description: Get allowances for a source of income
+        responses:
+          200:
+            body:
+              application/json:
+                schema: Allowances
+      put:
+        description: Set allowances for a souce of income
+        is: [ softwarePackageHeaders ]
+        body:
+          application/json:
+            schema: Allowances
+        responses:
+          204:
+    /adjustments/{taxYear}:
+      uriParameters:
+        taxYear:
+          type: string
+      get:
+        description: Get adjustments for a source of income
+        responses:
+          200:
+            body:
+              application/json:
+                schema: Adjustments
+      put:
+        description: Set adjustments for a source of income
+        is: [ softwarePackageHeaders ]
+        body:
+          application/json:
+            schema: Adjustments
+        responses:
+          204:
+    /non-financials/{taxYear}:
+      get:
+        description: Get non-financial data
+        responses:
+          200:
+            body:
+              application/json:
+                schema: NonFinancial
+      put:
+        description: Set non-financial data
+        is: [ softwarePackageHeaders ]
+        body:
+          application/json:
+            schema: NonFinancial
+        responses:
+          204:
+    /periods:
+      post:
+        description: Create a period
+        is: [ softwarePackageHeaders ]
+        body:
+          application/json:
+            schema: Period
+            example: |
+              {
+                "from": "2016-09-01",
+                "to": "2016-09-29"
+              }
+        responses:
+          201:
+      get:
+        description: List periods
+        is: [ taxYearQueryParameters ]
+        responses:
+          200:
+            body:
+              application/json:
+      /{periodId}:
+        get:
+          description: Get a period
+          responses:
+            200:
+              body:
+                application/json:
+                  schema: Period
+                  example: |
+                    {
+                      "id": "0001",
+                      "from": "2016-09-01",
+                      "to": "2016-09-29"
+                    }
+        /incomes:
+          get:
+            description: Get incomes for a source of income
+            is: [ taxYearQueryParameters ]
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: Incomes
+                    example: |
+                      {
+                        "turnover": {"amount": 10.20},
+                        "other": {"amount": 10.20}
+                      }
+          put:
+            description: Update incomes for a source
+            is: [ softwarePackageHeaders ]
+            body:
+              application/json:
+                schema: Incomes
+            responses:
+              200:
+        /deductions:
+          get:
+            description: Get deductions for a source of income
+            is: [ taxYearQueryParameters ]
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: Deductions
+                    example: |
+                      {
+                        "rent": {"amount": 10.20, "disallowableAmount": 0}
+                      }
+          put:
+            description: Update deductions for a source
+            is: [ softwarePackageHeaders ]
+            body:
+              application/json:
+                schema: Deductions
+            responses:
+              200:
+        /benefits:
+          get:
+            description: Get benefits for a source of income
+            is: [ taxYearQueryParameters ]
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: Benefits
+                    example: |
+                      {
+                        "privateInsurance": {"amount": 10.20}
+                      }
+          put:
+            description: Update benefits for a source
+            is: [ softwarePackageHeaders ]
+            body:
+              application/json:
+                schema: Benefits
+            responses:
+              200:
+/liabilites:
+    post:
+      description: Create a liability
+      responses:
+        200:
+          body:
+            application/json:
+              schema: Liability
+              example: |
+                {
+                  "income" : {
+                    "incomes" : {
+                      "nonSavings" : {
+                        "employment" : [ ],
+                        "selfEmployment" : [ {
+                          "sourceId" : "self-employment-1",
+                          "taxableProfit" : 8200,
+                          "profit" : 10000
+                        }, {
+                          "sourceId" : "self-employment-2",
+                          "taxableProfit" : 25000,
+                          "profit" : 28000
+                        } ],
+                        "ukProperties" : [ {
+                          "sourceId" : "property1",
+                          "profit" : 2000
+                        }, {
+                          "sourceId" : "property2",
+                          "profit" : 1500
+                        } ],
+                        "furnishedHolidayLettings" : [ {
+                          "sourceId" : "furnished-holiday-letting-1",
+                          "profit" : 8200
+                        }, {
+                          "sourceId" : "furnished-holiday-letting-2",
+                          "profit" : 25000
+                        } ]
+                      },
+                      "savings" : {
+                        "fromUKBanksAndBuildingSocieties" : [ {
+                          "sourceId" : "interest-income-1",
+                          "totalInterest" : 100
+                        }, {
+                          "sourceId" : "interest-income-2",
+                          "totalInterest" : 200
+                        } ]
+                      },
+                      "dividends" : {
+                        "fromUKSources" : [ {
+                          "sourceId" : "dividend-income-1",
+                          "totalDividend" : 1000
+                        }, {
+                          "sourceId" : "dividend-income-2",
+                          "totalDividend" : 2000
+                        } ]
+                      },
+                      "total" : 93039
+                    },
+                    "deductions" : {
+                      "incomeTaxRelief" : 5000,
+                      "personalAllowance" : 9440,
+                      "retirementAnnuityContract" : 10000,
+                      "total" : 24440
+                    },
+                    "totalIncomeOnWhichTaxIsDue" : 80000
+                  },
+                  "incomeTaxCalculations" : {
+                    "nonSavings" : [ {
+                      "taxBand" : "basicRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "20%",
+                      "tax" : 2000
+                    }, {
+                      "taxBand" : "higherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "40%",
+                      "tax" : 4000
+                    }, {
+                      "taxBand" : "additionalHigherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "45%",
+                      "tax" : 4500
+                    } ],
+                    "savings" : [ {
+                      "taxBand" : "startingRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "0%",
+                      "tax" : 0
+                    }, {
+                      "taxBand" : "nilRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "0%",
+                      "tax" : 0
+                    }, {
+                      "taxBand" : "basicRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "20%",
+                      "tax" : 2000
+                    }, {
+                      "taxBand" : "higherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "40%",
+                      "tax" : 4000
+                    }, {
+                      "taxBand" : "additionalHigherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "45%",
+                      "tax" : 4500
+                    } ],
+                    "dividends" : [ {
+                      "taxBand" : "nilRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "0%",
+                      "tax" : 0
+                    }, {
+                      "taxBand" : "basicRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "20%",
+                      "tax" : 2000
+                    }, {
+                      "taxBand" : "higherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "40%",
+                      "tax" : 4000
+                    }, {
+                      "taxBand" : "additionalHigherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "45%",
+                      "tax" : 4500
+                    } ],
+                    "total" : 31500
+                  },
+                  "otherCharges" : {
+                    "pensionSavings" : [ {
+                      "taxBand" : "basicRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "20%",
+                      "tax" : 2000
+                    }, {
+                      "taxBand" : "higherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "40%",
+                      "tax" : 4000
+                    }, {
+                      "taxBand" : "additionalHigherRate",
+                      "taxableAmount" : 10000,
+                      "chargedAt" : "45%",
+                      "tax" : 4500
+                    } ],
+                    "total" : 10500
+                  },
+                  "taxDeducted" : {
+                    "interestFromUk" : 0,
+                    "taxPaidByPensionScheme" : 10500,
+                    "fromUkProperties" : [ ],
+                    "fromEmployments" : [ ],
+                    "total" : 0
+                  },
+                  "totalTaxDue" : 25796.95,
+                  "totalTaxOverpaid" : 0
+                }
