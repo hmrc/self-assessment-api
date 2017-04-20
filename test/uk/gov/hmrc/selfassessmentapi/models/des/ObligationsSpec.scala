@@ -67,14 +67,14 @@ class ObligationsSpec extends JsonSpec {
           inboundCorrespondenceFromDate = "2016-10-07",
           inboundCorrespondenceToDate = "2016-10-10",
           inboundCorrespondenceDateReceived = None,
-          inboundCorrespondenceDueDate = "2016-10-31",
+          inboundCorrespondanceDueDate = "2016-10-31",
           periodKey = "004"),
         ObligationDetail(
           status = "F",
           inboundCorrespondenceFromDate = "2016-10-01",
           inboundCorrespondenceToDate = "2016-10-07",
           inboundCorrespondenceDateReceived = Some("2016-10-15"),
-          inboundCorrespondenceDueDate = "2016-10-20",
+          inboundCorrespondanceDueDate = "2016-10-20",
           periodKey = "004"))
 
     }
