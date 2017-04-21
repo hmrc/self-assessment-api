@@ -7,7 +7,8 @@ class SelfEmploymentObligationsResourceSpec extends BaseFunctionalSpec {
 
     "return code 200 with a set of obligations" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .des().obligations.returnObligationsFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/obligations")
@@ -18,7 +19,8 @@ class SelfEmploymentObligationsResourceSpec extends BaseFunctionalSpec {
 
     "forward the GovTestScenario header to DES" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .des().obligations.receivesObligationsTestHeader(nino, "ALL_MET")
         .when()
         .get(s"/ni/$nino/self-employments/abc/obligations").withHeaders(GovTestScenarioHeader, "ALL_MET")
@@ -29,7 +31,8 @@ class SelfEmploymentObligationsResourceSpec extends BaseFunctionalSpec {
 
     "return code 404 when self employment id does not exist" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .des().obligations.obligationNotFoundFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/obligations")
@@ -39,7 +42,8 @@ class SelfEmploymentObligationsResourceSpec extends BaseFunctionalSpec {
 
     "return code 400 when nino is invalid" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .des().invalidNinoFor(nino)
         .when()
         .get("/ni/abcd1234/self-employments/abc/obligations")

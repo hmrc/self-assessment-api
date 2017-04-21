@@ -8,7 +8,8 @@ class PropertiesResourceSpec extends BaseFunctionalSpec {
   "creating a property business" should {
     "return code 201 containing a location header when creating a uk property business" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(Jsons.Properties()).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -23,7 +24,8 @@ class PropertiesResourceSpec extends BaseFunctionalSpec {
 
     "return code 409 when attempting to create the same property business more than once" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(Jsons.Properties()).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -37,7 +39,8 @@ class PropertiesResourceSpec extends BaseFunctionalSpec {
 
     "return code 400 when attempting to create a property business with invalid information" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(JsString("OOPS")).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -48,7 +51,8 @@ class PropertiesResourceSpec extends BaseFunctionalSpec {
   "retrieving a property business" should {
     "return code 404 when accessing a property business which doesn't exists" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .get(s"/ni/$nino/uk-properties")
         .thenAssertThat()

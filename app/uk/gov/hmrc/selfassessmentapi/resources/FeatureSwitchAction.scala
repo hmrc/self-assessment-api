@@ -33,22 +33,12 @@ class FeatureSwitchAction(source: SourceType, summary: String) extends ActionBui
     block(request)
   }
 
-  def asyncEmptyFeatureSwitch(block: Request[Unit] => Future[Result]): Action[Unit] = {
-    if (isFeatureEnabled) async(BodyParsers.parse.empty)(block)
-    else async(BodyParsers.parse.empty)(_ => notFound)
-  }
-
   def asyncJsonFeatureSwitch(block: Request[JsValue] => Future[Result]): Action[JsValue] = {
 
     val emptyJsonParser: BodyParser[JsValue] = BodyParser { _ => Accumulator.done(Right(JsNull)) }
 
     if (isFeatureEnabled) async(BodyParsers.parse.json)(block)
     else async[JsValue](emptyJsonParser)(_ => notFound)
-  }
-
-  def asyncFeatureSwitch(block: => Future[Result]): Action[AnyContent] = {
-    if (isFeatureEnabled) async(block)
-    else async(notFound)
   }
 
   def asyncFeatureSwitch(block: RequestHeader => Future[Result]): Action[AnyContent] = {

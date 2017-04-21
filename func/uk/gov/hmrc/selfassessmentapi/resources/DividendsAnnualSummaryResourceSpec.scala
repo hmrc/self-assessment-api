@@ -7,7 +7,8 @@ class DividendsAnnualSummaryResourceSpec extends BaseFunctionalSpec {
   "update annual summary" should {
     "return code 204 when updating dividends" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .put(Jsons.Dividends(500)).at(s"/ni/$nino/dividends/$taxYear")
         .thenAssertThat()
@@ -39,7 +40,8 @@ class DividendsAnnualSummaryResourceSpec extends BaseFunctionalSpec {
 
     "return code 400 when updating dividends with an invalid value" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .put(Jsons.Dividends(-50.123)).at(s"/ni/$nino/dividends/$taxYear")
         .thenAssertThat()
@@ -51,7 +53,8 @@ class DividendsAnnualSummaryResourceSpec extends BaseFunctionalSpec {
   "retrieve annual summary" should {
     "return code 200 with empty json when retrieving a dividends annual summary that does not exist" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .get(s"/ni/$nino/dividends/$taxYear")
         .thenAssertThat()

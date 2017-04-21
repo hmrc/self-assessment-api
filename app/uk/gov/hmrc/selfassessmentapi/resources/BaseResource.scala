@@ -17,13 +17,14 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.Logger
-import play.api.mvc.Result
+import play.api.mvc.{RequestHeader, Result}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuthConnector
 import uk.gov.hmrc.selfassessmentapi.connectors.BusinessDetailsConnector
+import uk.gov.hmrc.selfassessmentapi.controllers.definition.HttpMethod
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models.MtdId
 
@@ -36,7 +37,8 @@ trait BaseResource extends BaseController with AuthorisedFunctions {
 
   val logger: Logger
 
-  def authorise(nino: Nino)(f: => Future[Result])(implicit hc: HeaderCarrier): Future[Result] =
+  def withAuth(nino: Nino)(f: => Future[Result])
+              (implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[Result] =
     businessConnector.get(nino).flatMap { response =>
       response.status match {
         case 200 => authorise(response.mtdId)(f)
@@ -45,27 +47,29 @@ trait BaseResource extends BaseController with AuthorisedFunctions {
       }
     }
 
-  private def authorise(mtdId: Option[MtdId])(f: => Future[Result])(implicit hc: HeaderCarrier): Future[Result] =
+  private def authorise(mtdId: Option[MtdId])(f: => Future[Result])
+                       (implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[Result] =
     mtdId match {
       case Some(id) => authoriseAsClient(id)(f)
       case None => Future.successful(Unauthorized)
     }
 
-  private def authoriseAsClient(mtdId: MtdId)(f: => Future[Result])(implicit hc: HeaderCarrier): Future[Result] =
+  private def authoriseAsClient(mtdId: MtdId)(f: => Future[Result])
+                               (implicit hc: HeaderCarrier, requestHeader: RequestHeader): Future[Result] =
     authorised(
       Enrolment("HMRC-MTD-IT")
         .withIdentifier("MTDITID", mtdId.mtdId)
         .withDelegatedAuthRule("mtd-it-auth")) {
       f
-    } recoverWith /*authoriseAsFOA(f) recoverWith*/ unauthorised
+    } recoverWith authoriseAsFOA(f) recoverWith unauthorised
 
-  /*private def authoriseAsFOA(f: => Future[Result])
-                            (implicit hc: HeaderCarrier): PartialFunction[Throwable, Future[Result]] = {
+  private def authoriseAsFOA(f: => Future[Result])
+                            (implicit hc: HeaderCarrier, reqHeader: RequestHeader): PartialFunction[Throwable, Future[Result]] = {
     case _: InsufficientEnrolments => authorised(
       Enrolment("HMRC-AS-AGENT")) {
-      f
+      if (reqHeader.method == "GET") Future.successful(Unauthorized) else f
     }
-  }*/
+  }
 
   private val unauthorised: PartialFunction[Throwable, Future[Status]] = {
     case e: AuthorisationException => {

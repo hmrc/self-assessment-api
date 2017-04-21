@@ -33,7 +33,7 @@ object BanksAnnualSummaryResource extends BaseResource {
   override val logger: Logger = Logger(BanksAnnualSummaryResource.getClass)
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validate[BankAnnualSummary, Boolean](request.body) {
         annualSummaryService.updateAnnualSummary(nino, id, taxYear, _)
       } match {
@@ -47,7 +47,7 @@ object BanksAnnualSummaryResource extends BaseResource {
   }
 
   def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
-    authorise(nino) {
+    withAuth(nino) {
       annualSummaryService.retrieveAnnualSummary(nino, id, taxYear).map {
         case Some(summary) => Ok(Json.toJson(summary))
         case None => NotFound

@@ -34,7 +34,7 @@ object DividendsAnnualSummaryResource extends BaseResource {
   override val logger: Logger = Logger(DividendsAnnualSummaryResource.getClass)
 
   def updateAnnualSummary(nino: Nino, taxYear: TaxYear): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validate[Dividends, Boolean](request.body) { dividends =>
         service.updateAnnualSummary(nino, taxYear, dividends)
       } match {
@@ -47,7 +47,7 @@ object DividendsAnnualSummaryResource extends BaseResource {
   }
 
   def retrieveAnnualSummary(nino: Nino, taxYear: TaxYear): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
-    authorise(nino) {
+    withAuth(nino) {
       service.retrieveAnnualSummary(nino, taxYear).map {
         case Some(summary) => Ok(Json.toJson(summary))
         case None => NotFound

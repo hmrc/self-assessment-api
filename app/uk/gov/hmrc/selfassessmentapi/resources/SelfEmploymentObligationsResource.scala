@@ -32,7 +32,7 @@ object SelfEmploymentObligationsResource extends BaseResource {
   val logger = Logger(SelfEmploymentObligationsResource.getClass)
 
   def retrieveObligations(nino: Nino, id: SourceId): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
-    authorise(nino) {
+    withAuth(nino) {
       connector.get(nino, id).map { response =>
         response.status match {
           case 200 =>

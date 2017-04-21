@@ -19,7 +19,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
         otherCost = 50.22)
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -48,7 +49,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
         otherCost = 50.22)
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -73,7 +75,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
         "INVALID_MONETARY_AMOUNT" -> "/expenses/financialCosts/amount")
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -101,7 +104,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
         "INVALID_MONETARY_AMOUNT" -> "/incomes/premiumsOfLeaseGrant/amount")
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -120,7 +124,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
       val periodTwo = Jsons.Properties.fhlPeriod(fromDate = Some("2017-04-06"), toDate = Some("2018-04-02"))
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -144,7 +149,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
       val periodTwo = Jsons.Properties.otherPeriod(fromDate = Some("2017-04-06"), toDate = Some("2018-04-02"))
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -167,7 +173,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
       val periodTwo = Jsons.Properties.fhlPeriod(fromDate = Some("2017-04-06"), toDate = Some("2018-04-01"))
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -189,7 +196,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
       val periodTwo = Jsons.Properties.otherPeriod(fromDate = Some("2017-04-06"), toDate = Some("2018-04-01"))
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -221,7 +229,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
         ("2017-04-08", "2017-04-09"))
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -257,7 +266,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
         ("2017-04-08", "2017-04-09"))
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -283,7 +293,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
       val property = Jsons.Properties()
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -300,7 +311,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
       val property = Jsons.Properties()
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -315,7 +327,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
 
     "return code 404 for an FHL property business that does not exist" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .get(s"/ni/$nino/uk-properties/furnished-holiday-lettings/periods")
         .thenAssertThat()
@@ -324,7 +337,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
 
     "return code 404 for an Other property business that does not exist" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .get(s"/ni/$nino/uk-properties/other/periods")
         .thenAssertThat()
@@ -340,7 +354,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
         toDate = Some("2018-04-05"))
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -364,7 +379,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
         toDate = Some("2018-04-05"))
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -385,7 +401,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
       val property = Jsons.Properties()
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -400,7 +417,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
       val property = Jsons.Properties()
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -429,7 +447,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
         otherCost = 50.12)
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -470,7 +489,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
         otherCost = 50.12)
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -507,7 +527,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
         "INVALID_MONETARY_AMOUNT" -> "/expenses/financialCosts/amount")
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -542,7 +563,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
         "INVALID_MONETARY_AMOUNT" -> "/incomes/premiumsOfLeaseGrant/amount")
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -566,7 +588,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
         toDate = Some("2018-04-05"))
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -584,7 +607,8 @@ class PropertiesPeriodicSummarySpec extends BaseFunctionalSpec {
         toDate = Some("2018-04-05"))
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()

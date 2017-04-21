@@ -81,22 +81,22 @@ object DesJsons {
        """.stripMargin
     }
 
-    def emptySelfEmployment(nino: Nino): String = {
+    def emptySelfEmployment(nino: Nino, mtdId: String): String = {
       s"""
          |{
          |   "safeId": "XE00001234567890",
          |   "nino": "$nino",
-         |   "mtdbsa": "123456789012345",
+         |   "mtdbsa": "$mtdId",
          |   "propertyIncome": false
          |}
        """.stripMargin
     }
 
-    def createResponse(id: String): String = {
+    def createResponse(id: String, mtdId: String): String = {
       s"""
          |{
          |  "safeId": "XA0001234567890",
-         |  "mtditId": "mdtitId001",
+         |  "mtdsba": "$mtdId",
          |  "incomeSources": [
          |    {
          |      "incomeSourceId": "$id"

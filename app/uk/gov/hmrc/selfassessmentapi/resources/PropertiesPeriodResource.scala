@@ -35,7 +35,7 @@ object PropertiesPeriodResource extends BaseResource {
   override val logger: Logger = Logger(PropertiesPeriodResource.getClass)
 
   def createPeriod(nino: Nino, id: PropertyType): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validateCreateRequest(id, nino, request) match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
         case Right(result) => result.map {
@@ -52,7 +52,7 @@ object PropertiesPeriodResource extends BaseResource {
   }
 
   def updatePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validateUpdateRequest(id, nino, periodId, request) match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
         case Right(result) => result.map {
@@ -64,7 +64,7 @@ object PropertiesPeriodResource extends BaseResource {
   }
 
   def retrievePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
-    authorise(nino) {
+    withAuth(nino) {
       id match {
         case PropertyType.OTHER => OtherPropertiesPeriodService.retrievePeriod(nino, periodId).map {
           case Some(period) => Ok(Json.toJson(period))
@@ -79,7 +79,7 @@ object PropertiesPeriodResource extends BaseResource {
   }
 
   def retrievePeriods(nino: Nino, id: PropertyType): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
-    authorise(nino) {
+    withAuth(nino) {
       id match {
         case PropertyType.OTHER => OtherPropertiesPeriodService.retrieveAllPeriods(nino).map {
           case Some(period) => Ok(Json.toJson(period))

@@ -36,7 +36,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
   val logger = Logger(SelfEmploymentPeriodResource.getClass)
 
   def createPeriod(nino: Nino, sourceId: SourceId): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validate[SelfEmploymentPeriod, SelfEmploymentPeriodResponse](request.body) { period =>
         connector.create(nino, sourceId, des.SelfEmploymentPeriod.from(period))
       } match {
@@ -56,7 +56,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def updatePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validate[SelfEmploymentPeriodUpdate, SelfEmploymentPeriodResponse](request.body) { period =>
         connector.update(nino, id, periodId, Financials.from(period.incomes, period.expenses))
       } match {
@@ -75,7 +75,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def retrievePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       connector.get(nino, id, periodId).map { response =>
         response.status match {
           case 200 => response.period.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
@@ -89,7 +89,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def retrievePeriods(nino: Nino, id: SourceId): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       connector.getAll(nino, id).map { response =>
         response.status match {
           case 200 => Ok(Json.toJson(response.allPeriods))

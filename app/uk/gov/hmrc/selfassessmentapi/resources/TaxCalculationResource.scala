@@ -43,7 +43,7 @@ object TaxCalculationResource extends BaseResource {
      """.stripMargin
 
   def requestCalculation(nino: Nino): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validate[CalculationRequest, TaxCalculationResponse](request.body) { req =>
         connector.requestCalculation(nino, req.taxYear)
       } match {
@@ -62,7 +62,7 @@ object TaxCalculationResource extends BaseResource {
   }
 
   def retrieveCalculation(nino: Nino, calcId: SourceId): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       connector.retrieveCalculation(nino, calcId).map { response =>
         response.status match {
           case 200 => Ok(Json.toJson(response.calculation))

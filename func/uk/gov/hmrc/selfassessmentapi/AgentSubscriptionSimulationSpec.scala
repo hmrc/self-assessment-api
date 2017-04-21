@@ -9,7 +9,7 @@ class AgentSubscriptionSimulationSpec extends BaseFunctionalSpec {
   "Request for self-employments with Gov-Test-Scenario = AGENT_NOT_SUBSCRIBED" should {
     "return HTTP 403 with error code informing Agent should be subscribed to Agent Services" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .get(s"/ni/$nino/self-employments")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_SUBSCRIBED")
@@ -22,7 +22,7 @@ class AgentSubscriptionSimulationSpec extends BaseFunctionalSpec {
   "Request for dividends with Gov-Test-Scenario = AGENT_NOT_SUBSCRIBED" should {
     "return HTTP 403 with error code informing Agent should be subscribed to Agent Services" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(s"/ni/$nino/dividends/$taxYear")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_SUBSCRIBED")

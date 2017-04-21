@@ -22,7 +22,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
-import uk.gov.hmrc.selfassessmentapi.models.{Errors, _}
+import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmployment, SelfEmploymentUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentResponse
 
@@ -35,7 +35,7 @@ object SelfEmploymentsResource extends BaseResource {
   val logger = Logger(SelfEmploymentsResource.getClass)
 
   def create(nino: Nino): Action[JsValue] = seFeatureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validate[SelfEmployment, SelfEmploymentResponse](request.body) { selfEmployment =>
         connector.create(nino, des.Business.from(selfEmployment))
       } match {
@@ -55,7 +55,7 @@ object SelfEmploymentsResource extends BaseResource {
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def update(nino: Nino, id: SourceId): Action[JsValue] = seFeatureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validate[SelfEmploymentUpdate, SelfEmploymentResponse](request.body) { selfEmployment =>
         connector.update(nino, des.SelfEmploymentUpdate.from(selfEmployment), id)
       } match {
@@ -73,7 +73,7 @@ object SelfEmploymentsResource extends BaseResource {
   }
 
   def retrieve(nino: Nino, id: SourceId): Action[AnyContent] = seFeatureSwitch.asyncFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       connector.get(nino).map { response =>
         response.status match {
           case 200 => response.selfEmployment(id).map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
@@ -86,7 +86,7 @@ object SelfEmploymentsResource extends BaseResource {
   }
 
   def retrieveAll(nino: Nino): Action[AnyContent] = seFeatureSwitch.asyncFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       connector.get(nino).map { response =>
         response.status match {
           case 200 => Ok(Json.toJson(response.listSelfEmployment))
