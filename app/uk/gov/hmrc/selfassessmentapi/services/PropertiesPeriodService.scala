@@ -39,14 +39,7 @@ trait PropertiesPeriodService[P <: Period, F <: Financials] {
       case _ => Future.successful(false)
     }
   }
-
-  def retrievePeriod(nino: Nino, periodId: PeriodId): Future[Option[P]] = {
-    repository.retrieve(nino).map {
-      case Some(properties) => propertyOps.period(periodId, properties)
-      case None => None
-    }
-  }
-
+  
   def retrieveAllPeriods(nino: Nino): Future[Option[Seq[PeriodSummary]]] = {
     repository.retrieve(nino).map {
       case Some(properties) => {
