@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
@@ -31,7 +30,6 @@ object DividendsAnnualSummaryResource extends BaseResource {
 
   private lazy val featureSwitch = FeatureSwitchAction(SourceType.Dividends, "annual")
   private val service = DividendsAnnualSummaryService
-  override val logger: Logger = Logger(DividendsAnnualSummaryResource.getClass)
 
   def updateAnnualSummary(nino: Nino, taxYear: TaxYear): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
     withAuth(nino) {

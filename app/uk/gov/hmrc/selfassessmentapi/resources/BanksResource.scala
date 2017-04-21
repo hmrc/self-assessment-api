@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
@@ -30,7 +29,6 @@ import scala.concurrent.Future
 object BanksResource extends BaseResource {
   private lazy val seFeatureSwitch = FeatureSwitchAction(SourceType.Banks)
   private val service = BanksService
-  override val logger: Logger = Logger(BanksResource.getClass)
 
   def create(nino: Nino): Action[JsValue] = seFeatureSwitch.asyncJsonFeatureSwitch { implicit request =>
     withAuth(nino) {

@@ -7,6 +7,7 @@ class TestScenarioHeaderSpec extends BaseFunctionalSpec {
   "Request for self-employments with no Gov-Test-Scenario" should {
     "return HTTP 200" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()
@@ -19,6 +20,7 @@ class TestScenarioHeaderSpec extends BaseFunctionalSpec {
   "Request for self-employments with invalid Gov-Test-Scenario" should {
     "return HTTP 200" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()
@@ -32,6 +34,7 @@ class TestScenarioHeaderSpec extends BaseFunctionalSpec {
   "Request for dividends with no Gov-Test-Scenario" should {
     "return HTTP 200" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()
@@ -44,6 +47,7 @@ class TestScenarioHeaderSpec extends BaseFunctionalSpec {
   "Request for dividends with invalid Gov-Test-Scenario" should {
     "return HTTP 200" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()

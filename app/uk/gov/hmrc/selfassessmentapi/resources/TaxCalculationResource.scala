@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
@@ -33,7 +32,6 @@ object TaxCalculationResource extends BaseResource {
 
   private lazy val featureSwitch = FeatureSwitchAction(SourceType.Calculation)
   private val connector = TaxCalculationConnector
-  val logger = Logger(TaxCalculationResource.getClass)
 
   private val cannedEtaResponse =
     s"""

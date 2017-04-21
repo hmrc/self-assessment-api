@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
@@ -32,7 +31,6 @@ import scala.concurrent.Future
 object SelfEmploymentAnnualSummaryResource extends BaseResource {
   private lazy val annualSummaryFeatureSwitch = FeatureSwitchAction(SourceType.SelfEmployments, "annual")
   private val connector = SelfEmploymentAnnualSummaryConnector
-  val logger = Logger(SelfEmploymentAnnualSummaryResource.getClass)
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] = annualSummaryFeatureSwitch.asyncJsonFeatureSwitch { implicit request =>
     withAuth(nino) {

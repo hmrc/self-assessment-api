@@ -212,6 +212,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
       val expectedSelfEmployment = Jsons.SelfEmployment(cessationDate = None, businessDescription = None)
 
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()
@@ -225,6 +226,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
 
     "return code 401 when attempting to retrieve a self-employment that fails DES nino validation" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().invalidNinoFor(nino)
         .when()
@@ -236,6 +238,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
 
     "return code 404 when retrieving a self-employment resource that does not exist" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().selfEmployment.noneFor(nino)
         .when()
@@ -246,6 +249,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
 
     "return code 400 when retrieving a self-employment that fails nino validation" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .get(s"/ni/teapot/self-employments/invalidSourceId")
@@ -256,6 +260,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
 
     "return code 401 when retrieving a self-employment for a nino that does not exist" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().ninoNotFoundFor(nino)
         .when()
@@ -266,6 +271,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
 
     "return code 500 when DES is experiencing issues" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().serverErrorFor(nino)
         .when()
@@ -277,6 +283,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
 
     "return code 500 when systems that DES is dependant on are experiencing issues" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().serviceUnavailableFor(nino)
         .when()
@@ -288,6 +295,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
 
     "return code 500 when we receive a status code from DES that we do not handle" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().isATeapotFor(nino)
         .when()
@@ -308,6 +316,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
          """.stripMargin
 
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()
@@ -321,6 +330,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
 
     "return code 200 with an empty body when the user has no self-employment sources" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().selfEmployment.noneFor(nino)
         .when()
@@ -332,6 +342,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
 
     "return code 401 when attempting to retrieve self-employments that fails DES nino validation" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().invalidNinoFor(nino)
         .when()
@@ -343,6 +354,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
 
     "return code 401 when attempting to retrieve self-employments for a nino that does not exist" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().ninoNotFoundFor(nino)
         .when()
@@ -353,6 +365,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
 
     "return code 500 when we receive a status code from DES that we do not handle" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().isATeapotFor(nino)
         .when()

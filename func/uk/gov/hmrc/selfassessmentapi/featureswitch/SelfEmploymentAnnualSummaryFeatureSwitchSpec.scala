@@ -19,6 +19,7 @@ class SelfEmploymentAnnualSummaryFeatureSwitchSpec extends BaseFunctionalSpec {
     "not be visible if feature Switched Off" in {
 
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()

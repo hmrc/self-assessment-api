@@ -9,6 +9,7 @@ class ClientSubscriptionSimulationSpec extends BaseFunctionalSpec {
   "Request for self-employments with Gov-Test-Scenario = CLIENT_NOT_SUBSCRIBED" should {
     "return HTTP 403 with error code informing client should be subscribed to MTD" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .get(s"/ni/$nino/self-employments")
@@ -22,6 +23,7 @@ class ClientSubscriptionSimulationSpec extends BaseFunctionalSpec {
   "Request for dividends with Gov-Test-Scenario = CLIENT_NOT_SUBSCRIBED" should {
     "return HTTP 403 with error code informing client should be subscribed to MTD" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(s"/ni/$nino/dividends/$taxYear")

@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
@@ -33,7 +32,6 @@ import scala.concurrent.Future
 object SelfEmploymentPeriodResource extends BaseResource {
   private lazy val featureSwitch = FeatureSwitchAction(SourceType.SelfEmployments, "periods")
   private val connector = SelfEmploymentPeriodConnector
-  val logger = Logger(SelfEmploymentPeriodResource.getClass)
 
   def createPeriod(nino: Nino, sourceId: SourceId): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
     withAuth(nino) {

@@ -9,6 +9,7 @@ class AcceptHeaderSpec extends BaseFunctionalSpec {
   "if the valid content type header is sent in the request, they" should {
     "receive 200" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().selfEmployment.noneFor(nino)
         .when()
@@ -20,6 +21,7 @@ class AcceptHeaderSpec extends BaseFunctionalSpec {
   "if the valid content type header is missing in the request, they" should {
     "receive 406" in {
       given()
+        .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()

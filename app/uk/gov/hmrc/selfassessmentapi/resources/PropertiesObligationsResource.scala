@@ -28,7 +28,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 object PropertiesObligationsResource extends BaseResource {
   private val featureSwitch = FeatureSwitchAction(SourceType.Properties, "obligations")
   private val propertiesService = PropertiesObligationsService
-  override val logger: Logger = Logger(PropertiesObligationsResource.getClass)
 
   def retrieveObligations(nino: Nino): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
     withAuth(nino) {
