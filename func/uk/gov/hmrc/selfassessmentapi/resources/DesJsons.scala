@@ -1,7 +1,8 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.models.des.properties.FHL
+import uk.gov.hmrc.selfassessmentapi.models.des.properties.{FHL, Other}
 
 object DesJsons {
 
@@ -21,12 +22,16 @@ object DesJsons {
     val ninoNotFound: String = error("NOT_FOUND_NINO", "The remote endpoint has indicated that no data can be found.")
     val notFound: String = error("NOT_FOUND", "The remote endpoint has indicated that no data can be found.")
     val tradingNameConflict: String = error("CONFLICT", "Duplicated trading name.")
-    val serverError: String = error("SERVER_ERROR", "DES is currently experiencing problems that require live service intervention.")
+    val serverError: String =
+      error("SERVER_ERROR", "DES is currently experiencing problems that require live service intervention.")
     val serviceUnavailable: String = error("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")
-    val tooManySources: String = error("TOO_MANY_SOURCES", "You may only have a maximum of one self-employment source.")
-    val invalidPeriod: String = error("INVALID_PERIOD", "The remote endpoint has indicated that a overlapping period was submitted.")
+    val tooManySources: String =
+      error("TOO_MANY_SOURCES", "You may only have a maximum of one self-employment source.")
+    val invalidPeriod: String =
+      error("INVALID_PERIOD", "The remote endpoint has indicated that a overlapping period was submitted.")
     val invalidObligation: String = error("INVALID_REQUEST", "Accounting period should be greater than 6 months.")
-    val invalidOriginatorId: String = error("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
+    val invalidOriginatorId: String =
+      error("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
     val invalidCalcId: String = error("INVALID_CALCID", "Submission has not passed validation")
     val propertyConflict: String = error("CONFLICT", "Property already exists.")
   }
@@ -238,6 +243,55 @@ object DesJsons {
   }
 
   object Properties {
+
+    def fhlPeriod(from: String = "",
+                  to: String = "",
+                  rentIncome: BigDecimal = 0,
+                  premisesRunningCosts: BigDecimal = 0,
+                  repairsAndMaintenance: BigDecimal = 0,
+                  financialCosts: BigDecimal = 0,
+                  professionalFees: BigDecimal = 0,
+                  other: BigDecimal = 0): JsValue =
+      Json.toJson(
+        FHL.Properties(from = from,
+          to = to,
+          financials =
+            FHL.Financials(incomes = Some(FHL.Incomes(rentIncome = Some(rentIncome))),
+              deductions = Some(
+                FHL.Deductions(premisesRunningCosts = Some(premisesRunningCosts),
+                  repairsAndMaintenance = Some(repairsAndMaintenance),
+                  financialCosts = Some(financialCosts),
+                  professionalFees = Some(professionalFees),
+                  other = Some(other))))))
+
+    def otherPeriod(from: String = "",
+                    to: String = "",
+                    rentIncome: BigDecimal = 0,
+                    rentIncomeTaxDeducted: Option[BigDecimal] = Some(0),
+                    premiumsOfLeaseGrant: Option[BigDecimal] = Some(0),
+                    reversePremiums: Option[BigDecimal] = Some(0),
+                    premisesRunningCosts: Option[BigDecimal] = Some(0),
+                    repairsAndMaintenance: Option[BigDecimal] = Some(0),
+                    financialCosts: Option[BigDecimal] = Some(0),
+                    professionalFees: Option[BigDecimal] = Some(0),
+                    costOfServices: Option[BigDecimal] = Some(0),
+                    other: Option[BigDecimal] = Some(0)): JsValue =
+      Json.toJson(
+        Other.Properties(from = from,
+          to = to,
+          financials =
+            Other.Financials(incomes = Some(Other.Incomes(
+              rentIncome = Some(Other.Income(rentIncome, rentIncomeTaxDeducted)),
+              premiumsOfLeaseGrant = premiumsOfLeaseGrant,
+              reversePremiums = reversePremiums)),
+              deductions = Some(Other.Deductions(
+                premisesRunningCosts = premisesRunningCosts,
+                repairsAndMaintenance = repairsAndMaintenance,
+                financialCosts = financialCosts,
+                professionalFees = professionalFees,
+                costOfServices = costOfServices,
+                other = other)))))
+
     def createResponse: String = {
       s"""
          |{
@@ -251,8 +305,7 @@ object DesJsons {
       """.stripMargin
     }
 
-
-  def retrieveProperty: String = {
+    def retrieveProperty: String = {
       s"""
          {
          |   "safeId": "XE00001234567890",
@@ -327,8 +380,10 @@ object DesJsons {
   }
 
   object Obligations {
-    def apply(firstMet: Boolean = false, secondMet: Boolean = false,
-              thirdMet: Boolean = false, fourthMet: Boolean = false): String = {
+    def apply(firstMet: Boolean = false,
+              secondMet: Boolean = false,
+              thirdMet: Boolean = false,
+              fourthMet: Boolean = false): String = {
       s"""
          |{
          |  "obligations": [

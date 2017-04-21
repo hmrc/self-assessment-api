@@ -16,24 +16,26 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, Request}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodConnector
+import uk.gov.hmrc.selfassessmentapi.models.Errors._
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesPeriodResponse
 import uk.gov.hmrc.selfassessmentapi.services.{FHLPropertiesPeriodService, OtherPropertiesPeriodService}
-import uk.gov.hmrc.selfassessmentapi.models.Errors._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object PropertiesPeriodResource extends BaseController {
 
+  private val logger = Logger(PropertiesPeriodResource.getClass)
   lazy val featureSwitch = FeatureSwitchAction(SourceType.Properties, "periods")
   private val connector = PropertiesPeriodConnector
 
@@ -48,6 +50,7 @@ object PropertiesPeriodResource extends BaseController {
               case 400 if response.containsOverlappingPeriod => Forbidden(Error.asBusinessError(response.json))
               case 400 => BadRequest(Error.from(response.json))
               case 404 => NotFound
+              case _ => unhandledResponse(response.status, logger)
             }
           }
       }
@@ -66,18 +69,17 @@ object PropertiesPeriodResource extends BaseController {
     }
 
   def retrievePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[AnyContent] =
-    featureSwitch.asyncFeatureSwitch {
-      id match {
-        case PropertyType.OTHER =>
-          OtherPropertiesPeriodService.retrievePeriod(nino, periodId).map {
-            case Some(period) => Ok(Json.toJson(period))
-            case None => NotFound
+    featureSwitch.asyncFeatureSwitch { implicit request =>
+      connector.retrieve(nino, periodId, id).map { response =>
+        response.status match {
+          case 200 => id match {
+            case PropertyType.FHL => response.periodFHL.map(period => Ok(Json.toJson(period))).getOrElse(NotFound)
+            case PropertyType.OTHER => response.periodOther.map(period => Ok(Json.toJson(period))).getOrElse(NotFound)
           }
-        case PropertyType.FHL =>
-          FHLPropertiesPeriodService.retrievePeriod(nino, periodId).map {
-            case Some(period) => Ok(Json.toJson(period))
-            case None => NotFound
-          }
+          case 400 => BadRequest(Error.from(response.json))
+          case 404 => NotFound
+          case _ => unhandledResponse(response.status, logger)
+        }
       }
     }
 
@@ -97,8 +99,7 @@ object PropertiesPeriodResource extends BaseController {
   }
 
   private def validateCreateRequest(id: PropertyType, nino: Nino, request: Request[JsValue])(
-
-    implicit hc: HeaderCarrier): Either[ErrorResult, Future[PropertiesPeriodResponse]] =
+      implicit hc: HeaderCarrier): Either[ErrorResult, Future[PropertiesPeriodResponse]] =
     id match {
       case PropertyType.OTHER =>
         validate[Other.Properties, PropertiesPeriodResponse](request.body) { period =>

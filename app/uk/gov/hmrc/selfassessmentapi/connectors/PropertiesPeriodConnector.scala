@@ -20,7 +20,8 @@ import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.models.des
+import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
+import uk.gov.hmrc.selfassessmentapi.models.{PeriodId, des}
 import uk.gov.hmrc.selfassessmentapi.models.properties._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesPeriodResponse
 
@@ -31,19 +32,29 @@ object PropertiesPeriodConnector {
 
   private lazy val baseUrl: String = AppContext.desUrl
 
-  private def httpResponse2PropertiesPeriodResponse(fut: Future[HttpResponse], from: Option[LocalDate] = None,
+  private def httpResponse2PropertiesPeriodResponse(fut: Future[HttpResponse],
+                                                    from: Option[LocalDate] = None,
                                                     to: Option[LocalDate] = None): Future[PropertiesPeriodResponse] =
     fut.map(PropertiesPeriodResponse(_, from, to))
 
   def createFHL(nino: Nino, properties: FHL.Properties)(implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-    httpResponse2PropertiesPeriodResponse(httpPost(baseUrl + s"/income-store/nino/$nino/uk-properties/furnished-holiday-lettings/periodic-summaries",
-      des.properties.FHL.Properties.from(properties)), Some(properties.from), Some(properties.to))
+    httpResponse2PropertiesPeriodResponse(
+      httpPost(baseUrl + s"/income-store/nino/$nino/uk-properties/furnished-holiday-lettings/periodic-summaries",
+               des.properties.FHL.Properties.from(properties)),
+      Some(properties.from),
+      Some(properties.to))
 
   def createOther(nino: Nino, properties: Other.Properties)(
-    implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-    httpResponse2PropertiesPeriodResponse(httpPost(baseUrl + s"/income-store/nino/$nino/uk-properties/other/periodic-summaries",
-      des.properties.Other.Properties.from(properties)), Some(properties.from), Some(properties.to))
+      implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
+    httpResponse2PropertiesPeriodResponse(
+      httpPost(baseUrl + s"/income-store/nino/$nino/uk-properties/other/periodic-summaries",
+               des.properties.Other.Properties.from(properties)),
+      Some(properties.from),
+      Some(properties.to))
 
-  def retrieve(nino: Nino)(implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] = ???
+  def retrieve(nino: Nino, periodId: PeriodId, propertyType: PropertyType)(
+      implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
+    httpResponse2PropertiesPeriodResponse(
+      httpGet(baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId"))
 
 }

@@ -21,10 +21,14 @@ import play.api.Logger
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
+import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
+import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 
-class PropertiesPeriodResponse(underlying: HttpResponse, from: Option[LocalDate] = None, to: Option[LocalDate] = None) {
+case class PropertiesPeriodResponse(underlying: HttpResponse,
+                                    from: Option[LocalDate] = None,
+                                    to: Option[LocalDate] = None) {
 
   private val logger: Logger = Logger(classOf[PropertiesPeriodResponse])
 
@@ -32,15 +36,15 @@ class PropertiesPeriodResponse(underlying: HttpResponse, from: Option[LocalDate]
 
   def json: JsValue = underlying.json
 
-  def getPeriodId: String = {
-    val locationHeader = for {
+  def getPeriodId: String =
+    (for {
       fromDate <- from
       toDate <- to
-    } yield s"${fromDate}_$toDate"
-    locationHeader.get
-  }
+    } yield s"${fromDate}_$toDate")
+      .getOrElse(throw new IllegalStateException("response should contain period from and to dates"))
 
-  def createLocationHeader(nino: Nino, id: PropertyType): String = s"/self-assessment/ni/$nino/uk-properties/$id/periods/$getPeriodId"
+  def createLocationHeader(nino: Nino, id: PropertyType): String =
+    s"/self-assessment/ni/$nino/uk-properties/$id/periods/$getPeriodId"
 
   def containsOverlappingPeriod: Boolean = {
     json.asOpt[DesError] match {
@@ -51,8 +55,22 @@ class PropertiesPeriodResponse(underlying: HttpResponse, from: Option[LocalDate]
     }
   }
 
-}
+  def periodFHL: Option[FHL.Properties] =
+    json.asOpt[des.properties.FHL.Properties] match {
+      case Some(prop) =>
+        Some(FHL.Properties.from(prop))
+      case None =>
+        logger.error("The response from DES does not match the expected properties period format.")
+        None
+    }
 
-object PropertiesPeriodResponse {
-  def apply(response: HttpResponse, from: Option[LocalDate] = None, to: Option[LocalDate] = None): PropertiesPeriodResponse = new PropertiesPeriodResponse(response, from, to)
+  def periodOther: Option[Other.Properties] =
+    json.asOpt[des.properties.Other.Properties] match {
+      case Some(prop) =>
+        Some(Other.Properties.from(prop))
+      case None =>
+        logger.error("The response from DES does not match the expected properties period format.")
+        None
+    }
+
 }

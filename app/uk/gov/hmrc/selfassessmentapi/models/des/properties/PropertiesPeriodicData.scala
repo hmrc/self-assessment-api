@@ -70,7 +70,7 @@ object FHL {
 
 object Other {
 
-  case class Income(amount: BigDecimal, taxDeducted: Option[BigDecimal])
+  case class Income(amount: BigDecimal, taxDeducted: Option[BigDecimal] = None)
 
   object Income {
     implicit val format: OFormat[Income] = Json.format[Income]

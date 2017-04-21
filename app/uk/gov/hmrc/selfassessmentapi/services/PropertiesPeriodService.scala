@@ -16,18 +16,15 @@
 
 package uk.gov.hmrc.selfassessmentapi.services
 
-import reactivemongo.bson.BSONObjectID
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.domain.PropertyPeriodOps
 import uk.gov.hmrc.selfassessmentapi.domain.PropertyPeriodOps._
-import uk.gov.hmrc.selfassessmentapi.repositories.PropertiesRepository
-import uk.gov.hmrc.selfassessmentapi.models.ErrorCode._
-import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
+import uk.gov.hmrc.selfassessmentapi.repositories.PropertiesRepository
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 
 trait PropertiesPeriodService[P <: Period, F <: Financials] {
