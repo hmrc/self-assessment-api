@@ -28,7 +28,7 @@ private object AppDependencies {
     ws exclude("org.apache.httpcomponents", "httpclient") exclude("org.apache.httpcomponents", "httpcore"),
     "uk.gov.hmrc" %% "play-graphite" % "3.2.0",
     "uk.gov.hmrc" %% "microservice-bootstrap" % "5.12.0",
-    "uk.gov.hmrc" %% "play-authorisation" % "4.3.0",
+    "uk.gov.hmrc" %% "play-auth" % "1.0.0",
     "uk.gov.hmrc" %% "play-health" % "2.1.0",
     "uk.gov.hmrc" %% "play-url-binders" % "2.1.0",
     "uk.gov.hmrc" %% "play-config" % "4.2.0",

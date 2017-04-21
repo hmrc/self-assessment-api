@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.models.Errors._
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.services.PropertiesService
@@ -27,31 +27,36 @@ import uk.gov.hmrc.selfassessmentapi.services.PropertiesService
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object PropertiesResource extends BaseController {
+object PropertiesResource extends BaseResource {
 
   lazy val featureSwitch: FeatureSwitchAction = FeatureSwitchAction(SourceType.Properties)
+  override val logger: Logger = Logger(PropertiesResource.getClass)
 
   private val service = PropertiesService()
 
-  def create(nino: Nino): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { request =>
-    validate[properties.Properties, Either[Error, Boolean]](request.body) {
-      service.create(nino, _)
-    } match {
-      case Left(errorResult) =>
-        Future.successful(handleValidationErrors(errorResult))
-      case Right(result) => result.map {
-        case Right(successful) =>
-          if (successful) Created.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/uk-properties")
-          else InternalServerError
-        case Left(_) => Conflict.withHeaders(LOCATION ->  s"/self-assessment/ni/$nino/uk-properties")
+  def create(nino: Nino): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
+    authorise(nino) {
+      validate[properties.Properties, Either[Error, Boolean]](request.body) {
+        service.create(nino, _)
+      } match {
+        case Left(errorResult) =>
+          Future.successful(handleValidationErrors(errorResult))
+        case Right(result) => result.map {
+          case Right(successful) =>
+            if (successful) Created.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/uk-properties")
+            else InternalServerError
+          case Left(_) => Conflict.withHeaders(LOCATION ->  s"/self-assessment/ni/$nino/uk-properties")
+        }
       }
     }
   }
 
-  def retrieve(nino: Nino): Action[AnyContent] = featureSwitch.asyncFeatureSwitch {
-    service.retrieve(nino).map {
-      case Some(properties) => Ok(Json.toJson(properties))
-      case None => NotFound
+  def retrieve(nino: Nino): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
+    authorise(nino) {
+      service.retrieve(nino).map {
+        case Some(properties) => Ok(Json.toJson(properties))
+        case None => NotFound
+      }
     }
   }
 }

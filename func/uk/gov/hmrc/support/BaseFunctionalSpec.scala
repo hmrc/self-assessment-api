@@ -384,53 +384,42 @@ trait BaseFunctionalSpec extends TestApplication {
     def when() = new HttpVerbs()
 
     def userIsNotAuthorisedForTheResource(nino: Nino): Givens = {
-      stubFor(get(urlPathEqualTo(s"/authorise/read/paye/$nino")).willReturn(aResponse().withStatus(401).withHeader("Content-Length", "0")))
-      stubFor(get(urlPathEqualTo(s"/authorise/write/paye/$nino")).willReturn(aResponse().withStatus(401).withHeader("Content-Length", "0")))
+      stubFor(any(urlMatching(s".*/registration/business-details/nino/$nino"))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withHeader("Content-Type", "application/json")
+            .withBody(DesJsons.SelfEmployment(nino, "123"))))
+
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .willReturn(aResponse()
+          .withStatus(401)
+          .withHeader("Content-Length", "0")
+          .withHeader("WWW-Authenticate", "MDTP detail=\"InsufficientEnrolments\"")))
+
       this
     }
 
-    def userIsAuthorisedForTheResource(nino: Nino): Givens = {
-      stubFor(get(urlPathEqualTo(s"/authorise/read/paye/$nino")).willReturn(aResponse().withStatus(200)))
-      stubFor(get(urlPathEqualTo(s"/authorise/write/paye/$nino")).willReturn(aResponse().withStatus(200)))
+    def userIsAuthorisedForTheResource(nino: Nino, mtdId: String = "123"): Givens = {
+      stubFor(any(urlMatching(s".*/registration/business-details/nino/$nino"))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withHeader("Content-Type", "application/json")
+            .withBody(DesJsons.SelfEmployment(nino, mtdId))))
+
+      stubFor(post(urlPathEqualTo(s"/auth/authorise")).willReturn(aResponse().withStatus(200).withBody(
+        """
+          |{
+          |  "internalId": "some-id",
+          |  "loginTimes": {
+          |     "currentLogin": "2016-11-27T09:00:00.000Z",
+          |     "previousLogin": "2016-11-01T12:00:00.000Z"
+          |  }
+          |}
+        """.stripMargin)))
       this
     }
-
-    def userIsEnrolledInSa(nino: Nino): Givens = {
-      val json =
-        s"""
-           |{
-           |    "accounts": {
-           |        "paye": {
-           |            "link": "/paye/$nino",
-           |            "nino": "$nino"
-           |        }
-           |    },
-           |    "confidenceLevel": 500
-           |}
-      """.stripMargin
-
-      stubFor(
-        get(urlPathEqualTo(s"/auth/authority"))
-          .willReturn(aResponse().withBody(json).withStatus(200).withHeader("Content-Type", "application/json")))
-      this
-    }
-
-    def userIsNotEnrolledInSa: Givens = {
-      val json =
-        s"""
-           |{
-           |    "accounts": {
-           |    },
-           |    "confidenceLevel": 500
-           |}
-      """.stripMargin
-
-      stubFor(
-        get(urlPathEqualTo(s"/auth/authority"))
-          .willReturn(aResponse().withBody(json).withStatus(200).withHeader("Content-Type", "application/json")))
-      this
-    }
-
 
     class Des(givens: Givens) {
       def isATeapotFor(nino: Nino): Givens = {
@@ -438,18 +427,6 @@ trait BaseFunctionalSpec extends TestApplication {
           .willReturn(
             aResponse()
               .withStatus(418)))
-
-        givens
-      }
-
-      def invalidOriginatorIdFor(nino: Nino): Givens = {
-        stubFor(any(urlMatching(s".*/nino/$nino.*"))
-          .willReturn(
-            aResponse()
-              .withStatus(400)
-              .withHeader("Content-Type", "application/json")
-              .withBody(DesJsons.Errors.invalidOriginatorId)
-          ))
 
         givens
       }
@@ -512,6 +489,28 @@ trait BaseFunctionalSpec extends TestApplication {
       }
 
       object selfEmployment {
+        def annualSummaryNotFoundFor(nino: Nino): Givens = {
+          stubFor(any(urlMatching(s".*/income-store/nino/$nino/self-employments/.*"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.ninoNotFound)))
+
+          givens
+        }
+
+        def invalidOriginatorIdFor(nino: Nino): Givens = {
+          stubFor(any(urlMatching(s"/income-store/nino/$nino/self-employments/.*"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.invalidOriginatorId)
+            ))
+
+          givens
+        }
 
         def tooManySourcesFor(nino: Nino): Givens = {
           stubFor(post(urlEqualTo(s"/income-tax-self-assessment/nino/$nino/business"))
@@ -547,13 +546,13 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def willBeReturnedFor(nino: Nino, id: String = "abc", accPeriodStart: String = "2017-04-06", accPeriodEnd: String = "2018-04-05"): Givens = {
+        def willBeReturnedFor(nino: Nino, mtdId: String = "123", id: String = "abc", accPeriodStart: String = "2017-04-06", accPeriodEnd: String = "2018-04-05"): Givens = {
           stubFor(get(urlEqualTo(s"/registration/business-details/nino/$nino"))
             .willReturn(
               aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.SelfEmployment(nino, id, accPeriodStart = accPeriodStart, accPeriodEnd = accPeriodEnd))))
+                .withBody(DesJsons.SelfEmployment(nino, mtdId, id, accPeriodStart = accPeriodStart, accPeriodEnd = accPeriodEnd))))
 
           givens
         }
@@ -622,7 +621,6 @@ trait BaseFunctionalSpec extends TestApplication {
 
           givens
         }
-
 
         def noPeriodFor(nino: Nino, id: String = "abc", periodId: String = "def"): Givens = {
           stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries/$periodId"))
