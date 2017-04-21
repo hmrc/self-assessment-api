@@ -29,7 +29,8 @@ object PropertiesAnnualSummary {
   }
 }
 
-case class OtherPropertiesAnnualSummary(otherProperties: Option[OtherPropertiesAnnualSummaryDetails]) extends PropertiesAnnualSummary
+case class OtherPropertiesAnnualSummary(annualAllowances: Option[OtherPropertiesAllowances],
+                                        annualAdjustments: Option[OtherPropertiesAdjustments]) extends PropertiesAnnualSummary
 
 object OtherPropertiesAnnualSummary {
   implicit val reads: Reads[OtherPropertiesAnnualSummary] = Json.reads[OtherPropertiesAnnualSummary]
@@ -52,17 +53,8 @@ object OtherPropertiesAnnualSummary {
         adj.balancingCharge
       )
     }
-    OtherPropertiesAnnualSummary(Some(OtherPropertiesAnnualSummaryDetails(allowances, adjustments)))
+    OtherPropertiesAnnualSummary(allowances, adjustments)
   }
-}
-
-
-case class OtherPropertiesAnnualSummaryDetails(annualAllowances: Option[OtherPropertiesAllowances],
-                                               annualAdjustments: Option[OtherPropertiesAdjustments])
-
-object OtherPropertiesAnnualSummaryDetails {
-  implicit val reads: Reads[OtherPropertiesAnnualSummaryDetails] = Json.reads[OtherPropertiesAnnualSummaryDetails]
-  implicit val writes: Writes[OtherPropertiesAnnualSummaryDetails] = Json.writes[OtherPropertiesAnnualSummaryDetails]
 }
 
 
@@ -88,7 +80,8 @@ object OtherPropertiesAdjustments {
 }
 
 
-case class FHLPropertiesAnnualSummary(furnishedHolidayLettings: Option[FHLPropertiesAnnualSummaryDetails]) extends PropertiesAnnualSummary
+case class FHLPropertiesAnnualSummary(annualAllowances: Option[FHLPropertiesAllowances],
+                                      annualAdjustments: Option[FHLPropertiesAdjustments]) extends PropertiesAnnualSummary
 
 object FHLPropertiesAnnualSummary {
   implicit val reads: Reads[FHLPropertiesAnnualSummary] = Json.reads[FHLPropertiesAnnualSummary]
@@ -108,17 +101,10 @@ object FHLPropertiesAnnualSummary {
         adj.balancingCharge
       )
     }
-    FHLPropertiesAnnualSummary(Some(FHLPropertiesAnnualSummaryDetails(allowances, adjustments)))
+    FHLPropertiesAnnualSummary(allowances, adjustments)
   }
 }
 
-case class FHLPropertiesAnnualSummaryDetails(annualAllowances: Option[FHLPropertiesAllowances],
-                                             annualAdjustments: Option[FHLPropertiesAdjustments])
-
-object FHLPropertiesAnnualSummaryDetails {
-  implicit val reads: Reads[FHLPropertiesAnnualSummaryDetails] = Json.reads[FHLPropertiesAnnualSummaryDetails]
-  implicit val writes: Writes[FHLPropertiesAnnualSummaryDetails] = Json.writes[FHLPropertiesAnnualSummaryDetails]
-}
 
 case class FHLPropertiesAllowances(annualInvestmentAllowance: Option[BigDecimal] = None,
                                    otherCapitalAllowance: Option[BigDecimal] = None)

@@ -35,8 +35,7 @@ object OtherPropertiesAnnualSummary {
 
   def from(summary: des.OtherPropertiesAnnualSummary): OtherPropertiesAnnualSummary = {
     val allowances = for {
-      details <- summary.otherProperties
-      allow <- details.annualAllowances
+      allow <- summary.annualAllowances
     } yield OtherPropertiesAllowances(
       allow.annualInvestmentAllowance,
       allow.businessPremisesRenovationAllowance,
@@ -44,8 +43,7 @@ object OtherPropertiesAnnualSummary {
       allow.costOfReplacingDomGoods,
       allow.zeroEmissionGoodsVehicleAllowance)
     val adjustments = for {
-      details <- summary.otherProperties
-      adj <- details.annualAdjustments
+      adj <- summary.annualAdjustments
     } yield OtherPropertiesAdjustments(
       adj.lossBroughtForward,
       adj.privateUseAdjustment,
@@ -68,14 +66,12 @@ object FHLPropertiesAnnualSummary {
 
   def from(summary: des.FHLPropertiesAnnualSummary): FHLPropertiesAnnualSummary = {
     val allowances = for {
-      details <- summary.furnishedHolidayLettings
-      allow <- details.annualAllowances
+      allow <- summary.annualAllowances
     } yield FHLPropertiesAllowances(
       allow.annualInvestmentAllowance,
       allow.otherCapitalAllowance)
     val adjustments = for {
-      details <- summary.furnishedHolidayLettings
-      adj <- details.annualAdjustments
+      adj <- summary.annualAdjustments
     } yield FHLPropertiesAdjustments(
       adj.lossBroughtForward,
       adj.privateUseAdjustment,

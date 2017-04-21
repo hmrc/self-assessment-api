@@ -32,16 +32,16 @@ class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlying: Ht
 
   def annualSummary: Option[PropertiesAnnualSummary] = propertyType match {
     case PropertyType.OTHER =>
-      json.asOpt[des.OtherPropertiesAnnualSummaryDetails] match {
-        case Some(other) => Some(OtherPropertiesAnnualSummary.from(des.OtherPropertiesAnnualSummary(Some(other))))
+      json.asOpt[des.OtherPropertiesAnnualSummary] match {
+        case Some(other) => Some(OtherPropertiesAnnualSummary.from(des.OtherPropertiesAnnualSummary(other.annualAllowances, other.annualAdjustments)))
         case None => {
           logger.error(s"The response from DES for $propertyType does not match the expected properties annual summary format.")
           None
         }
       }
     case PropertyType.FHL =>
-      json.asOpt[des.FHLPropertiesAnnualSummaryDetails] match {
-        case Some(fhl) => Some(FHLPropertiesAnnualSummary.from(des.FHLPropertiesAnnualSummary(Some(fhl))))
+      json.asOpt[des.FHLPropertiesAnnualSummary] match {
+        case Some(fhl) => Some(FHLPropertiesAnnualSummary.from(des.FHLPropertiesAnnualSummary(fhl.annualAllowances, fhl.annualAdjustments)))
         case None => {
           logger.error(s"The response from DES for $propertyType does not match the expected properties annual summary format.")
           None
