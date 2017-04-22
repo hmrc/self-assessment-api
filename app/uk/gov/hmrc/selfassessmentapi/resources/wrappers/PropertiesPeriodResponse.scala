@@ -82,7 +82,7 @@ case class PropertiesPeriodResponse(underlying: HttpResponse,
   def allPeriodsFHL: Seq[PeriodSummary] =
     json.asOpt[Seq[des.properties.FHL.Properties]] match {
       case Some(desPeriods) =>
-        desPeriods.map((mkPeriodIdFHL _ compose FHL.Properties.from)(_).asSummary)
+        desPeriods.map((mkPeriodIdFHL _ compose FHL.Properties.from)(_).asSummary).sorted
       case None =>
         logger.error("The response from DES does not match the expected self-employment period format.")
         Seq.empty
@@ -91,7 +91,7 @@ case class PropertiesPeriodResponse(underlying: HttpResponse,
   def allPeriodsOther: Seq[PeriodSummary] =
     json.asOpt[Seq[des.properties.Other.Properties]] match {
       case Some(desPeriods) =>
-        desPeriods.map((mkPeriodIdOther _ compose Other.Properties.from)(_).asSummary)
+        desPeriods.map((mkPeriodIdOther _ compose Other.Properties.from)(_).asSummary).sorted
       case None =>
         logger.error("The response from DES does not match the expected self-employment period format.")
         Seq.empty
