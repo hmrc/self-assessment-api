@@ -1,7 +1,6 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.JsValue
-import uk.gov.hmrc.selfassessmentapi.models.PeriodId
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.support.BaseFunctionalSpec
@@ -117,8 +116,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .bodyIsLike(Jsons.Errors.internalServerError)
       }
 
-      //TODO implement
-      s"return code 500 when we receive a status code from DES that we do not handle for $propertyType" ignore {
+      s"return code 500 when we receive a status code from DES that we do not handle for $propertyType" in {
         given()
           .userIsAuthorisedForTheResource(nino)
           .des()
@@ -131,131 +129,63 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
     }
   }
 
-  "retrieving all periods" ignore {
-    "return code 200 with a JSON list of all FHL periods belonging to the property business" in {
-      val property = Jsons.Properties()
-      val periodOne = Jsons.Properties.fhlPeriod(fromDate = Some("2017-04-06"), toDate = Some("2017-04-07"))
+  "retrieving all periods" should {
 
-      val periodTwo = Jsons.Properties.fhlPeriod(fromDate = Some("2017-04-08"), toDate = Some("2017-04-09"))
+    for (propertyType <- Seq(PropertyType.OTHER, PropertyType.FHL)) {
 
-      val expectedJson = Jsons.Properties.periodSummary(("2017-04-06", "2017-04-07"), ("2017-04-08", "2017-04-09"))
+      s"return code 200 with a JSON array of all $propertyType periods belonging to the property business" in {
+        val expectedJson = Jsons.Properties.periodSummary(("2017-04-06", "2017-07-04"), ("2017-07-05", "2017-08-04"))
+        given()
+          .userIsAuthorisedForTheResource(nino)
+          .des()
+          .properties
+          .periodsWillBeReturnedFor(nino, propertyType)
+          .when()
+          .get(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(200)
+          .contentTypeIsJson()
+          .bodyIsLike(expectedJson.toString)
+          .selectFields(_ \\ "id")
+          .isLength(2)
+          .matches("\\d{4}\\-\\d{2}\\-\\d{2}_\\d{4}\\-\\d{2}\\-\\d{2}".r)
+      }
 
-      given()
-        .userIsAuthorisedForTheResource(nino)
-        .when()
-        .post(property)
-        .to(s"/ni/$nino/uk-properties")
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .post(periodOne)
-        .to(s"%sourceLocation%/furnished-holiday-lettings/periods")
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .post(periodTwo)
-        .to(s"%sourceLocation%/furnished-holiday-lettings/periods")
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .get(s"%sourceLocation%/furnished-holiday-lettings/periods")
-        .thenAssertThat()
-        .statusIs(200)
-        .contentTypeIsJson()
-        .bodyIsLike(expectedJson.toString)
-        .selectFields(_ \\ "id")
-        .isLength(2)
-        .matches("\\w+".r)
-    }
+      s"return code 200 with an empty JSON array for an $propertyType property business containing no periods" in {
+        given()
+          .userIsAuthorisedForTheResource(nino)
+          .des()
+          .properties
+          .noPeriodsFor(nino, propertyType)
+          .when()
+          .get(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(200)
+          .jsonBodyIsEmptyArray()
+      }
 
-    "return code 200 with a JSON list of all Other periods belonging to the property business" in {
-      val property = Jsons.Properties()
-      val periodOne = Jsons.Properties.otherPeriod(fromDate = Some("2017-04-06"), toDate = Some("2017-04-07"))
+      s"return code 404 for an $propertyType property business that does not exist" in {
+        given()
+          .userIsAuthorisedForTheResource(nino)
+          .des()
+          .properties
+          .doesNotExistPeriodFor(nino, propertyType)
+          .when()
+          .get(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(404)
+      }
 
-      val periodTwo = Jsons.Properties.otherPeriod(fromDate = Some("2017-04-08"), toDate = Some("2017-04-09"))
+      s"return code 500 when we receive a status code from DES that we do not handle for $propertyType" in {
+        given()
+          .userIsAuthorisedForTheResource(nino)
+          .des().isATeapotFor(nino)
+          .when()
+          .get(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(500)
+      }
 
-      val expectedJson = Jsons.Properties.periodSummary(("2017-04-06", "2017-04-07"), ("2017-04-08", "2017-04-09"))
-
-      given()
-        .userIsAuthorisedForTheResource(nino)
-        .when()
-        .post(property)
-        .to(s"/ni/$nino/uk-properties")
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .post(periodOne)
-        .to(s"%sourceLocation%/other/periods")
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .post(periodTwo)
-        .to(s"%sourceLocation%/other/periods")
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .get(s"%sourceLocation%/other/periods")
-        .thenAssertThat()
-        .statusIs(200)
-        .contentTypeIsJson()
-        .bodyIsLike(expectedJson.toString)
-        .selectFields(_ \\ "id")
-        .isLength(2)
-        .matches("\\w+".r)
-    }
-
-    "return code 200 with an empty JSON array for an FHL property business containing no periods" in {
-      val property = Jsons.Properties()
-
-      given()
-        .userIsAuthorisedForTheResource(nino)
-        .when()
-        .post(property)
-        .to(s"/ni/$nino/uk-properties")
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .get(s"%sourceLocation%/furnished-holiday-lettings/periods")
-        .thenAssertThat()
-        .statusIs(200)
-        .contentTypeIsJson()
-        .jsonBodyIsEmptyArray()
-    }
-
-    "return code 200 with an empty JSON array for an Other property business containing no periods" in {
-      val property = Jsons.Properties()
-
-      given()
-        .userIsAuthorisedForTheResource(nino)
-        .when()
-        .post(property)
-        .to(s"/ni/$nino/uk-properties")
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .get(s"%sourceLocation%/other/periods")
-        .thenAssertThat()
-        .statusIs(200)
-        .contentTypeIsJson()
-        .jsonBodyIsEmptyArray()
-    }
-
-    "return code 404 for an FHL property business that does not exist" in {
-      given()
-        .userIsAuthorisedForTheResource(nino)
-        .when()
-        .get(s"/ni/$nino/uk-properties/furnished-holiday-lettings/periods")
-        .thenAssertThat()
-        .statusIs(404)
-    }
-
-    "return code 404 for an Other property business that does not exist" in {
-      given()
-        .userIsAuthorisedForTheResource(nino)
-        .when()
-        .get(s"/ni/$nino/uk-properties/other/periods")
-        .thenAssertThat()
-        .statusIs(404)
     }
   }
 
@@ -274,7 +204,8 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(200)
           .contentTypeIsJson()
           .bodyIsLike(expected)
-          .bodyDoesNotHavePath[PeriodId]("id")
+          .selectFields(_ \\ "id")
+          .matches("\\d{4}\\-\\d{2}\\-\\d{2}_\\d{4}\\-\\d{2}\\-\\d{2}".r)
       }
 
       s"return code 404 for a $propertyType period that does not exist" in {

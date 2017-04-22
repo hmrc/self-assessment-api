@@ -21,10 +21,10 @@ import play.api.Logger
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
-import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
+import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
+import uk.gov.hmrc.selfassessmentapi.models.{PeriodSummary, des}
 
 case class PropertiesPeriodResponse(underlying: HttpResponse,
                                     from: Option[LocalDate] = None,
@@ -55,22 +55,46 @@ case class PropertiesPeriodResponse(underlying: HttpResponse,
     }
   }
 
+  def mkPeriodIdFHL(prop: FHL.Properties): FHL.Properties =
+    prop.copy(id = Some(s"${prop.from}_${prop.to}"))
+
   def periodFHL: Option[FHL.Properties] =
     json.asOpt[des.properties.FHL.Properties] match {
       case Some(prop) =>
-        Some(FHL.Properties.from(prop))
+        Some((mkPeriodIdFHL _ compose FHL.Properties.from)(prop))
       case None =>
         logger.error("The response from DES does not match the expected properties period format.")
         None
     }
 
+  def mkPeriodIdOther(prop: Other.Properties): Other.Properties =
+    prop.copy(id = Some(s"${prop.from}_${prop.to}"))
+
   def periodOther: Option[Other.Properties] =
     json.asOpt[des.properties.Other.Properties] match {
       case Some(prop) =>
-        Some(Other.Properties.from(prop))
+        Some((mkPeriodIdOther _ compose Other.Properties.from)(prop))
       case None =>
         logger.error("The response from DES does not match the expected properties period format.")
         None
+    }
+
+  def allPeriodsFHL: Seq[PeriodSummary] =
+    json.asOpt[Seq[des.properties.FHL.Properties]] match {
+      case Some(desPeriods) =>
+        desPeriods.map((mkPeriodIdFHL _ compose FHL.Properties.from)(_).asSummary)
+      case None =>
+        logger.error("The response from DES does not match the expected self-employment period format.")
+        Seq.empty
+    }
+
+  def allPeriodsOther: Seq[PeriodSummary] =
+    json.asOpt[Seq[des.properties.Other.Properties]] match {
+      case Some(desPeriods) =>
+        desPeriods.map((mkPeriodIdOther _ compose Other.Properties.from)(_).asSummary)
+      case None =>
+        logger.error("The response from DES does not match the expected self-employment period format.")
+        Seq.empty
     }
 
 }

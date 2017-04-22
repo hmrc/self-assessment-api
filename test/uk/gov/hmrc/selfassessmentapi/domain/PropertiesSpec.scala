@@ -31,12 +31,14 @@ class PropertiesSpec extends UnitSpec {
   val fhlAdjustments = FHLPropertiesAdjustments(Some(50.12), Some(38.77), Some(12.20))
 
   val otherPeriod: Other.Properties = Other.Properties(
+    None,
     LocalDate.parse("2017-04-06"),
     LocalDate.parse("2018-04-05"),
     Other.Financials(incomes = Some(Other.Incomes(rentIncome = Some(Other.Income(1000, None)))),
                      expenses = Some(Other.Expenses(premisesRunningCosts = Some(Other.Expense(50.55)))))
   )
   val fhlPeriod: FHL.Properties = FHL.Properties(
+    None,
     LocalDate.parse("2017-04-06"),
     LocalDate.parse("2018-04-05"),
     FHL.Financials(incomes = Some(FHL.Incomes(rentIncome = Some(FHL.Income(1234.56)))),

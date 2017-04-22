@@ -25,13 +25,17 @@ import uk.gov.hmrc.selfassessmentapi.models._
 
 object FHL {
 
-  final case class Properties(from: LocalDate, to: LocalDate, financials: Financials) extends Period
+  final case class Properties(id: Option[String], from: LocalDate, to: LocalDate, financials: Financials)
+      extends Period {
+    def asSummary: PeriodSummary = PeriodSummary(id.getOrElse(""), from, to)
+  }
 
   object Properties extends PeriodValidator[Properties] {
 
     implicit val writes = new Writes[Properties] {
       override def writes(o: Properties): JsValue = {
         Json.obj(
+          "id" -> o.id,
           "from" -> o.from,
           "to" -> o.to,
           "incomes" -> o.financials.incomes,
@@ -41,17 +45,19 @@ object FHL {
     }
 
     implicit val reads: Reads[Properties] = (
-      (__ \ "from").read[LocalDate] and
+      Reads.pure(None) and
+        (__ \ "from").read[LocalDate] and
         (__ \ "to").read[LocalDate] and
         (__ \ "incomes").readNullable[Incomes] and
         (__ \ "expenses").readNullable[Expenses]
-    )((from, to, incomes, expenses) => {
-      Properties(from, to, Financials(incomes, expenses))
+    )((id, from, to, incomes, expenses) => {
+      Properties(id, from, to, Financials(incomes, expenses))
     }).filter(ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD))(
       periodDateValidator)
 
     def from(o: des.properties.FHL.Properties) =
-      Properties(from = LocalDate.parse(o.from),
+      Properties(id = o.id,
+                 from = LocalDate.parse(o.from),
                  to = LocalDate.parse(o.to),
                  financials = Financials.from(o.financials))
   }
@@ -109,16 +115,22 @@ object FHL {
     def from(o: des.properties.FHL.Financials) =
       Financials(incomes = o.incomes.map(Incomes.from), expenses = o.deductions.map(Expenses.from))
   }
+
 }
 
 object Other {
-  final case class Properties(from: LocalDate, to: LocalDate, financials: Financials) extends Period
+
+  final case class Properties(id: Option[String], from: LocalDate, to: LocalDate, financials: Financials)
+      extends Period {
+    def asSummary: PeriodSummary = PeriodSummary(id.getOrElse(""), from, to)
+  }
 
   object Properties extends PeriodValidator[Properties] {
 
     implicit val writes = new Writes[Properties] {
       override def writes(o: Properties): JsValue = {
         Json.obj(
+          "id" -> o.id,
           "from" -> o.from,
           "to" -> o.to,
           "incomes" -> o.financials.incomes,
@@ -128,17 +140,19 @@ object Other {
     }
 
     implicit val reads: Reads[Properties] = (
-      (__ \ "from").read[LocalDate] and
+      Reads.pure(None) and
+        (__ \ "from").read[LocalDate] and
         (__ \ "to").read[LocalDate] and
         (__ \ "incomes").readNullable[Incomes] and
         (__ \ "expenses").readNullable[Expenses]
-    )((from, to, incomes, expenses) => {
-      Properties(from, to, Financials(incomes, expenses))
+    )((id, from, to, incomes, expenses) => {
+      Properties(id, from, to, Financials(incomes, expenses))
     }).filter(ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD))(
       periodDateValidator)
 
     def from(o: des.properties.Other.Properties) =
-      Properties(from = LocalDate.parse(o.from),
+      Properties(id = o.id,
+                 from = LocalDate.parse(o.from),
                  to = LocalDate.parse(o.to),
                  financials = Financials.from(o.financials))
   }

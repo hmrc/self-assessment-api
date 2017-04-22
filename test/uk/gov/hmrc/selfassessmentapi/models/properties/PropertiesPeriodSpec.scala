@@ -88,9 +88,9 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
       expenses <- Gen.option(genFHLExpenses)
     } yield
       if (valid)
-        FHL.Properties(from, to, FHL.Financials(incomes, expenses))
+        FHL.Properties(None, from, to, FHL.Financials(incomes, expenses))
       else
-        FHL.Properties(from, from.minusDays(1), FHL.Financials(incomes, expenses))
+        FHL.Properties(None, from, from.minusDays(1), FHL.Financials(incomes, expenses))
 
   def genOtherPropertiesPeriodicData(valid: Boolean): Gen[Other.Properties] =
     for {
@@ -100,9 +100,9 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
       expenses <- Gen.option(genOtherExpenses)
     } yield
       if (valid)
-        Other.Properties(from, to, Other.Financials(incomes, expenses))
+        Other.Properties(None, from, to, Other.Financials(incomes, expenses))
       else
-        Other.Properties(from, from.minusDays(1), Other.Financials(incomes, expenses))
+        Other.Properties(None, from, from.minusDays(1), Other.Financials(incomes, expenses))
 
   "PropertiesPeriod" should {
     "round trip FHL properties" in forAll(genFHLPropertiesPeriodicData(valid = true)) { fhlProps =>

@@ -57,13 +57,13 @@ object FHL {
 
   }
 
-  case class Properties(from: String, to: String, financials: Financials)
+  case class Properties(id: Option[String], from: String, to: String, financials: Financials)
 
   object Properties {
     implicit val format: OFormat[Properties] = Json.format[Properties]
 
     def from(o: properties.FHL.Properties): Properties =
-      Properties(from = o.from.toString, to = o.to.toString, financials = Financials.from(o.financials))
+      Properties(id = None, from = o.from.toString, to = o.to.toString, financials = Financials.from(o.financials))
   }
 
 }
@@ -120,14 +120,14 @@ object Other {
       Financials(incomes = o.incomes.map(Incomes.from), deductions = o.expenses.map(Deductions.from))
   }
 
-  case class Properties(from: String, to: String, financials: Financials)
+  case class Properties(id: Option[String], from: String, to: String, financials: Financials)
 
   object Properties {
 
     implicit val format: OFormat[Properties] = Json.format[Properties]
 
     def from(o: properties.Other.Properties): Properties =
-      Properties(from = o.from.toString, to = o.to.toString, financials = Financials.from(o.financials))
+      Properties(id = None, from = o.from.toString, to = o.to.toString, financials = Financials.from(o.financials))
   }
 
 }

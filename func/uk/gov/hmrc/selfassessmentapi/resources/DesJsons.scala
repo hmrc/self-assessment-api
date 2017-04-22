@@ -1,8 +1,10 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.models.des.properties.{FHL, Other}
+import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
+import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 
 object DesJsons {
 
@@ -244,7 +246,8 @@ object DesJsons {
 
   object Properties {
 
-    def fhlPeriod(from: String = "",
+    def fhlPeriod(id: String = "12345",
+                  from: String = "",
                   to: String = "",
                   rentIncome: BigDecimal = 0,
                   premisesRunningCosts: BigDecimal = 0,
@@ -253,18 +256,20 @@ object DesJsons {
                   professionalFees: BigDecimal = 0,
                   other: BigDecimal = 0): JsValue =
       Json.toJson(
-        FHL.Properties(from = from,
-          to = to,
-          financials =
-            FHL.Financials(incomes = Some(FHL.Incomes(rentIncome = Some(rentIncome))),
-              deductions = Some(
-                FHL.Deductions(premisesRunningCosts = Some(premisesRunningCosts),
-                  repairsAndMaintenance = Some(repairsAndMaintenance),
-                  financialCosts = Some(financialCosts),
-                  professionalFees = Some(professionalFees),
-                  other = Some(other))))))
+        FHL.Properties(id = Some(id),
+                       from = from,
+                       to = to,
+                       financials =
+                         FHL.Financials(incomes = Some(FHL.Incomes(rentIncome = Some(rentIncome))),
+                                        deductions = Some(
+                                          FHL.Deductions(premisesRunningCosts = Some(premisesRunningCosts),
+                                                         repairsAndMaintenance = Some(repairsAndMaintenance),
+                                                         financialCosts = Some(financialCosts),
+                                                         professionalFees = Some(professionalFees),
+                                                         other = Some(other))))))
 
-    def otherPeriod(from: String = "",
+    def otherPeriod(id: String = "12345",
+                    from: String = "",
                     to: String = "",
                     rentIncome: BigDecimal = 0,
                     rentIncomeTaxDeducted: Option[BigDecimal] = Some(0),
@@ -277,20 +282,11 @@ object DesJsons {
                     costOfServices: Option[BigDecimal] = Some(0),
                     other: Option[BigDecimal] = Some(0)): JsValue =
       Json.toJson(
-        Other.Properties(from = from,
-          to = to,
-          financials =
-            Other.Financials(incomes = Some(Other.Incomes(
-              rentIncome = Some(Other.Income(rentIncome, rentIncomeTaxDeducted)),
-              premiumsOfLeaseGrant = premiumsOfLeaseGrant,
-              reversePremiums = reversePremiums)),
-              deductions = Some(Other.Deductions(
-                premisesRunningCosts = premisesRunningCosts,
-                repairsAndMaintenance = repairsAndMaintenance,
-                financialCosts = financialCosts,
-                professionalFees = professionalFees,
-                costOfServices = costOfServices,
-                other = other)))))
+        Other.Properties(id = Some(id),
+                         from = from,
+                         to = to,
+                         financials =
+                           Other.Financials(incomes = Some(Other.Incomes(rentIncome = Some(Other.Income(rentIncome, rentIncomeTaxDeducted)), premiumsOfLeaseGrant = premiumsOfLeaseGrant, reversePremiums = reversePremiums)), deductions = Some(Other.Deductions(premisesRunningCosts = premisesRunningCosts, repairsAndMaintenance = repairsAndMaintenance, financialCosts = financialCosts, professionalFees = professionalFees, costOfServices = costOfServices, other = other)))))
 
     def createResponse: String = {
       s"""
@@ -376,6 +372,20 @@ object DesJsons {
         """.stripMargin
       }
     }
+
+    def periods(propertyType: PropertyType): String =
+      propertyType match {
+        case PropertyType.FHL =>
+          Json
+            .arr(fhlPeriod(id = "2017-04-06_2017-07-04", from = "2017-04-06", to = "2017-07-04"),
+                 fhlPeriod(id = "2017-07-05_2017-08-04", from = "2017-07-05", to = "2017-08-04"))
+            .toString()
+        case PropertyType.OTHER =>
+          Json
+            .arr(otherPeriod(id = "2017-04-06_2017-07-04", from = "2017-04-06", to = "2017-07-04"),
+                 otherPeriod(id = "2017-07-05_2017-08-04", from = "2017-07-05", to = "2017-08-04"))
+            .toString()
+      }
 
   }
 

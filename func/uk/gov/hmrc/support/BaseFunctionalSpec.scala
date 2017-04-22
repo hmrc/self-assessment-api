@@ -1057,7 +1057,8 @@ trait BaseFunctionalSpec extends TestApplication {
           val periodAsJsonString = propertyType match {
             case PropertyType.FHL =>
               DesJsons.Properties
-                .fhlPeriod(from = "2017-04-05",
+                .fhlPeriod(id = periodId,
+                           from = "2017-04-05",
                            to = "2018-04-04",
                            rentIncome = 200.00,
                            premisesRunningCosts = 200.00,
@@ -1068,7 +1069,8 @@ trait BaseFunctionalSpec extends TestApplication {
                 .toString()
             case PropertyType.OTHER =>
               DesJsons.Properties
-                .otherPeriod(from = "2017-04-05",
+                .otherPeriod(id = periodId,
+                             from = "2017-04-05",
                              to = "2018-04-04",
                              rentIncome = 200.00,
                              premiumsOfLeaseGrant = Some(200.00),
@@ -1092,9 +1094,45 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def periodsWillBeReturnedFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(
+            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Properties.periods(propertyType))))
+
+          givens
+        }
+
         def noPeriodFor(nino: Nino, propertyType: PropertyType, periodId: String = "def"): Givens = {
           stubFor(
             get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId"))
+              .willReturn(
+                aResponse()
+                  .withStatus(404)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.ninoNotFound)))
+
+          givens
+        }
+
+        def noPeriodsFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(
+            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(Json.arr().toString)))
+
+          givens
+        }
+
+        def doesNotExistPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(
+            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
                   .withStatus(404)
