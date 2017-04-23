@@ -74,9 +74,18 @@ object PropertiesPeriodResource extends BaseController {
         response.status match {
           case 200 =>
             id match {
-              case PropertyType.FHL => response.periodFHL.map(period => Ok(Json.toJson(period))).getOrElse(NotFound)
+              case PropertyType.FHL =>
+                response
+                  .PropertiesPeriodResponseOps[FHL.Properties, des.properties.FHL.Properties]
+                  .period
+                  .map(period => Ok(Json.toJson(period)))
+                  .getOrElse(NotFound)
               case PropertyType.OTHER =>
-                response.periodOther.map(period => Ok(Json.toJson(period))).getOrElse(NotFound)
+                response
+                  .PropertiesPeriodResponseOps[Other.Properties, des.properties.Other.Properties]
+                  .period
+                  .map(period => Ok(Json.toJson(period)))
+                  .getOrElse(NotFound)
             }
           case 400 => BadRequest(Error.from(response.json))
           case 404 => NotFound
@@ -91,8 +100,10 @@ object PropertiesPeriodResource extends BaseController {
         response.status match {
           case 200 =>
             Ok(Json.toJson(id match {
-              case PropertyType.FHL => response.allPeriodsFHL
-              case PropertyType.OTHER => response.allPeriodsOther
+              case PropertyType.FHL =>
+                response.PropertiesPeriodResponseOps[FHL.Properties, des.properties.FHL.Properties].allPeriods
+              case PropertyType.OTHER =>
+                response.PropertiesPeriodResponseOps[Other.Properties, des.properties.Other.Properties].allPeriods
             }))
           case 400 => BadRequest(Error.from(response.json))
           case 404 => NotFound
@@ -105,28 +116,26 @@ object PropertiesPeriodResource extends BaseController {
       implicit hc: HeaderCarrier): Either[ErrorResult, Future[PropertiesPeriodResponse]] =
     id match {
       case PropertyType.OTHER =>
-        validate[Other.Properties, PropertiesPeriodResponse](request.body) { period =>
-          connector.createOther(nino, period)
-        }
+        validate[Other.Properties, PropertiesPeriodResponse](request.body)(
+          PropertiesPeriodConnector[Other.Properties].create(nino, _))
+
       case PropertyType.FHL =>
-        validate[FHL.Properties, PropertiesPeriodResponse](request.body) { period =>
-          connector.createFHL(nino, period)
-        }
+        validate[FHL.Properties, PropertiesPeriodResponse](request.body)(
+          PropertiesPeriodConnector[FHL.Properties].create(nino, _))
+
     }
 
   private def validateUpdateRequest(id: PropertyType,
                                     nino: Nino,
                                     periodId: PeriodId,
                                     request: Request[JsValue]): Either[ErrorResult, Future[Boolean]] = id match {
-    case PropertyType.OTHER => {
+    case PropertyType.OTHER =>
       validate[Other.Financials, Boolean](request.body) { period =>
         OtherPropertiesPeriodService.updatePeriod(nino, periodId, period)
       }
-    }
-    case PropertyType.FHL => {
+    case PropertyType.FHL =>
       validate[FHL.Financials, Boolean](request.body) { period =>
         FHLPropertiesPeriodService.updatePeriod(nino, periodId, period)
       }
-    }
   }
 }

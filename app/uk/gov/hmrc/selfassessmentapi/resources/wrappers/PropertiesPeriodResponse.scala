@@ -24,17 +24,77 @@ import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
-import uk.gov.hmrc.selfassessmentapi.models.{PeriodSummary, des}
+import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodSummary, des}
 
 case class PropertiesPeriodResponse(underlying: HttpResponse,
                                     from: Option[LocalDate] = None,
                                     to: Option[LocalDate] = None) {
 
-  private val logger: Logger = Logger(classOf[PropertiesPeriodResponse])
+  val logger: Logger = Logger(classOf[PropertiesPeriodResponse])
 
-  val status: Int = underlying.status
+  def status: Int = underlying.status
 
   def json: JsValue = underlying.json
+
+  trait PropertiesPeriodResponseOps[P <: Period, D <: des.properties.Period] {
+    def mkPeriodId(prop: P): P
+    def period: Option[P]
+    def allPeriods: Seq[PeriodSummary]
+  }
+
+  object PropertiesPeriodResponseOps {
+
+    def apply[P <: Period, D <: des.properties.Period](
+        implicit p: PropertiesPeriodResponseOps[P, D]): PropertiesPeriodResponseOps[P, D] = implicitly
+
+    implicit object OtherPropertiesPeriodResponseOps
+        extends PropertiesPeriodResponseOps[Other.Properties, des.properties.Other.Properties] {
+      override def mkPeriodId(prop: Other.Properties): Other.Properties =
+        prop.copy(id = Some(s"${prop.from}_${prop.to}"))
+
+      override def period: Option[Other.Properties] =
+        json.asOpt[des.properties.Other.Properties] match {
+          case Some(prop) =>
+            Some((mkPeriodId _ compose Other.Properties.from)(prop))
+          case None =>
+            logger.error("The response from DES does not match the expected properties period format.")
+            None
+        }
+
+      override def allPeriods: Seq[PeriodSummary] =
+        json.asOpt[Seq[des.properties.Other.Properties]] match {
+          case Some(desPeriods) =>
+            desPeriods.map((mkPeriodId _ compose Other.Properties.from)(_).asSummary).sorted
+          case None =>
+            logger.error("The response from DES does not match the expected self-employment period format.")
+            Seq.empty
+        }
+    }
+
+    implicit object FHLPropertiesPeriodResponseOps
+        extends PropertiesPeriodResponseOps[FHL.Properties, des.properties.FHL.Properties] {
+      override def mkPeriodId(prop: FHL.Properties): FHL.Properties =
+        prop.copy(id = Some(s"${prop.from}_${prop.to}"))
+
+      override def period: Option[FHL.Properties] =
+        json.asOpt[des.properties.FHL.Properties] match {
+          case Some(prop) =>
+            Some((mkPeriodId _ compose FHL.Properties.from)(prop))
+          case None =>
+            logger.error("The response from DES does not match the expected properties period format.")
+            None
+        }
+
+      override def allPeriods: Seq[PeriodSummary] =
+        json.asOpt[Seq[des.properties.FHL.Properties]] match {
+          case Some(desPeriods) =>
+            desPeriods.map((mkPeriodId _ compose FHL.Properties.from)(_).asSummary).sorted
+          case None =>
+            logger.error("The response from DES does not match the expected self-employment period format.")
+            Seq.empty
+        }
+    }
+  }
 
   def getPeriodId: String =
     (for {
@@ -54,47 +114,5 @@ case class PropertiesPeriodResponse(underlying: HttpResponse,
         false
     }
   }
-
-  def mkPeriodIdFHL(prop: FHL.Properties): FHL.Properties =
-    prop.copy(id = Some(s"${prop.from}_${prop.to}"))
-
-  def periodFHL: Option[FHL.Properties] =
-    json.asOpt[des.properties.FHL.Properties] match {
-      case Some(prop) =>
-        Some((mkPeriodIdFHL _ compose FHL.Properties.from)(prop))
-      case None =>
-        logger.error("The response from DES does not match the expected properties period format.")
-        None
-    }
-
-  def mkPeriodIdOther(prop: Other.Properties): Other.Properties =
-    prop.copy(id = Some(s"${prop.from}_${prop.to}"))
-
-  def periodOther: Option[Other.Properties] =
-    json.asOpt[des.properties.Other.Properties] match {
-      case Some(prop) =>
-        Some((mkPeriodIdOther _ compose Other.Properties.from)(prop))
-      case None =>
-        logger.error("The response from DES does not match the expected properties period format.")
-        None
-    }
-
-  def allPeriodsFHL: Seq[PeriodSummary] =
-    json.asOpt[Seq[des.properties.FHL.Properties]] match {
-      case Some(desPeriods) =>
-        desPeriods.map((mkPeriodIdFHL _ compose FHL.Properties.from)(_).asSummary).sorted
-      case None =>
-        logger.error("The response from DES does not match the expected self-employment period format.")
-        Seq.empty
-    }
-
-  def allPeriodsOther: Seq[PeriodSummary] =
-    json.asOpt[Seq[des.properties.Other.Properties]] match {
-      case Some(desPeriods) =>
-        desPeriods.map((mkPeriodIdOther _ compose Other.Properties.from)(_).asSummary).sorted
-      case None =>
-        logger.error("The response from DES does not match the expected self-employment period format.")
-        Seq.empty
-    }
 
 }

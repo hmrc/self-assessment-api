@@ -26,7 +26,6 @@ import uk.gov.hmrc.selfassessmentapi.repositories.PropertiesRepository
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-
 trait PropertiesPeriodService[P <: Period, F <: Financials] {
   val repository: PropertiesRepository
 
@@ -37,17 +36,6 @@ trait PropertiesPeriodService[P <: Period, F <: Financials] {
       case Some(property) if propertyOps.periodExists(periodId, property) =>
         repository.update(nino, propertyOps.update(periodId, period, property))
       case _ => Future.successful(false)
-    }
-  }
-  
-  def retrieveAllPeriods(nino: Nino): Future[Option[Seq[PeriodSummary]]] = {
-    repository.retrieve(nino).map {
-      case Some(properties) => {
-        val bucket = propertyOps.periods(properties)
-
-        Some(bucket.map { case (k, v) => PeriodSummary(k, v.from, v.to) }.toSeq.sorted)
-      }
-      case None => None
     }
   }
 }
