@@ -1,6 +1,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.JsValue
+import uk.gov.hmrc.selfassessmentapi.models.PeriodId
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.support.BaseFunctionalSpec
@@ -204,8 +205,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(200)
           .contentTypeIsJson()
           .bodyIsLike(expected)
-          .selectFields(_ \\ "id")
-          .matches("\\d{4}\\-\\d{2}\\-\\d{2}_\\d{4}\\-\\d{2}\\-\\d{2}".r)
+          .bodyDoesNotHavePath[PeriodId]("id")
       }
 
       s"return code 404 for a $propertyType period that does not exist" in {

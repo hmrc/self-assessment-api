@@ -55,7 +55,7 @@ case class PropertiesPeriodResponse(underlying: HttpResponse,
       override def period: Option[Other.Properties] =
         json.asOpt[des.properties.Other.Properties] match {
           case Some(prop) =>
-            Some((mkPeriodId _ compose Other.Properties.from)(prop))
+            Some(Other.Properties.from(prop).copy(id = None))
           case None =>
             logger.error("The response from DES does not match the expected properties period format.")
             None
@@ -79,7 +79,7 @@ case class PropertiesPeriodResponse(underlying: HttpResponse,
       override def period: Option[FHL.Properties] =
         json.asOpt[des.properties.FHL.Properties] match {
           case Some(prop) =>
-            Some((mkPeriodId _ compose FHL.Properties.from)(prop))
+            Some(FHL.Properties.from(prop).copy(id = None))
           case None =>
             logger.error("The response from DES does not match the expected properties period format.")
             None
