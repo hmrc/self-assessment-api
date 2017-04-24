@@ -29,7 +29,8 @@ import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, TaxYear, _}
 case class Properties(id: BSONObjectID,
                       nino: Nino,
                       lastModifiedDateTime: DateTime = DateTime.now(DateTimeZone.UTC),
-                      accountingPeriod: AccountingPeriod = AccountingPeriod(LocalDate.parse("2017-04-06"), LocalDate.parse("2018-04-05")),
+                      accountingPeriod: AccountingPeriod =
+                        AccountingPeriod(LocalDate.parse("2017-04-06"), LocalDate.parse("2018-04-05")),
                       fhlBucket: FHLPropertiesBucket = FHLPropertiesBucket(Map.empty, Map.empty),
                       otherBucket: OtherPropertiesBucket = OtherPropertiesBucket(Map.empty, Map.empty))
     extends LastModifiedDateTime {
@@ -51,69 +52,73 @@ object Properties {
   })
 }
 
- trait PropertyPeriodOps[T <: Period, P <: PeriodicData] {
-  def periods(properties: Properties): Map[PeriodId, T]
+trait PropertyPeriodOps[P <: Period, F <: Financials] {
+  def periods(properties: Properties): Map[PeriodId, P]
 
-  def validatePeriod(period: T, properties: Properties): Either[Errors.Error, Properties]
+  def validatePeriod(period: P, properties: Properties): Either[Errors.Error, Properties]
 
   def periodExists(periodId: PeriodId, properties: Properties): Boolean
 
-  def period(periodId: PeriodId, properties: Properties): Option[T]
+  def period(periodId: PeriodId, properties: Properties): Option[P]
 
-  def setPeriodsTo(periodId: PeriodId, period: T, properties: Properties): Properties
+  def setPeriodsTo(periodId: PeriodId, period: P, properties: Properties): Properties
 
-  def update(periodId: PeriodId, periodicData: P, properties: Properties): Properties
+  def update(periodId: PeriodId, financials: F, properties: Properties): Properties
 }
 
 object PropertyPeriodOps {
-  implicit object OtherPeriodOps extends PropertyPeriodOps[OtherProperties, OtherPeriodicData] {
+  implicit object OtherPeriodOps extends PropertyPeriodOps[Other.Properties, Other.Financials] {
 
-    override def periods(properties: Properties): Map[PeriodId, OtherProperties] = properties.otherBucket.periods
+    override def periods(properties: Properties): Map[PeriodId, Other.Properties] = properties.otherBucket.periods
 
-    override def validatePeriod(period: OtherProperties, properties: Properties): Either[Errors.Error, Properties] = {
+    override def validatePeriod(period: Other.Properties, properties: Properties): Either[Errors.Error, Properties] = {
       val errors = properties.otherBucket.validatePeriod(period, properties.accountingPeriod)
       errors.map(Left(_)).getOrElse(Right(properties))
     }
 
-    override def periodExists(periodId: PeriodId, properties: Properties): Boolean = period(periodId, properties).isDefined
+    override def periodExists(periodId: PeriodId, properties: Properties): Boolean =
+      period(periodId, properties).isDefined
 
-    override def period(periodId: PeriodId, properties: Properties): Option[OtherProperties] =
+    override def period(periodId: PeriodId, properties: Properties): Option[Other.Properties] =
       properties.otherBucket.periods.get(periodId)
 
-    override def setPeriodsTo(periodId: PeriodId, period: OtherProperties, properties: Properties): Properties =
-      properties.copy(otherBucket = properties.otherBucket.copy(periods = properties.otherBucket.periods.updated(periodId, period)))
+    override def setPeriodsTo(periodId: PeriodId, period: Other.Properties, properties: Properties): Properties =
+      properties.copy(
+        otherBucket = properties.otherBucket.copy(periods = properties.otherBucket.periods.updated(periodId, period)))
 
-    override def update(periodId: PeriodId, periodicData: OtherPeriodicData, properties: Properties): Properties = {
+    override def update(periodId: PeriodId, financials: Other.Financials, properties: Properties): Properties = {
       val periodOpt = properties.otherBucket.periods.find(period => period._1.equals(periodId))
 
       periodOpt.map { period =>
-        setPeriodsTo(periodId, period._2.copy(data = periodicData), properties)
+        setPeriodsTo(periodId, period._2.copy(financials = financials), properties)
       }.get
     }
   }
 
-  implicit object FHLPeriodOps extends PropertyPeriodOps[FHLProperties, FHLPeriodicData] {
+  implicit object FHLPeriodOps extends PropertyPeriodOps[FHL.Properties, FHL.Financials] {
 
-    override def periods(properties: Properties): Map[PeriodId, FHLProperties] = properties.fhlBucket.periods
+    override def periods(properties: Properties): Map[PeriodId, FHL.Properties] = properties.fhlBucket.periods
 
-    override def validatePeriod(period: FHLProperties, properties: Properties): Either[Error, Properties] = {
+    override def validatePeriod(period: FHL.Properties, properties: Properties): Either[Error, Properties] = {
       val errors = properties.fhlBucket.validatePeriod(period, properties.accountingPeriod)
       errors.map(Left(_)).getOrElse(Right(properties))
     }
 
-    override def periodExists(periodId: PeriodId, properties: Properties): Boolean = period(periodId, properties).isDefined
+    override def periodExists(periodId: PeriodId, properties: Properties): Boolean =
+      period(periodId, properties).isDefined
 
-    override def period(periodId: PeriodId, properties: Properties): Option[FHLProperties] =
+    override def period(periodId: PeriodId, properties: Properties): Option[FHL.Properties] =
       properties.fhlBucket.periods.get(periodId)
 
-    override def setPeriodsTo(periodId: PeriodId, period: FHLProperties, properties: Properties): Properties =
-      properties.copy(fhlBucket = properties.fhlBucket.copy(periods = properties.fhlBucket.periods.updated(periodId, period)))
+    override def setPeriodsTo(periodId: PeriodId, period: FHL.Properties, properties: Properties): Properties =
+      properties.copy(
+        fhlBucket = properties.fhlBucket.copy(periods = properties.fhlBucket.periods.updated(periodId, period)))
 
-    override def update(periodId: PeriodId, periodicData: FHLPeriodicData, properties: Properties): Properties = {
+    override def update(periodId: PeriodId, financials: FHL.Financials, properties: Properties): Properties = {
       val periodOpt = properties.fhlBucket.periods.find(period => period._1.equals(periodId))
 
       periodOpt.map { period =>
-        setPeriodsTo(periodId, period._2.copy(data = periodicData), properties)
+        setPeriodsTo(periodId, period._2.copy(financials = financials), properties)
       }.get
     }
   }

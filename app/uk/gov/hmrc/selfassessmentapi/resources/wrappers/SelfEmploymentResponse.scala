@@ -23,7 +23,6 @@ import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentRetrieve
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, des}
 
-
 class SelfEmploymentResponse(underlying: HttpResponse) {
 
   private val logger: Logger = Logger(classOf[SelfEmploymentResponse])
@@ -41,27 +40,25 @@ class SelfEmploymentResponse(underlying: HttpResponse) {
     }
   }
 
-  def selfEmployment(id: SourceId): Option[SelfEmploymentRetrieve] = {
+  def selfEmployment(id: SourceId): Option[SelfEmploymentRetrieve] =
     (json \ "businessData").asOpt[Seq[des.SelfEmployment]] match {
       case Some(selfEmployments) =>
-        selfEmployments.find(_.incomeSourceId.exists(_ == id)).flatMap { se =>
-          SelfEmploymentRetrieve.from(se, withId = false)
-        }
-      case None => {
+        for {
+          desSe <- selfEmployments.find(_.incomeSourceId.exists(_ == id))
+          se <- SelfEmploymentRetrieve.from(desSe)
+        } yield se.copy(id = None)
+      case None =>
         logger.error("The 'businessData' field was not found in the response from DES")
         None
-      }
     }
-  }
 
   def listSelfEmployment: Seq[SelfEmploymentRetrieve] = {
     (json \ "businessData").asOpt[Seq[des.SelfEmployment]] match {
       case Some(selfEmployments) =>
-        selfEmployments.flatMap(SelfEmploymentRetrieve.from(_))
-      case None => {
+        selfEmployments.flatMap(SelfEmploymentRetrieve.from)
+      case None =>
         logger.error("The 'businessData' field was not found in the response from DES")
         Seq.empty
-      }
     }
   }
 }

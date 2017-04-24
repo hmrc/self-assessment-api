@@ -14,6 +14,24 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models
+package uk.gov.hmrc.selfassessmentapi.models.des.properties
 
-trait PeriodicData
+import play.api.libs.json._
+import uk.gov.hmrc.selfassessmentapi.models.properties
+
+case class Properties()
+
+object Properties {
+  implicit val reads: Reads[Properties] = new Reads[Properties] {
+    override def reads(json: JsValue) = json match {
+      case JsObject(_) => JsSuccess(Properties())
+      case _ => JsError()
+    }
+  }
+  implicit val writes: Writes[Properties] = new Writes[Properties] {
+    override def writes(o: Properties) = Json.obj()
+  }
+
+  def from(apiProperties: properties.Properties): Properties = Properties()
+
+}

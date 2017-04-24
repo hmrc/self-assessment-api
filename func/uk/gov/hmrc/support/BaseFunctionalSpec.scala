@@ -9,9 +9,11 @@ import play.api.libs.json._
 import uk.gov.hmrc.api.controllers.ErrorNotFound
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.selfassessmentapi.{NinoGenerator, TestApplication}
+import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
+import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.{ErrorNotImplemented, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.DesJsons
+import uk.gov.hmrc.selfassessmentapi.{NinoGenerator, TestApplication}
 
 import scala.collection.mutable
 import scala.util.matching.Regex
@@ -21,11 +23,10 @@ trait BaseFunctionalSpec extends TestApplication {
   protected val nino = NinoGenerator().nextNino()
 
   class Assertions(request: String, response: HttpResponse)(implicit urlPathVariables: mutable.Map[String, String])
-    extends UrlInterpolation {
+      extends UrlInterpolation {
     def jsonBodyIsEmptyObject() = response.json shouldBe Json.obj()
 
     def jsonBodyIsEmptyArray() = response.json shouldBe JsArray()
-
 
     def responseContainsHeader(name: String, pattern: Regex) = {
       response.header(name).get should fullyMatch regex pattern
@@ -455,6 +456,19 @@ trait BaseFunctionalSpec extends TestApplication {
         givens
       }
 
+      def invalidOriginatorIdFor(nino: Nino): Givens = {
+        stubFor(
+          any(urlMatching(s".*/nino/$nino.*"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.invalidOriginatorId)
+            ))
+
+        givens
+      }
+
       def serviceUnavailableFor(nino: Nino): Givens = {
         stubFor(any(urlMatching(s".*/nino/$nino.*"))
           .willReturn(
@@ -645,6 +659,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
           givens
         }
+
 
         def noPeriodFor(nino: Nino, id: String = "abc", periodId: String = "def"): Givens = {
           stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries/$periodId"))
@@ -867,6 +882,250 @@ trait BaseFunctionalSpec extends TestApplication {
 
           givens
         }
+      }
+
+
+      object properties {
+
+        def willBeCreatedFor(nino: Nino): Givens = {
+          stubFor(
+            post(urlEqualTo(s"/income-tax-self-assessment/nino/$nino/properties"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Properties.createResponse)))
+          givens
+        }
+
+        def willConflict(nino: Nino): Givens = {
+          stubFor(
+            post(urlEqualTo(s"/income-tax-self-assessment/nino/$nino/properties"))
+              .willReturn(
+                aResponse()
+                  .withStatus(403)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.propertyConflict)
+              ))
+
+          givens
+        }
+
+        def willBeReturnedFor(nino: Nino): Givens = {
+          stubFor(
+            get(urlEqualTo(s"/registration/business-details/nino/$nino"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Properties.retrieveProperty)))
+          givens
+        }
+
+        def willReturnNone(nino: Nino): Givens = {
+          stubFor(
+            get(urlEqualTo(s"/registration/business-details/nino/$nino"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Properties.retrieveNoProperty)))
+          givens
+        }
+
+        def returnObligationsFor(nino: Nino, id: String = "abc"): Givens = {
+          stubFor(
+            get(urlEqualTo(s"/ni/$nino/self-employments/$id/obligations"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Obligations())))
+
+          givens
+        }
+
+        def annualSummaryWillBeUpdatedFor(nino: Nino,
+                                          propertyType: PropertyType,
+                                          taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(
+            put(urlEqualTo(
+              s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
+              .willReturn(aResponse()
+                .withStatus(200)))
+
+          givens
+        }
+
+        def annualSummaryWillNotBeReturnedFor(nino: Nino,
+                                              propertyType: PropertyType,
+                                              taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(
+            any(urlEqualTo(
+              s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
+              .willReturn(
+                aResponse()
+                  .withStatus(404)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.ninoNotFound)))
+
+          givens
+        }
+
+        def annualSummaryWillBeReturnedFor(nino: Nino,
+                                           propertyType: PropertyType,
+                                           taxYear: TaxYear = TaxYear("2017-18"),
+                                           response: String = ""): Givens = {
+          stubFor(
+            get(urlEqualTo(
+              s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(response)))
+
+          givens
+        }
+
+        def noAnnualSummaryFor(nino: Nino, propertyType: PropertyType, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(
+            get(urlEqualTo(
+              s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(Json.obj().toString)))
+
+          givens
+        }
+
+        def periodWillBeCreatedFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(
+            post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Properties.Period.createResponse())))
+
+          givens
+        }
+
+        def invalidPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(
+            post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+              .willReturn(
+                aResponse()
+                  .withStatus(400)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.invalidPeriod)))
+
+          givens
+        }
+
+        def periodWillBeNotBeCreatedFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(
+            post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+              .willReturn(
+                aResponse()
+                  .withStatus(404)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.notFound)))
+
+          givens
+        }
+
+        def periodWillBeReturnedFor(nino: Nino, propertyType: PropertyType, periodId: String = "def"): Givens = {
+          val periodAsJsonString = propertyType match {
+            case PropertyType.FHL =>
+              DesJsons.Properties
+                .fhlPeriod(id = periodId,
+                           from = "2017-04-05",
+                           to = "2018-04-04",
+                           rentIncome = 200.00,
+                           premisesRunningCosts = 200.00,
+                           repairsAndMaintenance = 200.00,
+                           financialCosts = 200.00,
+                           professionalFees = 200.00,
+                           other = 200.00)
+                .toString()
+            case PropertyType.OTHER =>
+              DesJsons.Properties
+                .otherPeriod(id = periodId,
+                             from = "2017-04-05",
+                             to = "2018-04-04",
+                             rentIncome = 200.00,
+                             premiumsOfLeaseGrant = Some(200.00),
+                             reversePremiums = Some(200.00),
+                             premisesRunningCosts = Some(200.00),
+                             repairsAndMaintenance = Some(200.00),
+                             financialCosts = Some(200.00),
+                             professionalFees = Some(200.00),
+                             costOfServices = Some(200.00),
+                             other = Some(200.00))
+                .toString()
+          }
+          stubFor(
+            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(periodAsJsonString)))
+
+          givens
+        }
+
+        def periodsWillBeReturnedFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(
+            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Properties.periods(propertyType))))
+
+          givens
+        }
+
+        def noPeriodFor(nino: Nino, propertyType: PropertyType, periodId: String = "def"): Givens = {
+          stubFor(
+            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId"))
+              .willReturn(
+                aResponse()
+                  .withStatus(404)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.ninoNotFound)))
+
+          givens
+        }
+
+        def noPeriodsFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(
+            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(Json.arr().toString)))
+
+          givens
+        }
+
+        def doesNotExistPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(
+            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+              .willReturn(
+                aResponse()
+                  .withStatus(404)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.ninoNotFound)))
+
+          givens
+        }
+
       }
 
     }

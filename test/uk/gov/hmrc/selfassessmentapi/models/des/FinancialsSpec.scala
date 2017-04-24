@@ -24,27 +24,27 @@ class FinancialsSpec extends JsonSpec {
   "from" should {
     "correctly map a API self-employment update into a DES self-employment update" in {
       val apiUpdate = models.selfemployment.SelfEmploymentPeriodUpdate(
-        incomes = Some(models.selfemployment.Incomes(
-          turnover = Some(SimpleIncome(10.10)),
-          other = Some(SimpleIncome(10.10)))),
-        expenses = Some(models.selfemployment.Expenses(
-          cisPaymentsToSubcontractors = Some(Expense(10.10, Some(10.10))),
-          depreciation = Some(Expense(10.10, Some(10.10))),
-          costOfGoodsBought = Some(Expense(10.10, Some(10.10))),
-          professionalFees = Some(Expense(10.10, Some(10.10))),
-          badDebt = Some(Expense(10.10, Some(10.10))),
-          adminCosts = Some(Expense(10.10, Some(10.10))),
-          advertisingCosts = Some(Expense(10.10, Some(10.10))),
-          financialCharges = Some(Expense(10.10, Some(10.10))),
-          interest = Some(Expense(10.10, Some(10.10))),
-          maintenanceCosts = Some(Expense(10.10, Some(10.10))),
-          premisesRunningCosts = Some(Expense(10.10, Some(10.10))),
-          staffCosts = Some(Expense(10.10, Some(10.10))),
-          travelCosts = Some(Expense(10.10, Some(10.10))),
-          other = Some(Expense(10.10, Some(10.10)))
-        )))
+        incomes =
+          Some(models.selfemployment.Incomes(turnover = Some(SimpleIncome(10.10)), other = Some(SimpleIncome(10.10)))),
+        expenses = Some(
+          models.selfemployment.Expenses(
+            cisPaymentsToSubcontractors = Some(Expense(10.10, Some(10.10))),
+            depreciation = Some(Expense(10.10, Some(10.10))),
+            costOfGoodsBought = Some(Expense(10.10, Some(10.10))),
+            professionalFees = Some(Expense(10.10, Some(10.10))),
+            badDebt = Some(Expense(10.10, Some(10.10))),
+            adminCosts = Some(Expense(10.10, Some(10.10))),
+            advertisingCosts = Some(Expense(10.10, Some(10.10))),
+            financialCharges = Some(Expense(10.10, Some(10.10))),
+            interest = Some(Expense(10.10, Some(10.10))),
+            maintenanceCosts = Some(Expense(10.10, Some(10.10))),
+            premisesRunningCosts = Some(Expense(10.10, Some(10.10))),
+            staffCosts = Some(Expense(10.10, Some(10.10))),
+            travelCosts = Some(Expense(10.10, Some(10.10))),
+            other = Some(Expense(10.10, Some(10.10)))
+          )))
 
-      val desUpdate = Financials.from(apiUpdate.incomes, apiUpdate.expenses)
+      val desUpdate = Financials.from(apiUpdate)
       val desIncomes = desUpdate.incomes.get
       val desDeductions = desUpdate.deductions.get
 

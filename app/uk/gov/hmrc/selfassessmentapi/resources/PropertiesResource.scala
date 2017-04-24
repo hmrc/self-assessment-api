@@ -19,42 +19,51 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors._
 import uk.gov.hmrc.selfassessmentapi.models._
-import uk.gov.hmrc.selfassessmentapi.services.PropertiesService
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object PropertiesResource extends BaseResource {
 
-  private lazy val FeatureSwitch: FeatureSwitchAction = FeatureSwitchAction(SourceType.Properties)
+ private lazy val FeatureSwitch: FeatureSwitchAction = FeatureSwitchAction(SourceType.Properties)
 
-  private val service = PropertiesService()
+  private val connector = PropertiesConnector
 
   def create(nino: Nino): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
-      validate[properties.Properties, Either[Error, Boolean]](request.body) {
-        service.create(nino, _)
+      validate[properties.Properties, PropertiesResponse](request.body) { props =>
+        connector.create(nino, props)
       } match {
         case Left(errorResult) =>
           Future.successful(handleValidationErrors(errorResult))
-        case Right(result) => result.map {
-          case Right(successful) =>
-            if (successful) Created.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/uk-properties")
-            else InternalServerError
-          case Left(_) => Conflict.withHeaders(LOCATION ->  s"/self-assessment/ni/$nino/uk-properties")
-        }
+        case Right(response) =>
+          response.map { response =>
+            if (response.status == 200) Created.withHeaders(LOCATION -> response.createLocationHeader(nino))
+            else if (response.status == 403) Conflict.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/uk-properties")
+            else if (response.status == 400) BadRequest(Error.from(response.json))
+            else if (response.status == 404) NotFound
+            else unhandledResponse(response.status, logger)
+          }
       }
     }
   }
 
-  def retrieve(nino: Nino): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
+  def retrieve(nino: Nino): Action[AnyContent] = FeatureSwitch.async { implicit request =>
     withAuth(nino) {
-      service.retrieve(nino).map {
-        case Some(properties) => Ok(Json.toJson(properties))
-        case None => NotFound
+      connector.retrieve(nino).map { response =>
+        if (response.status == 200) response.property match {
+          case Some(property) => Ok(Json.toJson(property))
+          case None => NotFound
+        }
+        else if (response.status == 404) NotFound
+        else if (response.status == 400) BadRequest(Error.from(response.json))
+        else unhandledResponse(response.status, logger)
       }
+
     }
   }
 }

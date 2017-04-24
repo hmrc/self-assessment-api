@@ -22,43 +22,54 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models._
 
-case class SelfEmploymentPeriod(id: Option[String], from: LocalDate, to: LocalDate, incomes: Option[Incomes], expenses: Option[Expenses]) extends Period {
+case class SelfEmploymentPeriod(id: Option[String],
+                                from: LocalDate,
+                                to: LocalDate,
+                                incomes: Option[Incomes],
+                                expenses: Option[Expenses])
+    extends Period {
   def asSummary: PeriodSummary = PeriodSummary(id.getOrElse(""), from, to)
 }
 
 object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
 
-  def from(desPeriod: des.SelfEmploymentPeriod, elideId: Boolean = false): SelfEmploymentPeriod = {
+  def from(desPeriod: des.SelfEmploymentPeriod): SelfEmploymentPeriod =
     SelfEmploymentPeriod(
-      id = if (elideId) None else desPeriod.id,
+      id = desPeriod.id,
       from = LocalDate.parse(desPeriod.from),
       to = LocalDate.parse(desPeriod.to),
-      incomes = incomes2Map(desPeriod),
-      expenses = expenses2Map(desPeriod))
-  }
+      incomes = fromDESIncomes(desPeriod),
+      expenses = fromDESExpenses(desPeriod)
+    )
 
-  private def incomes2Map(desPeriod: des.SelfEmploymentPeriod): Option[Incomes] = {
+  private def fromDESIncomes(desPeriod: des.SelfEmploymentPeriod): Option[Incomes] = {
     desPeriod.financials.flatMap(_.incomes.map { incomes =>
-      Incomes(
-        turnover = incomes.turnover.map(SimpleIncome(_)),
-        other = incomes.other.map(SimpleIncome(_)))
+      Incomes(turnover = incomes.turnover.map(SimpleIncome(_)), other = incomes.other.map(SimpleIncome(_)))
     })
   }
 
-  private def expenses2Map(desPeriod: des.SelfEmploymentPeriod): Option[Expenses] = {
+  private def fromDESExpenses(desPeriod: des.SelfEmploymentPeriod): Option[Expenses] = {
     desPeriod.financials.flatMap(_.deductions.map { deductions =>
       Expenses(
-        cisPaymentsToSubcontractors = deductions.constructionIndustryScheme.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        depreciation = deductions.depreciation.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        costOfGoodsBought = deductions.costOfGoods.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        professionalFees = deductions.professionalFees.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
+        cisPaymentsToSubcontractors = deductions.constructionIndustryScheme.map(deduction =>
+          Expense(deduction.amount, deduction.disallowableAmount)),
+        depreciation =
+          deductions.depreciation.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
+        costOfGoodsBought =
+          deductions.costOfGoods.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
+        professionalFees =
+          deductions.professionalFees.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         badDebt = deductions.badDebt.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         adminCosts = deductions.adminCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        advertisingCosts = deductions.advertisingCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        financialCharges = deductions.financialCharges.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
+        advertisingCosts =
+          deductions.advertisingCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
+        financialCharges =
+          deductions.financialCharges.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         interest = deductions.interest.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        maintenanceCosts = deductions.maintenanceCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        premisesRunningCosts = deductions.premisesRunningCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
+        maintenanceCosts =
+          deductions.maintenanceCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
+        premisesRunningCosts =
+          deductions.premisesRunningCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         staffCosts = deductions.staffCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         travelCosts = deductions.travelCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         other = deductions.other.map(deduction => Expense(deduction.amount, deduction.disallowableAmount))
@@ -70,11 +81,12 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
 
   implicit val reads: Reads[SelfEmploymentPeriod] = (
     Reads.pure(None) and
-    (__ \ "from").read[LocalDate] and
+      (__ \ "from").read[LocalDate] and
       (__ \ "to").read[LocalDate] and
       (__ \ "incomes").readNullable[Incomes] and
       (__ \ "expenses").readNullable[Expenses]
-    ) (SelfEmploymentPeriod.apply _)
-    .filter(ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD))(periodDateValidator)
+  )(SelfEmploymentPeriod.apply _)
+    .filter(ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD))(
+      periodDateValidator)
 
 }

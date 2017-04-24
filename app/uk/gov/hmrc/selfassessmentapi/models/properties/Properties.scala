@@ -17,19 +17,23 @@
 package uk.gov.hmrc.selfassessmentapi.models.properties
 
 import play.api.libs.json._
+import uk.gov.hmrc.selfassessmentapi.models.des.properties
 
 case class Properties()
 
 object Properties {
-  // these odd choices are a workaround to the fact that you cannot use Json.reads[Properties] on an case class with
-  // new properties
+  // these odd choices are a workaround to the fact that you cannot use Json.reads[Properties] on an case class with no properties
   implicit val reads: Reads[Properties] = new Reads[Properties] {
     override def reads(json: JsValue) = json match {
-      case JsObject(_) => JsSuccess (Properties ())
+      case JsObject(_) => JsSuccess(Properties())
       case _ => JsError()
     }
   }
+
   implicit val writes: Writes[Properties] = new Writes[Properties] {
-    override def writes(o: Properties) = JsObject(Seq())
+    override def writes(o: Properties) = Json.obj()
   }
+
+  def from(desProperties: properties.Properties): Properties = Properties()
+
 }

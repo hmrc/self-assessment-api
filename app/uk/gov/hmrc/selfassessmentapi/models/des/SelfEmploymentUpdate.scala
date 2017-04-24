@@ -19,9 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.models.des
 import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.selfassessmentapi.models
 
-case class SelfEmploymentUpdate(tradingName: String,
-                                typeOfBusiness: String,
-                                addressDetails: SelfEmploymentAddress)
+case class SelfEmploymentUpdate(tradingName: String, typeOfBusiness: String, addressDetails: SelfEmploymentAddress)
 
 object SelfEmploymentUpdate {
   implicit val writes: Writes[SelfEmploymentUpdate] = Json.writes[SelfEmploymentUpdate]
@@ -39,4 +37,5 @@ object SelfEmploymentUpdate {
       )
     )
   }
+
 }

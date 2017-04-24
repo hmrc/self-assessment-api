@@ -18,8 +18,8 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.resources.{JsonSpec, Jsons}
 import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, ErrorCode}
+import uk.gov.hmrc.selfassessmentapi.resources.{JsonSpec, Jsons}
 
 class SelfEmploymentSpec extends JsonSpec {
 
