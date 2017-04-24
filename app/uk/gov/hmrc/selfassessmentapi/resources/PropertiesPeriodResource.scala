@@ -33,10 +33,10 @@ import scala.concurrent.Future
 
 object PropertiesPeriodResource extends BaseResource {
 
-  lazy val featureSwitch = FeatureSwitchAction(SourceType.Properties, "periods")
+  lazy val FeatureSwitch = FeatureSwitchAction(SourceType.Properties, "periods")
   private val connector = PropertiesPeriodConnector
 
-  def createPeriod(nino: Nino, id: PropertyType): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch {
+  def createPeriod(nino: Nino, id: PropertyType): Action[JsValue] = FeatureSwitch.async(parse.json) {
     implicit request =>
       withAuth(nino) {
         validateCreateRequest(id, nino, request) match {
@@ -55,7 +55,7 @@ object PropertiesPeriodResource extends BaseResource {
       }
   }
 
-  def updatePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
+  def updatePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
       validateUpdateRequest(id, nino, periodId, request) match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
@@ -67,56 +67,55 @@ object PropertiesPeriodResource extends BaseResource {
     }
   }
 
-  def retrievePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[AnyContent] =
-    featureSwitch.asyncFeatureSwitch { implicit request =>
-      withAuth(nino) {
-        connector.retrieve(nino, periodId, id).map { response =>
-          response.status match {
-            case 200 =>
-              id match {
-                case PropertyType.FHL =>
-                  response
-                    .PropertiesPeriodResponseOps[FHL.Properties, des.properties.FHL.Properties]
-                    .period
-                    .map(period => Ok(Json.toJson(period)))
-                    .getOrElse(NotFound)
-                case PropertyType.OTHER =>
-                  response
-                    .PropertiesPeriodResponseOps[Other.Properties, des.properties.Other.Properties]
-                    .period
-                    .map(period => Ok(Json.toJson(period)))
-                    .getOrElse(NotFound)
-              }
-            case 400 => BadRequest(Error.from(response.json))
-            case 404 => NotFound
-            case _ => unhandledResponse(response.status, logger)
-          }
-        }
-      }
-    }
+  def retrievePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[AnyContent] = FeatureSwitch.async { implicit request =>
+    withAuth(nino) {
+      connector.retrieve(nino, periodId, id).map { response =>
+        response.status match {
+          case 200 =>
+            id match {
+              case PropertyType.FHL =>
+                response
+                  .PropertiesPeriodResponseOps[FHL.Properties, des.properties.FHL.Properties]
+                  .period
+                  .map(period => Ok(Json.toJson(period)))
+                  .getOrElse(NotFound)
 
-  def retrievePeriods(nino: Nino, id: PropertyType): Action[AnyContent] =
-    featureSwitch.asyncFeatureSwitch { implicit request =>
-      withAuth(nino) {
-        connector.retrieveAll(nino, id).map { response =>
-          response.status match {
-            case 200 =>
-              Ok(Json.toJson(id match {
-                case PropertyType.FHL =>
-                  response.PropertiesPeriodResponseOps[FHL.Properties, des.properties.FHL.Properties].allPeriods
-                case PropertyType.OTHER =>
-                  response.PropertiesPeriodResponseOps[Other.Properties, des.properties.Other.Properties].allPeriods
-              }))
-            case 400 => BadRequest(Error.from(response.json))
-            case 404 => NotFound
-            case _ => unhandledResponse(response.status, logger)
-          }
+              case PropertyType.OTHER =>
+                response
+                  .PropertiesPeriodResponseOps[Other.Properties, des.properties.Other.Properties]
+                  .period
+                  .map(period => Ok(Json.toJson(period)))
+                  .getOrElse(NotFound)
+            }
+          case 400 => BadRequest(Error.from(response.json))
+          case 404 => NotFound
+          case _ => unhandledResponse(response.status, logger)
         }
       }
     }
+  }
+
+  def retrievePeriods(nino: Nino, id: PropertyType): Action[AnyContent] = FeatureSwitch.async { implicit request =>
+    withAuth(nino) {
+      connector.retrieveAll(nino, id).map { response =>
+        response.status match {
+          case 200 =>
+            Ok(Json.toJson(id match {
+              case PropertyType.FHL =>
+                response.PropertiesPeriodResponseOps[FHL.Properties, des.properties.FHL.Properties].allPeriods
+              case PropertyType.OTHER =>
+                response.PropertiesPeriodResponseOps[Other.Properties, des.properties.Other.Properties].allPeriods
+            }))
+          case 400 => BadRequest(Error.from(response.json))
+          case 404 => NotFound
+          case _ => unhandledResponse(response.status, logger)
+        }
+      }
+    }
+  }
 
   private def validateCreateRequest(id: PropertyType, nino: Nino, request: Request[JsValue])(
-      implicit hc: HeaderCarrier): Either[ErrorResult, Future[PropertiesPeriodResponse]] =
+    implicit hc: HeaderCarrier): Either[ErrorResult, Future[PropertiesPeriodResponse]] =
     id match {
       case PropertyType.OTHER =>
         validate[Other.Properties, PropertiesPeriodResponse](request.body)(

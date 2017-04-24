@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.Action
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
@@ -30,10 +30,10 @@ import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
 
 object SelfEmploymentsResource extends BaseResource {
-  private lazy val seFeatureSwitch = FeatureSwitchAction(SourceType.SelfEmployments)
+  private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.SelfEmployments)
   private val connector = SelfEmploymentConnector
 
-  def create(nino: Nino): Action[JsValue] = seFeatureSwitch.asyncJsonFeatureSwitch { implicit request =>
+  def create(nino: Nino): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
       validate[SelfEmployment, SelfEmploymentResponse](request.body) { selfEmployment =>
         connector.create(nino, Business.from(selfEmployment))
@@ -59,7 +59,7 @@ object SelfEmploymentsResource extends BaseResource {
   }
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
-  def update(nino: Nino, id: SourceId): Action[JsValue] = seFeatureSwitch.asyncJsonFeatureSwitch { implicit request =>
+  def update(nino: Nino, id: SourceId): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
       validate[SelfEmploymentUpdate, SelfEmploymentResponse](request.body) { selfEmployment =>
         connector.update(nino, des.SelfEmploymentUpdate.from(selfEmployment), id)
@@ -78,7 +78,7 @@ object SelfEmploymentsResource extends BaseResource {
     }
   }
 
-  def retrieve(nino: Nino, id: SourceId): Action[AnyContent] = seFeatureSwitch.asyncFeatureSwitch { implicit request =>
+  def retrieve(nino: Nino, id: SourceId) = FeatureSwitch.async(parse.empty) { implicit request =>
     withAuth(nino) {
       connector.get(nino).map { response =>
         response.status match {
@@ -91,7 +91,7 @@ object SelfEmploymentsResource extends BaseResource {
     }
   }
 
-  def retrieveAll(nino: Nino): Action[AnyContent] = seFeatureSwitch.asyncFeatureSwitch { implicit request =>
+  def retrieveAll(nino: Nino) = FeatureSwitch.async(parse.empty) { implicit request =>
     withAuth(nino) {
       connector.get(nino).map { response =>
         response.status match {

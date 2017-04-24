@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.libs.json._
-import play.api.libs.streams.Accumulator
 import play.api.mvc.Results._
 import play.api.mvc._
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
@@ -25,28 +23,10 @@ import uk.gov.hmrc.selfassessmentapi.models.SourceType.SourceType
 
 import scala.concurrent.Future
 
-class FeatureSwitchAction(source: SourceType, summary: String) extends ActionBuilder[Request] {
+case class FeatureSwitchAction(source: SourceType, summary: String = "") extends ActionBuilder[Request] {
   private val isFeatureEnabled = FeatureSwitch(AppContext.featureSwitch).isEnabled(source, summary)
-  private val notFound = Future.successful(NotFound)
-
   override def invokeBlock[A](request: Request[A], block: (Request[A]) => Future[Result]): Future[Result] = {
-    block(request)
-  }
-
-  def asyncJsonFeatureSwitch(block: Request[JsValue] => Future[Result]): Action[JsValue] = {
-
-    val emptyJsonParser: BodyParser[JsValue] = BodyParser { _ => Accumulator.done(Right(JsNull)) }
-
-    if (isFeatureEnabled) async(BodyParsers.parse.json)(block)
-    else async[JsValue](emptyJsonParser)(_ => notFound)
-  }
-
-  def asyncFeatureSwitch(block: RequestHeader => Future[Result]): Action[AnyContent] = {
-    if (isFeatureEnabled) async(block)
-    else async(notFound)
+    if (isFeatureEnabled) block(request) else Future.successful(NotFound)
   }
 }
 
-object FeatureSwitchAction {
-  def apply(source: SourceType, summary: String = "") = new FeatureSwitchAction(source, summary)
-}

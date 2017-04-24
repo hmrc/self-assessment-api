@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.Action
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
@@ -29,10 +29,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object SelfEmploymentPeriodResource extends BaseResource {
-  private lazy val featureSwitch = FeatureSwitchAction(SourceType.SelfEmployments, "periods")
+  private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.SelfEmployments, "periods")
   private val connector = SelfEmploymentPeriodConnector
 
-  def createPeriod(nino: Nino, sourceId: SourceId): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch {
+  def createPeriod(nino: Nino, sourceId: SourceId): Action[JsValue] = FeatureSwitch.async(parse.json) {
     implicit request =>
       withAuth(nino) {
         validate[SelfEmploymentPeriod, SelfEmploymentPeriodResponse](request.body) { period =>
@@ -54,33 +54,15 @@ object SelfEmploymentPeriodResource extends BaseResource {
   }
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
-  def updatePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[JsValue] =
-    featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-      withAuth(nino) {
-        validate[SelfEmploymentPeriodUpdate, SelfEmploymentPeriodResponse](request.body) { period =>
-          connector.update(nino, id, periodId, period)
-        } match {
-          case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-          case Right(result) =>
-            result.map { response =>
-              response.status match {
-                case 204 => NoContent
-                case 400 => BadRequest(Error.from(response.json))
-                case 404 => NotFound
-                case _ => unhandledResponse(response.status, logger)
-              }
-            }
-        }
-      }
-    }
-
-  // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
-  def retrievePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[AnyContent] =
-    featureSwitch.asyncFeatureSwitch { implicit request =>
-      withAuth(nino) {
-        connector.get(nino, id, periodId).map { response =>
+  def updatePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
+    withAuth(nino) {
+      validate[SelfEmploymentPeriodUpdate, SelfEmploymentPeriodResponse](request.body) { period =>
+        connector.update(nino, id, periodId, period)
+      } match {
+        case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
+        case Right(result) => result.map { response =>
           response.status match {
-            case 200 => response.period.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+            case 204 => NoContent
             case 400 => BadRequest(Error.from(response.json))
             case 404 => NotFound
             case _ => unhandledResponse(response.status, logger)
@@ -88,9 +70,24 @@ object SelfEmploymentPeriodResource extends BaseResource {
         }
       }
     }
+  }
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
-  def retrievePeriods(nino: Nino, id: SourceId): Action[AnyContent] = featureSwitch.asyncFeatureSwitch {
+  def retrievePeriod(nino: Nino, id: SourceId, periodId: PeriodId) = FeatureSwitch.async(parse.empty) { implicit request =>
+    withAuth(nino) {
+      connector.get(nino, id, periodId).map { response =>
+        response.status match {
+          case 200 => response.period.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+          case 400 => BadRequest(Error.from(response.json))
+          case 404 => NotFound
+          case _ => unhandledResponse(response.status, logger)
+        }
+      }
+    }
+  }
+
+  // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
+  def retrievePeriods(nino: Nino, id: SourceId) = FeatureSwitch.async(parse.empty) {
     implicit request =>
       withAuth(nino) {
         connector.getAll(nino, id).map { response =>

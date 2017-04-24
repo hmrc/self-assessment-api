@@ -28,10 +28,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object PropertiesResource extends BaseResource {
-  lazy val featureSwitch: FeatureSwitchAction = FeatureSwitchAction(SourceType.Properties)
+
+  private lazy val FeatureSwitch: FeatureSwitchAction = FeatureSwitchAction(SourceType.Properties)
+
   private val connector = PropertiesConnector
 
-  def create(nino: Nino): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
+  def create(nino: Nino): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
       validate[properties.Properties, PropertiesResponse](request.body) { props =>
         connector.create(nino, props)
@@ -50,7 +52,7 @@ object PropertiesResource extends BaseResource {
     }
   }
 
-  def retrieve(nino: Nino): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit request =>
+  def retrieve(nino: Nino): Action[AnyContent] = FeatureSwitch.async { implicit request =>
     withAuth(nino) {
       connector.retrieve(nino).map { response =>
         if (response.status == 200) response.property match {

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.Action
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.TaxCalculationConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
@@ -30,7 +30,7 @@ import scala.concurrent.Future
 
 object TaxCalculationResource extends BaseResource {
 
-  private lazy val featureSwitch = FeatureSwitchAction(SourceType.Calculation)
+  private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.Calculation)
   private val connector = TaxCalculationConnector
 
   private val cannedEtaResponse =
@@ -40,7 +40,7 @@ object TaxCalculationResource extends BaseResource {
        |}
      """.stripMargin
 
-  def requestCalculation(nino: Nino): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
+  def requestCalculation(nino: Nino): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
       validate[CalculationRequest, TaxCalculationResponse](request.body) { req =>
         connector.requestCalculation(nino, req.taxYear)
@@ -59,7 +59,7 @@ object TaxCalculationResource extends BaseResource {
     }
   }
 
-  def retrieveCalculation(nino: Nino, calcId: SourceId): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit request =>
+  def retrieveCalculation(nino: Nino, calcId: SourceId) = FeatureSwitch.async(parse.empty) { implicit request =>
     withAuth(nino) {
       connector.retrieveCalculation(nino, calcId).map { response =>
         response.status match {

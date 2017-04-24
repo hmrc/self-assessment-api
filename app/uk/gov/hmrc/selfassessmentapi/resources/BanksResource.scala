@@ -27,10 +27,10 @@ import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
 
 object BanksResource extends BaseResource {
-  private lazy val seFeatureSwitch = FeatureSwitchAction(SourceType.Banks)
+  private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.Banks)
   private val service = BanksService
 
-  def create(nino: Nino): Action[JsValue] = seFeatureSwitch.asyncJsonFeatureSwitch { implicit request =>
+  def create(nino: Nino): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
       validate[Bank, Option[SourceId]](request.body) { bank =>
         service.create(nino, bank)
@@ -44,7 +44,7 @@ object BanksResource extends BaseResource {
     }
   }
 
-  def update(nino: Nino, id: SourceId): Action[JsValue] = seFeatureSwitch.asyncJsonFeatureSwitch { implicit request =>
+  def update(nino: Nino, id: SourceId): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
       validate[Bank, Boolean](request.body) { bank =>
         service.update(nino, bank, id)
@@ -58,7 +58,7 @@ object BanksResource extends BaseResource {
     }
   }
 
-  def retrieve(nino: Nino, id: SourceId): Action[AnyContent] = seFeatureSwitch.asyncFeatureSwitch { implicit headers =>
+  def retrieve(nino: Nino, id: SourceId): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
     withAuth(nino) {
       service.retrieve(nino, id) map {
         case Some(bank) => Ok(Json.toJson(bank))
@@ -67,7 +67,7 @@ object BanksResource extends BaseResource {
     }
   }
 
-  def retrieveAll(nino: Nino): Action[AnyContent] = seFeatureSwitch.asyncFeatureSwitch { implicit headers =>
+  def retrieveAll(nino: Nino): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
     withAuth(nino) {
       service.retrieveAll(nino) map { seq =>
         Ok(Json.toJson(seq))
