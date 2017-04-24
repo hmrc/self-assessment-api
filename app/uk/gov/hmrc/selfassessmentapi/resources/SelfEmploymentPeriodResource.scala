@@ -22,7 +22,6 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
-import uk.gov.hmrc.selfassessmentapi.models.des.Financials
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentPeriodResponse
 
@@ -33,16 +32,55 @@ object SelfEmploymentPeriodResource extends BaseResource {
   private lazy val featureSwitch = FeatureSwitchAction(SourceType.SelfEmployments, "periods")
   private val connector = SelfEmploymentPeriodConnector
 
-  def createPeriod(nino: Nino, sourceId: SourceId): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    withAuth(nino) {
-      validate[SelfEmploymentPeriod, SelfEmploymentPeriodResponse](request.body) { period =>
-        connector.create(nino, sourceId, des.SelfEmploymentPeriod.from(period))
-      } match {
-        case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-        case Right(result) => result.map { response =>
+  def createPeriod(nino: Nino, sourceId: SourceId): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch {
+    implicit request =>
+      withAuth(nino) {
+        validate[SelfEmploymentPeriod, SelfEmploymentPeriodResponse](request.body) { period =>
+          connector.create(nino, sourceId, period)
+        } match {
+          case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
+          case Right(result) =>
+            result.map { response =>
+              response.status match {
+                case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino, sourceId))
+                case 400 if response.containsOverlappingPeriod => Forbidden(Error.asBusinessError(response.json))
+                case 400 => BadRequest(Error.from(response.json))
+                case 404 => NotFound
+                case _ => unhandledResponse(response.status, logger)
+              }
+            }
+        }
+      }
+  }
+
+  // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
+  def updatePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[JsValue] =
+    featureSwitch.asyncJsonFeatureSwitch { implicit request =>
+      withAuth(nino) {
+        validate[SelfEmploymentPeriodUpdate, SelfEmploymentPeriodResponse](request.body) { period =>
+          connector.update(nino, id, periodId, period)
+        } match {
+          case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
+          case Right(result) =>
+            result.map { response =>
+              response.status match {
+                case 204 => NoContent
+                case 400 => BadRequest(Error.from(response.json))
+                case 404 => NotFound
+                case _ => unhandledResponse(response.status, logger)
+              }
+            }
+        }
+      }
+    }
+
+  // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
+  def retrievePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[AnyContent] =
+    featureSwitch.asyncFeatureSwitch { implicit request =>
+      withAuth(nino) {
+        connector.get(nino, id, periodId).map { response =>
           response.status match {
-            case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino, sourceId).getOrElse(""))
-            case 400 if response.containsOverlappingPeriod => Forbidden(Error.asBusinessError(response.json))
+            case 200 => response.period.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
             case 400 => BadRequest(Error.from(response.json))
             case 404 => NotFound
             case _ => unhandledResponse(response.status, logger)
@@ -50,52 +88,19 @@ object SelfEmploymentPeriodResource extends BaseResource {
         }
       }
     }
-  }
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
-  def updatePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    withAuth(nino) {
-      validate[SelfEmploymentPeriodUpdate, SelfEmploymentPeriodResponse](request.body) { period =>
-        connector.update(nino, id, periodId, Financials.from(period.incomes, period.expenses))
-      } match {
-        case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-        case Right(result) => result.map { response =>
+  def retrievePeriods(nino: Nino, id: SourceId): Action[AnyContent] = featureSwitch.asyncFeatureSwitch {
+    implicit request =>
+      withAuth(nino) {
+        connector.getAll(nino, id).map { response =>
           response.status match {
-            case 204 => NoContent
+            case 200 => Ok(Json.toJson(response.allPeriods))
             case 400 => BadRequest(Error.from(response.json))
             case 404 => NotFound
             case _ => unhandledResponse(response.status, logger)
           }
         }
       }
-    }
-  }
-
-  // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
-  def retrievePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit request =>
-    withAuth(nino) {
-      connector.get(nino, id, periodId).map { response =>
-        response.status match {
-          case 200 => response.period.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
-          case 400 => BadRequest(Error.from(response.json))
-          case 404 => NotFound
-          case _ => unhandledResponse(response.status, logger)
-        }
-      }
-    }
-  }
-
-  // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
-  def retrievePeriods(nino: Nino, id: SourceId): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit request =>
-    withAuth(nino) {
-      connector.getAll(nino, id).map { response =>
-        response.status match {
-          case 200 => Ok(Json.toJson(response.allPeriods))
-          case 400 => BadRequest(Error.from(response.json))
-          case 404 => NotFound
-          case _ => unhandledResponse(response.status, logger)
-        }
-      }
-    }
   }
 }

@@ -30,16 +30,20 @@ class PropertiesSpec extends UnitSpec {
   val fhlAllowances = FHLPropertiesAllowances(Some(50.12), Some(50.55))
   val fhlAdjustments = FHLPropertiesAdjustments(Some(50.12), Some(38.77), Some(12.20))
 
-  val otherPeriod: OtherProperties = OtherProperties(
+  val otherPeriod: Other.Properties = Other.Properties(
+    None,
     LocalDate.parse("2017-04-06"),
     LocalDate.parse("2018-04-05"),
-    OtherPeriodicData(Map(IncomeType.RentIncome -> Income(10000, None)),
-    Map(ExpenseType.PremisesRunningCosts -> SimpleExpense(50.55))))
-  val fhlPeriod: FHLProperties = FHLProperties(
+    Other.Financials(incomes = Some(Other.Incomes(rentIncome = Some(Other.Income(1000, None)))),
+                     expenses = Some(Other.Expenses(premisesRunningCosts = Some(Other.Expense(50.55)))))
+  )
+  val fhlPeriod: FHL.Properties = FHL.Properties(
+    None,
     LocalDate.parse("2017-04-06"),
     LocalDate.parse("2018-04-05"),
-    FHLPeriodicData(Map(FHLIncomeType.RentIncome -> SimpleIncome(1234.56)),
-    Map(FHLExpenseType.ProfessionalFees -> SimpleExpense(500.12))))
+    FHL.Financials(incomes = Some(FHL.Incomes(rentIncome = Some(FHL.Income(1234.56)))),
+                   expenses = Some(FHL.Expenses(professionalFees = Some(FHL.Expense(500.12)))))
+  )
 
   val properties: Properties = Properties(
     BSONObjectID.generate,
@@ -96,10 +100,12 @@ class PropertiesSpec extends UnitSpec {
 
   "setPeriodsTo" should {
     "set the periods map for the period specified by the given id" in {
-      val newOtherPeriod = otherPeriod.copy(data = otherPeriod.data.copy(incomes = Map.empty))
-      val newFhlPeriod = fhlPeriod.copy(data = fhlPeriod.data.copy(incomes = Map.empty))
+      val newOtherPeriod = otherPeriod.copy(financials = otherPeriod.financials.copy(incomes = None))
+      val newFhlPeriod =
+        fhlPeriod.copy(financials = fhlPeriod.financials.copy(incomes = None))
 
-      val otherProps = OtherPeriodOps.setPeriodsTo("other", newOtherPeriod, properties)
+      val otherProps =
+        OtherPeriodOps.setPeriodsTo("other", newOtherPeriod, properties)
       val fhlProps = FHLPeriodOps.setPeriodsTo("fhl", newFhlPeriod, properties)
 
       OtherPeriodOps.period("other", otherProps) shouldBe Some(newOtherPeriod)

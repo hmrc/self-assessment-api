@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models.selfemployment
+package uk.gov.hmrc.selfassessmentapi.models.des.properties
 
-import play.api.libs.json.{Format, Json}
-
-case class SelfEmploymentPeriodUpdate(incomes: Option[Incomes], expenses: Option[Expenses])
-
-object SelfEmploymentPeriodUpdate {
-  implicit val format: Format[SelfEmploymentPeriodUpdate] = Json.format[SelfEmploymentPeriodUpdate]
-}
+trait Period

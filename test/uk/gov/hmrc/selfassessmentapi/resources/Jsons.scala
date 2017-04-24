@@ -42,6 +42,9 @@ object Jsons {
     val invalidNino: String = errorWithMessage("INVALID_NINO", "Submission has not passed validation. Invalid parameter NINO.")
     val ninoInvalid: String = errorWithMessage("NINO_INVALID", "The provided Nino is invalid")
     val invalidPayload: String = errorWithMessage("INVALID_PAYLOAD", "Submission has not passed validation. Invalid PAYLOAD.")
+    val invalidRequest: String = errorWithMessage("INVALID_REQUEST", "Invalid request")
+    val ninoNotFound: String = errorWithMessage("NOT_FOUND_NINO", "The remote endpoint has indicated that no data can be found.")
+    val desNotFound: String = errorWithMessage("NOT_FOUND", "The remote endpoint has indicated that no data can be found.")
     val duplicateTradingName: String = errorWithMessage("CONFLICT", "Duplicated trading name.")
     val notFound: String = errorWithMessage("NOT_FOUND", "Resource was not found")
     val invalidPeriod: String = businessErrorWithMessage("INVALID_PERIOD" -> "The remote endpoint has indicated that a overlapping period was submitted.")
@@ -56,11 +59,7 @@ object Jsons {
          |  "code": "INVALID_REQUEST",
          |  "message": "Invalid request",
          |  "errors": [
-         |    ${
-        errors.map {
-          error
-        }.mkString(",")
-      }
+         |    ${errors.map { error }.mkString(",")}
          |  ]
          |}
          """.stripMargin
@@ -72,11 +71,7 @@ object Jsons {
          |  "code": "BUSINESS_ERROR",
          |  "message": "Business validation error",
          |  "errors": [
-         |    ${
-        errors.map {
-          error
-        }.mkString(",")
-      }
+         |    ${ errors.map { error }.mkString(",") }
          |  ]
          |}
          """.stripMargin

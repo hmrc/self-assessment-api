@@ -37,10 +37,9 @@ trait BaseResource extends BaseController {
               (implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[Result] =
     businessConnector.get(nino).flatMap { response =>
       response.status match {
-        case 200 => {
+        case 200 =>
           logger.debug(s"NINO to MTD reference lookup successful. Status Code ${response.status}.")
           authService.authorise(response.mtdId)(f)
-        }
         case 400 | 404 => {
           logger.debug(s"NINO to MTD reference lookup failed. Status Code ${response.status}")
           Future.successful(Unauthorized)

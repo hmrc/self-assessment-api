@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.des
 
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models
 import uk.gov.hmrc.selfassessmentapi.models.AccountingType
 
@@ -29,21 +29,21 @@ object Business {
   def from(apiSelfEmployment: models.selfemployment.SelfEmployment): Business = {
     Business(
       Seq(
-        SelfEmployment(
-          incomeSourceId = None,
-          accountingPeriodStartDate = apiSelfEmployment.accountingPeriod.start.toString,
-          accountingPeriodEndDate = apiSelfEmployment.accountingPeriod.end.toString,
-          tradingName = apiSelfEmployment.tradingName,
-          addressDetails = Some(SelfEmploymentAddress(
-            addressLine1 = apiSelfEmployment.businessAddressLineOne,
-            addressLine2 = apiSelfEmployment.businessAddressLineTwo,
-            addressLine3 = apiSelfEmployment.businessAddressLineThree,
-            addressLine4 = apiSelfEmployment.businessAddressLineFour,
-            postalCode = Some(apiSelfEmployment.businessPostcode))),
-          typeOfBusiness = Some(apiSelfEmployment.businessDescription),
-          tradingStartDate = Some(apiSelfEmployment.commencementDate.toString),
-          cashOrAccruals = AccountingType.toDes(apiSelfEmployment.accountingType))))
+        SelfEmployment(incomeSourceId = None,
+                       accountingPeriodStartDate = apiSelfEmployment.accountingPeriod.start.toString,
+                       accountingPeriodEndDate = apiSelfEmployment.accountingPeriod.end.toString,
+                       tradingName = apiSelfEmployment.tradingName,
+                       addressDetails = Some(
+                         SelfEmploymentAddress(addressLine1 = apiSelfEmployment.businessAddressLineOne,
+                                               addressLine2 = apiSelfEmployment.businessAddressLineTwo,
+                                               addressLine3 = apiSelfEmployment.businessAddressLineThree,
+                                               addressLine4 = apiSelfEmployment.businessAddressLineFour,
+                                               postalCode = Some(apiSelfEmployment.businessPostcode))),
+                       typeOfBusiness = Some(apiSelfEmployment.businessDescription),
+                       tradingStartDate = Some(apiSelfEmployment.commencementDate.toString),
+                       cashOrAccruals = AccountingType.toDes(apiSelfEmployment.accountingType))))
   }
+
 }
 
 case class SelfEmployment(incomeSourceId: Option[String],
@@ -67,7 +67,24 @@ object SelfEmployment {
       (__ \ "typeOfBusiness").readNullable[String] and
       (__ \ "tradingStartDate").readNullable[String] and
       (__ \ "cashOrAccruals").read[String]
-    ) (SelfEmployment.apply _)
+  )(SelfEmployment.apply _)
+
+  def from(apiSelfEmployment: models.selfemployment.SelfEmployment): SelfEmployment = {
+    SelfEmployment(incomeSourceId = None,
+                   accountingPeriodStartDate = apiSelfEmployment.accountingPeriod.start.toString,
+                   accountingPeriodEndDate = apiSelfEmployment.accountingPeriod.end.toString,
+                   tradingName = apiSelfEmployment.tradingName,
+                   addressDetails = Some(
+                     SelfEmploymentAddress(addressLine1 = apiSelfEmployment.businessAddressLineOne,
+                                           addressLine2 = apiSelfEmployment.businessAddressLineTwo,
+                                           addressLine3 = apiSelfEmployment.businessAddressLineThree,
+                                           addressLine4 = apiSelfEmployment.businessAddressLineFour,
+                                           postalCode = Some(apiSelfEmployment.businessPostcode))),
+                   typeOfBusiness = Some(apiSelfEmployment.businessDescription),
+                   tradingStartDate = Some(apiSelfEmployment.commencementDate.toString),
+                   cashOrAccruals = AccountingType.toDes(apiSelfEmployment.accountingType))
+  }
+
 }
 
 case class SelfEmploymentAddress(addressLine1: String,

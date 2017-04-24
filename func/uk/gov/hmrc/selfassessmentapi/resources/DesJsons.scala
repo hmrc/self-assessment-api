@@ -1,6 +1,10 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.models.des.properties.{FHL, Other}
+import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
+import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 
 object DesJsons {
 
@@ -27,6 +31,7 @@ object DesJsons {
     val invalidObligation: String = error("INVALID_REQUEST", "Accounting period should be greater than 6 months.")
     val invalidOriginatorId: String = error("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
     val invalidCalcId: String = error("INVALID_CALCID", "Submission has not passed validation")
+    val propertyConflict: String = error("CONFLICT", "Property already exists.")
   }
 
   object SelfEmployment {
@@ -233,6 +238,151 @@ object DesJsons {
        """.stripMargin
       }
     }
+
+  }
+
+  object Properties {
+
+    def fhlPeriod(id: String = "12345",
+                  from: String = "",
+                  to: String = "",
+                  rentIncome: BigDecimal = 0,
+                  premisesRunningCosts: BigDecimal = 0,
+                  repairsAndMaintenance: BigDecimal = 0,
+                  financialCosts: BigDecimal = 0,
+                  professionalFees: BigDecimal = 0,
+                  other: BigDecimal = 0): JsValue =
+      Json.toJson(
+        FHL.Properties(id = Some(id),
+                       from = from,
+                       to = to,
+                       financials =
+                         FHL.Financials(incomes = Some(FHL.Incomes(rentIncome = Some(rentIncome))),
+                                        deductions = Some(
+                                          FHL.Deductions(premisesRunningCosts = Some(premisesRunningCosts),
+                                                         repairsAndMaintenance = Some(repairsAndMaintenance),
+                                                         financialCosts = Some(financialCosts),
+                                                         professionalFees = Some(professionalFees),
+                                                         other = Some(other))))))
+
+    def otherPeriod(id: String = "12345",
+                    from: String = "",
+                    to: String = "",
+                    rentIncome: BigDecimal = 0,
+                    rentIncomeTaxDeducted: Option[BigDecimal] = Some(0),
+                    premiumsOfLeaseGrant: Option[BigDecimal] = Some(0),
+                    reversePremiums: Option[BigDecimal] = Some(0),
+                    premisesRunningCosts: Option[BigDecimal] = Some(0),
+                    repairsAndMaintenance: Option[BigDecimal] = Some(0),
+                    financialCosts: Option[BigDecimal] = Some(0),
+                    professionalFees: Option[BigDecimal] = Some(0),
+                    costOfServices: Option[BigDecimal] = Some(0),
+                    other: Option[BigDecimal] = Some(0)): JsValue =
+      Json.toJson(
+        Other.Properties(id = Some(id),
+                         from = from,
+                         to = to,
+                         financials =
+                           Other.Financials(incomes = Some(Other.Incomes(rentIncome = Some(Other.Income(rentIncome, rentIncomeTaxDeducted)), premiumsOfLeaseGrant = premiumsOfLeaseGrant, reversePremiums = reversePremiums)), deductions = Some(Other.Deductions(premisesRunningCosts = premisesRunningCosts, repairsAndMaintenance = repairsAndMaintenance, financialCosts = financialCosts, professionalFees = professionalFees, costOfServices = costOfServices, other = other)))))
+
+    def createResponse: String = {
+      s"""
+         |{
+         |  "safeId": "XA0001234567890",
+         |  "mtditId": "mdtitId001",
+         |  "incomeSource":
+         |    {
+         |      "incomeSourceId": "1234567"
+         |    }
+         |}
+      """.stripMargin
+    }
+
+    def retrieveProperty: String = {
+      s"""
+         {
+         |   "safeId": "XE00001234567890",
+         |   "nino": "AA123456A",
+         |   "mtdbsa": "123456789012345",
+         |   "propertyIncome": false,
+         |   "propertyData": {
+         |      "incomeSourceId": "123456789012345",
+         |      "accountingPeriodStartDate": "2001-01-01",
+         |      "accountingPeriodEndDate": "2001-01-01"
+         |    }
+         |}
+      """.stripMargin
+    }
+
+    def retrieveNoProperty: String = {
+      s"""
+         {
+         |   "safeId": "XE00001234567890",
+         |   "nino": "AA123456A",
+         |   "mtdbsa": "123456789012345",
+         |   "propertyIncome": false
+         |}
+      """.stripMargin
+    }
+
+    def annualSummaryOtherProperties: String = {
+      s"""
+         {
+         |   "annualAdjustments": {
+         |      "lossBroughtForward": 0.0,
+         |      "balancingCharge": 0.0,
+         |      "privateUseAdjustment": 0.0
+         |   },
+         |   "annualAllowances": {
+         |      "annualInvestmentAllowance": 0.0,
+         |      "otherCapitalAllowance": 0.0,
+         |      "zeroEmissionGoodsVehicleAllowance": 0.0,
+         |      "businessPremisesRenovationAllowance": 0.0,
+         |      "costOfReplacingDomGoods": 0.0
+         |   }
+         |}
+      """.stripMargin
+    }
+
+    def annualSummaryFHLProperties: String = {
+      s"""
+         {
+         |   "annualAdjustments": {
+         |      "lossBroughtForward": 0.0,
+         |      "balancingCharge": 0.0,
+         |      "privateUseAdjustment": 0.0
+         |   },
+         |   "annualAllowances": {
+         |      "annualInvestmentAllowance": 0.0,
+         |      "otherCapitalAllowance": 0.0
+         |   }
+         |}
+      """.stripMargin
+    }
+
+    object Period {
+      def createResponse(id: String = "123456789012345"): String = {
+        s"""
+           |{
+           |   "transactionReference": "$id"
+           |}
+        """.stripMargin
+      }
+    }
+
+    def periods(propertyType: PropertyType): String =
+      propertyType match {
+        case PropertyType.FHL =>
+          Json
+            .arr(fhlPeriod(id = "2017-04-06_2017-07-04", from = "2017-04-06", to = "2017-07-04"),
+                 fhlPeriod(id = "2017-07-05_2017-08-04", from = "2017-07-05", to = "2017-08-04"))
+            .toString()
+        case PropertyType.OTHER =>
+          Json
+            .arr(otherPeriod(id = "2017-04-06_2017-07-04", from = "2017-04-06", to = "2017-07-04"),
+                 otherPeriod(id = "2017-07-05_2017-08-04", from = "2017-07-05", to = "2017-08-04"))
+            .toString()
+      }
 
   }
 

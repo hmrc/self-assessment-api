@@ -17,46 +17,43 @@
 package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
 import org.joda.time.LocalDate
-import play.api.data.validation.ValidationError
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.AccountingType._
-import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, ErrorCode, SourceId, sicClassifications}
-import uk.gov.hmrc.selfassessmentapi.models.{AccountingType, _}
+import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, SourceId, _}
 
 case class SelfEmploymentRetrieve(id: Option[SourceId] = None,
-                          accountingPeriod: AccountingPeriod,
-                          accountingType: AccountingType,
-                          commencementDate: Option[LocalDate],
-                          cessationDate: Option[LocalDate],
-                          tradingName: String,
-                          businessDescription: Option[String],
-                          businessAddressLineOne: Option[String],
-                          businessAddressLineTwo: Option[String],
-                          businessAddressLineThree: Option[String],
-                          businessAddressLineFour: Option[String],
-                          businessPostcode: Option[String])
+                                  accountingPeriod: AccountingPeriod,
+                                  accountingType: AccountingType,
+                                  commencementDate: Option[LocalDate],
+                                  cessationDate: Option[LocalDate],
+                                  tradingName: String,
+                                  businessDescription: Option[String],
+                                  businessAddressLineOne: Option[String],
+                                  businessAddressLineTwo: Option[String],
+                                  businessAddressLineThree: Option[String],
+                                  businessAddressLineFour: Option[String],
+                                  businessPostcode: Option[String])
 
 object SelfEmploymentRetrieve {
-  def from(desSelfEmployment: des.SelfEmployment, withId: Boolean = true): Option[SelfEmploymentRetrieve] = {
+
+  def from(desSelfEmployment: des.SelfEmployment): Option[SelfEmploymentRetrieve] =
     for {
       accountingType <- AccountingType.fromDes(desSelfEmployment.cashOrAccruals)
-    } yield SelfEmploymentRetrieve(
-      id = if (withId) desSelfEmployment.incomeSourceId else None,
-      accountingPeriod = AccountingPeriod(
-        start = LocalDate.parse(desSelfEmployment.accountingPeriodStartDate),
-        end = LocalDate.parse(desSelfEmployment.accountingPeriodEndDate)),
-      accountingType = accountingType,
-      commencementDate = desSelfEmployment.tradingStartDate.map(LocalDate.parse),
-      cessationDate = None,
-      tradingName = desSelfEmployment.tradingName,
-      businessDescription = desSelfEmployment.typeOfBusiness,
-      businessAddressLineOne = desSelfEmployment.addressDetails.map(_.addressLine1),
-      businessAddressLineTwo = desSelfEmployment.addressDetails.flatMap(_.addressLine2),
-      businessAddressLineThree = desSelfEmployment.addressDetails.flatMap(_.addressLine3),
-      businessAddressLineFour = desSelfEmployment.addressDetails.flatMap(_.addressLine4),
-      businessPostcode = desSelfEmployment.addressDetails.flatMap(_.postalCode))
-  }
+    } yield
+      SelfEmploymentRetrieve(id = desSelfEmployment.incomeSourceId,
+                             accountingPeriod =
+                               AccountingPeriod(start = LocalDate.parse(desSelfEmployment.accountingPeriodStartDate),
+                                                end = LocalDate.parse(desSelfEmployment.accountingPeriodEndDate)),
+                             accountingType = accountingType,
+                             commencementDate = desSelfEmployment.tradingStartDate.map(LocalDate.parse),
+                             cessationDate = None,
+                             tradingName = desSelfEmployment.tradingName,
+                             businessDescription = desSelfEmployment.typeOfBusiness,
+                             businessAddressLineOne = desSelfEmployment.addressDetails.map(_.addressLine1),
+                             businessAddressLineTwo = desSelfEmployment.addressDetails.flatMap(_.addressLine2),
+                             businessAddressLineThree = desSelfEmployment.addressDetails.flatMap(_.addressLine3),
+                             businessAddressLineFour = desSelfEmployment.addressDetails.flatMap(_.addressLine4),
+                             businessPostcode = desSelfEmployment.addressDetails.flatMap(_.postalCode))
 
   implicit val writes: Writes[SelfEmploymentRetrieve] = Json.writes[SelfEmploymentRetrieve]
 }
