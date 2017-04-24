@@ -43,6 +43,7 @@ repository.
 
 ### Notes ###
 * This API is usable only for taxpayers subscribed to Making Tax Digital (MTD) and only for tax years 2017/18 onwards.
-* Self-employment and UK property businesses will be known to HMRC  as part of the MTD subscription process.
+* Self-employment and UK property businesses will be known to HMRC as part of the MTD subscription process.
 * Some APIs may be marked "test only"; this means that they are not available for use in production.
+* Some APIs may be marked "canned"; this means that they will return a pre-defined response that may not align with the data you have provided.
 
