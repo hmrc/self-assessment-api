@@ -30,9 +30,9 @@ import scala.concurrent.Future
 
 object PropertiesPeriodResource extends BaseResource {
 
-  lazy val featureSwitch = FeatureSwitchAction(SourceType.Properties, "periods")
+  lazy val FeatureSwitch = FeatureSwitchAction(SourceType.Properties, "periods")
 
-  def createPeriod(nino: Nino, id: PropertyType): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
+  def createPeriod(nino: Nino, id: PropertyType): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
       validateCreateRequest(id, nino, request) match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
@@ -49,7 +49,7 @@ object PropertiesPeriodResource extends BaseResource {
     }
   }
 
-  def updatePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
+  def updatePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
       validateUpdateRequest(id, nino, periodId, request) match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
@@ -61,7 +61,7 @@ object PropertiesPeriodResource extends BaseResource {
     }
   }
 
-  def retrievePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
+  def retrievePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
     withAuth(nino) {
       id match {
         case PropertyType.OTHER => OtherPropertiesPeriodService.retrievePeriod(nino, periodId).map {
@@ -76,7 +76,7 @@ object PropertiesPeriodResource extends BaseResource {
     }
   }
 
-  def retrievePeriods(nino: Nino, id: PropertyType): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
+  def retrievePeriods(nino: Nino, id: PropertyType): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
     withAuth(nino) {
       id match {
         case PropertyType.OTHER => OtherPropertiesPeriodService.retrieveAllPeriods(nino).map {

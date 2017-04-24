@@ -28,10 +28,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object PropertiesAnnualSummaryResource extends BaseResource {
-  private lazy val featureSwitch = FeatureSwitchAction(SourceType.Properties, "annual")
+  private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.Properties, "annual")
   private val service = PropertiesAnnualSummaryService
 
-  def updateAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
+  def updateAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
       validateProperty(propertyId, request.body, service.updateAnnualSummary(nino, taxYear, _)) match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
@@ -43,7 +43,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
     }
   }
 
-  def retrieveAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
+  def retrieveAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
     withAuth(nino) {
       service.retrieveAnnualSummary(nino, propertyId, taxYear).map {
         case Some(summary @ OtherPropertiesAnnualSummary(_, _)) => Ok(Json.toJson(summary))

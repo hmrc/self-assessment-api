@@ -28,10 +28,10 @@ import scala.concurrent.Future
 
 object DividendsAnnualSummaryResource extends BaseResource {
 
-  private lazy val featureSwitch = FeatureSwitchAction(SourceType.Dividends, "annual")
+  private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.Dividends, "annual")
   private val service = DividendsAnnualSummaryService
 
-  def updateAnnualSummary(nino: Nino, taxYear: TaxYear): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
+  def updateAnnualSummary(nino: Nino, taxYear: TaxYear): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
       validate[Dividends, Boolean](request.body) { dividends =>
         service.updateAnnualSummary(nino, taxYear, dividends)
@@ -44,7 +44,7 @@ object DividendsAnnualSummaryResource extends BaseResource {
     }
   }
 
-  def retrieveAnnualSummary(nino: Nino, taxYear: TaxYear): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
+  def retrieveAnnualSummary(nino: Nino, taxYear: TaxYear): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
     withAuth(nino) {
       service.retrieveAnnualSummary(nino, taxYear).map {
         case Some(summary) => Ok(Json.toJson(summary))

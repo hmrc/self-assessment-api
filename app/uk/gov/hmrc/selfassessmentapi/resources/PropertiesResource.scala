@@ -28,11 +28,11 @@ import scala.concurrent.Future
 
 object PropertiesResource extends BaseResource {
 
-  lazy val featureSwitch: FeatureSwitchAction = FeatureSwitchAction(SourceType.Properties)
+  private lazy val FeatureSwitch: FeatureSwitchAction = FeatureSwitchAction(SourceType.Properties)
 
   private val service = PropertiesService()
 
-  def create(nino: Nino): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
+  def create(nino: Nino): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
       validate[properties.Properties, Either[Error, Boolean]](request.body) {
         service.create(nino, _)
@@ -49,7 +49,7 @@ object PropertiesResource extends BaseResource {
     }
   }
 
-  def retrieve(nino: Nino): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
+  def retrieve(nino: Nino): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
     withAuth(nino) {
       service.retrieve(nino).map {
         case Some(properties) => Ok(Json.toJson(properties))

@@ -29,10 +29,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object SelfEmploymentAnnualSummaryResource extends BaseResource {
-  private lazy val annualSummaryFeatureSwitch = FeatureSwitchAction(SourceType.SelfEmployments, "annual")
+  private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.SelfEmployments, "annual")
   private val connector = SelfEmploymentAnnualSummaryConnector
 
-  def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] = annualSummaryFeatureSwitch.asyncJsonFeatureSwitch { implicit request =>
+  def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
       validate[SelfEmploymentAnnualSummary, SelfEmploymentAnnualSummaryResponse](request.body) { summary =>
         connector.update(nino, id, taxYear, des.SelfEmploymentAnnualSummary.from(summary))
@@ -51,7 +51,7 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
   }
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
-  def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[AnyContent] = annualSummaryFeatureSwitch.asyncFeatureSwitch { implicit request =>
+  def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear) = FeatureSwitch.async(parse.empty) { implicit request =>
     withAuth(nino) {
       connector.get(nino, id, taxYear).map { response =>
         response.status match {
