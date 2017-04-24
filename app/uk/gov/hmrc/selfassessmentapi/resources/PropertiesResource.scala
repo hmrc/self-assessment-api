@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 object PropertiesResource extends BaseResource {
 
- private lazy val FeatureSwitch: FeatureSwitchAction = FeatureSwitchAction(SourceType.Properties)
+  private lazy val FeatureSwitch: FeatureSwitchAction = FeatureSwitchAction(SourceType.Properties)
 
   private val connector = PropertiesConnector
 

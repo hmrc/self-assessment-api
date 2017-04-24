@@ -69,24 +69,24 @@ object PropertiesPeriodResource extends BaseResource {
 
   def retrievePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[AnyContent] = FeatureSwitch.async { implicit request =>
     withAuth(nino) {
-      connector.retrieve(nino, periodId,id).map { response =>
-          response.status match {
-        case 200 =>
-         id match {
-          case PropertyType.FHL =>
-                  response
-                    .PropertiesPeriodResponseOps[FHL.Properties, des.properties.FHL.Properties]
-                    .period
-                    .map(period => Ok(Json.toJson(period)))
-          .getOrElse( NotFound)
+      connector.retrieve(nino, periodId, id).map { response =>
+        response.status match {
+          case 200 =>
+            id match {
+              case PropertyType.FHL =>
+                response
+                  .PropertiesPeriodResponseOps[FHL.Properties, des.properties.FHL.Properties]
+                  .period
+                  .map(period => Ok(Json.toJson(period)))
+                  .getOrElse(NotFound)
 
-        case PropertyType.OTHER =>
-          response
-                    .PropertiesPeriodResponseOps[Other.Properties, des.properties.Other.Properties]
-                    .period
-                    .map(period => Ok(Json.toJson(period)))
-          .getOrElse(NotFound)
-              }
+              case PropertyType.OTHER =>
+                response
+                  .PropertiesPeriodResponseOps[Other.Properties, des.properties.Other.Properties]
+                  .period
+                  .map(period => Ok(Json.toJson(period)))
+                  .getOrElse(NotFound)
+            }
           case 400 => BadRequest(Error.from(response.json))
           case 404 => NotFound
           case _ => unhandledResponse(response.status, logger)
@@ -97,24 +97,25 @@ object PropertiesPeriodResource extends BaseResource {
 
   def retrievePeriods(nino: Nino, id: PropertyType): Action[AnyContent] = FeatureSwitch.async { implicit request =>
     withAuth(nino) {
-      connector.retrieveAll(nino,id).map { response =>
-          response.status match {
-        case 200 =>
-           Ok(Json.toJson(id match {
-          case PropertyType.FHL =>
-        response.PropertiesPeriodResponseOps[FHL.Properties, des.properties.FHL.Properties].allPeriods
-        case PropertyType.OTHER =>
-                  response.PropertiesPeriodResponseOps[Other.Properties, des.properties.Other.Properties].allPeriods
-              }))
+      connector.retrieveAll(nino, id).map { response =>
+        response.status match {
+          case 200 =>
+            Ok(Json.toJson(id match {
+              case PropertyType.FHL =>
+                response.PropertiesPeriodResponseOps[FHL.Properties, des.properties.FHL.Properties].allPeriods
+              case PropertyType.OTHER =>
+                response.PropertiesPeriodResponseOps[Other.Properties, des.properties.Other.Properties].allPeriods
+            }))
           case 400 => BadRequest(Error.from(response.json))
           case 404 => NotFound
-        case _ => unhandledResponse(response.status, logger)
+          case _ => unhandledResponse(response.status, logger)
+        }
       }
     }
-  }}
+  }
 
   private def validateCreateRequest(id: PropertyType, nino: Nino, request: Request[JsValue])(
-      implicit hc: HeaderCarrier): Either[ErrorResult, Future[PropertiesPeriodResponse]] =
+    implicit hc: HeaderCarrier): Either[ErrorResult, Future[PropertiesPeriodResponse]] =
     id match {
       case PropertyType.OTHER =>
         validate[Other.Properties, PropertiesPeriodResponse](request.body)(

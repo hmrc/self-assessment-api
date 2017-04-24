@@ -22,12 +22,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesAnnualSummaryConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
-import uk.gov.hmrc.selfassessmentapi.models.properties.{
-  FHLPropertiesAnnualSummary,
-  OtherPropertiesAnnualSummary,
-  PropertiesAnnualSummary,
-  PropertyType
-}
+import uk.gov.hmrc.selfassessmentapi.models.properties.{FHLPropertiesAnnualSummary, OtherPropertiesAnnualSummary, PropertiesAnnualSummary, PropertyType}
 import uk.gov.hmrc.selfassessmentapi.models.{SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
 
@@ -40,15 +35,15 @@ object PropertiesAnnualSummaryResource extends BaseResource {
 
   def updateAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
     withAuth(nino) {
-      validateProperty(propertyId, request.body, connector.update(nino, propertyId,taxYear, _)) match {
+      validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-        case Right(result) => result.map {response =>
-              response.status match {
-          case 200 => NoContent
-          case 404 => NotFound
-          case 400 => BadRequest(Error.from(response.json))
-                case _ => unhandledResponse(response.status, logger)
-              }
+        case Right(result) => result.map { response =>
+          response.status match {
+            case 200 => NoContent
+            case 404 => NotFound
+            case 400 => BadRequest(Error.from(response.json))
+            case _ => unhandledResponse(response.status, logger)
+          }
         }
       }
     }
@@ -56,19 +51,20 @@ object PropertiesAnnualSummaryResource extends BaseResource {
 
   def retrieveAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[AnyContent] = FeatureSwitch.async { implicit request =>
     withAuth(nino) {
-      connector.get(nino, propertyId, taxYear).map {response =>
-          response.status match {
-            case 200 =>
-              response.annualSummary match {
-        case Some(summary ) => summary match {
-                    case other: OtherPropertiesAnnualSummary => Ok(Json.toJson(other))
-        case fhl: FHLPropertiesAnnualSummary => Ok(Json.toJson(fhl))
-                  }
-        case None => NotFound}
-            case 404 => NotFound
-            case 400 => BadRequest(Error.from(response.json))
-            case _ => unhandledResponse(response.status, logger)
-          }
+      connector.get(nino, propertyId, taxYear).map { response =>
+        response.status match {
+          case 200 =>
+            response.annualSummary match {
+              case Some(summary) => summary match {
+                case other: OtherPropertiesAnnualSummary => Ok(Json.toJson(other))
+                case fhl: FHLPropertiesAnnualSummary => Ok(Json.toJson(fhl))
+              }
+              case None => NotFound
+            }
+          case 404 => NotFound
+          case 400 => BadRequest(Error.from(response.json))
+          case _ => unhandledResponse(response.status, logger)
+        }
       }
     }
   }

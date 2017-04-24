@@ -73,7 +73,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
   }
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
-  def retrievePeriod(nino: Nino, id: SourceId, periodId: PeriodId)= FeatureSwitch.async(parse.empty) { implicit request =>
+  def retrievePeriod(nino: Nino, id: SourceId, periodId: PeriodId) = FeatureSwitch.async(parse.empty) { implicit request =>
     withAuth(nino) {
       connector.get(nino, id, periodId).map { response =>
         response.status match {
