@@ -1434,7 +1434,7 @@ traits:
         name: Tax calculations
         description: !include docs/tax-calculation.md
       post:
-        displayName: Trigger a tax calculation
+        displayName: Trigger a tax calculation [canned]
         description: Trigger a tax calculation. Please note that this API will return pre-defined responses that are representative of what may be returned in a future version of this API.
         (annotations.sandboxData): !include scenarios/agent-scenarios.md
         is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
@@ -1477,7 +1477,7 @@ traits:
             description: The ID of the tax calculation
             type: string
         get:
-          displayName: Retrieve a tax calculation
+          displayName: Retrieve a tax calculation [canned]
           description: Retrieve a tax calculation. Please note that this API will return pre-defined responses that are representative of what may be returned in a future version of this API.
           (annotations.sandboxData): !include scenarios/agent-scenarios.md
           is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
