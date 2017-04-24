@@ -19,26 +19,24 @@ package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 import play.api.Logger
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.play.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.models.{Obligations, SourceId, des}
+import uk.gov.hmrc.selfassessmentapi.models.MtdId
 
-class SelfEmploymentObligationsResponse(underlying: HttpResponse) {
-
-  private val logger: Logger = Logger(classOf[SelfEmploymentObligationsResponse])
+class BusinessDetailsResponse(underlying: HttpResponse) {
+  private val logger: Logger = Logger(classOf[BusinessDetailsResponse])
 
   val status: Int = underlying.status
   def json: JsValue = underlying.json
 
-  def obligations(id: SourceId): Option[Obligations] = {
-    val desObligations = json.asOpt[des.Obligations]
-    if (desObligations.isEmpty) logger.error("The response from DES does not match the expected self-employment obligations format.")
-
-    desObligations
-      .map(obs => Obligations.from(obs.selfEmploymentObligationsForId(id)))
-      .filter(_.obligations.nonEmpty)
+  def mtdId: Option[MtdId] = {
+    if (status == 200) (json \ "mtdbsa").asOpt[String].map(MtdId)
+    else {
+      logger.error("The response from DES does not match the expected business details format.")
+      None
+    }
   }
+
 }
 
-object SelfEmploymentObligationsResponse {
-  def apply(httpResponse: HttpResponse): SelfEmploymentObligationsResponse =
-    new SelfEmploymentObligationsResponse(httpResponse)
+object BusinessDetailsResponse {
+  def apply(httpResponse: HttpResponse): BusinessDetailsResponse = new BusinessDetailsResponse(httpResponse)
 }

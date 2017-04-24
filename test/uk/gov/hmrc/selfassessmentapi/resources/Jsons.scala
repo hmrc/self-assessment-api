@@ -48,10 +48,10 @@ object Jsons {
     val duplicateTradingName: String = errorWithMessage("CONFLICT", "Duplicated trading name.")
     val notFound: String = errorWithMessage("NOT_FOUND", "Resource was not found")
     val invalidPeriod: String = businessErrorWithMessage("INVALID_PERIOD" -> "The remote endpoint has indicated that a overlapping period was submitted.")
-    val invalidObligation: String = errorWithMessage("INVALID_REQUEST", "Accounting period should be greater than 6 months.")
     val invalidOriginatorId: String = errorWithMessage("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
     val internalServerError: String = errorWithMessage("INTERNAL_SERVER_ERROR", "An internal server error occurred")
     val invalidCalcId: String = errorWithMessage("INVALID_CALCID", "Submission has not passed validation")
+    val unauthorised: String = errorWithMessage("UNAUTHORIZED", "Bearer token is missing or not authorized")
 
     def invalidRequest(errors: (String, String)*): String = {
       s"""
@@ -647,21 +647,25 @@ object Jsons {
            |    {
            |      "start": "2017-04-06",
            |      "end": "2017-07-05",
+           |      "due": "2017-08-05",
            |      "met": $firstMet
            |    },
            |    {
            |      "start": "2017-07-06",
            |      "end": "2017-10-05",
+           |      "due": "2017-11-05",
            |      "met": $secondMet
            |    },
            |    {
            |      "start": "2017-10-06",
            |      "end": "2018-01-05",
+           |      "due": "2018-02-05",
            |      "met": $thirdMet
            |    },
            |    {
            |      "start": "2018-01-06",
            |      "end": "2018-04-05",
+           |      "due": "2018-05-06",
            |      "met": $fourthMet
            |    }
            |  ]

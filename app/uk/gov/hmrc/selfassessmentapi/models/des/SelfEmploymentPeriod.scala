@@ -22,8 +22,7 @@ import uk.gov.hmrc.selfassessmentapi.models
 case class SelfEmploymentPeriod(id: Option[String], from: String, to: String, financials: Option[Financials])
 
 object SelfEmploymentPeriod {
-  implicit val writes: Writes[SelfEmploymentPeriod] = Json.writes[SelfEmploymentPeriod]
-  implicit val reads: Reads[SelfEmploymentPeriod] = Json.reads[SelfEmploymentPeriod]
+  implicit val format: Format[SelfEmploymentPeriod] = Json.format[SelfEmploymentPeriod]
 
   def from(apiSePeriod: models.selfemployment.SelfEmploymentPeriod): SelfEmploymentPeriod = {
     SelfEmploymentPeriod(id = None,
@@ -90,8 +89,7 @@ object Financials {
 case class Incomes(turnover: Option[BigDecimal], other: Option[BigDecimal])
 
 object Incomes {
-  implicit val writes: Writes[Incomes] = Json.writes[Incomes]
-  implicit val reads: Reads[Incomes] = Json.reads[Incomes]
+  implicit val format: Format[Incomes] = Json.format[Incomes]
 }
 
 case class Deductions(costOfGoods: Option[Deduction],

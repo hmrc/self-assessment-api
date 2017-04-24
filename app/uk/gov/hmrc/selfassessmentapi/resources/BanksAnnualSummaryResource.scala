@@ -19,34 +19,37 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.models.banks.BankAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.BanksAnnualSummaryService
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-object BanksAnnualSummaryResource extends BaseController {
+object BanksAnnualSummaryResource extends BaseResource {
   private lazy val featureSwitch = FeatureSwitchAction(SourceType.Banks, "annual")
   private val annualSummaryService = BanksAnnualSummaryService
 
-  def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { request =>
-    validate[BankAnnualSummary, Boolean](request.body) {
-      annualSummaryService.updateAnnualSummary(nino, id, taxYear, _)
-    } match {
-      case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-      case Right(result) => result.map {
-        case true => NoContent
-        case false => NotFound
+  def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
+    withAuth(nino) {
+      validate[BankAnnualSummary, Boolean](request.body) {
+        annualSummaryService.updateAnnualSummary(nino, id, taxYear, _)
+      } match {
+        case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
+        case Right(result) => result.map {
+          case true => NoContent
+          case false => NotFound
+        }
       }
     }
   }
 
-  def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[AnyContent] = featureSwitch.asyncFeatureSwitch {
-    annualSummaryService.retrieveAnnualSummary(nino, id, taxYear).map {
-      case Some(summary) => Ok(Json.toJson(summary))
-      case None => NotFound
+  def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
+    withAuth(nino) {
+      annualSummaryService.retrieveAnnualSummary(nino, id, taxYear).map {
+        case Some(summary) => Ok(Json.toJson(summary))
+        case None => NotFound
+      }
     }
   }
 }

@@ -31,22 +31,17 @@ import play.routing.Router.Tags
 import uk.gov.hmrc.api.config.{ServiceLocatorConfig, ServiceLocatorRegistration}
 import uk.gov.hmrc.api.connector.ServiceLocatorConnector
 import uk.gov.hmrc.api.controllers.{ErrorAcceptHeaderInvalid, ErrorNotFound, ErrorUnauthorized, HeaderValidator}
+import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.auth.filter.{AuthorisationFilter, FilterConfig}
 import uk.gov.hmrc.kenshoo.monitoring.MonitoringFilter
 import uk.gov.hmrc.play.audit.filters.AuditFilter
-import uk.gov.hmrc.play.auth.controllers.{AuthConfig, AuthParamsControllerConfig}
-import uk.gov.hmrc.play.auth.microservice.connectors._
-import uk.gov.hmrc.play.auth.microservice.filters.AuthorisationFilter
 import uk.gov.hmrc.play.config.{AppName, RunMode}
 import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
 import uk.gov.hmrc.play.http.logging.filters.LoggingFilter
 import uk.gov.hmrc.play.http.{HeaderCarrier, NotImplementedException}
 import uk.gov.hmrc.play.microservice.bootstrap.DefaultMicroserviceGlobal
 import uk.gov.hmrc.play.scheduling._
-import uk.gov.hmrc.selfassessmentapi.config.simulation.{
-  AgentAuthorizationSimulation,
-  AgentSubscriptionSimulation,
-  ClientSubscriptionSimulation
-}
+import uk.gov.hmrc.selfassessmentapi.config.simulation.{AgentAuthorizationSimulation, AgentSubscriptionSimulation, ClientSubscriptionSimulation}
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.GovTestScenarioHeader
 
@@ -57,30 +52,24 @@ import scala.util.matching.Regex
 case class ControllerConfigParams(needsHeaderValidation: Boolean = true,
                                   needsLogging: Boolean = true,
                                   needsAuditing: Boolean = true,
-                                  needsAuth: Boolean = true,
                                   needsTaxYear: Boolean = true)
 
 object ControllerConfiguration {
-  lazy val controllerConfigs = Play.current.configuration.underlying.as[Config]("controllers")
-  implicit val regexValueReader: ValueReader[Regex] = StringReader.stringValueReader.map(_.r)
-
-  implicit val controllerParamsReader = ValueReader.relative[ControllerConfigParams] { config =>
+  private implicit val regexValueReader: ValueReader[Regex] = StringReader.stringValueReader.map(_.r)
+  private implicit val controllerParamsReader = ValueReader.relative[ControllerConfigParams] { config =>
     ControllerConfigParams(
       needsHeaderValidation = config.getAs[Boolean]("needsHeaderValidation").getOrElse(true),
       needsLogging = config.getAs[Boolean]("needsLogging").getOrElse(true),
       needsAuditing = config.getAs[Boolean]("needsAuditing").getOrElse(true),
-      needsAuth = config.getAs[Boolean]("needsAuth").getOrElse(true),
       needsTaxYear = config.getAs[Boolean]("needsTaxYear").getOrElse(true)
     )
   }
 
+  lazy val controllerConfigs: Config = Play.current.configuration.underlying.as[Config]("controllers")
+
   def controllerParamsConfig(controllerName: String): ControllerConfigParams = {
     controllerConfigs.as[Option[ControllerConfigParams]](controllerName).getOrElse(ControllerConfigParams())
   }
-}
-
-object AuthParamsControllerConfiguration extends AuthParamsControllerConfig {
-  lazy val controllerConfigs = ControllerConfiguration.controllerConfigs
 }
 
 object MicroserviceAuditFilter extends AuditFilter with AppName with MicroserviceFilterSupport {
@@ -132,27 +121,6 @@ object AgentSimulationFilter extends Filter with MicroserviceFilterSupport {
 }
 
 object MicroserviceAuthFilter extends AuthorisationFilter with MicroserviceFilterSupport {
-  override lazy val authParamsConfig = AuthParamsControllerConfiguration
-  override lazy val authConnector = MicroserviceAuthConnector
-
-  override def extractResource(pathString: String,
-                               verb: HttpVerb,
-                               authConfig: AuthConfig): Option[ResourceToAuthorise] = {
-    authConfig.mode match {
-      case "identity" => extractIdentityResource(pathString, verb, authConfig)
-      case "passcode" => super.extractResource(pathString, verb, authConfig)
-    }
-  }
-
-  private def extractIdentityResource(pathString: String,
-                                      verb: HttpVerb,
-                                      authConfig: AuthConfig): Option[ResourceToAuthorise] = {
-    pathString match {
-      case authConfig.pattern(nino) =>
-        Some(RegimeAndIdResourceToAuthorise(verb, Regime("paye"), AccountId(nino)))
-      case _ => None
-    }
-  }
 
   override def apply(next: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
     super.apply(next)(rh) map { res =>
@@ -163,8 +131,8 @@ object MicroserviceAuthFilter extends AuthorisationFilter with MicroserviceFilte
     }
   }
 
-  override def controllerNeedsAuth(controllerName: String): Boolean =
-    AppContext.authEnabled && ControllerConfiguration.controllerParamsConfig(controllerName).needsAuth
+  override def config: FilterConfig = FilterConfig(ControllerConfiguration.controllerConfigs)
+  override def connector: AuthConnector = MicroserviceAuthConnector
 }
 
 object HeaderValidatorFilter extends Filter with HeaderValidator with MicroserviceFilterSupport {

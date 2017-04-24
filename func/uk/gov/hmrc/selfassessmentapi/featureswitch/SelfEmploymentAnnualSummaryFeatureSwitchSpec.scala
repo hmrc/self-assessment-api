@@ -19,7 +19,8 @@ class SelfEmploymentAnnualSummaryFeatureSwitchSpec extends BaseFunctionalSpec {
     "not be visible if feature Switched Off" in {
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()
         .put(Json.toJson(SelfEmploymentAnnualSummary(None, None))).at(s"/ni/$nino/self-employments/abc/$taxYear")

@@ -3,10 +3,11 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class PropertiesObligationsResourceSpec extends BaseFunctionalSpec {
-  "retrieveObligations" ignore  {
+  "retrieveObligations" ignore {
     "return code 200 containing a set of canned obligations, all of which have not been met" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .des().properties.willBeCreatedFor(nino)
         .des().properties.returnObligationsFor(nino)
         .when()
@@ -22,7 +23,8 @@ class PropertiesObligationsResourceSpec extends BaseFunctionalSpec {
 
     "return code 200 containing a set of canned obligations of which only the first has been met" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .des().properties.willBeCreatedFor(nino)
         .des().properties.returnObligationsFor(nino)
         .when()
@@ -38,7 +40,8 @@ class PropertiesObligationsResourceSpec extends BaseFunctionalSpec {
 
     "return code 200 containing a set of canned obligations, all of which have been met" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .des().properties.willBeCreatedFor(nino)
         .des().properties.returnObligationsFor(nino)
         .when()
@@ -54,7 +57,8 @@ class PropertiesObligationsResourceSpec extends BaseFunctionalSpec {
 
     "return code 404 when attempting to retrieve obligations for a properties business that does not exist" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .get(s"/ni/$nino/uk-properties/obligations")
         .thenAssertThat()

@@ -30,7 +30,19 @@ The above restrictions mean it is not possible for an unauthorised agent to use 
 necessary to submit an update. For example, pre-existing business identifiers or pre-existing periodic update identifiers 
 must be recorded on creation, or obtained from a source that does have access, e.g. the taxpayer.
 
+### Technical Issues ###
+
+Technical issues with the API may be raised via the Software Development Support Team (SDST). In addition to this,
+the dev team also provides technical support via the API [Github](https://github.com/hmrc/self-assessment-api/issues) page. 
+Please note that Github should be used for technical queries only.
+
+### Changelog ###
+
+The changelog can be found in API [Github](https://github.com/hmrc/self-assessment-api/blob/master/CHANGELOG.md) 
+repository.
+
 ### Notes ###
 * This API is usable only for taxpayers subscribed to Making Tax Digital (MTD) and only for tax years 2017/18 onwards.
 * Self-employment and UK property businesses will be known to HMRC  as part of the MTD subscription process.
 * Some APIs may be marked "test only"; this means that they are not available for use in production.
+

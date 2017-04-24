@@ -16,11 +16,9 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentAnnualSummaryConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
@@ -30,22 +28,23 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentAnnualSumm
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object SelfEmploymentAnnualSummaryResource extends BaseController {
-  private val logger = Logger(SelfEmploymentAnnualSummaryResource.getClass)
+object SelfEmploymentAnnualSummaryResource extends BaseResource {
   private lazy val annualSummaryFeatureSwitch = FeatureSwitchAction(SourceType.SelfEmployments, "annual")
   private val connector = SelfEmploymentAnnualSummaryConnector
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] = annualSummaryFeatureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    validate[SelfEmploymentAnnualSummary, SelfEmploymentAnnualSummaryResponse](request.body) { summary =>
-      connector.update(nino, id, taxYear, des.SelfEmploymentAnnualSummary.from(summary))
-    } match {
-      case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-      case Right(result) => result.map { response =>
-        response.status match {
-          case 200 => NoContent
-          case 400 => BadRequest(Error.from(response.json))
-          case 404 => NotFound
-          case _ => unhandledResponse(response.status, logger)
+    withAuth(nino) {
+      validate[SelfEmploymentAnnualSummary, SelfEmploymentAnnualSummaryResponse](request.body) { summary =>
+        connector.update(nino, id, taxYear, des.SelfEmploymentAnnualSummary.from(summary))
+      } match {
+        case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
+        case Right(result) => result.map { response =>
+          response.status match {
+            case 200 => NoContent
+            case 400 => BadRequest(Error.from(response.json))
+            case 404 => NotFound
+            case _ => unhandledResponse(response.status, logger)
+          }
         }
       }
     }
@@ -53,11 +52,13 @@ object SelfEmploymentAnnualSummaryResource extends BaseController {
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[AnyContent] = annualSummaryFeatureSwitch.asyncFeatureSwitch { implicit request =>
-    connector.get(nino, id, taxYear).map { response =>
-      response.status match {
-        case 200 => response.annualSummary.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
-        case 404 => NotFound
-        case _ => unhandledResponse(response.status, logger)
+    withAuth(nino) {
+      connector.get(nino, id, taxYear).map { response =>
+        response.status match {
+          case 200 => response.annualSummary.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+          case 404 => NotFound
+          case _ => unhandledResponse(response.status, logger)
+        }
       }
     }
   }

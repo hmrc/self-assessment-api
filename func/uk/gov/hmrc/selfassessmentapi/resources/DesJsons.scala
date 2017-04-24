@@ -24,22 +24,19 @@ object DesJsons {
     val ninoNotFound: String = error("NOT_FOUND_NINO", "The remote endpoint has indicated that no data can be found.")
     val notFound: String = error("NOT_FOUND", "The remote endpoint has indicated that no data can be found.")
     val tradingNameConflict: String = error("CONFLICT", "Duplicated trading name.")
-    val serverError: String =
-      error("SERVER_ERROR", "DES is currently experiencing problems that require live service intervention.")
+    val serverError: String = error("SERVER_ERROR", "DES is currently experiencing problems that require live service intervention.")
     val serviceUnavailable: String = error("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")
-    val tooManySources: String =
-      error("TOO_MANY_SOURCES", "You may only have a maximum of one self-employment source.")
-    val invalidPeriod: String =
-      error("INVALID_PERIOD", "The remote endpoint has indicated that a overlapping period was submitted.")
+    val tooManySources: String = error("TOO_MANY_SOURCES", "You may only have a maximum of one self-employment source.")
+    val invalidPeriod: String = error("INVALID_PERIOD", "The remote endpoint has indicated that a overlapping period was submitted.")
     val invalidObligation: String = error("INVALID_REQUEST", "Accounting period should be greater than 6 months.")
-    val invalidOriginatorId: String =
-      error("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
+    val invalidOriginatorId: String = error("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
     val invalidCalcId: String = error("INVALID_CALCID", "Submission has not passed validation")
     val propertyConflict: String = error("CONFLICT", "Property already exists.")
   }
 
   object SelfEmployment {
     def apply(nino: Nino,
+              mtdId: String,
               id: String = "123456789012345",
               accPeriodStart: String = "2017-04-06",
               accPeriodEnd: String = "2018-04-05",
@@ -57,7 +54,7 @@ object DesJsons {
          |{
          |   "safeId": "XE00001234567890",
          |   "nino": "$nino",
-         |   "mtdbsa": "123456789012345",
+         |   "mtdbsa": "$mtdId",
          |   "propertyIncome": false,
          |   "businessData": [
          |      {
@@ -89,22 +86,22 @@ object DesJsons {
        """.stripMargin
     }
 
-    def emptySelfEmployment(nino: Nino): String = {
+    def emptySelfEmployment(nino: Nino, mtdId: String): String = {
       s"""
          |{
          |   "safeId": "XE00001234567890",
          |   "nino": "$nino",
-         |   "mtdbsa": "123456789012345",
+         |   "mtdbsa": "$mtdId",
          |   "propertyIncome": false
          |}
        """.stripMargin
     }
 
-    def createResponse(id: String): String = {
+    def createResponse(id: String, mtdId: String): String = {
       s"""
          |{
          |  "safeId": "XA0001234567890",
-         |  "mtditId": "mdtitId001",
+         |  "mtdsba": "$mtdId",
          |  "incomeSources": [
          |    {
          |      "incomeSourceId": "$id"
@@ -390,32 +387,77 @@ object DesJsons {
   }
 
   object Obligations {
-    def apply(firstMet: Boolean = false,
-              secondMet: Boolean = false,
-              thirdMet: Boolean = false,
-              fourthMet: Boolean = false): String = {
+    def apply(id: String = "abc"): String = {
       s"""
          |{
          |  "obligations": [
          |    {
-         |      "start": "2017-04-06",
-         |      "end": "2017-07-05",
-         |      "met": $firstMet
+         |      "id": "$id",
+         |      "type": "ITSB",
+         |      "details": [
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2017-04-06",
+         |          "inboundCorrespondenceToDate": "2017-07-05",
+         |          "inboundCorrespondanceDueDate": "2017-08-05",
+         |          "periodKey": "004"
+         |        },
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2017-07-06",
+         |          "inboundCorrespondenceToDate": "2017-10-05",
+         |          "inboundCorrespondanceDueDate": "2017-11-05",
+         |          "periodKey": "004"
+         |        },
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2017-10-06",
+         |          "inboundCorrespondenceToDate": "2018-01-05",
+         |          "inboundCorrespondanceDueDate": "2018-02-05",
+         |          "periodKey": "004"
+         |        },
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2018-01-06",
+         |          "inboundCorrespondenceToDate": "2018-04-05",
+         |          "inboundCorrespondanceDueDate": "2018-05-06",
+         |          "periodKey": "004"
+         |        }
+         |      ]
          |    },
          |    {
-         |      "start": "2017-07-06",
-         |      "end": "2017-10-05",
-         |      "met": $secondMet
-         |    },
-         |    {
-         |      "start": "2017-10-06",
-         |      "end": "2018-01-05",
-         |      "met": $thirdMet
-         |    },
-         |    {
-         |      "start": "2018-01-06",
-         |      "end": "2018-04-05",
-         |      "met": $fourthMet
+         |      "id": "$id",
+         |      "type": "ITSP",
+         |      "details": [
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2017-04-06",
+         |          "inboundCorrespondenceToDate": "2017-07-05",
+         |          "inboundCorrespondanceDueDate": "2017-08-05",
+         |          "periodKey": "004"
+         |        },
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2017-07-06",
+         |          "inboundCorrespondenceToDate": "2017-10-05",
+         |          "inboundCorrespondanceDueDate": "2017-11-05",
+         |          "periodKey": "004"
+         |        },
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2017-10-06",
+         |          "inboundCorrespondenceToDate": "2018-01-05",
+         |          "inboundCorrespondanceDueDate": "2018-02-05",
+         |          "periodKey": "004"
+         |        },
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2018-01-06",
+         |          "inboundCorrespondenceToDate": "2018-04-05",
+         |          "inboundCorrespondanceDueDate": "2018-05-06",
+         |          "periodKey": "004"
+         |        }
+         |      ]
          |    }
          |  ]
          |}

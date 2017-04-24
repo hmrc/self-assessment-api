@@ -16,21 +16,4 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
-import com.github.nscala_time.time.OrderingImplicits
-import org.joda.time.LocalDate
-import play.api.libs.json.{Json, Writes}
-
-case class Obligations(obligations: Seq[Obligation])
-
-object Obligations {
-  implicit val writes: Writes[Obligations] = Json.writes[Obligations]
-}
-
-case class Obligation(start: LocalDate, end: LocalDate, met: Boolean)
-
-object Obligation {
-  implicit val localDateOrder: Ordering[LocalDate] = OrderingImplicits.LocalDateOrdering
-  implicit val ordering: Ordering[Obligation] = Ordering.by(_.start)
-
-  implicit val writes: Writes[Obligation] = Json.writes[Obligation]
-}
+case class MtdId(mtdId: String)

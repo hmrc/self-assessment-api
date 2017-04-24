@@ -25,9 +25,11 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentPeriod
 
-class SelfEmploymentPeriodResponse(underlying: HttpResponse, from: Option[LocalDate] = None, to: Option[LocalDate] = None) {
+class SelfEmploymentPeriodResponse(underlying: HttpResponse,
+                                   from: Option[LocalDate] = None,
+                                   to: Option[LocalDate] = None) {
 
-  private val logger: Logger = Logger(classOf[SelfEmploymentResponse])
+  private val logger: Logger = Logger(classOf[SelfEmploymentPeriodResponse])
 
   val status: Int = underlying.status
 
@@ -77,5 +79,8 @@ class SelfEmploymentPeriodResponse(underlying: HttpResponse, from: Option[LocalD
 }
 
 object SelfEmploymentPeriodResponse {
-  def apply(response: HttpResponse, from: Option[LocalDate] = None, to: Option[LocalDate] = None): SelfEmploymentPeriodResponse = new SelfEmploymentPeriodResponse(response, from, to)
+  def apply(response: HttpResponse,
+            from: Option[LocalDate] = None,
+            to: Option[LocalDate] = None): SelfEmploymentPeriodResponse =
+    new SelfEmploymentPeriodResponse(response, from, to)
 }

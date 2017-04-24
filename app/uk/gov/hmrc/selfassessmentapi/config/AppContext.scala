@@ -32,14 +32,8 @@ object AppContext extends ServicesConfig {
   lazy val apiGatewayLinkContext: String = apiGatewayContext.map(x => if(x.isEmpty) x else s"/$x").getOrElse("")
   lazy val apiStatus: String = config.getString("api.status").getOrElse(throw new RuntimeException("api.status is not configured"))
   lazy val serviceLocatorUrl: String = baseUrl("service-locator")
-  lazy val authUrl: String = baseUrl("auth")
   lazy val desUrl: String = baseUrl("des")
   lazy val registrationEnabled: Boolean = current.configuration.getBoolean(s"$env.microservice.services.service-locator.enabled").getOrElse(true)
   lazy val featureSwitch: Option[Configuration] = config.getConfig(s"$env.feature-switch")
-  lazy val updateTaxYearPropertiesEnabled: Boolean = config.getBoolean(s"update-tax-year-properties.enabled").getOrElse(true)
-  lazy val authEnabled: Boolean = config.getBoolean(s"auth.enabled").getOrElse(true)
   lazy val auditEnabled: Boolean = config.getBoolean(s"auditing.enabled").getOrElse(true)
-
-  def deleteExpiredDataJob(): Configuration =
-    config.getConfig(s"$env.scheduling.deleteExpiredDataJob").getOrElse(throw new RuntimeException(s"$env.scheduling.deleteExpiredDataJob is not configured"))
 }
