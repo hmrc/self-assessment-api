@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
@@ -30,10 +29,9 @@ import scala.concurrent.Future
 object BanksAnnualSummaryResource extends BaseResource {
   private lazy val featureSwitch = FeatureSwitchAction(SourceType.Banks, "annual")
   private val annualSummaryService = BanksAnnualSummaryService
-  override val logger: Logger = Logger(BanksAnnualSummaryResource.getClass)
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validate[BankAnnualSummary, Boolean](request.body) {
         annualSummaryService.updateAnnualSummary(nino, id, taxYear, _)
       } match {
@@ -47,7 +45,7 @@ object BanksAnnualSummaryResource extends BaseResource {
   }
 
   def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
-    authorise(nino) {
+    withAuth(nino) {
       annualSummaryService.retrieveAnnualSummary(nino, id, taxYear).map {
         case Some(summary) => Ok(Json.toJson(summary))
         case None => NotFound

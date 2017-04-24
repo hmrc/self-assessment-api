@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.Logger
 import play.api.libs.json.Json
-import play.api.mvc.Action
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.models.SourceType
 import uk.gov.hmrc.selfassessmentapi.services.PropertiesObligationsService
@@ -28,11 +28,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 object PropertiesObligationsResource extends BaseResource {
   private val featureSwitch = FeatureSwitchAction(SourceType.Properties, "obligations")
   private val propertiesService = PropertiesObligationsService
-  override val logger: Logger = Logger(PropertiesObligationsResource.getClass)
 
-  def retrieveObligations(nino: Nino): Action[Unit] = featureSwitch.asyncEmptyFeatureSwitch { implicit request =>
-    authorise(nino) {
-      propertiesService.retrieveObligations(nino, request.headers.get(GovTestScenarioHeader)) map {
+  def retrieveObligations(nino: Nino): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
+    withAuth(nino) {
+      propertiesService.retrieveObligations(nino, headers.headers.get(GovTestScenarioHeader)) map {
         case Some(obligations) => Ok(Json.toJson(obligations))
         case None => NotFound
       }

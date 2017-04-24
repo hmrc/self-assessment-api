@@ -19,7 +19,8 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         balancingCharge = 350.34)
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -48,7 +49,8 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         "INVALID_MONETARY_AMOUNT" -> "/adjustments/privateUseAdjustment")
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -73,7 +75,8 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         balancingCharge = 350.34)
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .put(annualSummaries).at(s"/ni/$nino/uk-properties/other/$taxYear")
         .thenAssertThat()
@@ -94,7 +97,8 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         balancingCharge = 350.34)
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -123,7 +127,8 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         balancingCharge = 350.34)
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -144,7 +149,8 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       val property = Jsons.Properties()
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -159,7 +165,8 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
 
     "return code 404 when retrieving annual summaries for a properties business that does not exist" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .get(s"/ni/$nino/uk-properties/other/$taxYear")
         .thenAssertThat()
@@ -170,7 +177,8 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       val property = Jsons.Properties()
 
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(property).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()

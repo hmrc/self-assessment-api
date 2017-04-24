@@ -13,7 +13,8 @@ class AgentSimulationFeatureSwitchDisabledSpec extends BaseFunctionalSpec {
   "Agent simulation filters" should {
     "not be applied if feature is switched off" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments")

@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
@@ -30,12 +29,11 @@ import scala.concurrent.Future
 object PropertiesResource extends BaseResource {
 
   lazy val featureSwitch: FeatureSwitchAction = FeatureSwitchAction(SourceType.Properties)
-  override val logger: Logger = Logger(PropertiesResource.getClass)
 
   private val service = PropertiesService()
 
   def create(nino: Nino): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validate[properties.Properties, Either[Error, Boolean]](request.body) {
         service.create(nino, _)
       } match {
@@ -52,7 +50,7 @@ object PropertiesResource extends BaseResource {
   }
 
   def retrieve(nino: Nino): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
-    authorise(nino) {
+    withAuth(nino) {
       service.retrieve(nino).map {
         case Some(properties) => Ok(Json.toJson(properties))
         case None => NotFound

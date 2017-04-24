@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
@@ -31,10 +30,9 @@ import scala.concurrent.Future
 object PropertiesAnnualSummaryResource extends BaseResource {
   private lazy val featureSwitch = FeatureSwitchAction(SourceType.Properties, "annual")
   private val service = PropertiesAnnualSummaryService
-  override val logger: Logger = Logger(PropertiesAnnualSummaryResource.getClass)
 
   def updateAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validateProperty(propertyId, request.body, service.updateAnnualSummary(nino, taxYear, _)) match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
         case Right(result) => result.map {
@@ -46,7 +44,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
   }
 
   def retrieveAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit headers =>
-    authorise(nino) {
+    withAuth(nino) {
       service.retrieveAnnualSummary(nino, propertyId, taxYear).map {
         case Some(summary @ OtherPropertiesAnnualSummary(_, _)) => Ok(Json.toJson(summary))
         case Some(summary @ FHLPropertiesAnnualSummary(_, _)) => Ok(Json.toJson(summary))

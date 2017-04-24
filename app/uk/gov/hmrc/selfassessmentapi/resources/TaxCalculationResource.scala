@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
@@ -33,7 +32,6 @@ object TaxCalculationResource extends BaseResource {
 
   private lazy val featureSwitch = FeatureSwitchAction(SourceType.Calculation)
   private val connector = TaxCalculationConnector
-  val logger = Logger(TaxCalculationResource.getClass)
 
   private val cannedEtaResponse =
     s"""
@@ -43,7 +41,7 @@ object TaxCalculationResource extends BaseResource {
      """.stripMargin
 
   def requestCalculation(nino: Nino): Action[JsValue] = featureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validate[CalculationRequest, TaxCalculationResponse](request.body) { req =>
         connector.requestCalculation(nino, req.taxYear)
       } match {
@@ -62,7 +60,7 @@ object TaxCalculationResource extends BaseResource {
   }
 
   def retrieveCalculation(nino: Nino, calcId: SourceId): Action[AnyContent] = featureSwitch.asyncFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       connector.retrieveCalculation(nino, calcId).map { response =>
         response.status match {
           case 200 => Ok(Json.toJson(response.calculation))

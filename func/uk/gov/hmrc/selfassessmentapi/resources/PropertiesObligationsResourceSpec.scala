@@ -6,7 +6,8 @@ class PropertiesObligationsResourceSpec extends BaseFunctionalSpec {
   "retrieveObligations" should {
     "return code 200 containing a set of canned obligations, all of which have not been met" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(Jsons.Properties()).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -20,7 +21,8 @@ class PropertiesObligationsResourceSpec extends BaseFunctionalSpec {
 
     "return code 200 containing a set of canned obligations of which only the first has been met" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(Jsons.Properties()).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -34,7 +36,8 @@ class PropertiesObligationsResourceSpec extends BaseFunctionalSpec {
 
     "return code 200 containing a set of canned obligations, all of which have been met" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .post(Jsons.Properties()).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
@@ -48,7 +51,8 @@ class PropertiesObligationsResourceSpec extends BaseFunctionalSpec {
 
     "return code 404 when attempting to retrieve obligations for a properties business that does not exist" in {
       given()
-        .userIsAuthorisedForTheResource(nino)
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource(nino)
         .when()
         .get(s"/ni/$nino/uk-properties/obligations")
         .thenAssertThat()

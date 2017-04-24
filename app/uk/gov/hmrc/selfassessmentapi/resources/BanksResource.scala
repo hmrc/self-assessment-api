@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
@@ -30,10 +29,9 @@ import scala.concurrent.Future
 object BanksResource extends BaseResource {
   private lazy val seFeatureSwitch = FeatureSwitchAction(SourceType.Banks)
   private val service = BanksService
-  override val logger: Logger = Logger(BanksResource.getClass)
 
   def create(nino: Nino): Action[JsValue] = seFeatureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validate[Bank, Option[SourceId]](request.body) { bank =>
         service.create(nino, bank)
       } match {
@@ -47,7 +45,7 @@ object BanksResource extends BaseResource {
   }
 
   def update(nino: Nino, id: SourceId): Action[JsValue] = seFeatureSwitch.asyncJsonFeatureSwitch { implicit request =>
-    authorise(nino) {
+    withAuth(nino) {
       validate[Bank, Boolean](request.body) { bank =>
         service.update(nino, bank, id)
       } match {
@@ -61,7 +59,7 @@ object BanksResource extends BaseResource {
   }
 
   def retrieve(nino: Nino, id: SourceId): Action[AnyContent] = seFeatureSwitch.asyncFeatureSwitch { implicit headers =>
-    authorise(nino) {
+    withAuth(nino) {
       service.retrieve(nino, id) map {
         case Some(bank) => Ok(Json.toJson(bank))
         case None => NotFound
@@ -70,7 +68,7 @@ object BanksResource extends BaseResource {
   }
 
   def retrieveAll(nino: Nino): Action[AnyContent] = seFeatureSwitch.asyncFeatureSwitch { implicit headers =>
-    authorise(nino) {
+    withAuth(nino) {
       service.retrieveAll(nino) map { seq =>
         Ok(Json.toJson(seq))
       }

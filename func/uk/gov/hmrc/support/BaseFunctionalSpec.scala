@@ -383,14 +383,18 @@ trait BaseFunctionalSpec extends TestApplication {
 
     def when() = new HttpVerbs()
 
-    def userIsNotAuthorisedForTheResource(nino: Nino): Givens = {
+    def userIsSubscribedToMtdFor(nino: Nino, mtdId: String = "abc"): Givens = {
       stubFor(any(urlMatching(s".*/registration/business-details/nino/$nino"))
         .willReturn(
           aResponse()
             .withStatus(200)
             .withHeader("Content-Type", "application/json")
-            .withBody(DesJsons.SelfEmployment(nino, "123"))))
+            .withBody(DesJsons.SelfEmployment(nino, mtdId))))
 
+      this
+    }
+
+    def userIsNotAuthorisedForTheResource(nino: Nino): Givens = {
       stubFor(post(urlPathEqualTo(s"/auth/authorise"))
         .willReturn(aResponse()
           .withStatus(401)
@@ -400,14 +404,34 @@ trait BaseFunctionalSpec extends TestApplication {
       this
     }
 
-    def userIsAuthorisedForTheResource(nino: Nino, mtdId: String = "123"): Givens = {
-      stubFor(any(urlMatching(s".*/registration/business-details/nino/$nino"))
-        .willReturn(
-          aResponse()
-            .withStatus(200)
-            .withHeader("Content-Type", "application/json")
-            .withBody(DesJsons.SelfEmployment(nino, mtdId))))
+    def userIsPartiallyAuthorisedForTheResource(nino: Nino): Givens = {
 
+      // First call to auth to check if fully authorised should fail.
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .withRequestBody(containing("HMRC-MTD-IT"))
+        .willReturn(aResponse()
+          .withStatus(401)
+          .withHeader("Content-Length", "0")
+          .withHeader("WWW-Authenticate", "MDTP detail=\"InsufficientEnrolments\"")))
+
+      // Second call to auth to check FOA status should succeed.
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .withRequestBody(containing("HMRC-AS-AGENT"))
+        .willReturn(aResponse().withStatus(200).withBody(
+        """
+          |{
+          |  "internalId": "some-id",
+          |  "loginTimes": {
+          |     "currentLogin": "2016-11-27T09:00:00.000Z",
+          |     "previousLogin": "2016-11-01T12:00:00.000Z"
+          |  }
+          |}
+        """.stripMargin)))
+
+      this
+    }
+
+    def userIsFullyAuthorisedForTheResource(nino: Nino): Givens = {
       stubFor(post(urlPathEqualTo(s"/auth/authorise")).willReturn(aResponse().withStatus(200).withBody(
         """
           |{
@@ -536,13 +560,13 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def willBeCreatedFor(nino: Nino, id: String = "abc"): Givens = {
+        def willBeCreatedFor(nino: Nino, id: String = "abc", mtdId: String = "123"): Givens = {
           stubFor(post(urlEqualTo(s"/income-tax-self-assessment/nino/$nino/business"))
             .willReturn(
               aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.SelfEmployment.createResponse(id))))
+                .withBody(DesJsons.SelfEmployment.createResponse(id, mtdId))))
           givens
         }
 
@@ -739,13 +763,13 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def noneFor(nino: Nino): Givens = {
+        def noneFor(nino: Nino, mtdId: String = "123"): Givens = {
           stubFor(get(urlEqualTo(s"/registration/business-details/nino/$nino"))
             .willReturn(
               aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.SelfEmployment.emptySelfEmployment(nino))))
+                .withBody(DesJsons.SelfEmployment.emptySelfEmployment(nino, mtdId))))
 
           givens
         }
