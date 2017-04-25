@@ -22,14 +22,14 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.connectors.BusinessDetailsConnector
-import uk.gov.hmrc.selfassessmentapi.services.AuthenticatorService
+import uk.gov.hmrc.selfassessmentapi.services.AuthenticationService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait BaseResource extends BaseController {
   private val businessConnector = BusinessDetailsConnector
-  private val authService = AuthenticatorService
+  private val authService = AuthenticationService
 
   val logger: Logger = Logger(this.getClass)
 

@@ -27,10 +27,10 @@ import uk.gov.hmrc.selfassessmentapi.models.MtdId
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object AuthenticatorService extends AuthorisedFunctions {
+object AuthenticationService extends AuthorisedFunctions {
   override def authConnector: AuthConnector = MicroserviceAuthConnector
 
-  private val logger = Logger(AuthenticatorService.getClass)
+  private val logger = Logger(AuthenticationService.getClass)
 
   def authorise(mtdId: Option[MtdId])(f: => Future[Result])
                (implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[Result] =

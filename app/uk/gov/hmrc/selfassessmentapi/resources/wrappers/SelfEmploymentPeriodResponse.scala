@@ -76,6 +76,16 @@ class SelfEmploymentPeriodResponse(underlying: HttpResponse,
         Seq.empty
     }
   }
+
+  def transactionReference: Option[String] = {
+    (json \ "transactionReference").asOpt[String] match {
+      case x @ Some(_) => x
+      case None => {
+        logger.error("The 'transactionReference' field was not found in the response from DES")
+        None
+      }
+    }
+  }
 }
 
 object SelfEmploymentPeriodResponse {
