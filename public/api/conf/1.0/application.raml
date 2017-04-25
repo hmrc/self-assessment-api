@@ -281,7 +281,7 @@ traits:
             description: Retrieve self-employment business obligations
             (annotations.sandboxData): !include scenarios/self-employment-obligation-scenarios.md
             is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
-            (annotations.scope): "write:self-assessment"
+            (annotations.scope): "read:self-assessment"
             securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
             responses:
               200:
