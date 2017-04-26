@@ -31,24 +31,20 @@ case class PropertiesPeriodResponse(underlying: HttpResponse,
                                     to: Option[LocalDate] = None) {
 
   val logger: Logger = Logger(classOf[PropertiesPeriodResponse])
-
   def status: Int = underlying.status
-
   def json: JsValue = underlying.json
 
-  trait PropertiesPeriodResponseOps[P <: Period, D <: des.properties.Period] {
+  trait ResponseMapper[P <: Period, D <: des.properties.Period] {
     def mkPeriodId(prop: P): P
     def period: Option[P]
     def allPeriods: Seq[PeriodSummary]
   }
 
-  object PropertiesPeriodResponseOps {
+  object ResponseMapper {
+    def apply[P <: Period, D <: des.properties.Period](implicit p: ResponseMapper[P, D]): ResponseMapper[P, D] =
+      implicitly
 
-    def apply[P <: Period, D <: des.properties.Period](
-        implicit p: PropertiesPeriodResponseOps[P, D]): PropertiesPeriodResponseOps[P, D] = implicitly
-
-    implicit object OtherPropertiesPeriodResponseOps
-        extends PropertiesPeriodResponseOps[Other.Properties, des.properties.Other.Properties] {
+    implicit object OtherResponseMapper extends ResponseMapper[Other.Properties, des.properties.Other.Properties] {
       override def mkPeriodId(prop: Other.Properties): Other.Properties =
         prop.copy(id = Some(s"${prop.from}_${prop.to}"))
 
@@ -71,8 +67,7 @@ case class PropertiesPeriodResponse(underlying: HttpResponse,
         }
     }
 
-    implicit object FHLPropertiesPeriodResponseOps
-        extends PropertiesPeriodResponseOps[FHL.Properties, des.properties.FHL.Properties] {
+    implicit object FHLResponseMapper extends ResponseMapper[FHL.Properties, des.properties.FHL.Properties] {
       override def mkPeriodId(prop: FHL.Properties): FHL.Properties =
         prop.copy(id = Some(s"${prop.from}_${prop.to}"))
 
@@ -114,5 +109,4 @@ case class PropertiesPeriodResponse(underlying: HttpResponse,
         false
     }
   }
-
 }
