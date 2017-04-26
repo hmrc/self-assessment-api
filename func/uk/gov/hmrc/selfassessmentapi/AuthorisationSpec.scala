@@ -1,9 +1,14 @@
 package uk.gov.hmrc.selfassessmentapi
 
+import play.api.test.FakeApplication
 import uk.gov.hmrc.selfassessmentapi.resources.Jsons
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class AuthorisationSpec extends BaseFunctionalSpec {
+
+  private val conf = Map("Test.microservice.services.auth.enabled" -> true)
+
+  override lazy val app: FakeApplication = new FakeApplication(additionalConfiguration = conf)
 
   "if the user is not authorised they" should {
     "receive 401" in {

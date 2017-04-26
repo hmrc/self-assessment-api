@@ -55,15 +55,16 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Errors.invalidPayload)
     }
 
-    "return code 401 when attempting to create a self-employment that fails DES nino validation" in {
+    "return code 400 when attempting to create a self-employment that fails DES nino validation" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
-        .des().ninoNotFoundFor(nino)
+        .des().invalidNinoFor(nino)
         .when()
         .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
         .thenAssertThat()
-        .statusIs(401)
+        .statusIs(400)
+        .bodyIsLike(Jsons.Errors.invalidNino)
     }
 
     "return code 400 when attempting to create a self-employment that fails DES duplicated trading name validaton" in {
@@ -224,7 +225,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .bodyDoesNotHavePath[SourceId]("id")
     }
 
-    "return code 401 when attempting to retrieve a self-employment that fails DES nino validation" in {
+    "return code 400 when attempting to retrieve a self-employment that fails DES nino validation" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
@@ -232,8 +233,8 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .when()
         .get(s"/ni/$nino/self-employments/sourceId")
         .thenAssertThat()
-        .statusIs(401)
-        .bodyIsLike(Jsons.Errors.unauthorised)
+        .statusIs(400)
+        .bodyIsLike(Jsons.Errors.invalidNino)
     }
 
     "return code 404 when retrieving a self-employment resource that does not exist" in {
@@ -258,7 +259,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Errors.ninoInvalid)
     }
 
-    "return code 401 when retrieving a self-employment for a nino that does not exist" in {
+    "return code 404 when retrieving a self-employment for a nino that does not exist" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
@@ -266,7 +267,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .when()
         .get(s"/ni/$nino/self-employments/invalidSourceId")
         .thenAssertThat()
-        .statusIs(401)
+        .statusIs(404)
     }
 
     "return code 500 when DES is experiencing issues" in {
@@ -340,7 +341,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .jsonBodyIsEmptyArray()
     }
 
-    "return code 401 when attempting to retrieve self-employments that fails DES nino validation" in {
+    "return code 400 when attempting to retrieve self-employments that fails DES nino validation" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
@@ -348,11 +349,11 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .when()
         .get(s"/ni/$nino/self-employments")
         .thenAssertThat()
-        .statusIs(401)
-        .bodyIsLike(Jsons.Errors.unauthorised)
+        .statusIs(400)
+        .bodyIsLike(Jsons.Errors.invalidNino)
     }
 
-    "return code 401 when attempting to retrieve self-employments for a nino that does not exist" in {
+    "return code 404 when attempting to retrieve self-employments for a nino that does not exist" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
@@ -360,7 +361,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .when()
         .get(s"/ni/$nino/self-employments")
         .thenAssertThat()
-        .statusIs(401)
+        .statusIs(404)
     }
 
     "return code 500 when we receive a status code from DES that we do not handle" in {

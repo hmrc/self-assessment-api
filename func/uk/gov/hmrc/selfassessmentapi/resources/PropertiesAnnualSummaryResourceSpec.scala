@@ -45,7 +45,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .statusIs(404)
       }
 
-      s"return code 401 when provided with an invalid Originator-Id header for $propertyType" in {
+      s"return code 400 when provided with an invalid Originator-Id header for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource(nino)
@@ -53,7 +53,8 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .when()
           .put(annualSummary(propertyType)).at(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
           .thenAssertThat()
-          .statusIs(401)
+          .statusIs(400)
+          .bodyIsLike(Jsons.Errors.invalidOriginatorId)
       }
 
       s"return code 400 when provided with an invalid payload for $propertyType" in {
@@ -172,7 +173,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .statusIs(404)
       }
 
-      s"return code 401 when retrieving annual summary for a non MTD year for $propertyType" in {
+      s"return code 400 when retrieving annual summary for a non MTD year for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource(nino)
@@ -183,7 +184,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .bodyIsError("TAX_YEAR_INVALID")
       }
 
-      s"return code 401 when provided with an invalid Originator-Id header for $propertyType" in {
+      s"return code 400 when provided with an invalid Originator-Id header for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource(nino)
@@ -191,7 +192,8 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .when()
           .get(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
           .thenAssertThat()
-          .statusIs(401)
+          .statusIs(400)
+          .bodyIsLike(Jsons.Errors.invalidOriginatorId)
       }
 
       s"return code 500 when DES is experiencing problems for $propertyType" in {

@@ -41,15 +41,16 @@ class PropertiesResourceSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Errors.invalidPayload)
     }
 
-    "return code 401 when attempting to create a property business that fails DES nino validation" in {
+    "return code 400 when attempting to create a property business that fails DES nino validation" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
-        .des().ninoNotFoundFor(nino)
+        .des().invalidNinoFor(nino)
         .when()
         .post(Jsons.Properties()).to(s"/ni/$nino/uk-properties")
         .thenAssertThat()
-        .statusIs(401)
+        .statusIs(400)
+        .bodyIsLike(Jsons.Errors.invalidNino)
     }
 
     "return code 500 when DES is experiencing issues" in {
@@ -113,17 +114,17 @@ class PropertiesResourceSpec extends BaseFunctionalSpec {
         .statusIs(404)
     }
 
-    "return code 401 when attempting to create a property business that fails DES nino validation" in {
+    "return code 400 when attempting to create a property business that fails DES nino validation" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource(nino)
-        .des().ninoNotFoundFor(nino)
+        .des().invalidNinoFor(nino)
         .when()
         .get(s"/ni/$nino/uk-properties")
         .thenAssertThat()
-        .statusIs(401)
+        .statusIs(400)
+        .bodyIsLike(Jsons.Errors.invalidNino)
     }
-
 
     "return code 500 when DES is experiencing issues" in {
       given()
