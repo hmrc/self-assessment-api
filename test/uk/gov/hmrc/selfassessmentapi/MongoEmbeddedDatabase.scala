@@ -41,6 +41,7 @@ trait MongoEmbeddedDatabase extends UnitSpec with BeforeAndAfterAll with BeforeA
   }
 
   startEmbeddedMongo()
+  System.setProperty("RELEASED_ROUTES", "prod.Routes")
 }
 
 object MongoEmbeddedDatabase {
