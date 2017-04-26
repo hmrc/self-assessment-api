@@ -66,7 +66,7 @@ case class PropertiesPeriodResponse(underlying: HttpResponse,
           case Some(desPeriods) =>
             desPeriods.map((mkPeriodId _ compose Other.Properties.from)(_).asSummary).sorted
           case None =>
-            logger.error("The response from DES does not match the expected self-employment period format.")
+            logger.error("The response from DES does not match the expected properties period format.")
             Seq.empty
         }
     }
@@ -90,7 +90,7 @@ case class PropertiesPeriodResponse(underlying: HttpResponse,
           case Some(desPeriods) =>
             desPeriods.map((mkPeriodId _ compose FHL.Properties.from)(_).asSummary).sorted
           case None =>
-            logger.error("The response from DES does not match the expected self-employment period format.")
+            logger.error("The response from DES does not match the expected properties period format.") //FIXME should return Either with error instead of failing silently
             Seq.empty
         }
     }

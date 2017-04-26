@@ -24,14 +24,19 @@ object DesJsons {
     val ninoNotFound: String = error("NOT_FOUND_NINO", "The remote endpoint has indicated that no data can be found.")
     val notFound: String = error("NOT_FOUND", "The remote endpoint has indicated that no data can be found.")
     val tradingNameConflict: String = error("CONFLICT", "Duplicated trading name.")
-    val serverError: String = error("SERVER_ERROR", "DES is currently experiencing problems that require live service intervention.")
+    val serverError: String =
+      error("SERVER_ERROR", "DES is currently experiencing problems that require live service intervention.")
     val serviceUnavailable: String = error("SERVICE_UNAVAILABLE", "Dependent systems are currently not responding.")
-    val tooManySources: String = error("TOO_MANY_SOURCES", "You may only have a maximum of one self-employment source.")
-    val invalidPeriod: String = error("INVALID_PERIOD", "The remote endpoint has indicated that a overlapping period was submitted.")
+    val tooManySources: String =
+      error("TOO_MANY_SOURCES", "You may only have a maximum of one self-employment source.")
+    val invalidPeriod: String =
+      error("INVALID_PERIOD", "The remote endpoint has indicated that a overlapping period was submitted.")
     val invalidObligation: String = error("INVALID_REQUEST", "Accounting period should be greater than 6 months.")
-    val invalidOriginatorId: String = error("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
+    val invalidOriginatorId: String =
+      error("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
     val invalidCalcId: String = error("INVALID_CALCID", "Submission has not passed validation")
     val propertyConflict: String = error("CONFLICT", "Property already exists.")
+    val invalidIncomeSource: String = error("INVALID_INCOME_SOURCE", "The remote endpoint has indicated that the taxpayer does not have an associated property.")
   }
 
   object SelfEmployment {
@@ -256,14 +261,15 @@ object DesJsons {
         FHL.Properties(id = Some(id),
                        from = from,
                        to = to,
-                       financials =
-                         FHL.Financials(incomes = Some(FHL.Incomes(rentIncome = Some(rentIncome))),
-                                        deductions = Some(
-                                          FHL.Deductions(premisesRunningCosts = Some(premisesRunningCosts),
-                                                         repairsAndMaintenance = Some(repairsAndMaintenance),
-                                                         financialCosts = Some(financialCosts),
-                                                         professionalFees = Some(professionalFees),
-                                                         other = Some(other))))))
+                       financials = Some(
+                         FHL
+                           .Financials(incomes = Some(FHL.Incomes(rentIncome = Some(rentIncome))),
+                                       deductions = Some(
+                                         FHL.Deductions(premisesRunningCosts = Some(premisesRunningCosts),
+                                                        repairsAndMaintenance = Some(repairsAndMaintenance),
+                                                        financialCosts = Some(financialCosts),
+                                                        professionalFees = Some(professionalFees),
+                                                        other = Some(other)))))))
 
     def otherPeriod(id: String = "12345",
                     from: String = "",
@@ -277,13 +283,25 @@ object DesJsons {
                     financialCosts: Option[BigDecimal] = Some(0),
                     professionalFees: Option[BigDecimal] = Some(0),
                     costOfServices: Option[BigDecimal] = Some(0),
-                    other: Option[BigDecimal] = Some(0)): JsValue =
+                    other: Option[BigDecimal] = Some(0))
+      : JsValue =
       Json.toJson(
-        Other.Properties(id = Some(id),
-                         from = from,
-                         to = to,
-                         financials =
-                           Other.Financials(incomes = Some(Other.Incomes(rentIncome = Some(Other.Income(rentIncome, rentIncomeTaxDeducted)), premiumsOfLeaseGrant = premiumsOfLeaseGrant, reversePremiums = reversePremiums)), deductions = Some(Other.Deductions(premisesRunningCosts = premisesRunningCosts, repairsAndMaintenance = repairsAndMaintenance, financialCosts = financialCosts, professionalFees = professionalFees, costOfServices = costOfServices, other = other)))))
+        Other
+          .Properties(id = Some(id),
+                      from = from,
+                      to = to,
+                      financials = Some(
+                        Other.Financials(incomes = Some(Other.Incomes(rentIncome =
+                                                                        Some(Other.Income(rentIncome, rentIncomeTaxDeducted)),
+                          premiumsOfLeaseGrant = premiumsOfLeaseGrant,
+                          reversePremiums = reversePremiums)),
+                          deductions = Some(Other.Deductions(
+                            premisesRunningCosts = premisesRunningCosts,
+                            repairsAndMaintenance = repairsAndMaintenance,
+                            financialCosts = financialCosts,
+                            professionalFees = professionalFees,
+                            costOfServices = costOfServices,
+                            other = other))))))
 
     def createResponse: String = {
       s"""
@@ -374,13 +392,13 @@ object DesJsons {
       propertyType match {
         case PropertyType.FHL =>
           Json
-            .arr(fhlPeriod(id = "2017-04-06_2017-07-04", from = "2017-04-06", to = "2017-07-04"),
-                 fhlPeriod(id = "2017-07-05_2017-08-04", from = "2017-07-05", to = "2017-08-04"))
+            .arr(fhlPeriod(id = "abc", from = "2017-04-06", to = "2017-07-04"),
+                 fhlPeriod(id = "def", from = "2017-07-05", to = "2017-08-04"))
             .toString()
         case PropertyType.OTHER =>
           Json
-            .arr(otherPeriod(id = "2017-04-06_2017-07-04", from = "2017-04-06", to = "2017-07-04"),
-                 otherPeriod(id = "2017-07-05_2017-08-04", from = "2017-07-05", to = "2017-08-04"))
+            .arr(otherPeriod(id = "abc", from = "2017-04-06", to = "2017-07-04"),
+                 otherPeriod(id = "def", from = "2017-07-05", to = "2017-08-04"))
             .toString()
       }
 

@@ -52,12 +52,16 @@ object FHL {
   object Financials {
     implicit val format: OFormat[Financials] = Json.format[Financials]
 
-    def from(o: properties.FHL.Financials): Financials =
-      Financials(incomes = o.incomes.map(Incomes.from), deductions = o.expenses.map(Deductions.from))
-
+    def from(o: Option[properties.FHL.Financials]): Option[Financials] =
+      o.flatMap { f =>
+        (f.incomes, f.expenses) match {
+          case (None, None) => None
+          case (incomes, expenses) => Some(Financials(incomes = incomes.map(Incomes.from), deductions = expenses.map(Deductions.from)))
+        }
+      }
   }
 
-  case class Properties(id: Option[String], from: String, to: String, financials: Financials) extends Period
+  case class Properties(id: Option[String], from: String, to: String, financials: Option[Financials]) extends Period
 
   object Properties {
     implicit val format: OFormat[Properties] = Json.format[Properties]
@@ -116,11 +120,16 @@ object Other {
   object Financials {
     implicit val format: OFormat[Financials] = Json.format[Financials]
 
-    def from(o: properties.Other.Financials): Financials =
-      Financials(incomes = o.incomes.map(Incomes.from), deductions = o.expenses.map(Deductions.from))
+    def from(o: Option[properties.Other.Financials]): Option[Financials] =
+    o.flatMap { f =>
+      (f.incomes, f.expenses) match {
+        case (None, None) => None
+        case (incomes, expenses) => Some(Financials(incomes = incomes.map(Incomes.from), deductions = expenses.map(Deductions.from)))
+      }
+    }
   }
 
-  case class Properties(id: Option[String], from: String, to: String, financials: Financials) extends Period
+  case class Properties(id: Option[String], from: String, to: String, financials: Option[Financials]) extends Period
 
   object Properties {
 

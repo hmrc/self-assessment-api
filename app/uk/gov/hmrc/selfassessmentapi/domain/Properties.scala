@@ -90,7 +90,7 @@ object PropertyPeriodOps {
       val periodOpt = properties.otherBucket.periods.find(period => period._1.equals(periodId))
 
       periodOpt.map { period =>
-        setPeriodsTo(periodId, period._2.copy(financials = financials), properties)
+        setPeriodsTo(periodId, period._2.copy(financials = Some(financials)), properties)
       }.get
     }
   }
@@ -118,7 +118,7 @@ object PropertyPeriodOps {
       val periodOpt = properties.fhlBucket.periods.find(period => period._1.equals(periodId))
 
       periodOpt.map { period =>
-        setPeriodsTo(periodId, period._2.copy(financials = financials), properties)
+        setPeriodsTo(periodId, period._2.copy(financials = Some(financials)), properties)
       }.get
     }
   }

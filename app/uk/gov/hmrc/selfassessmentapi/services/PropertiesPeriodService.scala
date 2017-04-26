@@ -31,6 +31,7 @@ trait PropertiesPeriodService[P <: Period, F <: Financials] {
 
   val propertyOps: PropertyPeriodOps[P, F]
 
+  // FIXME implement using DES connector
   def updatePeriod(nino: Nino, periodId: PeriodId, period: F): Future[Boolean] = {
     repository.retrieve(nino).flatMap {
       case Some(property) if propertyOps.periodExists(periodId, property) =>

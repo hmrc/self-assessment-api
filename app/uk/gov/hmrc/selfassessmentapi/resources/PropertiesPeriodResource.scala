@@ -47,7 +47,7 @@ object PropertiesPeriodResource extends BaseResource {
                 case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id))
                 case 400 if response.containsOverlappingPeriod => Forbidden(Error.asBusinessError(response.json))
                 case 400 => BadRequest(Error.from(response.json))
-                case 404 => NotFound
+                case 404 | 403 => NotFound
                 case _ => unhandledResponse(response.status, logger)
               }
             }

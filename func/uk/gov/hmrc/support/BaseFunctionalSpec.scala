@@ -1078,6 +1078,18 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def periodWillBeNotBeCreatedForInexistentIncomeSource(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(
+            post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+              .willReturn(
+                aResponse()
+                  .withStatus(403)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.invalidIncomeSource)))
+
+          givens
+        }
+
         def periodsWillBeReturnedFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
             get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))

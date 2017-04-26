@@ -95,6 +95,21 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(404)
       }
 
+      s"""return code 404 when attempting to create a period for a property that does not exist for $propertyType
+         |and DES returns HTTP 403 INVALID_INCOME_SOURCE""".stripMargin in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource(nino)
+          .des()
+          .properties
+          .periodWillBeNotBeCreatedForInexistentIncomeSource(nino, propertyType)
+          .when()
+          .post(period(propertyType))
+          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(404)
+      }
+
       s"return code 500 when DES is experiencing issues for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
@@ -191,7 +206,8 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource(nino)
-          .des().isATeapotFor(nino)
+          .des()
+          .isATeapotFor(nino)
           .when()
           .get(s"/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()

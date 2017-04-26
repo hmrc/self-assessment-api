@@ -24,6 +24,29 @@ import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
 class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
 
+  "PropertiesPeriod" should {
+    "round trip FHL properties" in forAll(FHLGen.genPropertiesPeriod(valid = true)) { fhlProps =>
+      roundTripJson(fhlProps)
+    }
+
+    "round trip Other properties" in forAll(OtherGen.genPropertiesPeriod(valid = true)) { otherProps =>
+      roundTripJson(otherProps)
+    }
+  }
+
+  "validate" should {
+    "reject a FHL properties where the `to` date comes before the `from` date" in forAll(
+      FHLGen.genPropertiesPeriod(valid = false)) { fhlProps =>
+      assertValidationErrorWithCode(fhlProps, "", ErrorCode.INVALID_PERIOD)
+    }
+
+    "reject a Other properties where the `to` date comes before the `from` date" in forAll(
+      OtherGen.genPropertiesPeriod(valid = false)) { otherProps =>
+      assertValidationErrorWithCode(otherProps, "", ErrorCode.INVALID_PERIOD)
+    }
+
+  }
+
   def amountGen(lower: BigDecimal, upper: BigDecimal): Gen[BigDecimal] =
     for {
       value <- Gen.chooseNum(lower.intValue(), upper.intValue())
@@ -31,99 +54,94 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
 
   val amount: Gen[BigDecimal] = amountGen(1000, 5000)
 
-  val genFHLIncome: Gen[FHL.Income] = for (amount <- amount) yield FHL.Income(amount)
+  object FHLGen {
+    val genIncome: Gen[FHL.Income] = for (amount <- amount) yield FHL.Income(amount)
 
-  val genFHLIncomes: Gen[FHL.Incomes] =
-    for {
-      rentIncome <- Gen.option(genFHLIncome)
-    } yield FHL.Incomes(rentIncome = rentIncome)
+    val genIncomes: Gen[FHL.Incomes] =
+      for {
+        rentIncome <- Gen.option(genIncome)
+      } yield FHL.Incomes(rentIncome = rentIncome)
 
-  val genFHLExpense: Gen[FHL.Expense] = for (amount <- amount) yield FHL.Expense(amount)
+    val genExpense: Gen[FHL.Expense] = for (amount <- amount) yield FHL.Expense(amount)
 
-  val genFHLExpenses: Gen[FHL.Expenses] =
-    for {
-      premisesRunningCosts <- Gen.option(genFHLExpense)
-      repairsAndMaintenance <- Gen.option(genFHLExpense)
-      financialCosts <- Gen.option(genFHLExpense)
-      professionalFees <- Gen.option(genFHLExpense)
-      other <- Gen.option(genFHLExpense)
-    } yield FHL.Expenses(premisesRunningCosts, repairsAndMaintenance, financialCosts, professionalFees, other)
+    val genExpenses: Gen[FHL.Expenses] =
+      for {
+        premisesRunningCosts <- Gen.option(genExpense)
+        repairsAndMaintenance <- Gen.option(genExpense)
+        financialCosts <- Gen.option(genExpense)
+        professionalFees <- Gen.option(genExpense)
+        other <- Gen.option(genExpense)
+      } yield FHL.Expenses(premisesRunningCosts, repairsAndMaintenance, financialCosts, professionalFees, other)
 
-  val genOtherIncome: Gen[Other.Income] =
-    for {
-      amount <- amount
-      taxDeducted <- Gen.option(amount)
-    } yield Other.Income(amount, taxDeducted)
+    def genFinancials: Gen[FHL.Financials] =
+      (for {
+        incomes <- Gen.option(genIncomes)
+        expenses <- Gen.option(genExpenses)
+      } yield FHL.Financials(incomes, expenses)) suchThat (f => f.expenses.isDefined && f.incomes.isDefined)
 
-  val genOtherIncomes: Gen[Other.Incomes] =
-    for {
-      rentIncome <- Gen.option(genOtherIncome)
-      premiumsOfLeaseGrant <- Gen.option(genOtherIncome)
-      reversePremiums <- Gen.option(genOtherIncome)
-    } yield Other.Incomes(rentIncome, premiumsOfLeaseGrant, reversePremiums)
-
-  val genOtherExpense: Gen[Other.Expense] = for (amount <- amount) yield Other.Expense(amount)
-
-  val genOtherExpenses: Gen[Other.Expenses] =
-    for {
-      premisesRunningCosts <- Gen.option(genOtherExpense)
-      repairsAndMaintenance <- Gen.option(genOtherExpense)
-      financialCosts <- Gen.option(genOtherExpense)
-      professionalFees <- Gen.option(genOtherExpense)
-      costOfServices <- Gen.option(genOtherExpense)
-      other <- Gen.option(genOtherExpense)
-    } yield
-      Other.Expenses(premisesRunningCosts,
-                       repairsAndMaintenance,
-                       financialCosts,
-                       professionalFees,
-                       costOfServices,
-                       other)
-
-  def genFHLPropertiesPeriodicData(valid: Boolean): Gen[FHL.Properties] =
-    for {
-      from <- Gen.const(LocalDate.now())
-      to <- Gen.oneOf(from, from.plusDays(1))
-      incomes <- Gen.option(genFHLIncomes)
-      expenses <- Gen.option(genFHLExpenses)
-    } yield
-      if (valid)
-        FHL.Properties(None, from, to, FHL.Financials(incomes, expenses))
-      else
-        FHL.Properties(None, from, from.minusDays(1), FHL.Financials(incomes, expenses))
-
-  def genOtherPropertiesPeriodicData(valid: Boolean): Gen[Other.Properties] =
-    for {
-      from <- Gen.const(LocalDate.now())
-      to <- Gen.oneOf(from, from.plusDays(1))
-      incomes <- Gen.option(genOtherIncomes)
-      expenses <- Gen.option(genOtherExpenses)
-    } yield
-      if (valid)
-        Other.Properties(None, from, to, Other.Financials(incomes, expenses))
-      else
-        Other.Properties(None, from, from.minusDays(1), Other.Financials(incomes, expenses))
-
-  "PropertiesPeriod" should {
-    "round trip FHL properties" in forAll(genFHLPropertiesPeriodicData(valid = true)) { fhlProps =>
-      roundTripJson(fhlProps)
-    }
-
-    "round trip Other properties" in forAll(genOtherPropertiesPeriodicData(valid = true)) { otherProps =>
-      roundTripJson(otherProps)
-    }
-  }
-
-  "validate" should {
-    "reject a FHL properties where the `to` date comes before the `from` date" in forAll(
-      genFHLPropertiesPeriodicData(valid = false)) { fhlProps =>
-      assertValidationErrorWithCode(fhlProps, "", ErrorCode.INVALID_PERIOD)
-    }
-
-    "reject a Other properties where the `to` date comes before the `from` date" in forAll(
-      genOtherPropertiesPeriodicData(valid = false)) { otherProps =>
-      assertValidationErrorWithCode(otherProps, "", ErrorCode.INVALID_PERIOD)
-    }
+    def genPropertiesPeriod(valid: Boolean): Gen[FHL.Properties] =
+      for {
+        from <- Gen.const(LocalDate.now())
+        to <- Gen.oneOf(from, from.plusDays(1))
+        financials <- Gen.option(genFinancials)
+      } yield
+        if (valid)
+          FHL.Properties(None, from, to, financials)
+        else
+          FHL.Properties(None, from, from.minusDays(1), financials)
 
   }
+
+  object OtherGen {
+    val genIncome: Gen[Other.Income] =
+      for {
+        amount <- amount
+        taxDeducted <- Gen.option(amount)
+      } yield Other.Income(amount, taxDeducted)
+
+    val genIncomes: Gen[Other.Incomes] =
+      for {
+        rentIncome <- Gen.option(genIncome)
+        premiumsOfLeaseGrant <- Gen.option(genIncome)
+        reversePremiums <- Gen.option(genIncome)
+      } yield Other.Incomes(rentIncome, premiumsOfLeaseGrant, reversePremiums)
+
+    val genExpense: Gen[Other.Expense] = for (amount <- amount) yield Other.Expense(amount)
+
+    val genExpenses: Gen[Other.Expenses] =
+      for {
+        premisesRunningCosts <- Gen.option(genExpense)
+        repairsAndMaintenance <- Gen.option(genExpense)
+        financialCosts <- Gen.option(genExpense)
+        professionalFees <- Gen.option(genExpense)
+        costOfServices <- Gen.option(genExpense)
+        other <- Gen.option(genExpense)
+      } yield
+        Other
+          .Expenses(premisesRunningCosts,
+                    repairsAndMaintenance,
+                    financialCosts,
+                    professionalFees,
+                    costOfServices,
+                    other)
+
+    def genFinancials: Gen[Other.Financials] =
+      (for {
+        incomes <- Gen.option(genIncomes)
+        expenses <- Gen.option(genExpenses)
+      } yield Other.Financials(incomes, expenses)) suchThat (f => f.expenses.isDefined && f.incomes.isDefined)
+
+    def genPropertiesPeriod(valid: Boolean): Gen[Other.Properties] =
+      for {
+        from <- Gen.const(LocalDate.now())
+        to <- Gen.oneOf(from, from.plusDays(1))
+        financials <- Gen.option(genFinancials)
+      } yield
+        if (valid)
+          Other.Properties(None, from, to, financials)
+        else
+          Other.Properties(None, from, from.minusDays(1), financials)
+
+  }
+
 }
