@@ -34,63 +34,6 @@ case class PropertiesPeriodResponse(underlying: HttpResponse,
   def status: Int = underlying.status
   def json: JsValue = underlying.json
 
-  trait ResponseMapper[P <: Period, D <: des.properties.Period] {
-    def mkPeriodId(prop: P): P
-    def period: Option[P]
-    def allPeriods: Seq[PeriodSummary]
-  }
-
-  object ResponseMapper {
-    def apply[P <: Period, D <: des.properties.Period](implicit p: ResponseMapper[P, D]): ResponseMapper[P, D] =
-      implicitly
-
-    implicit object OtherResponseMapper extends ResponseMapper[Other.Properties, des.properties.Other.Properties] {
-      override def mkPeriodId(prop: Other.Properties): Other.Properties =
-        prop.copy(id = Some(s"${prop.from}_${prop.to}"))
-
-      override def period: Option[Other.Properties] =
-        json.asOpt[des.properties.Other.Properties] match {
-          case Some(prop) =>
-            Some(Other.Properties.from(prop).copy(id = None))
-          case None =>
-            logger.error("The response from DES does not match the expected properties period format.")
-            None
-        }
-
-      override def allPeriods: Seq[PeriodSummary] =
-        json.asOpt[Seq[des.properties.Other.Properties]] match {
-          case Some(desPeriods) =>
-            desPeriods.map((mkPeriodId _ compose Other.Properties.from)(_).asSummary).sorted
-          case None =>
-            logger.error("The response from DES does not match the expected properties period format.")
-            Seq.empty
-        }
-    }
-
-    implicit object FHLResponseMapper extends ResponseMapper[FHL.Properties, des.properties.FHL.Properties] {
-      override def mkPeriodId(prop: FHL.Properties): FHL.Properties =
-        prop.copy(id = Some(s"${prop.from}_${prop.to}"))
-
-      override def period: Option[FHL.Properties] =
-        json.asOpt[des.properties.FHL.Properties] match {
-          case Some(prop) =>
-            Some(FHL.Properties.from(prop).copy(id = None))
-          case None =>
-            logger.error("The response from DES does not match the expected properties period format.")
-            None
-        }
-
-      override def allPeriods: Seq[PeriodSummary] =
-        json.asOpt[Seq[des.properties.FHL.Properties]] match {
-          case Some(desPeriods) =>
-            desPeriods.map((mkPeriodId _ compose FHL.Properties.from)(_).asSummary).sorted
-          case None =>
-            logger.error("The response from DES does not match the expected properties period format.") //FIXME should return Either with error instead of failing silently
-            Seq.empty
-        }
-    }
-  }
-
   def getPeriodId: String =
     (for {
       fromDate <- from
@@ -108,5 +51,68 @@ case class PropertiesPeriodResponse(underlying: HttpResponse,
         logger.error("The response from DES does not match the expected error format.")
         false
     }
+  }
+}
+
+trait ResponseMapper[P <: Period, D <: des.properties.Period] {
+  def mkPeriodId(prop: P): P
+  def period: PropertiesPeriodResponse => Option[P]
+  def allPeriods: PropertiesPeriodResponse => Seq[PeriodSummary]
+}
+
+object ResponseMapper {
+  def apply[P <: Period, D <: des.properties.Period](implicit p: ResponseMapper[P, D]): ResponseMapper[P, D] =
+    implicitly
+
+  implicit object OtherResponseMapper extends ResponseMapper[Other.Properties, des.properties.Other.Properties] {
+
+    override def mkPeriodId(prop: Other.Properties): Other.Properties =
+      prop.copy(id = Some(s"${prop.from}_${prop.to}"))
+
+    override def period: PropertiesPeriodResponse => Option[Other.Properties] =
+      response =>
+        response.json.asOpt[des.properties.Other.Properties] match {
+          case Some(prop) =>
+            Some(Other.Properties.from(prop).copy(id = None))
+          case None =>
+            response.logger.error("The response from DES does not match the expected properties period format.")
+            None
+      }
+
+    override def allPeriods: PropertiesPeriodResponse => Seq[PeriodSummary] =
+      response =>
+        response.json.asOpt[Seq[des.properties.Other.Properties]] match {
+          case Some(desPeriods) =>
+            desPeriods.map((mkPeriodId _ compose Other.Properties.from)(_).asSummary).sorted
+          case None =>
+            response.logger.error("The response from DES does not match the expected properties period format.")
+            Seq.empty
+      }
+
+  }
+
+  implicit object FHLResponseMapper extends ResponseMapper[FHL.Properties, des.properties.FHL.Properties] {
+    override def mkPeriodId(prop: FHL.Properties): FHL.Properties =
+      prop.copy(id = Some(s"${prop.from}_${prop.to}"))
+
+    override def period: PropertiesPeriodResponse => Option[FHL.Properties] =
+      response =>
+        response.json.asOpt[des.properties.FHL.Properties] match {
+          case Some(prop) =>
+            Some(FHL.Properties.from(prop).copy(id = None))
+          case None =>
+            response.logger.error("The response from DES does not match the expected properties period format.")
+            None
+      }
+
+    override def allPeriods: PropertiesPeriodResponse => Seq[PeriodSummary] =
+      response =>
+        response.json.asOpt[Seq[des.properties.FHL.Properties]] match {
+          case Some(desPeriods) =>
+            desPeriods.map((mkPeriodId _ compose FHL.Properties.from)(_).asSummary).sorted
+          case None =>
+            response.logger.error("The response from DES does not match the expected properties period format.") //FIXME should return Either with error instead of failing silently
+            Seq.empty
+      }
   }
 }

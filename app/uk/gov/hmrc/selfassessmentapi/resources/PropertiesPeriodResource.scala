@@ -25,7 +25,7 @@ import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
-import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesPeriodResponse
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{PropertiesPeriodResponse, ResponseMapper}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -80,15 +80,13 @@ object PropertiesPeriodResource extends BaseResource {
             case 200 =>
               id match {
                 case PropertyType.FHL =>
-                  response
-                    .ResponseMapper[FHL.Properties, des.properties.FHL.Properties]
-                    .period
+                  ResponseMapper[FHL.Properties, des.properties.FHL.Properties]
+                    .period(response)
                     .map(period => Ok(Json.toJson(period)))
                     .getOrElse(NotFound)
                 case PropertyType.OTHER =>
-                  response
-                    .ResponseMapper[Other.Properties, des.properties.Other.Properties]
-                    .period
+                  ResponseMapper[Other.Properties, des.properties.Other.Properties]
+                    .period(response)
                     .map(period => Ok(Json.toJson(period)))
                     .getOrElse(NotFound)
               }
@@ -108,9 +106,9 @@ object PropertiesPeriodResource extends BaseResource {
             case 200 =>
               Ok(Json.toJson(id match {
                 case PropertyType.FHL =>
-                  response.ResponseMapper[FHL.Properties, des.properties.FHL.Properties].allPeriods
+                  ResponseMapper[FHL.Properties, des.properties.FHL.Properties].allPeriods(response)
                 case PropertyType.OTHER =>
-                  response.ResponseMapper[Other.Properties, des.properties.Other.Properties].allPeriods
+                  ResponseMapper[Other.Properties, des.properties.Other.Properties].allPeriods(response)
               }))
             case 400 => BadRequest(Error.from(response.json))
             case 404 => NotFound
