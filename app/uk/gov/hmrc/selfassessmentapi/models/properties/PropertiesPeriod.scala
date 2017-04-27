@@ -163,12 +163,10 @@ object Other {
       Json.format[Incomes]
 
     def from(o: des.properties.Other.Incomes): Incomes =
-      Incomes(rentIncome = o.rentIncome.map(from),
-              premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(Income(_, None)),
-              reversePremiums = o.reversePremiums.map(Income(_, None)))
-
-    def from(o: des.properties.Other.Income): Income =
-      Income(amount = o.amount, taxDeducted = o.taxDeducted)
+      Incomes(
+        rentIncome = o.rentIncome.map(income => Income(amount = income.amount, taxDeducted = income.taxDeducted)),
+        premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(Income(_, None)),
+        reversePremiums = o.reversePremiums.map(Income(_, None)))
   }
 
   case class Expense(amount: Amount)
