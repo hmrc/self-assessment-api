@@ -59,7 +59,7 @@ object AuthenticationService extends AuthorisedFunctions {
         authorised(Enrolment("HMRC-AS-AGENT")) { // If so, are they enrolled in Agent Services?
           if (reqHeader.method == "GET") {
             logger.debug("Client authorisation failed. Attempt to GET as a filing-only agent.")
-            Future.successful(Unauthorized(Json.toJson(Errors.AgentNotAuthorized)))
+            Future.successful(Forbidden(Json.toJson(Errors.AgentNotAuthorized)))
           } else {
             logger.debug("Client authorisation succeeded as filing-only agent.")
             f
@@ -71,18 +71,18 @@ object AuthenticationService extends AuthorisedFunctions {
   private def unauthorisedAgent: PartialFunction[Throwable, Future[Result]] = {
     case _: InsufficientEnrolments =>
       logger.debug(s"Authorisation failed as filing-only agent.")
-      Future.successful(Unauthorized(Json.toJson(Errors.AgentNotSubscribed)))
+      Future.successful(Forbidden(Json.toJson(Errors.AgentNotSubscribed)))
   }
 
   private def unauthorisedClient: PartialFunction[Throwable, Future[Result]] = {
     case _: UnsupportedAffinityGroup =>
       logger.debug(s"Authorisation failed as client.")
-      Future.successful(Unauthorized(Json.toJson(Errors.ClientNotSubscribed)))
+      Future.successful(Forbidden(Json.toJson(Errors.ClientNotSubscribed)))
   }
 
   private def unhandledError: PartialFunction[Throwable, Future[Result]] = {
     case e: AuthorisationException =>
       logger.error(s"Authorisation failed with unexpected exception. Bad token? Exception: [$e]")
-      Future.successful(Unauthorized(Json.toJson(Errors.BadToken)))
+      Future.successful(Forbidden(Json.toJson(Errors.BadToken)))
   }
 }

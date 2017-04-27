@@ -55,7 +55,7 @@ trait BaseResource extends BaseController {
           authService.authorise(response.mtdId)(f)
         case 400 | 404 =>
           logger.debug(s"NINO to MTD reference lookup failed. Status Code ${response.status}")
-          Future.successful(Unauthorized(Json.toJson(Errors.ClientNotSubscribed)))
+          Future.successful(Forbidden(Json.toJson(Errors.ClientNotSubscribed)))
         case _ => Future.successful(unhandledResponse(response.status, logger))
       }
     }

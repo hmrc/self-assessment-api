@@ -11,46 +11,46 @@ class AuthorisationSpec extends BaseFunctionalSpec {
   override lazy val app: FakeApplication = new FakeApplication(additionalConfiguration = conf)
 
   "a user" should {
-    "receive 401 if the are not subscribed to MTD" in {
+    "receive 403 if the are not subscribed to MTD" in {
       given()
         .userIsNotSubscribedToMtdFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments")
         .thenAssertThat()
-        .statusIs(401)
+        .statusIs(403)
         .bodyIsLike(Jsons.Errors.clientNotSubscribed)
     }
 
-    "receive 401 if they are not authorised to access the resource as a client (i.e. not a filing-only agent)" in {
+    "receive 403 if they are not authorised to access the resource as a client (i.e. not a filing-only agent)" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsNotAuthorisedForTheResource
         .when()
         .get(s"/ni/$nino/self-employments")
         .thenAssertThat()
-        .statusIs(401)
+        .statusIs(403)
         .bodyIsLike(Jsons.Errors.clientNotSubscribed)
     }
 
-    "receive 401 if they are not authorised to access the resource as a filing-only agent" in {
+    "receive 403 if they are not authorised to access the resource as a filing-only agent" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsNotPartiallyAuthorisedForTheResource
         .when()
         .get(s"/ni/$nino/self-employments")
         .thenAssertThat()
-        .statusIs(401)
+        .statusIs(403)
         .bodyIsLike(Jsons.Errors.agentNotSubscribed)
     }
 
-    "receive 401 if the bearer token is missing" in {
+    "receive 403 if the bearer token is missing" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .missingBearerToken
         .when()
         .get(s"/ni/$nino/self-employments")
         .thenAssertThat()
-        .statusIs(401)
+        .statusIs(403)
         .bodyIsLike(Jsons.Errors.unauthorised)
     }
 
@@ -96,7 +96,7 @@ class AuthorisationSpec extends BaseFunctionalSpec {
         .when()
         .get(s"/ni/$nino/self-employments/abc")
         .thenAssertThat()
-        .statusIs(401)
+        .statusIs(403)
         .bodyIsLike(Jsons.Errors.agentNotAuthorised)
     }
   }
