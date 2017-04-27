@@ -25,24 +25,20 @@ import uk.gov.hmrc.selfassessmentapi.models._
 
 object FHL {
 
-  final case class Properties(id: Option[String], from: LocalDate, to: LocalDate, financials: Option[Financials])
+  case class Properties(id: Option[String], from: LocalDate, to: LocalDate, financials: Option[Financials])
       extends Period {
     def asSummary: PeriodSummary = PeriodSummary(id.getOrElse(""), from, to)
   }
 
   object Properties extends PeriodValidator[Properties] {
 
-    implicit val writes = new Writes[Properties] {
-      override def writes(o: Properties): JsValue = {
-        Json.obj(
-          "id" -> o.id,
-          "from" -> o.from,
-          "to" -> o.to,
-          "incomes" -> o.financials.map(_.incomes),
-          "expenses" -> o.financials.map(_.expenses)
-        )
-      }
-    }
+    implicit val writes: Writes[Properties] = (
+      (__ \ "id").writeNullable[String] and
+        (__ \ "from").write[LocalDate] and
+        (__ \ "to").write[LocalDate] and
+        (__ \ "incomes").writeNullable[Incomes] and
+        (__ \ "expenses").writeNullable[Expenses]
+    )(p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses)))
 
     implicit val reads: Reads[Properties] = (
       Reads.pure(None) and
@@ -109,8 +105,7 @@ object FHL {
                other = o.other.map(Expense(_)))
   }
 
-  final case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None)
-      extends models.Financials
+  case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None) extends models.Financials
 
   object Financials {
     implicit val format: Format[Financials] =
@@ -130,24 +125,20 @@ object FHL {
 
 object Other {
 
-  final case class Properties(id: Option[String], from: LocalDate, to: LocalDate, financials: Option[Financials])
+  case class Properties(id: Option[String], from: LocalDate, to: LocalDate, financials: Option[Financials])
       extends Period {
     def asSummary: PeriodSummary = PeriodSummary(id.getOrElse(""), from, to)
   }
 
   object Properties extends PeriodValidator[Properties] {
 
-    implicit val writes = new Writes[Properties] {
-      override def writes(o: Properties): JsValue = {
-        Json.obj(
-          "id" -> o.id,
-          "from" -> o.from,
-          "to" -> o.to,
-          "incomes" -> o.financials.map(_.incomes),
-          "expenses" -> o.financials.map(_.expenses)
-        )
-      }
-    }
+    implicit val writes: Writes[Properties] = (
+      (__ \ "id").writeNullable[String] and
+        (__ \ "from").write[LocalDate] and
+        (__ \ "to").write[LocalDate] and
+        (__ \ "incomes").writeNullable[Incomes] and
+        (__ \ "expenses").writeNullable[Expenses]
+    )(p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses)))
 
     implicit val reads: Reads[Properties] = (
       Reads.pure(None) and
@@ -227,8 +218,7 @@ object Other {
                other = o.other.map(Expense(_)))
   }
 
-  final case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None)
-      extends models.Financials
+  case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None) extends models.Financials
 
   object Financials {
 
