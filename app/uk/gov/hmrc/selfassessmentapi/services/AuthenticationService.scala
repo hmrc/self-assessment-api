@@ -28,8 +28,6 @@ import uk.gov.hmrc.selfassessmentapi.models.{Errors, MtdId}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-import scala.languageFeature.postfixOps
-
 object AuthenticationService extends AuthorisedFunctions {
   override def authConnector: AuthConnector = MicroserviceAuthConnector
 
