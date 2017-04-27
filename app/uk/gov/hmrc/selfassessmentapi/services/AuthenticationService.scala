@@ -17,15 +17,18 @@
 package uk.gov.hmrc.selfassessmentapi.services
 
 import play.api.Logger
+import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuthConnector
-import uk.gov.hmrc.selfassessmentapi.models.MtdId
+import uk.gov.hmrc.selfassessmentapi.models.{Errors, MtdId}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+
+import scala.languageFeature.postfixOps
 
 object AuthenticationService extends AuthorisedFunctions {
   override def authConnector: AuthConnector = MicroserviceAuthConnector
@@ -36,37 +39,52 @@ object AuthenticationService extends AuthorisedFunctions {
                (implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[Result] =
     mtdId match {
       case Some(id) => authoriseAsClient(id)(f)
-      case None => Future.successful(Unauthorized)
+      case None => Future.successful(InternalServerError)
     }
 
   private def authoriseAsClient(mtdId: MtdId)(f: => Future[Result])
-                               (implicit hc: HeaderCarrier, requestHeader: RequestHeader): Future[Result] =
+                               (implicit hc: HeaderCarrier, requestHeader: RequestHeader): Future[Result] = {
+    logger.debug("Attempting to authorise user a a fully-authorised individual.")
     authorised(
       Enrolment("HMRC-MTD-IT")
         .withIdentifier("MTDITID", mtdId.mtdId)
         .withDelegatedAuthRule("mtd-it-auth")) {
       logger.debug("Client authorisation succeeded as fully-authorised individual.")
       f
-    } recoverWith authoriseAsFOA(f) recoverWith unauthorised
+    } recoverWith (authoriseAsFOA(f) orElse unhandledError)
+  }
 
   private def authoriseAsFOA(f: => Future[Result])
                             (implicit hc: HeaderCarrier, reqHeader: RequestHeader): PartialFunction[Throwable, Future[Result]] = {
-    case _: InsufficientEnrolments => authorised(
-      Enrolment("HMRC-AS-AGENT")) {
-      if (reqHeader.method == "GET") {
-        logger.debug("Client authorisation failed. Attempt to GET as a filing-only agent.")
-        Future.successful(Unauthorized)
-      } else {
-        logger.debug("Client authorisation succeeded as filing-only agent.")
-        f
-      }
-    }
+    case _: InsufficientEnrolments =>
+      authorised(AffinityGroup.Agent) { // Is the user an agent?
+        authorised(Enrolment("HMRC-AS-AGENT")) { // If so, are they enrolled in Agent Services?
+          if (reqHeader.method == "GET") {
+            logger.debug("Client authorisation failed. Attempt to GET as a filing-only agent.")
+            Future.successful(Unauthorized(Json.toJson(Errors.AgentNotAuthorized)))
+          } else {
+            logger.debug("Client authorisation succeeded as filing-only agent.")
+            f
+          }
+        } recoverWith (unauthorisedAgent orElse unhandledError) // Iff agent is not enrolled for the user.
+      } recoverWith (unauthorisedClient orElse unhandledError) // Iff client affinityGroup is not Agent.
   }
 
-  private def unauthorised(implicit requestHeader: RequestHeader): PartialFunction[Throwable, Future[Status]] = {
-    case e: AuthorisationException => {
-      logger.debug(s"Client authorisation failed. Exception: [$e]")
-      Future.successful(Unauthorized)
-    }
+  private def unauthorisedAgent: PartialFunction[Throwable, Future[Result]] = {
+    case _: InsufficientEnrolments =>
+      logger.debug(s"Authorisation failed as filing-only agent.")
+      Future.successful(Unauthorized(Json.toJson(Errors.AgentNotSubscribed)))
+  }
+
+  private def unauthorisedClient: PartialFunction[Throwable, Future[Result]] = {
+    case _: UnsupportedAffinityGroup =>
+      logger.debug(s"Authorisation failed as client.")
+      Future.successful(Unauthorized(Json.toJson(Errors.ClientNotSubscribed)))
+  }
+
+  private def unhandledError: PartialFunction[Throwable, Future[Result]] = {
+    case e: AuthorisationException =>
+      logger.error(s"Authorisation failed with unexpected exception. Bad token? Exception: [$e]")
+      Future.successful(Unauthorized(Json.toJson(Errors.BadToken)))
   }
 }

@@ -11,7 +11,7 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
     "return 202 containing a Location header, along with an ETA for the calculation to be ready" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().taxCalculation.isAcceptedFor(nino)
         .when()
         .post(Jsons.TaxCalculation.request()).to(s"/ni/$nino/calculations")
@@ -24,7 +24,7 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
     "return 400 when attempting to request calculation without specifying a tax year" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .when()
         .post(Json.obj()).to(s"/ni/$nino/calculations")
         .thenAssertThat()
@@ -35,7 +35,7 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
     "return 400 when attempting to request calculation with invalid tax year" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .when()
         .post(Jsons.TaxCalculation.request("2011-12")).to(s"/ni/$nino/calculations")
         .thenAssertThat()
@@ -46,7 +46,7 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
     "return code 500 when we receive a status code from DES that we do not handle" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().isATeapotFor(nino)
         .when()
         .post(Jsons.TaxCalculation.request()).to(s"/ni/$nino/calculations")
@@ -60,7 +60,7 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
     "return 200 containing a calculation" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().taxCalculation.isReadyFor(nino)
         .when()
         .get(s"/ni/$nino/calculations/abc")
@@ -72,7 +72,7 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
     "return 204 when the calculation is not ready" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().taxCalculation.isNotReadyFor(nino)
         .when()
         .get(s"/ni/$nino/calculations/abc")
@@ -83,7 +83,7 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
     "return 404 when provided with an invalid calculation ID" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().taxCalculation.invalidCalculationIdFor(nino)
         .when()
         .get(s"/ni/$nino/calculations/abc")
@@ -94,7 +94,7 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
     "return 404 when attempting to retrieve a calculation using an invalid id" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().taxCalculation.doesNotExistFor(nino)
         .when()
         .get(s"/ni/$nino/calculations/abc")
@@ -105,7 +105,7 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
     "return code 500 when we receive a status code from DES that we do not handle" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().isATeapotFor(nino)
         .when()
         .get(s"/ni/$nino/calculations/abc")

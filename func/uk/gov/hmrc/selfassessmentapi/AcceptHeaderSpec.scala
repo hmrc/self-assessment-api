@@ -10,7 +10,7 @@ class AcceptHeaderSpec extends BaseFunctionalSpec {
     "receive 200" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.noneFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments").withAcceptHeader()
@@ -22,7 +22,7 @@ class AcceptHeaderSpec extends BaseFunctionalSpec {
     "receive 406" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments").withoutAcceptHeader()

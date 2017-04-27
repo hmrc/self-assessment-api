@@ -17,12 +17,14 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.Logger
+import play.api.libs.json.Json
 import play.api.mvc.{RequestHeader, Result}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.BusinessDetailsConnector
+import uk.gov.hmrc.selfassessmentapi.models.Errors
 import uk.gov.hmrc.selfassessmentapi.services.AuthenticationService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -40,6 +42,10 @@ trait BaseResource extends BaseController {
     if (authIsEnabled) performAuthCheck(nino)(f)
     else f
 
+  /*
+   * Retrieve the user's MTD reference number using the provided NINO.
+   * This reference number is used to perform authorisation.
+   */
   private def performAuthCheck(nino: Nino)(f: => Future[Result])
                               (implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[Result] =
     businessConnector.get(nino).flatMap { response =>
@@ -47,10 +53,9 @@ trait BaseResource extends BaseController {
         case 200 =>
           logger.debug(s"NINO to MTD reference lookup successful. Status Code ${response.status}.")
           authService.authorise(response.mtdId)(f)
-        case 400 | 404 => {
+        case 400 | 404 =>
           logger.debug(s"NINO to MTD reference lookup failed. Status Code ${response.status}")
-          Future.successful(Unauthorized)
-        }
+          Future.successful(Unauthorized(Json.toJson(Errors.ClientNotSubscribed)))
         case _ => Future.successful(unhandledResponse(response.status, logger))
       }
     }

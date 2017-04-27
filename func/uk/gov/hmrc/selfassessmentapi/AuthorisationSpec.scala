@@ -10,29 +10,58 @@ class AuthorisationSpec extends BaseFunctionalSpec {
 
   override lazy val app: FakeApplication = new FakeApplication(additionalConfiguration = conf)
 
-  "if the user is not authorised they" should {
-    "receive 401" in {
+  "a user" should {
+    "receive 401 if the are not subscribed to MTD" in {
       given()
-        .userIsSubscribedToMtdFor(nino)
-        .userIsNotAuthorisedForTheResource(nino)
+        .userIsNotSubscribedToMtdFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments")
         .thenAssertThat()
         .statusIs(401)
-        .contentTypeIsJson()
+        .bodyIsLike(Jsons.Errors.clientNotSubscribed)
     }
-  }
 
-  "if the user is authorised for the resource as a client or fully-authorised agent they" should {
-    "receive 200" in {
+    "receive 401 if they are not authorised to access the resource as a client (i.e. not a filing-only agent)" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsNotAuthorisedForTheResource
+        .when()
+        .get(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(401)
+        .bodyIsLike(Jsons.Errors.clientNotSubscribed)
+    }
+
+    "receive 401 if they are not authorised to access the resource as a filing-only agent" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsNotPartiallyAuthorisedForTheResource
+        .when()
+        .get(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(401)
+        .bodyIsLike(Jsons.Errors.agentNotSubscribed)
+    }
+
+    "receive 401 if the bearer token is missing" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .missingBearerToken
+        .when()
+        .get(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(401)
+        .bodyIsLike(Jsons.Errors.unauthorised)
+    }
+
+    "receive 200 if they are authorised for the resource as a client or fully-authorised agent" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
         .when()
         .get(s"/ni/$nino/self-employments")
         .thenAssertThat()
         .statusIs(200)
-        .contentTypeIsJson()
     }
   }
 
@@ -40,7 +69,7 @@ class AuthorisationSpec extends BaseFunctionalSpec {
     "be able to make POST requests" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsPartiallyAuthorisedForTheResource(nino)
+        .userIsPartiallyAuthorisedForTheResource
         .des().selfEmployment.willBeCreatedFor(nino)
         .when()
         .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
@@ -52,7 +81,7 @@ class AuthorisationSpec extends BaseFunctionalSpec {
     "be able to make PUT requests" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsPartiallyAuthorisedForTheResource(nino)
+        .userIsPartiallyAuthorisedForTheResource
         .des().selfEmployment.willBeUpdatedFor(nino)
         .when()
         .put(Jsons.SelfEmployment.update()).at(s"/ni/$nino/self-employments/abc")
@@ -63,12 +92,12 @@ class AuthorisationSpec extends BaseFunctionalSpec {
     "be forbidden from making GET requests" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsPartiallyAuthorisedForTheResource(nino)
+        .userIsPartiallyAuthorisedForTheResource
         .when()
         .get(s"/ni/$nino/self-employments/abc")
         .thenAssertThat()
         .statusIs(401)
-        .contentTypeIsJson()
+        .bodyIsLike(Jsons.Errors.agentNotAuthorised)
     }
   }
 }
