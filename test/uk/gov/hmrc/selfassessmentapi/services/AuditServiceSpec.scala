@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.logging.Authorization
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
-import uk.gov.hmrc.selfassessmentapi.models.audit.{AuditType, PeriodicUpdateAuditPayload}
+import uk.gov.hmrc.selfassessmentapi.models.audit.{AuditType, PeriodicUpdate}
 
 import scala.concurrent.ExecutionContext
 
@@ -42,7 +42,7 @@ class AuditServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "send an audit event with the provided information when invoked" in {
       val testService = new TestAuditService
 
-      val auditPayload = PeriodicUpdateAuditPayload(
+      val auditPayload = PeriodicUpdate(
         nino = generateNino,
         sourceId = "abc",
         periodId = "def",
@@ -53,7 +53,6 @@ class AuditServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
       testService.audit(
         payload = auditPayload,
-        auditType = AuditType.SUBMIT_PERIODIC_UPDATE,
         transactionName = "jkl")
 
       val captor = ArgumentCaptor.forClass(classOf[ExtendedDataEvent])
@@ -63,7 +62,7 @@ class AuditServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
       event shouldBe ExtendedDataEvent(
         auditSource = "self-assessment-api",
-        auditType = "submit-periodic-update",
+        auditType = auditPayload.auditType,
         tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags("jkl", "path"),
         detail = Json.toJson(auditPayload),
         eventId = event.eventId,

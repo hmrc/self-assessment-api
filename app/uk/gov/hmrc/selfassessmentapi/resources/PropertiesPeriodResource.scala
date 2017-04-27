@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
-import uk.gov.hmrc.selfassessmentapi.models.audit.{AuditType, PeriodicUpdateAuditPayload}
+import uk.gov.hmrc.selfassessmentapi.models.audit.{AuditType, PeriodicUpdate}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesPeriodResponse
@@ -147,8 +147,7 @@ object PropertiesPeriodResource extends BaseResource {
   private def auditPeriodicCreate(nino: Nino, id: PropertyType, response: PropertiesPeriodResponse)
                                  (implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
     AuditService.audit(
-      payload = PeriodicUpdateAuditPayload(nino, id.toString, response.getPeriodId, response.transactionReference, request.body),
-      auditType = AuditType.SUBMIT_PERIODIC_UPDATE,
+      payload = PeriodicUpdate(nino, id.toString, response.getPeriodId, response.transactionReference, request.body),
       s"$id-property-periodic-create")
   }
 }

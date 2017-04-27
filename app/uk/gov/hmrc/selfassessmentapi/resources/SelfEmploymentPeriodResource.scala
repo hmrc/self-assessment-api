@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
-import uk.gov.hmrc.selfassessmentapi.models.audit.{AuditType, PeriodicUpdateAuditPayload}
+import uk.gov.hmrc.selfassessmentapi.models.audit.{AuditType, PeriodicUpdate}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentPeriodResponse
 import uk.gov.hmrc.selfassessmentapi.services.AuditService
@@ -109,8 +109,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
   private def auditPeriodicCreate(nino: Nino, id: SourceId, response: SelfEmploymentPeriodResponse)
                                  (implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
     AuditService.audit(
-      payload = PeriodicUpdateAuditPayload(nino, id, response.getPeriodId, response.transactionReference, request.body),
-      auditType = AuditType.SUBMIT_PERIODIC_UPDATE,
+      payload = PeriodicUpdate(nino, id, response.getPeriodId, response.transactionReference, request.body),
       "self-employment-periodic-create")
   }
 }

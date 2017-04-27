@@ -20,23 +20,38 @@ import play.api.libs.json.{Format, JsValue, Json}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, TaxYear}
 
-sealed trait AuditPayload
-
-case class PeriodicUpdateAuditPayload(nino: Nino,
-                                      sourceId: SourceId,
-                                      periodId: String,
-                                      transactionReference: Option[String],
-                                      requestPayload: JsValue) extends AuditPayload
-
-object PeriodicUpdateAuditPayload {
-  implicit val format: Format[PeriodicUpdateAuditPayload] = Json.format[PeriodicUpdateAuditPayload]
+sealed trait AuditPayload {
+  val auditType: String
 }
 
-case class TaxCalculationAuditPayload(nino: Nino,
-                                      taxYear: Option[TaxYear],
-                                      calculationId: SourceId,
-                                      responsePayload: Option[JsValue]) extends AuditPayload
+case class PeriodicUpdate(nino: Nino,
+                          sourceId: SourceId,
+                          periodId: String,
+                          transactionReference: Option[String],
+                          requestPayload: JsValue) extends AuditPayload {
+  override val auditType: String = "submit-periodic-update"
+}
 
-object TaxCalculationAuditPayload {
-  implicit val format: Format[TaxCalculationAuditPayload] = Json.format[TaxCalculationAuditPayload]
+object PeriodicUpdate {
+  implicit val format: Format[PeriodicUpdate] = Json.format[PeriodicUpdate]
+}
+
+case class TaxCalculationTrigger(nino: Nino,
+                                 taxYear: TaxYear,
+                                 calculationId: SourceId) extends AuditPayload {
+  override val auditType: String = "trigger-tax-calculation"
+}
+
+object TaxCalculationTrigger {
+  implicit val format: Format[TaxCalculationTrigger] = Json.format[TaxCalculationTrigger]
+}
+
+case class TaxCalculationRequest(nino: Nino,
+                                 calculationId: SourceId,
+                                 responsePayload: JsValue) extends AuditPayload {
+  override val auditType: String = "retrieve-tax-calculation"
+}
+
+object TaxCalculationRequest {
+  implicit val format: Format[TaxCalculationRequest] = Json.format[TaxCalculationRequest]
 }

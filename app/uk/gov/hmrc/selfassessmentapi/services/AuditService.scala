@@ -32,12 +32,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 trait AuditService {
   val auditConnector: AuditConnector
 
-  def audit[T <: AuditPayload](payload: T, auditType: AuditType, transactionName: String)
+  def audit[T <: AuditPayload](payload: T, transactionName: String)
                               (implicit hc: HeaderCarrier, fmt: Format[T], request: Request[_]): Unit = {
     auditConnector.sendEvent(
       ExtendedDataEvent(
         auditSource = "self-assessment-api",
-        auditType = auditType.toString,
+        auditType = payload.auditType.toString,
         tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(transactionName, request.path),
         detail = Json.toJson(payload),
         generatedAt = DateTime.now(DateTimeZone.UTC))

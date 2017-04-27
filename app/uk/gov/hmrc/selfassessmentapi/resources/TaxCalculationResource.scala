@@ -22,7 +22,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.TaxCalculationConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
-import uk.gov.hmrc.selfassessmentapi.models.audit.{AuditType, TaxCalculationAuditPayload}
+import uk.gov.hmrc.selfassessmentapi.models.audit.{TaxCalculationRequest, TaxCalculationTrigger}
 import uk.gov.hmrc.selfassessmentapi.models.calculation.CalculationRequest
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, SourceType}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.TaxCalculationResponse
@@ -83,16 +83,14 @@ object TaxCalculationResource extends BaseResource {
   private def auditTaxCalcTrigger(nino: Nino, response: TaxCalculationResponse)
                                  (implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
     AuditService.audit(
-      payload = TaxCalculationAuditPayload(nino, Some(request.body.as[CalculationRequest].taxYear), response.calcId.getOrElse(""), None),
-      auditType = AuditType.TRIGGER_TAX_CALCULATION,
+      payload = TaxCalculationTrigger(nino, request.body.as[CalculationRequest].taxYear, response.calcId.getOrElse("")),
       "trigger-tax-calculation")
   }
 
   private def auditTaxCalcRequest(nino: Nino, calcId: String, response: TaxCalculationResponse)
                                  (implicit hc: HeaderCarrier, request: Request[_]): Unit = {
     AuditService.audit(
-      payload = TaxCalculationAuditPayload(nino, None, calcId, Some(response.json)),
-      auditType = AuditType.RETRIEVE_TAX_CALCULATION,
+      payload = TaxCalculationRequest(nino, calcId, response.json),
       "retrieve-tax-calculation")
   }
 }
