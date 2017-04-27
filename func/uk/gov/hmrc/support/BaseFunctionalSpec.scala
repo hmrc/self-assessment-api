@@ -395,17 +395,46 @@ trait BaseFunctionalSpec extends TestApplication {
       this
     }
 
-    def userIsNotAuthorisedForTheResource(nino: Nino): Givens = {
+    def userIsNotSubscribedToMtdFor(nino: Nino): Givens = {
+      stubFor(any(urlMatching(s".*/registration/business-details/nino/$nino"))
+        .willReturn(
+          aResponse()
+            .withStatus(404)
+            .withHeader("Content-Type", "application/json")
+            .withBody(DesJsons.Errors.ninoNotFound)))
+
+      this
+    }
+
+    def missingBearerToken: Givens = {
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .willReturn(aResponse()
+          .withStatus(401)
+          .withHeader("Content-Length", "0")
+          .withHeader("WWW-Authenticate", "MDTP detail=\"MissingBearerToken\"")))
+
+      this
+    }
+
+    def userIsNotAuthorisedForTheResource: Givens = {
       stubFor(post(urlPathEqualTo(s"/auth/authorise"))
         .willReturn(aResponse()
           .withStatus(401)
           .withHeader("Content-Length", "0")
           .withHeader("WWW-Authenticate", "MDTP detail=\"InsufficientEnrolments\"")))
 
+      // The user is an 'Individual/Group', so the affinity check for 'Agent' should fail.
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .withRequestBody(containing("Agent"))
+        .willReturn(aResponse()
+          .withStatus(401)
+          .withHeader("Content-Length", "0")
+          .withHeader("WWW-Authenticate", "MDTP detail=\"UnsupportedAffinityGroup\"")))
+
       this
     }
 
-    def userIsPartiallyAuthorisedForTheResource(nino: Nino): Givens = {
+    def userIsPartiallyAuthorisedForTheResource: Givens = {
 
       // First call to auth to check if fully authorised should fail.
       stubFor(post(urlPathEqualTo(s"/auth/authorise"))
@@ -415,7 +444,21 @@ trait BaseFunctionalSpec extends TestApplication {
           .withHeader("Content-Length", "0")
           .withHeader("WWW-Authenticate", "MDTP detail=\"InsufficientEnrolments\"")))
 
-      // Second call to auth to check FOA status should succeed.
+      // Second call to auth to check affinity is equal to 'Agent' should succeed.
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .withRequestBody(containing("Agent"))
+        .willReturn(aResponse().withStatus(200).withBody(
+          """
+            |{
+            |  "internalId": "some-id",
+            |  "loginTimes": {
+            |     "currentLogin": "2016-11-27T09:00:00.000Z",
+            |     "previousLogin": "2016-11-01T12:00:00.000Z"
+            |  }
+            |}
+          """.stripMargin)))
+
+      // Third call to auth to check FOA subscription status should succeed.
       stubFor(post(urlPathEqualTo(s"/auth/authorise"))
         .withRequestBody(containing("HMRC-AS-AGENT"))
         .willReturn(aResponse().withStatus(200).withBody(
@@ -432,17 +475,53 @@ trait BaseFunctionalSpec extends TestApplication {
       this
     }
 
-    def userIsFullyAuthorisedForTheResource(nino: Nino): Givens = {
-      stubFor(post(urlPathEqualTo(s"/auth/authorise")).willReturn(aResponse().withStatus(200).withBody(
-        """
-          |{
-          |  "internalId": "some-id",
-          |  "loginTimes": {
-          |     "currentLogin": "2016-11-27T09:00:00.000Z",
-          |     "previousLogin": "2016-11-01T12:00:00.000Z"
-          |  }
-          |}
-        """.stripMargin)))
+    def userIsNotPartiallyAuthorisedForTheResource: Givens = {
+      // First call to auth to check if fully authorised should fail.
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .withRequestBody(containing("HMRC-MTD-IT"))
+        .willReturn(aResponse()
+          .withStatus(401)
+          .withHeader("Content-Length", "0")
+          .withHeader("WWW-Authenticate", "MDTP detail=\"InsufficientEnrolments\"")))
+
+      // Second call to auth to check affinity is equal to 'Agent' should succeed.
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .withRequestBody(containing("Agent"))
+        .willReturn(aResponse().withStatus(200).withBody(
+          """
+            |{
+            |  "internalId": "some-id",
+            |  "loginTimes": {
+            |     "currentLogin": "2016-11-27T09:00:00.000Z",
+            |     "previousLogin": "2016-11-01T12:00:00.000Z"
+            |  }
+            |}
+          """.stripMargin)))
+
+      // Third call to auth to check FOA subscription status should fail.
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .withRequestBody(containing("HMRC-AS-AGENT"))
+        .willReturn(aResponse()
+          .withStatus(401)
+          .withHeader("Content-Length", "0")
+          .withHeader("WWW-Authenticate", "MDTP detail=\"InsufficientEnrolments\"")))
+
+      this
+    }
+
+    def userIsFullyAuthorisedForTheResource: Givens = {
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .willReturn(aResponse().withStatus(200).withBody(
+          """
+            |{
+            |  "internalId": "some-id",
+            |  "loginTimes": {
+            |     "currentLogin": "2016-11-27T09:00:00.000Z",
+            |     "previousLogin": "2016-11-01T12:00:00.000Z"
+            |  }
+            |}
+          """.stripMargin)))
+
       this
     }
 

@@ -23,9 +23,11 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{PropertiesPeriodResponse, ResponseMapper}
+import uk.gov.hmrc.selfassessmentapi.services.AuditService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -40,15 +42,18 @@ object PropertiesPeriodResource extends BaseResource {
       withAuth(nino) {
         validateCreateRequest(id, nino, request) match {
           case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-          case Right(response) =>
-            response.map { response =>
-              response.status match {
-                case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id))
-                case 400 if response.containsOverlappingPeriod => Forbidden(Error.asBusinessError(response.json))
-                case 400 => BadRequest(Error.from(response.json))
-                case 404 | 403 => NotFound
-                case _ => unhandledResponse(response.status, logger)
-              }
+          case Right(result) =>
+            result.map {
+              case (periodId, response) =>
+                response.status match {
+                  case 200 =>
+                    auditPeriodicCreate(nino, id, response, periodId)
+                    Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
+                  case 400 if response.containsOverlappingPeriod => Forbidden(Error.asBusinessError(response.json))
+                  case 400 => BadRequest(Error.from(response.json))
+                  case 404 | 403 => NotFound
+                  case _ => unhandledResponse(response.status, logger)
+                }
             }
         }
       }
@@ -119,16 +124,21 @@ object PropertiesPeriodResource extends BaseResource {
     }
 
   private def validateCreateRequest(id: PropertyType, nino: Nino, request: Request[JsValue])(
-      implicit hc: HeaderCarrier): Either[ErrorResult, Future[PropertiesPeriodResponse]] =
+      implicit hc: HeaderCarrier): Either[ErrorResult, Future[(PeriodId, PropertiesPeriodResponse)]] =
     id match {
       case PropertyType.OTHER =>
-        validate[Other.Properties, PropertiesPeriodResponse](request.body)(
-          PropertiesPeriodConnector[Other.Properties, Other.Financials].create(nino, _))
+        validate[Other.Properties, (PeriodId, PropertiesPeriodResponse)](request.body) { period =>
+          PropertiesPeriodConnector[Other.Properties, Other.Financials]
+            .create(nino, period)
+            .map((period.createPeriodId, _))
+        }
 
       case PropertyType.FHL =>
-        validate[FHL.Properties, PropertiesPeriodResponse](request.body)(
-          PropertiesPeriodConnector[FHL.Properties, FHL.Financials].create(nino, _))
-
+        validate[FHL.Properties, (PeriodId, PropertiesPeriodResponse)](request.body) { period =>
+          PropertiesPeriodConnector[FHL.Properties, FHL.Financials]
+            .create(nino, period)
+            .map((period.createPeriodId, _))
+        }
     }
 
   private def validateUpdateRequest(id: PropertyType, nino: Nino, periodId: PeriodId, request: Request[JsValue])(
@@ -141,4 +151,13 @@ object PropertiesPeriodResource extends BaseResource {
         validate[FHL.Financials, PropertiesPeriodResponse](request.body)(
           PropertiesPeriodConnector[FHL.Properties, FHL.Financials].update(nino, id, periodId, _))
     }
+
+  private def auditPeriodicCreate(nino: Nino,
+                                  id: PropertyType,
+                                  response: PropertiesPeriodResponse,
+                                  periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
+    AuditService.audit(payload =
+                         PeriodicUpdate(nino, id.toString, periodId, response.transactionReference, request.body),
+                       s"$id-property-periodic-create")
+  }
 }

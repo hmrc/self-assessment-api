@@ -49,7 +49,7 @@ object SelfEmploymentsResource extends BaseResource {
                   Json.toJson(
                     Errors.businessError(Error(ErrorCode.TOO_MANY_SOURCES.toString,
                       s"The maximum number of Self-Employment incomes sources is 1",
-                      ""))))
+                      Some("")))))
               case 404 => NotFound
               case _ => unhandledResponse(response.status, logger)
             }

@@ -7,7 +7,7 @@ class BanksAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 204 when successfully updating a bank annual summary" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .when()
         .post(Jsons.Banks()).to(s"/ni/$nino/savings-accounts")
         .thenAssertThat()
@@ -30,7 +30,7 @@ class BanksAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 400 when attempting to update a bank annual summary with invalid JSON" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .when()
         .post(Jsons.Banks()).to(s"/ni/$nino/savings-accounts")
         .thenAssertThat()
@@ -47,7 +47,7 @@ class BanksAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 404 when attempting to update a bank annual summary for a non-existent bank" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .when()
         .put(Jsons.Banks.annualSummary(Some(50.123), Some(12.552))).at(s"/ni/$nino/savings-accounts/sillyid/$taxYear")
         .thenAssertThat()
@@ -59,7 +59,7 @@ class BanksAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 200 for an annual summary that exists" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .when()
         .post(Jsons.Banks()).to(s"/ni/$nino/savings-accounts")
         .thenAssertThat()
@@ -78,7 +78,7 @@ class BanksAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 200 with empty json when retrieving a banks annual summary that does not exist" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .when()
         .post(Jsons.Banks()).to(s"/ni/$nino/savings-accounts")
         .thenAssertThat()
@@ -93,7 +93,7 @@ class BanksAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 404 when attempting to access an annual summary for a banks source that does not exist" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .when()
         .get(s"/ni/$nino/savings-accounts/sillyid/$taxYear")
         .thenAssertThat()

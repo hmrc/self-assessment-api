@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import org.joda.time.LocalDate
 import play.api.Logger
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.Nino
@@ -25,26 +24,13 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentPeriod
 
-class SelfEmploymentPeriodResponse(underlying: HttpResponse,
-                                   from: Option[LocalDate] = None,
-                                   to: Option[LocalDate] = None) {
-
+case class SelfEmploymentPeriodResponse(underlying: HttpResponse) {
   private val logger: Logger = Logger(classOf[SelfEmploymentPeriodResponse])
-
   val status: Int = underlying.status
-
   def json: JsValue = underlying.json
 
-  def getPeriodId: String = {
-    val locationHeader = for {
-      fromDate <- from
-      toDate <- to
-    } yield s"${fromDate}_$toDate"
-    locationHeader.get
-  }
-
-  def createLocationHeader(nino: Nino, id: SourceId): String = {
-    s"/self-assessment/ni/$nino/${SourceType.SelfEmployments.toString}/$id/periods/$getPeriodId"
+  def createLocationHeader(nino: Nino, id: SourceId, periodId: PeriodId): String = {
+    s"/self-assessment/ni/$nino/${SourceType.SelfEmployments.toString}/$id/periods/$periodId"
   }
 
   def containsOverlappingPeriod: Boolean = {
@@ -70,17 +56,24 @@ class SelfEmploymentPeriodResponse(underlying: HttpResponse,
   def allPeriods: Seq[PeriodSummary] = {
     json.asOpt[Seq[des.SelfEmploymentPeriod]] match {
       case Some(desPeriods) =>
-        desPeriods.map(period => SelfEmploymentPeriod.from(period).asSummary)
+        val from = SelfEmploymentPeriod.from _
+        val setId = (p: SelfEmploymentPeriod) => p.copy(id = Some(p.createPeriodId))
+        val fromDES = from andThen setId andThen ((p: SelfEmploymentPeriod) => p.asSummary)
+        desPeriods.map(fromDES).sorted
       case None =>
         logger.error("The response from DES does not match the expected self-employment period format.")
         Seq.empty
     }
   }
+
+  def transactionReference: Option[String] = {
+    (json \ "transactionReference").asOpt[String] match {
+      case x @ Some(_) => x
+      case None => {
+        logger.error("The 'transactionReference' field was not found in the response from DES")
+        None
+      }
+    }
+  }
 }
 
-object SelfEmploymentPeriodResponse {
-  def apply(response: HttpResponse,
-            from: Option[LocalDate] = None,
-            to: Option[LocalDate] = None): SelfEmploymentPeriodResponse =
-    new SelfEmploymentPeriodResponse(response, from, to)
-}

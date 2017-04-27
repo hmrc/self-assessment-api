@@ -41,17 +41,17 @@ object Errors {
       Json.obj("code" -> req.code, "message" -> req.message)
   }
 
-  case class Error(code: String, message: String, path: String)
+  case class Error(code: String, message: String, path: Option[String] = None)
 
   object Error {
-    private val logger = Logger(classOf[Error])
+    private val logger = Logger(Error.getClass)
 
     def asBusinessError(json: JsValue): JsValue = {
       json.asOpt[DesError].map { err =>
         Json.toJson(businessError(fromDesError(err)))
       }.getOrElse {
         logger.error(s"Error received from DES does not match what we are expecting.")
-        Json.toJson(businessError(Error("UNKNOWN_ERROR", "Unknown error", "")))
+        Json.toJson(businessError(Error("UNKNOWN_ERROR", "Unknown error", Some(""))))
       }
     }
 
@@ -64,12 +64,12 @@ object Errors {
         }
       }.getOrElse {
         logger.error(s"Error received from DES does not match what we are expecting.")
-        Json.toJson(Error("UNKNOWN_ERROR", "Unknown error", ""))
+        Json.toJson(Error("UNKNOWN_ERROR", "Unknown error", Some("")))
       }
     }
 
     private def fromDesError(err: DesError): Error = {
-      Error(err.code.toString, err.reason, "")
+      Error(err.code.toString, err.reason, Some(""))
     }
   }
 
@@ -85,6 +85,11 @@ object Errors {
     val code = "INTERNAL_SERVER_ERROR"
   }
 
+  object ClientNotSubscribed extends Error("CLIENT_NOT_SUBSCRIBED", "The client is not subscribed to MTD")
+  object AgentNotAuthorized extends Error("AGENT_NOT_AUTHORIZED", "The agent is not authorised to perform this action")
+  object AgentNotSubscribed extends Error("AGENT_NOT_SUBSCRIBED", "Agent not subscribed to Agent Services")
+  object BadToken extends Error("UNAUTHORIZED", "Bearer token is missing or not authorized")
+
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")
   def badRequest(message: String) = BadRequest(Seq.empty, message)
 
@@ -97,7 +102,7 @@ object Errors {
       errors.map { err =>
         err.args match {
           case Seq(head, _*) if head.isInstanceOf[ErrorCode] =>
-            Error(head.asInstanceOf[ErrorCode].toString, err.message, path.toString())
+            Error(head.asInstanceOf[ErrorCode].toString, err.message, Some(path.toString()))
           case _ => convertErrorMessageToCode(err, path.toString())
         }
       }
@@ -110,9 +115,11 @@ object Errors {
    */
   private def convertErrorMessageToCode(playError: ValidationError, errorPath: String): Error = {
     playError.message match {
-      case "error.expected.jodadate.format" => Error("INVALID_DATE", "please provide a date in ISO format (i.e. YYYY-MM-DD)", errorPath)
-      case "error.path.missing" => Error("MANDATORY_FIELD_MISSING", "a mandatory field is missing", errorPath)
-      case _ => Error("UNMAPPED_PLAY_ERROR", playError.message, errorPath)
+      case "error.expected.jodadate.format" => Error("INVALID_DATE", "please provide a date in ISO format (i.e. YYYY-MM-DD)", Some(errorPath))
+      case "error.path.missing" => Error("MANDATORY_FIELD_MISSING", "a mandatory field is missing", Some(errorPath))
+      case _ => Error("UNMAPPED_PLAY_ERROR", playError.message, Some(errorPath))
     }
   }
+
+
 }

@@ -15,7 +15,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       s"return code 201 containing a location header containing from date and to date pointing to the newly created property period for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .properties
           .willBeCreatedFor(nino)
@@ -40,7 +40,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       s"return code 400 when provided with an invalid period for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .properties
           .willBeCreatedFor(nino)
@@ -61,7 +61,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       s"return code 403 when creating an overlapping period for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .properties
           .willBeCreatedFor(nino)
@@ -84,7 +84,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       s"return code 404 when attempting to create a period for a property that does not exist for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .properties
           .periodWillBeNotBeCreatedFor(nino, propertyType)
@@ -99,7 +99,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
          |and DES returns HTTP 403 INVALID_INCOME_SOURCE""".stripMargin in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .properties
           .periodWillBeNotBeCreatedForInexistentIncomeSource(nino, propertyType)
@@ -113,7 +113,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       s"return code 500 when DES is experiencing issues for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .serverErrorFor(nino)
           .when()
@@ -127,7 +127,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       s"return code 500 when dependent systems are not available for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .serviceUnavailableFor(nino)
           .when()
@@ -141,7 +141,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       s"return code 500 when we receive a status code from DES that we do not handle for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .isATeapotFor(nino)
           .when()
@@ -160,7 +160,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         val expectedJson = Jsons.Properties.periodSummary(("2017-04-06", "2017-07-04"), ("2017-07-05", "2017-08-04"))
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .properties
           .periodsWillBeReturnedFor(nino, propertyType)
@@ -178,7 +178,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       s"return code 200 with an empty JSON array for an $propertyType property business containing no periods" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .properties
           .noPeriodsFor(nino, propertyType)
@@ -192,7 +192,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       s"return code 404 for an $propertyType property business that does not exist" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .properties
           .doesNotExistPeriodFor(nino, propertyType)
@@ -205,9 +205,8 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       s"return code 500 when we receive a status code from DES that we do not handle for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
-          .des()
-          .isATeapotFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des().isATeapotFor(nino)
           .when()
           .get(s"/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
@@ -223,7 +222,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         val expected = expectedBody(propertyType)
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .properties
           .periodWillBeReturnedFor(nino, propertyType)
@@ -239,7 +238,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       s"return code 404 for a $propertyType period that does not exist" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .properties
           .noPeriodFor(nino, propertyType)
@@ -252,7 +251,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       s"return code 500 when we receive a status code from DES that we do not handle for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .isATeapotFor(nino)
           .when()
@@ -277,7 +276,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
 
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .properties
           .periodWillBeUpdatedFor(nino, propertyType)
@@ -291,8 +290,6 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       s"return code 400 when updating an $propertyType period with invalid data" in {
         val property = Jsons.Properties()
 
-//        val period = Jsons.Properties.fhlPeriod(fromDate = Some("2017-04-06"), toDate = Some("2018-04-05"))
-
         val invalidPeriod = Jsons.Properties.fhlPeriod(rentIncome = -500, financialCosts = 400.234)
 
         val expectedJson = Jsons.Errors.invalidRequest("INVALID_MONETARY_AMOUNT" -> "/incomes/rentIncome/amount",
@@ -300,7 +297,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
 
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .properties
           .willBeCreatedFor(nino)
@@ -334,7 +331,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
 
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des()
           .properties
           .periodWillNotBeUpdatedFor(nino, propertyType)

@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
-import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
@@ -41,51 +40,39 @@ object PropertiesPeriodConnector {
 
   private lazy val baseUrl: String = AppContext.desUrl
 
-  private def httpResponse2PropertiesPeriodResponse(fut: Future[HttpResponse],
-                                                    from: Option[LocalDate] = None,
-                                                    to: Option[LocalDate] = None): Future[PropertiesPeriodResponse] =
-    fut.map(PropertiesPeriodResponse(_, from, to))
+  implicit def httpResponse2PropertiesPeriodResponse(fut: Future[HttpResponse]): Future[PropertiesPeriodResponse] =
+    fut.map(PropertiesPeriodResponse)
 
   implicit object OtherPropertiesPeriodConnector
       extends PropertiesPeriodConnector[Other.Properties, Other.Financials] {
     override def create(nino: Nino, properties: Other.Properties)(
         implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-      httpResponse2PropertiesPeriodResponse(
-        httpPost(baseUrl + s"/income-store/nino/$nino/uk-properties/other/periodic-summaries",
-                 des.properties.Other.Properties.from(properties)),
-        Some(properties.from),
-        Some(properties.to))
+      httpPost(baseUrl + s"/income-store/nino/$nino/uk-properties/other/periodic-summaries",
+               des.properties.Other.Properties.from(properties))
 
     override def update(nino: Nino, propertyType: PropertyType, periodId: PeriodId, financials: Other.Financials)(
         implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-      httpResponse2PropertiesPeriodResponse(
-        httpPut(baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId",
-                des.properties.Other.Financials.from(Some(financials))))
+      httpPut(baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId",
+              des.properties.Other.Financials.from(Some(financials)))
   }
 
   implicit object FHLPropertiesPeriodConnector extends PropertiesPeriodConnector[FHL.Properties, FHL.Financials] {
     override def create(nino: Nino, properties: FHL.Properties)(
         implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-      httpResponse2PropertiesPeriodResponse(
-        httpPost(baseUrl + s"/income-store/nino/$nino/uk-properties/furnished-holiday-lettings/periodic-summaries",
-                 des.properties.FHL.Properties.from(properties)),
-        Some(properties.from),
-        Some(properties.to))
+      httpPost(baseUrl + s"/income-store/nino/$nino/uk-properties/furnished-holiday-lettings/periodic-summaries",
+               des.properties.FHL.Properties.from(properties))
 
     override def update(nino: Nino, propertyType: PropertyType, periodId: PeriodId, financials: FHL.Financials)(
         implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-      httpResponse2PropertiesPeriodResponse(
-        httpPut(baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId",
-                des.properties.FHL.Financials.from(Some(financials))))
+      httpPut(baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId",
+              des.properties.FHL.Financials.from(Some(financials)))
   }
 
   def retrieve(nino: Nino, periodId: PeriodId, propertyType: PropertyType)(
       implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-    httpResponse2PropertiesPeriodResponse(
-      httpGet(baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId"))
+    httpGet(baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId")
 
   def retrieveAll(nino: Nino, propertyType: PropertyType)(
       implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-    httpResponse2PropertiesPeriodResponse(
-      httpGet(baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+    httpGet(baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries")
 }

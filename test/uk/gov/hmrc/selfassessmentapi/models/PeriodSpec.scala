@@ -17,10 +17,15 @@
 package uk.gov.hmrc.selfassessmentapi.models
 
 import org.joda.time.LocalDate
+import uk.gov.hmrc.play.test.UnitSpec
 
-trait Period {
-  val from: LocalDate
-  val to: LocalDate
-
-  def createPeriodId = s"${from}_$to"
+class PeriodSpec extends UnitSpec {
+  "createPeriodId" should {
+    "concatenate the from and to dates separated by an underscore" in {
+      (new Period {
+        override val from: LocalDate = LocalDate.parse("2017-04-07")
+        override val to: LocalDate = LocalDate.parse("2018-04-07")
+      } createPeriodId) shouldBe "2017-04-07_2018-04-07"
+    }
+  }
 }
