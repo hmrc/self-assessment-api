@@ -17,15 +17,8 @@
 package uk.gov.hmrc.selfassessmentapi.models.des
 
 import play.api.libs.json.{Json, Reads}
-import uk.gov.hmrc.selfassessmentapi.models.SourceId
 
-case class Obligations(obligations: Seq[Obligation]) {
-  def selfEmploymentObligationsForId(id: SourceId): Seq[Obligation] =
-    obligations.filter { obligation =>
-      obligation.`type` == "ITSB" &&
-      obligation.id == id
-    }
-}
+case class Obligations(obligations: Seq[Obligation])
 
 object Obligations {
   implicit val reads: Reads[Obligations] = Json.reads[Obligations]

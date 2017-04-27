@@ -18,20 +18,27 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.connectors.ObligationsConnector
+import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models.SourceType
-import uk.gov.hmrc.selfassessmentapi.services.PropertiesObligationsService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object PropertiesObligationsResource extends BaseResource {
   private val FeatureSwitch = FeatureSwitchAction(SourceType.Properties, "obligations")
-  private val propertiesService = PropertiesObligationsService
+  private val connector = ObligationsConnector
 
   def retrieveObligations(nino: Nino) = FeatureSwitch.async(parse.empty) { implicit headers =>
     withAuth(nino) {
-      propertiesService.retrieveObligations(nino, headers.headers.get(GovTestScenarioHeader)) map {
-        case Some(obligations) => Ok(Json.toJson(obligations))
-        case None => NotFound
+      connector.get(nino).map { response =>
+        response.status match {
+          case 200 =>
+            logger.debug("Properties obligations from DES = " + Json.stringify(response.json))
+            response.obligations(_ == "ITSP").map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+          case 400 => BadRequest(Error.from(response.json))
+          case 404 => NotFound
+          case _ => unhandledResponse(response.status, logger)
+        }
       }
     }
   }
