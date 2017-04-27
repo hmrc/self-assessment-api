@@ -39,7 +39,7 @@ class PropertiesService(repository: PropertiesRepository) {
     val properties = Properties(BSONObjectID.generate, nino)
 
     repository.retrieve(nino) flatMap {
-      case Some(_) => Future.successful(Left(Error(ErrorCode.ALREADY_EXISTS.toString, s"A property business already exists", "")))
+      case Some(_) => Future.successful(Left(Error(ErrorCode.ALREADY_EXISTS.toString, s"A property business already exists", Some(""))))
       case None => repository.create(properties).map(Right(_))
     }
   }

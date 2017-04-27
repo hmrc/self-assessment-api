@@ -31,7 +31,7 @@ class PropertiesServiceSpec extends MongoEmbeddedDatabase {
       val properties = Properties()
 
       await(service.create(nino, properties)) shouldBe Right(true)
-      await(service.create(nino, properties)) shouldBe Left(Error("ALREADY_EXISTS", "A property business already exists", ""))
+      await(service.create(nino, properties)) shouldBe Left(Error("ALREADY_EXISTS", "A property business already exists", Some("")))
     }
   }
 }

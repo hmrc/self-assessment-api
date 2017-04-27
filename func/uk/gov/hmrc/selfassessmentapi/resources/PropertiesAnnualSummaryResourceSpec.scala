@@ -10,7 +10,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       s"return code 204 when amending annual summaries for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des().properties.annualSummaryWillBeUpdatedFor(nino, propertyType, taxYear)
           .when()
           .put(annualSummary(propertyType)).at(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
@@ -25,7 +25,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
 
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .when()
           .put(invalidAnnualSummary(propertyType)).at(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
           .thenAssertThat()
@@ -37,7 +37,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       s"return code 404 when amending annual summaries for a properties business that does not exist for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des().properties.annualSummaryWillNotBeReturnedFor(nino, propertyType, taxYear)
           .when()
           .put(annualSummary(propertyType)).at(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
@@ -45,21 +45,22 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .statusIs(404)
       }
 
-      s"return code 401 when provided with an invalid Originator-Id header for $propertyType" in {
+      s"return code 400 when provided with an invalid Originator-Id header for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des().invalidOriginatorIdFor(nino)
           .when()
           .put(annualSummary(propertyType)).at(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
           .thenAssertThat()
-          .statusIs(401)
+          .statusIs(400)
+          .bodyIsLike(Jsons.Errors.invalidOriginatorId)
       }
 
       s"return code 400 when provided with an invalid payload for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des().payloadFailsValidationFor(nino)
           .when()
           .put(annualSummary(propertyType)).at(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
@@ -72,7 +73,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       s"return code 400 when updating properties annual summary for a non MTD year for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .when()
           .put(annualSummary(propertyType)).at(s"/ni/$nino/uk-properties/$propertyType/2015-16")
           .thenAssertThat()
@@ -83,7 +84,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       s"return code 404 when attempting to update annual summaries for an invalid property type for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .when()
           .put(annualSummary(propertyType)).at(s"/ni/$nino/uk-properties/silly/$taxYear")
           .thenAssertThat()
@@ -95,7 +96,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       s"return code 500 when DES is experiencing problems for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des().serverErrorFor(nino)
           .when()
           .put(annualSummary(propertyType)).at(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
@@ -108,7 +109,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       s"return code 500 when a dependent system is not responding for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des().serviceUnavailableFor(nino)
           .when()
           .put(annualSummary(propertyType)).at(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
@@ -121,7 +122,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       s"return code 500 when we receive a status code from DES that we do not handle for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des().isATeapotFor(nino)
           .when()
           .put(annualSummary(propertyType)).at(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
@@ -137,7 +138,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         val expectedJson = annualSummary(propertyType).toString()
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des().properties.annualSummaryWillBeReturnedFor(nino, propertyType, taxYear, desAnnualSummary(propertyType))
           .when()
           .get(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
@@ -151,7 +152,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
 
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des().properties.noAnnualSummaryFor(nino, propertyType, taxYear)
           .when()
           .get(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
@@ -164,7 +165,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       s"return code 404 when retrieving an annual summary for a non-existent property for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des().properties.annualSummaryWillNotBeReturnedFor(nino, propertyType, taxYear)
           .when()
           .get(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
@@ -172,10 +173,10 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .statusIs(404)
       }
 
-      s"return code 401 when retrieving annual summary for a non MTD year for $propertyType" in {
+      s"return code 400 when retrieving annual summary for a non MTD year for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .when()
           .get(s"/ni/$nino/uk-properties/$propertyType/2015-16")
           .thenAssertThat()
@@ -183,21 +184,22 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .bodyIsError("TAX_YEAR_INVALID")
       }
 
-      s"return code 401 when provided with an invalid Originator-Id header for $propertyType" in {
+      s"return code 400 when provided with an invalid Originator-Id header for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des().invalidOriginatorIdFor(nino)
           .when()
           .get(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
           .thenAssertThat()
-          .statusIs(401)
+          .statusIs(400)
+          .bodyIsLike(Jsons.Errors.invalidOriginatorId)
       }
 
       s"return code 500 when DES is experiencing problems for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des().serverErrorFor(nino)
           .when()
           .get(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
@@ -210,7 +212,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       s"return code 500 when a dependent system is not responding for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des().serviceUnavailableFor(nino)
           .when()
           .get(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
@@ -223,7 +225,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       s"return code 500 when we receive a status code from DES that we do not handle for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource(nino)
+          .userIsFullyAuthorisedForTheResource
           .des().isATeapotFor(nino)
           .when()
           .get(s"/ni/$nino/uk-properties/$propertyType/$taxYear")

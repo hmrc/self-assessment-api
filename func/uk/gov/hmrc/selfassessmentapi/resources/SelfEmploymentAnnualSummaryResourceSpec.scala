@@ -8,7 +8,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 204 when updating an annual summary for a valid self-employment source" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.annualSummaryWillBeUpdatedFor(nino)
         .when()
         .put(Jsons.SelfEmployment.annualSummary()).at(s"/ni/$nino/self-employments/abc/$taxYear")
@@ -19,7 +19,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 404 when updating an annual summary for an invalid self-employment source" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.annualSummaryNotFoundFor(nino)
         .when()
         .put(Jsons.SelfEmployment.annualSummary()).at(s"/ni/$nino/self-employments/sillysource/$taxYear")
@@ -40,7 +40,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
 
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .when()
         .put(annualSummaries).at(s"/ni/$nino/self-employments/abc/$taxYear")
         .thenAssertThat()
@@ -52,7 +52,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 400 when provided with an invalid Originator-Id header" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.invalidOriginatorIdFor(nino)
         .when()
         .put(Jsons.SelfEmployment.annualSummary()).at(s"/ni/$nino/self-employments/abc/$taxYear")
@@ -65,7 +65,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 400 when provided with an invalid payload" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().payloadFailsValidationFor(nino)
         .when()
         .put(Jsons.SelfEmployment.annualSummary()).at(s"/ni/$nino/self-employments/abc/$taxYear")
@@ -78,7 +78,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 500 when DES is experiencing problems" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().serverErrorFor(nino)
         .when()
         .put(Jsons.SelfEmployment.annualSummary()).at(s"/ni/$nino/self-employments/abc/$taxYear")
@@ -91,7 +91,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 500 when a dependent system is not responding" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().serviceUnavailableFor(nino)
         .when()
         .put(Jsons.SelfEmployment.annualSummary()).at(s"/ni/$nino/self-employments/abc/$taxYear")
@@ -104,7 +104,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 500 when we receive a status code from DES that we do not handle" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().isATeapotFor(nino)
         .when()
         .put(Jsons.SelfEmployment.update()).at(s"/ni/$nino/self-employments/$taxYear")
@@ -137,7 +137,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
 
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.annualSummaryWillBeReturnedFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/$taxYear")
@@ -151,7 +151,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
 
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.noAnnualSummaryFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/$taxYear")
@@ -164,7 +164,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 404 when retrieving an annual summary for a non-existent self-employment" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.annualSummaryWillNotBeReturnedFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/$taxYear")
@@ -175,7 +175,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 400 when retrieving annual summary for a non MTD year" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .when()
         .get(s"/ni/$nino/self-employments/abc/2015-16")
         .thenAssertThat()
@@ -186,7 +186,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 500 when we receive a status code from DES that we do not handle" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().isATeapotFor(nino)
         .when()
         .put(Jsons.SelfEmployment.update()).at(s"/ni/$nino/self-employments/abc/$taxYear")

@@ -36,6 +36,16 @@ case class PropertiesPeriodResponse(underlying: HttpResponse,
 
   def json: JsValue = underlying.json
 
+  def transactionReference: Option[String] = {
+    (json \ "transactionReference").asOpt[String] match {
+      case x @ Some(_) => x
+      case None => {
+        logger.error("The 'transactionReference' field was not found in the response from DES")
+        None
+      }
+    }
+  }
+
   trait PropertiesPeriodResponseOps[P <: Period, D <: des.properties.Period] {
     def mkPeriodId(prop: P): P
     def period: Option[P]

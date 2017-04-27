@@ -121,16 +121,6 @@ object AgentSimulationFilter extends Filter with MicroserviceFilterSupport {
 }
 
 object MicroserviceAuthFilter extends AuthorisationFilter with MicroserviceFilterSupport {
-
-  override def apply(next: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
-    super.apply(next)(rh) map { res =>
-      res.header.status match {
-        case 401 => Status(ErrorUnauthorized.httpStatusCode)(Json.toJson(ErrorUnauthorized))
-        case _ => res
-      }
-    }
-  }
-
   override def config: FilterConfig = FilterConfig(ControllerConfiguration.controllerConfigs)
   override def connector: AuthConnector = MicroserviceAuthConnector
 }

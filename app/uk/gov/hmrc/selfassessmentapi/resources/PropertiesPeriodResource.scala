@@ -23,10 +23,11 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.models.audit.{AuditType, PeriodicUpdate}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesPeriodResponse
-import uk.gov.hmrc.selfassessmentapi.services.{FHLPropertiesPeriodService, OtherPropertiesPeriodService}
+import uk.gov.hmrc.selfassessmentapi.services.{AuditService, FHLPropertiesPeriodService, OtherPropertiesPeriodService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -44,7 +45,9 @@ object PropertiesPeriodResource extends BaseResource {
           case Right(response) =>
             response.map { response =>
               response.status match {
-                case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id))
+                case 200 =>
+                  auditPeriodicCreate(nino, id, response)
+                  Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id))
                 case 400 if response.containsOverlappingPeriod => Forbidden(Error.asBusinessError(response.json))
                 case 400 => BadRequest(Error.from(response.json))
                 case 404 => NotFound
@@ -139,5 +142,12 @@ object PropertiesPeriodResource extends BaseResource {
       validate[FHL.Financials, Boolean](request.body) { period =>
         FHLPropertiesPeriodService.updatePeriod(nino, periodId, period)
       }
+  }
+
+  private def auditPeriodicCreate(nino: Nino, id: PropertyType, response: PropertiesPeriodResponse)
+                                 (implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
+    AuditService.audit(
+      payload = PeriodicUpdate(nino, id.toString, response.getPeriodId, response.transactionReference, request.body),
+      s"$id-property-periodic-create")
   }
 }

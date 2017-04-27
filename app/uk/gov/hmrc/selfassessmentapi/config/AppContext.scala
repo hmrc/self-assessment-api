@@ -36,4 +36,5 @@ object AppContext extends ServicesConfig {
   lazy val registrationEnabled: Boolean = current.configuration.getBoolean(s"$env.microservice.services.service-locator.enabled").getOrElse(true)
   lazy val featureSwitch: Option[Configuration] = config.getConfig(s"$env.feature-switch")
   lazy val auditEnabled: Boolean = config.getBoolean(s"auditing.enabled").getOrElse(true)
+  lazy val authEnabled: Boolean = config.getBoolean(s"$env.microservice.services.auth.enabled").getOrElse(true)
 }

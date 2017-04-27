@@ -32,7 +32,7 @@ class PeriodValidatorSpec extends UnitSpec {
     "fail `containsOverlappingPeriod` when adding a period that overlaps with an existing period" in
       new TestPeriodValidator(Map("" -> TestPeriod(LocalDate.parse("2017-04-06"), LocalDate.parse("2018-04-05")))) {
         validatePeriod(TestPeriod(LocalDate.parse("2018-04-05"), LocalDate.parse("2018-04-06")), accPeriod) shouldBe
-          Some(Error(ErrorCode.INVALID_PERIOD.toString, "Periods should be contiguous and have no gaps between one another.", ""))
+          Some(Error(ErrorCode.INVALID_PERIOD.toString, "Periods should be contiguous and have no gaps between one another.", Some("")))
       }
 
     "pass `containsOverlappingPeriod` when adding a period that does not overlap with an existing period" in
@@ -43,7 +43,7 @@ class PeriodValidatorSpec extends UnitSpec {
     "fails `containsGap` when adding a period that creates a gap" in
       new TestPeriodValidator(Map("" -> TestPeriod(LocalDate.parse("2017-04-06"), LocalDate.parse("2018-04-05")))) {
         validatePeriod(TestPeriod(LocalDate.parse("2018-04-07"), LocalDate.parse("2018-04-08")), accPeriod) shouldBe
-          Some(Error(ErrorCode.INVALID_PERIOD.toString, "Periods should be contiguous and have no gaps between one another.", ""))
+          Some(Error(ErrorCode.INVALID_PERIOD.toString, "Periods should be contiguous and have no gaps between one another.", Some("")))
       }
 
     "pass `containsGap` when adding a period that does not create a gap" in
@@ -54,7 +54,7 @@ class PeriodValidatorSpec extends UnitSpec {
     "fail `containsPeriod` when adding a period that already exists" in
       new TestPeriodValidator(Map("id" -> TestPeriod(LocalDate.parse("2017-04-06"), LocalDate.parse("2018-04-01")))) {
         validatePeriod(TestPeriod(LocalDate.parse("2017-04-06"), LocalDate.parse("2018-04-01")), accPeriod) shouldBe
-          Some(Error(ErrorCode.INVALID_PERIOD.toString, "Periods should be contiguous and have no gaps between one another.", "id"))
+          Some(Error(ErrorCode.INVALID_PERIOD.toString, "Periods should be contiguous and have no gaps between one another.", Some("id")))
       }
 
     "pass `containsPeriod` when adding a period that does not yet exist" in
@@ -65,7 +65,7 @@ class PeriodValidatorSpec extends UnitSpec {
     "fail `containsMisalignedPeriod` when adding a period whose end date is beyond the end of the accounting period" in
       new TestPeriodValidator(Map("" -> TestPeriod(LocalDate.parse("2017-04-06"), LocalDate.parse("2018-04-01")))) {
         validatePeriod(TestPeriod(LocalDate.parse("2018-04-02"), LocalDate.parse("2018-04-06")), accPeriod) shouldBe
-          Some(Error(ErrorCode.INVALID_PERIOD.toString, "Periods should be contiguous and have no gaps between one another.", ""))
+          Some(Error(ErrorCode.INVALID_PERIOD.toString, "Periods should be contiguous and have no gaps between one another.", Some("")))
       }
 
     "pass `containsMisalignedPeriod` when adding a period whose end date is equal to the end of the accounting period" in
@@ -81,13 +81,13 @@ class PeriodValidatorSpec extends UnitSpec {
     "fail `containsMisalignedPeriod` when adding a first period whose start date is before the start of the accounting period" in
       new TestPeriodValidator(Map.empty) {
         validatePeriod(TestPeriod(LocalDate.parse("2017-04-05"), LocalDate.parse("2017-04-15")), accPeriod) shouldBe
-          Some(Error(ErrorCode.INVALID_PERIOD.toString, "Periods should be contiguous and have no gaps between one another.", ""))
+          Some(Error(ErrorCode.INVALID_PERIOD.toString, "Periods should be contiguous and have no gaps between one another.", Some("")))
       }
 
     "fail `containsMisalignedPeriod` when adding a first period whose start date is after the start of the accounting period" in
       new TestPeriodValidator(Map.empty) {
         validatePeriod(TestPeriod(LocalDate.parse("2017-04-07"), LocalDate.parse("2017-04-08")), accPeriod) shouldBe
-          Some(Error(ErrorCode.INVALID_PERIOD.toString, "Periods should be contiguous and have no gaps between one another.", ""))
+          Some(Error(ErrorCode.INVALID_PERIOD.toString, "Periods should be contiguous and have no gaps between one another.", Some("")))
       }
 
     "return None when provided with a period that passes validation" in new TestPeriodValidator(Map.empty) {

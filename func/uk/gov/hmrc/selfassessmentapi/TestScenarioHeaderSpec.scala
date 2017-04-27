@@ -8,7 +8,7 @@ class TestScenarioHeaderSpec extends BaseFunctionalSpec {
     "return HTTP 200" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments")
@@ -21,7 +21,7 @@ class TestScenarioHeaderSpec extends BaseFunctionalSpec {
     "return HTTP 200" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments")
@@ -35,7 +35,7 @@ class TestScenarioHeaderSpec extends BaseFunctionalSpec {
     "return HTTP 200" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()
         .get(s"/ni/$nino/dividends/$taxYear")
@@ -48,7 +48,7 @@ class TestScenarioHeaderSpec extends BaseFunctionalSpec {
     "return HTTP 200" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource(nino)
+        .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()
         .get(s"/ni/$nino/dividends/$taxYear")

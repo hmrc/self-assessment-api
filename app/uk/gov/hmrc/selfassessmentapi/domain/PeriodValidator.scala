@@ -33,7 +33,7 @@ trait PeriodValidator[P <: Period] {
       containsOverlappingPeriod(period) ||
       containsGap(period) ||
       containsMisalignedPeriod(period, accountingPeriod)) {
-      Some(Error(INVALID_PERIOD.toString, "Periods should be contiguous and have no gaps between one another.", containsPeriod(period).getOrElse("")))
+      Some(Error(INVALID_PERIOD.toString, "Periods should be contiguous and have no gaps between one another.", containsPeriod(period).orElse(Some(""))))
     }
     else None
   }

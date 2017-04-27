@@ -17,13 +17,16 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.Action
+import play.api.mvc.{Action, Request}
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.models.audit.{AuditType, PeriodicUpdate}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentPeriodResponse
+import uk.gov.hmrc.selfassessmentapi.services.AuditService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -42,7 +45,9 @@ object SelfEmploymentPeriodResource extends BaseResource {
           case Right(result) =>
             result.map { response =>
               response.status match {
-                case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino, sourceId))
+                case 200 =>
+                  auditPeriodicCreate(nino, sourceId, response)
+                  Created.withHeaders(LOCATION -> response.createLocationHeader(nino, sourceId))
                 case 400 if response.containsOverlappingPeriod => Forbidden(Error.asBusinessError(response.json))
                 case 400 => BadRequest(Error.from(response.json))
                 case 404 => NotFound
@@ -73,7 +78,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
   }
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
-  def retrievePeriod(nino: Nino, id: SourceId, periodId: PeriodId) = FeatureSwitch.async(parse.empty) { implicit request =>
+  def retrievePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[Unit] = FeatureSwitch.async(parse.empty) { implicit request =>
     withAuth(nino) {
       connector.get(nino, id, periodId).map { response =>
         response.status match {
@@ -87,7 +92,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
   }
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
-  def retrievePeriods(nino: Nino, id: SourceId) = FeatureSwitch.async(parse.empty) {
+  def retrievePeriods(nino: Nino, id: SourceId): Action[Unit] = FeatureSwitch.async(parse.empty) {
     implicit request =>
       withAuth(nino) {
         connector.getAll(nino, id).map { response =>
@@ -99,5 +104,12 @@ object SelfEmploymentPeriodResource extends BaseResource {
           }
         }
       }
+  }
+
+  private def auditPeriodicCreate(nino: Nino, id: SourceId, response: SelfEmploymentPeriodResponse)
+                                 (implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
+    AuditService.audit(
+      payload = PeriodicUpdate(nino, id, response.getPeriodId, response.transactionReference, request.body),
+      "self-employment-periodic-create")
   }
 }
