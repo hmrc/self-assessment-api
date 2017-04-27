@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.models.des.properties
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.selfassessmentapi.models.properties
+import uk.gov.hmrc.selfassessmentapi.models
 
 object FHL {
 
@@ -79,7 +80,7 @@ object Other {
   object Income {
     implicit val format: OFormat[Income] = Json.format[Income]
 
-    def from(o: properties.Other.Income): Income =
+    def from(o: models.Income): Income =
       Income(amount = o.amount, taxDeducted = o.taxDeducted)
   }
 

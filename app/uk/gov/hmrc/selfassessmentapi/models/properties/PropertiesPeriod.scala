@@ -62,22 +62,13 @@ object FHL {
                  financials = Financials.from(o.financials))
   }
 
-  case class Income(amount: Amount)
-
-  object Income {
-    implicit val reads: Reads[Income] = (__ \ "amount").read[Amount](nonNegativeAmountValidator).map(Income(_))
-
-    implicit val writes: Writes[Income] = Json.writes[Income]
-
-  }
-
-  case class Incomes(rentIncome: Option[Income] = None)
+  case class Incomes(rentIncome: Option[SimpleIncome] = None)
 
   object Incomes {
     implicit val format: Format[Incomes] = Json.format[Incomes]
 
     def from(o: des.properties.FHL.Incomes): Incomes =
-      Incomes(rentIncome = o.rentIncome.map(Income(_)))
+      Incomes(rentIncome = o.rentIncome.map(SimpleIncome(_)))
   }
 
   case class Expense(amount: Amount)
@@ -162,20 +153,6 @@ object Other {
                  financials = Financials.from(o.financials))
   }
 
-  case class Income(amount: Amount, taxDeducted: Option[Amount] = None)
-
-  object Income {
-    implicit val reads: Reads[Income] = (
-      (__ \ "amount").read[Amount](nonNegativeAmountValidator) and
-        (__ \ "taxDeducted").readNullable[Amount](nonNegativeAmountValidator)
-    )(Income.apply _)
-
-    implicit val writes: Writes[Income] = Json.writes[Income]
-
-    def from(o: des.properties.Other.Income): Income =
-      Income(amount = o.amount, taxDeducted = o.taxDeducted)
-  }
-
   case class Incomes(rentIncome: Option[Income] = None,
                      premiumsOfLeaseGrant: Option[Income] = None,
                      reversePremiums: Option[Income] = None)
@@ -186,9 +163,12 @@ object Other {
       Json.format[Incomes]
 
     def from(o: des.properties.Other.Incomes): Incomes =
-      Incomes(rentIncome = o.rentIncome.map(Income.from),
-              premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(Income(_)),
-              reversePremiums = o.reversePremiums.map(Income(_)))
+      Incomes(rentIncome = o.rentIncome.map(from),
+              premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(Income(_, None)),
+              reversePremiums = o.reversePremiums.map(Income(_, None)))
+
+    def from(o: des.properties.Other.Income): Income =
+      Income(amount = o.amount, taxDeducted = o.taxDeducted)
   }
 
   case class Expense(amount: Amount)

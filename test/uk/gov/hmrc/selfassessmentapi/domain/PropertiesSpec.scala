@@ -35,7 +35,7 @@ class PropertiesSpec extends UnitSpec {
     LocalDate.parse("2017-04-06"),
     LocalDate.parse("2018-04-05"),
     Some(
-      Other.Financials(incomes = Some(Other.Incomes(rentIncome = Some(Other.Income(1000, None)))),
+      Other.Financials(incomes = Some(Other.Incomes(rentIncome = Some(Income(1000, None)))),
                        expenses = Some(Other.Expenses(premisesRunningCosts = Some(Other.Expense(50.55))))))
   )
   val fhlPeriod: FHL.Properties = FHL.Properties(
@@ -43,7 +43,7 @@ class PropertiesSpec extends UnitSpec {
     LocalDate.parse("2017-04-06"),
     LocalDate.parse("2018-04-05"),
     Some(
-      FHL.Financials(incomes = Some(FHL.Incomes(rentIncome = Some(FHL.Income(1234.56)))),
+      FHL.Financials(incomes = Some(FHL.Incomes(rentIncome = Some(SimpleIncome(1234.56)))),
                      expenses = Some(FHL.Expenses(professionalFees = Some(FHL.Expense(500.12))))))
   )
 
