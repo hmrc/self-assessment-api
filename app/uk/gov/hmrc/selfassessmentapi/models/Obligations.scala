@@ -23,10 +23,6 @@ import play.api.libs.json.{Json, Writes}
 case class Obligations(obligations: Seq[Obligation])
 
 object Obligations {
-  def from(desObligations: Seq[des.Obligation]): Obligations = {
-    Obligations(desObligations.flatMap(_.details.map(Obligation.from)))
-  }
-
   implicit val writes: Writes[Obligations] = Json.writes[Obligations]
 }
 

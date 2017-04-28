@@ -89,28 +89,4 @@ class ObligationsSpec extends JsonSpec {
       createObligationDetails(status = "O").isFulfilled shouldBe false
     }
   }
-
-  "selfEmploymentObligationsForId" should {
-    "return only the obligations that match the provided ID" in {
-      val obligations =
-        Obligations(
-          obligations = Seq(
-            Obligation(id = "abc", `type` = "ITSB", details = Seq.empty),
-            Obligation(id = "def", `type` = "ITSB", details = Seq.empty)))
-
-      obligations.selfEmploymentObligationsForId("abc").size shouldBe 1
-      obligations.selfEmploymentObligationsForId("abc").head.id shouldBe "abc"
-    }
-
-    "return only the obligations whose type is 'ITSB' (i.e. self-employment obligations)" in {
-      val obligations =
-        Obligations(
-          obligations = Seq(
-            Obligation(id = "abc", `type` = "ITSB", details = Seq.empty),
-            Obligation(id = "def", `type` = "ITSP", details = Seq.empty)))
-
-      obligations.selfEmploymentObligationsForId("abc").size shouldBe 1
-      obligations.selfEmploymentObligationsForId("def").size shouldBe 0
-    }
-  }
 }
