@@ -23,40 +23,30 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.connectors.BusinessDetailsConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors
-import uk.gov.hmrc.selfassessmentapi.services.AuthenticationService
+import uk.gov.hmrc.selfassessmentapi.services.{AuthenticationService, MtdRefLookupService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait BaseResource extends BaseController {
-  private val businessConnector = BusinessDetailsConnector
   private val authService = AuthenticationService
+  private val lookupService = MtdRefLookupService
   private lazy val authIsEnabled = AppContext.authEnabled
 
   val logger: Logger = Logger(this.getClass)
 
   def withAuth(nino: Nino)(f: => Future[Result])(implicit hc: HeaderCarrier,
-                                                 reqHeader: RequestHeader): Future[Result] =
+                                                 reqHeader: RequestHeader): Future[Result] = {
     if (authIsEnabled) performAuthCheck(nino)(f)
     else f
+  }
 
-  /*
-   * Retrieve the user's MTD reference number using the provided NINO.
-   * This reference number is used to perform authorisation.
-   */
   private def performAuthCheck(nino: Nino)(f: => Future[Result])(implicit hc: HeaderCarrier,
-                                                                 reqHeader: RequestHeader): Future[Result] =
-    businessConnector.get(nino).flatMap { response =>
-      response.status match {
-        case 200 =>
-          logger.debug(s"NINO to MTD reference lookup successful. Status Code ${response.status}.")
-          authService.authorise(response.mtdId)(f)
-        case 400 | 404 =>
-          logger.debug(s"NINO to MTD reference lookup failed. Status Code ${response.status}")
-          Future.successful(Forbidden(Json.toJson(Errors.ClientNotSubscribed)))
-        case _ => Future.successful(unhandledResponse(response.status, logger))
-      }
+                                                                 reqHeader: RequestHeader): Future[Result] = {
+    lookupService.mtdReferenceFor(nino).flatMap {
+      case Some(id) => authService.authorise(id)(f)
+      case None => Future.successful(Forbidden(Json.toJson(Errors.ClientNotSubscribed)))
     }
+  }
 }

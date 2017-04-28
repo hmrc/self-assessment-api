@@ -33,12 +33,9 @@ object AuthenticationService extends AuthorisedFunctions {
 
   private val logger = Logger(AuthenticationService.getClass)
 
-  def authorise(mtdId: Option[MtdId])(f: => Future[Result])
+  def authorise(mtdId: MtdId)(f: => Future[Result])
                (implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[Result] =
-    mtdId match {
-      case Some(id) => authoriseAsClient(id)(f)
-      case None => Future.successful(InternalServerError)
-    }
+    authoriseAsClient(mtdId)(f)
 
   private def authoriseAsClient(mtdId: MtdId)(f: => Future[Result])
                                (implicit hc: HeaderCarrier, requestHeader: RequestHeader): Future[Result] = {

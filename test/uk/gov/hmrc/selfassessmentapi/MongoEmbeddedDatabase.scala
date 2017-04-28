@@ -36,7 +36,7 @@ trait MongoEmbeddedDatabase extends UnitSpec with BeforeAndAfterAll with BeforeA
     MongoClient("localhost", if (useEmbeddedMongo) embeddedPort else diskPort)("self-assessment-api")
 
   override def beforeEach(): Unit =
-    List("selfEmployments", "properties", "dividends", "banks", "jobHistory").foreach {
+    List("selfEmployments", "properties", "dividends", "banks", "ninoToMtdRefLookupTable").foreach {
     coll => mongoClient.getCollection(coll).remove(new BasicDBObject())
   }
 
