@@ -34,7 +34,7 @@ object PropertiesObligationsResource extends BaseResource {
         response.status match {
           case 200 =>
             logger.debug("Properties obligations from DES = " + Json.stringify(response.json))
-            response.obligations(incomeSourceType = "ITSP").map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+            response.obligations("ITSP").map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
           case 400 => BadRequest(Error.from(response.json))
           case 404 => NotFound
           case _ => unhandledResponse(response.status, logger)
