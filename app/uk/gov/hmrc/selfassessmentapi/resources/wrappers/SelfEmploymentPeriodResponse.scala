@@ -58,7 +58,7 @@ case class SelfEmploymentPeriodResponse(underlying: HttpResponse) {
       case Some(desPeriods) =>
         val from = SelfEmploymentPeriod.from _
         val setId = (p: SelfEmploymentPeriod) => p.copy(id = Some(p.createPeriodId))
-        val fromDES = from andThen setId andThen ((p: SelfEmploymentPeriod) => p.asSummary)
+        val fromDES = from andThen setId andThen (_.asSummary)
         desPeriods.map(fromDES).sorted
       case None =>
         logger.error("The response from DES does not match the expected self-employment period format.")
