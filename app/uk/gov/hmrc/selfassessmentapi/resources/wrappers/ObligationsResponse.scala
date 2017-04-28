@@ -26,7 +26,7 @@ case class ObligationsResponse(underlying: HttpResponse) {
   val status: Int = underlying.status
   private val logger: Logger = Logger(classOf[ObligationsResponse])
 
-  def obligations(filter: String => Boolean, id: Option[SourceId] = None): Option[Obligations] = {
+  def obligations(incomeSourceType: String, id: Option[SourceId] = None): Option[Obligations] = {
 
     val desObligations = json.asOpt[des.Obligations]
 
@@ -39,7 +39,7 @@ case class ObligationsResponse(underlying: HttpResponse) {
 
     desObligations.fold(noneFound) {
       errorMessage = "Obligation for source id and/or business type was not found."
-      _.obligations.find(o => o.id == id.getOrElse(o.id) && filter(o.`type`)).fold(noneFound) {
+      _.obligations.find(o => o.id == id.getOrElse(o.id) && o.`type` == incomeSourceType).fold(noneFound) {
         desObligation =>
           Some(Obligations(for {
             details <- desObligation.details
