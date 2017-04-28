@@ -37,15 +37,17 @@ case class ObligationsResponse(underlying: HttpResponse) {
       None
     }
 
-    desObligations.fold(noneFound) {
+    def oneFound(obligation: des.Obligations): Option[Obligations] = {
       errorMessage = "Obligation for source id and/or business type was not found."
-      _.obligations.find(o => o.id == id.getOrElse(o.id) && o.`type` == incomeSourceType).fold(noneFound) {
+      obligation.obligations.find(o => o.id == id.getOrElse(o.id) && o.`type` == incomeSourceType).fold(noneFound) {
         desObligation =>
           Some(Obligations(for {
             details <- desObligation.details
           } yield Obligation.from(details)))
       }
     }
+
+    desObligations.fold(noneFound)(oneFound)
   }
 
   def json: JsValue = underlying.json

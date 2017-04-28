@@ -34,7 +34,7 @@ object SelfEmploymentObligationsResource extends BaseResource {
         response.status match {
           case 200 =>
             logger.debug("Self-employment obligations from DES = " + Json.stringify(response.json))
-            response.obligations(incomeSourceType = "ITSB", Some(id)).map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+            response.obligations("ITSB", Some(id)).map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
           case 400 => BadRequest(Error.from(response.json))
           case 404 => NotFound
           case _ => unhandledResponse(response.status, logger)
