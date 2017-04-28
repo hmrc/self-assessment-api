@@ -19,40 +19,68 @@ package uk.gov.hmrc.selfassessmentapi.models.properties
 import org.joda.time.LocalDate
 import org.scalacheck.Gen
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import play.api.libs.json.Json
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
+import uk.gov.hmrc.selfassessmentapi.models.Generators._
 
 class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
 
   "PropertiesPeriod" should {
-    "round trip FHL properties" in forAll(FHLGen.genPropertiesPeriod(valid = true)) { fhlProps =>
-      roundTripJson(fhlProps)
-    }
+    "round trip FHL properties" in forAll(FHLGen.genPropertiesPeriod())(roundTripJson(_))
 
-    "round trip Other properties" in forAll(OtherGen.genPropertiesPeriod(valid = true)) { otherProps =>
-      roundTripJson(otherProps)
-    }
+    "round trip Other properties" in forAll(OtherGen.genPropertiesPeriod())(roundTripJson(_))
   }
 
   "validate" should {
-    "reject a FHL properties where the `to` date comes before the `from` date" in forAll(
-      FHLGen.genPropertiesPeriod(valid = false)) { fhlProps =>
-      assertValidationErrorWithCode(fhlProps, "", ErrorCode.INVALID_PERIOD)
-    }
+    "reject FHL properties where the `to` date comes before the `from` date" in
+      forAll(FHLGen.genPropertiesPeriod(invalidPeriod = true)) { fhlProps =>
+        assertValidationErrorsWithCode[FHL.Properties](Json.toJson(fhlProps),
+                                                       Map("/from" -> Seq(ErrorCode.INVALID_PERIOD),
+                                                           "/to" -> Seq(ErrorCode.INVALID_PERIOD)))
+      }
 
-    "reject a Other properties where the `to` date comes before the `from` date" in forAll(
-      OtherGen.genPropertiesPeriod(valid = false)) { otherProps =>
-      assertValidationErrorWithCode(otherProps, "", ErrorCode.INVALID_PERIOD)
-    }
+    "reject Other properties where the `to` date comes before the `from` date" in
+      forAll(OtherGen.genPropertiesPeriod(invalidPeriod = true)) { otherProps =>
+        assertValidationErrorsWithCode[Other.Properties](Json.toJson(otherProps),
+                                                         Map("/from" -> Seq(ErrorCode.INVALID_PERIOD),
+                                                             "/to" -> Seq(ErrorCode.INVALID_PERIOD)))
+      }
 
+    "reject FHL properties that has null financials" in
+      forAll(FHLGen.genPropertiesPeriod(nullFinancials = true)) { fhlProps =>
+        assertValidationErrorsWithCode[FHL.Properties](Json.toJson(fhlProps),
+                                                       Map("/incomes" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
+                                                           "/expenses" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES)))
+      }
+
+    "reject Other properties that has null financials" in
+      forAll(OtherGen.genPropertiesPeriod(nullFinancials = true)) { otherProps =>
+        assertValidationErrorsWithCode[Other.Properties](Json.toJson(otherProps),
+                                                         Map("/incomes" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
+                                                             "/expenses" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES)))
+      }
+
+    "reject FHL properties where the `to` date comes before the `from` date and has null financials" in
+      forAll(FHLGen.genPropertiesPeriod(invalidPeriod = true, nullFinancials = true)) { fhlProps =>
+        assertValidationErrorsWithCode[FHL.Properties](Json.toJson(fhlProps),
+                                                       Map("/incomes" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
+                                                           "/expenses" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
+                                                           "/from" -> Seq(ErrorCode.INVALID_PERIOD),
+                                                           "/to" -> Seq(ErrorCode.INVALID_PERIOD)))
+      }
+
+    "reject Other properties where the `to` date comes before the `from` date and has null financials" in
+      forAll(OtherGen.genPropertiesPeriod(invalidPeriod = true, nullFinancials = true)) { otherProps =>
+        assertValidationErrorsWithCode[Other.Properties](Json.toJson(otherProps),
+                                                         Map("/incomes" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
+                                                             "/expenses" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
+                                                             "/from" -> Seq(ErrorCode.INVALID_PERIOD),
+                                                             "/to" -> Seq(ErrorCode.INVALID_PERIOD)))
+      }
   }
 
-  def amountGen(lower: BigDecimal, upper: BigDecimal): Gen[BigDecimal] =
-    for {
-      value <- Gen.chooseNum(lower.intValue(), upper.intValue())
-    } yield BigDecimal(value)
-
-  val amount: Gen[BigDecimal] = amountGen(1000, 5000)
+  val amount: Gen[BigDecimal] = amountGen(0, 5000)
 
   object FHLGen {
     val genSimpleIncome: Gen[SimpleIncome] = for (amount <- amount) yield SimpleIncome(amount)
@@ -73,22 +101,27 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         other <- Gen.option(genExpense)
       } yield FHL.Expenses(premisesRunningCosts, repairsAndMaintenance, financialCosts, professionalFees, other)
 
-    def genFinancials: Gen[FHL.Financials] =
+    val genFinancials: Gen[FHL.Financials] =
       (for {
         incomes <- Gen.option(genIncomes)
         expenses <- Gen.option(genExpenses)
-      } yield FHL.Financials(incomes, expenses)) suchThat (f => f.expenses.isDefined && f.incomes.isDefined)
+      } yield FHL.Financials(incomes, expenses)) suchThat { f =>
+        (f.incomes.isDefined && f.incomes.get.hasIncomes) ||
+        (f.expenses.isDefined && f.expenses.get.hasExpenses)
+      }
 
-    def genPropertiesPeriod(valid: Boolean): Gen[FHL.Properties] =
+    def genPropertiesPeriod(invalidPeriod: Boolean = false, nullFinancials: Boolean = false): Gen[FHL.Properties] =
       for {
-        from <- Gen.const(LocalDate.now())
-        to <- Gen.oneOf(from, from.plusDays(1))
-        financials <- Gen.option(genFinancials)
-      } yield
-        if (valid)
-          FHL.Properties(None, from, to, financials)
-        else
-          FHL.Properties(None, from, from.minusDays(1), financials)
+        emptyFinancials <- Gen.option(FHL.Financials(None, None))
+        financials <- genFinancials
+      } yield {
+        val from = LocalDate.now()
+        val to = from.plusDays(1)
+        FHL.Properties(None,
+                       if (invalidPeriod) to else from,
+                       if (invalidPeriod) from else to,
+                       if (nullFinancials) emptyFinancials else Some(financials))
+      }
 
   }
 
@@ -96,7 +129,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
     val genIncome: Gen[Income] =
       for {
         amount <- amount
-        taxDeducted <- Gen.option(amount)
+        taxDeducted <- Gen.option(amountGen(0, amount))
       } yield Income(amount, taxDeducted)
 
     val genIncomes: Gen[Other.Incomes] =
@@ -125,23 +158,26 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
                     costOfServices,
                     other)
 
-    def genFinancials: Gen[Other.Financials] =
+    val genFinancials: Gen[Other.Financials] =
       (for {
         incomes <- Gen.option(genIncomes)
         expenses <- Gen.option(genExpenses)
-      } yield Other.Financials(incomes, expenses)) suchThat (f => f.expenses.isDefined && f.incomes.isDefined)
+      } yield Other.Financials(incomes, expenses)) suchThat { f =>
+        (f.incomes.isDefined && f.incomes.get.hasIncomes) ||
+        (f.expenses.isDefined && f.expenses.get.hasExpenses)
+      }
 
-    def genPropertiesPeriod(valid: Boolean): Gen[Other.Properties] =
+    def genPropertiesPeriod(invalidPeriod: Boolean = false, nullFinancials: Boolean = false): Gen[Other.Properties] =
       for {
-        from <- Gen.const(LocalDate.now())
-        to <- Gen.oneOf(from, from.plusDays(1))
-        financials <- Gen.option(genFinancials)
-      } yield
-        if (valid)
-          Other.Properties(None, from, to, financials)
-        else
-          Other.Properties(None, from, from.minusDays(1), financials)
-
+        emptyFinancials <- Gen.option(Other.Financials(None, None))
+        financials <- genFinancials
+      } yield {
+        val from = LocalDate.now()
+        val to = from.plusDays(1)
+        Other.Properties(None,
+                         if (invalidPeriod) to else from,
+                         if (invalidPeriod) from else to,
+                         if (nullFinancials) emptyFinancials else Some(financials))
+      }
   }
-
 }

@@ -21,6 +21,7 @@ import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.models.Validation._
 
 case class SelfEmploymentPeriod(id: Option[String],
                                 from: LocalDate,
@@ -79,6 +80,10 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
 
   implicit val writes: Writes[SelfEmploymentPeriod] = Json.writes[SelfEmploymentPeriod]
 
+  private def financialsValidator(period: SelfEmploymentPeriod): Boolean =
+    (period.incomes.isDefined && period.incomes.get.hasIncomes) ||
+      (period.expenses.isDefined && period.expenses.get.hasExpenses)
+
   implicit val reads: Reads[SelfEmploymentPeriod] = (
     Reads.pure(None) and
       (__ \ "from").read[LocalDate] and
@@ -86,7 +91,13 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
       (__ \ "incomes").readNullable[Incomes] and
       (__ \ "expenses").readNullable[Expenses]
   )(SelfEmploymentPeriod.apply _)
-    .filter(ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD))(
-      periodDateValidator)
+    .validate(
+      Seq(Validation(Seq("from", "to"),
+                     periodDateValidator,
+                     ValidationError("the period 'from' date should come before the 'to' date",
+                                     ErrorCode.INVALID_PERIOD)),
+          Validation(Seq("incomes", "expenses"),
+                     financialsValidator,
+                     ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))))
 
 }

@@ -22,6 +22,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models
 import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.models.Validation._
 
 object FHL {
 
@@ -40,6 +41,14 @@ object FHL {
         (__ \ "expenses").writeNullable[Expenses]
     )(p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses)))
 
+    private def financialsValidator(period: Properties): Boolean =
+      (period.financials.isDefined &&
+        period.financials.get.incomes.isDefined &&
+        period.financials.get.incomes.get.hasIncomes) ||
+        (period.financials.isDefined &&
+          period.financials.get.expenses.isDefined &&
+          period.financials.get.expenses.get.hasExpenses)
+
     implicit val reads: Reads[Properties] = (
       Reads.pure(None) and
         (__ \ "from").read[LocalDate] and
@@ -52,8 +61,14 @@ object FHL {
         case (inc, exp) => Some(Financials(inc, exp))
       }
       Properties(id, from, to, financials)
-    }).filter(ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD))(
-      periodDateValidator)
+    }).validate(
+      Seq(Validation(Seq("from", "to"),
+                     periodDateValidator,
+                     ValidationError("the period 'from' date should come before the 'to' date",
+                                     ErrorCode.INVALID_PERIOD)),
+          Validation(Seq("incomes", "expenses"),
+                     financialsValidator,
+                     ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))))
 
     def from(o: des.properties.FHL.Properties): Properties =
       Properties(id = o.id,
@@ -62,7 +77,9 @@ object FHL {
                  financials = Financials.from(o.financials))
   }
 
-  case class Incomes(rentIncome: Option[SimpleIncome] = None)
+  case class Incomes(rentIncome: Option[SimpleIncome] = None) {
+    def hasIncomes: Boolean = rentIncome.isDefined
+  }
 
   object Incomes {
     implicit val format: Format[Incomes] = Json.format[Incomes]
@@ -83,7 +100,14 @@ object FHL {
                       repairsAndMaintenance: Option[Expense] = None,
                       financialCosts: Option[Expense] = None,
                       professionalFees: Option[Expense] = None,
-                      other: Option[Expense] = None)
+                      other: Option[Expense] = None) {
+    def hasExpenses: Boolean =
+      premisesRunningCosts.isDefined ||
+        repairsAndMaintenance.isDefined ||
+        financialCosts.isDefined ||
+        professionalFees.isDefined ||
+        other.isDefined
+  }
 
   object Expenses {
     implicit val format: Format[Expenses] = Json.format[Expenses]
@@ -131,6 +155,14 @@ object Other {
         (__ \ "expenses").writeNullable[Expenses]
     )(p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses)))
 
+    private def financialsValidator(period: Properties): Boolean =
+      (period.financials.isDefined &&
+        period.financials.get.incomes.isDefined &&
+        period.financials.get.incomes.get.hasIncomes) ||
+        (period.financials.isDefined &&
+          period.financials.get.expenses.isDefined &&
+          period.financials.get.expenses.get.hasExpenses)
+
     implicit val reads: Reads[Properties] = (
       Reads.pure(None) and
         (__ \ "from").read[LocalDate] and
@@ -143,8 +175,14 @@ object Other {
         case (inc, exp) => Some(Financials(inc, exp))
       }
       Properties(id, from, to, financials)
-    }).filter(ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD))(
-      periodDateValidator)
+    }).validate(
+      Seq(Validation(Seq("from", "to"),
+                     periodDateValidator,
+                     ValidationError("the period 'from' date should come before the 'to' date",
+                                     ErrorCode.INVALID_PERIOD)),
+          Validation(Seq("incomes", "expenses"),
+                     financialsValidator,
+                     ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))))
 
     def from(o: des.properties.Other.Properties): Properties =
       Properties(id = o.id,
@@ -155,7 +193,12 @@ object Other {
 
   case class Incomes(rentIncome: Option[Income] = None,
                      premiumsOfLeaseGrant: Option[Income] = None,
-                     reversePremiums: Option[Income] = None)
+                     reversePremiums: Option[Income] = None) {
+    def hasIncomes: Boolean =
+      rentIncome.isDefined ||
+        premiumsOfLeaseGrant.isDefined ||
+        reversePremiums.isDefined
+  }
 
   object Incomes {
 
@@ -182,7 +225,15 @@ object Other {
                       financialCosts: Option[Expense] = None,
                       professionalFees: Option[Expense] = None,
                       costOfServices: Option[Expense] = None,
-                      other: Option[Expense] = None)
+                      other: Option[Expense] = None) {
+    def hasExpenses: Boolean =
+      premisesRunningCosts.isDefined ||
+        repairsAndMaintenance.isDefined ||
+        financialCosts.isDefined ||
+        professionalFees.isDefined ||
+        costOfServices.isDefined ||
+        other.isDefined
+  }
 
   object Expenses {
     implicit val format: Format[Expenses] = Json.format[Expenses]

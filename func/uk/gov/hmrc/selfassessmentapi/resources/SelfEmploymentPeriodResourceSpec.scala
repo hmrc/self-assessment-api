@@ -29,15 +29,10 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
     }
 
     "return code 400 when attempting to create a period with the 'from' and 'to' dates are in the incorrect order" in {
-      val periodOne =
-        s"""
-           |{
-           |  "from": "2017-04-01",
-           |  "to": "2017-03-31"
-           |}
-         """.stripMargin
 
-      val expectedBody = Jsons.Errors.invalidRequest(("INVALID_PERIOD", ""))
+      val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-01"), toDate = Some("2017-03-31"))
+
+      val expectedBody = Jsons.Errors.invalidRequest(("INVALID_PERIOD", "/from"), ("INVALID_PERIOD", "/to"))
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -48,7 +43,66 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(201)
         .when()
-        .post(Json.parse(periodOne)).to(s"%sourceLocation%/periods")
+        .post(period).to(s"%sourceLocation%/periods")
+        .thenAssertThat()
+        .statusIs(400)
+        .contentTypeIsJson()
+        .bodyIsLike(expectedBody)
+    }
+
+    "return code 400 when attempting to create a period with no incomes and expenses" in {
+      val period =
+        s"""
+           |{
+           |  "from": "2017-03-31",
+           |  "to": "2017-04-01"
+           |}
+         """.stripMargin
+
+      val expectedBody =
+        Jsons.Errors.invalidRequest(("NO_INCOMES_AND_EXPENSES", "/incomes"), ("NO_INCOMES_AND_EXPENSES", "/expenses"))
+
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .des().selfEmployment.willBeCreatedFor(nino)
+        .when()
+        .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(201)
+        .when()
+        .post(Json.parse(period)).to(s"%sourceLocation%/periods")
+        .thenAssertThat()
+        .statusIs(400)
+        .contentTypeIsJson()
+        .bodyIsLike(expectedBody)
+    }
+
+    "return code 400 with multiple validation errors when attempting to create a period with invalid from and to dates and no incomes and expenses" in {
+      val period =
+        s"""
+           |{
+           |  "from": "2017-04-01",
+           |  "to": "2017-03-31"
+           |}
+         """.stripMargin
+
+      val expectedBody =
+        Jsons.Errors.invalidRequest(("INVALID_PERIOD", "/from"),
+                                    ("INVALID_PERIOD", "/to"),
+                                    ("NO_INCOMES_AND_EXPENSES", "/incomes"),
+                                    ("NO_INCOMES_AND_EXPENSES", "/expenses"))
+
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .des().selfEmployment.willBeCreatedFor(nino)
+        .when()
+        .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(201)
+        .when()
+        .post(Json.parse(period)).to(s"%sourceLocation%/periods")
         .thenAssertThat()
         .statusIs(400)
         .contentTypeIsJson()
@@ -75,9 +129,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
     }
 
     "return code 404 when attempting to create a period for a self-employment that does not exist" in {
-      val period = Jsons.SelfEmployment.period(
-        fromDate = Some("2017-04-06"),
-        toDate = Some("2017-07-04"))
+      val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-06"), toDate = Some("2017-07-04"))
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -90,9 +142,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
     }
 
     "return code 500 when DES is experiencing issues" in {
-      val period = Jsons.SelfEmployment.period(
-        fromDate = Some("2017-04-06"),
-        toDate = Some("2017-07-04"))
+      val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-06"), toDate = Some("2017-07-04"))
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -106,9 +156,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
     }
 
     "return code 500 when dependent systems are not available" in {
-      val period = Jsons.SelfEmployment.period(
-        fromDate = Some("2017-04-06"),
-        toDate = Some("2017-07-04"))
+      val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-06"), toDate = Some("2017-07-04"))
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -135,11 +183,10 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
 
   "updatePeriod" should {
     "return code 204 when updating a period that exists" in {
-      val updatePeriod = Jsons.SelfEmployment.period(
-        turnover = 200.25,
-        otherIncome = 100.25,
-        costOfGoodsBought = (200.25, 50.25),
-        cisPaymentsToSubcontractors = (100.25, 55.25))
+      val updatePeriod = Jsons.SelfEmployment.period(turnover = 200.25,
+                                                     otherIncome = 100.25,
+                                                     costOfGoodsBought = (200.25, 50.25),
+                                                     cisPaymentsToSubcontractors = (100.25, 55.25))
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -152,13 +199,12 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
     }
 
     "return code 404 when attempting to update a non-existent period" in {
-      val period = Jsons.SelfEmployment.period(
-        fromDate = Some("2017-04-06"),
-        toDate = Some("2017-07-04"),
-        turnover = 100.25,
-        otherIncome = 100.25,
-        costOfGoodsBought = (100.25, 50.25),
-        cisPaymentsToSubcontractors = (100.25, 50.25))
+      val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-06"),
+                                               toDate = Some("2017-07-04"),
+                                               turnover = 100.25,
+                                               otherIncome = 100.25,
+                                               costOfGoodsBought = (100.25, 50.25),
+                                               cisPaymentsToSubcontractors = (100.25, 50.25))
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -171,13 +217,12 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
     }
 
     "return code 500 when we receive a status code from DES that we do not handle" in {
-      val period = Jsons.SelfEmployment.period(
-        fromDate = Some("2017-04-06"),
-        toDate = Some("2017-07-04"),
-        turnover = 100.25,
-        otherIncome = 100.25,
-        costOfGoodsBought = (100.25, 50.25),
-        cisPaymentsToSubcontractors = (100.25, 50.25))
+      val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-06"),
+                                               toDate = Some("2017-07-04"),
+                                               turnover = 100.25,
+                                               otherIncome = 100.25,
+                                               costOfGoodsBought = (100.25, 50.25),
+                                               cisPaymentsToSubcontractors = (100.25, 50.25))
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -192,25 +237,24 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
 
   "retrievePeriod" should {
     "return code 200 when retrieving a period that exists" in {
-      val expectedBody = Jsons.SelfEmployment.period(
-        fromDate = Some("2017-04-05"),
-        toDate = Some("2018-04-04"),
-        turnover = 200,
-        otherIncome = 200,
-        costOfGoodsBought = (200, 200),
-        cisPaymentsToSubcontractors = (200, 200),
-        staffCosts = (200, 200),
-        travelCosts = (200, 200),
-        premisesRunningCosts = (200, 200),
-        maintenanceCosts = (200, 200),
-        adminCosts = (200, 200),
-        advertisingCosts = (200, 200),
-        interest = (200, 200),
-        financialCharges = (200, 200),
-        badDebt = (200, 200),
-        professionalFees = (200, 200),
-        depreciation = (200, 200),
-        otherExpenses = (200, 200))
+      val expectedBody = Jsons.SelfEmployment.period(fromDate = Some("2017-04-05"),
+                                                     toDate = Some("2018-04-04"),
+                                                     turnover = 200,
+                                                     otherIncome = 200,
+                                                     costOfGoodsBought = (200, 200),
+                                                     cisPaymentsToSubcontractors = (200, 200),
+                                                     staffCosts = (200, 200),
+                                                     travelCosts = (200, 200),
+                                                     premisesRunningCosts = (200, 200),
+                                                     maintenanceCosts = (200, 200),
+                                                     adminCosts = (200, 200),
+                                                     advertisingCosts = (200, 200),
+                                                     interest = (200, 200),
+                                                     financialCharges = (200, 200),
+                                                     badDebt = (200, 200),
+                                                     professionalFees = (200, 200),
+                                                     depreciation = (200, 200),
+                                                     otherExpenses = (200, 200))
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -275,7 +319,9 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .statusIs(200)
         .contentTypeIsJson()
         .bodyIsLike(expectedBody)
-        .selectFields(_ \\ "id").isLength(2).matches("\\d{4}\\-\\d{2}\\-\\d{2}_\\d{4}\\-\\d{2}\\-\\d{2}".r)
+        .selectFields(_ \\ "id")
+        .isLength(2)
+        .matches("\\d{4}\\-\\d{2}\\-\\d{2}_\\d{4}\\-\\d{2}\\-\\d{2}".r)
     }
 
     "return code 200 containing an empty json body when retrieving all periods where periods.size == 0" in {
@@ -312,6 +358,5 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .statusIs(500)
     }
   }
-
 
 }

@@ -18,18 +18,18 @@ package uk.gov.hmrc.selfassessmentapi.models
 
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
-class SimpleIncomeSpec extends JsonSpec {
-  "SimpleIncome" should {
-    "round trip" in {
-      roundTripJson(SimpleIncome(500.55))
-    }
+class ExpenseSpec extends JsonSpec {
+  "Expense" should {
+    "round trip" in roundTripJson(Expense(500.55, Some(300)))
 
-    "reject a negative amount" in {
-      assertValidationErrorWithCode(SimpleIncome(-20.20), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
-    }
+    "reject a negative amount" in
+      assertValidationErrorWithCode(Expense(-20.20, None), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
 
-    "reject an amount with more than 2 decimal places" in {
-      assertValidationErrorWithCode(SimpleIncome(10.123), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
-    }
+    "reject an amount with more than 2 decimal places" in
+      assertValidationErrorWithCode(Expense(10.123, None), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
+
+    "reject an expense where the disallowable amount is greater than the amount" in
+      assertValidationErrorWithCode(Expense(30.00, Some(50.00)), "", ErrorCode.INVALID_DISALLOWABLE_AMOUNT)
+
   }
 }

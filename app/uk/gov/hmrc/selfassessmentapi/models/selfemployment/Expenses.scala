@@ -33,11 +33,31 @@ case class Expenses(costOfGoodsBought: Option[Expense] = None,
                     badDebt: Option[Expense] = None,
                     professionalFees: Option[Expense] = None,
                     depreciation: Option[Expense] = None,
-                    other: Option[Expense] = None)
+                    other: Option[Expense] = None) {
+
+  def hasExpenses: Boolean =
+    costOfGoodsBought.isDefined ||
+      cisPaymentsToSubcontractors.isDefined ||
+      staffCosts.isDefined ||
+      travelCosts.isDefined ||
+      premisesRunningCosts.isDefined ||
+      maintenanceCosts.isDefined ||
+      adminCosts.isDefined ||
+      advertisingCosts.isDefined ||
+      interest.isDefined ||
+      financialCharges.isDefined ||
+      badDebt.isDefined ||
+      professionalFees.isDefined ||
+      depreciation.isDefined ||
+      other.isDefined
+}
 
 object Expenses {
   implicit val writes: Writes[Expenses] = Json.writes[Expenses]
-  implicit val reads: Reads[Expenses] = Json.reads[Expenses].filter(
-    ValidationError("the disallowableAmount for depreciation expenses must be the same as the amount", ErrorCode.DEPRECIATION_DISALLOWABLE_AMOUNT)
-  )(_.depreciation.forall(e => e.amount == e.disallowableAmount.getOrElse(false)))
+  implicit val reads: Reads[Expenses] = Json
+    .reads[Expenses]
+    .filter(
+      ValidationError("the disallowableAmount for depreciation expenses must be the same as the amount",
+                      ErrorCode.DEPRECIATION_DISALLOWABLE_AMOUNT)
+    )(_.depreciation.forall(e => e.amount == e.disallowableAmount.getOrElse(false)))
 }
