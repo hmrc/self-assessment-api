@@ -16,113 +16,104 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import org.joda.time.LocalDate
 import play.api.Logger
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Reads}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
-import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodSummary, des}
+import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId, PeriodSummary, des}
 
-case class PropertiesPeriodResponse(underlying: HttpResponse,
-                                    from: Option[LocalDate] = None,
-                                    to: Option[LocalDate] = None) {
-
+case class PropertiesPeriodResponse(underlying: HttpResponse) {
   val logger: Logger = Logger(classOf[PropertiesPeriodResponse])
-
   def status: Int = underlying.status
-
   def json: JsValue = underlying.json
 
-  def transactionReference: Option[String] = {
-    (json \ "transactionReference").asOpt[String] match {
-      case x @ Some(_) => x
-      case None => {
-        logger.error("The 'transactionReference' field was not found in the response from DES")
-        None
-      }
-    }
-  }
+  def createLocationHeader(nino: Nino, id: PropertyType, periodId: PeriodId): String =
+    s"/self-assessment/ni/$nino/uk-properties/$id/periods/$periodId"
 
-  trait PropertiesPeriodResponseOps[P <: Period, D <: des.properties.Period] {
-    def mkPeriodId(prop: P): P
-    def period: Option[P]
-    def allPeriods: Seq[PeriodSummary]
-  }
-
-  object PropertiesPeriodResponseOps {
-
-    def apply[P <: Period, D <: des.properties.Period](
-        implicit p: PropertiesPeriodResponseOps[P, D]): PropertiesPeriodResponseOps[P, D] = implicitly
-
-    implicit object OtherPropertiesPeriodResponseOps
-        extends PropertiesPeriodResponseOps[Other.Properties, des.properties.Other.Properties] {
-      override def mkPeriodId(prop: Other.Properties): Other.Properties =
-        prop.copy(id = Some(s"${prop.from}_${prop.to}"))
-
-      override def period: Option[Other.Properties] =
-        json.asOpt[des.properties.Other.Properties] match {
-          case Some(prop) =>
-            Some(Other.Properties.from(prop).copy(id = None))
-          case None =>
-            logger.error("The response from DES does not match the expected properties period format.")
-            None
-        }
-
-      override def allPeriods: Seq[PeriodSummary] =
-        json.asOpt[Seq[des.properties.Other.Properties]] match {
-          case Some(desPeriods) =>
-            desPeriods.map((mkPeriodId _ compose Other.Properties.from)(_).asSummary).sorted
-          case None =>
-            logger.error("The response from DES does not match the expected self-employment period format.")
-            Seq.empty
-        }
-    }
-
-    implicit object FHLPropertiesPeriodResponseOps
-        extends PropertiesPeriodResponseOps[FHL.Properties, des.properties.FHL.Properties] {
-      override def mkPeriodId(prop: FHL.Properties): FHL.Properties =
-        prop.copy(id = Some(s"${prop.from}_${prop.to}"))
-
-      override def period: Option[FHL.Properties] =
-        json.asOpt[des.properties.FHL.Properties] match {
-          case Some(prop) =>
-            Some(FHL.Properties.from(prop).copy(id = None))
-          case None =>
-            logger.error("The response from DES does not match the expected properties period format.")
-            None
-        }
-
-      override def allPeriods: Seq[PeriodSummary] =
-        json.asOpt[Seq[des.properties.FHL.Properties]] match {
-          case Some(desPeriods) =>
-            desPeriods.map((mkPeriodId _ compose FHL.Properties.from)(_).asSummary).sorted
-          case None =>
-            logger.error("The response from DES does not match the expected self-employment period format.")
-            Seq.empty
-        }
-    }
-  }
-
-  def getPeriodId: String =
-    (for {
-      fromDate <- from
-      toDate <- to
-    } yield s"${fromDate}_$toDate")
-      .getOrElse(throw new IllegalStateException("response should contain period from and to dates"))
-
-  def createLocationHeader(nino: Nino, id: PropertyType): String =
-    s"/self-assessment/ni/$nino/uk-properties/$id/periods/$getPeriodId"
-
-  def containsOverlappingPeriod: Boolean = {
+  def containsOverlappingPeriod: Boolean =
     json.asOpt[DesError] match {
       case Some(err) => err.code == DesErrorCode.INVALID_PERIOD
       case None =>
         logger.error("The response from DES does not match the expected error format.")
         false
     }
+
+  def transactionReference: Option[String] =
+    (json \ "transactionReference").asOpt[String] match {
+      case x @ Some(_) => x
+      case None =>
+        logger.error("The 'transactionReference' field was not found in the response from DES")
+        None
+    }
+}
+
+trait DataMapper[P <: Period, D <: des.properties.Period] {
+  def from(d: D): P
+  def setId(p: P, id: Option[String]): P
+  def asSummary(p: P): PeriodSummary
+}
+
+object DataMapper {
+  def apply[P <: Period, D <: des.properties.Period](implicit dm: DataMapper[P, D]): DataMapper[P, D] =
+    implicitly
+
+  implicit object OtherDataMapper extends DataMapper[Other.Properties, des.properties.Other.Properties] {
+    override def from(d: des.properties.Other.Properties): Other.Properties =
+      Other.Properties.from(d)
+
+    override def setId(p: Other.Properties, id: Option[String]): Other.Properties =
+      p.copy(id = id)
+
+    override def asSummary(p: Other.Properties): PeriodSummary =
+      p.asSummary
   }
 
+  implicit object FHLDataMapper extends DataMapper[FHL.Properties, des.properties.FHL.Properties] {
+    override def from(d: des.properties.FHL.Properties): FHL.Properties =
+      FHL.Properties.from(d)
+
+    override def setId(p: FHL.Properties, id: Option[String]): FHL.Properties =
+      p.copy(id = id)
+
+    override def asSummary(p: FHL.Properties): PeriodSummary =
+      p.asSummary
+  }
+}
+
+trait ResponseMapper[P <: Period, D <: des.properties.Period] {
+  def period(response: PropertiesPeriodResponse)(implicit reads: Reads[D], dm: DataMapper[P, D]): Option[P] =
+    response.json.asOpt[D] match {
+      case Some(desPeriod) =>
+        val from = DataMapper[P, D].from _
+        val elideId = (p: P) => DataMapper[P, D].setId(p, None)
+        Some((from andThen elideId)(desPeriod))
+      case None =>
+        response.logger.error("The response from DES does not match the expected properties period format.")
+        None
+    }
+
+  def allPeriods(response: PropertiesPeriodResponse)(implicit reads: Reads[D],
+                                                     dm: DataMapper[P, D]): Seq[PeriodSummary] =
+    response.json.asOpt[Seq[D]] match {
+      case Some(desPeriods) =>
+        val asSummary = DataMapper[P, D].asSummary _
+        val setId = (p: P) => DataMapper[P, D].setId(p, Some(p.createPeriodId))
+        val from = DataMapper[P, D].from _
+        val fromDES = from andThen setId andThen asSummary
+        desPeriods.map(fromDES(_)).sorted
+      case None =>
+        response.logger.error("The response from DES does not match the expected properties period format.")
+        Seq.empty
+    }
+}
+
+object ResponseMapper {
+  def apply[P <: Period, D <: des.properties.Period](implicit rm: ResponseMapper[P, D]): ResponseMapper[P, D] =
+    implicitly
+
+  implicit object OtherResponseMapper extends ResponseMapper[Other.Properties, des.properties.Other.Properties]
+  implicit object FHLResponseMapper extends ResponseMapper[FHL.Properties, des.properties.FHL.Properties]
 }

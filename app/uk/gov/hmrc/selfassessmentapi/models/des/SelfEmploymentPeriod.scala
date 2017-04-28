@@ -59,7 +59,7 @@ object Financials {
                               badDebt = exp.badDebt.map(expense2Deduction),
                               professionalFees = exp.professionalFees.map(expense2Deduction),
                               depreciation = exp.depreciation.map(expense2Deduction),
-                              other = exp.other.map(expense2Deduction))))
+                              other = exp.other.map(expense2Deduction)))) // FIXME if incomes and deductions are None we don't want to create Financials(None, None)
 
   def from(sePeriodUpdate: models.selfemployment.SelfEmploymentPeriodUpdate): Financials =
     Financials(incomes = sePeriodUpdate.incomes.map(

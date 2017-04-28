@@ -37,8 +37,8 @@ trait BaseResource extends BaseController {
 
   val logger: Logger = Logger(this.getClass)
 
-  def withAuth(nino: Nino)(f: => Future[Result])
-              (implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[Result] =
+  def withAuth(nino: Nino)(f: => Future[Result])(implicit hc: HeaderCarrier,
+                                                 reqHeader: RequestHeader): Future[Result] =
     if (authIsEnabled) performAuthCheck(nino)(f)
     else f
 
@@ -46,8 +46,8 @@ trait BaseResource extends BaseController {
    * Retrieve the user's MTD reference number using the provided NINO.
    * This reference number is used to perform authorisation.
    */
-  private def performAuthCheck(nino: Nino)(f: => Future[Result])
-                              (implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[Result] =
+  private def performAuthCheck(nino: Nino)(f: => Future[Result])(implicit hc: HeaderCarrier,
+                                                                 reqHeader: RequestHeader): Future[Result] =
     businessConnector.get(nino).flatMap { response =>
       response.status match {
         case 200 =>

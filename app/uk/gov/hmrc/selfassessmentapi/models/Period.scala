@@ -21,4 +21,6 @@ import org.joda.time.LocalDate
 trait Period {
   val from: LocalDate
   val to: LocalDate
+
+  def createPeriodId = s"${from}_$to"
 }

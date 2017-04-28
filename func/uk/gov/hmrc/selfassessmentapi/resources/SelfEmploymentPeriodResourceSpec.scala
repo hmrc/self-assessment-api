@@ -275,7 +275,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .statusIs(200)
         .contentTypeIsJson()
         .bodyIsLike(expectedBody)
-        .selectFields(_ \\ "id").isLength(2).matches("\\w+".r)
+        .selectFields(_ \\ "id").isLength(2).matches("\\d{4}\\-\\d{2}\\-\\d{2}_\\d{4}\\-\\d{2}\\-\\d{2}".r)
     }
 
     "return code 200 containing an empty json body when retrieving all periods where periods.size == 0" in {
@@ -287,7 +287,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .get(s"/ni/$nino/self-employments/abc/periods")
         .thenAssertThat()
         .statusIs(200)
-        .jsonBodyIsEmptyArray
+        .jsonBodyIsEmptyArray()
     }
 
     "return code 404 when retrieving all periods for a non-existent self-employment source" in {

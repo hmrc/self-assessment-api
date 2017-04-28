@@ -34,15 +34,17 @@ class PropertiesSpec extends UnitSpec {
     None,
     LocalDate.parse("2017-04-06"),
     LocalDate.parse("2018-04-05"),
-    Other.Financials(incomes = Some(Other.Incomes(rentIncome = Some(Other.Income(1000, None)))),
-                     expenses = Some(Other.Expenses(premisesRunningCosts = Some(Other.Expense(50.55)))))
+    Some(
+      Other.Financials(incomes = Some(Other.Incomes(rentIncome = Some(Income(1000, None)))),
+                       expenses = Some(Other.Expenses(premisesRunningCosts = Some(Other.Expense(50.55))))))
   )
   val fhlPeriod: FHL.Properties = FHL.Properties(
     None,
     LocalDate.parse("2017-04-06"),
     LocalDate.parse("2018-04-05"),
-    FHL.Financials(incomes = Some(FHL.Incomes(rentIncome = Some(FHL.Income(1234.56)))),
-                   expenses = Some(FHL.Expenses(professionalFees = Some(FHL.Expense(500.12)))))
+    Some(
+      FHL.Financials(incomes = Some(FHL.Incomes(rentIncome = Some(SimpleIncome(1234.56)))),
+                     expenses = Some(FHL.Expenses(professionalFees = Some(FHL.Expense(500.12))))))
   )
 
   val properties: Properties = Properties(
@@ -100,9 +102,9 @@ class PropertiesSpec extends UnitSpec {
 
   "setPeriodsTo" should {
     "set the periods map for the period specified by the given id" in {
-      val newOtherPeriod = otherPeriod.copy(financials = otherPeriod.financials.copy(incomes = None))
+      val newOtherPeriod = otherPeriod.copy(financials = otherPeriod.financials.map(_.copy(incomes = None)))
       val newFhlPeriod =
-        fhlPeriod.copy(financials = fhlPeriod.financials.copy(incomes = None))
+        fhlPeriod.copy(financials = fhlPeriod.financials.map(_.copy(incomes = None)))
 
       val otherProps =
         OtherPeriodOps.setPeriodsTo("other", newOtherPeriod, properties)

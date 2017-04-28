@@ -25,7 +25,6 @@ import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuditConnector
 import uk.gov.hmrc.selfassessmentapi.models.audit.AuditPayload
-import uk.gov.hmrc.selfassessmentapi.models.audit.AuditType.AuditType
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

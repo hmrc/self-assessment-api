@@ -25,24 +25,20 @@ import uk.gov.hmrc.selfassessmentapi.models._
 
 object FHL {
 
-  final case class Properties(id: Option[String], from: LocalDate, to: LocalDate, financials: Financials)
+  case class Properties(id: Option[String], from: LocalDate, to: LocalDate, financials: Option[Financials])
       extends Period {
     def asSummary: PeriodSummary = PeriodSummary(id.getOrElse(""), from, to)
   }
 
   object Properties extends PeriodValidator[Properties] {
 
-    implicit val writes = new Writes[Properties] {
-      override def writes(o: Properties): JsValue = {
-        Json.obj(
-          "id" -> o.id,
-          "from" -> o.from,
-          "to" -> o.to,
-          "incomes" -> o.financials.incomes,
-          "expenses" -> o.financials.expenses
-        )
-      }
-    }
+    implicit val writes: Writes[Properties] = (
+      (__ \ "id").writeNullable[String] and
+        (__ \ "from").write[LocalDate] and
+        (__ \ "to").write[LocalDate] and
+        (__ \ "incomes").writeNullable[Incomes] and
+        (__ \ "expenses").writeNullable[Expenses]
+    )(p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses)))
 
     implicit val reads: Reads[Properties] = (
       Reads.pure(None) and
@@ -51,33 +47,28 @@ object FHL {
         (__ \ "incomes").readNullable[Incomes] and
         (__ \ "expenses").readNullable[Expenses]
     )((id, from, to, incomes, expenses) => {
-      Properties(id, from, to, Financials(incomes, expenses))
+      val financials = (incomes, expenses) match {
+        case (None, None) => None
+        case (inc, exp) => Some(Financials(inc, exp))
+      }
+      Properties(id, from, to, financials)
     }).filter(ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD))(
       periodDateValidator)
 
-    def from(o: des.properties.FHL.Properties) =
+    def from(o: des.properties.FHL.Properties): Properties =
       Properties(id = o.id,
                  from = LocalDate.parse(o.from),
                  to = LocalDate.parse(o.to),
                  financials = Financials.from(o.financials))
   }
 
-  case class Income(amount: Amount)
-
-  object Income {
-    implicit val reads: Reads[Income] = (__ \ "amount").read[Amount](nonNegativeAmountValidator).map(Income(_))
-
-    implicit val writes: Writes[Income] = Json.writes[Income]
-
-  }
-
-  case class Incomes(rentIncome: Option[Income] = None)
+  case class Incomes(rentIncome: Option[SimpleIncome] = None)
 
   object Incomes {
     implicit val format: Format[Incomes] = Json.format[Incomes]
 
-    def from(o: des.properties.FHL.Incomes) =
-      Incomes(rentIncome = o.rentIncome.map(Income(_)))
+    def from(o: des.properties.FHL.Incomes): Incomes =
+      Incomes(rentIncome = o.rentIncome.map(SimpleIncome(_)))
   }
 
   case class Expense(amount: Amount)
@@ -97,7 +88,7 @@ object FHL {
   object Expenses {
     implicit val format: Format[Expenses] = Json.format[Expenses]
 
-    def from(o: des.properties.FHL.Deductions) =
+    def from(o: des.properties.FHL.Deductions): Expenses =
       Expenses(premisesRunningCosts = o.premisesRunningCosts.map(Expense(_)),
                repairsAndMaintenance = o.repairsAndMaintenance.map(Expense(_)),
                financialCosts = o.financialCosts.map(Expense(_)),
@@ -105,39 +96,40 @@ object FHL {
                other = o.other.map(Expense(_)))
   }
 
-  final case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None)
-      extends models.Financials
+  case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None) extends models.Financials
 
   object Financials {
     implicit val format: Format[Financials] =
       Json.format[Financials]
 
-    def from(o: des.properties.FHL.Financials) =
-      Financials(incomes = o.incomes.map(Incomes.from), expenses = o.deductions.map(Expenses.from))
+    def from(o: Option[des.properties.FHL.Financials]): Option[Financials] =
+      o.flatMap { f =>
+        (f.incomes, f.deductions) match {
+          case (None, None) => None
+          case (incomes, deductions) =>
+            Some(Financials(incomes = incomes.map(Incomes.from), expenses = deductions.map(Expenses.from)))
+        }
+      }
   }
 
 }
 
 object Other {
 
-  final case class Properties(id: Option[String], from: LocalDate, to: LocalDate, financials: Financials)
+  case class Properties(id: Option[String], from: LocalDate, to: LocalDate, financials: Option[Financials])
       extends Period {
     def asSummary: PeriodSummary = PeriodSummary(id.getOrElse(""), from, to)
   }
 
   object Properties extends PeriodValidator[Properties] {
 
-    implicit val writes = new Writes[Properties] {
-      override def writes(o: Properties): JsValue = {
-        Json.obj(
-          "id" -> o.id,
-          "from" -> o.from,
-          "to" -> o.to,
-          "incomes" -> o.financials.incomes,
-          "expenses" -> o.financials.expenses
-        )
-      }
-    }
+    implicit val writes: Writes[Properties] = (
+      (__ \ "id").writeNullable[String] and
+        (__ \ "from").write[LocalDate] and
+        (__ \ "to").write[LocalDate] and
+        (__ \ "incomes").writeNullable[Incomes] and
+        (__ \ "expenses").writeNullable[Expenses]
+    )(p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses)))
 
     implicit val reads: Reads[Properties] = (
       Reads.pure(None) and
@@ -146,29 +138,19 @@ object Other {
         (__ \ "incomes").readNullable[Incomes] and
         (__ \ "expenses").readNullable[Expenses]
     )((id, from, to, incomes, expenses) => {
-      Properties(id, from, to, Financials(incomes, expenses))
+      val financials = (incomes, expenses) match {
+        case (None, None) => None
+        case (inc, exp) => Some(Financials(inc, exp))
+      }
+      Properties(id, from, to, financials)
     }).filter(ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD))(
       periodDateValidator)
 
-    def from(o: des.properties.Other.Properties) =
+    def from(o: des.properties.Other.Properties): Properties =
       Properties(id = o.id,
                  from = LocalDate.parse(o.from),
                  to = LocalDate.parse(o.to),
                  financials = Financials.from(o.financials))
-  }
-
-  case class Income(amount: Amount, taxDeducted: Option[Amount] = None)
-
-  object Income {
-    implicit val reads: Reads[Income] = (
-      (__ \ "amount").read[Amount](nonNegativeAmountValidator) and
-        (__ \ "taxDeducted").readNullable[Amount](nonNegativeAmountValidator)
-    )(Income.apply _)
-
-    implicit val writes: Writes[Income] = Json.writes[Income]
-
-    def from(o: des.properties.Other.Income) =
-      Income(amount = o.amount, taxDeducted = o.taxDeducted)
   }
 
   case class Incomes(rentIncome: Option[Income] = None,
@@ -180,10 +162,11 @@ object Other {
     implicit val format: Format[Incomes] =
       Json.format[Incomes]
 
-    def from(o: des.properties.Other.Incomes) =
-      Incomes(rentIncome = o.rentIncome.map(Income.from),
-              premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(Income(_)),
-              reversePremiums = o.reversePremiums.map(Income(_)))
+    def from(o: des.properties.Other.Incomes): Incomes =
+      Incomes(
+        rentIncome = o.rentIncome.map(income => Income(amount = income.amount, taxDeducted = income.taxDeducted)),
+        premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(Income(_, None)),
+        reversePremiums = o.reversePremiums.map(Income(_, None)))
   }
 
   case class Expense(amount: Amount)
@@ -204,7 +187,7 @@ object Other {
   object Expenses {
     implicit val format: Format[Expenses] = Json.format[Expenses]
 
-    def from(o: des.properties.Other.Deductions) =
+    def from(o: des.properties.Other.Deductions): Expenses =
       Expenses(premisesRunningCosts = o.premisesRunningCosts.map(Expense(_)),
                repairsAndMaintenance = o.repairsAndMaintenance.map(Expense(_)),
                financialCosts = o.financialCosts.map(Expense(_)),
@@ -213,16 +196,21 @@ object Other {
                other = o.other.map(Expense(_)))
   }
 
-  final case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None)
-      extends models.Financials
+  case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None) extends models.Financials
 
   object Financials {
 
     implicit val format: Format[Financials] =
       Json.format[Financials]
 
-    def from(o: des.properties.Other.Financials) =
-      Financials(incomes = o.incomes.map(Incomes.from), expenses = o.deductions.map(Expenses.from))
+    def from(o: Option[des.properties.Other.Financials]): Option[Financials] =
+      o.flatMap { f =>
+        (f.incomes, f.deductions) match {
+          case (None, None) => None
+          case (incomes, deductions) =>
+            Some(Financials(incomes = incomes.map(Incomes.from), expenses = deductions.map(Expenses.from)))
+        }
+      }
   }
 
 }

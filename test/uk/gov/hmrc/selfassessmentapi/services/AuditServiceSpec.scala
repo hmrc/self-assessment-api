@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.logging.Authorization
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
-import uk.gov.hmrc.selfassessmentapi.models.audit.{AuditType, PeriodicUpdate}
+import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 
 import scala.concurrent.ExecutionContext
 

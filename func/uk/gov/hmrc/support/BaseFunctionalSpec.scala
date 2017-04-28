@@ -1157,6 +1157,18 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def periodWillBeNotBeCreatedForInexistentIncomeSource(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(
+            post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+              .willReturn(
+                aResponse()
+                  .withStatus(403)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.invalidIncomeSource)))
+
+          givens
+        }
+
         def periodsWillBeReturnedFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
             get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
@@ -1201,6 +1213,36 @@ trait BaseFunctionalSpec extends TestApplication {
                   .withStatus(404)
                   .withHeader("Content-Type", "application/json")
                   .withBody(DesJsons.Errors.ninoNotFound)))
+
+          givens
+        }
+
+        def periodWillBeUpdatedFor(nino: Nino, propertyType: PropertyType, periodId: String = "def"): Givens = {
+          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId"))
+            .willReturn(
+              aResponse()
+                .withStatus(204)))
+
+          givens
+        }
+
+        def periodWillNotBeUpdatedFor(nino: Nino, propertyType: PropertyType, periodId: String = "def"): Givens = {
+          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId"))
+            .willReturn(
+            aResponse()
+            .withStatus(404)))
+
+          givens
+        }
+
+
+        def invalidPeriodUpdateFor(nino: Nino, propertyType: PropertyType, periodId: String = "def"): Givens = {
+          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId"))
+              .willReturn(
+                aResponse()
+                  .withStatus(400)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.invalidPeriod)))
 
           givens
         }
