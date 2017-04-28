@@ -50,17 +50,17 @@ case class PropertiesPeriodResponse(underlying: HttpResponse) {
     }
 }
 
-trait DataMapper[P <: Period, D <: des.properties.Period] {
+trait PeriodMapper[P <: Period, D <: des.properties.Period] {
   def from(d: D): P
   def setId(p: P, id: Option[String]): P
   def asSummary(p: P): PeriodSummary
 }
 
-object DataMapper {
-  def apply[P <: Period, D <: des.properties.Period](implicit dm: DataMapper[P, D]): DataMapper[P, D] =
+object PeriodMapper {
+  def apply[P <: Period, D <: des.properties.Period](implicit pm: PeriodMapper[P, D]): PeriodMapper[P, D] =
     implicitly
 
-  implicit object OtherDataMapper extends DataMapper[Other.Properties, des.properties.Other.Properties] {
+  implicit object OtherPeriodMapper extends PeriodMapper[Other.Properties, des.properties.Other.Properties] {
     override def from(d: des.properties.Other.Properties): Other.Properties =
       Other.Properties.from(d)
 
@@ -71,7 +71,7 @@ object DataMapper {
       p.asSummary
   }
 
-  implicit object FHLDataMapper extends DataMapper[FHL.Properties, des.properties.FHL.Properties] {
+  implicit object FHLPeriodMapper extends PeriodMapper[FHL.Properties, des.properties.FHL.Properties] {
     override def from(d: des.properties.FHL.Properties): FHL.Properties =
       FHL.Properties.from(d)
 
@@ -84,11 +84,11 @@ object DataMapper {
 }
 
 trait ResponseMapper[P <: Period, D <: des.properties.Period] {
-  def period(response: PropertiesPeriodResponse)(implicit reads: Reads[D], dm: DataMapper[P, D]): Option[P] =
+  def period(response: PropertiesPeriodResponse)(implicit reads: Reads[D], pm: PeriodMapper[P, D]): Option[P] =
     response.json.asOpt[D] match {
       case Some(desPeriod) =>
-        val from = DataMapper[P, D].from _
-        val elideId = (p: P) => DataMapper[P, D].setId(p, None)
+        val from = PeriodMapper[P, D].from _
+        val elideId = (p: P) => PeriodMapper[P, D].setId(p, None)
         Some((from andThen elideId)(desPeriod))
       case None =>
         response.logger.error("The response from DES does not match the expected properties period format.")
@@ -96,12 +96,12 @@ trait ResponseMapper[P <: Period, D <: des.properties.Period] {
     }
 
   def allPeriods(response: PropertiesPeriodResponse)(implicit reads: Reads[D],
-                                                     dm: DataMapper[P, D]): Seq[PeriodSummary] =
+                                                     pm: PeriodMapper[P, D]): Seq[PeriodSummary] =
     response.json.asOpt[Seq[D]] match {
       case Some(desPeriods) =>
-        val asSummary = DataMapper[P, D].asSummary _
-        val setId = (p: P) => DataMapper[P, D].setId(p, Some(p.createPeriodId))
-        val from = DataMapper[P, D].from _
+        val asSummary = PeriodMapper[P, D].asSummary _
+        val setId = (p: P) => PeriodMapper[P, D].setId(p, Some(p.createPeriodId))
+        val from = PeriodMapper[P, D].from _
         val fromDES = from andThen setId andThen asSummary
         desPeriods.map(fromDES(_)).sorted
       case None =>
