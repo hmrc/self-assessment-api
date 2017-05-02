@@ -17,86 +17,116 @@
 package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
 import org.joda.time.LocalDate
+import org.scalacheck.Gen
+import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import play.api.libs.json.Json
+import uk.gov.hmrc.selfassessmentapi.models.Generators._
 import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, Expense, SimpleIncome}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
-class SelfEmploymentPeriodSpec extends JsonSpec {
+class SelfEmploymentPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
   "SelfEmploymentPeriod" should {
-    "round trip" in {
-      val period = SelfEmploymentPeriod(None, LocalDate.now, LocalDate.now.plusDays(1), None, None)
-      roundTripJson(period)
-    }
+    "round trip" in forAll(genSelfEmploymentPeriod())(roundTripJson(_))
 
-    "return a INVALID_PERIOD error when using a period with a 'from' date that becomes before the 'to' date" in {
-      val period = SelfEmploymentPeriod(None, LocalDate.now, LocalDate.now.minusDays(1), None, None)
-      assertValidationErrorWithCode(period, "", ErrorCode.INVALID_PERIOD)
-    }
+    "return a INVALID_PERIOD error when using a period with a 'from' date that becomes before the 'to' date" in
+      forAll(genSelfEmploymentPeriod(invalidPeriod = true)) { period =>
+        assertValidationErrorsWithCode[SelfEmploymentPeriod](Json.toJson(period),
+                                                             Map("/from" -> Seq(ErrorCode.INVALID_PERIOD),
+                                                                 "/to" -> Seq(ErrorCode.INVALID_PERIOD)))
+      }
 
-    "return a INVALID_MONETARY_AMOUNT error when income contains a negative value" in {
+    "return a NO_INCOMES_AND_EXPENSES error when incomes and expenses are not supplied" in
+      forAll(genSelfEmploymentPeriod(nullFinancials = true)) { period =>
+        assertValidationErrorsWithCode[SelfEmploymentPeriod](
+          Json.toJson(period),
+          Map("/incomes" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
+              "/expenses" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES)))
+      }
 
-      val period = SelfEmploymentPeriod(None, LocalDate.now.minusDays(1), LocalDate.now, Some(Incomes(Some(SimpleIncome(-5000)), None)), None)
+    "return a INVALID_PERIOD and NO_INCOMES_AND_EXPENSES errors when the from and to dates are invalid and incomes and expenses are not supplied" in
+      forAll(genSelfEmploymentPeriod(invalidPeriod = true, nullFinancials = true)) { period =>
+        assertValidationErrorsWithCode[SelfEmploymentPeriod](Json.toJson(period),
+                                                             Map("/incomes" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
+                                                                 "/expenses" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
+                                                                 "/from" -> Seq(ErrorCode.INVALID_PERIOD),
+                                                                 "/to" -> Seq(ErrorCode.INVALID_PERIOD)))
+      }
 
-      assertValidationErrorWithCode(period, "/incomes/turnover/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
-    }
-
-    "return a INVALID_MONETARY_AMOUNT error when income amount contains more than 2 decimal places" in {
-      val period = SelfEmploymentPeriod(None, LocalDate.now.minusDays(1), LocalDate.now, Some(Incomes(Some(SimpleIncome(10.123)), None)), None)
-
-      assertValidationErrorWithCode(period, "/incomes/turnover/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
-    }
-
-    "return a INVALID_MONETARY_AMOUNT error when expense contains a negative value" in {
-
-      val period = SelfEmploymentPeriod(
-        None, LocalDate.now.minusDays(1), LocalDate.now, None, Some(Expenses(
-          costOfGoodsBought = Some(Expense(-500, None)),
-          badDebt = Some(Expense(200, Some(100))))))
-
-      assertValidationErrorWithCode(period, "/expenses/costOfGoodsBought/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
-    }
-
-    "return a INVALID_MONETARY_AMOUNT error when expense contains more than 2 decimal places" in {
-      val period = SelfEmploymentPeriod(
-        None, LocalDate.now.minusDays(1), LocalDate.now, None, Some(Expenses(
-          costOfGoodsBought = Some(Expense(500.123, None)),
-          badDebt = Some(Expense(200, None)))))
-
-      assertValidationErrorWithCode(period, "/expenses/costOfGoodsBought/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
-    }
-
-    "return a INVALID_DISALLOWABLE_AMOUNT error when expense disallowableAmount > amount" in {
-      val period = SelfEmploymentPeriod(
-        None, LocalDate.now.minusDays(1), LocalDate.now, None, Some(Expenses(
-          costOfGoodsBought = Some(Expense(500, Some(600))),
-          badDebt = Some(Expense(200, Some(100))))))
-
-      assertValidationErrorWithCode(period, "/expenses/costOfGoodsBought", ErrorCode.INVALID_DISALLOWABLE_AMOUNT)
-    }
-
-    "return a DEPRECIATION_DISALLOWABLE_AMOUNT error when expense 'amount' and 'disallowableAmount' fields are not equal for depreciations" in {
-      val period = SelfEmploymentPeriod(
-        None, LocalDate.now.minusDays(1), LocalDate.now, None, Some(Expenses(
-          depreciation = Some(Expense(200, Some(100))),
-          badDebt = Some(Expense(200, Some(100))))))
-
-      assertValidationErrorWithCode(period, "/expenses", ErrorCode.DEPRECIATION_DISALLOWABLE_AMOUNT)
-    }
-
-    "return an error when provided with an empty json body" in {
+    "return an error when provided with an empty json body" in
       assertValidationErrorsWithMessage[SelfEmploymentPeriod](Json.parse("{}"),
-        Map("/from" -> Seq("error.path.missing"), "/to" -> Seq("error.path.missing")))
-    }
+                                                              Map("/from" -> Seq("error.path.missing"),
+                                                                  "/to" -> Seq("error.path.missing")))
 
     "pass if the from date is equal to the end date" in {
-      val period = SelfEmploymentPeriod(
-        id = None,
-        from = LocalDate.parse("2017-04-01"),
-        to = LocalDate.parse("2017-04-01"),
-        incomes = None,
-        expenses = None)
-
+      val period = SelfEmploymentPeriod(id = None,
+                                        from = LocalDate.parse("2017-04-01"),
+                                        to = LocalDate.parse("2017-04-01"),
+                                        incomes = Some(Incomes(turnover = Some(SimpleIncome(0)))),
+                                        expenses = None)
       assertValidationPasses(period)
     }
   }
+
+  val amount: Gen[BigDecimal] = amountGen(1000, 5000)
+
+  val genSimpleIncome: Gen[SimpleIncome] = for (amount <- amount) yield SimpleIncome(amount)
+
+  val genIncomes: Gen[Incomes] =
+    for {
+      turnover <- Gen.option(genSimpleIncome)
+      other <- Gen.option(genSimpleIncome)
+    } yield Incomes(turnover = turnover, other = other)
+
+  def genExpense(depreciation: Boolean = false): Gen[Expense] =
+    for {
+      amount <- amount
+      disallowableAmount <- Gen.option(amountGen(0, amount))
+    } yield Expense(amount = amount, disallowableAmount = if (depreciation) Some(amount) else disallowableAmount)
+
+  val genExpenses: Gen[Expenses] =
+    for {
+      costOfGoodsBought <- Gen.option(genExpense())
+      cisPaymentsToSubcontractors <- Gen.option(genExpense())
+      staffCosts <- Gen.option(genExpense())
+      travelCosts <- Gen.option(genExpense())
+      premisesRunningCosts <- Gen.option(genExpense())
+      maintenanceCosts <- Gen.option(genExpense())
+      adminCosts <- Gen.option(genExpense())
+      advertisingCosts <- Gen.option(genExpense())
+      interest <- Gen.option(genExpense())
+      financialCharges <- Gen.option(genExpense())
+      badDebt <- Gen.option(genExpense())
+      professionalFees <- Gen.option(genExpense())
+      depreciation <- Gen.option(genExpense(depreciation = true))
+      other <- Gen.option(genExpense())
+    } yield
+      Expenses(costOfGoodsBought = costOfGoodsBought,
+               cisPaymentsToSubcontractors = cisPaymentsToSubcontractors,
+               staffCosts = staffCosts,
+               travelCosts = travelCosts,
+               premisesRunningCosts = premisesRunningCosts,
+               maintenanceCosts = maintenanceCosts,
+               adminCosts = adminCosts,
+               advertisingCosts = advertisingCosts,
+               interest = interest,
+               financialCharges = financialCharges,
+               badDebt = badDebt,
+               professionalFees = professionalFees,
+               depreciation = depreciation,
+               other = other)
+
+  def genSelfEmploymentPeriod(invalidPeriod: Boolean = false,
+                              nullFinancials: Boolean = false): Gen[SelfEmploymentPeriod] =
+    (for {
+      incomes <- Gen.option(genIncomes)
+      expenses <- Gen.option(genExpenses)
+    } yield {
+      val from = LocalDate.now()
+      val to = from.plusDays(1)
+      SelfEmploymentPeriod(None, if (invalidPeriod) to else from, if (invalidPeriod) from else to, incomes, expenses)
+    }) suchThat { period =>
+      if (nullFinancials) period.incomes.isEmpty && period.expenses.isEmpty
+      else period.incomes.exists(_.hasIncomes) || period.expenses.exists(_.hasExpenses)
+    }
+
 }

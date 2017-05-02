@@ -16,12 +16,14 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.selfassessmentapi.models.SimpleIncome
 
-case class Incomes(turnover: Option[SimpleIncome] = None, other: Option[SimpleIncome] = None)
+case class Incomes(turnover: Option[SimpleIncome] = None, other: Option[SimpleIncome] = None) {
+  def hasIncomes: Boolean =
+    turnover.isDefined || other.isDefined
+}
 
 object Incomes {
-  implicit val writes: Writes[Incomes] = Json.writes[Incomes]
-  implicit val reads: Reads[Incomes] = Json.reads[Incomes]
+  implicit val format: Format[Incomes] = Json.format[Incomes]
 }

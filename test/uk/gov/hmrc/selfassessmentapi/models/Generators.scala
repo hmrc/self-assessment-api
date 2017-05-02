@@ -16,13 +16,9 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
-import com.github.nscala_time.time.OrderingImplicits
-import org.joda.time.LocalDate
+import org.scalacheck.Gen
 
-trait PeriodValidator[P <: Period] {
-  protected def periodDateValidator(period: P): Boolean =
-    period.from.isBefore(period.to) || period.from.isEqual(period.to)
-
-  implicit val dateTimeOrder: Ordering[LocalDate] = OrderingImplicits.LocalDateOrdering
-  implicit val order: Ordering[P] = Ordering.by(_.from)
+object Generators {
+  def amountGen(lower: BigDecimal, upper: BigDecimal): Gen[BigDecimal] =
+    for (value <- Gen.chooseNum(lower.intValue(), upper.intValue())) yield BigDecimal(value)
 }

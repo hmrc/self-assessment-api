@@ -310,7 +310,9 @@ traits:
         /periods:
           post:
             displayName: Create a self-employment update period
-            description: Create a self-employment update period for submission of periodic data i.e incomes and expenses
+            description: Create a self-employment update period for submission of periodic data i.e incomes and expenses.
+                         Submissions which do not include any incomes or expenses are invalid.
+                         You should submit zero values if you do not have incomes or expenses.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
             (annotations.scope): "write:self-assessment"
@@ -358,6 +360,10 @@ traits:
                         description: disallowableAmount != amount (for depreciation expenseType)
                         value:
                           code: DEPRECIATION_DISALLOWABLE_AMOUNT
+                      noIncomesAndExpenses:
+                        description: No incomes and expenses are supplied
+                        value:
+                          code: NO_INCOMES_AND_EXPENSES
               403:
                 body:
                   application/json:
@@ -437,6 +443,8 @@ traits:
             put:
               displayName: Update a self-employment update period [test only]
               description: Update a self-employment update period. This API is not available in production.
+                           Submissions  which do not include any incomes or expenses are invalid.
+                           You should submit zero values if you do not have incomes or expenses.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -464,6 +472,10 @@ traits:
                           description: disallowableAmount != amount (for depreciation expenseType)
                           value:
                             code: DEPRECIATION_DISALLOWABLE_AMOUNT
+                        noIncomesAndExpenses:
+                          description: No incomes and expenses are supplied
+                          value:
+                            code: NO_INCOMES_AND_EXPENSES
                 404:
                   body:
                     application/json:
@@ -673,7 +685,9 @@ traits:
         /periods:
           post:
             displayName: Create a non FHL UK property update period
-            description: Create a non FHL UK property update period for submission of periodic data i.e incomes and expenses
+            description: Create a non FHL UK property update period for submission of periodic data i.e incomes and expenses.
+                         Submissions  which do not include any incomes or expenses are invalid.
+                         You should submit zero values if you do not have incomes or expenses.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, overlappingPeriod]
             (annotations.scope): "write:self-assessment"
@@ -717,6 +731,10 @@ traits:
                         description: taxDeducted > amount
                         value:
                           code: INVALID_TAX_DEDUCTION_AMOUNT
+                      noIncomesAndExpenses:
+                        description: No incomes and expenses are supplied
+                        value:
+                          code: NO_INCOMES_AND_EXPENSES
               409:
                 body:
                   application/json:
@@ -793,6 +811,8 @@ traits:
             put:
               displayName: Update a non FHL UK property update period [test only]
               description: Update a non FHL UK property update period. This API is not available in production.
+                           Submissions  which do not include any incomes or expenses are invalid.
+                           You should submit zero values if you do not have incomes or expenses.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -820,6 +840,10 @@ traits:
                           description: taxDeducted > amount
                           value:
                             code: INVALID_TAX_DEDUCTION_AMOUNT
+                        noIncomesAndExpenses:
+                          description: No incomes and expenses are supplied
+                          value:
+                            code: NO_INCOMES_AND_EXPENSES
                 404:
                   body:
                     application/json:
@@ -914,7 +938,9 @@ traits:
         /periods:
           post:
             displayName: Create a FHL UK property update period
-            description: Create a FHL UK property update period for submission of periodic data i.e incomes and expenses
+            description: Create a FHL UK property update period for submission of periodic data i.e incomes and expenses.
+                         Submissions which do not include any incomes or expenses are invalid.
+                         You should submit zero values if you do not have incomes or expenses.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, overlappingPeriod]
             (annotations.scope): "write:self-assessment"
@@ -954,6 +980,10 @@ traits:
                         description: income or expense is not a non-negative amount or up to 2 decimal places
                         value:
                           code: INVALID_MONETARY_AMOUNT
+                      noIncomesAndExpenses:
+                        description: No incomes and expenses are supplied
+                        value:
+                          code: NO_INCOMES_AND_EXPENSES
               409:
                 body:
                   application/json:
@@ -1030,6 +1060,8 @@ traits:
             put:
               displayName: Update a FHL UK property update period [test only]
               description: Update a FHL UK property update period. This API is not available in production.
+                           Submissions which do not include any incomes or expenses are invalid.
+                           You should submit zero values if you do not have incomes or expenses.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -1057,6 +1089,10 @@ traits:
                           description: adjustments or allowances is not a non-negative amount or up to 2 decimal places
                           value:
                             code: INVALID_MONETARY_AMOUNT
+                        noIncomesAndExpenses:
+                          description: No incomes and expenses are supplied
+                          value:
+                            code: NO_INCOMES_AND_EXPENSES
                 404:
                   body:
                     application/json:
