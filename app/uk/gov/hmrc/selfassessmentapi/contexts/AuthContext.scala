@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models
+package uk.gov.hmrc.selfassessmentapi.contexts
 
-import play.api.libs.json.{Format, Json}
-
-case class MtdId(mtdId: String)
-
-object MtdId {
-  implicit val format: Format[MtdId] = Json.format[MtdId]
-}
+case class AuthContext(isFOA: Boolean)

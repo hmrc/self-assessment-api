@@ -21,7 +21,7 @@ import play.api.libs.json.JsValue
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.{Obligation, Obligations, SourceId, des}
 
-case class ObligationsResponse(underlying: HttpResponse) {
+case class ObligationsResponse(underlying: HttpResponse) extends ResponseFilter {
 
   val status: Int = underlying.status
   private val logger: Logger = Logger(classOf[ObligationsResponse])

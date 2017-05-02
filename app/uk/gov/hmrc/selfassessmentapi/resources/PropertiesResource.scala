@@ -34,7 +34,7 @@ object PropertiesResource extends BaseResource {
   private val connector = PropertiesConnector
 
   def create(nino: Nino): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
-    withAuth(nino) {
+    withAuth(nino) { implicit context =>
       validate[properties.Properties, PropertiesResponse](request.body) { props =>
         connector.create(nino, props)
       } match {
@@ -42,28 +42,31 @@ object PropertiesResource extends BaseResource {
           Future.successful(handleValidationErrors(errorResult))
         case Right(response) =>
           response.map { response =>
-            if (response.status == 200) Created.withHeaders(LOCATION -> response.createLocationHeader(nino))
-            else if (response.status == 403) Conflict.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/uk-properties")
-            else if (response.status == 400) BadRequest(Error.from(response.json))
-            else if (response.status == 404) NotFound
-            else unhandledResponse(response.status, logger)
+            response.filter {
+              case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino))
+              case 403 => Conflict.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/uk-properties")
+              case 400 => BadRequest(Error.from(response.json))
+              case 404 => NotFound
+              case _ => unhandledResponse(response.status, logger)
+            }
           }
       }
     }
   }
 
   def retrieve(nino: Nino): Action[AnyContent] = FeatureSwitch.async { implicit request =>
-    withAuth(nino) {
+    withAuth(nino) { implicit context =>
       connector.retrieve(nino).map { response =>
-        if (response.status == 200) response.property match {
-          case Some(property) => Ok(Json.toJson(property))
-          case None => NotFound
+        response.filter {
+          case 200 => response.property match {
+            case Some(property) => Ok(Json.toJson(property))
+            case None => NotFound
+          }
+          case 404 => NotFound
+          case 400 => BadRequest(Error.from(response.json))
+          case _ => unhandledResponse(response.status, logger)
         }
-        else if (response.status == 404) NotFound
-        else if (response.status == 400) BadRequest(Error.from(response.json))
-        else unhandledResponse(response.status, logger)
       }
-
     }
   }
 }

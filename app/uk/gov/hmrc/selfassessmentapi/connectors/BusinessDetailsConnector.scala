@@ -24,7 +24,7 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.BusinessDetailsResponse
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object BusinessDetailsConnector {
+trait BusinessDetailsConnector {
   private lazy val baseUrl: String = AppContext.desUrl
 
   private implicit def httpResponse2SeResponse(fut: Future[HttpResponse]): Future[BusinessDetailsResponse] =
@@ -33,3 +33,5 @@ object BusinessDetailsConnector {
   def get(nino: Nino)(implicit hc: HeaderCarrier): Future[BusinessDetailsResponse] =
     httpGet(baseUrl + s"/registration/business-details/nino/$nino")
 }
+
+object BusinessDetailsConnector extends BusinessDetailsConnector

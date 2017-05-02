@@ -23,7 +23,7 @@ import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType._
 import uk.gov.hmrc.selfassessmentapi.models.properties.{OtherPropertiesAnnualSummary, FHLPropertiesAnnualSummary, PropertiesAnnualSummary, PropertyType}
 
-class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlying: HttpResponse) {
+class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlying: HttpResponse) extends ResponseFilter {
   private val logger = Logger(classOf[PropertiesAnnualSummaryResponse])
 
   val status: Int = underlying.status

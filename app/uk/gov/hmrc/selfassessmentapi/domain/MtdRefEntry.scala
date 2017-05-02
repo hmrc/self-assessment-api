@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models
+package uk.gov.hmrc.selfassessmentapi.domain
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, OFormat}
 
-case class MtdId(mtdId: String)
+case class MtdRefEntry(nino: String, mtdRef: String)
 
-object MtdId {
-  implicit val format: Format[MtdId] = Json.format[MtdId]
+object MtdRefEntry {
+  implicit val format: OFormat[MtdRefEntry] = Json.format[MtdRefEntry]
 }

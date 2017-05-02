@@ -25,9 +25,9 @@ import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
 import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId, PeriodSummary, des}
 
-case class PropertiesPeriodResponse(underlying: HttpResponse) {
+case class PropertiesPeriodResponse(underlying: HttpResponse) extends ResponseFilter {
   val logger: Logger = Logger(classOf[PropertiesPeriodResponse])
-  def status: Int = underlying.status
+  val status: Int = underlying.status
   def json: JsValue = underlying.json
 
   def createLocationHeader(nino: Nino, id: PropertyType, periodId: PeriodId): String =

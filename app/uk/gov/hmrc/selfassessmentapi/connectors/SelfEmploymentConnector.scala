@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
+import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.SourceId
 import uk.gov.hmrc.selfassessmentapi.models.des.{Business, SelfEmploymentUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentResponse
@@ -33,13 +34,16 @@ object SelfEmploymentConnector {
   private implicit def httpResponse2SeResponse(fut: Future[HttpResponse]): Future[SelfEmploymentResponse] =
     fut.map(SelfEmploymentResponse(_))
 
-  def create(nino: Nino, business: Business)(implicit hc: HeaderCarrier): Future[SelfEmploymentResponse] =
+  def create(nino: Nino, business: Business)
+            (implicit hc: HeaderCarrier, authContext: AuthContext): Future[SelfEmploymentResponse] =
     httpPost(baseUrl + s"/income-tax-self-assessment/nino/$nino/business", business)
 
-  def get(nino: Nino)(implicit hc: HeaderCarrier): Future[SelfEmploymentResponse] =
+  def get(nino: Nino)
+         (implicit hc: HeaderCarrier, authContext: AuthContext): Future[SelfEmploymentResponse] =
     httpGet(baseUrl + s"/registration/business-details/nino/$nino")
 
-  def update(nino: Nino, business: SelfEmploymentUpdate, id: SourceId)(implicit hc: HeaderCarrier): Future[SelfEmploymentResponse] =
+  def update(nino: Nino, business: SelfEmploymentUpdate, id: SourceId)
+            (implicit hc: HeaderCarrier, authContext: AuthContext): Future[SelfEmploymentResponse] =
     httpPut(baseUrl + s"/income-tax-self-assessment/nino/$nino/business/$id", business)
 }
 

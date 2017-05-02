@@ -53,8 +53,8 @@ object Jsons {
     val invalidCalcId: String = errorWithMessage("INVALID_CALCID", "Submission has not passed validation")
     val unauthorised: String = errorWithMessage("UNAUTHORIZED", "Bearer token is missing or not authorized")
     val clientNotSubscribed: String = errorWithMessage("CLIENT_NOT_SUBSCRIBED", "The client is not subscribed to MTD")
-    val agentNotAuthorised: String = errorWithMessage("AGENT_NOT_AUTHORIZED", "The agent is not authorised to perform this action")
-    val agentNotSubscribed: String = errorWithMessage("AGENT_NOT_SUBSCRIBED", "Agent not subscribed to Agent Services")
+    val agentNotAuthorised: String = errorWithMessage("AGENT_NOT_AUTHORIZED", "The agent is not authorized")
+    val agentNotSubscribed: String = errorWithMessage("AGENT_NOT_SUBSCRIBED", "The agent is not subscribed to agent services")
 
     def invalidRequest(errors: (String, String)*): String = {
       s"""

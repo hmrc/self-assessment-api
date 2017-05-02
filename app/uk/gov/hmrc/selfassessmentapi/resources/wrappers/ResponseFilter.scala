@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models
+package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.Json
+import play.api.mvc.Result
+import play.api.mvc.Results.BadRequest
+import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
+import uk.gov.hmrc.selfassessmentapi.models.Errors
 
-case class MtdId(mtdId: String)
+trait ResponseFilter {
+  val status: Int
 
-object MtdId {
-  implicit val format: Format[MtdId] = Json.format[MtdId]
+  def filter(f: Int => Result)
+            (implicit context: AuthContext): Result = {
+    if (status / 100 == 4 && context.isFOA) BadRequest(Json.toJson(Errors.InvalidRequest))
+    else f(status)
+  }
 }

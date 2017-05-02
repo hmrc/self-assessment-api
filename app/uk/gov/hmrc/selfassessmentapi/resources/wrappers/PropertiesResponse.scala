@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.properties.Properties
 
-class PropertiesResponse(underlying: HttpResponse) {
+class PropertiesResponse(underlying: HttpResponse) extends ResponseFilter {
 
   private val logger: Logger = Logger(classOf[PropertiesResponse])
 

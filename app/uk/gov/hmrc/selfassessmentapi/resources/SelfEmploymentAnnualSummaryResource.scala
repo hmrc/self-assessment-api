@@ -33,13 +33,13 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
   private val connector = SelfEmploymentAnnualSummaryConnector
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
-    withAuth(nino) {
+    withAuth(nino) { implicit context =>
       validate[SelfEmploymentAnnualSummary, SelfEmploymentAnnualSummaryResponse](request.body) { summary =>
         connector.update(nino, id, taxYear, des.SelfEmploymentAnnualSummary.from(summary))
       } match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
         case Right(result) => result.map { response =>
-          response.status match {
+          response.filter {
             case 200 => NoContent
             case 400 => BadRequest(Error.from(response.json))
             case 404 => NotFound
@@ -52,9 +52,9 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear) = FeatureSwitch.async(parse.empty) { implicit request =>
-    withAuth(nino) {
+    withAuth(nino) { implicit context =>
       connector.get(nino, id, taxYear).map { response =>
-        response.status match {
+        response.filter {
           case 200 => response.annualSummary.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
           case 404 => NotFound
           case _ => unhandledResponse(response.status, logger)

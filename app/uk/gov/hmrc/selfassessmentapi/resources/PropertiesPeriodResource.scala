@@ -39,13 +39,13 @@ object PropertiesPeriodResource extends BaseResource {
 
   def createPeriod(nino: Nino, id: PropertyType): Action[JsValue] =
     FeatureSwitch.async(parse.json) { implicit request =>
-      withAuth(nino) {
+      withAuth(nino) { implicit context =>
         validateCreateRequest(id, nino, request) match {
           case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
           case Right(result) =>
             result.map {
               case (periodId, response) =>
-                response.status match {
+                response.filter {
                   case 200 =>
                     auditPeriodicCreate(nino, id, response, periodId)
                     Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
@@ -61,27 +61,26 @@ object PropertiesPeriodResource extends BaseResource {
 
   def updatePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[JsValue] =
     FeatureSwitch.async(parse.json) { implicit request =>
-      withAuth(nino) {
+      withAuth(nino) { implicit context =>
         validateUpdateRequest(id, nino, periodId, request) match {
           case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
           case Right(response) =>
             response.map { response =>
-              response.status match {
+              response.filter {
                 case 204 => NoContent
                 case 404 => NotFound
                 case _ => unhandledResponse(response.status, logger)
               }
             }
         }
-
       }
     }
 
   def retrievePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[AnyContent] =
     FeatureSwitch.async { implicit request =>
-      withAuth(nino) {
+      withAuth(nino) { implicit context =>
         connector.retrieve(nino, periodId, id).map { response =>
-          response.status match {
+          response.filter {
             case 200 =>
               id match {
                 case PropertyType.FHL =>
@@ -105,9 +104,9 @@ object PropertiesPeriodResource extends BaseResource {
 
   def retrievePeriods(nino: Nino, id: PropertyType): Action[AnyContent] =
     FeatureSwitch.async { implicit request =>
-      withAuth(nino) {
+      withAuth(nino) { implicit context =>
         connector.retrieveAll(nino, id).map { response =>
-          response.status match {
+          response.filter {
             case 200 =>
               Ok(Json.toJson(id match {
                 case PropertyType.FHL =>
@@ -124,7 +123,7 @@ object PropertiesPeriodResource extends BaseResource {
     }
 
   private def validateCreateRequest(id: PropertyType, nino: Nino, request: Request[JsValue])(
-      implicit hc: HeaderCarrier): Either[ErrorResult, Future[(PeriodId, PropertiesPeriodResponse)]] =
+    implicit hc: HeaderCarrier): Either[ErrorResult, Future[(PeriodId, PropertiesPeriodResponse)]] =
     id match {
       case PropertyType.OTHER =>
         validate[Other.Properties, (PeriodId, PropertiesPeriodResponse)](request.body) { period =>
@@ -142,7 +141,7 @@ object PropertiesPeriodResource extends BaseResource {
     }
 
   private def validateUpdateRequest(id: PropertyType, nino: Nino, periodId: PeriodId, request: Request[JsValue])(
-      implicit hc: HeaderCarrier): Either[ErrorResult, Future[PropertiesPeriodResponse]] =
+    implicit hc: HeaderCarrier): Either[ErrorResult, Future[PropertiesPeriodResponse]] =
     id match {
       case PropertyType.OTHER =>
         validate[Other.Financials, PropertiesPeriodResponse](request.body)(
@@ -157,7 +156,7 @@ object PropertiesPeriodResource extends BaseResource {
                                   response: PropertiesPeriodResponse,
                                   periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
     AuditService.audit(payload =
-                         PeriodicUpdate(nino, id.toString, periodId, response.transactionReference, request.body),
-                       s"$id-property-periodic-create")
+      PeriodicUpdate(nino, id.toString, periodId, response.transactionReference, request.body),
+      s"$id-property-periodic-create")
   }
 }

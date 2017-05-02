@@ -20,7 +20,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.models.banks.BankAnnualSummary
-import uk.gov.hmrc.selfassessmentapi.models.{SourceId, SourceType, TaxYear}
+import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.BanksAnnualSummaryService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -31,13 +31,14 @@ object BanksAnnualSummaryResource extends BaseResource {
   private val annualSummaryService = BanksAnnualSummaryService
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
-    withAuth(nino) {
+    withAuth(nino) { context =>
       validate[BankAnnualSummary, Boolean](request.body) {
         annualSummaryService.updateAnnualSummary(nino, id, taxYear, _)
       } match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
         case Right(result) => result.map {
           case true => NoContent
+          case false if context.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
           case false => NotFound
         }
       }
@@ -45,9 +46,10 @@ object BanksAnnualSummaryResource extends BaseResource {
   }
 
   def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
-    withAuth(nino) {
+    withAuth(nino) { context =>
       annualSummaryService.retrieveAnnualSummary(nino, id, taxYear).map {
         case Some(summary) => Ok(Json.toJson(summary))
+        case None if context.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
         case None => NotFound
       }
     }

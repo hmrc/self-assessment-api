@@ -85,10 +85,12 @@ object Errors {
     val code = "INTERNAL_SERVER_ERROR"
   }
 
+  object InvalidRequest extends Error("INVALID_REQUEST", "Invalid request")
   object ClientNotSubscribed extends Error("CLIENT_NOT_SUBSCRIBED", "The client is not subscribed to MTD")
-  object AgentNotAuthorized extends Error("AGENT_NOT_AUTHORIZED", "The agent is not authorised to perform this action")
-  object AgentNotSubscribed extends Error("AGENT_NOT_SUBSCRIBED", "Agent not subscribed to Agent Services")
+  object AgentNotAuthorized extends Error("AGENT_NOT_AUTHORIZED", "The agent is not authorized")
+  object AgentNotSubscribed extends Error("AGENT_NOT_SUBSCRIBED", "The agent is not subscribed to agent services")
   object BadToken extends Error("UNAUTHORIZED", "Bearer token is missing or not authorized")
+  object BadRequest extends Error("INVALID_REQUEST", "Invalid request")
 
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")
   def badRequest(message: String) = BadRequest(Seq.empty, message)

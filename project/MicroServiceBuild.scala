@@ -55,7 +55,7 @@ private object AppDependencies {
         "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % scope,
         "com.github.tomakehurst" % "wiremock" % "2.2.2" % scope,
         "uk.gov.hmrc" %% "reactivemongo-test"   % "2.0.0" % scope,
-        "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "1.50.5" % scope,
+        "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "2.0.0" % scope,
         "org.mongodb" %% "casbah" % "3.1.1" % scope,
         "org.scalacheck" %% "scalacheck" % "1.12.6" % scope,
         "org.skyscreamer" % "jsonassert" % "1.4.0" % scope,

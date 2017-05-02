@@ -24,7 +24,7 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentPeriod
 
-case class SelfEmploymentPeriodResponse(underlying: HttpResponse) {
+case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends ResponseFilter {
   private val logger: Logger = Logger(classOf[SelfEmploymentPeriodResponse])
   val status: Int = underlying.status
   def json: JsValue = underlying.json
