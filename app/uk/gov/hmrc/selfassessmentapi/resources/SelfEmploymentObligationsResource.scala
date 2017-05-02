@@ -29,9 +29,9 @@ object SelfEmploymentObligationsResource extends BaseResource {
   private val connector = ObligationsConnector
 
   def retrieveObligations(nino: Nino, id: SourceId) = FeatureSwitch.async(parse.empty) { implicit headers =>
-    withAuth(nino) {
+    withAuth(nino) { implicit context =>
       connector.get(nino).map { response =>
-        response.status match {
+        response.filterResponse {
           case 200 =>
             logger.debug("Self-employment obligations from DES = " + Json.stringify(response.json))
             response.obligations(incomeSourceType = "ITSB", Some(id)).map(x => Ok(Json.toJson(x))).getOrElse(NotFound)

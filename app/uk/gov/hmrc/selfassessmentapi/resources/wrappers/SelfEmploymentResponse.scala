@@ -23,11 +23,12 @@ import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentRetrieve
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, des}
 
-class SelfEmploymentResponse(underlying: HttpResponse) {
+class SelfEmploymentResponse(underlying: HttpResponse) extends ResponseFilter {
 
   private val logger: Logger = Logger(classOf[SelfEmploymentResponse])
 
   val status: Int = underlying.status
+
   def json: JsValue = underlying.json
 
   def createLocationHeader(nino: Nino): Option[String] = {
@@ -61,8 +62,12 @@ class SelfEmploymentResponse(underlying: HttpResponse) {
         Seq.empty
     }
   }
+
+
+
 }
 
 object SelfEmploymentResponse {
-  def apply(response: HttpResponse): SelfEmploymentResponse = new SelfEmploymentResponse(response)
+  def apply(response: HttpResponse): SelfEmploymentResponse =
+    new SelfEmploymentResponse(response)
 }

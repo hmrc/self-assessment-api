@@ -22,7 +22,7 @@ import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentAnnualSummary
 
-class SelfEmploymentAnnualSummaryResponse(underlying: HttpResponse) {
+class SelfEmploymentAnnualSummaryResponse(underlying: HttpResponse) extends ResponseFilter {
 
   private val logger = Logger(classOf[SelfEmploymentAnnualSummaryResponse])
 

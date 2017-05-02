@@ -20,7 +20,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.models.banks.Bank
-import uk.gov.hmrc.selfassessmentapi.models.{SourceId, SourceType}
+import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType}
 import uk.gov.hmrc.selfassessmentapi.services.BanksService
 
 import scala.concurrent.ExecutionContext.Implicits._
@@ -31,7 +31,7 @@ object BanksResource extends BaseResource {
   private val service = BanksService
 
   def create(nino: Nino): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
-    withAuth(nino) {
+    withAuth(nino) { _ =>
       validate[Bank, Option[SourceId]](request.body) { bank =>
         service.create(nino, bank)
       } match {
@@ -45,13 +45,14 @@ object BanksResource extends BaseResource {
   }
 
   def update(nino: Nino, id: SourceId): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
-    withAuth(nino) {
+    withAuth(nino) { context =>
       validate[Bank, Boolean](request.body) { bank =>
         service.update(nino, bank, id)
       } match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
         case Right(result) => result.map {
           case true => NoContent
+          case false if context.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
           case false => NotFound
         }
       }
@@ -59,16 +60,17 @@ object BanksResource extends BaseResource {
   }
 
   def retrieve(nino: Nino, id: SourceId): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
-    withAuth(nino) {
+    withAuth(nino) { context =>
       service.retrieve(nino, id) map {
         case Some(bank) => Ok(Json.toJson(bank))
+        case None if context.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
         case None => NotFound
       }
     }
   }
 
   def retrieveAll(nino: Nino): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
-    withAuth(nino) {
+    withAuth(nino) { _ =>
       service.retrieveAll(nino) map { seq =>
         Ok(Json.toJson(seq))
       }

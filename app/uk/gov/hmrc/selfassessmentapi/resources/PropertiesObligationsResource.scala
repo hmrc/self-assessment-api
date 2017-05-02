@@ -29,9 +29,9 @@ object PropertiesObligationsResource extends BaseResource {
   private val connector = ObligationsConnector
 
   def retrieveObligations(nino: Nino) = FeatureSwitch.async(parse.empty) { implicit headers =>
-    withAuth(nino) {
+    withAuth(nino) { implicit context =>
       connector.get(nino).map { response =>
-        response.status match {
+        response.filterResponse {
           case 200 =>
             logger.debug("Properties obligations from DES = " + Json.stringify(response.json))
             response.obligations(incomeSourceType = "ITSP").map(x => Ok(Json.toJson(x))).getOrElse(NotFound)

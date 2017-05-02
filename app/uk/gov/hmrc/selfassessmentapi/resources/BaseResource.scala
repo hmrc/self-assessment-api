@@ -23,6 +23,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
+import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.Errors
 import uk.gov.hmrc.selfassessmentapi.services.{AuthenticationService, MtdRefLookupService}
 
@@ -36,14 +37,14 @@ trait BaseResource extends BaseController {
 
   val logger: Logger = Logger(this.getClass)
 
-  def withAuth(nino: Nino)(f: => Future[Result])(implicit hc: HeaderCarrier,
-                                                 reqHeader: RequestHeader): Future[Result] = {
+  def withAuth(nino: Nino)(f: => AuthContext => Future[Result])
+              (implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[Result] = {
     if (authIsEnabled) performAuthCheck(nino)(f)
-    else f
+    else f(AuthContext(isFOA = false))
   }
 
-  private def performAuthCheck(nino: Nino)(f: => Future[Result])(implicit hc: HeaderCarrier,
-                                                                 reqHeader: RequestHeader): Future[Result] = {
+  private def performAuthCheck(nino: Nino)(f: AuthContext => Future[Result])
+                              (implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[Result] = {
     lookupService.mtdReferenceFor(nino).flatMap {
       case Some(id) => authService.authorise(id)(f)
       case None => Future.successful(Forbidden(Json.toJson(Errors.ClientNotSubscribed)))

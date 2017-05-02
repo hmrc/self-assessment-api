@@ -34,14 +34,14 @@ object SelfEmploymentsResource extends BaseResource {
   private val connector = SelfEmploymentConnector
 
   def create(nino: Nino): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
-    withAuth(nino) {
+    withAuth(nino) { implicit context =>
       validate[SelfEmployment, SelfEmploymentResponse](request.body) { selfEmployment =>
         connector.create(nino, Business.from(selfEmployment))
       } match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
         case Right(response) =>
           response.map { response =>
-            response.status match {
+            response.filterResponse {
               case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino).getOrElse(""))
               case 400 | 409 => BadRequest(Error.from(response.json))
               case 403 =>
@@ -60,14 +60,14 @@ object SelfEmploymentsResource extends BaseResource {
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def update(nino: Nino, id: SourceId): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
-    withAuth(nino) {
+    withAuth(nino) { implicit context =>
       validate[SelfEmploymentUpdate, SelfEmploymentResponse](request.body) { selfEmployment =>
         connector.update(nino, des.SelfEmploymentUpdate.from(selfEmployment), id)
       } match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
         case Right(result) =>
           result.map { response =>
-            response.status match {
+            response.filterResponse {
               case 204 => NoContent
               case 400 => BadRequest(Error.from(response.json))
               case 404 => NotFound
@@ -79,9 +79,9 @@ object SelfEmploymentsResource extends BaseResource {
   }
 
   def retrieve(nino: Nino, id: SourceId) = FeatureSwitch.async(parse.empty) { implicit request =>
-    withAuth(nino) {
+    withAuth(nino) { implicit context =>
       connector.get(nino).map { response =>
-        response.status match {
+        response.filterResponse {
           case 200 => response.selfEmployment(id).map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
           case 400 => BadRequest(Error.from(response.json))
           case 404 => NotFound
@@ -92,9 +92,9 @@ object SelfEmploymentsResource extends BaseResource {
   }
 
   def retrieveAll(nino: Nino) = FeatureSwitch.async(parse.empty) { implicit request =>
-    withAuth(nino) {
+    withAuth(nino) { implicit context =>
       connector.get(nino).map { response =>
-        response.status match {
+        response.filterResponse {
           case 200 => Ok(Json.toJson(response.listSelfEmployment))
           case 400 => BadRequest(Error.from(response.json))
           case 404 => NotFound

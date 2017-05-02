@@ -20,7 +20,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.models.dividends.Dividends
-import uk.gov.hmrc.selfassessmentapi.models.{SourceType, TaxYear}
+import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.DividendsAnnualSummaryService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -32,7 +32,7 @@ object DividendsAnnualSummaryResource extends BaseResource {
   private val service = DividendsAnnualSummaryService
 
   def updateAnnualSummary(nino: Nino, taxYear: TaxYear): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
-    withAuth(nino) {
+    withAuth(nino) { _ =>
       validate[Dividends, Boolean](request.body) { dividends =>
         service.updateAnnualSummary(nino, taxYear, dividends)
       } match {
@@ -45,10 +45,12 @@ object DividendsAnnualSummaryResource extends BaseResource {
   }
 
   def retrieveAnnualSummary(nino: Nino, taxYear: TaxYear): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
-    withAuth(nino) {
+    withAuth(nino) { context =>
       service.retrieveAnnualSummary(nino, taxYear).map {
         case Some(summary) => Ok(Json.toJson(summary))
-        case None => NotFound
+        case None =>
+          if (context.isFOA) BadRequest(Json.toJson(Errors.InvalidRequest))
+          else NotFound
       }
     }
   }

@@ -23,6 +23,7 @@ import play.api.mvc.{RequestHeader, Result}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuthConnector
+import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, MtdId}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -33,11 +34,11 @@ object AuthenticationService extends AuthorisedFunctions {
 
   private val logger = Logger(AuthenticationService.getClass)
 
-  def authorise(mtdId: MtdId)(f: => Future[Result])
+  def authorise(mtdId: MtdId)(f: AuthContext => Future[Result])
                (implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[Result] =
     authoriseAsClient(mtdId)(f)
 
-  private def authoriseAsClient(mtdId: MtdId)(f: => Future[Result])
+  private def authoriseAsClient(mtdId: MtdId)(f: AuthContext => Future[Result])
                                (implicit hc: HeaderCarrier, requestHeader: RequestHeader): Future[Result] = {
     logger.debug("Attempting to authorise user a a fully-authorised individual.")
     authorised(
@@ -45,11 +46,11 @@ object AuthenticationService extends AuthorisedFunctions {
         .withIdentifier("MTDITID", mtdId.mtdId)
         .withDelegatedAuthRule("mtd-it-auth")) {
       logger.debug("Client authorisation succeeded as fully-authorised individual.")
-      f
+      f(AuthContext(isFOA = false))
     } recoverWith (authoriseAsFOA(f) orElse unhandledError)
   }
 
-  private def authoriseAsFOA(f: => Future[Result])
+  private def authoriseAsFOA(f: AuthContext => Future[Result])
                             (implicit hc: HeaderCarrier, reqHeader: RequestHeader): PartialFunction[Throwable, Future[Result]] = {
     case _: InsufficientEnrolments =>
       authorised(AffinityGroup.Agent) { // Is the user an agent?
@@ -59,13 +60,13 @@ object AuthenticationService extends AuthorisedFunctions {
             Future.successful(Forbidden(Json.toJson(Errors.AgentNotAuthorized)))
           } else {
             logger.debug("Client authorisation succeeded as filing-only agent.")
-            f
+            f(AuthContext(isFOA = true))
           }
-        } recoverWith (unauthorisedAgent orElse unhandledError) // Iff agent is not enrolled for the user.
+        } recoverWith (unsubscribedAgent orElse unhandledError) // Iff agent is not enrolled for the user.
       } recoverWith (unauthorisedClient orElse unhandledError) // Iff client affinityGroup is not Agent.
   }
 
-  private def unauthorisedAgent: PartialFunction[Throwable, Future[Result]] = {
+  private def unsubscribedAgent: PartialFunction[Throwable, Future[Result]] = {
     case _: InsufficientEnrolments =>
       logger.debug(s"Authorisation failed as filing-only agent.")
       Future.successful(Forbidden(Json.toJson(Errors.AgentNotSubscribed)))

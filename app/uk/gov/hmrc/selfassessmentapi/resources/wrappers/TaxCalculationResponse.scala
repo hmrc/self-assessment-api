@@ -23,7 +23,7 @@ import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.calculation.TaxCalculation
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 
-class TaxCalculationResponse(underlying: HttpResponse) {
+class TaxCalculationResponse(underlying: HttpResponse) extends ResponseFilter {
   private val logger: Logger = Logger(classOf[TaxCalculationResponse])
 
   val status: Int = underlying.status
