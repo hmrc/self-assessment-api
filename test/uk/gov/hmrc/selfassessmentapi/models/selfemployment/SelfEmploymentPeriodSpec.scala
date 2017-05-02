@@ -125,11 +125,8 @@ class SelfEmploymentPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChec
       val to = from.plusDays(1)
       SelfEmploymentPeriod(None, if (invalidPeriod) to else from, if (invalidPeriod) from else to, incomes, expenses)
     }) suchThat { period =>
-      if (nullFinancials)
-        period.incomes.isEmpty && period.expenses.isEmpty
-      else
-        (period.incomes.isDefined && period.incomes.get.hasIncomes) ||
-        (period.expenses.isDefined && period.expenses.get.hasExpenses)
+      if (nullFinancials) period.incomes.isEmpty && period.expenses.isEmpty
+      else period.incomes.exists(_.hasIncomes) || period.expenses.exists(_.hasExpenses)
     }
 
 }

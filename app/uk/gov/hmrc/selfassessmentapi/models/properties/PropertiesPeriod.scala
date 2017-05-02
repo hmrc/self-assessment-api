@@ -42,12 +42,8 @@ object FHL {
     )(p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses)))
 
     private def financialsValidator(period: Properties): Boolean =
-      (period.financials.isDefined &&
-        period.financials.get.incomes.isDefined &&
-        period.financials.get.incomes.get.hasIncomes) ||
-        (period.financials.isDefined &&
-          period.financials.get.expenses.isDefined &&
-          period.financials.get.expenses.get.hasExpenses)
+      period.financials.exists(_.incomes.exists(_.hasIncomes)) ||
+        period.financials.exists(_.expenses.exists(_.hasExpenses))
 
     implicit val reads: Reads[Properties] = (
       Reads.pure(None) and
@@ -156,12 +152,8 @@ object Other {
     )(p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses)))
 
     private def financialsValidator(period: Properties): Boolean =
-      (period.financials.isDefined &&
-        period.financials.get.incomes.isDefined &&
-        period.financials.get.incomes.get.hasIncomes) ||
-        (period.financials.isDefined &&
-          period.financials.get.expenses.isDefined &&
-          period.financials.get.expenses.get.hasExpenses)
+      period.financials.exists(_.incomes.exists(_.hasIncomes)) ||
+        period.financials.exists(_.expenses.exists(_.hasExpenses))
 
     implicit val reads: Reads[Properties] = (
       Reads.pure(None) and

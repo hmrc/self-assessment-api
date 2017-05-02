@@ -81,8 +81,7 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
   implicit val writes: Writes[SelfEmploymentPeriod] = Json.writes[SelfEmploymentPeriod]
 
   private def financialsValidator(period: SelfEmploymentPeriod): Boolean =
-    (period.incomes.isDefined && period.incomes.get.hasIncomes) ||
-      (period.expenses.isDefined && period.expenses.get.hasExpenses)
+    period.incomes.exists(_.hasIncomes)  || period.expenses.exists(_.hasExpenses)
 
   implicit val reads: Reads[SelfEmploymentPeriod] = (
     Reads.pure(None) and

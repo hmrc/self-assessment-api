@@ -106,8 +106,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         incomes <- Gen.option(genIncomes)
         expenses <- Gen.option(genExpenses)
       } yield FHL.Financials(incomes, expenses)) suchThat { f =>
-        (f.incomes.isDefined && f.incomes.get.hasIncomes) ||
-        (f.expenses.isDefined && f.expenses.get.hasExpenses)
+        f.incomes.exists(_.hasIncomes) || f.expenses.exists(_.hasExpenses)
       }
 
     def genPropertiesPeriod(invalidPeriod: Boolean = false, nullFinancials: Boolean = false): Gen[FHL.Properties] =
@@ -163,8 +162,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         incomes <- Gen.option(genIncomes)
         expenses <- Gen.option(genExpenses)
       } yield Other.Financials(incomes, expenses)) suchThat { f =>
-        (f.incomes.isDefined && f.incomes.get.hasIncomes) ||
-        (f.expenses.isDefined && f.expenses.get.hasExpenses)
+        f.incomes.exists(_.hasIncomes) || f.expenses.exists(_.hasExpenses)
       }
 
     def genPropertiesPeriod(invalidPeriod: Boolean = false, nullFinancials: Boolean = false): Gen[Other.Properties] =
