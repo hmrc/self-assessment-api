@@ -45,7 +45,7 @@ object PropertiesPeriodResource extends BaseResource {
           case Right(result) =>
             result.map {
               case (periodId, response) =>
-                response.filterResponse {
+                response.filter {
                   case 200 =>
                     auditPeriodicCreate(nino, id, response, periodId)
                     Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
@@ -66,7 +66,7 @@ object PropertiesPeriodResource extends BaseResource {
           case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
           case Right(response) =>
             response.map { response =>
-              response.filterResponse {
+              response.filter {
                 case 204 => NoContent
                 case 404 => NotFound
                 case _ => unhandledResponse(response.status, logger)
@@ -80,7 +80,7 @@ object PropertiesPeriodResource extends BaseResource {
     FeatureSwitch.async { implicit request =>
       withAuth(nino) { implicit context =>
         connector.retrieve(nino, periodId, id).map { response =>
-          response.filterResponse {
+          response.filter {
             case 200 =>
               id match {
                 case PropertyType.FHL =>
@@ -106,7 +106,7 @@ object PropertiesPeriodResource extends BaseResource {
     FeatureSwitch.async { implicit request =>
       withAuth(nino) { implicit context =>
         connector.retrieveAll(nino, id).map { response =>
-          response.filterResponse {
+          response.filter {
             case 200 =>
               Ok(Json.toJson(id match {
                 case PropertyType.FHL =>

@@ -25,8 +25,8 @@ import uk.gov.hmrc.selfassessmentapi.models.Errors
 trait ResponseFilter {
   val status: Int
 
-  def filterResponse(f: Int => Result)
-                    (implicit context: AuthContext): Result = {
+  def filter(f: Int => Result)
+            (implicit context: AuthContext): Result = {
     if (status / 100 == 4 && context.isFOA) BadRequest(Json.toJson(Errors.InvalidRequest))
     else f(status)
   }

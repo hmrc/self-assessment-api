@@ -29,7 +29,7 @@ class ResponseFilterSpec extends UnitSpec {
 
       new ResponseFilter {
         override val status: Int = 409
-      }.filterResponse(_ => Conflict)(ctx) shouldBe BadRequest(Json.toJson(Errors.InvalidRequest))
+      }.filter(_ => Conflict)(ctx) shouldBe BadRequest(Json.toJson(Errors.InvalidRequest))
     }
 
     "return the response unmodified if the response contains a non-4xx error and the user is a FOA" in {
@@ -37,7 +37,7 @@ class ResponseFilterSpec extends UnitSpec {
 
       new ResponseFilter {
         override val status: Int = 200
-      }.filterResponse(_ => Ok)(ctx) shouldBe Ok
+      }.filter(_ => Ok)(ctx) shouldBe Ok
     }
 
     "return the response unmodified if the response contains a 4xx error and the user is not a FOA" in {
@@ -45,7 +45,7 @@ class ResponseFilterSpec extends UnitSpec {
 
       new ResponseFilter {
         override val status: Int = 409
-      }.filterResponse(_ => Conflict)(ctx) shouldBe Conflict
+      }.filter(_ => Conflict)(ctx) shouldBe Conflict
     }
 
   }

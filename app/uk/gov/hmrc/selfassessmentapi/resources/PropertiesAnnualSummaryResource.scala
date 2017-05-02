@@ -38,7 +38,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
       validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
         case Right(result) => result.map { response =>
-          response.filterResponse {
+          response.filter {
             case 200 => NoContent
             case 404 => NotFound
             case 400 => BadRequest(Error.from(response.json))
@@ -52,7 +52,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
   def retrieveAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[AnyContent] = FeatureSwitch.async { implicit request =>
     withAuth(nino) { implicit context =>
       connector.get(nino, propertyId, taxYear).map { response =>
-        response.filterResponse {
+        response.filter {
           case 200 =>
             response.annualSummary match {
               case Some(summary) => summary match {

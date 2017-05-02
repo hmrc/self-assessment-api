@@ -37,7 +37,7 @@ trait BaseResource extends BaseController {
 
   val logger: Logger = Logger(this.getClass)
 
-  def withAuth(nino: Nino)(f: => AuthContext => Future[Result])
+  def withAuth(nino: Nino)(f: AuthContext => Future[Result])
               (implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[Result] = {
     if (authIsEnabled) performAuthCheck(nino)(f)
     else f(AuthContext(isFOA = false))

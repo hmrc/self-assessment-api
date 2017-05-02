@@ -42,7 +42,7 @@ object PropertiesResource extends BaseResource {
           Future.successful(handleValidationErrors(errorResult))
         case Right(response) =>
           response.map { response =>
-            response.filterResponse {
+            response.filter {
               case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino))
               case 403 => Conflict.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/uk-properties")
               case 400 => BadRequest(Error.from(response.json))
@@ -57,7 +57,7 @@ object PropertiesResource extends BaseResource {
   def retrieve(nino: Nino): Action[AnyContent] = FeatureSwitch.async { implicit request =>
     withAuth(nino) { implicit context =>
       connector.retrieve(nino).map { response =>
-        response.filterResponse {
+        response.filter {
           case 200 => response.property match {
             case Some(property) => Ok(Json.toJson(property))
             case None => NotFound

@@ -47,7 +47,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
           case Right(result) =>
             result.map {
               case (periodId, response) =>
-                response.filterResponse {
+                response.filter {
                   case 200 =>
                     auditPeriodicCreate(nino, sourceId, response, periodId)
                     Created.withHeaders(LOCATION -> response.createLocationHeader(nino, sourceId, periodId))
@@ -71,7 +71,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
           case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
           case Right(result) =>
             result.map { response =>
-              response.filterResponse {
+              response.filter {
                 case 204 => NoContent
                 case 400 => BadRequest(Error.from(response.json))
                 case 404 => NotFound
@@ -87,7 +87,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
     implicit request =>
       withAuth(nino) { implicit context =>
         connector.get(nino, id, periodId).map { response =>
-          response.filterResponse {
+          response.filter {
             case 200 => response.period.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
             case 400 => BadRequest(Error.from(response.json))
             case 404 => NotFound
@@ -101,7 +101,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
   def retrievePeriods(nino: Nino, id: SourceId): Action[Unit] = FeatureSwitch.async(parse.empty) { implicit request =>
     withAuth(nino) { implicit context =>
       connector.getAll(nino, id).map { response =>
-        response.filterResponse {
+        response.filter {
           case 200 => Ok(Json.toJson(response.allPeriods))
           case 400 => BadRequest(Error.from(response.json))
           case 404 => NotFound

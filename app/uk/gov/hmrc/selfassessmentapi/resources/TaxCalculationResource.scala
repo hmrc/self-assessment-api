@@ -50,7 +50,7 @@ object TaxCalculationResource extends BaseResource {
       } match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
         case Right(result) => result.map { response =>
-          response.filterResponse {
+          response.filter {
             case 202 =>
               auditTaxCalcTrigger(nino, response)
               Accepted(Json.parse(cannedEtaResponse))
@@ -66,7 +66,7 @@ object TaxCalculationResource extends BaseResource {
   def retrieveCalculation(nino: Nino, calcId: SourceId): Action[Unit] = FeatureSwitch.async(parse.empty) { implicit request =>
     withAuth(nino) { implicit context =>
       connector.retrieveCalculation(nino, calcId).map { response =>
-        response.filterResponse {
+        response.filter {
           case 200 =>
             auditTaxCalcRequest(nino, calcId, response)
             Ok(Json.toJson(response.calculation))

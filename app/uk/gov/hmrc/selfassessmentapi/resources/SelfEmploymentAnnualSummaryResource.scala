@@ -39,7 +39,7 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
       } match {
         case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
         case Right(result) => result.map { response =>
-          response.filterResponse {
+          response.filter {
             case 200 => NoContent
             case 400 => BadRequest(Error.from(response.json))
             case 404 => NotFound
@@ -54,7 +54,7 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
   def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear) = FeatureSwitch.async(parse.empty) { implicit request =>
     withAuth(nino) { implicit context =>
       connector.get(nino, id, taxYear).map { response =>
-        response.filterResponse {
+        response.filter {
           case 200 => response.annualSummary.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
           case 404 => NotFound
           case _ => unhandledResponse(response.status, logger)
