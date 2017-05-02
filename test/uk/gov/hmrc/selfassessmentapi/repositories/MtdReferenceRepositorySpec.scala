@@ -16,12 +16,20 @@
 
 package uk.gov.hmrc.selfassessmentapi.repositories
 
+import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
 import uk.gov.hmrc.selfassessmentapi.models.MtdId
 
-class MtdReferenceRepositorySpec extends MongoEmbeddedDatabase {
+import scala.concurrent.ExecutionContext.Implicits.global
+
+class MtdReferenceRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach {
   private val repo = new MtdReferenceRepository
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    repo.ensureIndexes
+  }
 
   "create" should {
     "return true and insert a record containing a NINO and its associated MTD reference number" in {
@@ -49,5 +57,4 @@ class MtdReferenceRepositorySpec extends MongoEmbeddedDatabase {
       await(repo.retrieve(generateNino)) shouldBe None
     }
   }
-
 }

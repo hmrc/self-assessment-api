@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class MtdReferenceRepository(implicit mongo: () => DB) extends ReactiveRepository[MtdRefEntry, BSONObjectID](
-  "ninoToMtdRefLookupTable",
+  "mtdRef",
   mongo,
   domainFormat = MtdRefEntry.format,
   idFormat = ReactiveMongoFormats.objectIdFormats) {
