@@ -236,14 +236,6 @@ traits:
                       value:
                         code: INVALID_POSTCODE
             404:
-              body:
-                application/json:
-                  type: types.errorResponse
-                  examples:
-                    notFound:
-                      description: Not Found
-                      value:
-                        code: NOT_FOUND
         get:
           displayName: Get a self-employment business
           description: Get a self-employment business
@@ -267,14 +259,6 @@ traits:
                         value:
                           code: NINO_INVALID
             404:
-                body:
-                  application/json:
-                    type: types.errorResponse
-                    examples:
-                      notFound:
-                        description: Not Found
-                        value:
-                          code: NOT_FOUND
         /obligations:
           get:
             displayName: Retrieve self-employment business obligations
@@ -299,14 +283,6 @@ traits:
                         value:
                           code: NINO_INVALID
               404:
-                body:
-                  application/json:
-                    type: types.errorResponse
-                    examples:
-                      notFound:
-                        description: Not Found
-                        value:
-                          code: NOT_FOUND
         /periods:
           post:
             displayName: Create a self-employment update period
@@ -396,14 +372,6 @@ traits:
                         value:
                           code: NINO_INVALID
               404:
-                body:
-                  application/json:
-                    type: types.errorResponse
-                    examples:
-                      notFound:
-                        description: Not Found
-                        value:
-                          code: NOT_FOUND
           /{periodId}:
             uriParameters:
               periodId:
@@ -432,14 +400,6 @@ traits:
                           value:
                             code: NINO_INVALID
                 404:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notFound:
-                          description: Not Found
-                          value:
-                            code: NOT_FOUND
             put:
               displayName: Update a self-employment update period [test only]
               description: Update a self-employment update period. This API is not available in production.
@@ -477,14 +437,6 @@ traits:
                           value:
                             code: NO_INCOMES_AND_EXPENSES
                 404:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notFound:
-                          description: Not Found
-                          value:
-                            code: NOT_FOUND
         /{taxYear}:
           uriParameters:
             taxYear:
@@ -534,14 +486,6 @@ traits:
                         value:
                           code: INVALID_BALANCING_CHARGE_BPRA
               404:
-                body:
-                  application/json:
-                    type: types.errorResponse
-                    examples:
-                      notFound:
-                        description: Not Found
-                        value:
-                          code: NOT_FOUND
           get:
             displayName: Get a self-employment annual summary [test only]
             description: Get a self-employment annual summary for a tax year. This API is not available in production.
@@ -569,14 +513,6 @@ traits:
                         value:
                           code: TAX_YEAR_INVALID
               404:
-                body:
-                  application/json:
-                    type: types.errorResponse
-                    examples:
-                      notFound:
-                        description: Not Found
-                        value:
-                          code: NOT_FOUND
     /uk-properties:
       (annotations.group):
         name: UK property business
@@ -641,14 +577,6 @@ traits:
                     value:
                       code: NINO_INVALID
           404:
-            body:
-              application/json:
-                type: types.errorResponse
-                examples:
-                  notFound:
-                    description: Not Found
-                    value:
-                      code: NOT_FOUND
       /obligations:
         get:
           displayName: Retrieve all UK property business obligations
@@ -673,14 +601,6 @@ traits:
                       value:
                         code: NINO_INVALID
             404:
-              body:
-                application/json:
-                  type: types.errorResponse
-                  examples:
-                    notFound:
-                      description: Not Found
-                      value:
-                        code: NOT_FOUND
       /other:
         /periods:
           post:
@@ -763,14 +683,6 @@ traits:
                         value:
                           code: NINO_INVALID
               404:
-                body:
-                  application/json:
-                    type: types.errorResponse
-                    examples:
-                      notFound:
-                        description: Not Found
-                        value:
-                          code: NOT_FOUND
           /{periodId}:
             uriParameters:
               periodId:
@@ -800,14 +712,6 @@ traits:
                           value:
                             code: NINO_INVALID
                 404:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notFound:
-                          description: Not Found
-                          value:
-                            code: NOT_FOUND
             put:
               displayName: Update a non FHL UK property update period [test only]
               description: Update a non FHL UK property update period. This API is not available in production.
@@ -845,14 +749,6 @@ traits:
                           value:
                             code: NO_INCOMES_AND_EXPENSES
                 404:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notFound:
-                          description: Not Found
-                          value:
-                            code: NOT_FOUND
         /{taxYear}:
             displayName: Annual Summary
             uriParameters:
@@ -891,14 +787,6 @@ traits:
                           value:
                             code: INVALID_MONETARY_AMOUNT
                 404:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notFound:
-                          description: Not Found
-                          value:
-                            code: NOT_FOUND
             get:
               displayName: Get non FHL UK property business annual summary [test only]
               description: Get non FHL UK property business for a tax year. This API is not available in production.
@@ -926,14 +814,6 @@ traits:
                           value:
                             code: TAX_YEAR_INVALID
                 404:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notFound:
-                          description: Not Found
-                          value:
-                            code: NOT_FOUND
       /furnished-holiday-lettings:
         /periods:
           post:
@@ -1012,14 +892,6 @@ traits:
                         value:
                           code: NINO_INVALID
               404:
-                body:
-                  application/json:
-                    type: types.errorResponse
-                    examples:
-                      notFound:
-                        description: Not Found
-                        value:
-                          code: NOT_FOUND
           /{periodId}:
             uriParameters:
               periodId:
@@ -1049,14 +921,6 @@ traits:
                           value:
                             code: NINO_INVALID
                 404:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notFound:
-                          description: Not Found
-                          value:
-                            code: NOT_FOUND
             put:
               displayName: Update a FHL UK property update period [test only]
               description: Update a FHL UK property update period. This API is not available in production.
@@ -1094,14 +958,6 @@ traits:
                           value:
                             code: NO_INCOMES_AND_EXPENSES
                 404:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notFound:
-                          description: Not Found
-                          value:
-                            code: NOT_FOUND
         /{taxYear}:
             displayName: Annual Summary
             uriParameters:
@@ -1140,14 +996,6 @@ traits:
                           value:
                             code: INVALID_MONETARY_AMOUNT
                 404:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notFound:
-                          description: Not Found
-                          value:
-                            code: NOT_FOUND
             get:
               displayName: Get a FHL UK property business annual summary [test only]
               description: Get a FHL UK property business annual summary for a tax year. This API is not available in production.
@@ -1175,14 +1023,6 @@ traits:
                           value:
                             code: TAX_YEAR_INVALID
                 404:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notFound:
-                          description: Not Found
-                          value:
-                            code: NOT_FOUND
     /dividends:
       (annotations.group):
         name: Dividends income
@@ -1251,14 +1091,6 @@ traits:
                       value:
                         code: TAX_YEAR_INVALID
             404:
-              body:
-                application/json:
-                  type: types.errorResponse
-                  examples:
-                    notFound:
-                      description: Not Found
-                      value:
-                        code: NOT_FOUND
     /savings-accounts:
       (annotations.group):
         name: Savings accounts
@@ -1351,14 +1183,6 @@ traits:
                       value:
                         code: INVALID_VALUE
             404:
-              body:
-                application/json:
-                  type: types.errorResponse
-                  examples:
-                    notFound:
-                      description: Not Found
-                      value:
-                        code: NOT_FOUND
         get:
           displayName: Get a savings account [test only]
           description: Get a savings account. This API is not available in production.
@@ -1382,14 +1206,6 @@ traits:
                       value:
                         code: NINO_INVALID
             404:
-              body:
-                application/json:
-                  type: types.errorResponse
-                  examples:
-                    notFound:
-                      description: Not Found
-                      value:
-                        code: NOT_FOUND
         /{taxYear}:
           put:
             displayName: Update a savings account annual summary [test only]
@@ -1422,14 +1238,6 @@ traits:
                         value:
                           code: INVALID_MONETARY_AMOUNT
               404:
-                body:
-                  application/json:
-                    type: types.errorResponse
-                    examples:
-                      notFound:
-                        description: Not Found
-                        value:
-                          code: NOT_FOUND
           get:
             displayName: Get a savings account annual summary [test only]
             description: Get a savings account annual summary for a given tax year. This API is not available in production.
@@ -1457,14 +1265,6 @@ traits:
                         value:
                           code: TAX_YEAR_INVALID
               404:
-                body:
-                  application/json:
-                    type: types.errorResponse
-                    examples:
-                      notFound:
-                        description: Not Found
-                        value:
-                          code: NOT_FOUND
     /calculations:
       (annotations.group):
         name: Tax calculations
@@ -1527,14 +1327,6 @@ traits:
                   example: !include examples/calculation/TaxCalculation.json
             204:
             404:
-              body:
-                application/json:
-                  type: types.errorResponse
-                  examples:
-                    notFound:
-                      description: Not Found
-                      value:
-                        code: NOT_FOUND
             400:
               body:
                 application/json:
