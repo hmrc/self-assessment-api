@@ -20,10 +20,12 @@ import play.api.Logger
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
+import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentRetrieve
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, des}
 
 class SelfEmploymentResponse(underlying: HttpResponse) extends ResponseFilter {
+
 
   private val logger: Logger = Logger(classOf[SelfEmploymentResponse])
 
@@ -63,7 +65,8 @@ class SelfEmploymentResponse(underlying: HttpResponse) extends ResponseFilter {
     }
   }
 
-
+  def isInvalidNino: Boolean =
+    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_NINO)
 
 }
 

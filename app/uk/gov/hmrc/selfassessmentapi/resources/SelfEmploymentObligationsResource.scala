@@ -35,7 +35,7 @@ object SelfEmploymentObligationsResource extends BaseResource {
           case 200 =>
             logger.debug("Self-employment obligations from DES = " + Json.stringify(response.json))
             response.obligations("ITSB", Some(id)).map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
-          case 400 => BadRequest(Error.from(response.json))
+          case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
           case 404 => NotFound
           case _ => unhandledResponse(response.status, logger)
         }

@@ -51,8 +51,10 @@ object SelfEmploymentPeriodResource extends BaseResource {
                   case 200 =>
                     auditPeriodicCreate(nino, sourceId, response, periodId)
                     Created.withHeaders(LOCATION -> response.createLocationHeader(nino, sourceId, periodId))
-                  case 400 if response.containsOverlappingPeriod => Forbidden(Error.asBusinessError(response.json))
-                  case 400 => BadRequest(Error.from(response.json))
+                  case 400 if response.isInvalidBusinessId => NotFound
+                  case 400 if response.isInvalidPeriod => Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))
+                  case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
+                  case 400 if response.isInvalidPayload  => BadRequest(Json.toJson(Errors.InvalidRequest))
                   case 404 => NotFound
                   case _ => unhandledResponse(response.status, logger)
                 }

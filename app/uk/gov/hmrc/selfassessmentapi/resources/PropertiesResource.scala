@@ -63,7 +63,7 @@ object PropertiesResource extends BaseResource {
             case None => NotFound
           }
           case 404 => NotFound
-          case 400 => BadRequest(Error.from(response.json))
+          case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
           case _ => unhandledResponse(response.status, logger)
         }
       }

@@ -47,7 +47,7 @@ object Jsons {
     val desNotFound: String = errorWithMessage("NOT_FOUND", "The remote endpoint has indicated that no data can be found.")
     val duplicateTradingName: String = errorWithMessage("CONFLICT", "Duplicated trading name.")
     val notFound: String = errorWithMessage("NOT_FOUND", "Resource was not found")
-    val invalidPeriod: String = businessErrorWithMessage("INVALID_PERIOD" -> "The remote endpoint has indicated that a overlapping period was submitted.")
+    val invalidPeriod: String = businessErrorWithMessage("INVALID_PERIOD" -> "Periods should be contiguous and have no gaps between one another")
     val invalidOriginatorId: String = errorWithMessage("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
     val internalServerError: String = errorWithMessage("INTERNAL_SERVER_ERROR", "An internal server error occurred")
     val invalidCalcId: String = errorWithMessage("INVALID_CALCID", "Submission has not passed validation")

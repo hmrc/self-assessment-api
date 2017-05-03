@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
+
 import play.api.Logger
 import play.api.data.validation.ValidationError
 import play.api.libs.json.{JsValue, Json, Writes}
@@ -41,7 +42,7 @@ object Errors {
       Json.obj("code" -> req.code, "message" -> req.message)
   }
 
-  case class Error(code: String, message: String, path: Option[String] = None)
+  case class Error(code: String, message: String, path: Option[String] = Some(""))
 
   object Error {
     private val logger = Logger(Error.getClass)
@@ -71,6 +72,7 @@ object Errors {
     private def fromDesError(err: DesError): Error = {
       Error(err.code.toString, err.reason, Some(""))
     }
+
   }
 
   case class BadRequest(errors: Seq[Error], message: String) {
@@ -85,7 +87,9 @@ object Errors {
     val code = "INTERNAL_SERVER_ERROR"
   }
 
+  object NinoInvalid extends Error("NINO_INVALID", "The provided Nino is invalid")
   object InvalidRequest extends Error("INVALID_REQUEST", "Invalid request")
+  object InvalidPeriod extends Error("INVALID_PERIOD", "Periods should be contiguous and have no gaps between one another")
   object ClientNotSubscribed extends Error("CLIENT_NOT_SUBSCRIBED", "The client is not subscribed to MTD")
   object AgentNotAuthorized extends Error("AGENT_NOT_AUTHORIZED", "The agent is not authorized")
   object AgentNotSubscribed extends Error("AGENT_NOT_SUBSCRIBED", "The agent is not subscribed to agent services")

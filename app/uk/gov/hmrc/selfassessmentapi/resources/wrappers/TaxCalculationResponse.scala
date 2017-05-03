@@ -24,6 +24,7 @@ import uk.gov.hmrc.selfassessmentapi.models.calculation.TaxCalculation
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 
 class TaxCalculationResponse(underlying: HttpResponse) extends ResponseFilter {
+
   private val logger: Logger = Logger(classOf[TaxCalculationResponse])
 
   val status: Int = underlying.status
@@ -49,12 +50,14 @@ class TaxCalculationResponse(underlying: HttpResponse) extends ResponseFilter {
     }
   }
 
-  def isInvalidCalcId: Boolean = {
-    json.asOpt[DesError] match {
-      case Some(x) if x.code == DesErrorCode.INVALID_CALCID => true
-      case _ => false
-    }
-  }
+  def isInvalidCalcId: Boolean =
+    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_CALCID)
+
+  def isInvalidNino: Boolean =
+    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_NINO)
+
+  def isInvalidIdentifier: Boolean =
+    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_IDENTIFIER)
 }
 
 object TaxCalculationResponse {

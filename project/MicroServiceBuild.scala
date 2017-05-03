@@ -13,7 +13,7 @@ object MicroServiceBuild extends Build with MicroService {
   )
 
   override lazy val appDependencies: Seq[ModuleID] = AppDependencies()
-  override lazy val playSettings : Seq[Setting[_]] = Seq(
+  override lazy val playSettings: Seq[Setting[_]] = Seq(
     routesImport += "uk.gov.hmrc.selfassessmentapi.resources.Binders._"
   )
 }
@@ -54,7 +54,7 @@ private object AppDependencies {
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
         "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % scope,
         "com.github.tomakehurst" % "wiremock" % "2.2.2" % scope,
-        "uk.gov.hmrc" %% "reactivemongo-test"   % "2.0.0" % scope,
+        "uk.gov.hmrc" %% "reactivemongo-test" % "2.0.0" % scope,
         "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "2.0.0" % scope,
         "org.mongodb" %% "casbah" % "3.1.1" % scope,
         "org.scalacheck" %% "scalacheck" % "1.12.6" % scope,

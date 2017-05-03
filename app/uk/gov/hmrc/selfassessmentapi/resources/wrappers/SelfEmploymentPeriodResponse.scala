@@ -25,22 +25,14 @@ import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentPeriod
 
 case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends ResponseFilter {
+
+
   private val logger: Logger = Logger(classOf[SelfEmploymentPeriodResponse])
   val status: Int = underlying.status
   def json: JsValue = underlying.json
 
   def createLocationHeader(nino: Nino, id: SourceId, periodId: PeriodId): String = {
     s"/self-assessment/ni/$nino/${SourceType.SelfEmployments.toString}/$id/periods/$periodId"
-  }
-
-  def containsOverlappingPeriod: Boolean = {
-    json.asOpt[DesError] match {
-      case Some(err) => err.code == DesErrorCode.INVALID_PERIOD
-      case None => {
-        logger.error("The response from DES does not match the expected error format.")
-        false
-      }
-    }
   }
 
   def period: Option[SelfEmploymentPeriod] = {
@@ -75,5 +67,17 @@ case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Respon
       }
     }
   }
+
+  def isInvalidNino: Boolean =
+    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_NINO)
+
+  def isInvalidPayload: Boolean =
+    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_PAYLOAD)
+
+  def isInvalidPeriod: Boolean =
+    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_PERIOD)
+
+  def isInvalidBusinessId: Boolean =
+    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_BUSINESSID)
 }
 
