@@ -58,11 +58,11 @@ object FHL {
       }
       Properties(id, from, to, financials)
     }).validate(
-      Seq(Validation(Seq("from", "to"),
+      Seq(Validation(JsPath(),
                      periodDateValidator,
                      ValidationError("the period 'from' date should come before the 'to' date",
                                      ErrorCode.INVALID_PERIOD)),
-          Validation(Seq("incomes", "expenses"),
+          Validation(JsPath(),
                      financialsValidator,
                      ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))))
 
@@ -119,8 +119,20 @@ object FHL {
   case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None) extends models.Financials
 
   object Financials {
-    implicit val format: Format[Financials] =
-      Json.format[Financials]
+    implicit val writes: Writes[Financials] = Json.writes[Financials]
+
+    private def financialsValidator(financials: Financials): Boolean =
+      financials.incomes.exists(_.hasIncomes) || financials.expenses.exists(_.hasExpenses)
+
+    implicit val reads: Reads[Financials] = (
+      (__ \ "incomes").readNullable[Incomes] and
+        (__ \ "expenses").readNullable[Expenses]
+    )(Financials.apply _)
+      .validate(
+        Seq(
+          Validation(JsPath(),
+                     financialsValidator,
+                     ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))))
 
     def from(o: Option[des.properties.FHL.Financials]): Option[Financials] =
       o.flatMap { f =>
@@ -168,11 +180,11 @@ object Other {
       }
       Properties(id, from, to, financials)
     }).validate(
-      Seq(Validation(Seq("from", "to"),
+      Seq(Validation(JsPath(),
                      periodDateValidator,
                      ValidationError("the period 'from' date should come before the 'to' date",
                                      ErrorCode.INVALID_PERIOD)),
-          Validation(Seq("incomes", "expenses"),
+          Validation(JsPath(),
                      financialsValidator,
                      ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))))
 
@@ -242,9 +254,20 @@ object Other {
   case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None) extends models.Financials
 
   object Financials {
+    implicit val writes: Writes[Financials] = Json.writes[Financials]
 
-    implicit val format: Format[Financials] =
-      Json.format[Financials]
+    private def financialsValidator(financials: Financials): Boolean =
+      financials.incomes.exists(_.hasIncomes) || financials.expenses.exists(_.hasExpenses)
+
+    implicit val reads: Reads[Financials] = (
+      (__ \ "incomes").readNullable[Incomes] and
+        (__ \ "expenses").readNullable[Expenses]
+    )(Financials.apply _)
+      .validate(
+        Seq(
+          Validation(JsPath(),
+                     financialsValidator,
+                     ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))))
 
     def from(o: Option[des.properties.Other.Financials]): Option[Financials] =
       o.flatMap { f =>

@@ -31,25 +31,20 @@ class SelfEmploymentPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChec
     "return a INVALID_PERIOD error when using a period with a 'from' date that becomes before the 'to' date" in
       forAll(genSelfEmploymentPeriod(invalidPeriod = true)) { period =>
         assertValidationErrorsWithCode[SelfEmploymentPeriod](Json.toJson(period),
-                                                             Map("/from" -> Seq(ErrorCode.INVALID_PERIOD),
-                                                                 "/to" -> Seq(ErrorCode.INVALID_PERIOD)))
+                                                             Map("" -> Seq(ErrorCode.INVALID_PERIOD)))
       }
 
     "return a NO_INCOMES_AND_EXPENSES error when incomes and expenses are not supplied" in
       forAll(genSelfEmploymentPeriod(nullFinancials = true)) { period =>
-        assertValidationErrorsWithCode[SelfEmploymentPeriod](
-          Json.toJson(period),
-          Map("/incomes" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
-              "/expenses" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES)))
+        assertValidationErrorsWithCode[SelfEmploymentPeriod](Json.toJson(period),
+                                                             Map("" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES)))
       }
 
     "return a INVALID_PERIOD and NO_INCOMES_AND_EXPENSES errors when the from and to dates are invalid and incomes and expenses are not supplied" in
       forAll(genSelfEmploymentPeriod(invalidPeriod = true, nullFinancials = true)) { period =>
-        assertValidationErrorsWithCode[SelfEmploymentPeriod](Json.toJson(period),
-                                                             Map("/incomes" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
-                                                                 "/expenses" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
-                                                                 "/from" -> Seq(ErrorCode.INVALID_PERIOD),
-                                                                 "/to" -> Seq(ErrorCode.INVALID_PERIOD)))
+        assertValidationErrorsWithCode[SelfEmploymentPeriod](
+          Json.toJson(period),
+          Map("" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES, ErrorCode.INVALID_PERIOD)))
       }
 
     "return an error when provided with an empty json body" in
@@ -66,54 +61,6 @@ class SelfEmploymentPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChec
       assertValidationPasses(period)
     }
   }
-
-  val amount: Gen[BigDecimal] = amountGen(1000, 5000)
-
-  val genSimpleIncome: Gen[SimpleIncome] = for (amount <- amount) yield SimpleIncome(amount)
-
-  val genIncomes: Gen[Incomes] =
-    for {
-      turnover <- Gen.option(genSimpleIncome)
-      other <- Gen.option(genSimpleIncome)
-    } yield Incomes(turnover = turnover, other = other)
-
-  def genExpense(depreciation: Boolean = false): Gen[Expense] =
-    for {
-      amount <- amount
-      disallowableAmount <- Gen.option(amountGen(0, amount))
-    } yield Expense(amount = amount, disallowableAmount = if (depreciation) Some(amount) else disallowableAmount)
-
-  val genExpenses: Gen[Expenses] =
-    for {
-      costOfGoodsBought <- Gen.option(genExpense())
-      cisPaymentsToSubcontractors <- Gen.option(genExpense())
-      staffCosts <- Gen.option(genExpense())
-      travelCosts <- Gen.option(genExpense())
-      premisesRunningCosts <- Gen.option(genExpense())
-      maintenanceCosts <- Gen.option(genExpense())
-      adminCosts <- Gen.option(genExpense())
-      advertisingCosts <- Gen.option(genExpense())
-      interest <- Gen.option(genExpense())
-      financialCharges <- Gen.option(genExpense())
-      badDebt <- Gen.option(genExpense())
-      professionalFees <- Gen.option(genExpense())
-      depreciation <- Gen.option(genExpense(depreciation = true))
-      other <- Gen.option(genExpense())
-    } yield
-      Expenses(costOfGoodsBought = costOfGoodsBought,
-               cisPaymentsToSubcontractors = cisPaymentsToSubcontractors,
-               staffCosts = staffCosts,
-               travelCosts = travelCosts,
-               premisesRunningCosts = premisesRunningCosts,
-               maintenanceCosts = maintenanceCosts,
-               adminCosts = adminCosts,
-               advertisingCosts = advertisingCosts,
-               interest = interest,
-               financialCharges = financialCharges,
-               badDebt = badDebt,
-               professionalFees = professionalFees,
-               depreciation = depreciation,
-               other = other)
 
   def genSelfEmploymentPeriod(invalidPeriod: Boolean = false,
                               nullFinancials: Boolean = false): Gen[SelfEmploymentPeriod] =

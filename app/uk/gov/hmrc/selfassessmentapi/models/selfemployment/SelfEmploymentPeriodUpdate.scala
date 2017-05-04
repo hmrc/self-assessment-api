@@ -16,10 +16,27 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
-import play.api.libs.json.{Format, Json}
+import play.api.data.validation.ValidationError
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
+import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, Validation}
+import uk.gov.hmrc.selfassessmentapi.models.Validation._
 
 case class SelfEmploymentPeriodUpdate(incomes: Option[Incomes], expenses: Option[Expenses])
 
 object SelfEmploymentPeriodUpdate {
-  implicit val format: Format[SelfEmploymentPeriodUpdate] = Json.format[SelfEmploymentPeriodUpdate]
+  implicit val writes: Writes[SelfEmploymentPeriodUpdate] = Json.writes[SelfEmploymentPeriodUpdate]
+
+  private def financialsValidator(sePeriodUpdate: SelfEmploymentPeriodUpdate): Boolean =
+    sePeriodUpdate.incomes.exists(_.hasIncomes) || sePeriodUpdate.expenses.exists(_.hasExpenses)
+
+  implicit val reads: Reads[SelfEmploymentPeriodUpdate] = (
+    (__ \ "incomes").readNullable[Incomes] and
+      (__ \ "expenses").readNullable[Expenses]
+  )(SelfEmploymentPeriodUpdate.apply _)
+    .validate(
+      Seq(
+        Validation(JsPath(),
+                   financialsValidator,
+                   ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))))
 }
