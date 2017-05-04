@@ -33,14 +33,6 @@ case class PropertiesPeriodResponse(underlying: HttpResponse) extends ResponseFi
   def createLocationHeader(nino: Nino, id: PropertyType, periodId: PeriodId): String =
     s"/self-assessment/ni/$nino/uk-properties/$id/periods/$periodId"
 
-  def containsOverlappingPeriod: Boolean =
-    json.asOpt[DesError] match {
-      case Some(err) => err.code == DesErrorCode.INVALID_PERIOD
-      case None =>
-        logger.error("The response from DES does not match the expected error format.")
-        false
-    }
-
   def transactionReference: Option[String] =
     (json \ "transactionReference").asOpt[String] match {
       case x @ Some(_) => x
@@ -48,6 +40,15 @@ case class PropertiesPeriodResponse(underlying: HttpResponse) extends ResponseFi
         logger.error("The 'transactionReference' field was not found in the response from DES")
         None
     }
+
+  def isInvalidPeriod: Boolean =
+    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_PERIOD)
+
+  def isInvalidPayload: Boolean =
+    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_PAYLOAD)
+
+  def isInvalidNino: Boolean =
+    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_NINO)
 }
 
 trait PeriodMapper[P <: Period, D <: des.properties.Period] {

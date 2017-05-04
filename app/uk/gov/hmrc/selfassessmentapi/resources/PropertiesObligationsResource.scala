@@ -20,7 +20,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.ObligationsConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
-import uk.gov.hmrc.selfassessmentapi.models.SourceType
+import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -35,7 +35,7 @@ object PropertiesObligationsResource extends BaseResource {
           case 200 =>
             logger.debug("Properties obligations from DES = " + Json.stringify(response.json))
             response.obligations("ITSP").map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
-          case 400 => BadRequest(Error.from(response.json))
+          case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
           case 404 => NotFound
           case _ => unhandledResponse(response.status, logger)
         }

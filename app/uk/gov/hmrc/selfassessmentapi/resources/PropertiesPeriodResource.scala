@@ -26,6 +26,7 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
+import uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentPeriodResource.Forbidden
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{PropertiesPeriodResponse, ResponseMapper}
 import uk.gov.hmrc.selfassessmentapi.services.AuditService
 
@@ -49,8 +50,9 @@ object PropertiesPeriodResource extends BaseResource {
                   case 200 =>
                     auditPeriodicCreate(nino, id, response, periodId)
                     Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
-                  case 400 if response.containsOverlappingPeriod => Forbidden(Error.asBusinessError(response.json))
-                  case 400 => BadRequest(Error.from(response.json))
+                  case 400 if response.isInvalidPeriod => Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))
+                  case 400 if response.isInvalidPayload => BadRequest(Json.toJson(Errors.InvalidRequest))
+                  case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
                   case 404 | 403 => NotFound
                   case _ => unhandledResponse(response.status, logger)
                 }

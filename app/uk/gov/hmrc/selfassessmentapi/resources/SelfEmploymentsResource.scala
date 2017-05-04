@@ -83,7 +83,7 @@ object SelfEmploymentsResource extends BaseResource {
       connector.get(nino).map { response =>
         response.filter {
           case 200 => response.selfEmployment(id).map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
-          case 400 => BadRequest(Error.from(response.json))
+          case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
           case 404 => NotFound
           case _ => unhandledResponse(response.status, logger)
         }
@@ -96,7 +96,7 @@ object SelfEmploymentsResource extends BaseResource {
       connector.get(nino).map { response =>
         response.filter {
           case 200 => Ok(Json.toJson(response.listSelfEmployment))
-          case 400 => BadRequest(Error.from(response.json))
+          case 400 => BadRequest(Json.toJson(Errors.NinoInvalid))
           case 404 => NotFound
           case _ => unhandledResponse(response.status, logger)
         }

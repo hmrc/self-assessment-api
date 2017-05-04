@@ -234,7 +234,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .get(s"/ni/$nino/self-employments/sourceId")
         .thenAssertThat()
         .statusIs(400)
-        .bodyIsLike(Jsons.Errors.invalidNino)
+        .bodyIsLike(Jsons.Errors.ninoInvalid)
     }
 
     "return code 404 when retrieving a self-employment resource that does not exist" in {
@@ -350,7 +350,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .get(s"/ni/$nino/self-employments")
         .thenAssertThat()
         .statusIs(400)
-        .bodyIsLike(Jsons.Errors.invalidNino)
+        .bodyIsLike(Jsons.Errors.ninoInvalid)
     }
 
     "return code 404 when attempting to retrieve self-employments for a nino that does not exist" in {

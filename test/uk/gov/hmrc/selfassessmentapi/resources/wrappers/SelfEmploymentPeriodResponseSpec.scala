@@ -35,7 +35,7 @@ class SelfEmploymentPeriodResponseSpec extends UnitSpec with MockitoSugar with B
     }
   }
 
-  "containsOverlappingPeriod" should {
+  "isInvalidPeriod" should {
     "return Some(true) if the error code from DES is equal to INVALID_PERIOD" in {
       when(mockResponse.json).thenReturn(Json.parse(
         """
@@ -45,7 +45,7 @@ class SelfEmploymentPeriodResponseSpec extends UnitSpec with MockitoSugar with B
           |}
         """.stripMargin))
 
-      unitUnderTest.containsOverlappingPeriod shouldBe true
+      unitUnderTest.isInvalidPeriod shouldBe true
     }
 
     "return Some(false) if the error code from DES is not equal to INVALID_PERIOD" in {
@@ -57,13 +57,13 @@ class SelfEmploymentPeriodResponseSpec extends UnitSpec with MockitoSugar with B
           |}
         """.stripMargin))
 
-      unitUnderTest.containsOverlappingPeriod shouldBe false
+      unitUnderTest.isInvalidPeriod shouldBe false
     }
 
     "return false if the error code from DES does no match the expected format" in {
       when(mockResponse.json).thenReturn(Json.obj())
 
-      unitUnderTest.containsOverlappingPeriod shouldBe false
+      unitUnderTest.isInvalidPeriod shouldBe false
     }
   }
 
