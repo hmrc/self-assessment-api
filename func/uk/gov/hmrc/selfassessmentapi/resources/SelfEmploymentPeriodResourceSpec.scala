@@ -32,7 +32,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
 
       val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-01"), toDate = Some("2017-03-31"))
 
-      val expectedBody = Jsons.Errors.invalidRequest(("INVALID_PERIOD", "/from"), ("INVALID_PERIOD", "/to"))
+      val expectedBody = Jsons.Errors.invalidRequest(("INVALID_PERIOD", ""))
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -60,7 +60,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
          """.stripMargin
 
       val expectedBody =
-        Jsons.Errors.invalidRequest(("NO_INCOMES_AND_EXPENSES", "/incomes"), ("NO_INCOMES_AND_EXPENSES", "/expenses"))
+        Jsons.Errors.invalidRequest(("NO_INCOMES_AND_EXPENSES", ""))
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -88,10 +88,8 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
          """.stripMargin
 
       val expectedBody =
-        Jsons.Errors.invalidRequest(("INVALID_PERIOD", "/from"),
-                                    ("INVALID_PERIOD", "/to"),
-                                    ("NO_INCOMES_AND_EXPENSES", "/incomes"),
-                                    ("NO_INCOMES_AND_EXPENSES", "/expenses"))
+        Jsons.Errors.invalidRequest(("INVALID_PERIOD", ""),
+                                    ("NO_INCOMES_AND_EXPENSES", ""))
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -215,6 +213,30 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(404)
     }
+
+    "return code 400 when attempting to update a period with no incomes and expenses" in {
+      val period =
+        s"""
+           |{
+           |  "incomes": {},
+           |  "expenses": {}
+           |}
+         """.stripMargin
+
+      val expectedBody =
+        Jsons.Errors.invalidRequest(("NO_INCOMES_AND_EXPENSES", ""))
+
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .when()
+        .put(Json.parse(period)).at(s"/ni/$nino/self-employments/abc/periods/def")
+        .thenAssertThat()
+        .statusIs(400)
+        .contentTypeIsJson()
+        .bodyIsLike(expectedBody)
+    }
+
 
     "return code 500 when we receive a status code from DES that we do not handle" in {
       val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-06"),
