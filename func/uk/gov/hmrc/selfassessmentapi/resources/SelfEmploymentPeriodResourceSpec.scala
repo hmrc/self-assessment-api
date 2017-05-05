@@ -1,7 +1,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.models.PeriodId
+import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId}
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
@@ -281,9 +281,9 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource
-        .des().selfEmployment.periodWillBeReturnedFor(nino)
+        .des().selfEmployment.periodWillBeReturnedFor(nino, from = "2017-04-05", to = "2018-04-04")
         .when()
-        .get(s"/ni/$nino/self-employments/abc/periods/def")
+        .get(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .thenAssertThat()
         .statusIs(200)
         .contentTypeIsJson()
@@ -309,7 +309,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .userIsFullyAuthorisedForTheResource
         .des().isATeapotFor(nino)
         .when()
-        .get(s"/ni/$nino/self-employments/abc/periods/def")
+        .get(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .thenAssertThat()
         .statusIs(500)
     }
@@ -343,7 +343,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .bodyIsLike(expectedBody)
         .selectFields(_ \\ "id")
         .isLength(2)
-        .matches("\\d{4}\\-\\d{2}\\-\\d{2}_\\d{4}\\-\\d{2}\\-\\d{2}".r)
+        .matches(Period.periodPattern)
     }
 
     "return code 200 containing an empty json body when retrieving all periods where periods.size == 0" in {
