@@ -708,8 +708,8 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
 
-        def periodWillBeReturnedFor(nino: Nino, id: String = "abc", periodId: String = "def"): Givens = {
-          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries/$periodId"))
+        def periodWillBeReturnedFor(nino: Nino, id: String = "abc", from: String, to : String): Givens = {
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries?from=$from&to=$to"))
             .willReturn(
               aResponse()
                 .withStatus(200)

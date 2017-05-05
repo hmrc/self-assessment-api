@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
+import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
@@ -38,9 +39,9 @@ object SelfEmploymentPeriodConnector {
     httpPost(baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries",
              des.SelfEmploymentPeriod.from(selfEmploymentPeriod))
 
-  def get(nino: Nino, id: SourceId, periodId: PeriodId)(
+  def get(nino: Nino, id: SourceId, from: LocalDate, to : LocalDate)(
       implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
-    httpGet(baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries/$periodId")
+    httpGet(baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries?from=$from&to=$to")
 
   def getAll(nino: Nino, id: SourceId)(implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
     httpGet(baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries")

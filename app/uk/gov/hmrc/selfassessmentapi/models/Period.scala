@@ -24,3 +24,13 @@ trait Period {
 
   def createPeriodId = s"${from}_$to"
 }
+
+object Period {
+  val periodPattern = """(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})""".r
+  def unapply(period: String): Option[(LocalDate, LocalDate)] = {
+    period match {
+      case periodPattern(from, to) => Some((new LocalDate(from), new LocalDate(to)))
+      case _ => None
+    }
+  }
+}
