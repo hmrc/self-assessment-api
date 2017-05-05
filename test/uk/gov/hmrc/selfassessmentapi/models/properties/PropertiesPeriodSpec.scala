@@ -35,48 +35,40 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
   "validate" should {
     "reject FHL properties where the `to` date comes before the `from` date" in
       forAll(FHLGen.genPropertiesPeriod(invalidPeriod = true)) { fhlProps =>
-        assertValidationErrorsWithCode[FHL.Properties](Json.toJson(fhlProps),
-                                                       Map("/from" -> Seq(ErrorCode.INVALID_PERIOD),
-                                                           "/to" -> Seq(ErrorCode.INVALID_PERIOD)))
+        assertValidationErrorsWithCode[FHL.Properties](Json.toJson(fhlProps), Map("" -> Seq(ErrorCode.INVALID_PERIOD)))
       }
 
     "reject Other properties where the `to` date comes before the `from` date" in
       forAll(OtherGen.genPropertiesPeriod(invalidPeriod = true)) { otherProps =>
         assertValidationErrorsWithCode[Other.Properties](Json.toJson(otherProps),
-                                                         Map("/from" -> Seq(ErrorCode.INVALID_PERIOD),
-                                                             "/to" -> Seq(ErrorCode.INVALID_PERIOD)))
+                                                         Map("" -> Seq(ErrorCode.INVALID_PERIOD)))
       }
 
     "reject FHL properties that has null financials" in
       forAll(FHLGen.genPropertiesPeriod(nullFinancials = true)) { fhlProps =>
         assertValidationErrorsWithCode[FHL.Properties](Json.toJson(fhlProps),
-                                                       Map("/incomes" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
-                                                           "/expenses" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES)))
+                                                       Map("" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES)))
       }
 
     "reject Other properties that has null financials" in
       forAll(OtherGen.genPropertiesPeriod(nullFinancials = true)) { otherProps =>
         assertValidationErrorsWithCode[Other.Properties](Json.toJson(otherProps),
-                                                         Map("/incomes" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
-                                                             "/expenses" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES)))
+                                                         Map("" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES)))
       }
 
     "reject FHL properties where the `to` date comes before the `from` date and has null financials" in
       forAll(FHLGen.genPropertiesPeriod(invalidPeriod = true, nullFinancials = true)) { fhlProps =>
-        assertValidationErrorsWithCode[FHL.Properties](Json.toJson(fhlProps),
-                                                       Map("/incomes" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
-                                                           "/expenses" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
-                                                           "/from" -> Seq(ErrorCode.INVALID_PERIOD),
-                                                           "/to" -> Seq(ErrorCode.INVALID_PERIOD)))
+        assertValidationErrorsWithCode[FHL.Properties](
+          Json.toJson(fhlProps),
+          Map("" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES, ErrorCode.INVALID_PERIOD)))
+
       }
 
     "reject Other properties where the `to` date comes before the `from` date and has null financials" in
       forAll(OtherGen.genPropertiesPeriod(invalidPeriod = true, nullFinancials = true)) { otherProps =>
-        assertValidationErrorsWithCode[Other.Properties](Json.toJson(otherProps),
-                                                         Map("/incomes" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
-                                                             "/expenses" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES),
-                                                             "/from" -> Seq(ErrorCode.INVALID_PERIOD),
-                                                             "/to" -> Seq(ErrorCode.INVALID_PERIOD)))
+        assertValidationErrorsWithCode[Other.Properties](
+          Json.toJson(otherProps),
+          Map("" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES, ErrorCode.INVALID_PERIOD)))
       }
   }
 

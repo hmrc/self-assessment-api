@@ -1,6 +1,6 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.selfassessmentapi.models.PeriodId
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
@@ -56,6 +56,35 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(400)
           .contentTypeIsJson()
           .bodyIsLike(expectedJson(propertyType))
+      }
+
+      s"return code 400 when provided with an invalid period and no incomes and expenses for $propertyType" in {
+        val period =
+          s"""
+             |{
+             |  "from": "2017-05-31",
+             |  "to": "2017-04-01"
+             |}
+         """.stripMargin
+
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .willBeCreatedFor(nino)
+          .when()
+          .post(Jsons.Properties())
+          .to(s"/ni/$nino/uk-properties")
+          .thenAssertThat()
+          .statusIs(201)
+          .when()
+          .post(Json.parse(period))
+          .to(s"%sourceLocation%/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(400)
+          .contentTypeIsJson()
+          .bodyIsLike(Jsons.Errors.invalidRequest("NO_INCOMES_AND_EXPENSES" -> "", "INVALID_PERIOD" -> ""))
       }
 
       s"return code 403 when creating an overlapping period for $propertyType" in {

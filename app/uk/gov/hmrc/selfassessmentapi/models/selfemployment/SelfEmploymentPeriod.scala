@@ -91,11 +91,11 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
       (__ \ "expenses").readNullable[Expenses]
   )(SelfEmploymentPeriod.apply _)
     .validate(
-      Seq(Validation(Seq("from", "to"),
+      Seq(Validation(JsPath(),
                      periodDateValidator,
                      ValidationError("the period 'from' date should come before the 'to' date",
                                      ErrorCode.INVALID_PERIOD)),
-          Validation(Seq("incomes", "expenses"),
+          Validation(JsPath(),
                      financialsValidator,
                      ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))))
 
