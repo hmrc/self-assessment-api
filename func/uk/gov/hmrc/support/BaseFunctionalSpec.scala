@@ -416,6 +416,14 @@ trait BaseFunctionalSpec extends TestApplication {
       this
     }
 
+    def upstream5xxError: Givens = {
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .willReturn(aResponse()
+          .withStatus(502)))
+
+      this
+    }
+
     def userIsNotAuthorisedForTheResource: Givens = {
       stubFor(post(urlPathEqualTo(s"/auth/authorise"))
         .willReturn(aResponse()

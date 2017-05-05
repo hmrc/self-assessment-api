@@ -54,6 +54,17 @@ class AuthorisationSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Errors.unauthorised)
     }
 
+    "receive 403 if an upstream 5xx error is returned" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .upstream5xxError
+        .when()
+        .get(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(403)
+        .bodyIsLike(Jsons.Errors.unauthorised)
+    }
+
     "receive 200 if they are authorised for the resource as a client or fully-authorised agent" in {
       given()
         .userIsSubscribedToMtdFor(nino)
