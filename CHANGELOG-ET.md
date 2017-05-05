@@ -1,4 +1,6 @@
-## [0.112.0] (https://github.com/hmrc/self-assessment-api/releases/tag/v0.112.0) 05-May-2017
+
+
+## [0.112.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.112.0) 05-May-2017
 
 
 * Documentation updates:

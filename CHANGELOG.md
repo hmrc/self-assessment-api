@@ -1,12 +1,12 @@
 
-### Please refer to [CHANGELOG-ET.md] (https://github.com/hmrc/self-assessment-api/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to External Test Environment.
+### Please refer to [CHANGELOG-ET.md](https://github.com/hmrc/self-assessment-api/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to External Test Environment.
 
-## [0.100.1] (https://github.com/hmrc/self-assessment-api/releases/tag/v0.100.1) 06-Mar-2017
+## [0.100.1](https://github.com/hmrc/self-assessment-api/releases/tag/v0.100.1) 06-Mar-2017
 
 * Use UTF8 for reading SICs.txt file
 
 
-## [0.99.0] (https://github.com/hmrc/self-assessment-api/releases/tag/v0.99.0) 02-Mar-2017
+## [0.99.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.99.0) 02-Mar-2017
 
 * Rename Liability end-points as Tax calculation
 * Remove field 'accountingType' from UK Properties API's
@@ -20,11 +20,11 @@
   * an Agent who is subscribed to Agent Services but has not been authorised by the client on act on their behalf
     
 
-## [0.85.0] (https://github.com/hmrc/self-assessment-api/releases/tag/v0.85.0) 24-Jan-2017
+## [0.85.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.85.0) 24-Jan-2017
 
 * Ability to provide UK interest received
 
-## [0.82.0] (https://github.com/hmrc/self-assessment-api/releases/tag/v0.82.0) 19-Jan-2017
+## [0.82.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.82.0) 19-Jan-2017
 
 * API re-design
 * Ability to provide HMRC periodic and annual information
@@ -35,7 +35,7 @@
 * Removed Liability end-point (only temporarily)
 * Removed Employment, UnEarned Income Source end-points (Not part of MVP)
 
-## [0.61.0] (https://github.com/hmrc/self-assessment-api/releases/tag/v0.61.0) 10-Oct-2016
+## [0.61.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.61.0) 10-Oct-2016
 
 * Liability endpoints have been updated to support a single liability per tax year.
 * Data Collection: Live implementation for sources
@@ -54,7 +54,7 @@
     * UK Property
 * Documentation updated to include sub groups
 
-## [0.38.0] (https://github.com/hmrc/self-assessment-api/releases/tag/v0.38.0) 29-June-2016
+## [0.38.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.38.0) 29-June-2016
 
 Sandbox implementation (all CRUD operations unless specified)
 
