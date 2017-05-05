@@ -1,7 +1,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.selfassessmentapi.models.PeriodId
+import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.support.BaseFunctionalSpec
@@ -201,7 +201,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .bodyIsLike(expectedJson.toString)
           .selectFields(_ \\ "id")
           .isLength(2)
-          .matches("\\d{4}\\-\\d{2}\\-\\d{2}_\\d{4}\\-\\d{2}\\-\\d{2}".r)
+          .matches(Period.periodPattern)
       }
 
       s"return code 200 with an empty JSON array for an $propertyType property business containing no periods" in {

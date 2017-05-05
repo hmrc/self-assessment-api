@@ -54,7 +54,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
                   case 400 if response.isInvalidBusinessId => NotFound
                   case 400 if response.isInvalidPeriod => Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))
                   case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-                  case 400 if response.isInvalidPayload  => BadRequest(Json.toJson(Errors.InvalidRequest))
+                  case 400 if response.isInvalidPayload => BadRequest(Json.toJson(Errors.InvalidRequest))
                   case 404 => NotFound
                   case _ => unhandledResponse(response.status, logger)
                 }
@@ -84,22 +84,24 @@ object SelfEmploymentPeriodResource extends BaseResource {
       }
   }
 
-  // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def retrievePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[Unit] = FeatureSwitch.async(parse.empty) {
     implicit request =>
       withAuth(nino) { implicit context =>
-        connector.get(nino, id, periodId).map { response =>
-          response.filter {
-            case 200 => response.period.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
-            case 400 => BadRequest(Error.from(response.json))
-            case 404 => NotFound
-            case _ => unhandledResponse(response.status, logger)
-          }
+        periodId match {
+          case Period(from, to) =>
+            connector.get(nino, id, from, to).map { response =>
+              response.filter {
+                case 200 => response.period.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+                case 400 => BadRequest(Error.from(response.json))
+                case 404 => NotFound
+                case _ => unhandledResponse(response.status, logger)
+              }
+            }
+          case _ => Future.successful(NotFound)
         }
       }
   }
 
-  // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def retrievePeriods(nino: Nino, id: SourceId): Action[Unit] = FeatureSwitch.async(parse.empty) { implicit request =>
     withAuth(nino) { implicit context =>
       connector.getAll(nino, id).map { response =>
@@ -118,6 +120,6 @@ object SelfEmploymentPeriodResource extends BaseResource {
                                   response: SelfEmploymentPeriodResponse,
                                   periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
     AuditService.audit(payload = PeriodicUpdate(nino, id, periodId, response.transactionReference, request.body),
-                       "self-employment-periodic-create")
+      "self-employment-periodic-create")
   }
 }
