@@ -18,33 +18,37 @@ package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
 import play.api.libs.json.Json
 import play.api.mvc.Results._
+import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.Errors
 
-class ResponseFilterSpec extends UnitSpec {
+class ResponseSpec extends UnitSpec {
   "filterResponse" should {
     "return a BadRequest with a generic error if the response contains a 4xx error and the user is a FOA" in {
       val ctx = AuthContext(isFOA = true)
 
-      new ResponseFilter {
+      new Response {
         override val status: Int = 409
+        override def underlying: HttpResponse = HttpResponse(status)
       }.filter(_ => Conflict)(ctx) shouldBe BadRequest(Json.toJson(Errors.InvalidRequest))
     }
 
     "return the response unmodified if the response contains a non-4xx error and the user is a FOA" in {
       val ctx = AuthContext(isFOA = true)
 
-      new ResponseFilter {
+      new Response {
         override val status: Int = 200
+        override def underlying: HttpResponse = HttpResponse(status)
       }.filter(_ => Ok)(ctx) shouldBe Ok
     }
 
     "return the response unmodified if the response contains a 4xx error and the user is not a FOA" in {
       val ctx = AuthContext(isFOA = false)
 
-      new ResponseFilter {
+      new Response {
         override val status: Int = 409
+        override def underlying: HttpResponse = HttpResponse(status)
       }.filter(_ => Conflict)(ctx) shouldBe Conflict
     }
 

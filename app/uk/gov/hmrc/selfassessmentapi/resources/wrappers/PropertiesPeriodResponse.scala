@@ -16,8 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import play.api.Logger
-import play.api.libs.json.{JsValue, Reads}
+import play.api.libs.json.Reads
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
@@ -25,11 +24,7 @@ import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
 import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId, PeriodSummary, des}
 
-case class PropertiesPeriodResponse(underlying: HttpResponse) extends ResponseFilter {
-  val logger: Logger = Logger(classOf[PropertiesPeriodResponse])
-  val status: Int = underlying.status
-  def json: JsValue = underlying.json
-
+case class PropertiesPeriodResponse(underlying: HttpResponse) extends Response {
   def createLocationHeader(nino: Nino, id: PropertyType, periodId: PeriodId): String =
     s"/self-assessment/ni/$nino/uk-properties/$id/periods/$periodId"
 
@@ -86,7 +81,7 @@ object PeriodMapper {
 
 trait ResponseMapper[P <: Period, D <: des.properties.Period] {
   def period(response: PropertiesPeriodResponse)(implicit reads: Reads[D], pm: PeriodMapper[P, D]): Option[P] =
-    response.json.asOpt[D] match {
+    response.underlying.json.asOpt[D] match {
       case Some(desPeriod) =>
         val from = PeriodMapper[P, D].from _
         val elideId = (p: P) => PeriodMapper[P, D].setId(p, None)
@@ -98,7 +93,7 @@ trait ResponseMapper[P <: Period, D <: des.properties.Period] {
 
   def allPeriods(response: PropertiesPeriodResponse)(implicit reads: Reads[D],
                                                      pm: PeriodMapper[P, D]): Seq[PeriodSummary] =
-    response.json.asOpt[Seq[D]] match {
+    response.underlying.json.asOpt[Seq[D]] match {
       case Some(desPeriods) =>
         val asSummary = PeriodMapper[P, D].asSummary _
         val setId = (p: P) => PeriodMapper[P, D].setId(p, Some(p.createPeriodId))

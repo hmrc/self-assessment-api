@@ -26,7 +26,6 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
-import uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentPeriodResource.Forbidden
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{PropertiesPeriodResponse, ResponseMapper}
 import uk.gov.hmrc.selfassessmentapi.services.AuditService
 

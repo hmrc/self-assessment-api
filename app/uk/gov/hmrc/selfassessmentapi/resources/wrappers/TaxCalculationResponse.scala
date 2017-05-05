@@ -16,19 +16,12 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import play.api.Logger
-import play.api.libs.json.JsValue
 import uk.gov.hmrc.play.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.calculation.TaxCalculation
+import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 
-class TaxCalculationResponse(underlying: HttpResponse) extends ResponseFilter {
-
-  private val logger: Logger = Logger(classOf[TaxCalculationResponse])
-
-  val status: Int = underlying.status
-  def json: JsValue = underlying.json
+case class TaxCalculationResponse(underlying: HttpResponse) extends Response {
 
   def calcId: Option[String] = {
     (json \ "id").asOpt[String] match {
@@ -60,7 +53,3 @@ class TaxCalculationResponse(underlying: HttpResponse) extends ResponseFilter {
     json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_IDENTIFIER)
 }
 
-object TaxCalculationResponse {
-  def apply(httpResponse: HttpResponse): TaxCalculationResponse =
-    new TaxCalculationResponse(httpResponse)
-}

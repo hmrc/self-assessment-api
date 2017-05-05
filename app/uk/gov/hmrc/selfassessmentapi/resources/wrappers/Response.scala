@@ -16,18 +16,34 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import play.api.libs.json.Json
+import play.api.Logger
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import play.api.mvc.Results.BadRequest
+import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.Errors
 
-trait ResponseFilter {
-  val status: Int
+trait Response {
+  val logger: Logger = Logger(classOf[Response])
 
-  def filter(f: Int => Result)
-            (implicit context: AuthContext): Result = {
-    if (status / 100 == 4 && context.isFOA) BadRequest(Json.toJson(Errors.InvalidRequest))
-    else f(status)
-  }
+  def underlying: HttpResponse
+
+  def json: JsValue = underlying.json
+
+  val status: Int = underlying.status
+
+  private def logResponse(): Unit =
+    logger.error(s"DES error occurred with status code ${underlying.status} and body ${underlying.body}")
+
+  def filter(f: Int => Result)(implicit context: AuthContext): Result =
+    status / 100 match {
+      case 4 if context.isFOA =>
+        logResponse()
+        BadRequest(Json.toJson(Errors.InvalidRequest))
+      case 4 | 5 =>
+        logResponse()
+        f(status)
+      case _ => f(status)
+    }
 }

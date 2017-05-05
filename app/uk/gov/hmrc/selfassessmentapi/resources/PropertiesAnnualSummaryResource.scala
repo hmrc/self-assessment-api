@@ -22,7 +22,12 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesAnnualSummaryConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
-import uk.gov.hmrc.selfassessmentapi.models.properties.{FHLPropertiesAnnualSummary, OtherPropertiesAnnualSummary, PropertiesAnnualSummary, PropertyType}
+import uk.gov.hmrc.selfassessmentapi.models.properties.{
+  FHLPropertiesAnnualSummary,
+  OtherPropertiesAnnualSummary,
+  PropertiesAnnualSummary,
+  PropertyType
+}
 import uk.gov.hmrc.selfassessmentapi.models.{SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
 
@@ -33,50 +38,52 @@ object PropertiesAnnualSummaryResource extends BaseResource {
   private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.Properties, "annual")
   private val connector = PropertiesAnnualSummaryConnector
 
-  def updateAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
-    withAuth(nino) { implicit context =>
-      validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) match {
-        case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-        case Right(result) => result.map { response =>
+  def updateAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[JsValue] =
+    FeatureSwitch.async(parse.json) { implicit request =>
+      withAuth(nino) { context =>
+        validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) match {
+          case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
+          case Right(result) =>
+            result.map { response =>
+              response.filter {
+                case 200 => NoContent
+                case 404 => NotFound
+                case 400 => BadRequest(Error.from(response.json))
+                case _ => unhandledResponse(response.status, logger)
+              }(context)
+            }
+        }
+      }
+    }
+
+  def retrieveAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[AnyContent] =
+    FeatureSwitch.async { implicit request =>
+      withAuth(nino) { context =>
+        connector.get(nino, propertyId, taxYear).map { response =>
           response.filter {
-            case 200 => NoContent
+            case 200 =>
+              response.annualSummary match {
+                case Some(summary) =>
+                  summary match {
+                    case other: OtherPropertiesAnnualSummary => Ok(Json.toJson(other))
+                    case fhl: FHLPropertiesAnnualSummary => Ok(Json.toJson(fhl))
+                  }
+                case None => NotFound
+              }
             case 404 => NotFound
             case 400 => BadRequest(Error.from(response.json))
             case _ => unhandledResponse(response.status, logger)
-          }
+          }(context)
         }
       }
     }
-  }
-
-  def retrieveAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[AnyContent] = FeatureSwitch.async { implicit request =>
-    withAuth(nino) { implicit context =>
-      connector.get(nino, propertyId, taxYear).map { response =>
-        response.filter {
-          case 200 =>
-            response.annualSummary match {
-              case Some(summary) => summary match {
-                case other: OtherPropertiesAnnualSummary => Ok(Json.toJson(other))
-                case fhl: FHLPropertiesAnnualSummary => Ok(Json.toJson(fhl))
-              }
-              case None => NotFound
-            }
-          case 404 => NotFound
-          case 400 => BadRequest(Error.from(response.json))
-          case _ => unhandledResponse(response.status, logger)
-        }
-      }
-    }
-  }
 
   private def validateProperty(propertyId: PropertyType,
                                body: JsValue,
-                               f: PropertiesAnnualSummary => Future[PropertiesAnnualSummaryResponse]) = {
-    val validationFunc = propertyId match {
-      case PropertyType.OTHER => validate[OtherPropertiesAnnualSummary, PropertiesAnnualSummaryResponse](body) _
-      case PropertyType.FHL => validate[FHLPropertiesAnnualSummary, PropertiesAnnualSummaryResponse](body) _
+                               f: PropertiesAnnualSummary => Future[PropertiesAnnualSummaryResponse]) =
+    propertyId match {
+      case PropertyType.OTHER => validate[OtherPropertiesAnnualSummary, PropertiesAnnualSummaryResponse](body)(f)
+      case PropertyType.FHL => validate[FHLPropertiesAnnualSummary, PropertiesAnnualSummaryResponse](body)(f)
     }
 
-    validationFunc(f(_))
-  }
 }

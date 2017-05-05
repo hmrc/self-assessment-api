@@ -16,19 +16,12 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import play.api.Logger
-import play.api.libs.json.JsValue
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType._
-import uk.gov.hmrc.selfassessmentapi.models.properties.{OtherPropertiesAnnualSummary, FHLPropertiesAnnualSummary, PropertiesAnnualSummary, PropertyType}
+import uk.gov.hmrc.selfassessmentapi.models.properties.{FHLPropertiesAnnualSummary, OtherPropertiesAnnualSummary, PropertiesAnnualSummary, PropertyType}
 
-class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlying: HttpResponse) extends ResponseFilter {
-  private val logger = Logger(classOf[PropertiesAnnualSummaryResponse])
-
-  val status: Int = underlying.status
-
-  def json: JsValue = underlying.json
+case class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlying: HttpResponse) extends Response {
 
   def annualSummary: Option[PropertiesAnnualSummary] = propertyType match {
     case PropertyType.OTHER =>
@@ -48,10 +41,4 @@ class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlying: Ht
         }
       }
   }
-}
-
-
-object PropertiesAnnualSummaryResponse {
-  def apply(propertyType: PropertyType, httpResponse: HttpResponse): PropertiesAnnualSummaryResponse =
-    new PropertiesAnnualSummaryResponse(propertyType, httpResponse)
 }

@@ -16,22 +16,13 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import play.api.Logger
-import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.properties.Properties
 
-class PropertiesResponse(underlying: HttpResponse) extends ResponseFilter {
-
-
-  private val logger: Logger = Logger(classOf[PropertiesResponse])
-
-  val status: Int = underlying.status
-
-  def json: JsValue = underlying.json
+case class PropertiesResponse(underlying: HttpResponse) extends Response {
 
   def createLocationHeader(nino: Nino): String = s"/self-assessment/ni/$nino/uk-properties"
 
@@ -47,8 +38,4 @@ class PropertiesResponse(underlying: HttpResponse) extends ResponseFilter {
 
   def isInvalidNino: Boolean =
     json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_NINO)
-}
-
-object PropertiesResponse {
-  def apply(response: HttpResponse): PropertiesResponse = new PropertiesResponse(response)
 }
