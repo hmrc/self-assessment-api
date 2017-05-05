@@ -34,7 +34,6 @@ trait PropertiesPeriodConnector[P <: Period, F <: Financials] {
 }
 
 object PropertiesPeriodConnector {
-
   def apply[P <: Period, F <: Financials](
       implicit p: PropertiesPeriodConnector[P, F]): PropertiesPeriodConnector[P, F] = implicitly
 

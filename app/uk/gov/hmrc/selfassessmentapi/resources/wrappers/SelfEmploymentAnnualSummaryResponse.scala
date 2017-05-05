@@ -16,18 +16,11 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import play.api.Logger
-import play.api.libs.json.JsValue
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentAnnualSummary
 
-class SelfEmploymentAnnualSummaryResponse(underlying: HttpResponse) extends ResponseFilter {
-
-  private val logger = Logger(classOf[SelfEmploymentAnnualSummaryResponse])
-
-  val status: Int = underlying.status
-  def json: JsValue = underlying.json
+case class SelfEmploymentAnnualSummaryResponse(underlying: HttpResponse) extends Response {
 
   def annualSummary: Option[SelfEmploymentAnnualSummary] = {
     json.asOpt[des.SelfEmploymentAnnualSummary] match {
@@ -38,9 +31,4 @@ class SelfEmploymentAnnualSummaryResponse(underlying: HttpResponse) extends Resp
       }
     }
   }
-}
-
-object SelfEmploymentAnnualSummaryResponse {
-  def apply(httpResponse: HttpResponse): SelfEmploymentAnnualSummaryResponse =
-    new SelfEmploymentAnnualSummaryResponse(httpResponse)
 }

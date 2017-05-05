@@ -16,32 +16,21 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import play.api.Logger
-import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentRetrieve
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, des}
 
-class SelfEmploymentResponse(underlying: HttpResponse) extends ResponseFilter {
+case class SelfEmploymentResponse(underlying: HttpResponse) extends Response {
 
-
-  private val logger: Logger = Logger(classOf[SelfEmploymentResponse])
-
-  val status: Int = underlying.status
-
-  def json: JsValue = underlying.json
-
-  def createLocationHeader(nino: Nino): Option[String] = {
+  def createLocationHeader(nino: Nino): Option[String] =
     (json \ "incomeSources" \\ "incomeSourceId").map(_.asOpt[String]) match {
       case Some(id) +: _ => Some(s"/self-assessment/ni/$nino/self-employments/$id")
-      case _ => {
+      case _ =>
         logger.error("The 'incomeSourceId' field was not found in the response from DES.")
         None
-      }
     }
-  }
 
   def selfEmployment(id: SourceId): Option[SelfEmploymentRetrieve] =
     (json \ "businessData").asOpt[Seq[des.SelfEmployment]] match {
@@ -55,7 +44,7 @@ class SelfEmploymentResponse(underlying: HttpResponse) extends ResponseFilter {
         None
     }
 
-  def listSelfEmployment: Seq[SelfEmploymentRetrieve] = {
+  def listSelfEmployment: Seq[SelfEmploymentRetrieve] =
     (json \ "businessData").asOpt[Seq[des.SelfEmployment]] match {
       case Some(selfEmployments) =>
         selfEmployments.flatMap(SelfEmploymentRetrieve.from)
@@ -63,14 +52,8 @@ class SelfEmploymentResponse(underlying: HttpResponse) extends ResponseFilter {
         logger.error("The 'businessData' field was not found in the response from DES")
         Seq.empty
     }
-  }
 
   def isInvalidNino: Boolean =
     json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_NINO)
 
-}
-
-object SelfEmploymentResponse {
-  def apply(response: HttpResponse): SelfEmploymentResponse =
-    new SelfEmploymentResponse(response)
 }

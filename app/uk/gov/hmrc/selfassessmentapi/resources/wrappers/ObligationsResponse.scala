@@ -16,17 +16,11 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import play.api.Logger
-import play.api.libs.json.JsValue
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.{Obligation, Obligations, SourceId, des}
 
-case class ObligationsResponse(underlying: HttpResponse) extends ResponseFilter {
-
-
-  val status: Int = underlying.status
-  private val logger: Logger = Logger(classOf[ObligationsResponse])
+case class ObligationsResponse(underlying: HttpResponse) extends Response {
 
   def obligations(incomeSourceType: String, id: Option[SourceId] = None): Option[Obligations] = {
 
@@ -55,5 +49,4 @@ case class ObligationsResponse(underlying: HttpResponse) extends ResponseFilter 
   def isInvalidNino: Boolean =
     json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_NINO)
 
-  def json: JsValue = underlying.json
 }

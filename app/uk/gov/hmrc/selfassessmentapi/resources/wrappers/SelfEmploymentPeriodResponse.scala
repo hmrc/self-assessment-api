@@ -16,20 +16,13 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import play.api.Logger
-import play.api.libs.json.JsValue
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentPeriod
 
-case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends ResponseFilter {
-
-
-  private val logger: Logger = Logger(classOf[SelfEmploymentPeriodResponse])
-  val status: Int = underlying.status
-  def json: JsValue = underlying.json
+case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Response {
 
   def createLocationHeader(nino: Nino, id: SourceId, periodId: PeriodId): String = {
     s"/self-assessment/ni/$nino/${SourceType.SelfEmployments.toString}/$id/periods/$periodId"
@@ -61,10 +54,9 @@ case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Respon
   def transactionReference: Option[String] = {
     (json \ "transactionReference").asOpt[String] match {
       case x @ Some(_) => x
-      case None => {
+      case None =>
         logger.error("The 'transactionReference' field was not found in the response from DES")
         None
-      }
     }
   }
 
@@ -80,4 +72,3 @@ case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Respon
   def isInvalidBusinessId: Boolean =
     json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_BUSINESSID)
 }
-

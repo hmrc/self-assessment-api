@@ -297,13 +297,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
     for (propertyType <- Seq(PropertyType.OTHER, PropertyType.FHL)) {
 
       s"return code 204 when updating an $propertyType period" in {
-        val updatedPeriod = Jsons.Properties.fhlPeriod(rentIncome = 600,
-                                                       premisesRunningCosts = 20.20,
-                                                       repairsAndMaintenance = 111.25,
-                                                       financialCosts = 160,
-                                                       professionalFees = 1132.55,
-                                                       otherCost = 50.12)
-
+        val updatedPeriod = period(propertyType)
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource

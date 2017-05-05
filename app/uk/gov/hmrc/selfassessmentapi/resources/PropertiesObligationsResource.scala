@@ -17,9 +17,9 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.Json
+import play.api.mvc.Action
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.ObligationsConnector
-import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -28,18 +28,19 @@ object PropertiesObligationsResource extends BaseResource {
   private val FeatureSwitch = FeatureSwitchAction(SourceType.Properties, "obligations")
   private val connector = ObligationsConnector
 
-  def retrieveObligations(nino: Nino) = FeatureSwitch.async(parse.empty) { implicit headers =>
-    withAuth(nino) { implicit context =>
-      connector.get(nino).map { response =>
-        response.filter {
-          case 200 =>
-            logger.debug("Properties obligations from DES = " + Json.stringify(response.json))
-            response.obligations("ITSP").map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
-          case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-          case 404 => NotFound
-          case _ => unhandledResponse(response.status, logger)
+  def retrieveObligations(nino: Nino): Action[Unit] =
+    FeatureSwitch.async(parse.empty) { implicit headers =>
+      withAuth(nino) { implicit context =>
+        connector.get(nino).map { response =>
+          response.filter {
+            case 200 =>
+              logger.debug("Properties obligations from DES = " + Json.stringify(response.json))
+              response.obligations("ITSP").map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+            case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
+            case 404 => NotFound
+            case _ => unhandledResponse(response.status, logger)
+          }
         }
       }
     }
-  }
 }
