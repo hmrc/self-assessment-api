@@ -40,7 +40,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
 
   def updateAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[JsValue] =
     FeatureSwitch.async(parse.json) { implicit request =>
-      withAuth(nino) { context =>
+      withAuth(nino) { implicit context =>
         validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) match {
           case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
           case Right(result) =>
@@ -50,7 +50,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
                 case 404 => NotFound
                 case 400 => BadRequest(Error.from(response.json))
                 case _ => unhandledResponse(response.status, logger)
-              }(context)
+              }
             }
         }
       }
@@ -58,7 +58,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
 
   def retrieveAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[AnyContent] =
     FeatureSwitch.async { implicit request =>
-      withAuth(nino) { context =>
+      withAuth(nino) { implicit context =>
         connector.get(nino, propertyId, taxYear).map { response =>
           response.filter {
             case 200 =>
@@ -73,7 +73,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
             case 404 => NotFound
             case 400 => BadRequest(Error.from(response.json))
             case _ => unhandledResponse(response.status, logger)
-          }(context)
+          }
         }
       }
     }

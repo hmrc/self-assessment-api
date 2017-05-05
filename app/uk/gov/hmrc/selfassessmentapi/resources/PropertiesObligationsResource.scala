@@ -30,7 +30,7 @@ object PropertiesObligationsResource extends BaseResource {
 
   def retrieveObligations(nino: Nino): Action[Unit] =
     FeatureSwitch.async(parse.empty) { implicit headers =>
-      withAuth(nino) { context =>
+      withAuth(nino) { implicit context =>
         connector.get(nino).map { response =>
           response.filter {
             case 200 =>
@@ -39,7 +39,7 @@ object PropertiesObligationsResource extends BaseResource {
             case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
             case 404 => NotFound
             case _ => unhandledResponse(response.status, logger)
-          }(context)
+          }
         }
       }
     }
