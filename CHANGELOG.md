@@ -1,3 +1,6 @@
+
+### Please refer to [CHANGELOG-ET.md] (https://github.com/hmrc/self-assessment-api/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to External Test Environment.
+
 ## [0.100.1] (https://github.com/hmrc/self-assessment-api/releases/tag/v0.100.1) 06-Mar-2017
 
 * Use UTF8 for reading SICs.txt file
