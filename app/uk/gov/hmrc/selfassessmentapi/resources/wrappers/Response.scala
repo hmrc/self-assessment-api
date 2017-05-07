@@ -25,7 +25,7 @@ import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.Errors
 
 trait Response {
-  val logger: Logger = Logger(classOf[Response])
+  val logger: Logger = Logger(this.getClass)
 
   def underlying: HttpResponse
 

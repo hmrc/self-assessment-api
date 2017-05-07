@@ -24,34 +24,33 @@ import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.DividendsAnnualSummaryService
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 object DividendsAnnualSummaryResource extends BaseResource {
 
   private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.Dividends, "annual")
   private val service = DividendsAnnualSummaryService
 
-  def updateAnnualSummary(nino: Nino, taxYear: TaxYear): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
-    withAuth(nino) { _ =>
-      validate[Dividends, Boolean](request.body) { dividends =>
-        service.updateAnnualSummary(nino, taxYear, dividends)
-      } match {
-        case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-        case Right(result) => result.map { ok =>
-          if (ok) NoContent else InternalServerError
+  def updateAnnualSummary(nino: Nino, taxYear: TaxYear): Action[JsValue] =
+    FeatureSwitch.async(parse.json) { implicit request =>
+      withAuth(nino) { _ =>
+        validate[Dividends, Boolean](request.body) { dividends =>
+          service.updateAnnualSummary(nino, taxYear, dividends)
+        } map {
+          case Left(errorResult) => handleValidationErrors(errorResult)
+          case Right(true) => NoContent
+          case _ => InternalServerError
         }
       }
     }
-  }
 
-  def retrieveAnnualSummary(nino: Nino, taxYear: TaxYear): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
-    withAuth(nino) { context =>
-      service.retrieveAnnualSummary(nino, taxYear).map {
-        case Some(summary) => Ok(Json.toJson(summary))
-        case None =>
-          if (context.isFOA) BadRequest(Json.toJson(Errors.InvalidRequest))
-          else NotFound
+  def retrieveAnnualSummary(nino: Nino, taxYear: TaxYear): Action[AnyContent] =
+    FeatureSwitch.async { implicit headers =>
+      withAuth(nino) { context =>
+        service.retrieveAnnualSummary(nino, taxYear).map {
+          case Some(summary) => Ok(Json.toJson(summary))
+          case None if context.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
+          case _ => NotFound
+        }
       }
     }
-  }
 }

@@ -40,21 +40,19 @@ object PropertiesPeriodResource extends BaseResource {
   def createPeriod(nino: Nino, id: PropertyType): Action[JsValue] =
     FeatureSwitch.async(parse.json) { implicit request =>
       withAuth(nino) { implicit context =>
-        validateCreateRequest(id, nino, request) match {
-          case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-          case Right(result) =>
-            result.map {
-              case (periodId, response) =>
-                response.filter {
-                  case 200 =>
-                    auditPeriodicCreate(nino, id, response, periodId)
-                    Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
-                  case 400 if response.isInvalidPeriod => Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))
-                  case 400 if response.isInvalidPayload => BadRequest(Json.toJson(Errors.InvalidRequest))
-                  case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-                  case 404 | 403 => NotFound
-                  case _ => unhandledResponse(response.status, logger)
-                }
+        validateCreateRequest(id, nino, request) map {
+          case Left(errorResult) => handleValidationErrors(errorResult)
+          case Right((periodId, response)) =>
+            response.filter {
+              case 200 =>
+                auditPeriodicCreate(nino, id, response, periodId)
+                Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
+              case 400 if response.isInvalidPeriod =>
+                Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))
+              case 400 if response.isInvalidPayload => BadRequest(Json.toJson(Errors.InvalidRequest))
+              case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
+              case 404 | 403 => NotFound
+              case _ => unhandledResponse(response.status, logger)
             }
         }
       }
@@ -63,15 +61,13 @@ object PropertiesPeriodResource extends BaseResource {
   def updatePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[JsValue] =
     FeatureSwitch.async(parse.json) { implicit request =>
       withAuth(nino) { implicit context =>
-        validateUpdateRequest(id, nino, periodId, request) match {
-          case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
+        validateUpdateRequest(id, nino, periodId, request) map {
+          case Left(errorResult) => handleValidationErrors(errorResult)
           case Right(response) =>
-            response.map { response =>
-              response.filter {
-                case 204 => NoContent
-                case 404 => NotFound
-                case _ => unhandledResponse(response.status, logger)
-              }
+            response.filter {
+              case 204 => NoContent
+              case 404 => NotFound
+              case _ => unhandledResponse(response.status, logger)
             }
         }
       }
@@ -124,7 +120,7 @@ object PropertiesPeriodResource extends BaseResource {
     }
 
   private def validateCreateRequest(id: PropertyType, nino: Nino, request: Request[JsValue])(
-    implicit hc: HeaderCarrier): Either[ErrorResult, Future[(PeriodId, PropertiesPeriodResponse)]] =
+      implicit hc: HeaderCarrier): Future[Either[ErrorResult, (PeriodId, PropertiesPeriodResponse)]] =
     id match {
       case PropertyType.OTHER =>
         validate[Other.Properties, (PeriodId, PropertiesPeriodResponse)](request.body) { period =>
@@ -142,7 +138,7 @@ object PropertiesPeriodResource extends BaseResource {
     }
 
   private def validateUpdateRequest(id: PropertyType, nino: Nino, periodId: PeriodId, request: Request[JsValue])(
-    implicit hc: HeaderCarrier): Either[ErrorResult, Future[PropertiesPeriodResponse]] =
+      implicit hc: HeaderCarrier): Future[Either[ErrorResult, PropertiesPeriodResponse]] =
     id match {
       case PropertyType.OTHER =>
         validate[Other.Financials, PropertiesPeriodResponse](request.body)(
@@ -157,7 +153,7 @@ object PropertiesPeriodResource extends BaseResource {
                                   response: PropertiesPeriodResponse,
                                   periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
     AuditService.audit(payload =
-      PeriodicUpdate(nino, id.toString, periodId, response.transactionReference, request.body),
-      s"$id-property-periodic-create")
+                         PeriodicUpdate(nino, id.toString, periodId, response.transactionReference, request.body),
+                       s"$id-property-periodic-create")
   }
 }
