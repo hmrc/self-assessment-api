@@ -21,10 +21,14 @@ import org.scalacheck.Gen
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import play.api.libs.json.Json
 import uk.gov.hmrc.selfassessmentapi.models.Generators._
-import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, Expense, SimpleIncome}
+import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, SimpleIncome}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
 class SelfEmploymentPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
+
+  implicit override val generatorDrivenConfig =
+    PropertyCheckConfig(minSuccessful = 200)
+
   "SelfEmploymentPeriod" should {
     "round trip" in forAll(genSelfEmploymentPeriod())(roundTripJson(_))
 
@@ -71,7 +75,7 @@ class SelfEmploymentPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChec
       val from = LocalDate.now()
       val to = from.plusDays(1)
       SelfEmploymentPeriod(None, if (invalidPeriod) to else from, if (invalidPeriod) from else to, incomes, expenses)
-    }) suchThat { period =>
+    }) retryUntil { period =>
       if (nullFinancials) period.incomes.isEmpty && period.expenses.isEmpty
       else period.incomes.exists(_.hasIncomes) || period.expenses.exists(_.hasExpenses)
     }

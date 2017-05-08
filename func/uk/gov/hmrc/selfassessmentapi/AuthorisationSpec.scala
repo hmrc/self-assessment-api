@@ -54,6 +54,50 @@ class AuthorisationSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Errors.unauthorised)
     }
 
+    "receive 403 if an upstream 502 error with 'Unable to decrypt value message' is returned" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .upstream502BearerTokenDecryptionError
+        .when()
+        .get(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(403)
+        .bodyIsLike(Jsons.Errors.unauthorised)
+    }
+
+    "receive 500 if an upstream 5xx error is returned" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .upstream5xxError
+        .when()
+        .get(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(500)
+        .bodyIsLike(Jsons.Errors.internalServerError)
+    }
+
+    "receive 500 if an upstream 4xx error is returned" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .upstream4xxError
+        .when()
+        .get(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(500)
+        .bodyIsLike(Jsons.Errors.internalServerError)
+    }
+
+    "receive 500 if an upstream non-fatal exception error is returned" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .upstreamNonFatal
+        .when()
+        .get(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(500)
+        .bodyIsLike(Jsons.Errors.internalServerError)
+    }
+
     "receive 200 if they are authorised for the resource as a client or fully-authorised agent" in {
       given()
         .userIsSubscribedToMtdFor(nino)

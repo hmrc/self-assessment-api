@@ -22,6 +22,7 @@ import play.api.mvc.Result
 import play.api.mvc.Results.{BadRequest, InternalServerError}
 import uk.gov.hmrc.selfassessmentapi.models.{ErrorResult, Errors, GenericErrorResult, ValidationErrorResult}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
@@ -41,20 +42,11 @@ package object resources {
     }
   }
 
-  def validate[T](id: String, jsValue: JsValue)(implicit reads: Reads[T]): Either[ErrorResult, String] = {
+  def validate[T, R](jsValue: JsValue)(f: T => Future[R])(implicit reads: Reads[T]): Future[Either[ErrorResult, R]] =
     Try(jsValue.validate[T]) match {
-      case Success(JsSuccess(_, _)) => Right(id)
-      case Success(JsError(errors)) => Left(ValidationErrorResult(errors))
-      case Failure(e) => Left(GenericErrorResult(s"could not parse body due to ${e.getMessage}"))
+      case Success(JsSuccess(payload, _)) => f(payload).map(Right(_))
+      case Success(JsError(errors)) => Future.successful(Left(ValidationErrorResult(errors)))
+      case Failure(e) => Future.successful(Left(GenericErrorResult(s"could not parse body due to ${e.getMessage}")))
     }
-  }
-
-  def validate[T, R](jsValue: JsValue)(f: T => Future[R])(implicit reads: Reads[T]): Either[ErrorResult, Future[R]] = {
-    Try(jsValue.validate[T]) match {
-      case Success(JsSuccess(payload, _)) => Right(f(payload))
-      case Success(JsError(errors)) => Left(ValidationErrorResult(errors))
-      case Failure(e) => Left(GenericErrorResult(s"could not parse body due to ${e.getMessage}"))
-    }
-  }
 
 }

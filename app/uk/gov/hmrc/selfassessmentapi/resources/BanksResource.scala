@@ -24,40 +24,37 @@ import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType}
 import uk.gov.hmrc.selfassessmentapi.services.BanksService
 
 import scala.concurrent.ExecutionContext.Implicits._
-import scala.concurrent.Future
 
 object BanksResource extends BaseResource {
   private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.Banks)
   private val service = BanksService
 
-  def create(nino: Nino): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
-    withAuth(nino) { _ =>
-      validate[Bank, Option[SourceId]](request.body) { bank =>
-        service.create(nino, bank)
-      } match {
-        case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-        case Right(idOption) => idOption.map {
-          case Some(id) => Created.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/savings-accounts/$id")
-          case None => InternalServerError
+  def create(nino: Nino): Action[JsValue] =
+    FeatureSwitch.async(parse.json) { implicit request =>
+      withAuth(nino) { _ =>
+        validate[Bank, Option[SourceId]](request.body) { bank =>
+          service.create(nino, bank)
+        } map {
+          case Left(errorResult) => handleValidationErrors(errorResult)
+          case Right(Some(id)) => Created.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/savings-accounts/$id")
+          case Right(None) => InternalServerError
         }
       }
     }
-  }
 
-  def update(nino: Nino, id: SourceId): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
-    withAuth(nino) { context =>
-      validate[Bank, Boolean](request.body) { bank =>
-        service.update(nino, bank, id)
-      } match {
-        case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-        case Right(result) => result.map {
-          case true => NoContent
-          case false if context.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
-          case false => NotFound
+  def update(nino: Nino, id: SourceId): Action[JsValue] =
+    FeatureSwitch.async(parse.json) { implicit request =>
+      withAuth(nino) { context =>
+        validate[Bank, Boolean](request.body) { bank =>
+          service.update(nino, bank, id)
+        } map {
+          case Left(errorResult) => handleValidationErrors(errorResult)
+          case Right(true) => NoContent
+          case Right(false) if context.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
+          case _ => NotFound
         }
       }
     }
-  }
 
   def retrieve(nino: Nino, id: SourceId): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
     withAuth(nino) { context =>
