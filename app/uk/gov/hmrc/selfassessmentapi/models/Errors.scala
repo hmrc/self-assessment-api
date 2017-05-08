@@ -89,7 +89,7 @@ object Errors {
 
   object NinoInvalid extends Error("NINO_INVALID", "The provided Nino is invalid", None)
   object InvalidRequest extends Error("INVALID_REQUEST", "Invalid request", None)
-  object InvalidPeriod extends Error("INVALID_PERIOD", "Periods should be contiguous and have no gaps between one another", None)
+  object InvalidPeriod extends Error("INVALID_PERIOD", "Periods should be contiguous and have no gaps between one another", Some(""))
   object ClientNotSubscribed extends Error("CLIENT_NOT_SUBSCRIBED", "The client is not subscribed to MTD", None)
   object AgentNotAuthorized extends Error("AGENT_NOT_AUTHORIZED", "The agent is not authorized", None)
   object AgentNotSubscribed extends Error("AGENT_NOT_SUBSCRIBED", "The agent is not subscribed to agent services", None)
