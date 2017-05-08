@@ -416,13 +416,40 @@ trait BaseFunctionalSpec extends TestApplication {
       this
     }
 
-    def upstream5xxError: Givens = {
+    def upstream502BearerTokenDecryptionError: Givens = {
       stubFor(post(urlPathEqualTo(s"/auth/authorise"))
         .willReturn(aResponse()
-          .withStatus(502)))
+          .withStatus(502)
+          .withHeader("Content-Type", "application/json")
+          .withBody("""{"statusCode":500,"message":"Unable to decrypt value"}""")))
 
       this
     }
+
+    def upstream5xxError: Givens = {
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .willReturn(aResponse()
+          .withStatus(500)))
+
+      this
+    }
+
+    def upstream4xxError: Givens = {
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .willReturn(aResponse()
+          .withStatus(403)))
+
+      this
+    }
+
+    def upstreamNonFatal: Givens = {
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .willReturn(aResponse()
+          .withStatus(509))) // very brittle test that relies on how http-verbs.HttpErrorFunctions maps upstream status codes
+
+      this
+    }
+
 
     def userIsNotAuthorisedForTheResource: Givens = {
       stubFor(post(urlPathEqualTo(s"/auth/authorise"))

@@ -21,13 +21,15 @@ import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.play.http.{HeaderCarrier, Upstream5xxResponse}
+import uk.gov.hmrc.play.http.{HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuthConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, MtdId}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.control.NonFatal
+import scala.util.matching.Regex
 
 object AuthenticationService extends AuthorisedFunctions {
   override def authConnector: AuthConnector = MicroserviceAuthConnector
@@ -80,8 +82,23 @@ object AuthenticationService extends AuthorisedFunctions {
   }
 
   private def unhandledError: PartialFunction[Throwable, Future[Result]] = {
-    case e @ (_: AuthorisationException | _: Upstream5xxResponse) => //FIXME temporary solution until play-auth handles upstream 5xx errors
+    val regex: Regex = """.*"Unable to decrypt value".*""".r
+    lazy val internalServerError = Future.successful(
+      InternalServerError(Json.toJson(Errors.InternalServerError("An internal server error occurred"))))
+
+    {
+      case e @ (_: AuthorisationException | Upstream5xxResponse(regex(_ *), _, _)) =>
       logger.error(s"Authorisation failed with unexpected exception. Bad token? Exception: [$e]")
       Future.successful(Forbidden(Json.toJson(Errors.BadToken)))
+      case e: Upstream4xxResponse =>
+        logger.error(s"Unhandled 4xx response from play-auth: [$e]. Returning 500 to client.")
+        internalServerError
+      case e: Upstream5xxResponse =>
+        logger.error(s"Unhandled 5xx response from play-auth: [$e]. Returning 500 to client.")
+        internalServerError
+      case NonFatal(e) =>
+        logger.error(s"Unhandled non-fatal exception from play-auth: [$e]. Returning 500 to client.")
+        internalServerError
+    }
   }
 }
