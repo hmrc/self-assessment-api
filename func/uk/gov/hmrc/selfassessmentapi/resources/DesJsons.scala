@@ -2,7 +2,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.models.des.properties.{FHL, Other}
+import uk.gov.hmrc.selfassessmentapi.models.des.properties.{Common, FHL, Other}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 
@@ -263,7 +263,7 @@ object DesJsons {
                        to = to,
                        financials = Some(
                          FHL
-                           .Financials(incomes = Some(FHL.Incomes(rentIncome = Some(rentIncome))),
+                           .Financials(incomes = Some(FHL.Incomes(rentIncome = Some(Common.Income(rentIncome)))),
                                        deductions = Some(
                                          FHL.Deductions(premisesRunningCosts = Some(premisesRunningCosts),
                                                         repairsAndMaintenance = Some(repairsAndMaintenance),
@@ -292,7 +292,7 @@ object DesJsons {
                       to = to,
                       financials = Some(
                         Other.Financials(incomes = Some(Other.Incomes(rentIncome =
-                                                                        Some(Other.Income(rentIncome, rentIncomeTaxDeducted)),
+                                                                        Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
                           premiumsOfLeaseGrant = premiumsOfLeaseGrant,
                           reversePremiums = reversePremiums)),
                           deductions = Some(Other.Deductions(
