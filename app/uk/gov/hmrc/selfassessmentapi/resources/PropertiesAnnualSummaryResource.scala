@@ -41,16 +41,14 @@ object PropertiesAnnualSummaryResource extends BaseResource {
   def updateAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[JsValue] =
     FeatureSwitch.async(parse.json) { implicit request =>
       withAuth(nino) { implicit context =>
-        validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) match {
-          case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-          case Right(result) =>
-            result.map { response =>
-              response.filter {
-                case 200 => NoContent
-                case 404 => NotFound
-                case 400 => BadRequest(Error.from(response.json))
-                case _ => unhandledResponse(response.status, logger)
-              }
+        validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) map {
+          case Left(errorResult) => handleValidationErrors(errorResult)
+          case Right(response) =>
+            response.filter {
+              case 200 => NoContent
+              case 404 => NotFound
+              case 400 => BadRequest(Error.from(response.json))
+              case _ => unhandledResponse(response.status, logger)
             }
         }
       }

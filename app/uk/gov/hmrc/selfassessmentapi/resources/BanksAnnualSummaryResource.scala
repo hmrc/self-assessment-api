@@ -24,34 +24,33 @@ import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType, TaxYe
 import uk.gov.hmrc.selfassessmentapi.services.BanksAnnualSummaryService
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 object BanksAnnualSummaryResource extends BaseResource {
   private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.Banks, "annual")
   private val annualSummaryService = BanksAnnualSummaryService
 
-  def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] = FeatureSwitch.async(parse.json) { implicit request =>
-    withAuth(nino) { context =>
-      validate[BankAnnualSummary, Boolean](request.body) {
-        annualSummaryService.updateAnnualSummary(nino, id, taxYear, _)
-      } match {
-        case Left(errorResult) => Future.successful(handleValidationErrors(errorResult))
-        case Right(result) => result.map {
-          case true => NoContent
-          case false if context.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
-          case false => NotFound
+  def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] =
+    FeatureSwitch.async(parse.json) { implicit request =>
+      withAuth(nino) { context =>
+        validate[BankAnnualSummary, Boolean](request.body) {
+          annualSummaryService.updateAnnualSummary(nino, id, taxYear, _)
+        } map {
+          case Left(errorResult) => handleValidationErrors(errorResult)
+          case Right(true) => NoContent
+          case Right(false) if context.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
+          case _ => NotFound
         }
       }
     }
-  }
 
-  def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[AnyContent] = FeatureSwitch.async { implicit headers =>
-    withAuth(nino) { context =>
-      annualSummaryService.retrieveAnnualSummary(nino, id, taxYear).map {
-        case Some(summary) => Ok(Json.toJson(summary))
-        case None if context.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
-        case None => NotFound
+  def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[AnyContent] =
+    FeatureSwitch.async { implicit headers =>
+      withAuth(nino) { context =>
+        annualSummaryService.retrieveAnnualSummary(nino, id, taxYear).map {
+          case Some(summary) => Ok(Json.toJson(summary))
+          case None if context.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
+          case None => NotFound
+        }
       }
     }
-  }
 }
