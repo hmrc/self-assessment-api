@@ -113,7 +113,6 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
                        if (invalidPeriod) from else to,
                        if (nullFinancials) emptyFinancials else Some(financials))
       }
-
   }
 
   object OtherGen {
