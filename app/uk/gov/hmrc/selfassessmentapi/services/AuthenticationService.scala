@@ -86,10 +86,10 @@ object AuthenticationService extends AuthorisedFunctions {
     lazy val internalServerError = Future.successful(
       InternalServerError(Json.toJson(Errors.InternalServerError("An internal server error occurred"))))
 
-    {
+    locally { // http://www.scala-lang.org/old/node/3594
       case e @ (_: AuthorisationException | Upstream5xxResponse(regex(_ *), _, _)) =>
-      logger.error(s"Authorisation failed with unexpected exception. Bad token? Exception: [$e]")
-      Future.successful(Forbidden(Json.toJson(Errors.BadToken)))
+        logger.error(s"Authorisation failed with unexpected exception. Bad token? Exception: [$e]")
+        Future.successful(Forbidden(Json.toJson(Errors.BadToken)))
       case e: Upstream4xxResponse =>
         logger.error(s"Unhandled 4xx response from play-auth: [$e]. Returning 500 to client.")
         internalServerError
