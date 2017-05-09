@@ -27,7 +27,7 @@ trait MicroService {
     .settings(defaultSettings(): _*)
     .settings(
       targetJvm := "jvm-1.8",
-      scalaVersion := "2.11.8",
+      scalaVersion := "2.11.11",
       scalacOptions ++= Seq(
                             // FIXME: Uncomment fatal-warnings will make compilation fail because of usage of Play.current instead of DI
                             // Choose a DI strategy and uncomment
