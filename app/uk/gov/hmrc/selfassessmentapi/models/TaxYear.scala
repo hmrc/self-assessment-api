@@ -23,7 +23,7 @@ case class TaxYear(taxYear: String) extends SimpleName {
 
   override def toString = taxYear
   def value = taxYear
-  def toDesTaxYear = taxYear.take(4)
+  def toDesTaxYear = taxYear.take(2) + taxYear.drop(5)
   val name = "taxYear"
 }
 
