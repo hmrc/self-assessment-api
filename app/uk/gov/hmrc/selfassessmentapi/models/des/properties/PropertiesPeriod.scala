@@ -17,18 +17,34 @@
 package uk.gov.hmrc.selfassessmentapi.models.des.properties
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.selfassessmentapi.models.properties
 import uk.gov.hmrc.selfassessmentapi.models
+import uk.gov.hmrc.selfassessmentapi.models.des.properties.Common.Income
+import uk.gov.hmrc.selfassessmentapi.models.properties
+
+object Common {
+  case class Income(amount: BigDecimal, taxDeducted: Option[BigDecimal] = None)
+
+  object Income {
+    implicit val format: OFormat[Income] = Json.format[Income]
+
+    def fromIncome(o: models.Income): Income =
+      Income(amount = o.amount, taxDeducted = o.taxDeducted)
+
+    def fromSimpleIncome(o: models.SimpleIncome): Income =
+      Income(amount = o.amount)
+  }
+
+}
 
 object FHL {
 
-  case class Incomes(rentIncome: Option[BigDecimal] = None)
+  case class Incomes(rentIncome: Option[Income] = None)
 
   object Incomes {
     implicit val format: OFormat[Incomes] = Json.format[Incomes]
 
     def from(o: properties.FHL.Incomes): Incomes =
-      Incomes(rentIncome = o.rentIncome.map(_.amount))
+      Incomes(rentIncome = o.rentIncome.map(Income.fromSimpleIncome))
   }
 
   case class Deductions(premisesRunningCosts: Option[BigDecimal] = None,
@@ -75,15 +91,6 @@ object FHL {
 
 object Other {
 
-  case class Income(amount: BigDecimal, taxDeducted: Option[BigDecimal] = None)
-
-  object Income {
-    implicit val format: OFormat[Income] = Json.format[Income]
-
-    def from(o: models.Income): Income =
-      Income(amount = o.amount, taxDeducted = o.taxDeducted)
-  }
-
   case class Incomes(rentIncome: Option[Income] = None,
                      premiumsOfLeaseGrant: Option[BigDecimal] = None,
                      reversePremiums: Option[BigDecimal] = None)
@@ -92,7 +99,7 @@ object Other {
     implicit val format: OFormat[Incomes] = Json.format[Incomes]
 
     def from(o: properties.Other.Incomes): Incomes =
-      Incomes(rentIncome = o.rentIncome.map(Income.from),
+      Incomes(rentIncome = o.rentIncome.map(Income.fromIncome),
               premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(_.amount),
               reversePremiums = o.reversePremiums.map(_.amount))
   }

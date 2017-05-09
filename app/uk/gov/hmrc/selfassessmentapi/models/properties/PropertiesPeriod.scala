@@ -21,8 +21,8 @@ import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models
-import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.Validation._
+import uk.gov.hmrc.selfassessmentapi.models._
 
 object FHL {
 
@@ -81,7 +81,7 @@ object FHL {
     implicit val format: Format[Incomes] = Json.format[Incomes]
 
     def from(o: des.properties.FHL.Incomes): Incomes =
-      Incomes(rentIncome = o.rentIncome.map(SimpleIncome(_)))
+      Incomes(rentIncome = o.rentIncome.map(income => SimpleIncome(amount = income.amount)))
   }
 
   case class Expense(amount: Amount)
