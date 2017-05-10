@@ -292,13 +292,24 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
     }
 
     "return code 404 when retrieving a period that does not exist" in {
-
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.noPeriodFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods/def")
+        .thenAssertThat()
+        .statusIs(404)
+    }
+
+
+    "return code 404 when retrieving a period that has got invalid dates in the periodId" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .des().selfEmployment.periodWillBeReturnedFor(nino, from = "2017-05-04", to = "2018-06-31")
+        .when()
+        .get(s"/ni/$nino/self-employments/abc/periods/2017-05-04_2017-06-31")
         .thenAssertThat()
         .statusIs(404)
     }

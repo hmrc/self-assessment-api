@@ -18,6 +18,8 @@ package uk.gov.hmrc.selfassessmentapi.models
 
 import org.joda.time.LocalDate
 
+import scala.util.{Failure, Success, Try}
+
 trait Period {
   val from: LocalDate
   val to: LocalDate
@@ -27,9 +29,14 @@ trait Period {
 
 object Period {
   val periodPattern = """(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})""".r
+
   def unapply(period: String): Option[(LocalDate, LocalDate)] = {
     period match {
-      case periodPattern(from, to) => Some((new LocalDate(from), new LocalDate(to)))
+      case periodPattern(from, to) =>
+        Try(Some((new LocalDate(from), new LocalDate(to)))) match {
+          case Success(x) => x
+          case Failure(e) => None
+        }
       case _ => None
     }
   }
