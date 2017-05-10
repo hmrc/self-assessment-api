@@ -15,6 +15,9 @@ GET /ni/:nino/self-employments/:id/obligations   uk.gov.hmrc.selfassessmentapi.r
 # Self-Employments Periodic Summaries
 POST /ni/:nino/self-employments/:id/periods    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentPeriodResource.createPeriod(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
 
+# Self-Employments Annual Summaries
+PUT /ni/:nino/self-employments/:id/:taxYear    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentAnnualSummaryResource.updateAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+
 ####################
 #    Properties    #
 ####################
@@ -25,6 +28,9 @@ GET /ni/:nino/uk-properties/obligations   uk.gov.hmrc.selfassessmentapi.resource
 
 # Properties Periodic Summaries
 POST /ni/:nino/uk-properties/:id/periods   uk.gov.hmrc.selfassessmentapi.resources.PropertiesPeriodResource.createPeriod(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType)
+
+# Properties Annual Summaries
+PUT  /ni/:nino/uk-properties/:id/:taxYear   uk.gov.hmrc.selfassessmentapi.resources.PropertiesAnnualSummaryResource.updateAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 
 ##########################
 #    Tax Calculations    #

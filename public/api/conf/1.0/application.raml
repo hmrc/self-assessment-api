@@ -444,7 +444,7 @@ traits:
               type: string
               example: 2017-18
           put:
-            displayName: Update a self-employment annual summary [test only]
+            displayName: Update a self-employment annual summary
             description: Update a self-employment annual summary for a tax year. This API is not available in production.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
@@ -757,7 +757,7 @@ traits:
                 type: string
                 example: 2017-18
             put:
-              displayName: Update a non-FHL UK property business annual summary [test only]
+              displayName: Update a non-FHL UK property business annual summary
               description: Update a non-FHL UK property business annual summary for a tax year. This API is not available in production.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
@@ -966,7 +966,7 @@ traits:
                 type: string
                 example: 2017-18
             put:
-              displayName: Update a FHL UK property business annual summary [test only]
+              displayName: Update a FHL UK property business annual summary
               description: Update a FHL UK property business annual summary for a tax year. This API is not available in production.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
