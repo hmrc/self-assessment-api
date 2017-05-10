@@ -56,26 +56,21 @@ object AuthenticationService extends AuthorisedFunctions {
       implicit hc: HeaderCarrier,
       reqHeader: RequestHeader): PartialFunction[Throwable, Future[Result]] = {
     case _: InsufficientEnrolments =>
-      authorised(AffinityGroup.Agent) { // Is the user an agent?
-        authorised(Enrolment("HMRC-AS-AGENT")) { // If so, are they enrolled in Agent Services?
-          if (reqHeader.method == "GET") {
-            logger.debug("Client authorisation failed. Attempt to GET as a filing-only agent.")
-            Future.successful(Forbidden(Json.toJson(Errors.AgentNotAuthorized)))
-          } else {
-            logger.debug("Client authorisation succeeded as filing-only agent.")
-            f(AuthContext(isFOA = true))
-          }
-        } recoverWith (unsubscribedAgent orElse unhandledError) // Iff agent is not enrolled for the user.
-      } recoverWith (unauthorisedClient orElse unhandledError) // Iff client affinityGroup is not Agent.
+      authorised(AffinityGroup.Agent and Enrolment("HMRC-AS-AGENT")) { // If the user is an agent are they enrolled in Agent Services?
+        if (reqHeader.method == "GET") {
+          logger.debug("Client authorisation failed. Attempt to GET as a filing-only agent.")
+          Future.successful(Forbidden(Json.toJson(Errors.AgentNotAuthorized)))
+        } else {
+          logger.debug("Client authorisation succeeded as filing-only agent.")
+          f(AuthContext(isFOA = true))
+        }
+      } recoverWith (unsubscribedAgentOrUnauthorisedClient orElse unhandledError) // Iff agent is not enrolled for the user or client affinityGroup is not Agent.
   }
 
-  private def unsubscribedAgent: PartialFunction[Throwable, Future[Result]] = {
+  private def unsubscribedAgentOrUnauthorisedClient: PartialFunction[Throwable, Future[Result]] = {
     case _: InsufficientEnrolments =>
       logger.debug(s"Authorisation failed as filing-only agent.")
       Future.successful(Forbidden(Json.toJson(Errors.AgentNotSubscribed)))
-  }
-
-  private def unauthorisedClient: PartialFunction[Throwable, Future[Result]] = {
     case _: UnsupportedAffinityGroup =>
       logger.debug(s"Authorisation failed as client.")
       Future.successful(Forbidden(Json.toJson(Errors.ClientNotSubscribed)))

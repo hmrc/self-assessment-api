@@ -44,5 +44,9 @@ class TaxYearSpec extends UnitSpec {
       TaxYear.createTaxYear("2017-18") shouldBe Some(TaxYear("2017-18"))
       TaxYear.createTaxYear("2098-99") shouldBe Some(TaxYear("2098-99"))
     }
+
+    "DES tax year should be the year after the dash" in {
+      TaxYear.createTaxYear("2017-18").foreach(_.toDesTaxYear shouldBe "2018")
+    }
   }
 }
