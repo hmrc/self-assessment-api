@@ -78,13 +78,13 @@ object FHL {
       }
   }
 
-  case class Properties(id: Option[String], from: String, to: String, financials: Option[Financials]) extends Period
+  case class Properties(transactionReference: Option[String], from: String, to: String, financials: Option[Financials]) extends Period
 
   object Properties {
     implicit val format: OFormat[Properties] = Json.format[Properties]
 
     def from(o: properties.FHL.Properties): Properties =
-      Properties(id = None, from = o.from.toString, to = o.to.toString, financials = Financials.from(o.financials))
+      Properties(transactionReference = None, from = o.from.toString, to = o.to.toString, financials = Financials.from(o.financials))
   }
 
 }
@@ -137,14 +137,14 @@ object Other {
     }
   }
 
-  case class Properties(id: Option[String], from: String, to: String, financials: Option[Financials]) extends Period
+  case class Properties(transactionReference: Option[String], from: String, to: String, financials: Option[Financials]) extends Period
 
   object Properties {
 
     implicit val format: OFormat[Properties] = Json.format[Properties]
 
     def from(o: properties.Other.Properties): Properties =
-      Properties(id = None, from = o.from.toString, to = o.to.toString, financials = Financials.from(o.financials))
+      Properties(transactionReference = None, from = o.from.toString, to = o.to.toString, financials = Financials.from(o.financials))
   }
 
 }

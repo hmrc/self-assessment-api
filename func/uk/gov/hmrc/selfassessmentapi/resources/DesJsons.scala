@@ -248,7 +248,7 @@ object DesJsons {
 
   object Properties {
 
-    def fhlPeriod(id: String = "12345",
+    def fhlPeriod(transactionReference: String = "12345",
                   from: String = "",
                   to: String = "",
                   rentIncome: BigDecimal = 0,
@@ -258,7 +258,7 @@ object DesJsons {
                   professionalFees: BigDecimal = 0,
                   other: BigDecimal = 0): JsValue =
       Json.toJson(
-        FHL.Properties(id = Some(id),
+        FHL.Properties(transactionReference = Some(transactionReference),
                        from = from,
                        to = to,
                        financials = Some(
@@ -271,7 +271,7 @@ object DesJsons {
                                                         professionalFees = Some(professionalFees),
                                                         other = Some(other)))))))
 
-    def otherPeriod(id: String = "12345",
+    def otherPeriod(transactionReference: String = "12345",
                     from: String = "",
                     to: String = "",
                     rentIncome: BigDecimal = 0,
@@ -287,7 +287,7 @@ object DesJsons {
       : JsValue =
       Json.toJson(
         Other
-          .Properties(id = Some(id),
+          .Properties(transactionReference = Some(transactionReference),
                       from = from,
                       to = to,
                       financials = Some(
@@ -392,13 +392,13 @@ object DesJsons {
       propertyType match {
         case PropertyType.FHL =>
           Json
-            .arr(fhlPeriod(id = "abc", from = "2017-04-06", to = "2017-07-04"),
-                 fhlPeriod(id = "def", from = "2017-07-05", to = "2017-08-04"))
+            .arr(fhlPeriod(transactionReference = "abc", from = "2017-04-06", to = "2017-07-04"),
+                 fhlPeriod(transactionReference = "def", from = "2017-07-05", to = "2017-08-04"))
             .toString()
         case PropertyType.OTHER =>
           Json
-            .arr(otherPeriod(id = "abc", from = "2017-04-06", to = "2017-07-04"),
-                 otherPeriod(id = "def", from = "2017-07-05", to = "2017-08-04"))
+            .arr(otherPeriod(transactionReference = "abc", from = "2017-04-06", to = "2017-07-04"),
+                 otherPeriod(transactionReference = "def", from = "2017-07-05", to = "2017-08-04"))
             .toString()
       }
 

@@ -1155,7 +1155,7 @@ trait BaseFunctionalSpec extends TestApplication {
           val periodAsJsonString = propertyType match {
             case PropertyType.FHL =>
               DesJsons.Properties
-                .fhlPeriod(id = periodId,
+                .fhlPeriod(transactionReference = periodId,
                            from = "2017-04-05",
                            to = "2018-04-04",
                            rentIncome = 200.00,
@@ -1167,7 +1167,7 @@ trait BaseFunctionalSpec extends TestApplication {
                 .toString()
             case PropertyType.OTHER =>
               DesJsons.Properties
-                .otherPeriod(id = periodId,
+                .otherPeriod(transactionReference = periodId,
                              from = "2017-04-05",
                              to = "2018-04-04",
                              rentIncome = 200.00,

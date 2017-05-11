@@ -67,7 +67,7 @@ object FHL {
                      ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))))
 
     def from(o: des.properties.FHL.Properties): Properties =
-      Properties(id = o.id,
+      Properties(id = o.transactionReference,
                  from = LocalDate.parse(o.from),
                  to = LocalDate.parse(o.to),
                  financials = Financials.from(o.financials))
@@ -189,7 +189,7 @@ object Other {
                      ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))))
 
     def from(o: des.properties.Other.Properties): Properties =
-      Properties(id = o.id,
+      Properties(id = o.transactionReference,
                  from = LocalDate.parse(o.from),
                  to = LocalDate.parse(o.to),
                  financials = Financials.from(o.financials))
