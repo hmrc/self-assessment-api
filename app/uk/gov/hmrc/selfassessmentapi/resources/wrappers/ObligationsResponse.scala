@@ -21,7 +21,6 @@ import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.{Obligation, Obligations, SourceId, des}
 
 case class ObligationsResponse(underlying: HttpResponse) extends Response {
-
   def obligations(incomeSourceType: String, id: Option[SourceId] = None): Option[Obligations] = {
 
     val desObligations = json.asOpt[des.Obligations]

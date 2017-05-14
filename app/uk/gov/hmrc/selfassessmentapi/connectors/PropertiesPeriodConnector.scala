@@ -17,14 +17,13 @@
 package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
 import uk.gov.hmrc.selfassessmentapi.models.{Financials, Period, PeriodId, des}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesPeriodResponse
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait PropertiesPeriodConnector[P <: Period, F <: Financials] {
@@ -39,39 +38,48 @@ object PropertiesPeriodConnector {
 
   private lazy val baseUrl: String = AppContext.desUrl
 
-  implicit def httpResponse2PropertiesPeriodResponse(fut: Future[HttpResponse]): Future[PropertiesPeriodResponse] =
-    fut.map(PropertiesPeriodResponse)
-
   implicit object OtherPropertiesPeriodConnector
       extends PropertiesPeriodConnector[Other.Properties, Other.Financials] {
     override def create(nino: Nino, properties: Other.Properties)(
         implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-      httpPost(baseUrl + s"/income-store/nino/$nino/uk-properties/other/periodic-summaries",
-               des.properties.Other.Properties.from(properties))
+      httpPost[des.properties.Other.Properties, PropertiesPeriodResponse](
+        baseUrl + s"/income-store/nino/$nino/uk-properties/other/periodic-summaries",
+        des.properties.Other.Properties.from(properties),
+        PropertiesPeriodResponse)
 
     override def update(nino: Nino, propertyType: PropertyType, periodId: PeriodId, financials: Other.Financials)(
         implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-      httpPut(baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId",
-              des.properties.Other.Financials.from(Some(financials)))
+      httpPut[Option[des.properties.Other.Financials], PropertiesPeriodResponse](
+        baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId",
+        des.properties.Other.Financials.from(Some(financials)),
+        PropertiesPeriodResponse)
   }
 
   implicit object FHLPropertiesPeriodConnector extends PropertiesPeriodConnector[FHL.Properties, FHL.Financials] {
     override def create(nino: Nino, properties: FHL.Properties)(
         implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-      httpPost(baseUrl + s"/income-store/nino/$nino/uk-properties/furnished-holiday-lettings/periodic-summaries",
-               des.properties.FHL.Properties.from(properties))
+      httpPost[des.properties.FHL.Properties, PropertiesPeriodResponse](
+        baseUrl + s"/income-store/nino/$nino/uk-properties/furnished-holiday-lettings/periodic-summaries",
+        des.properties.FHL.Properties.from(properties),
+        PropertiesPeriodResponse)
 
     override def update(nino: Nino, propertyType: PropertyType, periodId: PeriodId, financials: FHL.Financials)(
         implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-      httpPut(baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId",
-              des.properties.FHL.Financials.from(Some(financials)))
+      httpPut[Option[des.properties.FHL.Financials], PropertiesPeriodResponse](
+        baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId",
+        des.properties.FHL.Financials.from(Some(financials)),
+        PropertiesPeriodResponse)
   }
 
   def retrieve(nino: Nino, periodId: PeriodId, propertyType: PropertyType)(
       implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-    httpGet(baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId")
+    httpGet[PropertiesPeriodResponse](
+      baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId",
+      PropertiesPeriodResponse)
 
   def retrieveAll(nino: Nino, propertyType: PropertyType)(
       implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
-    httpGet(baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries")
+    httpGet[PropertiesPeriodResponse](
+      baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries",
+      PropertiesPeriodResponse)
 }

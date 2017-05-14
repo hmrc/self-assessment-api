@@ -23,7 +23,6 @@ import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentRetriev
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, des}
 
 case class SelfEmploymentResponse(underlying: HttpResponse) extends Response {
-
   def createLocationHeader(nino: Nino): Option[String] =
     (json \ "incomeSources" \\ "incomeSourceId").map(_.asOpt[String]) match {
       case Some(id) +: _ => Some(s"/self-assessment/ni/$nino/self-employments/$id")

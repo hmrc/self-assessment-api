@@ -22,8 +22,7 @@ import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.properties.Properties
 
-case class PropertiesResponse(underlying: HttpResponse) extends Response {
-
+case class PropertiesResponse(underlying: HttpResponse) extends Response { self =>
   def createLocationHeader(nino: Nino): String = s"/self-assessment/ni/$nino/uk-properties"
 
   def property: Option[Properties] = {

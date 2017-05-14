@@ -16,17 +16,10 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import play.api.Logger
-import play.api.libs.json.JsValue
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.MtdId
 
-class BusinessDetailsResponse(underlying: HttpResponse) {
-  private val logger: Logger = Logger(classOf[BusinessDetailsResponse])
-
-  val status: Int = underlying.status
-  def json: JsValue = underlying.json
-
+case class BusinessDetailsResponse(underlying: HttpResponse) extends Response {
   def mtdId: Option[MtdId] = {
     if (status == 200) (json \ "mtdbsa").asOpt[String].map(MtdId(_))
     else {
@@ -34,9 +27,4 @@ class BusinessDetailsResponse(underlying: HttpResponse) {
       None
     }
   }
-
-}
-
-object BusinessDetailsResponse {
-  def apply(httpResponse: HttpResponse): BusinessDetailsResponse = new BusinessDetailsResponse(httpResponse)
 }

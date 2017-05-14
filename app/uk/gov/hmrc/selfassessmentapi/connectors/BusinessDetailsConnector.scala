@@ -17,21 +17,18 @@
 package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.BusinessDetailsResponse
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait BusinessDetailsConnector {
   private lazy val baseUrl: String = AppContext.desUrl
 
-  private implicit def httpResponse2SeResponse(fut: Future[HttpResponse]): Future[BusinessDetailsResponse] =
-    fut.map(BusinessDetailsResponse(_))
-
   def get(nino: Nino)(implicit hc: HeaderCarrier): Future[BusinessDetailsResponse] =
-    httpGet(baseUrl + s"/registration/business-details/nino/$nino")
+    httpGet[BusinessDetailsResponse](baseUrl + s"/registration/business-details/nino/$nino",
+                                     BusinessDetailsResponse)
 }
 
 object BusinessDetailsConnector extends BusinessDetailsConnector

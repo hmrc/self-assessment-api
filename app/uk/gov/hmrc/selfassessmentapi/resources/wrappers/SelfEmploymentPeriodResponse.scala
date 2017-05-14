@@ -23,7 +23,6 @@ import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentPeriod
 
 case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Response {
-
   def createLocationHeader(nino: Nino, id: SourceId, periodId: PeriodId): String = {
     s"/self-assessment/ni/$nino/${SourceType.SelfEmployments.toString}/$id/periods/$periodId"
   }
@@ -72,3 +71,4 @@ case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Respon
   def isInvalidBusinessId: Boolean =
     json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_BUSINESSID)
 }
+
