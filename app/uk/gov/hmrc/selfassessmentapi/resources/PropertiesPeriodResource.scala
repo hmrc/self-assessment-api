@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, Request}
+import play.api.libs.json._
+import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodConnector
@@ -26,7 +26,7 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
-import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{PropertiesPeriodResponse, ResponseMapper}
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{PeriodMapper, PropertiesPeriodResponse, ResponseMapper}
 import uk.gov.hmrc.selfassessmentapi.services.AuditService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -73,6 +73,13 @@ object PropertiesPeriodResource extends BaseResource {
       }
     }
 
+  private def toResult[P <: Period, D <: des.properties.Period](response: PropertiesPeriodResponse)(
+      implicit rm: ResponseMapper[P, D],
+      pm: PeriodMapper[P, D],
+      r: Reads[D],
+      w: Writes[P]): Result =
+    ResponseMapper[P, D].period(response).map(period => Ok(Json.toJson(period))).getOrElse(NotFound)
+
   def retrievePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[AnyContent] =
     FeatureSwitch.async { implicit request =>
       withAuth(nino) { implicit context =>
@@ -80,16 +87,8 @@ object PropertiesPeriodResource extends BaseResource {
           response.filter {
             case 200 =>
               id match {
-                case PropertyType.FHL =>
-                  ResponseMapper[FHL.Properties, des.properties.FHL.Properties]
-                    .period(response)
-                    .map(period => Ok(Json.toJson(period)))
-                    .getOrElse(NotFound)
-                case PropertyType.OTHER =>
-                  ResponseMapper[Other.Properties, des.properties.Other.Properties]
-                    .period(response)
-                    .map(period => Ok(Json.toJson(period)))
-                    .getOrElse(NotFound)
+                case PropertyType.FHL => toResult[FHL.Properties, des.properties.FHL.Properties](response)
+                case PropertyType.OTHER => toResult[Other.Properties, des.properties.Other.Properties](response)
               }
             case 400 => BadRequest(Error.from(response.json))
             case 404 => NotFound
@@ -119,33 +118,38 @@ object PropertiesPeriodResource extends BaseResource {
       }
     }
 
+  private def validateAndCreate[P <: Period, F <: Financials](nino: Nino, request: Request[JsValue])(
+      implicit hc: HeaderCarrier,
+      p: PropertiesPeriodConnector[P, F],
+      r: Reads[P]): Future[Either[ErrorResult, (PeriodId, PropertiesPeriodResponse)]] =
+    validate[P, (PeriodId, PropertiesPeriodResponse)](request.body) { period =>
+      PropertiesPeriodConnector[P, F]
+        .create(nino, period)
+        .map((period.createPeriodId, _))
+    }
+
   private def validateCreateRequest(id: PropertyType, nino: Nino, request: Request[JsValue])(
       implicit hc: HeaderCarrier): Future[Either[ErrorResult, (PeriodId, PropertiesPeriodResponse)]] =
     id match {
-      case PropertyType.OTHER =>
-        validate[Other.Properties, (PeriodId, PropertiesPeriodResponse)](request.body) { period =>
-          PropertiesPeriodConnector[Other.Properties, Other.Financials]
-            .create(nino, period)
-            .map((period.createPeriodId, _))
-        }
-
-      case PropertyType.FHL =>
-        validate[FHL.Properties, (PeriodId, PropertiesPeriodResponse)](request.body) { period =>
-          PropertiesPeriodConnector[FHL.Properties, FHL.Financials]
-            .create(nino, period)
-            .map((period.createPeriodId, _))
-        }
+      case PropertyType.OTHER => validateAndCreate[Other.Properties, Other.Financials](nino, request)
+      case PropertyType.FHL => validateAndCreate[FHL.Properties, FHL.Financials](nino, request)
     }
+
+  private def validateAndUpdate[P <: Period, F <: Financials](id: PropertyType,
+                                                              nino: Nino,
+                                                              periodId: PeriodId,
+                                                              request: Request[JsValue])(
+      implicit hc: HeaderCarrier,
+      p: PropertiesPeriodConnector[P, F],
+      r: Reads[P],
+      w: Format[F]): Future[Either[ErrorResult, PropertiesPeriodResponse]] =
+    validate[F, PropertiesPeriodResponse](request.body)(PropertiesPeriodConnector[P, F].update(nino, id, periodId, _))
 
   private def validateUpdateRequest(id: PropertyType, nino: Nino, periodId: PeriodId, request: Request[JsValue])(
       implicit hc: HeaderCarrier): Future[Either[ErrorResult, PropertiesPeriodResponse]] =
     id match {
-      case PropertyType.OTHER =>
-        validate[Other.Financials, PropertiesPeriodResponse](request.body)(
-          PropertiesPeriodConnector[Other.Properties, Other.Financials].update(nino, id, periodId, _))
-      case PropertyType.FHL =>
-        validate[FHL.Financials, PropertiesPeriodResponse](request.body)(
-          PropertiesPeriodConnector[FHL.Properties, FHL.Financials].update(nino, id, periodId, _))
+      case PropertyType.OTHER => validateAndUpdate[Other.Properties, Other.Financials](id, nino, periodId, request)
+      case PropertyType.FHL => validateAndUpdate[FHL.Properties, FHL.Financials](id, nino, periodId, request)
     }
 
   private def auditPeriodicCreate(nino: Nino,
