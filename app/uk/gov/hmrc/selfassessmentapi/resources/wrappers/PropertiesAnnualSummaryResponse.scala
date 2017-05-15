@@ -19,24 +19,36 @@ package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType._
-import uk.gov.hmrc.selfassessmentapi.models.properties.{FHLPropertiesAnnualSummary, OtherPropertiesAnnualSummary, PropertiesAnnualSummary, PropertyType}
+import uk.gov.hmrc.selfassessmentapi.models.properties.{
+  FHLPropertiesAnnualSummary,
+  OtherPropertiesAnnualSummary,
+  PropertiesAnnualSummary,
+  PropertyType
+}
 
 case class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlying: HttpResponse) extends Response {
-
   def annualSummary: Option[PropertiesAnnualSummary] = propertyType match {
     case PropertyType.OTHER =>
       json.asOpt[des.OtherPropertiesAnnualSummary] match {
-        case Some(other) => Some(OtherPropertiesAnnualSummary.from(des.OtherPropertiesAnnualSummary(other.annualAllowances, other.annualAdjustments)))
+        case Some(other) =>
+          Some(
+            OtherPropertiesAnnualSummary.from(
+              des.OtherPropertiesAnnualSummary(other.annualAllowances, other.annualAdjustments)))
         case None => {
-          logger.error(s"The response from DES for $propertyType does not match the expected properties annual summary format.")
+          logger.error(
+            s"The response from DES for $propertyType does not match the expected properties annual summary format.")
           None
         }
       }
     case PropertyType.FHL =>
       json.asOpt[des.FHLPropertiesAnnualSummary] match {
-        case Some(fhl) => Some(FHLPropertiesAnnualSummary.from(des.FHLPropertiesAnnualSummary(fhl.annualAllowances, fhl.annualAdjustments)))
+        case Some(fhl) =>
+          Some(
+            FHLPropertiesAnnualSummary.from(
+              des.FHLPropertiesAnnualSummary(fhl.annualAllowances, fhl.annualAdjustments)))
         case None => {
-          logger.error(s"The response from DES for $propertyType does not match the expected properties annual summary format.")
+          logger.error(
+            s"The response from DES for $propertyType does not match the expected properties annual summary format.")
           None
         }
       }

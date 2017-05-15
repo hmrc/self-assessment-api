@@ -17,27 +17,26 @@
 package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.properties.Properties
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object PropertiesConnector {
 
   private lazy val baseUrl: String = AppContext.desUrl
 
-  private implicit def httpResponse2PropertiesResponse(fut: Future[HttpResponse]): Future[PropertiesResponse] =
-    fut.map(PropertiesResponse(_))
-
-  def create(nino: Nino, properties: Properties)(implicit hc: HeaderCarrier): Future[PropertiesResponse] =
-    httpPost(baseUrl + s"/income-tax-self-assessment/nino/$nino/properties", des.properties.Properties.from(properties))
+  def create(nino: Nino, properties: Properties)(implicit hc: HeaderCarrier): Future[PropertiesResponse] = {
+    httpPost[des.properties.Properties, PropertiesResponse](
+      baseUrl + s"/income-tax-self-assessment/nino/$nino/properties",
+      des.properties.Properties.from(properties),
+      PropertiesResponse)
+  }
 
   def retrieve(nino: Nino)(implicit hc: HeaderCarrier): Future[PropertiesResponse] =
-    httpGet(baseUrl + s"/registration/business-details/nino/$nino")
+    httpGet[PropertiesResponse](baseUrl + s"/registration/business-details/nino/$nino", PropertiesResponse)
 
 }
-

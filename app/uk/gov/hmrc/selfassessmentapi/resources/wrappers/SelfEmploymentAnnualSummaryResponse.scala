@@ -21,7 +21,6 @@ import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentAnnualSummary
 
 case class SelfEmploymentAnnualSummaryResponse(underlying: HttpResponse) extends Response {
-
   def annualSummary: Option[SelfEmploymentAnnualSummary] = {
     json.asOpt[des.SelfEmploymentAnnualSummary] match {
       case Some(desSummary) => Some(SelfEmploymentAnnualSummary.from(desSummary))

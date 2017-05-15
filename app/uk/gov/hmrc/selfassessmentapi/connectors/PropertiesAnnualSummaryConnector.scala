@@ -17,31 +17,41 @@
 package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
+import uk.gov.hmrc.selfassessmentapi.models.des.{FHLPropertiesAnnualSummary, OtherPropertiesAnnualSummary}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.{TaxYear, des, properties}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object PropertiesAnnualSummaryConnector {
 
   private lazy val baseUrl: String = AppContext.desUrl
 
-  private def httpResponse2PropertiesResponse(propertyType: PropertyType, fut: Future[HttpResponse]): Future[PropertiesAnnualSummaryResponse] =
-    fut.map(PropertiesAnnualSummaryResponse(propertyType, _))
-
-  def update(nino: Nino, propertyType: PropertyType, taxYear: TaxYear, update: PropertiesAnnualSummary)(implicit hc: HeaderCarrier): Future[PropertiesAnnualSummaryResponse] = {
-    val url: String = baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"
+  def update(nino: Nino, propertyType: PropertyType, taxYear: TaxYear, update: PropertiesAnnualSummary)(
+      implicit hc: HeaderCarrier): Future[PropertiesAnnualSummaryResponse] = {
+    val url
+      : String = baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"
     update match {
-      case other: properties.OtherPropertiesAnnualSummary => httpResponse2PropertiesResponse(propertyType, httpPut(url, des.OtherPropertiesAnnualSummary.from(other)))
-      case fhl: properties.FHLPropertiesAnnualSummary => httpResponse2PropertiesResponse(propertyType, httpPut(url, des.FHLPropertiesAnnualSummary.from(fhl)))
+      case other: properties.OtherPropertiesAnnualSummary =>
+        httpPut[OtherPropertiesAnnualSummary, PropertiesAnnualSummaryResponse](
+          url,
+          des.OtherPropertiesAnnualSummary.from(other),
+          PropertiesAnnualSummaryResponse(propertyType, _))
+      case fhl: properties.FHLPropertiesAnnualSummary =>
+        httpPut[FHLPropertiesAnnualSummary, PropertiesAnnualSummaryResponse](
+          url,
+          des.FHLPropertiesAnnualSummary.from(fhl),
+          PropertiesAnnualSummaryResponse(propertyType, _))
     }
   }
 
-  def get(nino: Nino, propertyType: PropertyType, taxYear: TaxYear)(implicit hc: HeaderCarrier): Future[PropertiesAnnualSummaryResponse] =
-    httpResponse2PropertiesResponse(propertyType, httpGet(baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
+  def get(nino: Nino, propertyType: PropertyType, taxYear: TaxYear)(
+      implicit hc: HeaderCarrier): Future[PropertiesAnnualSummaryResponse] =
+    httpGet[PropertiesAnnualSummaryResponse](
+      baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}",
+      PropertiesAnnualSummaryResponse(propertyType, _))
 }

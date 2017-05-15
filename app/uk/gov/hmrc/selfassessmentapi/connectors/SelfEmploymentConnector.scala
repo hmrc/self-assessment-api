@@ -17,29 +17,31 @@
 package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.SourceId
 import uk.gov.hmrc.selfassessmentapi.models.des.{Business, SelfEmploymentUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentResponse
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object SelfEmploymentConnector {
 
   private lazy val baseUrl: String = AppContext.desUrl
 
-  private implicit def httpResponse2SeResponse(fut: Future[HttpResponse]): Future[SelfEmploymentResponse] =
-    fut.map(SelfEmploymentResponse)
-
   def create(nino: Nino, business: Business)(implicit hc: HeaderCarrier): Future[SelfEmploymentResponse] =
-    httpPost(baseUrl + s"/income-tax-self-assessment/nino/$nino/business", business)
+    httpPost[Business, SelfEmploymentResponse](baseUrl + s"/income-tax-self-assessment/nino/$nino/business",
+                                               business,
+                                               SelfEmploymentResponse)
 
   def get(nino: Nino)(implicit hc: HeaderCarrier): Future[SelfEmploymentResponse] =
-    httpGet(baseUrl + s"/registration/business-details/nino/$nino")
+    httpGet[SelfEmploymentResponse](baseUrl + s"/registration/business-details/nino/$nino",
+                                    SelfEmploymentResponse)
 
   def update(nino: Nino, business: SelfEmploymentUpdate, id: SourceId)(
       implicit hc: HeaderCarrier): Future[SelfEmploymentResponse] =
-    httpPut(baseUrl + s"/income-tax-self-assessment/nino/$nino/business/$id", business)
+    httpPut[SelfEmploymentUpdate, SelfEmploymentResponse](
+      baseUrl + s"/income-tax-self-assessment/nino/$nino/business/$id",
+      business,
+      SelfEmploymentResponse)
 }

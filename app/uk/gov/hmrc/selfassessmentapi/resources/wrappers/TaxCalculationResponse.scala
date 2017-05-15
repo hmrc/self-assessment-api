@@ -22,7 +22,6 @@ import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 
 case class TaxCalculationResponse(underlying: HttpResponse) extends Response {
-
   def calcId: Option[String] = {
     (json \ "id").asOpt[String] match {
       case x @ Some(_) => x
@@ -52,4 +51,3 @@ case class TaxCalculationResponse(underlying: HttpResponse) extends Response {
   def isInvalidIdentifier: Boolean =
     json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_IDENTIFIER)
 }
-
