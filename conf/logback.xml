@@ -42,6 +42,10 @@
       <appender-ref ref="STDOUT"/>
     </appender>
 
+    <logger name="uk.gov" level="INFO"/>
+
+    <logger name="application" level="WARN"/>
+
     <root level="INFO">
         <appender-ref ref="ASYNC_FILE"/>
         <appender-ref ref="ASYNC_STDOUT"/>
