@@ -45,7 +45,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .statusIs(404)
       }
 
-      s"return code 400 when provided with an invalid Originator-Id header for $propertyType" in {
+      s"return code 500 when provided with an invalid Originator-Id header for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource
@@ -53,8 +53,8 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .when()
           .put(annualSummary(propertyType)).at(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
           .thenAssertThat()
-          .statusIs(400)
-          .bodyIsLike(Jsons.Errors.invalidOriginatorId)
+          .statusIs(500)
+          .bodyIsLike(Jsons.Errors.internalServerError)
       }
 
       s"return code 400 when provided with an invalid payload for $propertyType" in {
@@ -67,7 +67,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .thenAssertThat()
           .statusIs(400)
           .contentTypeIsJson()
-          .bodyIsLike(Jsons.Errors.invalidPayload)
+          .bodyIsLike(Jsons.Errors.invalidRequest)
       }
 
       s"return code 400 when updating properties annual summary for a non MTD year for $propertyType" in {
