@@ -29,7 +29,7 @@ case class PeriodicUpdate(nino: Nino,
                           periodId: String,
                           transactionReference: Option[String],
                           requestPayload: JsValue) extends AuditPayload {
-  override val auditType: String = "submit-periodic-update"
+  override val auditType: String = "submitPeriodicUpdate"
 }
 
 object PeriodicUpdate {
@@ -39,7 +39,7 @@ object PeriodicUpdate {
 case class TaxCalculationTrigger(nino: Nino,
                                  taxYear: TaxYear,
                                  calculationId: SourceId) extends AuditPayload {
-  override val auditType: String = "trigger-tax-calculation"
+  override val auditType: String = "triggerTaxCalculation"
 }
 
 object TaxCalculationTrigger {
@@ -49,7 +49,7 @@ object TaxCalculationTrigger {
 case class TaxCalculationRequest(nino: Nino,
                                  calculationId: SourceId,
                                  responsePayload: JsValue) extends AuditPayload {
-  override val auditType: String = "retrieve-tax-calculation"
+  override val auditType: String = "retrieveTaxCalculation"
 }
 
 object TaxCalculationRequest {
