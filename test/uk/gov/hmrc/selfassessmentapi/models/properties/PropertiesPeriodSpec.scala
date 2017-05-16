@@ -97,7 +97,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
       (for {
         incomes <- Gen.option(genIncomes)
         expenses <- Gen.option(genExpenses)
-      } yield FHL.Financials(incomes, expenses)) suchThat { f =>
+      } yield FHL.Financials(incomes, expenses)) retryUntil { f =>
         f.incomes.exists(_.hasIncomes) || f.expenses.exists(_.hasExpenses)
       }
 
@@ -152,7 +152,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
       (for {
         incomes <- Gen.option(genIncomes)
         expenses <- Gen.option(genExpenses)
-      } yield Other.Financials(incomes, expenses)) suchThat { f =>
+      } yield Other.Financials(incomes, expenses)) retryUntil { f =>
         f.incomes.exists(_.hasIncomes) || f.expenses.exists(_.hasExpenses)
       }
 

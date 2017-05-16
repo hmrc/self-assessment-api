@@ -24,6 +24,10 @@ import uk.gov.hmrc.selfassessmentapi.models.Generators.{genExpenses, genIncomes}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
 class SelfEmploymentPeriodUpdateSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
+
+  implicit override val generatorDrivenConfig =
+    PropertyCheckConfig(minSuccessful = 200)
+
   "SelfEmploymentPeriodUpdate" should {
     "round trip" in forAll(genSelfEmploymentPeriodUpdate())(roundTripJson(_))
 
@@ -39,7 +43,7 @@ class SelfEmploymentPeriodUpdateSpec extends JsonSpec with GeneratorDrivenProper
         expenses <- Gen.option(genExpenses)
       } yield {
         SelfEmploymentPeriodUpdate(incomes, expenses)
-      }) suchThat { period =>
+      }) retryUntil { period =>
         if (nullFinancials) period.incomes.isEmpty && period.expenses.isEmpty
         else period.incomes.exists(_.hasIncomes) || period.expenses.exists(_.hasExpenses)
       }
