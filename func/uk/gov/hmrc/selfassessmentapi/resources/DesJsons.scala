@@ -242,11 +242,26 @@ object DesJsons {
            |}
        """.stripMargin
       }
+
+      val response: String = {
+        s"""
+           |{
+           |  "transactionReference": "abc"
+           |}
+         """.stripMargin
+      }
     }
 
   }
 
   object Properties {
+    val annualSummaryUpdate: String =
+      s"""
+         |{
+         |  "transactionReference": "abc"
+         |}
+       """.stripMargin
+
 
     def fhlPeriod(transactionReference: String = "12345",
                   from: String = "",

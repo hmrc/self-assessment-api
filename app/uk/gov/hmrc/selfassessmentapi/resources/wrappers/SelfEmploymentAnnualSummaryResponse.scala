@@ -21,6 +21,7 @@ import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentAnnualSummary
 
 case class SelfEmploymentAnnualSummaryResponse(underlying: HttpResponse) extends Response {
+
   def annualSummary: Option[SelfEmploymentAnnualSummary] = {
     json.asOpt[des.SelfEmploymentAnnualSummary] match {
       case Some(desSummary) => Some(SelfEmploymentAnnualSummary.from(desSummary))
@@ -28,6 +29,15 @@ case class SelfEmploymentAnnualSummaryResponse(underlying: HttpResponse) extends
         logger.error("The response from DES does not match the expected self-employment annual summary format.")
         None
       }
+    }
+  }
+
+  def transactionReference: Option[String] = {
+    (json \ "transactionReference").asOpt[String] match {
+      case x@Some(_) => x
+      case None =>
+        logger.error("The 'transactionReference' field was not found in the response from DES")
+        None
     }
   }
 }
