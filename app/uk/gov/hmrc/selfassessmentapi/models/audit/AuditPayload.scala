@@ -36,6 +36,18 @@ object PeriodicUpdate {
   implicit val format: Format[PeriodicUpdate] = Json.format[PeriodicUpdate]
 }
 
+case class AnnualSummaryUpdate(nino: Nino,
+                               sourceId: SourceId,
+                               taxYear: TaxYear,
+                               transactionReference: Option[String],
+                               requestPayload: JsValue) extends AuditPayload {
+  override val auditType: String = "submitAnnualSummary"
+}
+
+object AnnualSummaryUpdate {
+  implicit val format: Format[AnnualSummaryUpdate] = Json.format[AnnualSummaryUpdate]
+}
+
 case class TaxCalculationTrigger(nino: Nino,
                                  taxYear: TaxYear,
                                  calculationId: SourceId) extends AuditPayload {

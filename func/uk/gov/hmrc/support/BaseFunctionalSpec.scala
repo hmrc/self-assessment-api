@@ -23,7 +23,7 @@ trait BaseFunctionalSpec extends TestApplication {
   protected val nino = NinoGenerator().nextNino()
 
   class Assertions(request: String, response: HttpResponse)(implicit urlPathVariables: mutable.Map[String, String])
-      extends UrlInterpolation {
+    extends UrlInterpolation {
     def jsonBodyIsEmptyObject() = response.json shouldBe Json.obj()
 
     def jsonBodyIsEmptyArray() = response.json shouldBe JsArray()
@@ -497,15 +497,15 @@ trait BaseFunctionalSpec extends TestApplication {
       stubFor(post(urlPathEqualTo(s"/auth/authorise"))
         .withRequestBody(containing("HMRC-AS-AGENT"))
         .willReturn(aResponse().withStatus(200).withBody(
-        """
-          |{
-          |  "internalId": "some-id",
-          |  "loginTimes": {
-          |     "currentLogin": "2016-11-27T09:00:00.000Z",
-          |     "previousLogin": "2016-11-01T12:00:00.000Z"
-          |  }
-          |}
-        """.stripMargin)))
+          """
+            |{
+            |  "internalId": "some-id",
+            |  "loginTimes": {
+            |     "currentLogin": "2016-11-27T09:00:00.000Z",
+            |     "previousLogin": "2016-11-01T12:00:00.000Z"
+            |  }
+            |}
+          """.stripMargin)))
 
       this
     }
@@ -743,7 +743,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
 
-        def periodWillBeReturnedFor(nino: Nino, id: String = "abc", from: String, to : String): Givens = {
+        def periodWillBeReturnedFor(nino: Nino, id: String = "abc", from: String, to: String): Givens = {
           stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries?from=$from&to=$to"))
             .willReturn(
               aResponse()
@@ -812,7 +812,8 @@ trait BaseFunctionalSpec extends TestApplication {
           stubFor(put(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/annual-summaries/${taxYear.toDesTaxYear}"))
             .willReturn(
               aResponse()
-                .withStatus(200)))
+                .withStatus(200)
+                .withBody(DesJsons.SelfEmployment.AnnualSummary.response)))
 
           givens
         }
@@ -1066,7 +1067,8 @@ trait BaseFunctionalSpec extends TestApplication {
             put(urlEqualTo(
               s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
               .willReturn(aResponse()
-                .withStatus(200)))
+                .withStatus(200)
+                .withBody(DesJsons.Properties.annualSummaryUpdate)))
 
           givens
         }
@@ -1156,29 +1158,29 @@ trait BaseFunctionalSpec extends TestApplication {
             case PropertyType.FHL =>
               DesJsons.Properties
                 .fhlPeriod(transactionReference = periodId,
-                           from = "2017-04-05",
-                           to = "2018-04-04",
-                           rentIncome = 200.00,
-                           premisesRunningCosts = 200.00,
-                           repairsAndMaintenance = 200.00,
-                           financialCosts = 200.00,
-                           professionalFees = 200.00,
-                           other = 200.00)
+                  from = "2017-04-05",
+                  to = "2018-04-04",
+                  rentIncome = 200.00,
+                  premisesRunningCosts = 200.00,
+                  repairsAndMaintenance = 200.00,
+                  financialCosts = 200.00,
+                  professionalFees = 200.00,
+                  other = 200.00)
                 .toString()
             case PropertyType.OTHER =>
               DesJsons.Properties
                 .otherPeriod(transactionReference = periodId,
-                             from = "2017-04-05",
-                             to = "2018-04-04",
-                             rentIncome = 200.00,
-                             premiumsOfLeaseGrant = Some(200.00),
-                             reversePremiums = Some(200.00),
-                             premisesRunningCosts = Some(200.00),
-                             repairsAndMaintenance = Some(200.00),
-                             financialCosts = Some(200.00),
-                             professionalFees = Some(200.00),
-                             costOfServices = Some(200.00),
-                             other = Some(200.00))
+                  from = "2017-04-05",
+                  to = "2018-04-04",
+                  rentIncome = 200.00,
+                  premiumsOfLeaseGrant = Some(200.00),
+                  reversePremiums = Some(200.00),
+                  premisesRunningCosts = Some(200.00),
+                  repairsAndMaintenance = Some(200.00),
+                  financialCosts = Some(200.00),
+                  professionalFees = Some(200.00),
+                  costOfServices = Some(200.00),
+                  other = Some(200.00))
                 .toString()
           }
           stubFor(
@@ -1264,8 +1266,8 @@ trait BaseFunctionalSpec extends TestApplication {
         def periodWillNotBeUpdatedFor(nino: Nino, propertyType: PropertyType, periodId: String = "def"): Givens = {
           stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId"))
             .willReturn(
-            aResponse()
-            .withStatus(404)))
+              aResponse()
+                .withStatus(404)))
 
           givens
         }
@@ -1273,11 +1275,11 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def invalidPeriodUpdateFor(nino: Nino, propertyType: PropertyType, periodId: String = "def"): Givens = {
           stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId"))
-              .willReturn(
-                aResponse()
-                  .withStatus(400)
-                  .withHeader("Content-Type", "application/json")
-                  .withBody(DesJsons.Errors.invalidPeriod)))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.invalidPeriod)))
 
           givens
         }

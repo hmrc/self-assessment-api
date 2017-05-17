@@ -19,11 +19,14 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentAnnualSummaryConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.models.audit.AnnualSummaryUpdate
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentAnnualSummaryResponse
+import uk.gov.hmrc.selfassessmentapi.services.AuditService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -40,7 +43,9 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
           case Left(errorResult) => handleValidationErrors(errorResult)
           case Right(response) =>
             response.filter {
-              case 200 => NoContent
+              case 200 =>
+                auditAnnualSummaryUpdate(nino, id, taxYear, response)
+                NoContent
               case 404 => NotFound
               case _ => Error.from2(response.json)
             }
@@ -61,4 +66,11 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
         }
       }
     }
+
+  private def auditAnnualSummaryUpdate(nino: Nino, id: SourceId, taxYear: TaxYear, response: SelfEmploymentAnnualSummaryResponse)
+                                      (implicit hc: HeaderCarrier, request: Request[JsValue]) = {
+    AuditService.audit(
+      AnnualSummaryUpdate(nino, id, taxYear, response.transactionReference, request.body),
+      "self-employment-annual-summary-update")
+  }
 }
