@@ -82,6 +82,7 @@ object Errors {
         case INVALID_ORIGINATOR_ID => INTERNAL_SERVER_ERROR -> Some(InternalServerError)
         case INVALID_PAYLOAD => BAD_REQUEST -> Some(InvalidRequest)
         case NOT_FOUND_TAX_YEAR => NOT_FOUND -> None
+        case INVALID_TYPE => NOT_FOUND -> None
         case NOT_FOUND_NINO => NOT_FOUND -> None
         case NOT_FOUND_BUSINESS_ID => NOT_FOUND -> None
         case SERVER_ERROR => INTERNAL_SERVER_ERROR -> Some(InternalServerError)
