@@ -49,7 +49,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         .bodyIsLike(expectedBody)
     }
 
-    "return code 400 when provided with an invalid Originator-Id header" in {
+    "return code 500 when provided with an invalid Originator-Id header" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource
@@ -57,9 +57,9 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         .when()
         .put(Jsons.SelfEmployment.annualSummary()).at(s"/ni/$nino/self-employments/abc/$taxYear")
         .thenAssertThat()
-        .statusIs(400)
+        .statusIs(500)
         .contentTypeIsJson()
-        .bodyIsLike(Jsons.Errors.invalidOriginatorId)
+        .bodyIsLike(Jsons.Errors.internalServerError)
     }
 
     "return code 400 when provided with an invalid payload" in {
@@ -72,7 +72,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(400)
         .contentTypeIsJson()
-        .bodyIsLike(Jsons.Errors.invalidPayload)
+        .bodyIsLike(Jsons.Errors.invalidRequest)
     }
 
     "return code 500 when DES is experiencing problems" in {

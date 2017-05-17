@@ -47,8 +47,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
             response.filter {
               case 200 => NoContent
               case 404 => NotFound
-              case 400 => BadRequest(Error.from(response.json))
-              case _ => unhandledResponse(response.status, logger)
+              case _ => Error.from2(response.json)
             }
         }
       }

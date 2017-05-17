@@ -36,6 +36,8 @@ trait Response {
   private def logResponse(): Unit =
     logger.error(s"DES error occurred with status code ${underlying.status} and body ${underlying.body}")
 
+  @deprecated(message = "This will potentially need to be redesigned so that http status codes returned to TPVs " +
+    "are driven by des error codes and not by http status codes returned by the DES")
   def filter(f: Int => Result)(implicit context: AuthContext): Result =
     status / 100 match {
       case 4 if context.isFOA =>

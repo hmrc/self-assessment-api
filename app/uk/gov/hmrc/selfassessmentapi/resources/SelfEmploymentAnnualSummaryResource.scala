@@ -41,9 +41,8 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
           case Right(response) =>
             response.filter {
               case 200 => NoContent
-              case 400 => BadRequest(Error.from(response.json))
               case 404 => NotFound
-              case _ => unhandledResponse(response.status, logger)
+              case _ => Error.from2(response.json)
             }
         }
       }
