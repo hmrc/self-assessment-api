@@ -259,7 +259,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
   }
 
   private def desAnnualSummary(propertyType: PropertyType.Value) = propertyType match {
-    case PropertyType.OTHER => DesJsons.Properties.annualSummaryOtherProperties
-    case PropertyType.FHL => DesJsons.Properties.annualSummaryFHLProperties
+    case PropertyType.OTHER => DesJsons.Properties.AnnualSummary.other
+    case PropertyType.FHL => DesJsons.Properties.AnnualSummary.fhl
   }
 }
