@@ -16,15 +16,15 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.Action
+import play.api.libs.json.{JsArray, JsValue, Json, Writes}
+import play.api.mvc.{Action, Result}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models.des.Business
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmployment, SelfEmploymentUpdate}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, _}
-import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentResponse
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers._
 
 import scala.concurrent.ExecutionContext.Implicits._
 
@@ -80,7 +80,7 @@ object SelfEmploymentsResource extends BaseResource {
       withAuth(nino) { implicit context =>
         connector.get(nino).map { response =>
           response.filter {
-            case 200 => response.selfEmployment(id).map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+            case 200 => handleRetrieve(response.selfEmployment(id), NotFound)
             case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
             case 404 => NotFound
             case _ => unhandledResponse(response.status, logger)
@@ -94,7 +94,7 @@ object SelfEmploymentsResource extends BaseResource {
       withAuth(nino) { implicit context =>
         connector.get(nino).map { response =>
           response.filter {
-            case 200 => Ok(Json.toJson(response.listSelfEmployment))
+            case 200 => handleRetrieve(response.listSelfEmployment, Ok(JsArray()))
             case 400 => BadRequest(Json.toJson(Errors.NinoInvalid))
             case 404 => NotFound
             case _ => unhandledResponse(response.status, logger)
@@ -103,4 +103,19 @@ object SelfEmploymentsResource extends BaseResource {
       }
     }
 
+  private def handleRetrieve[T](selfEmployments: Either[SelfEmploymentRetrieveError, T], resultOnEmptyData: Result)(
+      implicit w: Writes[T]): Result = {
+    selfEmployments match {
+      case error @ Left(EmptyBusinessData(_) | EmptySelfEmployments(_)) =>
+        logger.warn(error.left.get.msg)
+        resultOnEmptyData
+      case error @ Left(SelfEmploymentRetrieveError(msg)) =>
+        error match {
+          case Left(ParseError(_)) => logger.error(msg)
+          case _ => logger.warn(msg)
+        }
+        InternalServerError(Json.toJson(Errors.InternalServerError))
+      case Right(se) => Ok(Json.toJson(se))
+    }
+  }
 }

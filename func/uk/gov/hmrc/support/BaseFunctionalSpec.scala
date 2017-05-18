@@ -903,6 +903,17 @@ trait BaseFunctionalSpec extends TestApplication {
 
           givens
         }
+
+        def invalidJson(nino: Nino, mtdId: String = "123"): Givens = {
+          stubFor(get(urlEqualTo(s"/registration/business-details/nino/$nino"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("""{ "businessData": 1 }""")))
+
+          givens
+        }
       }
 
       object taxCalculation {
