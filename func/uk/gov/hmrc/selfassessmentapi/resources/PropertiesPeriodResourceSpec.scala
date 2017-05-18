@@ -257,7 +257,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .properties
           .periodWillBeReturnedFor(nino, propertyType)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods/def")
+          .get(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(200)
           .contentTypeIsJson()
@@ -273,7 +273,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .properties
           .noPeriodFor(nino, propertyType)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods/def")
+          .get(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(404)
       }
@@ -285,7 +285,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .des()
           .isATeapotFor(nino)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods/def")
+          .get(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(500)
       }

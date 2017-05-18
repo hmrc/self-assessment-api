@@ -83,17 +83,20 @@ object PropertiesPeriodResource extends BaseResource {
   def retrievePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[AnyContent] =
     FeatureSwitch.async { implicit request =>
       withAuth(nino) { implicit context =>
-        connector.retrieve(nino, periodId, id).map { response =>
-          response.filter {
-            case 200 =>
-              id match {
-                case PropertyType.FHL => toResult[FHL.Properties, des.properties.FHL.Properties](response)
-                case PropertyType.OTHER => toResult[Other.Properties, des.properties.Other.Properties](response)
-              }
-            case 400 => BadRequest(Error.from(response.json))
-            case 404 => NotFound
-            case _ => unhandledResponse(response.status, logger)
+        periodId match {
+          case Period(from, to) => connector.retrieve(nino, from, to, id).map { response =>
+            response.filter {
+              case 200 =>
+                id match {
+                  case PropertyType.FHL => toResult[FHL.Properties, des.properties.FHL.Properties](response)
+                  case PropertyType.OTHER => toResult[Other.Properties, des.properties.Other.Properties](response)
+                }
+              case 400 => BadRequest(Error.from(response.json))
+              case 404 => NotFound
+              case _ => unhandledResponse(response.status, logger)
+            }
           }
+          case _ => Future.successful(NotFound)
         }
       }
     }
@@ -125,7 +128,7 @@ object PropertiesPeriodResource extends BaseResource {
     validate[P, (PeriodId, PropertiesPeriodResponse)](request.body) { period =>
       PropertiesPeriodConnector[P, F]
         .create(nino, period)
-        .map((period.createPeriodId, _))
+        .map((period.periodId, _))
     }
 
   private def validateCreateRequest(id: PropertyType, nino: Nino, request: Request[JsValue])(

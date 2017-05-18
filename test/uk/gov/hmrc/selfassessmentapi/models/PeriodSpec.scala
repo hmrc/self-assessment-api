@@ -25,7 +25,7 @@ class PeriodSpec extends UnitSpec {
       (new Period {
         override val from: LocalDate = LocalDate.parse("2017-04-07")
         override val to: LocalDate = LocalDate.parse("2018-04-07")
-      } createPeriodId) shouldBe "2017-04-07_2018-04-07"
+      } periodId) shouldBe "2017-04-07_2018-04-07"
     }
   }
 }
