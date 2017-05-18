@@ -1068,7 +1068,7 @@ trait BaseFunctionalSpec extends TestApplication {
               s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
               .willReturn(aResponse()
                 .withStatus(200)
-                .withBody(DesJsons.Properties.annualSummaryUpdate)))
+                .withBody(DesJsons.Properties.AnnualSummary.response)))
 
           givens
         }
@@ -1156,8 +1156,8 @@ trait BaseFunctionalSpec extends TestApplication {
         def periodWillBeReturnedFor(nino: Nino, propertyType: PropertyType, periodId: String = "def"): Givens = {
           val periodAsJsonString = propertyType match {
             case PropertyType.FHL =>
-              DesJsons.Properties
-                .fhlPeriod(transactionReference = periodId,
+              DesJsons.Properties.Period.fhl(
+                transactionReference = periodId,
                   from = "2017-04-05",
                   to = "2018-04-04",
                   rentIncome = 200.00,
@@ -1168,8 +1168,8 @@ trait BaseFunctionalSpec extends TestApplication {
                   other = 200.00)
                 .toString()
             case PropertyType.OTHER =>
-              DesJsons.Properties
-                .otherPeriod(transactionReference = periodId,
+              DesJsons.Properties.Period.other(
+                  transactionReference = periodId,
                   from = "2017-04-05",
                   to = "2018-04-04",
                   rentIncome = 200.00,
@@ -1213,7 +1213,7 @@ trait BaseFunctionalSpec extends TestApplication {
                 aResponse()
                   .withStatus(200)
                   .withHeader("Content-Type", "application/json")
-                  .withBody(DesJsons.Properties.periods(propertyType))))
+                  .withBody(DesJsons.Properties.Period.periods(propertyType))))
 
           givens
         }
