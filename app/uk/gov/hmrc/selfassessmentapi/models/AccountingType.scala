@@ -31,6 +31,7 @@ object AccountingType extends Enumeration {
   val fromDes: String => Option[AccountingType] = {
     case "cash" => Some(AccountingType.CASH)
     case "accruals" => Some(AccountingType.ACCRUAL)
+    case _ => None
   }
 
   implicit val format: Format[AccountingType] =

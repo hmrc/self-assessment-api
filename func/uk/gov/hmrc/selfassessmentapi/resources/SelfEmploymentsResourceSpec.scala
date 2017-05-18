@@ -270,6 +270,18 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .statusIs(404)
     }
 
+    "return code 500 when DES returns invalid Json" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .des().selfEmployment.invalidJson(nino)
+        .when()
+        .get(s"/ni/$nino/self-employments/abc")
+        .thenAssertThat()
+        .statusIs(500)
+        .bodyIsLike(Jsons.Errors.internalServerError)
+    }
+
     "return code 500 when DES is experiencing issues" in {
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -362,6 +374,18 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .get(s"/ni/$nino/self-employments")
         .thenAssertThat()
         .statusIs(404)
+    }
+
+    "return code 500 when DES returns invalid Json" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .des().selfEmployment.invalidJson(nino)
+        .when()
+        .get(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(500)
+        .bodyIsLike(Jsons.Errors.internalServerError)
     }
 
     "return code 500 when we receive a status code from DES that we do not handle" in {
