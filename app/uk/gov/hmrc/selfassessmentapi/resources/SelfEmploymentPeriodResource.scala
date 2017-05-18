@@ -41,7 +41,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
         validate[SelfEmploymentPeriod, (PeriodId, SelfEmploymentPeriodResponse)](request.body) { period =>
           connector
             .create(nino, sourceId, period)
-            .map((period.createPeriodId, _))
+            .map((period.periodId, _))
         } map {
           case Left(errorResult) => handleValidationErrors(errorResult)
           case Right((periodId, response)) =>

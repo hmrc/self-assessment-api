@@ -96,7 +96,7 @@ trait ResponseMapper[P <: Period, D <: des.properties.Period] {
     response.underlying.json.asOpt[Seq[D]] match {
       case Some(desPeriods) =>
         val asSummary = PeriodMapper[P, D].asSummary _
-        val setId = (p: P) => PeriodMapper[P, D].setId(p, Some(p.createPeriodId))
+        val setId = (p: P) => PeriodMapper[P, D].setId(p, Some(p.periodId))
         val from = PeriodMapper[P, D].from _
         val fromDES = from andThen setId andThen asSummary
         desPeriods.map(fromDES(_)).sorted

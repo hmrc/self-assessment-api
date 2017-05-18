@@ -24,7 +24,7 @@ trait Period {
   val from: LocalDate
   val to: LocalDate
 
-  def createPeriodId = s"${from}_$to"
+  def periodId = s"${from}_$to"
 }
 
 object Period {
@@ -33,9 +33,9 @@ object Period {
   def unapply(period: String): Option[(LocalDate, LocalDate)] = {
     period match {
       case periodPattern(from, to) =>
-        Try(Some((new LocalDate(from), new LocalDate(to)))) match {
+        Try(Some((LocalDate.parse(from), LocalDate.parse(to)))) match {
           case Success(x) => x
-          case Failure(e) => None
+          case Failure(_) => None
         }
       case _ => None
     }

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
+import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
@@ -71,15 +72,15 @@ object PropertiesPeriodConnector {
         PropertiesPeriodResponse)
   }
 
-  def retrieve(nino: Nino, periodId: PeriodId, propertyType: PropertyType)(
+  def retrieve(nino: Nino, from: LocalDate, to: LocalDate, propertyType: PropertyType)(
       implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
     httpGet[PropertiesPeriodResponse](
-      baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId",
+      baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to",
       PropertiesPeriodResponse)
 
   def retrieveAll(nino: Nino, propertyType: PropertyType)(
       implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
     httpGet[PropertiesPeriodResponse](
-      baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries",
+      baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodicsummaries",
       PropertiesPeriodResponse)
 }

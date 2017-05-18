@@ -41,7 +41,7 @@ case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Respon
     json.asOpt[Seq[des.SelfEmploymentPeriod]] match {
       case Some(desPeriods) =>
         val from = SelfEmploymentPeriod.from _
-        val setId = (p: SelfEmploymentPeriod) => p.copy(id = Some(p.createPeriodId))
+        val setId = (p: SelfEmploymentPeriod) => p.copy(id = Some(p.periodId))
         val fromDES = from andThen setId andThen (_.asSummary)
         desPeriods.map(fromDES).sorted
       case None =>
