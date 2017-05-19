@@ -61,21 +61,24 @@ object SelfEmploymentPeriodResource extends BaseResource {
       }
     }
 
-  // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def updatePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[JsValue] =
     FeatureSwitch.async(parse.json) { implicit request =>
       withAuth(nino) { implicit context =>
-        validate[SelfEmploymentPeriodUpdate, SelfEmploymentPeriodResponse](request.body) { period =>
-          connector.update(nino, id, periodId, period)
-        } map {
-          case Left(errorResult) => handleValidationErrors(errorResult)
-          case Right(response) =>
-            response.filter {
-              case 204 => NoContent
-              case 400 => BadRequest(Error.from(response.json))
-              case 404 => NotFound
-              case _ => unhandledResponse(response.status, logger)
+        periodId match {
+          case Period(from, to) =>
+            validate[SelfEmploymentPeriodUpdate, SelfEmploymentPeriodResponse](request.body) { period =>
+              connector.update(nino, id, from, to, period)
+            } map {
+              case Left(errorResult) => handleValidationErrors(errorResult)
+              case Right(response) =>
+                response.filter {
+                  case 200 => NoContent
+                  case 400 => BadRequest(Error.from(response.json))
+                  case 404 => NotFound
+                  case _ => unhandledResponse(response.status, logger)
+                }
             }
+          case _ => Future.successful(NotFound)
         }
       }
     }
