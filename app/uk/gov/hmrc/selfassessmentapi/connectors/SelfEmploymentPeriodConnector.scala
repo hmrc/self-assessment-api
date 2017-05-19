@@ -48,10 +48,10 @@ object SelfEmploymentPeriodConnector {
       baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries",
       SelfEmploymentPeriodResponse)
 
-  def update(nino: Nino, id: SourceId, periodId: PeriodId, update: SelfEmploymentPeriodUpdate)(
+  def update(nino: Nino, id: SourceId, from: LocalDate, to: LocalDate, update: SelfEmploymentPeriodUpdate)(
       implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
     httpPut[des.Financials, SelfEmploymentPeriodResponse](
-      baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries/$periodId",
+      baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries?from=$from&to=$to",
       des.Financials.from(update),
       SelfEmploymentPeriodResponse)
 

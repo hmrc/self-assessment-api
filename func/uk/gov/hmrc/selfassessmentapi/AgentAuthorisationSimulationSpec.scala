@@ -110,9 +110,9 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource
-        .des().selfEmployment.periodWillNotBeUpdatedFor(nino)
+        .des().selfEmployment.periodWillNotBeUpdatedFor(nino, from = "2017-04-05", to = "2018-04-04")
         .when()
-        .put(Jsons.SelfEmployment.period()).at(s"/ni/$nino/self-employments/abc/periods/def")
+        .put(Jsons.SelfEmployment.period()).at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
         .isBadRequest
@@ -153,7 +153,7 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(201)
         .when()
-        .put(Jsons.SelfEmployment.period(turnover = -100.1234)).at(s"/ni/$nino/self-employments/abc/periods/def")
+        .put(Jsons.SelfEmployment.period(turnover = -100.1234)).at(s"/ni/$nino/self-employments/abc/periods/2017-04-06_2018-04-05")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
         .isBadRequest
