@@ -19,19 +19,11 @@ package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 import play.api.libs.json._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
+import uk.gov.hmrc.selfassessmentapi.models.SourceId
+import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode, SelfEmployment}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentRetrieve
-import uk.gov.hmrc.selfassessmentapi.models.{SourceId, des}
-
-sealed trait SelfEmploymentRetrieveError
-case object EmptyBusinessData extends SelfEmploymentRetrieveError
-case object EmptySelfEmployments extends SelfEmploymentRetrieveError
-case object ParseError extends SelfEmploymentRetrieveError
-case object UnmatchedIncomeId extends SelfEmploymentRetrieveError
-case object UnableToMapAccountingType extends SelfEmploymentRetrieveError
 
 case class SelfEmploymentResponse(underlying: HttpResponse) extends Response {
-  type LogMsg = String
 
   def createLocationHeader(nino: Nino): Option[String] =
     (json \ "incomeSources" \\ "incomeSourceId").map(_.asOpt[String]) match {
@@ -41,48 +33,67 @@ case class SelfEmploymentResponse(underlying: HttpResponse) extends Response {
         None
     }
 
-  def selfEmployment(id: SourceId): Either[(SelfEmploymentRetrieveError, LogMsg), SelfEmploymentRetrieve] =
+  def selfEmployment(id: SourceId): Either[SelfEmploymentRetrieveError, SelfEmploymentRetrieve] =
     json \ "businessData" match {
-      case JsUndefined() => Left(EmptyBusinessData -> s"Empty business data in $json")
-      case JsDefined(_json) =>
-        _json.validate[Seq[des.SelfEmployment]] match {
-          case JsSuccess(Nil, _) =>
-            Left(
-              EmptySelfEmployments -> s"Got empty list of self employment businesses from DES for self employment id $id")
-          case JsSuccess(selfEmployments, _) =>
-            for {
-              desSe <- selfEmployments
-                        .find(_.incomeSourceId.exists(_ == id))
-                        .toRight(
-                          UnmatchedIncomeId -> s"Could not find Self-Employment Id $id in business details returned from DES $selfEmployments")
-                        .right
-              se <- SelfEmploymentRetrieve
-                     .from(desSe)
-                     .toRight(
-                       UnableToMapAccountingType -> s"Could not find accounting type (cash or accruals) in DES response $selfEmployments")
-                     .right
-            } yield se.copy(id = None)
-          case JsError(errors) => Left(ParseError -> s"Unable to parse the response from DES as Json: $errors")
-        }
+      case JsUndefined() => Left(EmptyBusinessData(s"Empty business data in $json"))
+      case JsDefined(_json) => validateRetrieve(id, _json)
     }
 
-  def listSelfEmployment: Either[(SelfEmploymentRetrieveError, LogMsg), Seq[SelfEmploymentRetrieve]] =
+  private def validateRetrieve(id: SourceId, json: JsValue) =
+    json.validate[Seq[SelfEmployment]] match {
+      case JsSuccess(Nil, _) =>
+        Left(EmptySelfEmployments(s"Got empty list of self employment businesses from DES for self employment id $id"))
+      case JsSuccess(selfEmployments, _) =>
+        for {
+          desSe <- selfEmployments
+                    .find(_.incomeSourceId.exists(_ == id))
+                    .toRight(UnmatchedIncomeId(
+                      s"Could not find Self-Employment Id $id in business details returned from DES $selfEmployments"))
+                    .right
+          se <- SelfEmploymentRetrieve
+                 .from(desSe)
+                 .toRight(
+                   UnableToMapAccountingType(
+                     s"Could not find accounting type (cash or accruals) in DES response $selfEmployments"))
+                 .right
+        } yield se.copy(id = None)
+      case JsError(errors) => Left(ParseError(s"Unable to parse the response from DES as Json: $errors"))
+    }
+
+  def listSelfEmployment: Either[SelfEmploymentRetrieveError, Seq[SelfEmploymentRetrieve]] =
     json \ "businessData" match {
-      case JsUndefined() => Left(EmptyBusinessData -> s"Empty business data in $json")
-      case JsDefined(_json) =>
-        _json.validate[Seq[des.SelfEmployment]] match {
-          case JsSuccess(Nil, _) =>
-            Left(EmptySelfEmployments -> s"Got empty list of self employment businesses from DES")
-          case JsSuccess(selfEmployments, _) =>
-            val result = selfEmployments.toStream.map(SelfEmploymentRetrieve.from)
-            if (result contains None)
-              Left(
-                UnableToMapAccountingType -> s"Could not find accounting type (cash or accruals) in DES response $selfEmployments")
-            else Right(result.map(_.get))
-          case JsError(errors) => Left(ParseError -> s"Unable to parse the response from DES as Json: $errors")
-        }
+      case JsUndefined() => Left(EmptyBusinessData(s"Empty business data in $json"))
+      case JsDefined(_json) => validateList(_json)
+    }
+
+  private def validateList(json: JsValue) =
+    json.validate[Seq[SelfEmployment]] match {
+      case JsSuccess(Nil, _) =>
+        Left(EmptySelfEmployments(s"Got empty list of self employment businesses from DES"))
+      case JsSuccess(selfEmployments, _) =>
+        val result = selfEmployments.toStream.map(SelfEmploymentRetrieve.from)
+        if (result contains None)
+          Left(
+            UnableToMapAccountingType(
+              s"Could not find accounting type (cash or accruals) in DES response $selfEmployments"))
+        else Right(result.map(_.get))
+      case JsError(errors) => Left(ParseError(s"Unable to parse the response from DES as Json: $errors"))
     }
 
   def isInvalidNino: Boolean =
     json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_NINO)
 }
+
+sealed trait SelfEmploymentRetrieveError {
+  def msg: String
+}
+
+object SelfEmploymentRetrieveError {
+  def unapply(err: SelfEmploymentRetrieveError): Option[String] = Some(err.msg)
+}
+
+case class EmptyBusinessData(msg: String) extends SelfEmploymentRetrieveError
+case class EmptySelfEmployments(msg: String) extends SelfEmploymentRetrieveError
+case class ParseError(msg: String) extends SelfEmploymentRetrieveError
+case class UnmatchedIncomeId(msg: String) extends SelfEmploymentRetrieveError
+case class UnableToMapAccountingType(msg: String) extends SelfEmploymentRetrieveError

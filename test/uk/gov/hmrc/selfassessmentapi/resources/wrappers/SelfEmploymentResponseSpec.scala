@@ -56,13 +56,13 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
     "return EmptyBusinessData if business data is not present in the json response" in {
       val json = Json.parse("{}")
       val response = SelfEmploymentResponse(HttpResponse(200, Some(json)))
-      response.selfEmployment("someId").left.value._1 shouldBe EmptyBusinessData
+      response.selfEmployment("someId").left.value shouldBe an[EmptyBusinessData]
     }
 
     "return EmptySelfEmployments if the list of self-employments is empty" in {
       val json = Json.parse("""{ "businessData": [] }""")
       val response = SelfEmploymentResponse(HttpResponse(200, Some(json)))
-      response.selfEmployment("someId").left.value._1 shouldBe EmptySelfEmployments
+      response.selfEmployment("someId").left.value shouldBe an[EmptySelfEmployments]
     }
 
     "return UnmatchedIncomeId if the supplied self-employment id does not match or is not found in the response" in {
@@ -100,7 +100,7 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
           |}
         """.stripMargin)
       val response = SelfEmploymentResponse(HttpResponse(200, Some(json)))
-      response.selfEmployment("someId").left.value._1 shouldBe UnmatchedIncomeId
+      response.selfEmployment("someId").left.value shouldBe an[UnmatchedIncomeId]
     }
 
     "return UnableToMapAccountingType if the accounting type cannot be found in the response" in {
@@ -138,13 +138,13 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
           |}
         """.stripMargin)
       val response = SelfEmploymentResponse(HttpResponse(200, Some(json)))
-      response.selfEmployment("123456789012345").left.value._1 shouldBe UnableToMapAccountingType
+      response.selfEmployment("123456789012345").left.value shouldBe an[UnableToMapAccountingType]
     }
 
     "return Parse error if the json cannot be parsed" in {
       val json = Json.parse("""{ "businessData": 1 }""")
       val response = SelfEmploymentResponse(HttpResponse(200, Some(json)))
-      response.selfEmployment("someId").left.value._1 shouldBe ParseError
+      response.selfEmployment("someId").left.value shouldBe an[ParseError]
     }
 
     "return valid self-employment if the response is valid" in {
@@ -202,13 +202,13 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
     "return EmptyBusinessData if business data is not present in the json response" in {
       val json = Json.parse("{}")
       val response = SelfEmploymentResponse(HttpResponse(200, Some(json)))
-      response.listSelfEmployment.left.value._1 shouldBe EmptyBusinessData
+      response.listSelfEmployment.left.value shouldBe an[EmptyBusinessData]
     }
 
     "return EmptySelfEmployments if the list of self-employments is empty" in {
       val json = Json.parse("""{ "businessData": [] }""")
       val response = SelfEmploymentResponse(HttpResponse(200, Some(json)))
-      response.listSelfEmployment.left.value._1 shouldBe EmptySelfEmployments
+      response.listSelfEmployment.left.value shouldBe an[EmptySelfEmployments]
     }
 
     "return UnableToMapAccountingType if there is at least one self-employment with an invalid accounting type in the response" in {
@@ -269,13 +269,13 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
                               |}
                             """.stripMargin)
       val response = SelfEmploymentResponse(HttpResponse(200, Some(json)))
-      response.listSelfEmployment.left.value._1 shouldBe UnableToMapAccountingType
+      response.listSelfEmployment.left.value shouldBe an[UnableToMapAccountingType]
     }
 
     "return Parse error if the json cannot be parsed" in {
       val json = Json.parse("""{ "businessData": 1 }""")
       val response = SelfEmploymentResponse(HttpResponse(200, Some(json)))
-      response.listSelfEmployment.left.value._1 shouldBe ParseError
+      response.listSelfEmployment.left.value shouldBe an[ParseError]
     }
 
     "return a list of valid self-employments if the response is valid" in {
