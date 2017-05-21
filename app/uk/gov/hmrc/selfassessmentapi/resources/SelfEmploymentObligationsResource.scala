@@ -17,19 +17,18 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.Json
+import play.api.mvc.Action
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.ObligationsConnector
-import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object SelfEmploymentObligationsResource extends BaseResource {
-  private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.SelfEmployments, "obligations")
   private val connector = ObligationsConnector
 
-  def retrieveObligations(nino: Nino, id: SourceId) = FeatureSwitch.async(parse.empty) { implicit headers =>
-    withAuth(nino) { implicit context =>
+  def retrieveObligations(nino: Nino, id: SourceId): Action[Unit] =
+    APIAction(nino, SourceType.SelfEmployments, "obligations").async(parse.empty) { implicit request =>
       connector.get(nino).map { response =>
         response.filter {
           case 200 =>
@@ -41,5 +40,4 @@ object SelfEmploymentObligationsResource extends BaseResource {
         }
       }
     }
-  }
 }
