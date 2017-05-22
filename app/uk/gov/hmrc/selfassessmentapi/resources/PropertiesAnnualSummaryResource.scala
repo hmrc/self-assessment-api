@@ -41,7 +41,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
   private val connector = PropertiesAnnualSummaryConnector
 
   def updateAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[JsValue] =
-    APIAction(nino, SourceType.Properties, "annual").async(parse.json) { implicit request =>
+    APIAction(nino, SourceType.Properties, Some("annual")).async(parse.json) { implicit request =>
       validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) map {
         case Left(errorResult) => handleValidationErrors(errorResult)
         case Right(response) =>
@@ -56,7 +56,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
     }
 
   def retrieveAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[AnyContent] =
-    APIAction(nino, SourceType.Properties, "annual").async { implicit request =>
+    APIAction(nino, SourceType.Properties, Some("annual")).async { implicit request =>
       connector.get(nino, propertyId, taxYear).map { response =>
         response.filter {
           case 200 =>

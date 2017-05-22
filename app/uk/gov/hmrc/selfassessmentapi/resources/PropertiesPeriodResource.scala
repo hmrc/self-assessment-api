@@ -36,7 +36,7 @@ object PropertiesPeriodResource extends BaseResource {
   private val connector = PropertiesPeriodConnector
 
   def createPeriod(nino: Nino, id: PropertyType): Action[JsValue] =
-    APIAction(nino, SourceType.Properties, "periods").async(parse.json) { implicit request =>
+    APIAction(nino, SourceType.Properties, Some("periods")).async(parse.json) { implicit request =>
       validateCreateRequest(id, nino, request) map {
         case Left(errorResult) => handleValidationErrors(errorResult)
         case Right((periodId, response)) =>
@@ -55,7 +55,7 @@ object PropertiesPeriodResource extends BaseResource {
     }
 
   def updatePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[JsValue] =
-    APIAction(nino, SourceType.Properties, "periods").async(parse.json) { implicit request =>
+    APIAction(nino, SourceType.Properties, Some("periods")).async(parse.json) { implicit request =>
       validateUpdateRequest(id, nino, periodId, request) map {
         case Left(errorResult) => handleValidationErrors(errorResult)
         case Right(response) =>
@@ -75,7 +75,7 @@ object PropertiesPeriodResource extends BaseResource {
     ResponseMapper[P, D].period(response).map(period => Ok(Json.toJson(period))).getOrElse(NotFound)
 
   def retrievePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[AnyContent] =
-    APIAction(nino, SourceType.Properties, "periods").async { implicit request =>
+    APIAction(nino, SourceType.Properties, Some("periods")).async { implicit request =>
       periodId match {
         case Period(from, to) =>
           connector.retrieve(nino, from, to, id).map { response =>
@@ -95,7 +95,7 @@ object PropertiesPeriodResource extends BaseResource {
     }
 
   def retrievePeriods(nino: Nino, id: PropertyType): Action[AnyContent] =
-    APIAction(nino, SourceType.Properties, "periods").async { implicit request =>
+    APIAction(nino, SourceType.Properties, Some("periods")).async { implicit request =>
       connector.retrieveAll(nino, id).map { response =>
         response.filter {
           case 200 =>

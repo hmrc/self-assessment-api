@@ -28,7 +28,7 @@ object PropertiesObligationsResource extends BaseResource {
   private val connector = ObligationsConnector
 
   def retrieveObligations(nino: Nino): Action[Unit] =
-    APIAction(nino, SourceType.Properties, "obligations").async(parse.empty) { implicit request =>
+    APIAction(nino, SourceType.Properties, Some("obligations")).async(parse.empty) { implicit request =>
       connector.get(nino).map { response =>
         response.filter {
           case 200 =>

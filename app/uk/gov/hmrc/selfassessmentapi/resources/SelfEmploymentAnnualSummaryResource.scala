@@ -34,7 +34,7 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
   private val connector = SelfEmploymentAnnualSummaryConnector
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] =
-    APIAction(nino, SourceType.SelfEmployments, "annual").async(parse.json) { implicit request =>
+    APIAction(nino, SourceType.SelfEmployments, Some("annual")).async(parse.json) { implicit request =>
       validate[SelfEmploymentAnnualSummary, SelfEmploymentAnnualSummaryResponse](request.body) { summary =>
         connector.update(nino, id, taxYear, des.SelfEmploymentAnnualSummary.from(summary))
       } map {
@@ -52,7 +52,7 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[Unit] =
-    APIAction(nino, SourceType.SelfEmployments, "annual").async(parse.empty) { implicit request =>
+    APIAction(nino, SourceType.SelfEmployments, Some("annual")).async(parse.empty) { implicit request =>
       connector.get(nino, id, taxYear).map { response =>
         response.filter {
           case 200 => response.annualSummary.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)

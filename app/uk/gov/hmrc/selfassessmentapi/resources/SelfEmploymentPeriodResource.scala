@@ -35,7 +35,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
   private val connector = SelfEmploymentPeriodConnector
 
   def createPeriod(nino: Nino, sourceId: SourceId): Action[JsValue] =
-    APIAction(nino, SourceType.SelfEmployments, "periods").async(parse.json) { implicit request =>
+    APIAction(nino, SourceType.SelfEmployments, Some("periods")).async(parse.json) { implicit request =>
       validate[SelfEmploymentPeriod, (PeriodId, SelfEmploymentPeriodResponse)](request.body) { period =>
         connector
           .create(nino, sourceId, period)
@@ -60,7 +60,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def updatePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[JsValue] =
-    APIAction(nino, SourceType.SelfEmployments, "periods").async(parse.json) { implicit request =>
+    APIAction(nino, SourceType.SelfEmployments, Some("periods")).async(parse.json) { implicit request =>
       validate[SelfEmploymentPeriodUpdate, SelfEmploymentPeriodResponse](request.body) { period =>
         connector.update(nino, id, periodId, period)
       } map {
@@ -76,7 +76,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
     }
 
   def retrievePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[Unit] =
-    APIAction(nino, SourceType.SelfEmployments, "periods").async(parse.empty) { implicit request =>
+    APIAction(nino, SourceType.SelfEmployments, Some("periods")).async(parse.empty) { implicit request =>
       periodId match {
         case Period(from, to) =>
           connector.get(nino, id, from, to).map { response =>
@@ -92,7 +92,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
     }
 
   def retrievePeriods(nino: Nino, id: SourceId): Action[Unit] =
-    APIAction(nino, SourceType.SelfEmployments, "periods").async(parse.empty) { implicit request =>
+    APIAction(nino, SourceType.SelfEmployments, Some("periods")).async(parse.empty) { implicit request =>
       connector.getAll(nino, id).map { response =>
         response.filter {
           case 200 => Ok(Json.toJson(response.allPeriods))

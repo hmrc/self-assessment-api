@@ -30,7 +30,7 @@ object DividendsAnnualSummaryResource extends BaseResource {
   private val service = DividendsAnnualSummaryService
 
   def updateAnnualSummary(nino: Nino, taxYear: TaxYear): Action[JsValue] =
-    APIAction(nino, SourceType.Dividends, "annual").async(parse.json) { implicit request =>
+    APIAction(nino, SourceType.Dividends, Some("annual")).async(parse.json) { implicit request =>
       validate[Dividends, Boolean](request.body) { dividends =>
         service.updateAnnualSummary(nino, taxYear, dividends)
       } map {
@@ -41,7 +41,7 @@ object DividendsAnnualSummaryResource extends BaseResource {
     }
 
   def retrieveAnnualSummary(nino: Nino, taxYear: TaxYear): Action[AnyContent] =
-    APIAction(nino, SourceType.Dividends, "annual").async { implicit request =>
+    APIAction(nino, SourceType.Dividends, Some("annual")).async { implicit request =>
       service.retrieveAnnualSummary(nino, taxYear).map {
         case Some(summary) => Ok(Json.toJson(summary))
         case None if request.authContext.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))

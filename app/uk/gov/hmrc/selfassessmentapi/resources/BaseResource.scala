@@ -50,7 +50,7 @@ trait BaseResource extends BaseController {
       } flatMap identity
   }
 
-  def FeatureSwitchAction(source: SourceType, summary: String = "") = new ActionBuilder[Request] {
+  def FeatureSwitchAction(source: SourceType, summary: Option[String] = None) = new ActionBuilder[Request] {
     private val isFeatureEnabled = FeatureSwitch(AppContext.featureSwitch).isEnabled(source, summary)
 
     override def invokeBlock[A](request: Request[A], block: (Request[A]) => Future[Result]): Future[Result] = {
@@ -60,6 +60,6 @@ trait BaseResource extends BaseController {
     }
   }
 
-  def APIAction(nino: Nino, source: SourceType, summary: String = ""): ActionBuilder[AuthRequest] =
+  def APIAction(nino: Nino, source: SourceType, summary: Option[String] = None): ActionBuilder[AuthRequest] =
     FeatureSwitchAction(source, summary) andThen AuthAction(nino)
 }

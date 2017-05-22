@@ -28,7 +28,7 @@ object SelfEmploymentObligationsResource extends BaseResource {
   private val connector = ObligationsConnector
 
   def retrieveObligations(nino: Nino, id: SourceId): Action[Unit] =
-    APIAction(nino, SourceType.SelfEmployments, "obligations").async(parse.empty) { implicit request =>
+    APIAction(nino, SourceType.SelfEmployments, Some("obligations")).async(parse.empty) { implicit request =>
       connector.get(nino).map { response =>
         response.filter {
           case 200 =>
