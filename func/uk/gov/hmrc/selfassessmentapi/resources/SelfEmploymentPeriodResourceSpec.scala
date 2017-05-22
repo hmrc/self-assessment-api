@@ -189,9 +189,9 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource
-        .des().selfEmployment.periodWillBeUpdatedFor(nino)
+        .des().selfEmployment.periodWillBeUpdatedFor(nino, from = "2017-04-05", to = "2018-04-04")
         .when()
-        .put(updatePeriod).at(s"/ni/$nino/self-employments/abc/periods/def")
+        .put(updatePeriod).at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .thenAssertThat()
         .statusIs(204)
     }
@@ -207,9 +207,9 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource
-        .des().selfEmployment.periodWillNotBeUpdatedFor(nino)
+        .des().selfEmployment.periodWillNotBeUpdatedFor(nino, from = "2017-04-05", to = "2018-04-04")
         .when()
-        .put(Json.toJson(period)).at(s"/ni/$nino/self-employments/abc/periods/def")
+        .put(Json.toJson(period)).at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .thenAssertThat()
         .statusIs(404)
     }
@@ -230,7 +230,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource
         .when()
-        .put(Json.parse(period)).at(s"/ni/$nino/self-employments/abc/periods/def")
+        .put(Json.parse(period)).at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .thenAssertThat()
         .statusIs(400)
         .contentTypeIsJson()
@@ -251,7 +251,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .userIsFullyAuthorisedForTheResource
         .des().isATeapotFor(nino)
         .when()
-        .put(Json.toJson(period)).at(s"/ni/$nino/self-employments/abc/periods/def")
+        .put(Json.toJson(period)).at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .thenAssertThat()
         .statusIs(500)
     }

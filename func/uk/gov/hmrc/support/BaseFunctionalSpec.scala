@@ -754,17 +754,17 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def periodWillBeUpdatedFor(nino: Nino, id: String = "abc", periodId: String = "def"): Givens = {
-          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries/$periodId"))
+        def periodWillBeUpdatedFor(nino: Nino, id: String = "abc", from: String, to: String): Givens = {
+          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries?from=$from&to=$to"))
             .willReturn(
               aResponse()
-                .withStatus(204)))
+                .withStatus(200)))
 
           givens
         }
 
-        def periodWillNotBeUpdatedFor(nino: Nino, id: String = "abc", periodId: String = "def"): Givens = {
-          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries/$periodId"))
+        def periodWillNotBeUpdatedFor(nino: Nino, id: String = "abc", from: String, to: String): Givens = {
+          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries?from=$from&to=$to"))
             .willReturn(
               aResponse()
                 .withStatus(404)
