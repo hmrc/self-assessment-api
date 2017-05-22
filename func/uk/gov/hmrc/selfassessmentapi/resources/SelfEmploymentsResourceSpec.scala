@@ -248,6 +248,17 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .statusIs(404)
     }
 
+    "return code 404 when retrieving a self-employment resource with an unmatched income id" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .des().selfEmployment.incomeIdNotFoundFor(nino)
+        .when()
+        .get(s"/ni/$nino/self-employments/invalidSourceId")
+        .thenAssertThat()
+        .statusIs(404)
+    }
+
     "return code 400 when retrieving a self-employment that fails nino validation" in {
       given()
         .userIsSubscribedToMtdFor(nino)

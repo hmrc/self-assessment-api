@@ -104,11 +104,14 @@ object SelfEmploymentsResource extends BaseResource {
     }
 
   private def handleRetrieve[T](selfEmployments: Either[SelfEmploymentRetrieveError, T], resultOnEmptyData: Result)(
-      implicit w: Writes[T]): Result = {
+      implicit w: Writes[T]): Result =
     selfEmployments match {
       case error @ Left(EmptyBusinessData(_) | EmptySelfEmployments(_)) =>
         logger.warn(error.left.get.msg)
         resultOnEmptyData
+      case Left(UnmatchedIncomeId(msg)) =>
+        logger.warn(msg)
+        NotFound
       case error @ Left(SelfEmploymentRetrieveError(msg)) =>
         error match {
           case Left(ParseError(_)) => logger.error(msg)
@@ -117,5 +120,4 @@ object SelfEmploymentsResource extends BaseResource {
         InternalServerError(Json.toJson(Errors.InternalServerError))
       case Right(se) => Ok(Json.toJson(se))
     }
-  }
 }

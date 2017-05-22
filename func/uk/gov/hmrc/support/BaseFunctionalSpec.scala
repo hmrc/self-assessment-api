@@ -904,6 +904,18 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+
+        def incomeIdNotFoundFor(nino: Nino, mtdId: String = "123"): Givens = {
+          stubFor(get(urlEqualTo(s"/registration/business-details/nino/$nino"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.SelfEmployment(nino, mtdId, id = "inexistent"))))
+
+          givens
+        }
+
         def invalidJson(nino: Nino, mtdId: String = "123"): Givens = {
           stubFor(get(urlEqualTo(s"/registration/business-details/nino/$nino"))
             .willReturn(
