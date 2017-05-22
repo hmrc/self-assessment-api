@@ -24,42 +24,39 @@ import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.SourceType.SourceType
 import uk.gov.hmrc.selfassessmentapi.services.AuthenticationService
-import uk.gov.hmrc.selfassessmentapi.services.AuthenticationService.AuthErrorResult
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-
-class AuthRequest[A](val authContext: AuthContext, request: Request[A]) extends WrappedRequest[A](request)
 
 trait BaseResource extends BaseController {
   val logger: Logger = Logger(this.getClass)
 
   private val authService = AuthenticationService
   private lazy val authIsEnabled = AppContext.authEnabled
+  private lazy val featureSwitch = FeatureSwitch(AppContext.featureSwitch)
 
   def AuthAction(nino: Nino) = new ActionRefiner[Request, AuthRequest] {
-    override protected def refine[A](request: Request[A]): Future[Either[AuthErrorResult, AuthRequest[A]]] =
-      Future.successful {
-        if (authIsEnabled) {
-          implicit val ev: Request[A] = request
-          authService.authCheck(nino) map {
-            case Right(authContext) => Right(new AuthRequest(authContext, request))
-            case Left(authError) => Left(authError)
-          }
-        } else Future.successful(Right(new AuthRequest(AuthContext(isFOA = false), request)))
-      } flatMap identity
+    override protected def refine[A](request: Request[A]): Future[Either[Result, AuthRequest[A]]] =
+      if (authIsEnabled) {
+        implicit val ev: Request[A] = request
+        authService.authCheck(nino) map {
+          case Right(authContext) => Right(new AuthRequest(authContext, request))
+          case Left(authError) => Left(authError)
+        }
+      } else Future.successful(Right(new AuthRequest(AuthContext(isFOA = false), request)))
   }
 
-  def FeatureSwitchAction(source: SourceType, summary: Option[String] = None) = new ActionBuilder[Request] {
-    private val isFeatureEnabled = FeatureSwitch(AppContext.featureSwitch).isEnabled(source, summary)
-
-    override def invokeBlock[A](request: Request[A], block: (Request[A]) => Future[Result]): Future[Result] = {
-      Future.successful {
-        if (isFeatureEnabled) block(request) else Future.successful(NotFound)
-      } flatMap identity
+  def FeatureSwitchAction(source: SourceType, summary: Option[String] = None) =
+    new ActionBuilder[Request] with ActionFilter[Request] {
+      override protected def filter[A](request: Request[A]): Future[Option[Result]] =
+        Future {
+          if (featureSwitch.isEnabled(source, summary)) None
+          else Some(NotFound)
+        }
     }
-  }
 
   def APIAction(nino: Nino, source: SourceType, summary: Option[String] = None): ActionBuilder[AuthRequest] =
     FeatureSwitchAction(source, summary) andThen AuthAction(nino)
 }
+
+class AuthRequest[A](val authContext: AuthContext, request: Request[A]) extends WrappedRequest[A](request)

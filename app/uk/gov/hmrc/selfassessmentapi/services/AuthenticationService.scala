@@ -33,8 +33,7 @@ import scala.util.control.NonFatal
 import scala.util.matching.Regex
 
 object AuthenticationService extends AuthorisedFunctions {
-  type AuthErrorResult = Result
-  type AuthResult = Either[AuthErrorResult, AuthContext]
+  type AuthResult = Either[Result, AuthContext]
 
   private val lookupService = MtdRefLookupService
 

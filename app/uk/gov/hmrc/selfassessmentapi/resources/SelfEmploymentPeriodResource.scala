@@ -60,22 +60,22 @@ object SelfEmploymentPeriodResource extends BaseResource {
 
   def updatePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments, Some("periods")).async(parse.json) { implicit request =>
-        periodId match {
-          case Period(from, to) =>
-            validate[SelfEmploymentPeriodUpdate, SelfEmploymentPeriodResponse](request.body) { period =>
-              connector.update(nino, id, from, to, period)
-            } map {
-              case Left(errorResult) => handleValidationErrors(errorResult)
-              case Right(response) =>
-                response.filter {
-                  case 200 => NoContent
-                  case 400 => BadRequest(Error.from(response.json))
-                  case 404 => NotFound
-                  case _ => unhandledResponse(response.status, logger)
-                }
-            }
-          case _ => Future.successful(NotFound)
-        }
+      periodId match {
+        case Period(from, to) =>
+          validate[SelfEmploymentPeriodUpdate, SelfEmploymentPeriodResponse](request.body) { period =>
+            connector.update(nino, id, from, to, period)
+          } map {
+            case Left(errorResult) => handleValidationErrors(errorResult)
+            case Right(response) =>
+              response.filter {
+                case 200 => NoContent
+                case 400 => BadRequest(Error.from(response.json))
+                case 404 => NotFound
+                case _ => unhandledResponse(response.status, logger)
+              }
+          }
+        case _ => Future.successful(NotFound)
+      }
     }
 
   def retrievePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[Unit] =

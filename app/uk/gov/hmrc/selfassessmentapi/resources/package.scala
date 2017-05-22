@@ -42,7 +42,7 @@ package object resources {
   }
 
   def validate[T, R](jsValue: JsValue)(f: T => Future[R])(implicit reads: Reads[T]): Future[Either[ErrorResult, R]] =
-    Future { jsValue.validate[T] } flatMap {
+    jsValue.validate[T] match {
       case JsSuccess(payload, _) => f(payload).map(Right(_))
       case JsError(errors) => Future.successful(Left(ValidationErrorResult(errors)))
     }

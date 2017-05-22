@@ -31,7 +31,7 @@ case class FeatureSwitch(value: Option[Configuration]) {
   def isEnabled(sourceType: SourceType, summary: Option[String]): Boolean = value match {
     case Some(config) =>
       summary match {
-        case None => FeatureConfig(config).isSourceEnabled(sourceType.toString)
+        case None | Some("") => FeatureConfig(config).isSourceEnabled(sourceType.toString)
         case Some(_summary) => FeatureConfig(config).isSummaryEnabled(sourceType.toString, _summary)
       }
     case None => DEFAULT_VALUE
