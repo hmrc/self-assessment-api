@@ -264,7 +264,7 @@ traits:
         /obligations:
           get:
             displayName: Retrieve self-employment business obligations
-            description: Retrieve self-employment business obligations. In sandbox environment, different scenarios for this end-point can be simulated using 'Gov-Test-Scenario' header.
+            description: Retrieve self-employment business obligations. In sandbox environment, different scenarios for this endpoint can be simulated using 'Gov-Test-Scenario' header.
             (annotations.sandboxData): !include scenarios/self-employment-obligation-scenarios.md
             is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
             (annotations.scope): "read:self-assessment"
@@ -582,7 +582,7 @@ traits:
       /obligations:
         get:
           displayName: Retrieve all UK property business obligations
-          description: Retrieve all UK property business obligations. In sandbox environment, different scenarios for this end-point can be simulated using 'Gov-Test-Scenario' header.
+          description: Retrieve all UK property business obligations. In sandbox environment, different scenarios for this endpoint can be simulated using 'Gov-Test-Scenario' header.
           (annotations.sandboxData): !include scenarios/property-obligation-scenarios.md
           is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
