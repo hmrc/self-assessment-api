@@ -30,8 +30,6 @@ import uk.gov.hmrc.selfassessmentapi.services.AuditService
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object TaxCalculationResource extends BaseResource {
-
-  private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.Calculation)
   private val connector = TaxCalculationConnector
 
   private val cannedEtaResponse =
@@ -42,42 +40,38 @@ object TaxCalculationResource extends BaseResource {
      """.stripMargin
 
   def requestCalculation(nino: Nino): Action[JsValue] =
-    FeatureSwitch.async(parse.json) { implicit request =>
-      withAuth(nino) { implicit context =>
-        validate[CalculationRequest, TaxCalculationResponse](request.body) { req =>
-          connector.requestCalculation(nino, req.taxYear)
-        } map {
-          case Left(errorResult) => handleValidationErrors(errorResult)
-          case Right(response) =>
-            response.filter {
-              case 202 =>
-                auditTaxCalcTrigger(nino, response)
-                Accepted(Json.parse(cannedEtaResponse))
-                  .withHeaders(
-                    LOCATION -> response.calcId
-                      .map(id => s"/self-assessment/ni/$nino/calculations/$id")
-                      .getOrElse(""))
-              case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-              case _ => unhandledResponse(response.status, logger)
-            }
-        }
+    APIAction(nino, SourceType.Calculation).async(parse.json) { implicit request =>
+      validate[CalculationRequest, TaxCalculationResponse](request.body) { req =>
+        connector.requestCalculation(nino, req.taxYear)
+      } map {
+        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Right(response) =>
+          response.filter {
+            case 202 =>
+              auditTaxCalcTrigger(nino, response)
+              Accepted(Json.parse(cannedEtaResponse))
+                .withHeaders(
+                  LOCATION -> response.calcId
+                    .map(id => s"/self-assessment/ni/$nino/calculations/$id")
+                    .getOrElse(""))
+            case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
+            case _ => unhandledResponse(response.status, logger)
+          }
       }
     }
 
   def retrieveCalculation(nino: Nino, calcId: SourceId): Action[Unit] =
-    FeatureSwitch.async(parse.empty) { implicit request =>
-      withAuth(nino) { implicit context =>
-        connector.retrieveCalculation(nino, calcId).map { response =>
-          response.filter {
-            case 200 =>
-              auditTaxCalcRequest(nino, calcId, response)
-              Ok(Json.toJson(response.calculation))
-            case 204 => NoContent
-            case 400 if response.isInvalidCalcId => NotFound
-            case 400 if response.isInvalidIdentifier => BadRequest(Json.toJson(Errors.NinoInvalid))
-            case 404 => NotFound
-            case _ => unhandledResponse(response.status, logger)
-          }
+    APIAction(nino, SourceType.Calculation).async(parse.empty) { implicit request =>
+      connector.retrieveCalculation(nino, calcId).map { response =>
+        response.filter {
+          case 200 =>
+            auditTaxCalcRequest(nino, calcId, response)
+            Ok(Json.toJson(response.calculation))
+          case 204 => NoContent
+          case 400 if response.isInvalidCalcId => NotFound
+          case 400 if response.isInvalidIdentifier => BadRequest(Json.toJson(Errors.NinoInvalid))
+          case 404 => NotFound
+          case _ => unhandledResponse(response.status, logger)
         }
       }
     }
