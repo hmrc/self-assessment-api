@@ -36,6 +36,11 @@ class OtherPropertiesAllowancesSpec extends JsonSpec {
         "/annualInvestmentAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
+    "reject annualInvestmentAllowance more than 99999999999999.98" in {
+      assertValidationErrorWithCode(OtherPropertiesAllowances(annualInvestmentAllowance = Some(BigDecimal("99999999999999.99"))),
+        "/annualInvestmentAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
     "reject annualInvestmentAllowance with more than 2 decimal places" in {
       assertValidationErrorWithCode(OtherPropertiesAllowances(annualInvestmentAllowance = Some(50.123)),
         "/annualInvestmentAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
@@ -43,6 +48,11 @@ class OtherPropertiesAllowancesSpec extends JsonSpec {
 
     "reject businessPremisesRenovationAllowance with a negative value" in {
       assertValidationErrorWithCode(OtherPropertiesAllowances(businessPremisesRenovationAllowance = Some(-50)),
+        "/businessPremisesRenovationAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject businessPremisesRenovationAllowance more than 99999999999999.98" in {
+      assertValidationErrorWithCode(OtherPropertiesAllowances(businessPremisesRenovationAllowance = Some(BigDecimal("99999999999999.99"))),
         "/businessPremisesRenovationAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
@@ -56,6 +66,11 @@ class OtherPropertiesAllowancesSpec extends JsonSpec {
         "/otherCapitalAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
+    "reject otherCapitalAllowance more than 99999999999999.98" in {
+      assertValidationErrorWithCode(OtherPropertiesAllowances(otherCapitalAllowance = Some(BigDecimal("99999999999999.99"))),
+        "/otherCapitalAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
     "reject otherCapitalAllowance with more than two decimal places" in {
       assertValidationErrorWithCode(OtherPropertiesAllowances(otherCapitalAllowance = Some(-50)),
         "/otherCapitalAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
@@ -66,17 +81,27 @@ class OtherPropertiesAllowancesSpec extends JsonSpec {
         "/costOfReplacingDomesticItems", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
+    "reject costOfReplacingDomesticItems more than 99999999999999.98" in {
+      assertValidationErrorWithCode(OtherPropertiesAllowances(costOfReplacingDomesticItems = Some(BigDecimal("99999999999999.99"))),
+        "/costOfReplacingDomesticItems", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
     "reject costOfReplacingDomesticItems with more than two decimal places" in {
       assertValidationErrorWithCode(OtherPropertiesAllowances(costOfReplacingDomesticItems = Some(-50)),
         "/costOfReplacingDomesticItems", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
-    "reject zeroEmissionGoodsVehicleAllowance with a negative value" in {
+    "reject zeroEmissionsGoodsVehicleAllowance with a negative value" in {
       assertValidationErrorWithCode(OtherPropertiesAllowances(zeroEmissionsGoodsVehicleAllowance = Some(-50)),
         "/zeroEmissionsGoodsVehicleAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
-    "reject zeroEmissionGoodsVehicleAllowance with more than two decimal places" in {
+    "reject zeroEmissionsGoodsVehicleAllowance more than 99999999999999.98" in {
+      assertValidationErrorWithCode(OtherPropertiesAllowances(zeroEmissionsGoodsVehicleAllowance = Some(BigDecimal("99999999999999.99"))),
+        "/zeroEmissionsGoodsVehicleAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject zeroEmissionsGoodsVehicleAllowance with more than two decimal places" in {
       assertValidationErrorWithCode(OtherPropertiesAllowances(zeroEmissionsGoodsVehicleAllowance = Some(-50)),
         "/zeroEmissionsGoodsVehicleAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
     }

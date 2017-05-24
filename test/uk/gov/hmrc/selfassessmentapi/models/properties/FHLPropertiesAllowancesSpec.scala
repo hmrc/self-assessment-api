@@ -36,6 +36,11 @@ class FHLPropertiesAllowancesSpec extends JsonSpec {
         "/annualInvestmentAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
+    "reject annualInvestmentAllowance more than 99999999999999.98" in {
+      assertValidationErrorWithCode(FHLPropertiesAllowances(annualInvestmentAllowance = Some(BigDecimal("99999999999999.99"))),
+        "/annualInvestmentAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
     "reject annualInvestmentAllowance with more than 2 decimal places" in {
       assertValidationErrorWithCode(FHLPropertiesAllowances(annualInvestmentAllowance = Some(50.123)),
         "/annualInvestmentAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
@@ -43,6 +48,11 @@ class FHLPropertiesAllowancesSpec extends JsonSpec {
 
     "reject otherCapitalAllowance with a negative value" in {
       assertValidationErrorWithCode(FHLPropertiesAllowances(otherCapitalAllowance = Some(-50)),
+        "/otherCapitalAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject otherCapitalAllowance more than 99999999999999.98" in {
+      assertValidationErrorWithCode(FHLPropertiesAllowances(otherCapitalAllowance = Some(BigDecimal("99999999999999.99"))),
         "/otherCapitalAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 

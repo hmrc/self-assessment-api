@@ -8,14 +8,16 @@
       "description": "Tax UK interest income",
       "type": "number",
       "multipleOf": 0.01,
-      "minimum": 0
+      "minimum": 0,
+      "maximum": 99999999999999.98
     },
     "untaxedUkInterest": {
       "title": "Untaxed UK interest",
       "description": "Untaxed UK interest income",
       "type": "number",
       "multipleOf": 0.01,
-      "minimum": 0
+      "minimum": 0,
+      "maximum": 99999999999999.98
     }
   },
   "additionalProperties": false

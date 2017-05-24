@@ -36,6 +36,14 @@ class IncomeSpec extends JsonSpec {
       assertValidationErrorWithCode(Income(500.55, Some(-100.11)), "/taxDeducted", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
+    "reject payloads where the amount is more than 99999999999999.98" in {
+      assertValidationErrorWithCode(Income(BigDecimal("99999999999999.99"), None), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject payloads where the taxDeducted is more than 99999999999999.98" in {
+      assertValidationErrorWithCode(Income(500.55, Some(BigDecimal("99999999999999.99"))), "/taxDeducted", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
     "accept payloads where the taxDeducted is equal to the amount" in {
       assertValidationPasses(Income(500.55, Some(500.55)))
     }

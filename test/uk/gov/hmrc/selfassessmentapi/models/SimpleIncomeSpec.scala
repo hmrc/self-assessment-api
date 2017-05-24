@@ -28,6 +28,10 @@ class SimpleIncomeSpec extends JsonSpec {
       assertValidationErrorWithCode(SimpleIncome(-20.20), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
+    "reject amounts more than 99999999999999.98" in {
+      assertValidationErrorWithCode(SimpleIncome(BigDecimal("99999999999999.99")), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
     "reject an amount with more than 2 decimal places" in {
       assertValidationErrorWithCode(SimpleIncome(10.123), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
     }

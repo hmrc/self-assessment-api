@@ -36,6 +36,11 @@ class DividendsSpec extends JsonSpec {
         "/ukDividends", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
+    "reject ukDividends more than 99999999999999.98" in {
+      assertValidationErrorWithCode(Dividends(ukDividends = Some(BigDecimal("99999999999999.99"))),
+        "/ukDividends", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
     "reject annualInvestmentAllowance with more than 2 decimal places" in {
       assertValidationErrorWithCode(Dividends(ukDividends = Some(50.123)),
         "/ukDividends", ErrorCode.INVALID_MONETARY_AMOUNT)

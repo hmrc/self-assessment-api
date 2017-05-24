@@ -25,6 +25,9 @@ class ExpenseSpec extends JsonSpec {
     "reject a negative amount" in
       assertValidationErrorWithCode(Expense(-20.20, None), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
 
+    "reject amounts more than 99999999999999.98" in
+      assertValidationErrorWithCode(Expense(BigDecimal("99999999999999.99"), None), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
+
     "reject an amount with more than 2 decimal places" in
       assertValidationErrorWithCode(Expense(10.123, None), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
 

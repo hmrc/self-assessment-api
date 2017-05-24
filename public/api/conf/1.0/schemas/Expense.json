@@ -9,14 +9,16 @@
       "description": "Expenses associated with the running of the business",
       "type": "number",
       "multipleOf": 0.01,
-      "minimum": 0
+      "minimum": 0,
+      "maximum": 99999999999999.98
     },
     "disallowableAmount": {
       "title": "Disallowable amount",
       "description": "Any expense or partial expense that cannot be claimed for tax purposes",
       "type": "number",
       "multipleOf": 0.01,
-      "minimum": 0
+      "minimum": 0,
+      "maximum": 99999999999999.98
     }
   },
   "required": [
