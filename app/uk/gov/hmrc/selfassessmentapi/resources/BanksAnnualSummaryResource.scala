@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
 import uk.gov.hmrc.selfassessmentapi.models.banks.BankAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.BanksAnnualSummaryService
@@ -35,7 +36,7 @@ object BanksAnnualSummaryResource extends BaseResource {
       } map {
         case Left(errorResult) => handleValidationErrors(errorResult)
         case Right(true) => NoContent
-        case Right(false) if request.authContext.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
+        case Right(false) if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
         case _ => NotFound
       }
     }
@@ -44,7 +45,7 @@ object BanksAnnualSummaryResource extends BaseResource {
     APIAction(nino, SourceType.Banks, Some("annual")).async { implicit request =>
       annualSummaryService.retrieveAnnualSummary(nino, id, taxYear).map {
         case Some(summary) => Ok(Json.toJson(summary))
-        case None if request.authContext.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
+        case None if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
         case None => NotFound
       }
     }

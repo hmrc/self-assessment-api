@@ -16,4 +16,16 @@
 
 package uk.gov.hmrc.selfassessmentapi.contexts
 
-case class AuthContext(isFOA: Boolean)
+sealed trait AuthContext
+
+case object Individual extends AuthContext {
+  override def toString: String = "individual"
+}
+
+case object Agent extends AuthContext {
+  override def toString: String = "agent"
+}
+
+case object FilingOnlyAgent extends AuthContext {
+  override def toString: String = "filingOnlyAgent"
+}

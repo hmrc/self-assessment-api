@@ -24,7 +24,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuthConnector
-import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
+import uk.gov.hmrc.selfassessmentapi.contexts.{Agent, AuthContext, FilingOnlyAgent, Individual}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, MtdId}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -53,9 +53,13 @@ object AuthenticationService extends AuthorisedFunctions {
     authorised(
       Enrolment("HMRC-MTD-IT")
         .withIdentifier("MTDITID", mtdId.mtdId)
-        .withDelegatedAuthRule("mtd-it-auth")) {
-      logger.debug("Client authorisation succeeded as fully-authorised individual.")
-      Future.successful(Right(AuthContext(isFOA = false)))
+        .withDelegatedAuthRule("mtd-it-auth")).retrieve(Retrievals.affinityGroup) {
+      case affinityGroup if affinityGroup.contains(AffinityGroup.Agent) =>
+        logger.debug("Client authorisation succeeded as fully-authorised agent.")
+        Future.successful(Right(Agent))
+      case _ =>
+        logger.debug("Client authorisation succeeded as fully-authorised individual.")
+        Future.successful(Right(Individual))
     } recoverWith (authoriseAsFOA orElse unhandledError)
   }
 
@@ -68,7 +72,7 @@ object AuthenticationService extends AuthorisedFunctions {
           Future.successful(Left(Forbidden(Json.toJson(Errors.AgentNotAuthorized))))
         } else {
           logger.debug("Client authorisation succeeded as filing-only agent.")
-          Future.successful(Right(AuthContext(isFOA = true)))
+          Future.successful(Right(FilingOnlyAgent))
         }
       } recoverWith (unsubscribedAgentOrUnauthorisedClient orElse unhandledError) // Iff agent is not enrolled for the user or client affinityGroup is not Agent.
   }

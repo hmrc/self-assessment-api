@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
 import uk.gov.hmrc.selfassessmentapi.models.dividends.Dividends
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.DividendsAnnualSummaryService
@@ -44,7 +45,7 @@ object DividendsAnnualSummaryResource extends BaseResource {
     APIAction(nino, SourceType.Dividends, Some("annual")).async { implicit request =>
       service.retrieveAnnualSummary(nino, taxYear).map {
         case Some(summary) => Ok(Json.toJson(summary))
-        case None if request.authContext.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
+        case None if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
         case _ => NotFound
       }
     }
