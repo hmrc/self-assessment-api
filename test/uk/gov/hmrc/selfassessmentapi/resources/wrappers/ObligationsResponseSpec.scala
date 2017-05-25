@@ -35,28 +35,28 @@ class ObligationsResponseSpec extends UnitSpec {
        |      "status": "F",
        |      "inboundCorrespondenceFromDate": "2017-01-01",
        |      "inboundCorrespondenceToDate": "2017-03-31",
-       |      "inboundCorrespondanceDueDate": "2017-04-30",
+       |      "inboundCorrespondenceDueDate": "2017-04-30",
        |      "periodKey": "001"
        |    },
        |    {
        |      "status": "O",
        |      "inboundCorrespondenceFromDate": "2017-04-01",
        |      "inboundCorrespondenceToDate": "2017-06-30",
-       |      "inboundCorrespondanceDueDate": "2017-07-30",
+       |      "inboundCorrespondenceDueDate": "2017-07-30",
        |      "periodKey": "002"
        |    },
        |    {
        |      "status": "O",
        |      "inboundCorrespondenceFromDate": "2017-07-01",
        |      "inboundCorrespondenceToDate": "2017-09-30",
-       |      "inboundCorrespondanceDueDate": "2017-10-30",
+       |      "inboundCorrespondenceDueDate": "2017-10-30",
        |      "periodKey": "003"
        |    },
        |    {
        |      "status": "O",
        |      "inboundCorrespondenceFromDate": "2017-10-01",
        |      "inboundCorrespondenceToDate": "2017-12-01",
-       |      "inboundCorrespondanceDueDate": "2018-01-01",
+       |      "inboundCorrespondenceDueDate": "2018-01-01",
        |      "periodKey": "004"
        |    }
        |    ]
@@ -69,28 +69,28 @@ class ObligationsResponseSpec extends UnitSpec {
        |      "status": "F",
        |      "inboundCorrespondenceFromDate": "2017-01-02",
        |      "inboundCorrespondenceToDate": "2017-03-31",
-       |      "inboundCorrespondanceDueDate": "2017-04-30",
+       |      "inboundCorrespondenceDueDate": "2017-04-30",
        |      "periodKey": "001"
        |    },
        |    {
        |      "status": "O",
        |      "inboundCorrespondenceFromDate": "2017-04-01",
        |      "inboundCorrespondenceToDate": "2017-06-30",
-       |      "inboundCorrespondanceDueDate": "2017-07-30",
+       |      "inboundCorrespondenceDueDate": "2017-07-30",
        |      "periodKey": "002"
        |    },
        |    {
        |      "status": "O",
        |      "inboundCorrespondenceFromDate": "2017-07-01",
        |      "inboundCorrespondenceToDate": "2017-09-30",
-       |      "inboundCorrespondanceDueDate": "2017-10-30",
+       |      "inboundCorrespondenceDueDate": "2017-10-30",
        |      "periodKey": "003"
        |    },
        |    {
        |      "status": "F",
        |      "inboundCorrespondenceFromDate": "2017-10-01",
        |      "inboundCorrespondenceToDate": "2017-12-01",
-       |      "inboundCorrespondanceDueDate": "2018-01-01",
+       |      "inboundCorrespondenceDueDate": "2018-01-01",
        |      "periodKey": "004"
        |    }
        |    ]
