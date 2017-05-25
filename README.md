@@ -51,3 +51,15 @@ Now you can test sandbox:
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
+
+### Reporting Issues
+If you encounter an issue with this API, you can use the GitHub issues page to seek help.
+
+When submitting a technical query, please be as detailed as possible in your explanation. 
+If the issue is related to a bug or undesired system behaviour, please provide us with 
+steps to reproduce the issue, as this will help to reduce the time it takes us to find 
+a solution.
+
+Please note that our GitHub issues page is for technical queries only. If you have any 
+business-related questions please direct them to the Software Developer Support Team (SDST), 
+who can be contacted at SDSTeam 'at' hmrc.gsi.gov.uk.
