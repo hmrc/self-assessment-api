@@ -29,8 +29,8 @@ object TaxCalculationConnector {
   private lazy val baseUrl: String = AppContext.desUrl
 
   def requestCalculation(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier): Future[TaxCalculationResponse] =
-    httpEmptyPost[TaxCalculationResponse](
-      baseUrl + s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation",
+    httpPost[String, TaxCalculationResponse](
+      baseUrl + s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation", "{}",
       TaxCalculationResponse)
 
   def retrieveCalculation(nino: Nino, calcId: SourceId)(implicit hc: HeaderCarrier): Future[TaxCalculationResponse] =
