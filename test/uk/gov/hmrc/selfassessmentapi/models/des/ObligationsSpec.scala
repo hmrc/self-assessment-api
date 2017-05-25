@@ -38,7 +38,7 @@ class ObligationsSpec extends JsonSpec {
              |          "status": "O",
              |          "inboundCorrespondenceFromDate": "2016-10-07",
              |          "inboundCorrespondenceToDate": "2016-10-10",
-             |          "inboundCorrespondanceDueDate": "2016-10-31",
+             |          "inboundCorrespondenceDueDate": "2016-10-31",
              |          "periodKey": "004"
              |        },
              |        {
@@ -46,7 +46,7 @@ class ObligationsSpec extends JsonSpec {
              |          "inboundCorrespondenceFromDate": "2016-10-01",
              |          "inboundCorrespondenceToDate": "2016-10-07",
              |          "inboundCorrespondenceDateReceived": "2016-10-15",
-             |          "inboundCorrespondanceDueDate": "2016-10-20",
+             |          "inboundCorrespondenceDueDate": "2016-10-20",
              |          "periodKey": "004"
              |        }
              |      ]
