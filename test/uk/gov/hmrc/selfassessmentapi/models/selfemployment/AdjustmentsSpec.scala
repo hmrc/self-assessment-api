@@ -45,6 +45,10 @@ class AdjustmentsSpec extends JsonSpec {
         INVALID_MONETARY_AMOUNT)
     }
 
+    def validateMaxAmount(model: Adjustments, path: String) = {
+      assertValidationErrorWithCode(model, path, INVALID_MONETARY_AMOUNT)
+    }
+
     def validateAmount(model: Adjustments, path: String) = {
       assertValidationErrorWithCode(model, path,
         INVALID_MONETARY_AMOUNT)
@@ -53,6 +57,11 @@ class AdjustmentsSpec extends JsonSpec {
     "reject negative includedNonTaxableProfits" in {
       val se = Adjustments(includedNonTaxableProfits = Some(BigDecimal(-10.00)))
       validateNonNegativeAmount(se, "/includedNonTaxableProfits")
+    }
+
+    "reject includedNonTaxableProfits more than 99999999999999.98" in {
+      val se = Adjustments(includedNonTaxableProfits = Some(BigDecimal("99999999999999.99")))
+      validateMaxAmount(se, "/includedNonTaxableProfits")
     }
 
     "reject includedNonTaxableProfits with more than two decimal places" in {
@@ -65,9 +74,19 @@ class AdjustmentsSpec extends JsonSpec {
       validateAmount(se, "/basisAdjustment")
     }
 
+    "reject basisAdjustment more than 99999999999999.98" in {
+      val se = Adjustments(basisAdjustment = Some(BigDecimal("99999999999999.99")))
+      validateMaxAmount(se, "/basisAdjustment")
+    }
+
     "reject negative overlapReliefUsed" in {
       val se = Adjustments(overlapReliefUsed = Some(BigDecimal(-10.00)))
      validateNonNegativeAmount(se, "/overlapReliefUsed")
+    }
+
+    "reject overlapReliefUsed more than 99999999999999.98" in {
+      val se = Adjustments(overlapReliefUsed = Some(BigDecimal("99999999999999.99")))
+      validateMaxAmount(se, "/overlapReliefUsed")
     }
 
     "reject overlapReliefUsed with more than two decimal places" in {
@@ -80,6 +99,11 @@ class AdjustmentsSpec extends JsonSpec {
       validateNonNegativeAmount(se, "/accountingAdjustment")
     }
 
+    "reject accountingAdjustment more than 99999999999999.98" in {
+      val se = Adjustments(accountingAdjustment = Some(BigDecimal("99999999999999.99")))
+      validateMaxAmount(se, "/accountingAdjustment")
+    }
+
     "reject accountingAdjustment with more than two decimal places" in {
       val se = Adjustments(accountingAdjustment = Some(BigDecimal(10.123)))
       validateNonNegativeAmount(se, "/accountingAdjustment")
@@ -90,9 +114,19 @@ class AdjustmentsSpec extends JsonSpec {
       validateAmount(se, "/averagingAdjustment")
     }
 
+    "reject averagingAdjustment more than 99999999999999.98" in {
+      val se = Adjustments(averagingAdjustment = Some(BigDecimal("99999999999999.99")))
+      validateMaxAmount(se, "/averagingAdjustment")
+    }
+
     "reject negative lossBroughtForward" in {
       val se = Adjustments(lossBroughtForward = Some(BigDecimal(-10.00)))
       validateNonNegativeAmount(se, "/lossBroughtForward")
+    }
+
+    "reject lossBroughtForward more than 99999999999999.98" in {
+      val se = Adjustments(lossBroughtForward = Some(BigDecimal("99999999999999.99")))
+      validateMaxAmount(se, "/lossBroughtForward")
     }
 
     "reject lossBroughtForward with more than two decimal places" in {
@@ -103,6 +137,11 @@ class AdjustmentsSpec extends JsonSpec {
     "reject negative outstandingBusinessIncome" in {
       val se = Adjustments(outstandingBusinessIncome = Some(BigDecimal(-10.00)))
       validateNonNegativeAmount(se, "/outstandingBusinessIncome")
+    }
+
+    "reject outstandingBusinessIncome more than 99999999999999.98" in {
+      val se = Adjustments(outstandingBusinessIncome = Some(BigDecimal("99999999999999.99")))
+      validateMaxAmount(se, "/outstandingBusinessIncome")
     }
 
     "reject outstandingBusinessIncome with more than two decimal places" in {
@@ -116,6 +155,11 @@ class AdjustmentsSpec extends JsonSpec {
       assertValidationErrorWithCode(period, "/balancingChargeBPRA", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
+    "reject balancingChargeBPRA more than 99999999999999.98" in {
+      val se = Adjustments(balancingChargeBPRA = Some(BigDecimal("99999999999999.99")))
+      validateMaxAmount(se, "/balancingChargeBPRA")
+    }
+
     "return a INVALID_MONETARY_AMOUNT error when balancingCharge amount contains more than 2 decimal places" in {
       val period = Adjustments(balancingChargeOther = Some(BigDecimal(100.555)))
 
@@ -126,6 +170,11 @@ class AdjustmentsSpec extends JsonSpec {
       val period = Adjustments(goodsAndServicesOwnUse = Some(-200))
 
       assertValidationErrorWithCode(period, "/goodsAndServicesOwnUse", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject goodsAndServicesOwnUse more than 99999999999999.98" in {
+      val se = Adjustments(goodsAndServicesOwnUse = Some(BigDecimal("99999999999999.99")))
+      validateMaxAmount(se, "/goodsAndServicesOwnUse")
     }
 
     "return a INVALID_MONETARY_AMOUNT error when goodsAndServicesOwnUse contains more than two decimal places" in {

@@ -9,14 +9,16 @@
       "description": "Annual investment allowance",
       "type": "number",
       "multipleOf": 0.01,
-      "minimum": 0
+      "minimum": 0,
+      "maximum": 99999999999999.98
     },
     "otherCapitalAllowance": {
       "title": "Other Capital allowance",
       "description": "All other capital allowances",
       "type": "number",
       "multipleOf": 0.01,
-      "minimum": 0
+      "minimum": 0,
+      "maximum": 99999999999999.98
     }
   },
   "additionalProperties": false

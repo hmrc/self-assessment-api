@@ -32,22 +32,25 @@ package object models {
   type SummaryId = String
   type ValidationErrors = Seq[(JsPath, Seq[ValidationError])]
 
+  private val MAX_AMOUNT = BigDecimal("99999999999999.98")
+
   /**
     * Asserts that amounts must have a maximum of two decimal places
     */
   val amountValidator: Reads[Amount] = Reads
     .of[Amount]
     .filter(
-      ValidationError("amount should be a number with up to 2 decimal places", ErrorCode.INVALID_MONETARY_AMOUNT))(
-      _.scale < 3)
+      ValidationError("amount should be a number less than 99999999999999.98 with up to 2 decimal places", ErrorCode.INVALID_MONETARY_AMOUNT))(
+      amount => amount.scale < 3 && amount <= MAX_AMOUNT)
 
   /**
     * Asserts that amounts must be non-negative and have a maximum of two decimal places
     */
   val nonNegativeAmountValidator: Reads[Amount] = Reads
     .of[Amount]
-    .filter(ValidationError("amounts should be non-negative numbers with up to 2 decimal places",
-                            ErrorCode.INVALID_MONETARY_AMOUNT))(amount => amount >= 0 && amount.scale < 3)
+    .filter(ValidationError("amounts should be a non-negative number less than 99999999999999.98 with up to 2 decimal places",
+                            ErrorCode.INVALID_MONETARY_AMOUNT))(
+      amount => amount >= 0 && amount.scale < 3 && amount <= MAX_AMOUNT)
 
   val sicClassifications: Try[Seq[String]] =
     for {
