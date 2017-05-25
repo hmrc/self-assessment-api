@@ -21,6 +21,7 @@ import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentAnnualSummaryConnector
+import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.AnnualSummaryUpdate
@@ -42,7 +43,7 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
         case Right(response) =>
           response.filter {
             case 200 =>
-              auditAnnualSummaryUpdate(nino, id, taxYear, response)
+              auditAnnualSummaryUpdate(nino, id, taxYear, request.authContext, response)
               NoContent
             case 404 => NotFound
             case _ => Error.from2(response.json)
@@ -66,8 +67,9 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
       nino: Nino,
       id: SourceId,
       taxYear: TaxYear,
+      authCtx: AuthContext,
       response: SelfEmploymentAnnualSummaryResponse)(implicit hc: HeaderCarrier, request: Request[JsValue]) = {
-    AuditService.audit(AnnualSummaryUpdate(nino, id, taxYear, response.transactionReference, request.body),
+    AuditService.audit(AnnualSummaryUpdate(nino, id, taxYear, authCtx.toString, response.transactionReference, request.body),
                        "self-employment-annual-summary-update")
   }
 }

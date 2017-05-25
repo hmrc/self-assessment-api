@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
 import uk.gov.hmrc.selfassessmentapi.models.banks.Bank
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType}
 import uk.gov.hmrc.selfassessmentapi.services.BanksService
@@ -46,7 +47,7 @@ object BanksResource extends BaseResource {
       } map {
         case Left(errorResult) => handleValidationErrors(errorResult)
         case Right(true) => NoContent
-        case Right(false) if request.authContext.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
+        case Right(false) if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
         case _ => NotFound
       }
     }
@@ -55,7 +56,7 @@ object BanksResource extends BaseResource {
     APIAction(nino, SourceType.Banks).async { implicit request =>
       service.retrieve(nino, id) map {
         case Some(bank) => Ok(Json.toJson(bank))
-        case None if request.authContext.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
+        case None if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
         case None => NotFound
       }
     }

@@ -21,6 +21,7 @@ import play.api.mvc.{Action, Request}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentPeriodConnector
+import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
@@ -45,7 +46,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
         case Right((periodId, response)) =>
           response.filter {
             case 200 =>
-              auditPeriodicCreate(nino, sourceId, response, periodId)
+              auditPeriodicCreate(nino, sourceId, request.authContext, response, periodId)
               Created.withHeaders(LOCATION -> response.createLocationHeader(nino, sourceId, periodId))
             case 400 if response.isInvalidBusinessId => NotFound
             case 400 if response.isInvalidPeriod =>
@@ -108,9 +109,10 @@ object SelfEmploymentPeriodResource extends BaseResource {
 
   private def auditPeriodicCreate(nino: Nino,
                                   id: SourceId,
+                                  authCtx: AuthContext,
                                   response: SelfEmploymentPeriodResponse,
                                   periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
-    AuditService.audit(payload = PeriodicUpdate(nino, id, periodId, response.transactionReference, request.body),
+    AuditService.audit(payload = PeriodicUpdate(nino, id, periodId, authCtx.toString, response.transactionReference, request.body),
                        "self-employment-periodic-create")
   }
 }

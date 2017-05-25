@@ -27,6 +27,7 @@ sealed trait AuditPayload {
 case class PeriodicUpdate(nino: Nino,
                           sourceId: SourceId,
                           periodId: String,
+                          affinityGroup: String,
                           transactionReference: Option[String],
                           requestPayload: JsValue) extends AuditPayload {
   override val auditType: String = "submitPeriodicUpdate"
@@ -39,6 +40,7 @@ object PeriodicUpdate {
 case class AnnualSummaryUpdate(nino: Nino,
                                sourceId: SourceId,
                                taxYear: TaxYear,
+                               affinityGroup: String,
                                transactionReference: Option[String],
                                requestPayload: JsValue) extends AuditPayload {
   override val auditType: String = "submitAnnualSummary"
@@ -50,6 +52,7 @@ object AnnualSummaryUpdate {
 
 case class TaxCalculationTrigger(nino: Nino,
                                  taxYear: TaxYear,
+                                 affinityGroup: String,
                                  calculationId: SourceId) extends AuditPayload {
   override val auditType: String = "triggerTaxCalculation"
 }
@@ -60,6 +63,7 @@ object TaxCalculationTrigger {
 
 case class TaxCalculationRequest(nino: Nino,
                                  calculationId: SourceId,
+                                 affinityGroup: String,
                                  responsePayload: JsValue) extends AuditPayload {
   override val auditType: String = "retrieveTaxCalculation"
 }

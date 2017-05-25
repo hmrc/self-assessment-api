@@ -21,7 +21,7 @@ import play.api.mvc.Results._
 import play.api.test.{FakeHeaders, FakeRequest, Helpers}
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
+import uk.gov.hmrc.selfassessmentapi.contexts.{Individual, FilingOnlyAgent}
 import uk.gov.hmrc.selfassessmentapi.models.Errors
 import uk.gov.hmrc.selfassessmentapi.resources.AuthRequest
 
@@ -30,7 +30,7 @@ class ResponseSpec extends UnitSpec {
     val fakeRequest = FakeRequest(Helpers.POST, "", FakeHeaders(), Json.obj())
 
     "return a BadRequest with a generic error if the response contains a 4xx error and the user is a FOA" in {
-      implicit val authReq = new AuthRequest[JsValue](AuthContext(isFOA = true), fakeRequest)
+      implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent, fakeRequest)
 
       new Response {
         override val status: Int = 409
@@ -39,7 +39,7 @@ class ResponseSpec extends UnitSpec {
     }
 
     "return the response unmodified if it contains a non-4xx error and the user is a FOA" in {
-      implicit val authReq = new AuthRequest[JsValue](AuthContext(isFOA = true), fakeRequest)
+      implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent, fakeRequest)
 
       new Response {
         override val status: Int = 200
@@ -48,7 +48,7 @@ class ResponseSpec extends UnitSpec {
     }
 
     "return the response unmodified if it contains a 4xx error and the user is not a FOA" in {
-      implicit val authReq = new AuthRequest[JsValue](AuthContext(isFOA = false), fakeRequest)
+      implicit val authReq = new AuthRequest[JsValue](Individual, fakeRequest)
 
       new Response {
         override val status: Int = 409

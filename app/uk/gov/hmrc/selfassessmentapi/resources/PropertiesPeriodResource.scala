@@ -21,6 +21,7 @@ import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodConnector
+import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
@@ -42,7 +43,7 @@ object PropertiesPeriodResource extends BaseResource {
         case Right((periodId, response)) =>
           response.filter {
             case 200 =>
-              auditPeriodicCreate(nino, id, response, periodId)
+              auditPeriodicCreate(nino, id, request.authContext, response, periodId)
               Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
             case 400 if response.isInvalidPeriod =>
               Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))
@@ -148,10 +149,11 @@ object PropertiesPeriodResource extends BaseResource {
 
   private def auditPeriodicCreate(nino: Nino,
                                   id: PropertyType,
+                                  authCtx: AuthContext,
                                   response: PropertiesPeriodResponse,
                                   periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
     AuditService.audit(payload =
-                         PeriodicUpdate(nino, id.toString, periodId, response.transactionReference, request.body),
+                         PeriodicUpdate(nino, id.toString, periodId, authCtx.toString, response.transactionReference, request.body),
                        s"$id-property-periodic-create")
   }
 }
