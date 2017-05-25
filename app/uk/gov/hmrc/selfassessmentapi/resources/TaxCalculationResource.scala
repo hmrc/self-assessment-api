@@ -49,6 +49,8 @@ object TaxCalculationResource extends BaseResource {
         } map {
           case Left(errorResult) => handleValidationErrors(errorResult)
           case Right(response) =>
+            logger.debug("Retrieve Tax Calculation DES headers = " + response.underlying.allHeaders)
+            logger.debug("Retrieve Tax Calculation DES Status Code = " + response.underlying.status)
             response.filter {
               case 202 =>
                 auditTaxCalcTrigger(nino, response)
