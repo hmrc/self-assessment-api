@@ -29,7 +29,7 @@ object TaxCalculationConnector {
   private lazy val baseUrl: String = AppContext.desUrl
 
   def requestCalculation(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier): Future[TaxCalculationResponse] =
-    httpPost[String, TaxCalculationResponse](
+    httpPostString[TaxCalculationResponse](
       baseUrl + s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation", "{}",
       TaxCalculationResponse)
 
