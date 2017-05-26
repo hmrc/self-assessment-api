@@ -34,6 +34,11 @@ class BankAnnualSummarySpec extends JsonSpec {
         "/taxedUkInterest", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
+    "reject taxedUkInterest more than 99999999999999.98" in {
+      assertValidationErrorWithCode(BankAnnualSummary(Some(BigDecimal("99999999999999.99")), Some(22.22)),
+        "/taxedUkInterest", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
     "reject taxedUkInterest with more than 2 decimal places" in {
       assertValidationErrorWithCode(BankAnnualSummary(Some(50.555), Some(22.22)),
         "/taxedUkInterest", ErrorCode.INVALID_MONETARY_AMOUNT)
@@ -41,6 +46,11 @@ class BankAnnualSummarySpec extends JsonSpec {
 
     "reject untaxedUkInterest with a negative value" in {
       assertValidationErrorWithCode(BankAnnualSummary(Some(50.55), Some(-22.22)),
+        "/untaxedUkInterest", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject untaxedUkInterest more than 99999999999999.98" in {
+      assertValidationErrorWithCode(BankAnnualSummary(Some(50.55), Some(BigDecimal("99999999999999.99"))),
         "/untaxedUkInterest", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 

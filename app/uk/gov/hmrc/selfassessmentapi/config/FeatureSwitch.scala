@@ -28,13 +28,14 @@ case class FeatureSwitch(value: Option[Configuration]) {
     case None => DEFAULT_VALUE
   }
 
-  def isEnabled(sourceType: SourceType, summary: String): Boolean = value match {
+  def isEnabled(sourceType: SourceType, summary: Option[String]): Boolean = value match {
     case Some(config) =>
-      if(summary.isEmpty) FeatureConfig(config).isSourceEnabled(sourceType.toString)
-      else FeatureConfig(config).isSummaryEnabled(sourceType.toString, summary)
+      summary match {
+        case None | Some("") => FeatureConfig(config).isSourceEnabled(sourceType.toString)
+        case Some(_summary) => FeatureConfig(config).isSummaryEnabled(sourceType.toString, _summary)
+      }
     case None => DEFAULT_VALUE
   }
-
 
   def isWhiteListingEnabled: Boolean = {
     value match {
@@ -50,7 +51,10 @@ case class FeatureSwitch(value: Option[Configuration]) {
 
   def whiteListedApplicationIds: Seq[String] = {
     value match {
-      case Some(config) => config.getStringSeq("white-list.applicationIds").getOrElse(throw new RuntimeException(s"$env.feature-switch.white-list.applicationIds is not configured"))
+      case Some(config) =>
+        config
+          .getStringSeq("white-list.applicationIds")
+          .getOrElse(throw new RuntimeException(s"$env.feature-switch.white-list.applicationIds is not configured"))
       case None => Seq()
     }
   }

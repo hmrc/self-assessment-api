@@ -9,21 +9,24 @@
       "description": "Loss brought forward from earlier years set off against this year’s profits",
       "type": "number",
       "multipleOf": 0.01,
-      "minimum": 0
+      "minimum": 0,
+      "maximum": 99999999999999.98
     },
     "privateUseAdjustment": {
       "title": "Private use adjustment",
       "description": "Any expenses incurred not solely for the property business",
       "type": "number",
       "multipleOf": 0.01,
-      "minimum": 0
+      "minimum": 0,
+      "maximum": 99999999999999.98
     },
     "balancingCharge": {
       "title": "Balancing charge",
       "description": "If an item for which capital allowance was claimed has been sold, given away or is no longer in use",
       "type": "number",
       "multipleOf": 0.01,
-      "minimum": 0
+      "minimum": 0,
+      "maximum": 99999999999999.98
     }
   },
   "additionalProperties": false

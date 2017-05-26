@@ -36,6 +36,11 @@ class OtherPropertiesAdjustmentsSpec extends JsonSpec {
         "/lossBroughtForward", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
+    "reject lossBroughtForward more than 99999999999999.98" in {
+      assertValidationErrorWithCode(OtherPropertiesAdjustments(lossBroughtForward = Some(BigDecimal("99999999999999.99"))),
+        "/lossBroughtForward", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
     "reject lossBroughtForward with more than 2 decimal places" in {
       assertValidationErrorWithCode(OtherPropertiesAdjustments(lossBroughtForward = Some(50.123)),
         "/lossBroughtForward", ErrorCode.INVALID_MONETARY_AMOUNT)
@@ -46,6 +51,11 @@ class OtherPropertiesAdjustmentsSpec extends JsonSpec {
         "/privateUseAdjustment", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
+    "reject privateUseAdjustment more than 99999999999999.98" in {
+      assertValidationErrorWithCode(OtherPropertiesAdjustments(privateUseAdjustment = Some(BigDecimal("99999999999999.99"))),
+        "/privateUseAdjustment", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
     "reject privateUseAdjustment with more than 2 decimal places" in {
       assertValidationErrorWithCode(OtherPropertiesAdjustments(privateUseAdjustment = Some(50.123)),
         "/privateUseAdjustment", ErrorCode.INVALID_MONETARY_AMOUNT)
@@ -53,6 +63,11 @@ class OtherPropertiesAdjustmentsSpec extends JsonSpec {
 
     "reject balancingCharge with a negative value" in {
       assertValidationErrorWithCode(OtherPropertiesAdjustments(balancingCharge = Some(-50)),
+        "/balancingCharge", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject balancingCharge more than 99999999999999.98" in {
+      assertValidationErrorWithCode(OtherPropertiesAdjustments(balancingCharge = Some(BigDecimal("99999999999999.99"))),
         "/balancingCharge", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 

@@ -21,6 +21,7 @@ import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodConnector
+import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
@@ -33,43 +34,37 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object PropertiesPeriodResource extends BaseResource {
-
-  lazy val FeatureSwitch = FeatureSwitchAction(SourceType.Properties, "periods")
   private val connector = PropertiesPeriodConnector
 
   def createPeriod(nino: Nino, id: PropertyType): Action[JsValue] =
-    FeatureSwitch.async(parse.json) { implicit request =>
-      withAuth(nino) { implicit context =>
-        validateCreateRequest(id, nino, request) map {
-          case Left(errorResult) => handleValidationErrors(errorResult)
-          case Right((periodId, response)) =>
-            response.filter {
-              case 200 =>
-                auditPeriodicCreate(nino, id, response, periodId)
-                Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
-              case 400 if response.isInvalidPeriod =>
-                Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))
-              case 400 if response.isInvalidPayload => BadRequest(Json.toJson(Errors.InvalidRequest))
-              case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-              case 404 | 403 => NotFound
-              case _ => unhandledResponse(response.status, logger)
-            }
-        }
+    APIAction(nino, SourceType.Properties, Some("periods")).async(parse.json) { implicit request =>
+      validateCreateRequest(id, nino, request) map {
+        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Right((periodId, response)) =>
+          response.filter {
+            case 200 =>
+              auditPeriodicCreate(nino, id, request.authContext, response, periodId)
+              Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
+            case 400 if response.isInvalidPeriod =>
+              Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))
+            case 400 if response.isInvalidPayload => BadRequest(Json.toJson(Errors.InvalidRequest))
+            case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
+            case 404 | 403 => NotFound
+            case _ => unhandledResponse(response.status, logger)
+          }
       }
     }
 
   def updatePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[JsValue] =
-    FeatureSwitch.async(parse.json) { implicit request =>
-      withAuth(nino) { implicit context =>
-        validateUpdateRequest(id, nino, periodId, request) map {
-          case Left(errorResult) => handleValidationErrors(errorResult)
-          case Right(response) =>
-            response.filter {
-              case 204 => NoContent
-              case 404 => NotFound
-              case _ => unhandledResponse(response.status, logger)
-            }
-        }
+    APIAction(nino, SourceType.Properties, Some("periods")).async(parse.json) { implicit request =>
+      validateUpdateRequest(id, nino, periodId, request) map {
+        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Right(response) =>
+          response.filter {
+            case 204 => NoContent
+            case 404 => NotFound
+            case _ => unhandledResponse(response.status, logger)
+          }
       }
     }
 
@@ -81,10 +76,10 @@ object PropertiesPeriodResource extends BaseResource {
     ResponseMapper[P, D].period(response).map(period => Ok(Json.toJson(period))).getOrElse(NotFound)
 
   def retrievePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[AnyContent] =
-    FeatureSwitch.async { implicit request =>
-      withAuth(nino) { implicit context =>
-        periodId match {
-          case Period(from, to) => connector.retrieve(nino, from, to, id).map { response =>
+    APIAction(nino, SourceType.Properties, Some("periods")).async { implicit request =>
+      periodId match {
+        case Period(from, to) =>
+          connector.retrieve(nino, from, to, id).map { response =>
             response.filter {
               case 200 =>
                 id match {
@@ -96,27 +91,24 @@ object PropertiesPeriodResource extends BaseResource {
               case _ => unhandledResponse(response.status, logger)
             }
           }
-          case _ => Future.successful(NotFound)
-        }
+        case _ => Future.successful(NotFound)
       }
     }
 
   def retrievePeriods(nino: Nino, id: PropertyType): Action[AnyContent] =
-    FeatureSwitch.async { implicit request =>
-      withAuth(nino) { implicit context =>
-        connector.retrieveAll(nino, id).map { response =>
-          response.filter {
-            case 200 =>
-              Ok(Json.toJson(id match {
-                case PropertyType.FHL =>
-                  ResponseMapper[FHL.Properties, des.properties.FHL.Properties].allPeriods(response)
-                case PropertyType.OTHER =>
-                  ResponseMapper[Other.Properties, des.properties.Other.Properties].allPeriods(response)
-              }))
-            case 400 => BadRequest(Error.from(response.json))
-            case 404 => NotFound
-            case _ => unhandledResponse(response.status, logger)
-          }
+    APIAction(nino, SourceType.Properties, Some("periods")).async { implicit request =>
+      connector.retrieveAll(nino, id).map { response =>
+        response.filter {
+          case 200 =>
+            Ok(Json.toJson(id match {
+              case PropertyType.FHL =>
+                ResponseMapper[FHL.Properties, des.properties.FHL.Properties].allPeriods(response)
+              case PropertyType.OTHER =>
+                ResponseMapper[Other.Properties, des.properties.Other.Properties].allPeriods(response)
+            }))
+          case 400 => BadRequest(Error.from(response.json))
+          case 404 => NotFound
+          case _ => unhandledResponse(response.status, logger)
         }
       }
     }
@@ -157,10 +149,11 @@ object PropertiesPeriodResource extends BaseResource {
 
   private def auditPeriodicCreate(nino: Nino,
                                   id: PropertyType,
+                                  authCtx: AuthContext,
                                   response: PropertiesPeriodResponse,
                                   periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
     AuditService.audit(payload =
-                         PeriodicUpdate(nino, id.toString, periodId, response.transactionReference, request.body),
+                         PeriodicUpdate(nino, id.toString, periodId, authCtx.toString, response.transactionReference, request.body),
                        s"$id-property-periodic-create")
   }
 }

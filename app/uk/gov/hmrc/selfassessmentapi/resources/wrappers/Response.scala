@@ -21,8 +21,9 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import play.api.mvc.Results.BadRequest
 import uk.gov.hmrc.play.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
+import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
 import uk.gov.hmrc.selfassessmentapi.models.Errors
+import uk.gov.hmrc.selfassessmentapi.resources.AuthRequest
 
 trait Response {
   val logger: Logger = Logger(this.getClass)
@@ -36,11 +37,9 @@ trait Response {
   private def logResponse(): Unit =
     logger.error(s"DES error occurred with status code ${underlying.status} and body ${underlying.body}")
 
-  @deprecated(message = "This will potentially need to be redesigned so that http status codes returned to TPVs " +
-    "are driven by des error codes and not by http status codes returned by the DES")
-  def filter(f: Int => Result)(implicit context: AuthContext): Result =
+  def filter[A](f: Int => Result)(implicit request: AuthRequest[A]): Result =
     status / 100 match {
-      case 4 if context.isFOA =>
+      case 4 if request.authContext == FilingOnlyAgent =>
         logResponse()
         BadRequest(Json.toJson(Errors.InvalidRequest))
       case 4 | 5 =>

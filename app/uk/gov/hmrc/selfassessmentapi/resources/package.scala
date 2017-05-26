@@ -46,5 +46,4 @@ package object resources {
       case JsSuccess(payload, _) => f(payload).map(Right(_))
       case JsError(errors) => Future.successful(Left(ValidationErrorResult(errors)))
     }
-
 }

@@ -21,6 +21,7 @@ import play.api.mvc.{Action, AnyContent, Request}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesAnnualSummaryConnector
+import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models.audit.AnnualSummaryUpdate
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
@@ -33,44 +34,39 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object PropertiesAnnualSummaryResource extends BaseResource {
-  private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.Properties, "annual")
   private val connector = PropertiesAnnualSummaryConnector
 
   def updateAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[JsValue] =
-    FeatureSwitch.async(parse.json) { implicit request =>
-      withAuth(nino) { implicit context =>
-        validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) map {
-          case Left(errorResult) => handleValidationErrors(errorResult)
-          case Right(response) =>
-            response.filter {
-              case 200 =>
-                auditAnnualSummaryUpdate(nino, propertyId, taxYear, response)
-                NoContent
-              case 404 => NotFound
-              case _ => Error.from2(response.json)
-            }
-        }
+    APIAction(nino, SourceType.Properties, Some("annual")).async(parse.json) { implicit request =>
+      validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) map {
+        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Right(response) =>
+          response.filter {
+            case 200 =>
+              auditAnnualSummaryUpdate(nino, propertyId, taxYear, request.authContext, response)
+              NoContent
+            case 404 => NotFound
+            case _ => Error.from2(response.json)
+          }
       }
     }
 
   def retrieveAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[AnyContent] =
-    FeatureSwitch.async { implicit request =>
-      withAuth(nino) { implicit context =>
-        connector.get(nino, propertyId, taxYear).map { response =>
-          response.filter {
-            case 200 =>
-              response.annualSummary match {
-                case Some(summary) =>
-                  summary match {
-                    case other: OtherPropertiesAnnualSummary => Ok(Json.toJson(other))
-                    case fhl: FHLPropertiesAnnualSummary => Ok(Json.toJson(fhl))
-                  }
-                case None => NotFound
-              }
-            case 404 => NotFound
-            case 400 => BadRequest(Error.from(response.json))
-            case _ => unhandledResponse(response.status, logger)
-          }
+    APIAction(nino, SourceType.Properties, Some("annual")).async { implicit request =>
+      connector.get(nino, propertyId, taxYear).map { response =>
+        response.filter {
+          case 200 =>
+            response.annualSummary match {
+              case Some(summary) =>
+                summary match {
+                  case other: OtherPropertiesAnnualSummary => Ok(Json.toJson(other))
+                  case fhl: FHLPropertiesAnnualSummary => Ok(Json.toJson(fhl))
+                }
+              case None => NotFound
+            }
+          case 404 => NotFound
+          case 400 => BadRequest(Error.from(response.json))
+          case _ => unhandledResponse(response.status, logger)
         }
       }
     }
@@ -83,10 +79,13 @@ object PropertiesAnnualSummaryResource extends BaseResource {
       case PropertyType.FHL => validate[FHLPropertiesAnnualSummary, PropertiesAnnualSummaryResponse](body)(f)
     }
 
-  private def auditAnnualSummaryUpdate(nino: Nino, id: PropertyType, taxYear: TaxYear, response: PropertiesAnnualSummaryResponse)
-                                      (implicit hc: HeaderCarrier, request: Request[JsValue]) = {
-    AuditService.audit(
-      AnnualSummaryUpdate(nino, id.toString, taxYear, response.transactionReference, request.body),
-      s"$id-property-annual-summary-update")
+  private def auditAnnualSummaryUpdate(
+      nino: Nino,
+      id: PropertyType,
+      taxYear: TaxYear,
+      authCtx: AuthContext,
+      response: PropertiesAnnualSummaryResponse)(implicit hc: HeaderCarrier, request: Request[JsValue]) = {
+    AuditService.audit(AnnualSummaryUpdate(nino, id.toString, taxYear, authCtx.toString, response.transactionReference, request.body),
+                       s"$id-property-annual-summary-update")
   }
 }

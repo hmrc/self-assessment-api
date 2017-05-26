@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
 import uk.gov.hmrc.selfassessmentapi.models.banks.BankAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.BanksAnnualSummaryService
@@ -26,31 +27,26 @@ import uk.gov.hmrc.selfassessmentapi.services.BanksAnnualSummaryService
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object BanksAnnualSummaryResource extends BaseResource {
-  private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.Banks, "annual")
   private val annualSummaryService = BanksAnnualSummaryService
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] =
-    FeatureSwitch.async(parse.json) { implicit request =>
-      withAuth(nino) { context =>
-        validate[BankAnnualSummary, Boolean](request.body) {
-          annualSummaryService.updateAnnualSummary(nino, id, taxYear, _)
-        } map {
-          case Left(errorResult) => handleValidationErrors(errorResult)
-          case Right(true) => NoContent
-          case Right(false) if context.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
-          case _ => NotFound
-        }
+    APIAction(nino, SourceType.Banks, Some("annual")).async(parse.json) { implicit request =>
+      validate[BankAnnualSummary, Boolean](request.body) {
+        annualSummaryService.updateAnnualSummary(nino, id, taxYear, _)
+      } map {
+        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Right(true) => NoContent
+        case Right(false) if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
+        case _ => NotFound
       }
     }
 
   def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[AnyContent] =
-    FeatureSwitch.async { implicit headers =>
-      withAuth(nino) { context =>
-        annualSummaryService.retrieveAnnualSummary(nino, id, taxYear).map {
-          case Some(summary) => Ok(Json.toJson(summary))
-          case None if context.isFOA => BadRequest(Json.toJson(Errors.InvalidRequest))
-          case None => NotFound
-        }
+    APIAction(nino, SourceType.Banks, Some("annual")).async { implicit request =>
+      annualSummaryService.retrieveAnnualSummary(nino, id, taxYear).map {
+        case Some(summary) => Ok(Json.toJson(summary))
+        case None if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
+        case None => NotFound
       }
     }
 }

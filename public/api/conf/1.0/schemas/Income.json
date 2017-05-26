@@ -9,14 +9,16 @@
       "description": "Amount",
       "type": "number",
       "multipleOf": 0.01,
-      "minimum": 0
+      "minimum": 0,
+      "maximum": 99999999999999.98
     },
     "taxDeducted": {
       "title": "Tax deducted",
       "description": "Tax taken of any income",
       "type": "number",
       "multipleOf": 0.01,
-      "minimum": 0
+      "minimum": 0,
+      "maximum": 99999999999999.98
     }
   },
   "required": [

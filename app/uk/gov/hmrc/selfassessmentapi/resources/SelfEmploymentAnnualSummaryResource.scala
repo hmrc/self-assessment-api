@@ -21,6 +21,7 @@ import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentAnnualSummaryConnector
+import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.AnnualSummaryUpdate
@@ -31,46 +32,44 @@ import uk.gov.hmrc.selfassessmentapi.services.AuditService
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object SelfEmploymentAnnualSummaryResource extends BaseResource {
-  private lazy val FeatureSwitch = FeatureSwitchAction(SourceType.SelfEmployments, "annual")
   private val connector = SelfEmploymentAnnualSummaryConnector
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] =
-    FeatureSwitch.async(parse.json) { implicit request =>
-      withAuth(nino) { implicit context =>
-        validate[SelfEmploymentAnnualSummary, SelfEmploymentAnnualSummaryResponse](request.body) { summary =>
-          connector.update(nino, id, taxYear, des.SelfEmploymentAnnualSummary.from(summary))
-        } map {
-          case Left(errorResult) => handleValidationErrors(errorResult)
-          case Right(response) =>
-            response.filter {
-              case 200 =>
-                auditAnnualSummaryUpdate(nino, id, taxYear, response)
-                NoContent
-              case 404 => NotFound
-              case _ => Error.from2(response.json)
-            }
-        }
+    APIAction(nino, SourceType.SelfEmployments, Some("annual")).async(parse.json) { implicit request =>
+      validate[SelfEmploymentAnnualSummary, SelfEmploymentAnnualSummaryResponse](request.body) { summary =>
+        connector.update(nino, id, taxYear, des.SelfEmploymentAnnualSummary.from(summary))
+      } map {
+        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Right(response) =>
+          response.filter {
+            case 200 =>
+              auditAnnualSummaryUpdate(nino, id, taxYear, request.authContext, response)
+              NoContent
+            case 404 => NotFound
+            case _ => Error.from2(response.json)
+          }
       }
     }
 
   // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[Unit] =
-    FeatureSwitch.async(parse.empty) { implicit request =>
-      withAuth(nino) { implicit context =>
-        connector.get(nino, id, taxYear).map { response =>
-          response.filter {
-            case 200 => response.annualSummary.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
-            case 404 => NotFound
-            case _ => unhandledResponse(response.status, logger)
-          }
+    APIAction(nino, SourceType.SelfEmployments, Some("annual")).async(parse.empty) { implicit request =>
+      connector.get(nino, id, taxYear).map { response =>
+        response.filter {
+          case 200 => response.annualSummary.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+          case 404 => NotFound
+          case _ => unhandledResponse(response.status, logger)
         }
       }
     }
 
-  private def auditAnnualSummaryUpdate(nino: Nino, id: SourceId, taxYear: TaxYear, response: SelfEmploymentAnnualSummaryResponse)
-                                      (implicit hc: HeaderCarrier, request: Request[JsValue]) = {
-    AuditService.audit(
-      AnnualSummaryUpdate(nino, id, taxYear, response.transactionReference, request.body),
-      "self-employment-annual-summary-update")
+  private def auditAnnualSummaryUpdate(
+      nino: Nino,
+      id: SourceId,
+      taxYear: TaxYear,
+      authCtx: AuthContext,
+      response: SelfEmploymentAnnualSummaryResponse)(implicit hc: HeaderCarrier, request: Request[JsValue]) = {
+    AuditService.audit(AnnualSummaryUpdate(nino, id, taxYear, authCtx.toString, response.transactionReference, request.body),
+                       "self-employment-annual-summary-update")
   }
 }

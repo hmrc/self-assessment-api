@@ -16,40 +16,44 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Results._
+import play.api.test.{FakeHeaders, FakeRequest, Helpers}
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
+import uk.gov.hmrc.selfassessmentapi.contexts.{Individual, FilingOnlyAgent}
 import uk.gov.hmrc.selfassessmentapi.models.Errors
+import uk.gov.hmrc.selfassessmentapi.resources.AuthRequest
 
 class ResponseSpec extends UnitSpec {
-  "filterResponse" should {
+  "response filter" should {
+    val fakeRequest = FakeRequest(Helpers.POST, "", FakeHeaders(), Json.obj())
+
     "return a BadRequest with a generic error if the response contains a 4xx error and the user is a FOA" in {
-      val ctx = AuthContext(isFOA = true)
+      implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent, fakeRequest)
 
       new Response {
         override val status: Int = 409
         override def underlying: HttpResponse = HttpResponse(status)
-      }.filter(_ => Conflict)(ctx) shouldBe BadRequest(Json.toJson(Errors.InvalidRequest))
+      }.filter(_ => Conflict) shouldBe BadRequest(Json.toJson(Errors.InvalidRequest))
     }
 
-    "return the response unmodified if the response contains a non-4xx error and the user is a FOA" in {
-      val ctx = AuthContext(isFOA = true)
+    "return the response unmodified if it contains a non-4xx error and the user is a FOA" in {
+      implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent, fakeRequest)
 
       new Response {
         override val status: Int = 200
         override def underlying: HttpResponse = HttpResponse(status)
-      }.filter(_ => Ok)(ctx) shouldBe Ok
+      }.filter(_ => Ok) shouldBe Ok
     }
 
-    "return the response unmodified if the response contains a 4xx error and the user is not a FOA" in {
-      val ctx = AuthContext(isFOA = false)
+    "return the response unmodified if it contains a 4xx error and the user is not a FOA" in {
+      implicit val authReq = new AuthRequest[JsValue](Individual, fakeRequest)
 
       new Response {
         override val status: Int = 409
         override def underlying: HttpResponse = HttpResponse(status)
-      }.filter(_ => Conflict)(ctx) shouldBe Conflict
+      }.filter(_ => Conflict) shouldBe Conflict
     }
 
   }
