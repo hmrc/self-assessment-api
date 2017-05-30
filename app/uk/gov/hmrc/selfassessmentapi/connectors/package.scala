@@ -78,11 +78,6 @@ package object connectors {
       WSHttp.POSTEmpty(url)(NoExceptReads, _) map toResponse
     }
 
-  def httpPostString[R <: Response](url: String, body: String, toResponse: HttpResponse => R)(implicit hc: HeaderCarrier): Future[R] =
-    withAdditionalHeaders[R](url) {
-      WSHttp.POSTString(url, body)(NoExceptReads, _) map toResponse
-    }
-
   def httpPut[T: Writes, R <: Response](url: String, elem: T, toResponse: HttpResponse => R)(
       implicit hc: HeaderCarrier): Future[R] =
     withAdditionalHeaders[R](url) {
