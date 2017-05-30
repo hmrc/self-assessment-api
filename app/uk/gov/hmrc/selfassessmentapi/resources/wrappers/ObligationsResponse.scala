@@ -34,7 +34,7 @@ case class ObligationsResponse(underlying: HttpResponse) extends Response {
 
     def oneFound(obligation: des.Obligations): Option[Obligations] = {
       errorMessage = "Obligation for source id and/or business type was not found."
-      obligation.obligations.find(o => o.id == id.getOrElse(o.id) && o.`type` == incomeSourceType).fold(noneFound) {
+      obligation.obligations.find(o => o.id.forall(oId => id.forall(_ == oId)) && o.`type` == incomeSourceType).fold(noneFound) {
         desObligation =>
           Some(Obligations(for {
             details <- desObligation.details

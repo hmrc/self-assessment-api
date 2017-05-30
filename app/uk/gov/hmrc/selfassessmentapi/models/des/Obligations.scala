@@ -24,7 +24,7 @@ object Obligations {
   implicit val reads: Reads[Obligations] = Json.reads[Obligations]
 }
 
-case class Obligation(id: String, `type`: String, details: Seq[ObligationDetail])
+case class Obligation(id: Option[String], `type`: String, details: Seq[ObligationDetail])
 
 object Obligation {
   implicit val reads: Reads[Obligation] = Json.reads[Obligation]
@@ -34,7 +34,7 @@ case class ObligationDetail(status: String,
                             inboundCorrespondenceFromDate: String,
                             inboundCorrespondenceToDate: String,
                             inboundCorrespondenceDateReceived: Option[String],
-                            inboundCorrespondanceDueDate: String,
+                            inboundCorrespondenceDueDate: String,
                             periodKey: String) {
   def isFulfilled: Boolean = status == "F"
 }

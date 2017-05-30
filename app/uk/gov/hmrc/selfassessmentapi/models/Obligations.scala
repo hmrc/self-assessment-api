@@ -33,7 +33,7 @@ object Obligation {
     Obligation(
       start = LocalDate.parse(desObligation.inboundCorrespondenceFromDate),
       end = LocalDate.parse(desObligation.inboundCorrespondenceToDate),
-      due = LocalDate.parse(desObligation.inboundCorrespondanceDueDate),
+      due = LocalDate.parse(desObligation.inboundCorrespondenceDueDate),
       met = desObligation.isFulfilled)
   }
 
