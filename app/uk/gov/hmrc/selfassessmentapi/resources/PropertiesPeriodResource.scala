@@ -57,14 +57,18 @@ object PropertiesPeriodResource extends BaseResource {
 
   def updatePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[JsValue] =
     APIAction(nino, SourceType.Properties, Some("periods")).async(parse.json) { implicit request =>
-      validateUpdateRequest(id, nino, periodId, request) map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
-        case Right(response) =>
-          response.filter {
-            case 204 => NoContent
-            case 404 => NotFound
-            case _ => unhandledResponse(response.status, logger)
+      periodId match {
+        case Period(from, to) =>
+          validateUpdateRequest(id, nino, Period(from, to), request) map {
+            case Left(errorResult) => handleValidationErrors(errorResult)
+            case Right(response) =>
+              response.filter {
+                case 204 => NoContent
+                case 404 => NotFound
+                case _ => unhandledResponse(response.status, logger)
+              }
           }
+        case _ => Future.successful(NotFound)
       }
     }
 
@@ -132,19 +136,19 @@ object PropertiesPeriodResource extends BaseResource {
 
   private def validateAndUpdate[P <: Period, F <: Financials](id: PropertyType,
                                                               nino: Nino,
-                                                              periodId: PeriodId,
+                                                              period: Period,
                                                               request: Request[JsValue])(
       implicit hc: HeaderCarrier,
       p: PropertiesPeriodConnector[P, F],
       r: Reads[P],
       w: Format[F]): Future[Either[ErrorResult, PropertiesPeriodResponse]] =
-    validate[F, PropertiesPeriodResponse](request.body)(PropertiesPeriodConnector[P, F].update(nino, id, periodId, _))
+    validate[F, PropertiesPeriodResponse](request.body)(PropertiesPeriodConnector[P, F].update(nino, id, period.periodId, _))
 
-  private def validateUpdateRequest(id: PropertyType, nino: Nino, periodId: PeriodId, request: Request[JsValue])(
+  private def validateUpdateRequest(id: PropertyType, nino: Nino, period: Period, request: Request[JsValue])(
       implicit hc: HeaderCarrier): Future[Either[ErrorResult, PropertiesPeriodResponse]] =
     id match {
-      case PropertyType.OTHER => validateAndUpdate[Other.Properties, Other.Financials](id, nino, periodId, request)
-      case PropertyType.FHL => validateAndUpdate[FHL.Properties, FHL.Financials](id, nino, periodId, request)
+      case PropertyType.OTHER => validateAndUpdate[Other.Properties, Other.Financials](id, nino, period, request)
+      case PropertyType.FHL => validateAndUpdate[FHL.Properties, FHL.Financials](id, nino, period, request)
     }
 
   private def auditPeriodicCreate(nino: Nino,

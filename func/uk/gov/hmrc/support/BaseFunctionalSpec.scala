@@ -1284,7 +1284,7 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def periodWillBeUpdatedFor(nino: Nino, propertyType: PropertyType, periodId: String = "def"): Givens = {
+        def periodWillBeUpdatedFor(nino: Nino, propertyType: PropertyType, periodId: String = "2017-04-06_2018-04-05"): Givens = {
           stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId"))
             .willReturn(
               aResponse()
