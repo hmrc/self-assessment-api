@@ -30,6 +30,11 @@ trait Period {
 object Period {
   val periodPattern = """(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})""".r
 
+  def apply(f: LocalDate, t:LocalDate) = new Period {
+    override val from: LocalDate = f
+    override val to: LocalDate = t
+  }
+
   def unapply(period: String): Option[(LocalDate, LocalDate)] = {
     period match {
       case periodPattern(from, to) =>

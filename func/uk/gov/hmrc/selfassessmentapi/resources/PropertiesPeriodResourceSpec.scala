@@ -306,7 +306,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .periodWillBeUpdatedFor(nino, propertyType)
           .when()
           .put(updatedPeriod)
-          .at(s"/ni/$nino/uk-properties/$propertyType/periods/def")
+          .at(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(204)
       }
