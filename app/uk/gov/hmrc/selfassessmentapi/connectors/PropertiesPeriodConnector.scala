@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 trait PropertiesPeriodConnector[P <: Period, F <: Financials] {
   def create(nino: Nino, properties: P)(implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse]
-  def update(nino: Nino, propertyType: PropertyType, periodId: PeriodId, financials: F)(
+  def update(nino: Nino, propertyType: PropertyType, period: Period, financials: F)(
       implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse]
 }
 
@@ -48,10 +48,10 @@ object PropertiesPeriodConnector {
         des.properties.Other.Properties.from(properties),
         PropertiesPeriodResponse)
 
-    override def update(nino: Nino, propertyType: PropertyType, periodId: PeriodId, financials: Other.Financials)(
+    override def update(nino: Nino, propertyType: PropertyType, period: Period, financials: Other.Financials)(
         implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
       httpPut[Option[des.properties.Other.Financials], PropertiesPeriodResponse](
-        baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId",
+        baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=${period.from}&to=${period.to}",
         des.properties.Other.Financials.from(Some(financials)),
         PropertiesPeriodResponse)
   }
@@ -64,10 +64,10 @@ object PropertiesPeriodConnector {
         des.properties.FHL.Properties.from(properties),
         PropertiesPeriodResponse)
 
-    override def update(nino: Nino, propertyType: PropertyType, periodId: PeriodId, financials: FHL.Financials)(
+    override def update(nino: Nino, propertyType: PropertyType, period: Period, financials: FHL.Financials)(
         implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
       httpPut[Option[des.properties.FHL.Financials], PropertiesPeriodResponse](
-        baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId",
+        baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=${period.from}&to=${period.to}",
         des.properties.FHL.Financials.from(Some(financials)),
         PropertiesPeriodResponse)
   }
