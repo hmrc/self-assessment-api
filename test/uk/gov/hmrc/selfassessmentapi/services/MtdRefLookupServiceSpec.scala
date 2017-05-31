@@ -16,11 +16,8 @@
 
 package uk.gov.hmrc.selfassessmentapi.services
 
-import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mock.MockitoSugar
-import uk.gov.hmrc.domain.Nino
+import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.connectors.BusinessDetailsConnector

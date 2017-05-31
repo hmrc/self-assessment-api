@@ -17,7 +17,7 @@
 package uk.gov.hmrc.kenshoo.monitoring
 
 import com.codahale.metrics.MetricRegistry
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 
 trait MockedKenshooRegistry extends KenshooMetric with MockitoSugar {
   val registry: MetricRegistry = mock[MetricRegistry]
