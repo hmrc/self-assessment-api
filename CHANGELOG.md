@@ -1,6 +1,30 @@
 
 ### Please refer to [CHANGELOG-ET.md](https://github.com/hmrc/self-assessment-api/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to Sandbox Test Environment.
 
+## [0.117.2](https://github.com/hmrc/self-assessment-api/releases/tag/v0.117.2) 31-May-2017
+
+* Sandbox section added to documentation.
+* Documentation updated for LIVE release. 
+* Validation of monetary values changed to max=99999999999999.98
+
+## [0.112.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.112.0) 05-May-2017 (Only on Sandbox)
+
+* Documentation updates:
+  * Added a Technical Issues section explaining how to raise technical issues. Also includes link to GitHub issues and ChangeLog.
+  * The documentation now clearly states that Tax Calculation has to be triggered in order for update data to be assessed for meeting obligations. 
+* Added validation to fail null periodic submissions. i.e the following endpoints will fail if no incomes and expenses are supplied.
+  * Create a self-employment update period
+  * Update a self-employment update period
+  * Create a non FHL UK property update period
+  * Update a non FHL UK property update period
+  * Create a FHL UK property update period
+  * Update a FHL UK property update period
+* Retrieve self-employment business obligations and Retrieve all UK property business obligations now return field 'due' which refers to date by which this obligation is due.
+* Implement Access Controls
+  * MTD subscription check
+  * Fully Authorised Agent
+  * Filing-Only Agent or UnAuthorised can only submit
+
 ## [0.100.1](https://github.com/hmrc/self-assessment-api/releases/tag/v0.100.1) 06-Mar-2017
 
 * Use UTF8 for reading SICs.txt file
