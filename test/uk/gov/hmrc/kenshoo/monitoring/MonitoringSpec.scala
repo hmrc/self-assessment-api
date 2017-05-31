@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.kenshoo.monitoring
 
-import play.api.Logger
-import scala.concurrent.Future
-
 import com.jayway.restassured.RestAssured
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers._
-import uk.gov.hmrc.play.test.UnitSpec
+import play.api.Logger
+import uk.gov.hmrc.selfassessmentapi.UnitSpec
+
+import scala.concurrent.Future
 
 trait MonitoringSpec extends UnitSpec {
 

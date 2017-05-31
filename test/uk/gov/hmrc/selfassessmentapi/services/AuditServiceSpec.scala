@@ -21,7 +21,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import uk.gov.hmrc.play.audit.AuditExtensions
@@ -35,8 +35,6 @@ import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 import scala.concurrent.ExecutionContext
 
 class AuditServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
-
-
 
   "audit" should {
     "send an audit event with the provided information when invoked" in {

@@ -16,26 +16,24 @@
 
 package uk.gov.hmrc.selfassessmentapi
 
-import java.util.concurrent.TimeUnit
-
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import org.scalatest.Matchers
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.OneServerPerSuite
 
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration._
 
 trait TestApplication extends MongoEmbeddedDatabase with Matchers with OneServerPerSuite with Eventually with ScalaFutures
   with IntegrationPatience with MockitoSugar {
 
-  override implicit val defaultTimeout = FiniteDuration(100, TimeUnit.SECONDS)
+  override implicit val timeout: FiniteDuration = 100 seconds
 
-  val WIREMOCK_PORT = 22222
-  val stubHost = "localhost"
+  private val WIREMOCK_PORT = 22222
+  private val stubHost = "localhost"
 
   protected val wiremockBaseUrl: String = s"http://$stubHost:$WIREMOCK_PORT"
   private val wireMockServer = new WireMockServer(wireMockConfig().port(WIREMOCK_PORT))

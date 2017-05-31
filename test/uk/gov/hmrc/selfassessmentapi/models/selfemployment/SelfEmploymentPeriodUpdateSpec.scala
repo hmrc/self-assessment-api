@@ -25,9 +25,6 @@ import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
 class SelfEmploymentPeriodUpdateSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
 
-  implicit override val generatorDrivenConfig =
-    PropertyCheckConfig(minSuccessful = 200)
-
   "SelfEmploymentPeriodUpdate" should {
     "round trip" in forAll(genSelfEmploymentPeriodUpdate())(roundTripJson(_))
 

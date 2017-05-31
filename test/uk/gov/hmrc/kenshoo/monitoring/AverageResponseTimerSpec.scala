@@ -25,7 +25,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.Matchers.longThat
 import org.mockito.Mockito.verify
 import uk.gov.hmrc.play.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.selfassessmentapi.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
