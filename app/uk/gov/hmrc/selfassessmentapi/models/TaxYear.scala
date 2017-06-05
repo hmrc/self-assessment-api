@@ -31,7 +31,7 @@ object TaxYear extends (String => TaxYear) {
   implicit val taxYearWrite: Writes[TaxYear] = new SimpleObjectWrites[TaxYear](_.value)
   implicit val taxYearRead: Reads[TaxYear] = new SimpleObjectReads[TaxYear]("taxYear", TaxYear.apply)
 
-  private val taxYearFormat = "20[1-9][0-9]\\-[1-9][0-9]"
+  val taxYearFormat = "20[1-9][0-9]\\-[1-9][0-9]"
 
   def createTaxYear(taxYear: String): Option[TaxYear] = {
     for {
