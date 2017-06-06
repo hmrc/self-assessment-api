@@ -30,7 +30,7 @@ import play.api.{Application, Configuration, Play}
 import play.routing.Router.Tags
 import uk.gov.hmrc.api.config.{ServiceLocatorConfig, ServiceLocatorRegistration}
 import uk.gov.hmrc.api.connector.ServiceLocatorConnector
-import uk.gov.hmrc.api.controllers.{ErrorAcceptHeaderInvalid, ErrorNotFound, ErrorUnauthorized, HeaderValidator}
+import uk.gov.hmrc.api.controllers.{ErrorAcceptHeaderInvalid, ErrorNotFound, HeaderValidator}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.auth.filter.{AuthorisationFilter, FilterConfig}
 import uk.gov.hmrc.kenshoo.monitoring.MonitoringFilter
@@ -42,9 +42,12 @@ import uk.gov.hmrc.play.http.{HeaderCarrier, NotImplementedException}
 import uk.gov.hmrc.play.microservice.bootstrap.DefaultMicroserviceGlobal
 import uk.gov.hmrc.play.scheduling._
 import uk.gov.hmrc.selfassessmentapi.config.simulation.{AgentAuthorizationSimulation, AgentSubscriptionSimulation, ClientSubscriptionSimulation}
+import uk.gov.hmrc.selfassessmentapi.models.SourceType.sourceTypeToDocumentationName
+import uk.gov.hmrc.selfassessmentapi.models.TaxYear.taxYearFormat
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.GovTestScenarioHeader
 
+import scala.collection.immutable.ListMap
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.matching.Regex
@@ -84,12 +87,23 @@ object MicroserviceLoggingFilter extends LoggingFilter with MicroserviceFilterSu
     ControllerConfiguration.controllerParamsConfig(controllerName).needsLogging
 }
 
-class MicroserviceMonitoringFilter @Inject()(metrics: Metrics)
-    extends MonitoringFilter
-    with MicroserviceFilterSupport {
-  override lazy val urlPatternToNameMapping = SourceType.values
-    .map(sourceType => s".*[/]${sourceType.toString}[/]?.*" -> SourceType.sourceTypeToDocumentationName(sourceType))
-    .toMap
+class MicroserviceMonitoringFilter @Inject()(metrics: Metrics) extends MonitoringFilter with MicroserviceFilterSupport {
+
+  private[config] val sources = Seq("self-employments", "uk-properties")
+
+  private val sourceIdLevel = sources.map(source => s".*[/]$source/.+" -> s"${sourceTypeToDocumentationName(source)}-id").toMap
+
+  private val sourceLevel = sources.map(source => s".*[/]$source[/]?" -> sourceTypeToDocumentationName(source)).toMap
+
+  private val summaryLevel = Map("periods[/]?" -> "periods", "periods/.+" -> "periods-id",
+                                 "obligations[/]?" -> "obligations", s"${taxYearFormat}[/]?" -> "annuals")
+
+  override lazy val urlPatternToNameMapping = (ListMap((for {
+    source <- sources
+    suffix <- summaryLevel
+  } yield s".*[/]$source[/].*[/]${suffix._1}" -> s"${sourceTypeToDocumentationName(source)}-${suffix._2}").toArray :_*)
+    ++ sourceIdLevel
+    ++ sourceLevel)
 
   override def kenshooRegistry = metrics.defaultRegistry
 }

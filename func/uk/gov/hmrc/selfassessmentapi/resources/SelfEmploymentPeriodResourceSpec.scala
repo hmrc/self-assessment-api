@@ -26,6 +26,11 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(201)
         .responseContainsHeader("Location", s"/self-assessment/ni/$nino/self-employments/\\w+/periods/2017-04-06_2017-07-04".r)
+        .when()
+        .get("/admin/metrics")
+        .thenAssertThat()
+        .body(_ \ "timers" \ "Timer-API-SelfEmployments-POST" \ "count").is(1)
+        .body(_ \ "timers" \ "Timer-API-SelfEmployments-periods-POST" \ "count").is(1)
     }
 
     "return code 400 when attempting to create a period with the 'from' and 'to' dates are in the incorrect order" in {

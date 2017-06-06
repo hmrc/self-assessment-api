@@ -266,7 +266,7 @@ trait BaseFunctionalSpec extends TestApplication {
       def is(value: BigDecimal) = {
         content match {
           case Some(v) => v.as[BigDecimal] shouldBe value
-          case None => ()
+          case None => fail()
         }
         assertions
       }
