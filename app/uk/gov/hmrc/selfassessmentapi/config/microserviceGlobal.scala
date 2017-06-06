@@ -88,14 +88,22 @@ object MicroserviceLoggingFilter extends LoggingFilter with MicroserviceFilterSu
 }
 
 class MicroserviceMonitoringFilter @Inject()(metrics: Metrics) extends MonitoringFilter with MicroserviceFilterSupport {
-  private val sources = Seq("self-employments", "uk-properties")
+
+  private[config] val sources = Seq("self-employments", "uk-properties")
+
+  private val sourceIdLevel = sources.map(source => s".*[/]$source/.+" -> s"${sourceTypeToDocumentationName(source)}-id").toMap
+
+  private val sourceLevel = sources.map(source => s".*[/]$source[/]?" -> sourceTypeToDocumentationName(source)).toMap
+
+  private val summaryLevel = Map("periods[/]?" -> "periods", "periods/.+" -> "periods-id",
+                                 "obligations[/]?" -> "obligations", s"${taxYearFormat}[/]?" -> "annuals")
+
   override lazy val urlPatternToNameMapping = (ListMap((for {
     source <- sources
-    suffix <- Map("periods[/]?" -> "periods", "periods[/].+" -> "periods-id",
-                  "obligations[/]?" -> "obligations", s"${taxYearFormat}[/]?" -> "annuals")
+    suffix <- summaryLevel
   } yield s".*[/]$source[/].*[/]${suffix._1}" -> s"${sourceTypeToDocumentationName(source)}-${suffix._2}").toArray :_*)
-    ++ sources.map(source => s".*[/]$source[/]?.+" -> s"${sourceTypeToDocumentationName(source)}-id").toMap
-    ++ sources.map(source => s".*[/]$source[/]?" -> sourceTypeToDocumentationName(source)).toMap)
+    ++ sourceIdLevel
+    ++ sourceLevel)
 
   override def kenshooRegistry = metrics.defaultRegistry
 }
