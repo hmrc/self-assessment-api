@@ -1,6 +1,11 @@
 
 ### Please refer to [CHANGELOG-ET.md](https://github.com/hmrc/self-assessment-api/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to Sandbox Test Environment.
 
+## [0.117.3](https://github.com/hmrc/self-assessment-api/releases/tag/v0.117.3) 01-Jun-2017
+
+* No functional changes
+* Enable Obligations end-points for LIVE and update documentation accordingly
+
 ## [0.117.2](https://github.com/hmrc/self-assessment-api/releases/tag/v0.117.2) 31-May-2017
 
 * Sandbox section added to documentation.
