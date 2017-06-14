@@ -1,6 +1,12 @@
 
 ### Please refer to [CHANGELOG-ET.md](https://github.com/hmrc/self-assessment-api/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to Sandbox Test Environment.
 
+## [0.121.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.121.0) 14-Jun-2017
+
+* No functional changes
+* Enable UK-Property create 'update period' end-points for LIVE and update documentation accordingly
+* Auditing improvements - identify the type of caller (Individual/Organisation or Agent)
+
 ## [0.117.3](https://github.com/hmrc/self-assessment-api/releases/tag/v0.117.3) 01-Jun-2017
 
 * No functional changes
