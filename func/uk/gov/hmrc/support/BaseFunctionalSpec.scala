@@ -1235,7 +1235,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def periodsWillBeReturnedFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
-            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodicsummaries"))
+            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
                   .withStatus(200)
