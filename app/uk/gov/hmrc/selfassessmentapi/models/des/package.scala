@@ -16,10 +16,19 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
+import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models
-import uk.gov.hmrc.selfassessmentapi.models.selfemployment.Allowances
 
 package object des {
   def expense2Deduction(expense: models.Expense): Deduction =
     Deduction(amount = expense.amount, disallowableAmount = expense.disallowableAmount)
+
+  implicit val bigIntFormat = new Format[BigInt] {
+    override def reads(json: JsValue): JsResult[BigInt] = json match {
+      case JsNumber(n) => n.toBigIntExact().map(JsSuccess(_)).getOrElse(JsError("Value is not an integer"))
+      case _           => JsError("Value is not an integer")
+    }
+
+    override def writes(o: BigInt): JsValue = JsNumber(BigDecimal(o))
+  }
 }

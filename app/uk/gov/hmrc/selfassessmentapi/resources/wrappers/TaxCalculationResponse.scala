@@ -33,7 +33,7 @@ case class TaxCalculationResponse(underlying: HttpResponse) extends Response {
   }
 
   def calculation: Option[TaxCalculation] = {
-    (json \ "calcResult" \ "calcDetail").asOpt[des.TaxCalculation] match {
+    (json \ "calcResult").asOpt[des.TaxCalculation] match {
       case x @ Some(_) => x
       case None => {
         logger.error("The 'calcDetail' field was not found in the response from DES")
