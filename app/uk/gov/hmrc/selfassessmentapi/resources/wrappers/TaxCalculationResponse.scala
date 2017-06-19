@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
 import uk.gov.hmrc.play.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.models.calculation.TaxCalculation
+import uk.gov.hmrc.selfassessmentapi.models.calculation.ApiTaxCalculation
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 
@@ -32,9 +32,9 @@ case class TaxCalculationResponse(underlying: HttpResponse) extends Response {
     }
   }
 
-  def calculation: Option[TaxCalculation] = {
+  def calculation: Option[ApiTaxCalculation] = {
     (json \ "calcResult").asOpt[des.TaxCalculation] match {
-      case x @ Some(_) => x
+      case x @ Some(_) => x.map(ApiTaxCalculation.from)
       case None => {
         logger.error("The 'calcDetail' field was not found in the response from DES")
         None

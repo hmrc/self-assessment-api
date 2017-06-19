@@ -539,7 +539,6 @@ object Jsons {
          {
            |  "incomeTaxYTD": 1000.25,
            |  "incomeTaxThisPeriod": 1000.25,
-           |  "calcDetail": {
            |    "payFromAllEmployments": 200.22,
            |    "benefitsAndExpensesReceived": 200.22,
            |    "allowableExpenses": 200.22,
@@ -738,12 +737,6 @@ object Jsons {
            |    "proportionClass4NICsLimitBR": 200,
            |    "proportionClass4NICsLimitHR": 200,
            |    "proportionReducedAllowanceLimit": 200
-           |  },
-           |  "previousCalc": {
-           |    "calcTimestamp": "4498-07-06T21:42:24.294Z",
-           |    "calcID": "12345678",
-           |    "calcAmount": 1000.25
-           |  }
            |}
          """.stripMargin
       )
