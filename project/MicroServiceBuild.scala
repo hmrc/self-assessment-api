@@ -27,7 +27,7 @@ private object AppDependencies {
     "uk.gov.hmrc" %% "play-reactivemongo" % "5.2.0",
     ws exclude("org.apache.httpcomponents", "httpclient") exclude("org.apache.httpcomponents", "httpcore"),
     "uk.gov.hmrc" %% "play-graphite" % "3.2.0",
-    "uk.gov.hmrc" %% "microservice-bootstrap" % "5.16.0",
+    "uk.gov.hmrc" %% "microservice-bootstrap" % "5.12.0",
     "uk.gov.hmrc" %% "play-auth" % "1.0.0",
     "uk.gov.hmrc" %% "play-health" % "2.1.0",
     "uk.gov.hmrc" %% "play-ui" % "7.2.1",
