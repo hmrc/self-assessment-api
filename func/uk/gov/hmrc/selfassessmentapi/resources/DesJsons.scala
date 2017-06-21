@@ -235,9 +235,9 @@ object DesJsons {
            |      "allowanceOnSales": 200.00
            |   },
            |   "annualNonFinancials": {
-           |      "businessDetailsChangedRecently": 200.00,
-           |      "payClass2Nics": 200.00,
-           |      "exemptFromPayingClass2Nics": 200.00
+           |      "businessDetailsChangedRecently": true,
+           |      "payClass2Nics": false,
+           |      "exemptFromPayingClass2Nics": true
            |   }
            |}
        """.stripMargin

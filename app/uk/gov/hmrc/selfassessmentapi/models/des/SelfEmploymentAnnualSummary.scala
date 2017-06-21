@@ -93,9 +93,9 @@ object AnnualAllowances {
   implicit val writes: Writes[AnnualAllowances] = Json.writes[AnnualAllowances]
 }
 
-case class AnnualNonFinancials(businessDetailsChangedRecently: Option[BigDecimal],
-                               payClass2Nics: Option[BigDecimal],
-                               exemptFromPayingClass2Nics: Option[BigDecimal])
+case class AnnualNonFinancials(businessDetailsChangedRecently: Option[Boolean],
+                               payClass2Nics: Option[Boolean],
+                               exemptFromPayingClass2Nics: Option[Boolean])
 
 object AnnualNonFinancials {
   implicit val reads: Reads[AnnualNonFinancials] = Json.reads[AnnualNonFinancials]

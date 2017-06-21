@@ -41,8 +41,7 @@ class SelfEmploymentRetrieveSpec extends UnitSpec {
 
   "constructing a API SelfEmploymentRetrieve using the DES SelfEmployment" should {
     "correctly map fields" in {
-      val selfEmployment =
-        SelfEmploymentRetrieve.from(createDesSelfEmployment()).get
+      val selfEmployment = SelfEmploymentRetrieve.from.from(createDesSelfEmployment()).right.get
 
       selfEmployment.id shouldBe Some("abc")
       selfEmployment.accountingPeriod shouldBe AccountingPeriod(LocalDate.parse("2017-01-04"),
@@ -60,7 +59,7 @@ class SelfEmploymentRetrieveSpec extends UnitSpec {
     }
 
     "correctly map the accrual accounting type" in {
-      val selfEmployment = SelfEmploymentRetrieve.from(createDesSelfEmployment(accountingType = "accruals")).get
+      val selfEmployment = SelfEmploymentRetrieve.from.from(createDesSelfEmployment(accountingType = "accruals")).right.get
 
       selfEmployment.accountingType shouldBe AccountingType.ACCRUAL
     }

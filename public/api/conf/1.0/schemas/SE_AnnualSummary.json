@@ -10,9 +10,5 @@
       "$ref": "self-employment/Allowances.json"
     }
   },
-  "required": [
-    "adjustments",
-    "allowances"
-  ],
   "additionalProperties": false
 }

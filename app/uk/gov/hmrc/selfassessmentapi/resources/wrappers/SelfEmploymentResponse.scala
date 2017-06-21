@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 import play.api.libs.json._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.models.SourceId
+import uk.gov.hmrc.selfassessmentapi.models.{DesTransformError, DesTransformValidator, des, SourceId}
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode, SelfEmployment}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentRetrieve
 
@@ -33,7 +33,7 @@ case class SelfEmploymentResponse(underlying: HttpResponse) extends Response {
         None
     }
 
-  def selfEmployment(id: SourceId): Either[SelfEmploymentRetrieveError, SelfEmploymentRetrieve] =
+  def selfEmployment(id: SourceId): Either[DesTransformError, SelfEmploymentRetrieve] =
     json \ "businessData" match {
       case JsUndefined() => Left(EmptyBusinessData(s"Empty business data in $json"))
       case JsDefined(_json) => validateRetrieve(id, _json)
@@ -50,17 +50,13 @@ case class SelfEmploymentResponse(underlying: HttpResponse) extends Response {
                     .toRight(UnmatchedIncomeId(
                       s"Could not find Self-Employment Id $id in business details returned from DES $selfEmployments"))
                     .right
-          se <- SelfEmploymentRetrieve
-                 .from(desSe)
-                 .toRight(
-                   UnableToMapAccountingType(
-                     s"Could not find accounting type (cash or accruals) in DES response $selfEmployments"))
-                 .right
+         se <- (DesTransformValidator[des.SelfEmployment, SelfEmploymentRetrieve].from(desSe).left map (ex => UnableToMapAccountingType(ex.msg))
+                ).right
         } yield se.copy(id = None)
       case JsError(errors) => Left(ParseError(s"Unable to parse the response from DES as Json: $errors"))
     }
 
-  def listSelfEmployment: Either[SelfEmploymentRetrieveError, Seq[SelfEmploymentRetrieve]] =
+  def listSelfEmployment: Either[DesTransformError, Seq[SelfEmploymentRetrieve]] =
     json \ "businessData" match {
       case JsUndefined() => Left(EmptyBusinessData(s"Empty business data in $json"))
       case JsDefined(_json) => validateList(_json)
@@ -71,12 +67,12 @@ case class SelfEmploymentResponse(underlying: HttpResponse) extends Response {
       case JsSuccess(Nil, _) =>
         Left(EmptySelfEmployments(s"Got empty list of self employment businesses from DES"))
       case JsSuccess(selfEmployments, _) =>
-        val result = selfEmployments.toStream.map(SelfEmploymentRetrieve.from)
-        if (result contains None)
+        val result = selfEmployments.toStream.map(SelfEmploymentRetrieve.from.from)
+        if (result exists (_.isLeft))
           Left(
             UnableToMapAccountingType(
               s"Could not find accounting type (cash or accruals) in DES response $selfEmployments"))
-        else Right(result.map(_.get))
+        else Right(result.map(_.right.get))
       case JsError(errors) => Left(ParseError(s"Unable to parse the response from DES as Json: $errors"))
     }
 
@@ -84,16 +80,8 @@ case class SelfEmploymentResponse(underlying: HttpResponse) extends Response {
     json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_NINO)
 }
 
-sealed trait SelfEmploymentRetrieveError {
-  def msg: String
-}
-
-object SelfEmploymentRetrieveError {
-  def unapply(err: SelfEmploymentRetrieveError): Option[String] = Some(err.msg)
-}
-
-case class EmptyBusinessData(msg: String) extends SelfEmploymentRetrieveError
-case class EmptySelfEmployments(msg: String) extends SelfEmploymentRetrieveError
-case class ParseError(msg: String) extends SelfEmploymentRetrieveError
-case class UnmatchedIncomeId(msg: String) extends SelfEmploymentRetrieveError
-case class UnableToMapAccountingType(msg: String) extends SelfEmploymentRetrieveError
+case class EmptyBusinessData(msg: String) extends DesTransformError
+case class EmptySelfEmployments(msg: String) extends DesTransformError
+case class ParseError(msg: String) extends DesTransformError
+case class UnmatchedIncomeId(msg: String) extends DesTransformError
+case class UnableToMapAccountingType(msg: String) extends DesTransformError
