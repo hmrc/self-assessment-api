@@ -121,13 +121,13 @@ class SelfEmploymentPeriodResponseSpec extends UnitSpec with MockitoSugar with B
           |}]
         """.stripMargin))
 
-      unitUnderTest.allPeriods.size shouldBe 1
+      unitUnderTest.allPeriods(86).size shouldBe 1
     }
 
     "return None if the response from DES does not match the expected format" in {
       when(mockResponse.json).thenReturn(Json.obj())
 
-      unitUnderTest.allPeriods shouldBe empty
+      unitUnderTest.allPeriods(86) shouldBe empty
     }
   }
 

@@ -22,7 +22,7 @@ import play.api.mvc.Result
 import play.api.mvc.Results.BadRequest
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
-import uk.gov.hmrc.selfassessmentapi.models.Errors
+import uk.gov.hmrc.selfassessmentapi.models.{Errors, PeriodSummary}
 import uk.gov.hmrc.selfassessmentapi.resources.AuthRequest
 
 trait Response {
@@ -47,4 +47,9 @@ trait Response {
         f(status)
       case _ => f(status)
     }
+}
+
+object Response {
+  def periodsExceeding(maxPeriodTimeSpan: Int)(summary: PeriodSummary): Boolean =
+    summary.from.plusDays(maxPeriodTimeSpan).isAfter(summary.to)
 }

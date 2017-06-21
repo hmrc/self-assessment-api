@@ -21,6 +21,7 @@ import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentPeriod
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.Response.periodsExceeding
 
 case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Response {
   def createLocationHeader(nino: Nino, id: SourceId, periodId: PeriodId): String = {
@@ -37,13 +38,13 @@ case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Respon
     }
   }
 
-  def allPeriods: Seq[PeriodSummary] = {
+  def allPeriods(maxPeriodTimeSpan: Int): Seq[PeriodSummary] = {
     json.asOpt[Seq[des.SelfEmploymentPeriod]] match {
       case Some(desPeriods) =>
         val from = SelfEmploymentPeriod.from _
         val setId = (p: SelfEmploymentPeriod) => p.copy(id = Some(p.periodId))
         val fromDES = from andThen setId andThen (_.asSummary)
-        desPeriods.map(fromDES).sorted
+        desPeriods.map(fromDES).filter(periodsExceeding(maxPeriodTimeSpan)).sorted
       case None =>
         logger.error("The response from DES does not match the expected self-employment period format.")
         Seq.empty
