@@ -19,7 +19,8 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 import org.joda.time.LocalDate
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.AccountingType._
-import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, SourceId, _}
+import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.UnableToMapAccountingType
 
 case class SelfEmploymentRetrieve(id: Option[SourceId] = None,
                                   accountingPeriod: AccountingPeriod,
@@ -34,26 +35,30 @@ case class SelfEmploymentRetrieve(id: Option[SourceId] = None,
                                   businessAddressLineFour: Option[String],
                                   businessPostcode: Option[String])
 
-object SelfEmploymentRetrieve {
+object SelfEmploymentRetrieve  {
 
-  def from(desSelfEmployment: des.SelfEmployment): Option[SelfEmploymentRetrieve] =
-    for {
-      accountingType <- AccountingType.fromDes(desSelfEmployment.cashOrAccruals)
-    } yield
-      SelfEmploymentRetrieve(id = desSelfEmployment.incomeSourceId,
-                             accountingPeriod =
-                               AccountingPeriod(start = LocalDate.parse(desSelfEmployment.accountingPeriodStartDate),
-                                                end = LocalDate.parse(desSelfEmployment.accountingPeriodEndDate)),
-                             accountingType = accountingType,
-                             commencementDate = desSelfEmployment.tradingStartDate.map(LocalDate.parse),
-                             cessationDate = None,
-                             tradingName = desSelfEmployment.tradingName,
-                             businessDescription = desSelfEmployment.typeOfBusiness,
-                             businessAddressLineOne = desSelfEmployment.addressDetails.map(_.addressLine1),
-                             businessAddressLineTwo = desSelfEmployment.addressDetails.flatMap(_.addressLine2),
-                             businessAddressLineThree = desSelfEmployment.addressDetails.flatMap(_.addressLine3),
-                             businessAddressLineFour = desSelfEmployment.addressDetails.flatMap(_.addressLine4),
-                             businessPostcode = desSelfEmployment.addressDetails.flatMap(_.postalCode))
+  implicit val from =  new DesTransformValidator[des.SelfEmployment, SelfEmploymentRetrieve] {
+    def from(desSelfEmployment: des.SelfEmployment): Either[DesTransformError, SelfEmploymentRetrieve] = {
+      AccountingType.fromDes(desSelfEmployment.cashOrAccruals) match {
+        case Some(accountingType) =>
+          Right(SelfEmploymentRetrieve(id = desSelfEmployment.incomeSourceId,
+            accountingPeriod =
+              AccountingPeriod(start = LocalDate.parse(desSelfEmployment.accountingPeriodStartDate),
+                end = LocalDate.parse(desSelfEmployment.accountingPeriodEndDate)),
+            accountingType = accountingType,
+            commencementDate = desSelfEmployment.tradingStartDate.map(LocalDate.parse),
+            cessationDate = None,
+            tradingName = desSelfEmployment.tradingName,
+            businessDescription = desSelfEmployment.typeOfBusiness,
+            businessAddressLineOne = desSelfEmployment.addressDetails.map(_.addressLine1),
+            businessAddressLineTwo = desSelfEmployment.addressDetails.flatMap(_.addressLine2),
+            businessAddressLineThree = desSelfEmployment.addressDetails.flatMap(_.addressLine3),
+            businessAddressLineFour = desSelfEmployment.addressDetails.flatMap(_.addressLine4),
+            businessPostcode = desSelfEmployment.addressDetails.flatMap(_.postalCode)))
+        case None => Left(UnableToMapAccountingType(s"Could not find accounting type (cash or accruals) in DES response $desSelfEmployment"))
+      }
+    }
+  }
 
   implicit val writes: Writes[SelfEmploymentRetrieve] = Json.writes[SelfEmploymentRetrieve]
 }

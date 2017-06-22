@@ -17,28 +17,34 @@
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
 import uk.gov.hmrc.play.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
-import uk.gov.hmrc.selfassessmentapi.models.{Obligation, Obligations, SourceId, des}
+import uk.gov.hmrc.selfassessmentapi.models.des.{ObligationDetail, DesError, DesErrorCode}
+import uk.gov.hmrc.selfassessmentapi.models._
 
 case class ObligationsResponse(underlying: HttpResponse) extends Response {
-  def obligations(incomeSourceType: String, id: Option[SourceId] = None): Option[Obligations] = {
+  def obligations(incomeSourceType: String, id: Option[SourceId] = None): Either[DesTransformError, Option[Obligations]] = {
 
     val desObligations = json.asOpt[des.Obligations]
 
     var errorMessage = "The response from DES does not match the expected obligations format."
 
-    def noneFound: Option[Obligations] = {
+    def noneFound: Either[DesTransformError, Option[Obligations]] = {
       logger.error(errorMessage)
-      None
+      Right(None)
     }
 
-    def oneFound(obligation: des.Obligations): Option[Obligations] = {
+    def oneFound(obligation: des.Obligations): Either[DesTransformError, Option[Obligations]] = {
       errorMessage = "Obligation for source id and/or business type was not found."
       obligation.obligations.find(o => o.id.forall(oId => id.forall(_ == oId)) && o.`type` == incomeSourceType).fold(noneFound) {
         desObligation =>
-          Some(Obligations(for {
+          val obligationsOrError: Seq[Either[DesTransformError, Obligation]] = for {
             details <- desObligation.details
-          } yield Obligation.from(details)))
+          } yield DesTransformValidator[ObligationDetail, Obligation].from(details)
+
+          obligationsOrError.find(_.isLeft) match {
+            case Some(ex) => Left(ex.left.get)
+            case None => Right(Some(Obligations(obligationsOrError map (_.right.get))))
+
+          }
       }
     }
 

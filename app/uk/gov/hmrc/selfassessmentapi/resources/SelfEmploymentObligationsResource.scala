@@ -21,6 +21,7 @@ import play.api.mvc.Action
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.ObligationsConnector
 import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.resources.PropertiesObligationsResource._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -33,7 +34,12 @@ object SelfEmploymentObligationsResource extends BaseResource {
         response.filter {
           case 200 =>
             logger.debug("Self-employment obligations from DES = " + Json.stringify(response.json))
-            response.obligations("ITSB", Some(id)).map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+            response.obligations("ITSB", Some(id)) match {
+              case Right(obj) =>  obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+              case Left(ex) =>
+                logger.warn(ex.msg)
+                InternalServerError(Json.toJson(Errors.InternalServerError))
+            }
           case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
           case 404 => NotFound
           case _ => unhandledResponse(response.status, logger)

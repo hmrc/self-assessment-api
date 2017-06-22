@@ -104,10 +104,10 @@ class ObligationsResponseSpec extends UnitSpec {
       val response = ObligationsResponse(HttpResponse(200, Some(obligationJson)))
 
       val seObligations = response.obligations("ITSB", Some("XAIS54321543215"))
-      seObligations.get.obligations.find(o => o.start == new LocalDate("2017-01-01")) shouldBe defined
+      seObligations.right.get.get.obligations.find(o => o.start == new LocalDate("2017-01-01")) shouldBe defined
 
       val propObligations = response.obligations("ITSP")
-      propObligations.get.obligations.find(o => o.start == new LocalDate("2017-01-02")) shouldBe defined
+      propObligations.right.get.get.obligations.find(o => o.start == new LocalDate("2017-01-02")) shouldBe defined
     }
   }
 }

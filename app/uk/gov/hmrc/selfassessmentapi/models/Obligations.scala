@@ -20,6 +20,8 @@ import com.github.nscala_time.time.OrderingImplicits
 import org.joda.time.LocalDate
 import play.api.libs.json.{Json, Writes}
 
+import scala.util.{Failure, Success, Try}
+
 case class Obligations(obligations: Seq[Obligation])
 
 object Obligations {
@@ -29,12 +31,19 @@ object Obligations {
 case class Obligation(start: LocalDate, end: LocalDate, due: LocalDate, met: Boolean)
 
 object Obligation {
-  def from(desObligation: des.ObligationDetail): Obligation = {
-    Obligation(
-      start = LocalDate.parse(desObligation.inboundCorrespondenceFromDate),
-      end = LocalDate.parse(desObligation.inboundCorrespondenceToDate),
-      due = LocalDate.parse(desObligation.inboundCorrespondenceDueDate),
-      met = desObligation.isFulfilled)
+
+  implicit val from =  new DesTransformValidator[des.ObligationDetail, Obligation] {
+    def from(desObligation: des.ObligationDetail) = {
+      Try(Obligation(
+        start = LocalDate.parse(desObligation.inboundCorrespondenceFromDate),
+        end = LocalDate.parse(desObligation.inboundCorrespondenceToDate),
+        due = LocalDate.parse(desObligation.inboundCorrespondenceDueDate),
+        met = desObligation.isFulfilled)
+      ) match {
+        case Success(obj) => Right(obj)
+        case Failure(ex) => Left(InvalidDateError(s"Unable to parse the date from des response $ex"))
+      }
+    }
   }
 
   implicit val localDateOrder: Ordering[LocalDate] = OrderingImplicits.LocalDateOrdering
@@ -42,3 +51,6 @@ object Obligation {
 
   implicit val writes: Writes[Obligation] = Json.writes[Obligation]
 }
+
+case class InvalidDateError(msg: String) extends DesTransformError
+

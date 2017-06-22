@@ -33,7 +33,12 @@ object PropertiesObligationsResource extends BaseResource {
         response.filter {
           case 200 =>
             logger.debug("Properties obligations from DES = " + Json.stringify(response.json))
-            response.obligations("ITSP").map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+            response.obligations("ITSP") match {
+              case Right(obj) =>  obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+              case Left(ex) =>
+                logger.warn(ex.msg)
+                InternalServerError(Json.toJson(Errors.InternalServerError))
+            }
           case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
           case 404 => NotFound
           case _ => unhandledResponse(response.status, logger)
