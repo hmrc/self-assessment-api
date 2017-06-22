@@ -20,6 +20,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, Request}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.selfassessmentapi.config.AppContext._
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
@@ -99,7 +100,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
     APIAction(nino, SourceType.SelfEmployments, Some("periods")).async(parse.empty) { implicit request =>
       connector.getAll(nino, id).map { response =>
         response.filter {
-          case 200 => Ok(Json.toJson(response.allPeriods))
+          case 200 => Ok(Json.toJson(response.allPeriods(getMaxPeriodTimeSpan)))
           case 400 => BadRequest(Error.from(response.json))
           case 404 => NotFound
           case _ => unhandledResponse(response.status, logger)

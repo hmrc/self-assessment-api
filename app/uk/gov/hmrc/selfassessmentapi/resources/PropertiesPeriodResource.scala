@@ -20,6 +20,7 @@ import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.selfassessmentapi.config.AppContext.getMaxPeriodTimeSpan
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
@@ -106,9 +107,9 @@ object PropertiesPeriodResource extends BaseResource {
           case 200 =>
             Ok(Json.toJson(id match {
               case PropertyType.FHL =>
-                ResponseMapper[FHL.Properties, des.properties.FHL.Properties].allPeriods(response)
+                ResponseMapper[FHL.Properties, des.properties.FHL.Properties].allPeriods(response, getMaxPeriodTimeSpan)
               case PropertyType.OTHER =>
-                ResponseMapper[Other.Properties, des.properties.Other.Properties].allPeriods(response)
+                ResponseMapper[Other.Properties, des.properties.Other.Properties].allPeriods(response, getMaxPeriodTimeSpan)
             }))
           case 400 => BadRequest(Error.from(response.json))
           case 404 => NotFound

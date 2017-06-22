@@ -337,10 +337,6 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         s"""
            |[
            |  {
-           |    "from": "2017-04-06",
-           |    "to": "2017-07-04"
-           |  },
-           |  {
            |    "from": "2017-07-05",
            |    "to": "2017-08-04"
            |  }
@@ -358,7 +354,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .contentTypeIsJson()
         .bodyIsLike(expectedBody)
         .selectFields(_ \\ "id")
-        .isLength(2)
+        .isLength(1)
         .matches(Period.periodPattern)
     }
 

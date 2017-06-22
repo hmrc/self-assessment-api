@@ -23,6 +23,7 @@ import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
 import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId, PeriodSummary, des}
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.Response.periodsExceeding
 
 case class PropertiesPeriodResponse(underlying: HttpResponse) extends Response {
   def createLocationHeader(nino: Nino, id: PropertyType, periodId: PeriodId): String =
@@ -91,7 +92,7 @@ trait ResponseMapper[P <: Period, D <: des.properties.Period] {
         None
     }
 
-  def allPeriods(response: PropertiesPeriodResponse)(implicit reads: Reads[D],
+  def allPeriods(response: PropertiesPeriodResponse, maxPeriodTimeSpan: Int)(implicit reads: Reads[D],
                                                      pm: PeriodMapper[P, D]): Seq[PeriodSummary] =
     response.underlying.json.asOpt[Seq[D]] match {
       case Some(desPeriods) =>
@@ -99,7 +100,7 @@ trait ResponseMapper[P <: Period, D <: des.properties.Period] {
         val setId = (p: P) => PeriodMapper[P, D].setId(p, Some(p.periodId))
         val from = PeriodMapper[P, D].from _
         val fromDES = from andThen setId andThen asSummary
-        desPeriods.map(fromDES(_)).sorted
+        desPeriods.map(fromDES(_)).filter(periodsExceeding(maxPeriodTimeSpan)).sorted
       case None =>
         response.logger.error("The response from DES does not match the expected properties period format.")
         Seq.empty
