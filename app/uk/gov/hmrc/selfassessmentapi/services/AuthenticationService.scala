@@ -17,7 +17,11 @@
 package uk.gov.hmrc.selfassessmentapi.services
 
 import play.api.Logger
+import play.api.http.Status.INTERNAL_SERVER_ERROR
+import play.api.http.Status.FORBIDDEN
+import play.api.http.Status.BAD_REQUEST
 import play.api.libs.json.Json
+import play.api.libs.json.Json.toJson
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result}
 import uk.gov.hmrc.auth.core._
@@ -25,6 +29,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuthConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.{Agent, AuthContext, FilingOnlyAgent, Individual}
+import uk.gov.hmrc.selfassessmentapi.models.Errors.{ClientNotSubscribed, NinoInvalid, UnknownError}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, MtdId}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -43,8 +48,12 @@ object AuthenticationService extends AuthorisedFunctions {
 
   def authCheck(nino: Nino)(implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[AuthResult] =
     lookupService.mtdReferenceFor(nino).flatMap {
-      case Some(id) => authoriseAsClient(id)
-      case None => Future.successful(Left(Forbidden(Json.toJson(Errors.ClientNotSubscribed))))
+      case Right(id) => authoriseAsClient(id)
+      case Left(status) => status match {
+        case 400 =>  Future.successful(Left(Status(BAD_REQUEST)(toJson(NinoInvalid))))
+        case 403 =>  Future.successful(Left(Status(FORBIDDEN)(toJson(ClientNotSubscribed))))
+        case 500 =>  Future.successful(Left(Status(INTERNAL_SERVER_ERROR)(toJson(Errors.InternalServerError))))
+      }
     }
 
   private def authoriseAsClient(mtdId: MtdId)(implicit hc: HeaderCarrier,
@@ -83,7 +92,7 @@ object AuthenticationService extends AuthorisedFunctions {
       Future.successful(Left(Forbidden(Json.toJson(Errors.AgentNotSubscribed))))
     case _: UnsupportedAffinityGroup =>
       logger.debug(s"Authorisation failed as client.")
-      Future.successful(Left(Forbidden(Json.toJson(Errors.ClientNotSubscribed))))
+      Future.successful(Left(Forbidden(Json.toJson(ClientNotSubscribed))))
   }
 
   private def unhandledError: PartialFunction[Throwable, Future[AuthResult]] = {

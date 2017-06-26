@@ -37,7 +37,7 @@ class MtdRefLookupServiceSpec extends UnitSpec with MockitoSugar {
 
       when(unitUnderTest.repository.retrieve(nino)).thenReturn(Future.successful(Some(MtdId("abc"))))
 
-      await(unitUnderTest.mtdReferenceFor(nino)) shouldBe Some(MtdId("abc"))
+      await(unitUnderTest.mtdReferenceFor(nino)) shouldBe Right(MtdId("abc"))
       verify(unitUnderTest.repository, times(1)).retrieve(nino)
       verifyNoMoreInteractions(unitUnderTest.repository)
       verifyZeroInteractions(unitUnderTest.businessConnector)
@@ -55,7 +55,7 @@ class MtdRefLookupServiceSpec extends UnitSpec with MockitoSugar {
       when(unitUnderTest.repository.store(nino, mtdId)).thenReturn(Future.successful(true))
       when(unitUnderTest.businessConnector.get(nino)).thenReturn(Future.successful(mockResponse))
 
-      await(unitUnderTest.mtdReferenceFor(nino)) shouldBe Some(mtdId)
+      await(unitUnderTest.mtdReferenceFor(nino)) shouldBe Right(mtdId)
       verify(unitUnderTest.businessConnector, times(1)).get(nino)
       verify(unitUnderTest.repository, times(1)).retrieve(nino)
       verify(unitUnderTest.repository, times(1)).store(nino, mtdId)
@@ -70,7 +70,7 @@ class MtdRefLookupServiceSpec extends UnitSpec with MockitoSugar {
       when(unitUnderTest.repository.retrieve(nino)).thenReturn(Future.successful(None))
       when(unitUnderTest.businessConnector.get(nino)).thenReturn(Future.successful(mockResponse))
 
-      await(unitUnderTest.mtdReferenceFor(nino)) shouldBe None
+      await(unitUnderTest.mtdReferenceFor(nino)) shouldBe Left(403)
       verify(unitUnderTest.businessConnector, times(1)).get(nino)
       verify(unitUnderTest.repository, times(1)).retrieve(nino)
       verifyNoMoreInteractions(unitUnderTest.repository)
@@ -85,7 +85,7 @@ class MtdRefLookupServiceSpec extends UnitSpec with MockitoSugar {
       when(unitUnderTest.repository.retrieve(nino)).thenReturn(Future.successful(None))
       when(unitUnderTest.businessConnector.get(nino)).thenReturn(Future.successful(mockResponse))
 
-      await(unitUnderTest.mtdReferenceFor(nino)) shouldBe None
+      await(unitUnderTest.mtdReferenceFor(nino)) shouldBe Left(500)
       verify(unitUnderTest.businessConnector, times(1)).get(nino)
       verify(unitUnderTest.repository, times(1)).retrieve(nino)
       verifyNoMoreInteractions(unitUnderTest.repository)

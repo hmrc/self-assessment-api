@@ -31,32 +31,40 @@ trait MtdRefLookupService {
   val businessConnector: BusinessDetailsConnector
   val repository: MtdReferenceRepository
 
-  def mtdReferenceFor(nino: Nino)(implicit hc: HeaderCarrier): Future[Option[MtdId]] = {
+  def mtdReferenceFor(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Int, MtdId]] = {
     repository.retrieve(nino).flatMap {
-      case x @ Some(_) =>
+      case x @ Some(_) => {
         logger.debug("NINO to MTD Ref lookup cache hit.")
-        Future.successful(x)
+        Future.successful(Right(x.get))
+      }
       case None =>
         logger.debug("NINO to MTD Ref lookup cache miss.")
         cacheReferenceFor(nino)
     }
   }
 
-  private def cacheReferenceFor(nino: Nino)(implicit hc: HeaderCarrier): Future[Option[MtdId]] = {
+  private def cacheReferenceFor(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Int, MtdId]] = {
     businessConnector.get(nino).map { response =>
       response.status match {
         case 200 =>
           logger.debug(s"NINO to MTD reference lookup successful. Status code: [${response.status}]")
-          response.mtdId.map { id =>
+          Right(response.mtdId.map { id =>
             repository.store(nino, id)
             id
-          }
-        case 400 | 404 =>
-          logger.debug(s"NINO to MTD reference lookup failed. Status code: [${response.status}]")
-          None
-        case _ =>
-          logger.error(s"NINO to MTD reference lookup failed. Is there an issue with DES? Status code: [${response.status}]")
-          None
+          }.getOrElse(throw new IllegalStateException("Unable to retrieve the mtdId")))
+
+        case 400 =>
+          logger.debug(s"NINO to MTD reference lookup was invalid. Status code: [${response.status}]")
+          Left(400)
+        case 404 =>
+          logger.debug(s"NINO to MTD reference lookup was not found. Status code: [${response.status}]")
+          Left(403)
+        case 500 =>
+          logger.error(s"NINO to MTD reference lookup failed with server error. Is there an issue with DES? Status code: [${response.status}]")
+          Left(500)
+        case 503 | _ =>
+          logger.error(s"NINO to MTD reference lookup failed with service error. Is there an issue with DES? Status code: [${response.status}]")
+          Left(500)
       }
     }
   }
