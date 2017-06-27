@@ -33,10 +33,9 @@ trait MtdRefLookupService {
 
   def mtdReferenceFor(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Int, MtdId]] = {
     repository.retrieve(nino).flatMap {
-      case x @ Some(_) => {
+      case Some(mtdId) =>
         logger.debug("NINO to MTD Ref lookup cache hit.")
-        Future.successful(Right(x.get))
-      }
+        Future.successful(Right(mtdId))
       case None =>
         logger.debug("NINO to MTD Ref lookup cache miss.")
         cacheReferenceFor(nino)
@@ -48,10 +47,16 @@ trait MtdRefLookupService {
       response.status match {
         case 200 =>
           logger.debug(s"NINO to MTD reference lookup successful. Status code: [${response.status}]")
-          Right(response.mtdId.map { id =>
+
+          response.mtdId.map { id =>
             repository.store(nino, id)
             id
-          }.getOrElse(throw new IllegalStateException("Unable to retrieve the mtdId")))
+          } match {
+            case Some(mtdId) => Right(mtdId)
+            case None =>
+              logger.warn("NINO to MTD reference lookup failed. MTD reference absent in the des lookup response")
+              Left(500)
+          }
 
         case 400 =>
           logger.debug(s"NINO to MTD reference lookup was invalid. Status code: [${response.status}]")

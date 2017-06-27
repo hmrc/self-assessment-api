@@ -50,9 +50,9 @@ object AuthenticationService extends AuthorisedFunctions {
     lookupService.mtdReferenceFor(nino).flatMap {
       case Right(id) => authoriseAsClient(id)
       case Left(status) => status match {
-        case 400 =>  Future.successful(Left(Status(BAD_REQUEST)(toJson(NinoInvalid))))
-        case 403 =>  Future.successful(Left(Status(FORBIDDEN)(toJson(ClientNotSubscribed))))
-        case 500 =>  Future.successful(Left(Status(INTERNAL_SERVER_ERROR)(toJson(Errors.InternalServerError))))
+        case 400 =>  Future.successful(Left(BadRequest(toJson(NinoInvalid))))
+        case 403 =>  Future.successful(Left(Forbidden(toJson(ClientNotSubscribed))))
+        case 500 =>  Future.successful(Left(InternalServerError(toJson(Errors.InternalServerError))))
       }
     }
 
