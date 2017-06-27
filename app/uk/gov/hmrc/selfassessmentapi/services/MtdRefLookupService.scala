@@ -53,9 +53,7 @@ trait MtdRefLookupService {
             id
           } match {
             case Some(mtdId) => Right(mtdId)
-            case None =>
-              logger.warn("NINO to MTD reference lookup failed. MTD reference absent in the des lookup response")
-              Left(500)
+            case None => Left(500)
           }
 
         case 400 =>
