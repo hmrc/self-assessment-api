@@ -17,7 +17,11 @@
 package uk.gov.hmrc.selfassessmentapi.services
 
 import play.api.Logger
+import play.api.http.Status.INTERNAL_SERVER_ERROR
+import play.api.http.Status.FORBIDDEN
+import play.api.http.Status.BAD_REQUEST
 import play.api.libs.json.Json
+import play.api.libs.json.Json.toJson
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result}
 import uk.gov.hmrc.auth.core._
@@ -25,6 +29,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuthConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.{Agent, AuthContext, FilingOnlyAgent, Individual}
+import uk.gov.hmrc.selfassessmentapi.models.Errors.{ClientNotSubscribed, NinoInvalid, UnknownError}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, MtdId}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -43,8 +48,12 @@ object AuthenticationService extends AuthorisedFunctions {
 
   def authCheck(nino: Nino)(implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[AuthResult] =
     lookupService.mtdReferenceFor(nino).flatMap {
-      case Some(id) => authoriseAsClient(id)
-      case None => Future.successful(Left(Forbidden(Json.toJson(Errors.ClientNotSubscribed))))
+      case Right(id) => authoriseAsClient(id)
+      case Left(status) => status match {
+        case 400 =>  Future.successful(Left(BadRequest(toJson(NinoInvalid))))
+        case 403 =>  Future.successful(Left(Forbidden(toJson(ClientNotSubscribed))))
+        case 500 =>  Future.successful(Left(InternalServerError(toJson(Errors.InternalServerError))))
+      }
     }
 
   private def authoriseAsClient(mtdId: MtdId)(implicit hc: HeaderCarrier,
@@ -69,7 +78,7 @@ object AuthenticationService extends AuthorisedFunctions {
       authorised(AffinityGroup.Agent and Enrolment("HMRC-AS-AGENT")) { // If the user is an agent are they enrolled in Agent Services?
         if (reqHeader.method == "GET") {
           logger.debug("Client authorisation failed. Attempt to GET as a filing-only agent.")
-          Future.successful(Left(Forbidden(Json.toJson(Errors.AgentNotAuthorized))))
+          Future.successful(Left(Forbidden(toJson(Errors.AgentNotAuthorized))))
         } else {
           logger.debug("Client authorisation succeeded as filing-only agent.")
           Future.successful(Right(FilingOnlyAgent))
@@ -80,21 +89,21 @@ object AuthenticationService extends AuthorisedFunctions {
   private def unsubscribedAgentOrUnauthorisedClient: PartialFunction[Throwable, Future[AuthResult]] = {
     case _: InsufficientEnrolments =>
       logger.debug(s"Authorisation failed as filing-only agent.")
-      Future.successful(Left(Forbidden(Json.toJson(Errors.AgentNotSubscribed))))
+      Future.successful(Left(Forbidden(toJson(Errors.AgentNotSubscribed))))
     case _: UnsupportedAffinityGroup =>
       logger.debug(s"Authorisation failed as client.")
-      Future.successful(Left(Forbidden(Json.toJson(Errors.ClientNotSubscribed))))
+      Future.successful(Left(Forbidden(toJson(ClientNotSubscribed))))
   }
 
   private def unhandledError: PartialFunction[Throwable, Future[AuthResult]] = {
     val regex: Regex = """.*"Unable to decrypt value".*""".r
     lazy val internalServerError = Future.successful(
-      Left(InternalServerError(Json.toJson(Errors.InternalServerError("An internal server error occurred")))))
+      Left(InternalServerError(toJson(Errors.InternalServerError("An internal server error occurred")))))
 
     locally { // http://www.scala-lang.org/old/node/3594
       case e @ (_: AuthorisationException | Upstream5xxResponse(regex(_ *), _, _)) =>
         logger.error(s"Authorisation failed with unexpected exception. Bad token? Exception: [$e]")
-        Future.successful(Left(Forbidden(Json.toJson(Errors.BadToken))))
+        Future.successful(Left(Forbidden(toJson(Errors.BadToken))))
       case e: Upstream4xxResponse =>
         logger.error(s"Unhandled 4xx response from play-auth: [$e]. Returning 500 to client.")
         internalServerError

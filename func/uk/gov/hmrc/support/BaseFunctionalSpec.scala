@@ -406,6 +406,28 @@ trait BaseFunctionalSpec extends TestApplication {
       this
     }
 
+    def businessDetailsLookupReturns500Error(nino: Nino): Givens = {
+      stubFor(any(urlMatching(s".*/registration/business-details/nino/$nino"))
+        .willReturn(
+          aResponse()
+            .withStatus(500)
+            .withHeader("Content-Type", "application/json")
+            .withBody(DesJsons.Errors.serverError)))
+
+      this
+    }
+
+    def businessDetailsLookupReturns503Error(nino: Nino): Givens = {
+      stubFor(any(urlMatching(s".*/registration/business-details/nino/$nino"))
+        .willReturn(
+          aResponse()
+            .withStatus(503)
+            .withHeader("Content-Type", "application/json")
+            .withBody(DesJsons.Errors.serviceUnavailable)))
+
+      this
+    }
+
     def missingBearerToken: Givens = {
       stubFor(post(urlPathEqualTo(s"/auth/authorise"))
         .willReturn(aResponse()

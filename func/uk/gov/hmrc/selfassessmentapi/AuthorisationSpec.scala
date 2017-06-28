@@ -11,6 +11,7 @@ class AuthorisationSpec extends BaseFunctionalSpec {
   override lazy val app: FakeApplication = new FakeApplication(additionalConfiguration = conf)
 
   "a user" should {
+
     "receive 403 if the are not subscribed to MTD" in {
       given()
         .userIsNotSubscribedToMtdFor(nino)
@@ -19,6 +20,26 @@ class AuthorisationSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(403)
         .bodyIsLike(Jsons.Errors.clientNotSubscribed)
+    }
+
+    "receive 500 is returned if the DES business lookup service returns 500" in {
+      given()
+        .businessDetailsLookupReturns503Error(nino)
+        .when()
+        .get(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(500)
+        .bodyIsLike(Jsons.Errors.internalServerError)
+    }
+
+    "receive 500 is returned if the DES business lookup service returns 503" in {
+      given()
+        .businessDetailsLookupReturns500Error(nino)
+        .when()
+        .get(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(500)
+        .bodyIsLike(Jsons.Errors.internalServerError)
     }
 
     "receive 403 if they are not authorised to access the resource as a client (i.e. not a filing-only agent)" in {
