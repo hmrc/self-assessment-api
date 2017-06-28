@@ -10,7 +10,7 @@ class AgentSubscriptionSimulationSpec extends BaseFunctionalSpec {
     "return HTTP 403 with error code informing Agent should be subscribed to Agent Services" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource
+        .clientIsFullyAuthorisedForTheResource
         .when()
         .get(s"/ni/$nino/self-employments")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_SUBSCRIBED")
@@ -24,7 +24,7 @@ class AgentSubscriptionSimulationSpec extends BaseFunctionalSpec {
     "return HTTP 403 with error code informing Agent should be subscribed to Agent Services" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource
+        .clientIsFullyAuthorisedForTheResource
         .when()
         .post(s"/ni/$nino/dividends/$taxYear")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_SUBSCRIBED")
