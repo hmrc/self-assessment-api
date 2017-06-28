@@ -97,8 +97,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
           enhanceCapitalAllowance = Some(200.25),
           allowanceOnSales = Some(200.25),
           zeroEmissionGoodsVehicleAllowance = Some(200.25)
-        )),
-        annualNonFinancials = None
+        ))
       )
 
       val apiSummary = SelfEmploymentAnnualSummary.from(desSelfEmployment)
