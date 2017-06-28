@@ -30,7 +30,7 @@ class ResponseSpec extends UnitSpec {
     val fakeRequest = FakeRequest(Helpers.POST, "", FakeHeaders(), Json.obj())
 
     "return a BadRequest with a generic error if the response contains a 4xx error and the user is a FOA" in {
-      implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent, fakeRequest)
+      implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent(Some("agentCode")), fakeRequest)
 
       new Response {
         override val status: Int = 409
@@ -39,7 +39,7 @@ class ResponseSpec extends UnitSpec {
     }
 
     "return the response unmodified if it contains a non-4xx error and the user is a FOA" in {
-      implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent, fakeRequest)
+      implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent(Some("agentCode")), fakeRequest)
 
       new Response {
         override val status: Int = 200

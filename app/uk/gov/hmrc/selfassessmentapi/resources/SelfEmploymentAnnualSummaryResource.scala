@@ -69,7 +69,7 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
       taxYear: TaxYear,
       authCtx: AuthContext,
       response: SelfEmploymentAnnualSummaryResponse)(implicit hc: HeaderCarrier, request: Request[JsValue]) = {
-    AuditService.audit(AnnualSummaryUpdate(nino, id, taxYear, authCtx.toString, response.transactionReference, request.body),
+    AuditService.audit(AnnualSummaryUpdate(nino, id, taxYear, authCtx.affinityGroup, authCtx.agentCode, response.transactionReference, request.body),
                        "self-employment-annual-summary-update")
   }
 }

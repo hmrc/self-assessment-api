@@ -21,7 +21,7 @@ import play.api.mvc.{ActionBuilder, _}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
-import uk.gov.hmrc.selfassessmentapi.contexts.{AuthContext, Individual}
+import uk.gov.hmrc.selfassessmentapi.contexts._
 import uk.gov.hmrc.selfassessmentapi.models.SourceType.SourceType
 import uk.gov.hmrc.selfassessmentapi.services.AuthenticationService
 
@@ -40,7 +40,8 @@ trait BaseResource extends BaseController {
       if (authIsEnabled) {
         implicit val ev: Request[A] = request
         authService.authCheck(nino) map {
-          case Right(authContext) => Right(new AuthRequest(authContext, request))
+          case Right(authContext) =>
+            Right(new AuthRequest(authContext, request))
           case Left(authError) => Left(authError)
         }
       } else Future.successful(Right(new AuthRequest(Individual, request)))

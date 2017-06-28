@@ -158,7 +158,7 @@ object PropertiesPeriodResource extends BaseResource {
                                   response: PropertiesPeriodResponse,
                                   periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
     AuditService.audit(payload =
-                         PeriodicUpdate(nino, id.toString, periodId, authCtx.toString, response.transactionReference, request.body),
+                         PeriodicUpdate(nino, id.toString, periodId, authCtx.affinityGroup, authCtx.agentCode, response.transactionReference, request.body),
                        s"$id-property-periodic-create")
   }
 }
