@@ -21,7 +21,7 @@ class SelfEmploymentFeatureSwitchSpec extends BaseFunctionalSpec {
     "not be visible if feature Switched Off" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .clientIsFullyAuthorisedForTheResource
+        .userIsFullyAuthorisedForTheResource
         .when()
         .get(s"/ni/$nino/${SourceType.SelfEmployments.toString}")
         .thenAssertThat()

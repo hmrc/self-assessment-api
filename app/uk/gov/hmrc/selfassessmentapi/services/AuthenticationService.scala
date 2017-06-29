@@ -62,10 +62,10 @@ object AuthenticationService extends AuthorisedFunctions {
     authorised(
       Enrolment("HMRC-MTD-IT")
         .withIdentifier("MTDITID", mtdId.mtdId)
-        .withDelegatedAuthRule("mtd-it-auth")).retrieve(Retrievals.affinityGroup and Retrievals.agentCode) {
-      case affinityGroup ~ Some(agentCode) if affinityGroup.contains(AffinityGroup.Agent) =>
+        .withDelegatedAuthRule("mtd-it-auth")).retrieve(Retrievals.affinityGroup) {
+      case affinityGroup if affinityGroup.contains(AffinityGroup.Agent) =>
         logger.debug("Client authorisation succeeded as fully-authorised agent.")
-        Future.successful(Right(Agent(Some(agentCode))))
+        Future.successful(Right(Agent))
       case _ =>
         logger.debug("Client authorisation succeeded as fully-authorised individual.")
         Future.successful(Right(Individual))
@@ -75,17 +75,15 @@ object AuthenticationService extends AuthorisedFunctions {
   private def authoriseAsFOA(implicit hc: HeaderCarrier,
                              reqHeader: RequestHeader): PartialFunction[Throwable, Future[AuthResult]] = {
     case _: InsufficientEnrolments =>
-      authorised(AffinityGroup.Agent and Enrolment("HMRC-AS-AGENT"))
-        .retrieve(Retrievals.agentCode) { // If the user is an agent are they enrolled in Agent Services?
-          case Some(agentCode) =>
-            if (reqHeader.method == "GET") {
-              logger.debug("Client authorisation failed. Attempt to GET as a filing-only agent.")
-              Future.successful(Left(Forbidden(toJson(Errors.AgentNotAuthorized))))
-            } else {
-              logger.debug("Client authorisation succeeded as filing-only agent.")
-              Future.successful(Right(FilingOnlyAgent(Some(agentCode))))
-            }
-        } recoverWith (unsubscribedAgentOrUnauthorisedClient orElse unhandledError) // Iff agent is not enrolled for the user or client affinityGroup is not Agent.
+      authorised(AffinityGroup.Agent and Enrolment("HMRC-AS-AGENT")) { // If the user is an agent are they enrolled in Agent Services?
+        if (reqHeader.method == "GET") {
+          logger.debug("Client authorisation failed. Attempt to GET as a filing-only agent.")
+          Future.successful(Left(Forbidden(toJson(Errors.AgentNotAuthorized))))
+        } else {
+          logger.debug("Client authorisation succeeded as filing-only agent.")
+          Future.successful(Right(FilingOnlyAgent))
+        }
+      } recoverWith (unsubscribedAgentOrUnauthorisedClient orElse unhandledError) // Iff agent is not enrolled for the user or client affinityGroup is not Agent.
   }
 
   private def unsubscribedAgentOrUnauthorisedClient: PartialFunction[Throwable, Future[AuthResult]] = {

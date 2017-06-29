@@ -25,19 +25,19 @@ class AuditPayloadSpec extends JsonSpec {
 
   "PeriodicUpdateAuditPayload" should {
     "round trip" in {
-      roundTripJson(PeriodicUpdate(Nino("AA999999A"), "abc", "def", "individual", None, Some("ghi"), Json.obj()))
+      roundTripJson(PeriodicUpdate(Nino("AA999999A"), "abc", "def", "individual", Some("ghi"), Json.obj()))
     }
   }
 
   "TaxCalculationTrigger" should {
     "round trip" in {
-      roundTripJson(TaxCalculationTrigger(Nino("AA999999A"), TaxYear("2017-18"), "individual", None, "abc"))
+      roundTripJson(TaxCalculationTrigger(Nino("AA999999A"), TaxYear("2017-18"), "individual", "abc"))
     }
   }
 
   "TaxCalculationRequest" should {
     "round trip" in {
-      roundTripJson(TaxCalculationRequest(Nino("AA999999A"), "abc", "individual", None, Json.obj()))
+      roundTripJson(TaxCalculationRequest(Nino("AA999999A"), "abc", "individual", Json.obj()))
     }
   }
 }

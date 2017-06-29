@@ -113,7 +113,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
                                   authCtx: AuthContext,
                                   response: SelfEmploymentPeriodResponse,
                                   periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
-    AuditService.audit(payload = PeriodicUpdate(nino, id, periodId, authCtx.affinityGroup, authCtx.agentCode, response.transactionReference, request.body),
+    AuditService.audit(payload = PeriodicUpdate(nino, id, periodId, authCtx.toString, response.transactionReference, request.body),
                        "self-employment-periodic-create")
   }
 }

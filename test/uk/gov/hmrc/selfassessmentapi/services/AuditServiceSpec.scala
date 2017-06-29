@@ -45,7 +45,6 @@ class AuditServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
         sourceId = "abc",
         periodId = "def",
         affinityGroup = "individual",
-        agentCode = None,
         transactionReference = Some("ghi"),
         requestPayload = Json.obj())
 

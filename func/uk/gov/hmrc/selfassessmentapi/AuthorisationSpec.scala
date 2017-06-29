@@ -119,20 +119,10 @@ class AuthorisationSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Errors.internalServerError)
     }
 
-    "receive 200 if the user is authorised for the resource as a client" in {
+    "receive 200 if they are authorised for the resource as a client or fully-authorised agent" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .clientIsFullyAuthorisedForTheResource
-        .when()
-        .get(s"/ni/$nino/self-employments")
-        .thenAssertThat()
-        .statusIs(200)
-    }
-
-    "receive 200 if the user is authorised for the resource as a fully-authorised agent" in {
-      given()
-        .userIsSubscribedToMtdFor(nino)
-        .agentIsFullyAuthorisedForTheResource
+        .userIsFullyAuthorisedForTheResource
         .when()
         .get(s"/ni/$nino/self-employments")
         .thenAssertThat()
