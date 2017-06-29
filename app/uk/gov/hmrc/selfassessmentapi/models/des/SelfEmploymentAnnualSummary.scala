@@ -21,8 +21,7 @@ import uk.gov.hmrc.selfassessmentapi.models
 
 
 case class SelfEmploymentAnnualSummary(annualAdjustments: Option[AnnualAdjustments],
-                                       annualAllowances: Option[AnnualAllowances],
-                                       annualNonFinancials: Option[AnnualNonFinancials])
+                                       annualAllowances: Option[AnnualAllowances])
 
 object SelfEmploymentAnnualSummary {
   implicit val reads: Reads[SelfEmploymentAnnualSummary] = Json.reads[SelfEmploymentAnnualSummary]
@@ -58,8 +57,7 @@ object SelfEmploymentAnnualSummary {
 
     SelfEmploymentAnnualSummary(
       annualAdjustments = adjustments,
-      annualAllowances = allowances,
-      annualNonFinancials = None)
+      annualAllowances = allowances)
   }
 
 }
@@ -93,11 +91,3 @@ object AnnualAllowances {
   implicit val writes: Writes[AnnualAllowances] = Json.writes[AnnualAllowances]
 }
 
-case class AnnualNonFinancials(businessDetailsChangedRecently: Option[Boolean],
-                               payClass2Nics: Option[Boolean],
-                               exemptFromPayingClass2Nics: Option[Boolean])
-
-object AnnualNonFinancials {
-  implicit val reads: Reads[AnnualNonFinancials] = Json.reads[AnnualNonFinancials]
-  implicit val writes: Writes[AnnualNonFinancials] = Json.writes[AnnualNonFinancials]
-}

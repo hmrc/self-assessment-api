@@ -65,8 +65,6 @@ class SelfEmploymentAnnualSummarySpec extends UnitSpec {
       adjustments.balancingChargeBpra shouldBe Some(200.50)
       adjustments.balancingChargeOther shouldBe Some(200.50)
       adjustments.goodsAndServicesOwnUse shouldBe Some(200.50)
-
-      desSummary.annualNonFinancials shouldBe None
     }
   }
 }
