@@ -148,8 +148,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .bodyIsLike(expectedJson)
       }
 
-      s"return code 200 containing an empty object when retrieving a non-existent annual summary for $propertyType" in {
-
+      s"return code 404 when no data can be found for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource
@@ -157,9 +156,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .when()
           .get(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
           .thenAssertThat()
-          .statusIs(200)
-          .contentTypeIsJson()
-          .jsonBodyIsEmptyObject()
+          .statusIs(404)
       }
 
       s"return code 404 when retrieving an annual summary for a non-existent property for $propertyType" in {
@@ -184,7 +181,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .bodyIsError("TAX_YEAR_INVALID")
       }
 
-      s"return code 400 when provided with an invalid Originator-Id header for $propertyType" in {
+      s"return code 500 when provided with an invalid Originator-Id header for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource
@@ -192,8 +189,8 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .when()
           .get(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
           .thenAssertThat()
-          .statusIs(400)
-          .bodyIsLike(Jsons.Errors.invalidOriginatorId)
+          .statusIs(500)
+          .bodyIsLike(Jsons.Errors.internalServerError)
       }
 
       s"return code 500 when DES is experiencing problems for $propertyType" in {

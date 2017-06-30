@@ -56,6 +56,7 @@ object DesErrorCode extends Enumeration {
   INVALID_DATE_FROM,
   INVALID_DATE_TO,
   INVALID_STATUS,
+  NOT_FOUND_PROPERTY,
   INVALID_DATE_RANGE = Value
 
   implicit val format: Format[DesErrorCode] = EnumJson.enumFormat(DesErrorCode, Some("DesErrorCode is invalid"))
