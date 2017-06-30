@@ -48,6 +48,12 @@ case class PropertiesPeriodResponse(underlying: HttpResponse) extends Response {
 
   def isInvalidType: Boolean =
     json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_TYPE)
+
+  def isInvalidDateFrom: Boolean =
+    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_DATE_FROM)
+
+  def isInvalidDateTo: Boolean =
+    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_DATE_TO)
 }
 
 trait PeriodMapper[P <: Period, D <: des.properties.Period] {

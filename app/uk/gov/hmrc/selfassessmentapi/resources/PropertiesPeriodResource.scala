@@ -92,8 +92,10 @@ object PropertiesPeriodResource extends BaseResource {
                   case PropertyType.FHL => toResult[FHL.Properties, des.properties.FHL.Properties](response)
                   case PropertyType.OTHER => toResult[Other.Properties, des.properties.Other.Properties](response)
                 }
-              case 400 => BadRequest(Error.from(response.json))
+              case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
+              case 400 if response.isInvalidType | response.isInvalidDateFrom | response.isInvalidDateTo => NotFound
               case 404 => NotFound
+              case 403 => NotFound
               case _ => unhandledResponse(response.status, logger)
             }
           }
@@ -112,7 +114,11 @@ object PropertiesPeriodResource extends BaseResource {
               case PropertyType.OTHER =>
                 ResponseMapper[Other.Properties, des.properties.Other.Properties].allPeriods(response, getMaxPeriodTimeSpan)
             }))
-          case _ => Error.from2(response.json)
+          case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
+          case 400 if response.isInvalidType => NotFound
+          case 404 => NotFound
+          case 403 => NotFound
+          case _ => unhandledResponse(response.status, logger)
         }
       }
     }
