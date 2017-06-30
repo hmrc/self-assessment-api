@@ -32,6 +32,7 @@ object DesJsons {
     val invalidPeriod: String =
       error("INVALID_PERIOD", "The remote endpoint has indicated that a overlapping period was submitted.")
     val invalidObligation: String = error("INVALID_REQUEST", "Accounting period should be greater than 6 months.")
+    val invalidBusinessId: String = error("INVALID_BUSINESSID", "Submission has not passed validation. Invalid parameter businessId.")
     val invalidOriginatorId: String =
       error("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
     val invalidCalcId: String = error("INVALID_CALCID", "Submission has not passed validation")

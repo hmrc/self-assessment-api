@@ -592,6 +592,19 @@ trait BaseFunctionalSpec extends TestApplication {
         givens
       }
 
+      def invalidBusinessIdFor(nino: Nino): Givens = {
+        stubFor(
+          any(urlMatching(s".*/nino/$nino.*"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.invalidBusinessId)
+            ))
+
+        givens
+      }
+
       def invalidOriginatorIdFor(nino: Nino): Givens = {
         stubFor(
           any(urlMatching(s".*/nino/$nino.*"))
