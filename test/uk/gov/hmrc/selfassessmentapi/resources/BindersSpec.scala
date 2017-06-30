@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
+import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.{SourceType, TaxYear}
 
 class BindersSpec extends UnitSpec {
@@ -68,6 +69,21 @@ class BindersSpec extends UnitSpec {
     "return Left for an invalid sourceType string" in {
       val result = Binders.sourceTypeBinder.bind("summaryType", "invalid")
       result shouldEqual Left("ERROR_INVALID_SOURCE_TYPE")
+    }
+  }
+
+  "propertyType.bind" should {
+
+    "return Right with a Property Type instance for a Property" in {
+      PropertyType.values.foreach { `type` =>
+        val result = Binders.propertyTypeBinder.bind("propertyType", `type`.toString)
+        result shouldEqual Right(`type`)
+      }
+    }
+
+    "return Left for an invalid propertyType string" in {
+      val result = Binders.propertyTypeBinder.bind("propertyType", "invalid")
+      result shouldEqual Left("ERROR_INVALID_PROPERTY_TYPE")
     }
   }
 

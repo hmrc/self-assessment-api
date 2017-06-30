@@ -22,6 +22,7 @@ object DesJsons {
     val invalidNino: String = error("INVALID_NINO", "Submission has not passed validation. Invalid parameter NINO.")
     val invalidPayload: String = error("INVALID_PAYLOAD", "Submission has not passed validation. Invalid PAYLOAD.")
     val ninoNotFound: String = error("NOT_FOUND_NINO", "The remote endpoint has indicated that no data can be found.")
+    val notFoundProperty: String = error("NOT_FOUND_PROPERTY", "The remote endpoint has indicated that no data can be found for the given property type.")
     val notFound: String = error("NOT_FOUND", "The remote endpoint has indicated that no data can be found.")
     val tradingNameConflict: String = error("CONFLICT", "Duplicated trading name.")
     val serverError: String =

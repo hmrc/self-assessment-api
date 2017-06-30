@@ -87,6 +87,8 @@ object Errors {
         case NOT_FOUND_BUSINESS_ID => NOT_FOUND -> None
         case SERVER_ERROR => INTERNAL_SERVER_ERROR -> Some(InternalServerError)
         case SERVICE_NOT_AVAILABLE => INTERNAL_SERVER_ERROR -> Some(InternalServerError)
+        case INVALID_INCOME_SOURCE => NOT_FOUND -> None
+        case NOT_FOUND_PROPERTY => NOT_FOUND -> None
         case _ => INTERNAL_SERVER_ERROR -> Some(InternalServerError)
       }
     }

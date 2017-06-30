@@ -1168,9 +1168,9 @@ trait BaseFunctionalSpec extends TestApplication {
               s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
               .willReturn(
                 aResponse()
-                  .withStatus(200)
+                  .withStatus(404)
                   .withHeader("Content-Type", "application/json")
-                  .withBody(Json.obj().toString)))
+                  .withBody(DesJsons.Errors.notFoundProperty)))
 
           givens
         }
@@ -1270,7 +1270,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def periodsWillBeReturnedFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
-            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodicsummaries"))
+            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
                   .withStatus(200)
@@ -1297,19 +1297,19 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def noPeriodsFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
-            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodicsummaries"))
+            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
-                  .withStatus(200)
+                  .withStatus(404)
                   .withHeader("Content-Type", "application/json")
-                  .withBody(Json.arr().toString)))
+                  .withBody(DesJsons.Errors.notFoundProperty)))
 
           givens
         }
 
         def doesNotExistPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
-            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodicsummaries"))
+            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
                   .withStatus(404)
