@@ -352,8 +352,8 @@ traits:
                         value:
                           code: INVALID_PERIOD
           get:
-            displayName: List all self-employment update periods [test only]
-            description: List all self-employment update periods. This API is not available in production.
+            displayName: List all self-employment update periods
+            description: List all self-employment update periods.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
             (annotations.scope): "read:self-assessment"
@@ -489,8 +489,8 @@ traits:
                           code: INVALID_BALANCING_CHARGE_BPRA
               404:
           get:
-            displayName: Get a self-employment annual summary [test only]
-            description: Get a self-employment annual summary for a tax year. This API is not available in production.
+            displayName: Get a self-employment annual summary
+            description: Get a self-employment annual summary for a tax year.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
             (annotations.scope): "read:self-assessment"
@@ -606,8 +606,8 @@ traits:
       /other:
         /periods:
           post:
-            displayName: Create a non FHL UK property update period
-            description: Create a non FHL UK property update period for submission of periodic data i.e incomes and expenses.
+            displayName: Create a non-FHL UK property update period
+            description: Create a non-FHL UK property update period for submission of periodic data i.e incomes and expenses.
                          Submissions  which do not include any incomes or expenses are invalid.
                          You should submit zero values if you do not have incomes or expenses.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
@@ -663,8 +663,8 @@ traits:
                     type: !include schemas/Error.json
                     example: !include examples/errors/CONFLICT.json
           get:
-            displayName: List all non FHL UK property update periods [test only]
-            description: List all non FHL UK property update periods. This API is not available in production.
+            displayName: List all non-FHL UK property update periods
+            description: List all non-FHL UK property update periods.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
             (annotations.scope): "read:self-assessment"
@@ -692,8 +692,8 @@ traits:
                 description: An identifier for the period
                 type: string
             get:
-              displayName: Get a non FHL UK property update period [test only]
-              description: Get a non FHL UK property update period for a given identifier. This API is not available in production.
+              displayName: Get a non-FHL UK property update period [test only]
+              description: Get a non-FHL UK property update period for a given identifier. This API is not available in production.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "read:self-assessment"
@@ -715,8 +715,8 @@ traits:
                             code: NINO_INVALID
                 404:
             put:
-              displayName: Update a non FHL UK property update period [test only]
-              description: Update a non FHL UK property update period. This API is not available in production.
+              displayName: Update a non-FHL UK property update period [test only]
+              description: Update a non-FHL UK property update period. This API is not available in production.
                            Submissions  which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
@@ -759,8 +759,8 @@ traits:
                 type: string
                 example: 2017-18
             put:
-              displayName: Update a non-FHL UK property business annual summary [test only]
-              description: Update a non-FHL UK property business annual summary for a tax year. This API is not available in production.
+              displayName: Update a non-FHL UK property business annual summary
+              description: Update a non-FHL UK property business annual summary for a tax year.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -790,8 +790,8 @@ traits:
                             code: INVALID_MONETARY_AMOUNT
                 404:
             get:
-              displayName: Get non FHL UK property business annual summary [test only]
-              description: Get non FHL UK property business for a tax year. This API is not available in production.
+              displayName: Get a non-FHL UK property business annual summary
+              description: Get a non-FHL UK property business annual summary for a tax year.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "read:self-assessment"
@@ -872,8 +872,8 @@ traits:
                     type: !include schemas/Error.json
                     example: !include examples/errors/CONFLICT.json
           get:
-            displayName: List all FHL UK property update periods [test only]
-            description: List all FHL UK property update periods. This API is not available in production.
+            displayName: List all FHL UK property update periods
+            description: List all FHL UK property update periods.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
             (annotations.scope): "read:self-assessment"
@@ -968,8 +968,8 @@ traits:
                 type: string
                 example: 2017-18
             put:
-              displayName: Update a FHL UK property business annual summary [test only]
-              description: Update a FHL UK property business annual summary for a tax year. This API is not available in production.
+              displayName: Update a FHL UK property business annual summary
+              description: Update a FHL UK property business annual summary for a tax year.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -999,8 +999,8 @@ traits:
                             code: INVALID_MONETARY_AMOUNT
                 404:
             get:
-              displayName: Get a FHL UK property business annual summary [test only]
-              description: Get a FHL UK property business annual summary for a tax year. This API is not available in production.
+              displayName: Get a FHL UK property business annual summary
+              description: Get a FHL UK property business annual summary for a tax year.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "read:self-assessment"
