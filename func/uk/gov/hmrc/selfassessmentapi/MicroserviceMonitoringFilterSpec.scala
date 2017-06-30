@@ -8,7 +8,7 @@ class MicroserviceMonitoringFilterSpec extends BaseFunctionalSpec {
   "Monitoring filter" should {
     "be applied when requests are made" in {
       given()
-        .clientIsFullyAuthorisedForTheResource
+        .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.willBeCreatedFor(nino)
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()

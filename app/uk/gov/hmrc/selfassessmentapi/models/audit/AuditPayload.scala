@@ -28,10 +28,8 @@ case class PeriodicUpdate(nino: Nino,
                           sourceId: SourceId,
                           periodId: String,
                           affinityGroup: String,
-                          agentCode: Option[String],
                           transactionReference: Option[String],
-                          requestPayload: JsValue)
-    extends AuditPayload {
+                          requestPayload: JsValue) extends AuditPayload {
   override val auditType: String = "submitPeriodicUpdate"
 }
 
@@ -43,10 +41,8 @@ case class AnnualSummaryUpdate(nino: Nino,
                                sourceId: SourceId,
                                taxYear: TaxYear,
                                affinityGroup: String,
-                               agentCode: Option[String],
                                transactionReference: Option[String],
-                               requestPayload: JsValue)
-    extends AuditPayload {
+                               requestPayload: JsValue) extends AuditPayload {
   override val auditType: String = "submitAnnualSummary"
 }
 
@@ -57,9 +53,7 @@ object AnnualSummaryUpdate {
 case class TaxCalculationTrigger(nino: Nino,
                                  taxYear: TaxYear,
                                  affinityGroup: String,
-                                 agentCode: Option[String],
-                                 calculationId: SourceId)
-    extends AuditPayload {
+                                 calculationId: SourceId) extends AuditPayload {
   override val auditType: String = "triggerTaxCalculation"
 }
 
@@ -70,9 +64,7 @@ object TaxCalculationTrigger {
 case class TaxCalculationRequest(nino: Nino,
                                  calculationId: SourceId,
                                  affinityGroup: String,
-                                 agentCode: Option[String],
-                                 responsePayload: JsValue)
-    extends AuditPayload {
+                                 responsePayload: JsValue) extends AuditPayload {
   override val auditType: String = "retrieveTaxCalculation"
 }
 

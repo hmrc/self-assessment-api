@@ -83,8 +83,7 @@ object TaxCalculationResource extends BaseResource {
       TaxCalculationTrigger(
         nino,
         request.body.as[CalculationRequest].taxYear,
-        authCtx.affinityGroup,
-        authCtx.agentCode,
+        authCtx.toString,
         response.calcId.getOrElse("")),
       "trigger-tax-calculation")
   }
@@ -96,8 +95,7 @@ object TaxCalculationResource extends BaseResource {
       TaxCalculationRequest(
         nino,
         calcId,
-        authCtx.affinityGroup,
-        authCtx.agentCode,
+        authCtx.toString,
         response.json), "retrieve-tax-calculation")
   }
 }
