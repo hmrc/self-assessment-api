@@ -296,6 +296,31 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .bodyDoesNotHavePath[PeriodId]("id")
     }
 
+    "return code 400 when retrieving a period and DES fails nino validation" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .des().selfEmployment.periodWillBeReturnedFor(nino, from = "2017-04-05", to = "2018-04-04")
+        .des().invalidNinoFor(nino)
+        .when()
+        .get(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
+        .thenAssertThat()
+        .statusIs(400)
+        .bodyIsLike(Jsons.Errors.ninoInvalid)
+    }
+
+    "return code 404 when retrieving a period and DES fails BusinessID validation" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .des().invalidBusinessIdFor(nino)
+        .when()
+        .get(s"/ni/$nino/self-employments/abc/periods/def")
+        .thenAssertThat()
+        .statusIs(404)
+    }
+
+
     "return code 404 when retrieving a period that does not exist" in {
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -368,6 +393,29 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(200)
         .jsonBodyIsEmptyArray()
+    }
+
+    "return code 400 when retrieving all periods and DES fails nino validation" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .des().invalidNinoFor(nino)
+        .when()
+        .get(s"/ni/$nino/self-employments/abc/periods")
+        .thenAssertThat()
+        .statusIs(400)
+        .bodyIsLike(Jsons.Errors.ninoInvalid)
+    }
+
+    "return code 404 when retrieving all periods and DES fails BusinessID validation" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .des().invalidBusinessIdFor(nino)
+        .when()
+        .get(s"/ni/$nino/self-employments/abc/periods")
+        .thenAssertThat()
+        .statusIs(404)
     }
 
     "return code 404 when retrieving all periods for a non-existent self-employment source" in {
