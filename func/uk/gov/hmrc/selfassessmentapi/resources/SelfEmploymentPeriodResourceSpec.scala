@@ -299,7 +299,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
     "return code 400 when retrieving a period and DES fails nino validation" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .clientIsFullyAuthorisedForTheResource
+        .userIsFullyAuthorisedForTheResource
         .des().selfEmployment.periodWillBeReturnedFor(nino, from = "2017-04-05", to = "2018-04-04")
         .des().invalidNinoFor(nino)
         .when()
@@ -312,7 +312,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
     "return code 404 when retrieving a period and DES fails BusinessID validation" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .clientIsFullyAuthorisedForTheResource
+        .userIsFullyAuthorisedForTheResource
         .des().invalidBusinessIdFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods/def")
@@ -398,7 +398,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
     "return code 400 when retrieving all periods and DES fails nino validation" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .clientIsFullyAuthorisedForTheResource
+        .userIsFullyAuthorisedForTheResource
         .des().invalidNinoFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods")
@@ -410,7 +410,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
     "return code 404 when retrieving all periods and DES fails BusinessID validation" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .clientIsFullyAuthorisedForTheResource
+        .userIsFullyAuthorisedForTheResource
         .des().invalidBusinessIdFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods")
