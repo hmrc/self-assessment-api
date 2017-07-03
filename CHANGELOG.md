@@ -1,6 +1,21 @@
 
 ### Please refer to [CHANGELOG-ET.md](https://github.com/hmrc/self-assessment-api/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to Sandbox Test Environment.
 
+## [0.126.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.126.0) 03-Jul-2017
+
+* Enable following API's in production.
+  * Self-employment business
+     * List all self-employment update periods
+     * Get a self-employment annual summary
+  * UK property business
+     * List all non-FHL UK property update periods
+     * List all FHL UK property update periods
+     * Get a FHL UK property business annual summary
+     * Update a FHL UK property business annual summary
+     * Get a non-FHL UK property business annual summary
+     * Update a non-FHL UK property business annual summary
+* Tax Calculation: Changes to tax calculation result response to include missing fields (like NI and some proportional values)
+
 ## [0.121.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.121.0) 14-Jun-2017
 
 * No functional changes
