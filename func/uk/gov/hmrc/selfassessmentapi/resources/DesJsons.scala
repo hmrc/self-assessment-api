@@ -39,6 +39,8 @@ object DesJsons {
     val invalidCalcId: String = error("INVALID_CALCID", "Submission has not passed validation")
     val propertyConflict: String = error("CONFLICT", "Property already exists.")
     val invalidIncomeSource: String = error("INVALID_INCOME_SOURCE", "The remote endpoint has indicated that the taxpayer does not have an associated property.")
+    val invalidDateFrom: String = error("INVALID_DATE_FROM", "Submission has not passed validation. Invalid parameter from.")
+    val invalidDateTo: String = error("INVALID_DATE_TO", "Submission has not passed validation. Invalid parameter to.")
   }
 
   object SelfEmployment {

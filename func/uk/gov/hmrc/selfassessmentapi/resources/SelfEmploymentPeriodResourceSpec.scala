@@ -344,6 +344,28 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .statusIs(404)
     }
 
+    "return code 500 when we receive a status code of INVALID_DATE_FROM from DES" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .des().selfEmployment.invalidDateFrom(nino, from = "2017-04-06", to = "2018-04-05")
+        .when()
+        .get(s"/ni/$nino/self-employments/abc/periods/2017-04-06_2018-04-05")
+        .thenAssertThat()
+        .statusIs(500)
+    }
+
+    "return code 500 when we receive a status code of INVALID_DATE_TO from DES" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .des().selfEmployment.invalidDateTo(nino, from = "2017-04-06", to = "2018-04-05")
+        .when()
+        .get(s"/ni/$nino/self-employments/abc/periods/2017-04-06_2018-04-05")
+        .thenAssertThat()
+        .statusIs(500)
+    }
+
     "return code 500 when we receive a status code from DES that we do not handle" in {
       given()
         .userIsSubscribedToMtdFor(nino)

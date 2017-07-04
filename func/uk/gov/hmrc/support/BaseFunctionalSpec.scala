@@ -821,6 +821,29 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+
+        def invalidDateFrom(nino: Nino, id: String = "abc", from: String, to: String): Givens = {
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summary-detail?from=$from&to=$to"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.invalidDateFrom)))
+
+          givens
+        }
+
+        def invalidDateTo(nino: Nino, id: String = "abc", from: String, to: String): Givens = {
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summary-detail?from=$from&to=$to"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.invalidDateTo)))
+
+          givens
+        }
+
         def noPeriodsFor(nino: Nino, id: String = "abc"): Givens = {
           stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries"))
             .willReturn(
@@ -1305,6 +1328,36 @@ trait BaseFunctionalSpec extends TestApplication {
                   .withBody(DesJsons.Errors.notFoundProperty)))
 
           givens
+        }
+
+        def invalidDateFrom(nino: Nino, propertyType: PropertyType, periodId: String = "2017-04-06_2018-04-05"): Givens = {
+          periodId match {
+            case Period(from, to) =>
+              stubFor(
+                get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summary-detail?from=$from&to=$to"))
+                  .willReturn(
+                    aResponse()
+                      .withStatus(400)
+                      .withHeader("Content-Type", "application/json")
+                      .withBody(DesJsons.Errors.invalidDateFrom)))
+              givens
+            case _ => fail(s"Invalid period ID: $periodId.")
+          }
+        }
+
+        def invalidDateTo(nino: Nino, propertyType: PropertyType, periodId: String = "2017-04-06_2018-04-05"): Givens = {
+          periodId match {
+            case Period(from, to) =>
+              stubFor(
+                get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summary-detail?from=$from&to=$to"))
+                  .willReturn(
+                    aResponse()
+                      .withStatus(400)
+                      .withHeader("Content-Type", "application/json")
+                      .withBody(DesJsons.Errors.invalidDateTo)))
+              givens
+            case _ => fail(s"Invalid period ID: $periodId.")
+          }
         }
 
         def doesNotExistPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {

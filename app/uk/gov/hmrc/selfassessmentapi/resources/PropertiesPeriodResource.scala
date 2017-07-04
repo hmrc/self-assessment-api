@@ -93,7 +93,7 @@ object PropertiesPeriodResource extends BaseResource {
                   case PropertyType.OTHER => toResult[Other.Properties, des.properties.Other.Properties](response)
                 }
               case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-              case 400 if response.isInvalidType | response.isInvalidDateFrom | response.isInvalidDateTo => NotFound
+              case 400 if response.isInvalidType => NotFound
               case 404 => NotFound
               case 403 => NotFound
               case _ => unhandledResponse(response.status, logger)

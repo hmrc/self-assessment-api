@@ -288,6 +288,32 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .thenAssertThat()
           .statusIs(500)
       }
+
+      s"return code 500 when we receive a status code INVALID_DATE_FROM from DES for $propertyType" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .invalidDateFrom(nino, propertyType)
+          .when()
+          .get(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .thenAssertThat()
+          .statusIs(500)
+      }
+
+      s"return code 500 when we receive a status code INVALID_DATE_TO from DES for $propertyType" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .invalidDateTo(nino, propertyType)
+          .when()
+          .get(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .thenAssertThat()
+          .statusIs(500)
+      }
     }
   }
 
