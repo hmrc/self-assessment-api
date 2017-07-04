@@ -75,7 +75,7 @@ object PropertiesPeriodConnector {
   def retrieve(nino: Nino, from: LocalDate, to: LocalDate, propertyType: PropertyType)(
       implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse] =
     httpGet[PropertiesPeriodResponse](
-      baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to",
+      baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summary-detail?from=$from&to=$to",
       PropertiesPeriodResponse)
 
   def retrieveAll(nino: Nino, propertyType: PropertyType)(

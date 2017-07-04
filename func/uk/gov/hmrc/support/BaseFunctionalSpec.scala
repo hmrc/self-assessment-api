@@ -779,7 +779,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
 
         def periodWillBeReturnedFor(nino: Nino, id: String = "abc", from: String, to: String): Givens = {
-          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries?from=$from&to=$to"))
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summary-detail?from=$from&to=$to"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -810,8 +810,8 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
 
-        def noPeriodFor(nino: Nino, id: String = "abc", periodId: String = "def"): Givens = {
-          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries/$periodId"))
+        def noPeriodFor(nino: Nino, id: String = "abc", from: String, to: String): Givens = {
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summary-detail?from=$from&to=$to"))
             .willReturn(
               aResponse()
                 .withStatus(404)
@@ -1245,7 +1245,7 @@ trait BaseFunctionalSpec extends TestApplication {
           periodId match {
             case Period(from, to) =>
               stubFor(
-                get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
+                get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summary-detail?from=$from&to=$to"))
                   .willReturn(
                     aResponse()
                       .withStatus(200)
@@ -1284,7 +1284,7 @@ trait BaseFunctionalSpec extends TestApplication {
           periodId match {
             case Period(from, to) =>
               stubFor(
-                get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
+                get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summary-detail?from=$from&to=$to"))
                   .willReturn(
                     aResponse()
                       .withStatus(404)
@@ -1328,8 +1328,8 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def periodWillNotBeUpdatedFor(nino: Nino, propertyType: PropertyType, periodId: String = "def"): Givens = {
-          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId"))
+        def periodWillNotBeUpdatedFor(nino: Nino, propertyType: PropertyType, from: String = "2017-04-06", to: String = "2018-04-05"): Givens = {
+          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
             .willReturn(
               aResponse()
                 .withStatus(404)))
@@ -1338,8 +1338,8 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
 
-        def invalidPeriodUpdateFor(nino: Nino, propertyType: PropertyType, periodId: String = "def"): Givens = {
-          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries/$periodId"))
+        def invalidPeriodUpdateFor(nino: Nino, propertyType: PropertyType, from: String = "2017-04-06", to: String = "2018-04-05"): Givens = {
+          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
             .willReturn(
               aResponse()
                 .withStatus(400)
