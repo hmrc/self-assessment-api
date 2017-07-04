@@ -325,9 +325,9 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource
-        .des().selfEmployment.noPeriodFor(nino)
+        .des().selfEmployment.noPeriodFor(nino, from = "2017-04-06", to = "2018-04-05")
         .when()
-        .get(s"/ni/$nino/self-employments/abc/periods/def")
+        .get(s"/ni/$nino/self-employments/abc/periods/2017-04-06_2018-04-05")
         .thenAssertThat()
         .statusIs(404)
     }

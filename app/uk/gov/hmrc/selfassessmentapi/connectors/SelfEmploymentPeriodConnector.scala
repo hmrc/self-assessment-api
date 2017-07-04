@@ -40,7 +40,7 @@ object SelfEmploymentPeriodConnector {
   def get(nino: Nino, id: SourceId, from: LocalDate, to: LocalDate)(
       implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
     httpGet[SelfEmploymentPeriodResponse](
-      baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries?from=$from&to=$to",
+      baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summary-detail?from=$from&to=$to",
       SelfEmploymentPeriodResponse)
 
   def getAll(nino: Nino, id: SourceId)(implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
