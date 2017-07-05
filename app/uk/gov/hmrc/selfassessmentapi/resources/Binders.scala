@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import java.util.Locale
+
 import play.api.mvc.PathBindable
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.models.SourceType.SourceType
@@ -31,11 +33,12 @@ object Binders {
     def unbind(key: String, nino: Nino): String = stringBinder.unbind(key, nino.value)
 
     def bind(key: String, value: String): Either[String, Nino] = {
-      val sanitisedNino = value.replaceAll("\\s", "")
+      val normalisedNino = value.replaceAll("\\s", "").toUpperCase(Locale.ROOT)
 
-      Nino.isValid(sanitisedNino) && sanitisedNino.matches(desNinoRegex) match {
-        case true => Right(Nino(sanitisedNino))
-        case false => Left("ERROR_NINO_INVALID")
+      if (Nino.isValid(normalisedNino) && normalisedNino.matches(desNinoRegex)) {
+        Right(Nino(normalisedNino))
+      } else {
+        Left("ERROR_NINO_INVALID")
       }
     }
   }

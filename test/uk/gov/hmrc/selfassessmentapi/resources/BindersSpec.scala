@@ -36,6 +36,10 @@ class BindersSpec extends UnitSpec {
       Binders.ninoBinder.bind("nino", "AA 99 99 99 A") shouldBe Right(Nino("AA999999A"))
     }
 
+    "return Right containing a NINO with all letters capitalised when provided with a valid NINO" in {
+      Binders.ninoBinder.bind("nino", "aa999999b") shouldBe Right(Nino("AA999999B"))
+    }
+
     "return Left for a NINO that fails domain validation" in {
       val result = Binders.ninoBinder.bind("nino", "invalid")
       result shouldEqual Left("ERROR_NINO_INVALID")
