@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.models.des.SelfEmploymentAnnualSummary
+import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.SelfEmploymentAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentAnnualSummaryResponse
 

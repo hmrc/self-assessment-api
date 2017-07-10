@@ -37,8 +37,8 @@ case class SelfEmploymentRetrieve(id: Option[SourceId] = None,
 
 object SelfEmploymentRetrieve  {
 
-  implicit val from =  new DesTransformValidator[des.SelfEmployment, SelfEmploymentRetrieve] {
-    def from(desSelfEmployment: des.SelfEmployment): Either[DesTransformError, SelfEmploymentRetrieve] = {
+  implicit val from =  new DesTransformValidator[des.selfemployment.SelfEmployment, SelfEmploymentRetrieve] {
+    def from(desSelfEmployment: des.selfemployment.SelfEmployment): Either[DesTransformError, SelfEmploymentRetrieve] = {
       AccountingType.fromDes(desSelfEmployment.cashOrAccruals) match {
         case Some(accountingType) =>
           Right(SelfEmploymentRetrieve(id = desSelfEmployment.incomeSourceId,

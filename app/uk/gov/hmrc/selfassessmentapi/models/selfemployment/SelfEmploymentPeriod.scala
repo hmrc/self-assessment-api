@@ -28,13 +28,11 @@ case class SelfEmploymentPeriod(id: Option[String],
                                 to: LocalDate,
                                 incomes: Option[Incomes],
                                 expenses: Option[Expenses])
-    extends Period {
-  def asSummary: PeriodSummary = PeriodSummary(id.getOrElse(""), from, to)
-}
+    extends Period
 
 object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
 
-  def from(desPeriod: des.SelfEmploymentPeriod): SelfEmploymentPeriod =
+  def from(desPeriod: des.selfemployment.SelfEmploymentPeriod): SelfEmploymentPeriod =
     SelfEmploymentPeriod(
       id = desPeriod.id,
       from = LocalDate.parse(desPeriod.from),
@@ -43,13 +41,13 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
       expenses = fromDESExpenses(desPeriod)
     )
 
-  private def fromDESIncomes(desPeriod: des.SelfEmploymentPeriod): Option[Incomes] = {
+  private def fromDESIncomes(desPeriod: des.selfemployment.SelfEmploymentPeriod): Option[Incomes] = {
     desPeriod.financials.flatMap(_.incomes.map { incomes =>
       Incomes(turnover = incomes.turnover.map(SimpleIncome(_)), other = incomes.other.map(SimpleIncome(_)))
     })
   }
 
-  private def fromDESExpenses(desPeriod: des.SelfEmploymentPeriod): Option[Expenses] = {
+  private def fromDESExpenses(desPeriod: des.selfemployment.SelfEmploymentPeriod): Option[Expenses] = {
     desPeriod.financials.flatMap(_.deductions.map { deductions =>
       Expenses(
         cisPaymentsToSubcontractors = deductions.constructionIndustryScheme.map(deduction =>

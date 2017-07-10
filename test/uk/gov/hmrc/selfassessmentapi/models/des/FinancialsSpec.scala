@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.models.des
 
 import uk.gov.hmrc.selfassessmentapi.models
+import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.{Deduction, Financials}
 import uk.gov.hmrc.selfassessmentapi.models.{Expense, SimpleIncome}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 

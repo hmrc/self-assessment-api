@@ -96,18 +96,16 @@ trait ResponseMapper[P <: Period, D <: des.properties.Period] {
         None
     }
 
-  def allPeriods(response: PropertiesPeriodResponse, maxPeriodTimeSpan: Int)(implicit reads: Reads[D],
-                                                     pm: PeriodMapper[P, D]): Seq[PeriodSummary] =
-    response.underlying.json.asOpt[Seq[D]] match {
+  def allPeriods(response: PropertiesPeriodResponse, maxPeriodTimeSpan: Int): Option[Seq[PeriodSummary]] =
+    (response.underlying.json \ "periods").asOpt[Seq[des.PeriodSummary]] match {
       case Some(desPeriods) =>
-        val asSummary = PeriodMapper[P, D].asSummary _
-        val setId = (p: P) => PeriodMapper[P, D].setId(p, Some(p.periodId))
-        val from = PeriodMapper[P, D].from _
-        val fromDES = from andThen setId andThen asSummary
-        desPeriods.map(fromDES(_)).filter(periodsExceeding(maxPeriodTimeSpan)).sorted
+        val periods = desPeriods.map { period =>
+          PeriodSummary(Period.id(period.from, period.to), period.from, period.to)
+        }
+        Some(periods.filter(periodsExceeding(maxPeriodTimeSpan)).sorted)
       case None =>
         response.logger.error("The response from DES does not match the expected properties period format.")
-        Seq.empty
+        None
     }
 }
 

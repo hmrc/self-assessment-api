@@ -32,9 +32,9 @@ object SelfEmploymentPeriodConnector {
 
   def create(nino: Nino, id: SourceId, selfEmploymentPeriod: SelfEmploymentPeriod)(
       implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
-    httpPost[des.SelfEmploymentPeriod, SelfEmploymentPeriodResponse](
+    httpPost[des.selfemployment.SelfEmploymentPeriod, SelfEmploymentPeriodResponse](
       baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries",
-      des.SelfEmploymentPeriod.from(selfEmploymentPeriod),
+      des.selfemployment.SelfEmploymentPeriod.from(selfEmploymentPeriod),
       SelfEmploymentPeriodResponse)
 
   def get(nino: Nino, id: SourceId, from: LocalDate, to: LocalDate)(
@@ -50,9 +50,9 @@ object SelfEmploymentPeriodConnector {
 
   def update(nino: Nino, id: SourceId, from: LocalDate, to: LocalDate, update: SelfEmploymentPeriodUpdate)(
       implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
-    httpPut[des.Financials, SelfEmploymentPeriodResponse](
+    httpPut[des.selfemployment.Financials, SelfEmploymentPeriodResponse](
       baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries?from=$from&to=$to",
-      des.Financials.from(update),
+      des.selfemployment.Financials.from(update),
       SelfEmploymentPeriodResponse)
 
 }

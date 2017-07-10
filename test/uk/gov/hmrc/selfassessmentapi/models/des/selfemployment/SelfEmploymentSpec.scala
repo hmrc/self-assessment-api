@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models.des
+package uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 
 import org.joda.time.LocalDate
 import uk.gov.hmrc.selfassessmentapi.models

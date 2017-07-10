@@ -384,6 +384,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         s"""
            |[
            |  {
+           |    "id": "2017-07-05_2017-08-04",
            |    "from": "2017-07-05",
            |    "to": "2017-08-04"
            |  }
@@ -449,6 +450,17 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .get(s"/ni/$nino/self-employments/abc/periods")
         .thenAssertThat()
         .statusIs(404)
+    }
+
+    "return code 500 when we receive an unexpected JSON from DES" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .des().selfEmployment.invalidPeriodsJsonFor(nino)
+        .when()
+        .get(s"/ni/$nino/self-employments/abc/periods")
+        .thenAssertThat()
+        .statusIs(500)
     }
 
     "return code 500 when we receive a status code from DES that we do not handle" in {

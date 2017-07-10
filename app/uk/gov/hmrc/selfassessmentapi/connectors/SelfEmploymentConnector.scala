@@ -20,7 +20,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.SourceId
-import uk.gov.hmrc.selfassessmentapi.models.des.{Business, SelfEmploymentUpdate}
+import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.{Business, SelfEmploymentUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentResponse
 
 import scala.concurrent.Future

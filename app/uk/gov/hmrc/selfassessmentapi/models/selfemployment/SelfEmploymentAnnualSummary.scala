@@ -43,7 +43,7 @@ object SelfEmploymentAnnualSummary {
     }
   }
 
-  def from(desSummary: des.SelfEmploymentAnnualSummary): SelfEmploymentAnnualSummary = {
+  def from(desSummary: des.selfemployment.SelfEmploymentAnnualSummary): SelfEmploymentAnnualSummary = {
     val adjustments = desSummary.annualAdjustments.map { adj =>
       Adjustments(
         includedNonTaxableProfits = adj.includedNonTaxableProfits,

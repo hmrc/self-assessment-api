@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models.des
+package uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 
-import play.api.libs.json.{Format, Json, Reads, Writes}
+import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models
+import uk.gov.hmrc.selfassessmentapi.models.des.expense2Deduction
 
 case class SelfEmploymentPeriod(id: Option[String], from: String, to: String, financials: Option[Financials])
 
