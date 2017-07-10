@@ -18,18 +18,16 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
 import org.joda.time.LocalDate
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
-import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
-import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.{SelfEmployment, SelfEmploymentAddress}
 import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, des}
 
 class SelfEmploymentRetrieveSpec extends UnitSpec {
   def createDesSelfEmployment(accountingType: String = "cash"): des.selfemployment.SelfEmployment = {
-    selfemployment.SelfEmployment(incomeSourceId = Some("abc"),
+    des.selfemployment.SelfEmployment(incomeSourceId = Some("abc"),
                        accountingPeriodStartDate = "2017-01-04",
                        accountingPeriodEndDate = "2017-01-05",
                        tradingName = "Acme Ltd.",
                        addressDetails = Some(
-                         SelfEmploymentAddress(
+                         des.selfemployment.SelfEmploymentAddress(
                            addressLine1 = "1 Acme Rd.",
                            addressLine2 = Some("London"),
                            addressLine3 = Some("Greater London"),

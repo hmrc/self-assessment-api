@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 
-import play.api.libs.json.{Format, Json, Reads, Writes, _}
+import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models
 import uk.gov.hmrc.selfassessmentapi.models.des.expense2Deduction
 

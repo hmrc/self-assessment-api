@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 import play.api.libs.json._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.SelfEmployment
+import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.{DesTransformError, DesTransformValidator, SourceId}
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentRetrieve
@@ -41,7 +41,7 @@ case class SelfEmploymentResponse(underlying: HttpResponse) extends Response {
     }
 
   private def validateRetrieve(id: SourceId, json: JsValue) =
-    json.validate[Seq[SelfEmployment]] match {
+    json.validate[Seq[des.selfemployment.SelfEmployment]] match {
       case JsSuccess(Nil, _) =>
         Left(EmptySelfEmployments(s"Got empty list of self employment businesses from DES for self employment id $id"))
       case JsSuccess(selfEmployments, _) =>
@@ -51,7 +51,7 @@ case class SelfEmploymentResponse(underlying: HttpResponse) extends Response {
                     .toRight(UnmatchedIncomeId(
                       s"Could not find Self-Employment Id $id in business details returned from DES $selfEmployments"))
                     .right
-         se <- (DesTransformValidator[SelfEmployment, SelfEmploymentRetrieve].from(desSe).left map (ex => UnableToMapAccountingType(ex.msg))
+         se <- (DesTransformValidator[des.selfemployment.SelfEmployment, SelfEmploymentRetrieve].from(desSe).left map (ex => UnableToMapAccountingType(ex.msg))
                 ).right
         } yield se.copy(id = None)
       case JsError(errors) => Left(ParseError(s"Unable to parse the response from DES as Json: $errors"))
@@ -64,7 +64,7 @@ case class SelfEmploymentResponse(underlying: HttpResponse) extends Response {
     }
 
   private def validateList(json: JsValue) =
-    json.validate[Seq[SelfEmployment]] match {
+    json.validate[Seq[des.selfemployment.SelfEmployment]] match {
       case JsSuccess(Nil, _) =>
         Left(EmptySelfEmployments(s"Got empty list of self employment businesses from DES"))
       case JsSuccess(selfEmployments, _) =>
