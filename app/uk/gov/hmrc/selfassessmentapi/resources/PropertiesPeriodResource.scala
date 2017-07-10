@@ -108,12 +108,14 @@ object PropertiesPeriodResource extends BaseResource {
       connector.retrieveAll(nino, id).map { response =>
         response.filter {
           case 200 =>
-            Ok(Json.toJson(id match {
+            id match {
               case PropertyType.FHL =>
-                ResponseMapper[FHL.Properties, des.properties.FHL.Properties].allPeriods(response, getMaxPeriodTimeSpan)
+                ResponseMapper[FHL.Properties, des.properties.FHL.Properties]
+                  .allPeriods(response, getMaxPeriodTimeSpan).map(seq => Ok(Json.toJson(seq))).getOrElse(InternalServerError)
               case PropertyType.OTHER =>
-                ResponseMapper[Other.Properties, des.properties.Other.Properties].allPeriods(response, getMaxPeriodTimeSpan)
-            }))
+                ResponseMapper[Other.Properties, des.properties.Other.Properties]
+                  .allPeriods(response, getMaxPeriodTimeSpan).map(seq => Ok(Json.toJson(seq))).getOrElse(InternalServerError)
+            }
           case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
           case 400 if response.isInvalidType => NotFound
           case 404 => NotFound

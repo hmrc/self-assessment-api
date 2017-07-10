@@ -1285,7 +1285,19 @@ trait BaseFunctionalSpec extends TestApplication {
                 aResponse()
                   .withStatus(200)
                   .withHeader("Content-Type", "application/json")
-                  .withBody(DesJsons.Properties.Period.periods(propertyType))))
+                  .withBody(DesJsons.Properties.Period.periodsSummary)))
+
+          givens
+        }
+
+        def invalidPeriodsJsonFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(
+            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(Json.obj().toString)))
 
           givens
         }

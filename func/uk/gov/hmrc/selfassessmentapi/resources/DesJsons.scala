@@ -370,6 +370,24 @@ object DesJsons {
         """.stripMargin
       }
 
+      def periodsSummary: String =
+        s"""
+           |{
+           |  "periods": [
+           |    {
+           |      "transactionReference": "abc",
+           |      "from": "2017-04-06",
+           |      "to": "2017-07-04"
+           |    },
+           |    {
+           |      "transactionReference": "def",
+           |      "from": "2017-07-05",
+           |      "to": "2017-08-04"
+           |    }
+           |  ]
+           |}
+         """.stripMargin
+
       def fhl(transactionReference: String = "12345",
               from: String = "",
               to: String = "",

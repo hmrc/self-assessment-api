@@ -230,6 +230,17 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(404)
       }
 
+      s"return code 500 when we receive an unexpected JSON from DES for $propertyType" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des().properties.invalidPeriodsJsonFor(nino, propertyType)
+          .when()
+          .get(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(500)
+      }
+
       s"return code 500 when we receive a status code from DES that we do not handle for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
