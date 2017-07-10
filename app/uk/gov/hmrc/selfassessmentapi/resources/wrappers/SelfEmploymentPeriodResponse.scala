@@ -16,12 +16,15 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
+import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.models._
-import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
+import uk.gov.hmrc.selfassessmentapi.models.{des, _}
+import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode, PeriodSummary => DesPeriodSummary}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentPeriod
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.Response.periodsExceeding
+
+import scala.util.Try
 
 case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Response {
   def createLocationHeader(nino: Nino, id: SourceId, periodId: PeriodId): String = {
@@ -29,7 +32,7 @@ case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Respon
   }
 
   def period: Option[SelfEmploymentPeriod] = {
-    json.asOpt[des.SelfEmploymentPeriod] match {
+    json.asOpt[des.selfemployment.SelfEmploymentPeriod] match {
       case Some(desPeriod) =>
         Some(SelfEmploymentPeriod.from(desPeriod).copy(id = None))
       case None =>
@@ -38,22 +41,22 @@ case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Respon
     }
   }
 
-  def allPeriods(maxPeriodTimeSpan: Int): Seq[PeriodSummary] = {
-    json.asOpt[Seq[des.SelfEmploymentPeriod]] match {
+  def allPeriods(maxPeriodTimeSpan: Int): Option[Seq[PeriodSummary]] = {
+    (json \ "periods").asOpt[Seq[DesPeriodSummary]] match {
       case Some(desPeriods) =>
-        val from = SelfEmploymentPeriod.from _
-        val setId = (p: SelfEmploymentPeriod) => p.copy(id = Some(p.periodId))
-        val fromDES = from andThen setId andThen (_.asSummary)
-        desPeriods.map(fromDES).filter(periodsExceeding(maxPeriodTimeSpan)).sorted
+        val periods = desPeriods.map { period =>
+          PeriodSummary(Period.id(period.from, period.to), period.from, period.to)
+        }
+        Some(periods.filter(periodsExceeding(maxPeriodTimeSpan)).sorted)
       case None =>
         logger.error("The response from DES does not match the expected self-employment period format.")
-        Seq.empty
+        None
     }
   }
 
   def transactionReference: Option[String] = {
     (json \ "transactionReference").asOpt[String] match {
-      case x @ Some(_) => x
+      case x@Some(_) => x
       case None =>
         logger.error("The 'transactionReference' field was not found in the response from DES")
         None

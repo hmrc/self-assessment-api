@@ -19,8 +19,9 @@ package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 import play.api.libs.json._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.models.{DesTransformError, DesTransformValidator, des, SourceId}
-import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode, SelfEmployment}
+import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.SelfEmployment
+import uk.gov.hmrc.selfassessmentapi.models.{DesTransformError, DesTransformValidator, SourceId}
+import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentRetrieve
 
 case class SelfEmploymentResponse(underlying: HttpResponse) extends Response {
@@ -50,7 +51,7 @@ case class SelfEmploymentResponse(underlying: HttpResponse) extends Response {
                     .toRight(UnmatchedIncomeId(
                       s"Could not find Self-Employment Id $id in business details returned from DES $selfEmployments"))
                     .right
-         se <- (DesTransformValidator[des.SelfEmployment, SelfEmploymentRetrieve].from(desSe).left map (ex => UnableToMapAccountingType(ex.msg))
+         se <- (DesTransformValidator[SelfEmployment, SelfEmploymentRetrieve].from(desSe).left map (ex => UnableToMapAccountingType(ex.msg))
                 ).right
         } yield se.copy(id = None)
       case JsError(errors) => Left(ParseError(s"Unable to parse the response from DES as Json: $errors"))

@@ -21,16 +21,10 @@ import play.api.mvc.{Action, Result}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
-import uk.gov.hmrc.selfassessmentapi.models.des.Business
+import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.Business
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmployment, SelfEmploymentUpdate}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, _}
-import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{
-  EmptyBusinessData,
-  EmptySelfEmployments,
-  ParseError,
-  SelfEmploymentResponse,
-  _
-}
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{EmptyBusinessData, EmptySelfEmployments, ParseError, SelfEmploymentResponse, _}
 
 import scala.concurrent.ExecutionContext.Implicits._
 
@@ -63,7 +57,7 @@ object SelfEmploymentsResource extends BaseResource {
   def update(nino: Nino, id: SourceId): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments).async(parse.json) { implicit request =>
       validate[SelfEmploymentUpdate, SelfEmploymentResponse](request.body) { selfEmployment =>
-        connector.update(nino, des.SelfEmploymentUpdate.from(selfEmployment), id)
+        connector.update(nino, des.selfemployment.SelfEmploymentUpdate.from(selfEmployment), id)
       } map {
         case Left(errorResult) => handleValidationErrors(errorResult)
         case Right(response) =>

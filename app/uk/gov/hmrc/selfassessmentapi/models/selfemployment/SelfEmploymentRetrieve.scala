@@ -19,7 +19,8 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 import org.joda.time.LocalDate
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.AccountingType._
-import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.models.{des, _}
+//import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.SelfEmployment
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.UnableToMapAccountingType
 
 case class SelfEmploymentRetrieve(id: Option[SourceId] = None,
@@ -37,8 +38,8 @@ case class SelfEmploymentRetrieve(id: Option[SourceId] = None,
 
 object SelfEmploymentRetrieve  {
 
-  implicit val from =  new DesTransformValidator[des.SelfEmployment, SelfEmploymentRetrieve] {
-    def from(desSelfEmployment: des.SelfEmployment): Either[DesTransformError, SelfEmploymentRetrieve] = {
+  implicit val from =  new DesTransformValidator[des.selfemployment.SelfEmployment, SelfEmploymentRetrieve] {
+    def from(desSelfEmployment: des.selfemployment.SelfEmployment): Either[DesTransformError, SelfEmploymentRetrieve] = {
       AccountingType.fromDes(desSelfEmployment.cashOrAccruals) match {
         case Some(accountingType) =>
           Right(SelfEmploymentRetrieve(id = desSelfEmployment.incomeSourceId,

@@ -19,7 +19,6 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.ErrorCode
-import uk.gov.hmrc.selfassessmentapi.models.des.{AnnualAdjustments, AnnualAllowances}
 
 class SelfEmploymentAnnualSummarySpec extends JsonSpec {
   "format" should {
@@ -76,8 +75,8 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
 
   "from" should {
     "correctly map a DES self-employment to an API self-employment" in {
-      val desSelfEmployment = des.SelfEmploymentAnnualSummary(
-        annualAdjustments = Some(AnnualAdjustments(
+      val desSelfEmployment = des.selfemployment.SelfEmploymentAnnualSummary(
+        annualAdjustments = Some(des.selfemployment.AnnualAdjustments(
           includedNonTaxableProfits = Some(200.25),
           basisAdjustment = Some(200.25),
           overlapReliefUsed = Some(200.25),
@@ -89,7 +88,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
           balancingChargeOther = Some(200.25),
           goodsAndServicesOwnUse = Some(200.25)
         )),
-        annualAllowances = Some(AnnualAllowances(
+        annualAllowances = Some(des.selfemployment.AnnualAllowances(
           annualInvestmentAllowance = Some(200.25),
           capitalAllowanceMainPool = Some(200.25),
           capitalAllowanceSpecialRatePool = Some(200.25),

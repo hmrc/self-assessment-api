@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models.des
+package uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._

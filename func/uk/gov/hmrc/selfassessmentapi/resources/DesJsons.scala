@@ -195,10 +195,28 @@ object DesJsons {
 
       def periods: String = {
         s"""
-           |[
-           |  ${apply(id = "abc", from = "2017-04-06", to = "2017-07-04")},
-           |  ${apply(id = "def", from = "2017-07-05", to = "2017-08-04")}
-           |]
+           |{
+           |  "periods": [
+           |      {
+           |          "from": "2017-04-06",
+           |          "to": "2017-07-04",
+           |          "transactionReference": "abc"
+           |      },
+           |      {
+           |          "from": "2017-07-05",
+           |          "to": "2017-08-04",
+           |          "transactionReference": "def"
+           |      }
+           |   ]
+           |}
+         """.stripMargin
+      }
+
+      def emptyPeriods: String = {
+        s"""
+           |{
+           |  "periods": []
+           |}
          """.stripMargin
       }
 

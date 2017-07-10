@@ -103,22 +103,15 @@ class SelfEmploymentPeriodResponseSpec extends UnitSpec with MockitoSugar with B
     "return Some(Seq(apiPeriod)) if the DES response is correct" in {
       when(mockResponse.json).thenReturn(Json.parse(
         """
-          |[{
-          |   "id": "abc",
-          |   "from": "2017-04-05",
-          |   "to": "2017-05-04",
-          |   "financials": {
-          |      "incomes": {
-          |         "turnover": 200.00
-          |      },
-          |      "deductions": {
-          |         "other": {
-          |            "amount": 200.00,
-          |            "disallowableAmount": 200.00
-          |         }
-          |      }
-          |   }
-          |}]
+          |{
+          |  "periods": [
+          |    {
+          |      "transactionReference": "abc",
+          |      "from": "2017-04-05",
+          |      "to": "2017-05-04"
+          |    }
+          |  ]
+          |}
         """.stripMargin))
 
       unitUnderTest.allPeriods(86).size shouldBe 1

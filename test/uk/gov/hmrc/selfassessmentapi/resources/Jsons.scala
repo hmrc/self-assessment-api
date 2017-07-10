@@ -245,6 +245,7 @@ object Jsons {
         .map { date =>
           s"""
              |{
+             |  "id": "${date._1}_${date._2}",
              |  "from": "${date._1}",
              |  "to": "${date._2}"
              |}

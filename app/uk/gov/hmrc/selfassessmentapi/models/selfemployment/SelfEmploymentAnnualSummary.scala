@@ -21,6 +21,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.ErrorCode
+import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 
 case class SelfEmploymentAnnualSummary(allowances: Option[Allowances], adjustments: Option[Adjustments])
 
@@ -43,7 +44,7 @@ object SelfEmploymentAnnualSummary {
     }
   }
 
-  def from(desSummary: des.SelfEmploymentAnnualSummary): SelfEmploymentAnnualSummary = {
+  def from(desSummary: selfemployment.SelfEmploymentAnnualSummary): SelfEmploymentAnnualSummary = {
     val adjustments = desSummary.annualAdjustments.map { adj =>
       Adjustments(
         includedNonTaxableProfits = adj.includedNonTaxableProfits,

@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models.des
+package uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 
-import uk.gov.hmrc.selfassessmentapi.UnitSpec
-import uk.gov.hmrc.selfassessmentapi.models
+import uk.gov.hmrc.selfassessmentapi.{UnitSpec, models}
 
 class SelfEmploymentAnnualSummarySpec extends UnitSpec {
   "from" should {

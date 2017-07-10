@@ -21,14 +21,7 @@ import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.AccountingType._
-import uk.gov.hmrc.selfassessmentapi.models.{
-  AccountingPeriod,
-  AccountingType,
-  ErrorCode,
-  SourceId,
-  sicClassifications,
-  _
-}
+import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, ErrorCode, SourceId, des, sicClassifications, _}
 
 case class SelfEmployment(id: Option[SourceId] = None,
                           accountingPeriod: AccountingPeriod,
@@ -44,7 +37,7 @@ case class SelfEmployment(id: Option[SourceId] = None,
                           businessPostcode: String)
 
 object SelfEmployment {
-  def from(desSelfEmployment: des.SelfEmployment): Option[SelfEmployment] = {
+  def from(desSelfEmployment: des.selfemployment.SelfEmployment): Option[SelfEmployment] = {
     for {
       accountingType <- AccountingType.fromDes(desSelfEmployment.cashOrAccruals)
       commencementDate <- desSelfEmployment.tradingStartDate

@@ -100,7 +100,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
     APIAction(nino, SourceType.SelfEmployments, Some("periods")).async(parse.empty) { implicit request =>
       connector.getAll(nino, id).map { response =>
         response.filter {
-          case 200 => Ok(Json.toJson(response.allPeriods(getMaxPeriodTimeSpan)))
+          case 200 => response.allPeriods(getMaxPeriodTimeSpan).map(seq => Ok(Json.toJson(seq))).getOrElse(InternalServerError)
           case 400 if response.isInvalidBusinessId => NotFound
           case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
           case 404 => NotFound

@@ -777,6 +777,16 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def invalidPeriodsJsonFor(nino: Nino, id: String = "abc"): Givens = {
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(Json.obj().toString())))
+
+          givens
+        }
 
         def periodWillBeReturnedFor(nino: Nino, id: String = "abc", from: String, to: String): Givens = {
           stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries?from=$from&to=$to"))
@@ -827,7 +837,7 @@ trait BaseFunctionalSpec extends TestApplication {
               aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(Json.arr().toString)))
+                .withBody(DesJsons.SelfEmployment.Period.emptyPeriods)))
 
           givens
         }

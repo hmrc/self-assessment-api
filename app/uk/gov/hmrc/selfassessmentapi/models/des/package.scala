@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.models
 
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models
+import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.Deduction
 
 package object des {
   def expense2Deduction(expense: models.Expense): Deduction =

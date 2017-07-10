@@ -24,11 +24,13 @@ trait Period {
   val from: LocalDate
   val to: LocalDate
 
-  def periodId = s"${from}_$to"
+  def periodId: String = Period.id(from, to)
 }
 
 object Period {
   val periodPattern = """(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})""".r
+
+  def id(f: LocalDate, t: LocalDate): String = s"${f}_$t"
 
   def apply(f: LocalDate, t:LocalDate) = new Period {
     override val from: LocalDate = f

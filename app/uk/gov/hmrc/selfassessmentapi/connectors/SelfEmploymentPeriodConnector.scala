@@ -20,6 +20,8 @@ import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
+import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
+import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.Financials
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodUpdate}
 import uk.gov.hmrc.selfassessmentapi.models.{PeriodId, SourceId, des}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentPeriodResponse
@@ -32,9 +34,9 @@ object SelfEmploymentPeriodConnector {
 
   def create(nino: Nino, id: SourceId, selfEmploymentPeriod: SelfEmploymentPeriod)(
       implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
-    httpPost[des.SelfEmploymentPeriod, SelfEmploymentPeriodResponse](
+    httpPost[selfemployment.SelfEmploymentPeriod, SelfEmploymentPeriodResponse](
       baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries",
-      des.SelfEmploymentPeriod.from(selfEmploymentPeriod),
+      selfemployment.SelfEmploymentPeriod.from(selfEmploymentPeriod),
       SelfEmploymentPeriodResponse)
 
   def get(nino: Nino, id: SourceId, from: LocalDate, to: LocalDate)(
@@ -50,9 +52,9 @@ object SelfEmploymentPeriodConnector {
 
   def update(nino: Nino, id: SourceId, from: LocalDate, to: LocalDate, update: SelfEmploymentPeriodUpdate)(
       implicit hc: HeaderCarrier): Future[SelfEmploymentPeriodResponse] =
-    httpPut[des.Financials, SelfEmploymentPeriodResponse](
+    httpPut[Financials, SelfEmploymentPeriodResponse](
       baseUrl + s"/income-store/nino/$nino/self-employments/$id/periodic-summaries?from=$from&to=$to",
-      des.Financials.from(update),
+      selfemployment.Financials.from(update),
       SelfEmploymentPeriodResponse)
 
 }
