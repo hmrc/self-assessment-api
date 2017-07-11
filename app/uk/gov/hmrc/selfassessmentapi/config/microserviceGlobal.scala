@@ -41,7 +41,11 @@ import uk.gov.hmrc.play.http.logging.filters.LoggingFilter
 import uk.gov.hmrc.play.http.{HeaderCarrier, NotImplementedException}
 import uk.gov.hmrc.play.microservice.bootstrap.DefaultMicroserviceGlobal
 import uk.gov.hmrc.play.scheduling._
-import uk.gov.hmrc.selfassessmentapi.config.simulation.{AgentAuthorizationSimulation, AgentSubscriptionSimulation, ClientSubscriptionSimulation}
+import uk.gov.hmrc.selfassessmentapi.config.simulation.{
+  AgentAuthorizationSimulation,
+  AgentSubscriptionSimulation,
+  ClientSubscriptionSimulation
+}
 import uk.gov.hmrc.selfassessmentapi.models.SourceType.sourceTypeToDocumentationName
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear.taxYearFormat
 import uk.gov.hmrc.selfassessmentapi.models._
@@ -91,17 +95,20 @@ class MicroserviceMonitoringFilter @Inject()(metrics: Metrics) extends Monitorin
 
   private[config] val sources = Seq("self-employments", "uk-properties")
 
-  private val sourceIdLevel = sources.map(source => s".*[/]$source/.+" -> s"${sourceTypeToDocumentationName(source)}-id").toMap
+  private val sourceIdLevel =
+    sources.map(source => s".*[/]$source/.+" -> s"${sourceTypeToDocumentationName(source)}-id").toMap
 
   private val sourceLevel = sources.map(source => s".*[/]$source[/]?" -> sourceTypeToDocumentationName(source)).toMap
 
-  private val summaryLevel = Map("periods[/]?" -> "periods", "periods/.+" -> "periods-id",
-                                 "obligations[/]?" -> "obligations", s"${taxYearFormat}[/]?" -> "annuals")
+  private val summaryLevel = Map("periods[/]?" -> "periods",
+                                 "periods/.+" -> "periods-id",
+                                 "obligations[/]?" -> "obligations",
+                                 s"${taxYearFormat}[/]?" -> "annuals")
 
   override lazy val urlPatternToNameMapping = (ListMap((for {
     source <- sources
     suffix <- summaryLevel
-  } yield s".*[/]$source[/].*[/]${suffix._1}" -> s"${sourceTypeToDocumentationName(source)}-${suffix._2}").toArray :_*)
+  } yield s".*[/]$source[/].*[/]${suffix._1}" -> s"${sourceTypeToDocumentationName(source)}-${suffix._2}").toArray: _*)
     ++ sourceIdLevel
     ++ sourceLevel)
 
@@ -121,15 +128,24 @@ object EmptyResponseFilter extends Filter with MicroserviceFilterSupport {
     }
 }
 
+// this filter is a workaround for the issue reported here https://jira.tools.tax.service.gov.uk/browse/APSR-87
+object SetContentTypeFilter extends Filter with MicroserviceFilterSupport {
+  override def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] =
+    f(rh) map { res =>
+      val headers = res.header.headers.updated("Content-Type", "application/json")
+      res.copy(res.header.copy(headers = headers), res.body)
+    }
+}
+
 object AgentSimulationFilter extends Filter with MicroserviceFilterSupport {
   override def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
     val method = rh.method
 
     rh.headers.get(GovTestScenarioHeader) match {
-      case Some("AGENT_NOT_SUBSCRIBED") => AgentSubscriptionSimulation(f, rh, method)
-      case Some("AGENT_NOT_AUTHORIZED") => AgentAuthorizationSimulation(f, rh, method)
+      case Some("AGENT_NOT_SUBSCRIBED")  => AgentSubscriptionSimulation(f, rh, method)
+      case Some("AGENT_NOT_AUTHORIZED")  => AgentAuthorizationSimulation(f, rh, method)
       case Some("CLIENT_NOT_SUBSCRIBED") => ClientSubscriptionSimulation(f, rh, method)
-      case _ => f(rh)
+      case _                             => f(rh)
     }
   }
 }
@@ -182,7 +198,7 @@ object MicroserviceGlobal
   }
 
   override def microserviceFilters: Seq[EssentialFilter] =
-    Seq(HeaderValidatorFilter, EmptyResponseFilter) ++ enabledFilters ++
+    Seq(HeaderValidatorFilter, EmptyResponseFilter, SetContentTypeFilter) ++ enabledFilters ++
       Seq(application.injector.instanceOf[MicroserviceMonitoringFilter]) ++ defaultMicroserviceFilters
 
   override lazy val scheduledJobs: Seq[ScheduledJob] = createScheduledJobs()
@@ -200,7 +216,7 @@ object MicroserviceGlobal
         case _ =>
           ex.getCause match {
             case ex: NotImplementedException => NotImplemented(Json.toJson(ErrorNotImplemented))
-            case _ => result
+            case _                           => result
           }
       }
     }
@@ -215,7 +231,7 @@ object MicroserviceGlobal
         case "ERROR_NINO_INVALID" =>
           BadRequest(Json.toJson(ErrorBadRequest(ErrorCode.NINO_INVALID, "The provided Nino is invalid")))
         case "ERROR_INVALID_PROPERTY_TYPE" => NotFound(Json.toJson(ErrorNotFound))
-        case _ => result
+        case _                             => result
       }
     }
   }
