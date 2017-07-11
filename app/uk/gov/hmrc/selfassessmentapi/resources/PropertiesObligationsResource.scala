@@ -36,7 +36,7 @@ object PropertiesObligationsResource extends BaseResource {
             response.obligations("ITSP") match {
               case Right(obj) =>  obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
               case Left(ex) =>
-                logger.warn(ex.msg)
+                logger.error(ex.msg)
                 InternalServerError(Json.toJson(Errors.InternalServerError))
             }
           case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))

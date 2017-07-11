@@ -47,15 +47,13 @@ trait MtdRefLookupService {
       response.status match {
         case 200 =>
           logger.debug(s"NINO to MTD reference lookup successful. Status code: [${response.status}]")
-
-          response.mtdId.map { id =>
-            repository.store(nino, id)
-            id
-          } match {
-            case Some(mtdId) => Right(mtdId)
-            case None => Left(500)
+          response.mtdId match {
+            case Some(id) =>
+              repository.store(nino, id)
+              Right(id)
+            case None =>
+              Left(500)
           }
-
         case 400 =>
           logger.debug(s"NINO to MTD reference lookup was invalid. Status code: [${response.status}]")
           Left(400)

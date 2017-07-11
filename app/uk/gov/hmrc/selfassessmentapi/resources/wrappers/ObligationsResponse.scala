@@ -25,7 +25,7 @@ case class ObligationsResponse(underlying: HttpResponse) extends Response {
 
     val desObligations = json.asOpt[des.Obligations]
 
-    var errorMessage = "The response from DES does not match the expected obligations format."
+    var errorMessage = s"The response from DES does not match the expected format. JSON: [$json]"
 
     def noneFound: Either[DesTransformError, Option[Obligations]] = {
       logger.error(errorMessage)

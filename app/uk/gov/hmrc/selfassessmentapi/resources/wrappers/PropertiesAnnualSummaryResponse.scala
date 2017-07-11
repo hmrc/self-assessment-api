@@ -36,7 +36,7 @@ case class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlyin
               des.OtherPropertiesAnnualSummary(other.annualAllowances, other.annualAdjustments)))
         case None => {
           logger.error(
-            s"The response from DES for $propertyType does not match the expected properties annual summary format.")
+            s"The response from DES does not match the expected format. PropertyType: [$propertyType] JSON: [$json]")
           None
         }
       }
@@ -48,7 +48,7 @@ case class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlyin
               des.FHLPropertiesAnnualSummary(fhl.annualAllowances, fhl.annualAdjustments)))
         case None => {
           logger.error(
-            s"The response from DES for $propertyType does not match the expected properties annual summary format.")
+            s"The response from DES does not match the expected format. PropertyType: [$propertyType] JSON: [$json]")
           None
         }
       }
@@ -58,7 +58,7 @@ case class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlyin
     (json \ "transactionReference").asOpt[String] match {
       case x @ Some(_) => x
       case None =>
-        logger.error("The 'transactionReference' field was not found in the response from DES")
+        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
         None
     }
   }
