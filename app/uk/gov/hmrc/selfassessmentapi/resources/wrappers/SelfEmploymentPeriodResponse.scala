@@ -33,7 +33,7 @@ case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Respon
       case Some(desPeriod) =>
         Some(SelfEmploymentPeriod.from(desPeriod).copy(id = None))
       case None =>
-        logger.error("The response from DES does not match the expected self-employment period format.")
+        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
         None
     }
   }
@@ -46,7 +46,7 @@ case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Respon
         }
         Some(periods.filter(periodsExceeding(maxPeriodTimeSpan)).sorted)
       case None =>
-        logger.error("The response from DES does not match the expected self-employment period format.")
+        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
         None
     }
   }
@@ -55,7 +55,7 @@ case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Respon
     (json \ "transactionReference").asOpt[String] match {
       case x@Some(_) => x
       case None =>
-        logger.error("The 'transactionReference' field was not found in the response from DES")
+        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
         None
     }
   }

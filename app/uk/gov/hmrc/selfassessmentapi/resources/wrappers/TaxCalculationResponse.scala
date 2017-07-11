@@ -26,7 +26,7 @@ case class TaxCalculationResponse(underlying: HttpResponse) extends Response {
     (json \ "id").asOpt[String] match {
       case x @ Some(_) => x
       case None => {
-        logger.error("The 'id' field was not found in the response from DES")
+        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
         None
       }
     }
@@ -36,7 +36,7 @@ case class TaxCalculationResponse(underlying: HttpResponse) extends Response {
     (json \ "calcResult").asOpt[des.TaxCalculation] match {
       case x @ Some(_) => x.map(ApiTaxCalculation.from)
       case None => {
-        logger.error("The 'calcDetail' field was not found in the response from DES")
+        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
         None
       }
     }

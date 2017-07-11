@@ -33,7 +33,7 @@ case class PropertiesPeriodResponse(underlying: HttpResponse) extends Response {
     (json \ "transactionReference").asOpt[String] match {
       case x @ Some(_) => x
       case None =>
-        logger.error("The 'transactionReference' field was not found in the response from DES")
+        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
         None
     }
 
@@ -92,7 +92,7 @@ trait ResponseMapper[P <: Period, D <: des.properties.Period] {
         val elideId = (p: P) => PeriodMapper[P, D].setId(p, None)
         Some((from andThen elideId)(desPeriod))
       case None =>
-        response.logger.error("The response from DES does not match the expected properties period format.")
+        response.logger.error(s"The response from DES does not match the expected format. JSON: [${response.json}]")
         None
     }
 
@@ -104,7 +104,7 @@ trait ResponseMapper[P <: Period, D <: des.properties.Period] {
         }
         Some(periods.filter(periodsExceeding(maxPeriodTimeSpan)).sorted)
       case None =>
-        response.logger.error("The response from DES does not match the expected properties period format.")
+        response.logger.error(s"The response from DES does not match the expected format. JSON: [${response.json}]")
         None
     }
 }

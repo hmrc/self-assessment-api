@@ -23,7 +23,7 @@ case class BusinessDetailsResponse(underlying: HttpResponse) extends Response {
   def mtdId: Option[MtdId] = {
     if (status == 200) (json \ "mtdbsa").asOpt[String].map(MtdId(_))
     else {
-      logger.error("The response from DES does not match the expected business details format.")
+      logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
       None
     }
   }
