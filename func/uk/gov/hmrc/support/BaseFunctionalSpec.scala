@@ -28,8 +28,11 @@ trait BaseFunctionalSpec extends TestApplication {
 
     def jsonBodyIsEmptyArray() = response.json shouldBe JsArray()
 
-    def responseContainsHeader(name: String, pattern: Regex) = {
-      response.header(name).get should fullyMatch regex pattern
+    def responseContainsHeader(name: String, pattern: Regex): Assertions = {
+      response.header(name) match {
+        case Some(h) => h should fullyMatch regex pattern
+        case _ => fail("Header [$name] not found in the response headers")
+      }
       this
     }
 
@@ -972,6 +975,15 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def noContentTypeFor(nino: Nino, mtdId: String = "123"): Givens = {
+          stubFor(get(urlEqualTo(s"/registration/business-details/nino/$nino"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withBody(DesJsons.SelfEmployment.emptySelfEmployment(nino, mtdId))))
+
+          givens
+        }
 
         def incomeIdNotFoundFor(nino: Nino, mtdId: String = "123"): Givens = {
           stubFor(get(urlEqualTo(s"/registration/business-details/nino/$nino"))
