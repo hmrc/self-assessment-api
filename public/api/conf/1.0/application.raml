@@ -380,8 +380,8 @@ traits:
                 description: Update period ID
                 type: string
             get:
-              displayName: Get a self-employment update period [test only]
-              description: Get a single self-employment update period for a given identifier. This API is not available in production.
+              displayName: Get a self-employment update period
+              description: Get a single self-employment update period for a given identifier.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "read:self-assessment"
@@ -692,8 +692,8 @@ traits:
                 description: An identifier for the period
                 type: string
             get:
-              displayName: Get a non-FHL UK property update period [test only]
-              description: Get a non-FHL UK property update period for a given identifier. This API is not available in production.
+              displayName: Get a non-FHL UK property update period
+              description: Get a non-FHL UK property update period for a given identifier.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "read:self-assessment"
@@ -901,8 +901,8 @@ traits:
                 description: An identifier for the period
                 type: string
             get:
-              displayName: Get a FHL UK property update period [test only]
-              description: Get a FHL UK property update period for a given identifier. This API is not available in production.
+              displayName: Get a FHL UK property update period
+              description: Get a FHL UK property update period for a given identifier.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "read:self-assessment"
