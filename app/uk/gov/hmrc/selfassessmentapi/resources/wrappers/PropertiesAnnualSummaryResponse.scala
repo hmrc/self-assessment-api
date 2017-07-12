@@ -31,26 +31,20 @@ case class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlyin
     case PropertyType.OTHER =>
       json.asOpt[des.OtherPropertiesAnnualSummary] match {
         case Some(other) =>
-          Some(
-            OtherPropertiesAnnualSummary.from(
-              des.OtherPropertiesAnnualSummary(other.annualAllowances, other.annualAdjustments)))
-        case None => {
+          Some(OtherPropertiesAnnualSummary.from(other))
+        case None =>
           logger.error(
             s"The response from DES does not match the expected format. PropertyType: [$propertyType] JSON: [$json]")
           None
-        }
       }
     case PropertyType.FHL =>
       json.asOpt[des.FHLPropertiesAnnualSummary] match {
         case Some(fhl) =>
-          Some(
-            FHLPropertiesAnnualSummary.from(
-              des.FHLPropertiesAnnualSummary(fhl.annualAllowances, fhl.annualAdjustments)))
-        case None => {
+          Some(FHLPropertiesAnnualSummary.from(fhl))
+        case None =>
           logger.error(
             s"The response from DES does not match the expected format. PropertyType: [$propertyType] JSON: [$json]")
           None
-        }
       }
   }
 

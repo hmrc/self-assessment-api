@@ -20,11 +20,12 @@ import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.MtdId
 
 case class BusinessDetailsResponse(underlying: HttpResponse) extends Response {
-  def mtdId: Option[MtdId] = {
-    if (status == 200) (json \ "mtdbsa").asOpt[String].map(MtdId(_))
-    else {
-      logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
-      None
+  def mtdId: Option[MtdId] =
+    (json \ "mtdbsa").asOpt[String] match {
+      case Some(id) =>
+        Some(MtdId(id))
+      case None =>
+        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
+        None
     }
-  }
 }
