@@ -39,9 +39,6 @@ object PropertiesObligationsResource extends BaseResource {
                 logger.error(ex.msg)
                 InternalServerError(Json.toJson(Errors.InternalServerError))
             }
-          case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-          case 404 => NotFound
-          case _ => unhandledResponse(response.status, logger)
         }
       }
     }

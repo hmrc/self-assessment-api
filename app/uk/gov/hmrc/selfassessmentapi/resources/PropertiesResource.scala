@@ -20,7 +20,6 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesConnector
-import uk.gov.hmrc.selfassessmentapi.models.Errors._
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
 
@@ -40,9 +39,6 @@ object PropertiesResource extends BaseResource {
           response.filter {
             case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino))
             case 403 => Conflict.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/uk-properties")
-            case 400 => BadRequest(Error.from(response.json))
-            case 404 => NotFound
-            case _ => unhandledResponse(response.status, logger)
           }
       }
     }
@@ -56,9 +52,6 @@ object PropertiesResource extends BaseResource {
               case Some(property) => Ok(Json.toJson(property))
               case None => NotFound
             }
-          case 404 => NotFound
-          case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-          case _ => unhandledResponse(response.status, logger)
         }
       }
     }

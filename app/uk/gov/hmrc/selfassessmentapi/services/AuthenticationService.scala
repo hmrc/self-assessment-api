@@ -17,10 +17,6 @@
 package uk.gov.hmrc.selfassessmentapi.services
 
 import play.api.Logger
-import play.api.http.Status.INTERNAL_SERVER_ERROR
-import play.api.http.Status.FORBIDDEN
-import play.api.http.Status.BAD_REQUEST
-import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result}
@@ -29,7 +25,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuthConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.{Agent, AuthContext, FilingOnlyAgent, Individual}
-import uk.gov.hmrc.selfassessmentapi.models.Errors.{ClientNotSubscribed, NinoInvalid, UnknownError}
+import uk.gov.hmrc.selfassessmentapi.models.Errors.{ClientNotSubscribed, NinoInvalid}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, MtdId}
 
 import scala.concurrent.ExecutionContext.Implicits.global

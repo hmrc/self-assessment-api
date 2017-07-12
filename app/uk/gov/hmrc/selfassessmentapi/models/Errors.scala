@@ -17,14 +17,9 @@
 package uk.gov.hmrc.selfassessmentapi.models
 
 
-import play.api.Logger
 import play.api.data.validation.ValidationError
-import play.api.libs.json.Json.toJson
 import play.api.libs.json.{JsValue, Json, Writes}
-import play.api.mvc.Result
 import uk.gov.hmrc.selfassessmentapi.models.ErrorCode.ErrorCode
-import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode.{SERVICE_UNAVAILABLE => SERVICE_NOT_AVAILABLE, _}
-import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, MultiDesError}
 
 object Errors {
 
@@ -47,68 +42,6 @@ object Errors {
 
   case class Error(code: String, message: String, path: Option[String])
 
-  object Error {
-    private val logger = Logger(Error.getClass)
-
-    @deprecated(message = "This will potentially need to be redesigned so that http status codes returned to TPVs " +
-      "are driven by des error codes and not by http status codes returned by the DES")
-    def from(json: JsValue): JsValue = {
-      json.asOpt[DesError].map { err =>
-        toJson(fromDesError(err))
-      }.orElse {
-        json.asOpt[MultiDesError].map { err =>
-          toJson(businessError(err.failures.map(fromDesError)))
-        }
-      }.getOrElse {
-        logger.error(s"Error received from DES does not match what we are expecting.")
-        toJson(Error("UNKNOWN_ERROR", "Unknown error", Some("")))
-      }
-    }
-
-    private def fromDesError(err: DesError): Error = {
-      Error(err.code.toString, err.reason, Some(""))
-    }
-
-    import play.api.http.Status._
-    // the line below blocks importing InternalServerError from Results
-    import play.api.mvc.Results.{InternalServerError => _, _}
-
-    private def fromDesError2(error: DesError): (Int, Option[Error]) = {
-
-      error.code match {
-        case INVALID_NINO => BAD_REQUEST -> Some(NinoInvalid)
-        case INVALID_BUSINESSID => NOT_FOUND -> None
-        case INVALID_TAX_YEAR => INTERNAL_SERVER_ERROR -> Some(InternalServerError)
-        case INVALID_ORIGINATOR_ID => INTERNAL_SERVER_ERROR -> Some(InternalServerError)
-        case INVALID_PAYLOAD => BAD_REQUEST -> Some(InvalidRequest)
-        case NOT_FOUND_TAX_YEAR => NOT_FOUND -> None
-        case INVALID_TYPE => NOT_FOUND -> None
-        case NOT_FOUND_NINO => NOT_FOUND -> None
-        case NOT_FOUND_BUSINESS_ID => NOT_FOUND -> None
-        case SERVER_ERROR => INTERNAL_SERVER_ERROR -> Some(InternalServerError)
-        case SERVICE_NOT_AVAILABLE => INTERNAL_SERVER_ERROR -> Some(InternalServerError)
-        case INVALID_INCOME_SOURCE => NOT_FOUND -> None
-        case NOT_FOUND_PROPERTY => NOT_FOUND -> None
-        case _ => INTERNAL_SERVER_ERROR -> Some(InternalServerError)
-      }
-    }
-
-    def from2(json: JsValue) =
-      json.asOpt[DesError].map { err =>
-        val (code, content) = fromDesError2(err)
-        content.fold[Result](Status(code))(err => Status(code)(toJson(err)))
-      }.orElse {
-        json.asOpt[MultiDesError].map { err =>
-          val businessErrors = err.failures.map(fromDesError2).unzip._2
-          Status(BAD_REQUEST)(toJson(businessError(businessErrors.map(_.getOrElse(UnknownError)))))
-        }
-      }.getOrElse {
-        logger.error(s"Error received from DES does not match what we are expecting.")
-        Status(INTERNAL_SERVER_ERROR)(toJson(UnknownError))
-      }
-
-  }
-
   case class BadRequest(errors: Seq[Error], message: String) {
     val code = "INVALID_REQUEST"
   }
@@ -130,8 +63,6 @@ object Errors {
   object BadToken extends Error("UNAUTHORIZED", "Bearer token is missing or not authorized", None)
   object BadRequest extends Error("INVALID_REQUEST", "Invalid request", None)
   object InternalServerError extends Error("INTERNAL_SERVER_ERROR", "An internal server error occurred", None)
-  object UnknownError extends Error("UNKNOWN_ERROR", "Unknown error", Some(""))
-
 
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")
   def badRequest(message: String) = BadRequest(Seq.empty, message)

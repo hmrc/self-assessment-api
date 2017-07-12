@@ -22,10 +22,14 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesAnnualSummaryConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
-import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models.audit.AnnualSummaryUpdate
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
-import uk.gov.hmrc.selfassessmentapi.models.properties.{FHLPropertiesAnnualSummary, OtherPropertiesAnnualSummary, PropertiesAnnualSummary, PropertyType}
+import uk.gov.hmrc.selfassessmentapi.models.properties.{
+  FHLPropertiesAnnualSummary,
+  OtherPropertiesAnnualSummary,
+  PropertiesAnnualSummary,
+  PropertyType
+}
 import uk.gov.hmrc.selfassessmentapi.models.{SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
 import uk.gov.hmrc.selfassessmentapi.services.AuditService
@@ -45,8 +49,6 @@ object PropertiesAnnualSummaryResource extends BaseResource {
             case 200 =>
               auditAnnualSummaryUpdate(nino, propertyId, taxYear, request.authContext, response)
               NoContent
-            case 404 => NotFound
-            case _ => Error.from2(response.json)
           }
       }
     }
@@ -60,11 +62,10 @@ object PropertiesAnnualSummaryResource extends BaseResource {
               case Some(summary) =>
                 summary match {
                   case other: OtherPropertiesAnnualSummary => Ok(Json.toJson(other))
-                  case fhl: FHLPropertiesAnnualSummary => Ok(Json.toJson(fhl))
+                  case fhl: FHLPropertiesAnnualSummary     => Ok(Json.toJson(fhl))
                 }
               case None => NotFound
             }
-          case _ => Error.from2(response.json)
         }
       }
     }
@@ -74,7 +75,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
                                f: PropertiesAnnualSummary => Future[PropertiesAnnualSummaryResponse]) =
     propertyId match {
       case PropertyType.OTHER => validate[OtherPropertiesAnnualSummary, PropertiesAnnualSummaryResponse](body)(f)
-      case PropertyType.FHL => validate[FHLPropertiesAnnualSummary, PropertiesAnnualSummaryResponse](body)(f)
+      case PropertyType.FHL   => validate[FHLPropertiesAnnualSummary, PropertiesAnnualSummaryResponse](body)(f)
     }
 
   private def auditAnnualSummaryUpdate(
@@ -83,7 +84,8 @@ object PropertiesAnnualSummaryResource extends BaseResource {
       taxYear: TaxYear,
       authCtx: AuthContext,
       response: PropertiesAnnualSummaryResponse)(implicit hc: HeaderCarrier, request: Request[JsValue]) = {
-    AuditService.audit(AnnualSummaryUpdate(nino, id.toString, taxYear, authCtx.toString, response.transactionReference, request.body),
-                       s"$id-property-annual-summary-update")
+    AuditService.audit(
+      AnnualSummaryUpdate(nino, id.toString, taxYear, authCtx.toString, response.transactionReference, request.body),
+      s"$id-property-annual-summary-update")
   }
 }
