@@ -131,10 +131,7 @@ object EmptyResponseFilter extends Filter with MicroserviceFilterSupport {
 // this filter is a workaround for the issue reported here https://jira.tools.tax.service.gov.uk/browse/APSR-87
 object SetContentTypeFilter extends Filter with MicroserviceFilterSupport {
   override def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] =
-    f(rh) map { res =>
-      val headers = res.header.headers.updated("Content-Type", "application/json")
-      res.copy(res.header.copy(headers = headers), res.body)
-    }
+    f(rh).map(_.as("application/json"))
 }
 
 object AgentSimulationFilter extends Filter with MicroserviceFilterSupport {
