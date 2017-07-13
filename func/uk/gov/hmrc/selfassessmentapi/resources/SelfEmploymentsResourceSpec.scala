@@ -52,7 +52,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
         .thenAssertThat()
         .statusIs(400)
-        .bodyIsLike(Jsons.Errors.invalidPayload)
+        .bodyIsLike(Jsons.Errors.invalidRequest)
     }
 
     "return code 400 when attempting to create a self-employment that fails DES nino validation" in {
@@ -64,19 +64,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
         .thenAssertThat()
         .statusIs(400)
-        .bodyIsLike(Jsons.Errors.invalidNino)
-    }
-
-    "return code 400 when attempting to create a self-employment that fails DES duplicated trading name validaton" in {
-      given()
-        .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource
-        .des().selfEmployment.failsTradingName(nino)
-        .when()
-        .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
-        .thenAssertThat()
-        .statusIs(400)
-        .bodyIsLike(Jsons.Errors.duplicateTradingName)
+        .bodyIsLike(Jsons.Errors.ninoInvalid)
     }
 
     "return code 500 when DES is experiencing issues" in {

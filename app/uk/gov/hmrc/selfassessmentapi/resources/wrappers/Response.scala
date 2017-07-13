@@ -17,11 +17,14 @@
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
 import play.api.Logger
+import play.api.libs.json.Json.toJson
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import play.api.mvc.Results.BadRequest
+import play.api.mvc.Results._
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
+import uk.gov.hmrc.selfassessmentapi.models.des.DesError
+import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode.{DesErrorCode, _}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, PeriodSummary}
 import uk.gov.hmrc.selfassessmentapi.resources.AuthRequest
 
@@ -37,16 +40,41 @@ trait Response {
   private def logResponse(): Unit =
     logger.error(s"DES error occurred with status code ${underlying.status} and body ${underlying.body}")
 
-  def filter[A](f: Int => Result)(implicit request: AuthRequest[A]): Result =
+  def filter[A](f: PartialFunction[Int, Result])(implicit request: AuthRequest[A]): Result =
     status / 100 match {
       case 4 if request.authContext == FilingOnlyAgent =>
         logResponse()
-        BadRequest(Json.toJson(Errors.InvalidRequest))
+        BadRequest(toJson(Errors.InvalidRequest))
       case 4 | 5 =>
         logResponse()
-        f(status)
-      case _ => f(status)
+        (f orElse errorMapping)(status)
+      case _ => (f orElse errorMapping)(status)
     }
+
+  private def errorMapping: PartialFunction[Int, Result] = {
+    case 400 if errorCodeIsIn(INVALID_NINO)    => BadRequest(toJson(Errors.NinoInvalid))
+    case 400 if errorCodeIsIn(INVALID_PAYLOAD) => BadRequest(toJson(Errors.InvalidRequest))
+    case 400
+        if errorCodeIsIn(INVALID_BUSINESSID, INVALID_INCOME_SOURCE, INVALID_TYPE, INVALID_IDENTIFIER, INVALID_CALCID) =>
+      NotFound
+    case 400 if errorCodeIsIn(INVALID_PERIOD) => Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))
+    case 400
+        if errorCodeIsIn(INVALID_ORIGINATOR_ID,
+                         INVALID_DATE_RANGE,
+                         INVALID_DATE_FROM,
+                         INVALID_DATE_TO,
+                         INVALID_STATUS,
+                         INVALID_TAX_YEAR) =>
+      InternalServerError(toJson(Errors.InternalServerError))
+    case 403                                       => NotFound
+    case 404                                       => NotFound
+    case 500 if errorCodeIsIn(SERVER_ERROR)        => InternalServerError(toJson(Errors.InternalServerError))
+    case 503 if errorCodeIsIn(SERVICE_UNAVAILABLE) => InternalServerError(toJson(Errors.InternalServerError))
+    case _                                         => InternalServerError(toJson(Errors.InternalServerError))
+  }
+
+  def errorCodeIsIn(errorCodes: DesErrorCode*): Boolean =
+    json.asOpt[DesError].exists(errorCode => errorCodes.contains(errorCode.code))
 }
 
 object Response {

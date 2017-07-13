@@ -23,7 +23,6 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext.getMaxPeriodTimeSpan
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
-import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
@@ -46,13 +45,6 @@ object PropertiesPeriodResource extends BaseResource {
             case 200 =>
               auditPeriodicCreate(nino, id, request.authContext, response, periodId)
               Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
-            case 400 if response.isInvalidPeriod =>
-              Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))
-            case 400 if response.isInvalidPayload => BadRequest(Json.toJson(Errors.InvalidRequest))
-            case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-            case 400 if response.isInvalidType => NotFound // This should never happen since property type is validated on the incoming request by the binders
-            case 404 | 403 => NotFound
-            case _ => unhandledResponse(response.status, logger)
           }
       }
     }
@@ -66,8 +58,6 @@ object PropertiesPeriodResource extends BaseResource {
             case Right(response) =>
               response.filter {
                 case 204 => NoContent
-                case 404 => NotFound
-                case _ => unhandledResponse(response.status, logger)
               }
           }
         case _ => Future.successful(NotFound)
@@ -92,11 +82,6 @@ object PropertiesPeriodResource extends BaseResource {
                   case PropertyType.FHL => toResult[FHL.Properties, des.properties.FHL.Properties](response)
                   case PropertyType.OTHER => toResult[Other.Properties, des.properties.Other.Properties](response)
                 }
-              case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-              case 400 if response.isInvalidType => NotFound
-              case 404 => NotFound
-              case 403 => NotFound
-              case _ => unhandledResponse(response.status, logger)
             }
           }
         case _ => Future.successful(NotFound)
@@ -116,11 +101,6 @@ object PropertiesPeriodResource extends BaseResource {
                 ResponseMapper[Other.Properties, des.properties.Other.Properties]
                   .allPeriods(response, getMaxPeriodTimeSpan).map(seq => Ok(Json.toJson(seq))).getOrElse(InternalServerError)
             }
-          case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-          case 400 if response.isInvalidType => NotFound
-          case 404 => NotFound
-          case 403 => NotFound
-          case _ => unhandledResponse(response.status, logger)
         }
       }
     }

@@ -22,7 +22,6 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentAnnualSummaryConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
-import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.AnnualSummaryUpdate
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentAnnualSummary
@@ -45,8 +44,6 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
             case 200 =>
               auditAnnualSummaryUpdate(nino, id, taxYear, request.authContext, response)
               NoContent
-            case 404 => NotFound
-            case _ => Error.from2(response.json)
           }
       }
     }
@@ -57,8 +54,6 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
       connector.get(nino, id, taxYear).map { response =>
         response.filter {
           case 200 => response.annualSummary.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
-          case 404 => NotFound
-          case _ => unhandledResponse(response.status, logger)
         }
       }
     }

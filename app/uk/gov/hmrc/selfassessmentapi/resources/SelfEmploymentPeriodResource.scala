@@ -49,13 +49,6 @@ object SelfEmploymentPeriodResource extends BaseResource {
             case 200 =>
               auditPeriodicCreate(nino, sourceId, request.authContext, response, periodId)
               Created.withHeaders(LOCATION -> response.createLocationHeader(nino, sourceId, periodId))
-            case 400 if response.isInvalidBusinessId => NotFound
-            case 400 if response.isInvalidPeriod =>
-              Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))
-            case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-            case 400 if response.isInvalidPayload => BadRequest(Json.toJson(Errors.InvalidRequest))
-            case 404 => NotFound
-            case _ => unhandledResponse(response.status, logger)
           }
       }
     }
@@ -71,8 +64,6 @@ object SelfEmploymentPeriodResource extends BaseResource {
             case Right(response) =>
               response.filter {
                 case 200 => NoContent
-                case 404 => NotFound
-                case _ => unhandledResponse(response.status, logger)
               }
           }
         case _ => Future.successful(NotFound)
@@ -86,10 +77,6 @@ object SelfEmploymentPeriodResource extends BaseResource {
           connector.get(nino, id, from, to).map { response =>
             response.filter {
               case 200 => response.period.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
-              case 400 if response.isInvalidBusinessId => NotFound
-              case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-              case 404 => NotFound
-              case _ => unhandledResponse(response.status, logger)
             }
           }
         case _ => Future.successful(NotFound)
@@ -101,10 +88,6 @@ object SelfEmploymentPeriodResource extends BaseResource {
       connector.getAll(nino, id).map { response =>
         response.filter {
           case 200 => response.allPeriods(getMaxPeriodTimeSpan).map(seq => Ok(Json.toJson(seq))).getOrElse(InternalServerError)
-          case 400 if response.isInvalidBusinessId => NotFound
-          case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-          case 404 => NotFound
-          case _ => unhandledResponse(response.status, logger)
         }
       }
     }

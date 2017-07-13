@@ -40,15 +40,12 @@ object SelfEmploymentsResource extends BaseResource {
         case Right(response) =>
           response.filter {
             case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino).getOrElse(""))
-            case 400 | 409 => BadRequest(Error.from(response.json))
             case 403 =>
               Forbidden(
                 Json.toJson(
                   Errors.businessError(Error(ErrorCode.TOO_MANY_SOURCES.toString,
                                              s"The maximum number of Self-Employment incomes sources is 1",
                                              Some("")))))
-            case 404 => NotFound
-            case _ => unhandledResponse(response.status, logger)
           }
       }
     }
@@ -63,9 +60,6 @@ object SelfEmploymentsResource extends BaseResource {
         case Right(response) =>
           response.filter {
             case 204 => NoContent
-            case 400 => BadRequest(Error.from(response.json))
-            case 404 => NotFound
-            case _ => unhandledResponse(response.status, logger)
           }
       }
     }
@@ -75,9 +69,6 @@ object SelfEmploymentsResource extends BaseResource {
       connector.get(nino).map { response =>
         response.filter {
           case 200 => handleRetrieve(response.selfEmployment(id), NotFound)
-          case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-          case 404 => NotFound
-          case _ => unhandledResponse(response.status, logger)
         }
       }
     }
@@ -87,9 +78,6 @@ object SelfEmploymentsResource extends BaseResource {
       connector.get(nino).map { response =>
         response.filter {
           case 200 => handleRetrieve(response.listSelfEmployment, Ok(JsArray()))
-          case 400 => BadRequest(Json.toJson(Errors.NinoInvalid))
-          case 404 => NotFound
-          case _ => unhandledResponse(response.status, logger)
         }
       }
     }

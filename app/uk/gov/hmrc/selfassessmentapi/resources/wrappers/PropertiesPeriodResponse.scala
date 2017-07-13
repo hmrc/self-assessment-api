@@ -19,7 +19,6 @@ package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 import play.api.libs.json.Reads
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
 import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId, PeriodSummary, des}
@@ -36,19 +35,6 @@ case class PropertiesPeriodResponse(underlying: HttpResponse) extends Response {
         logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
         None
     }
-
-  def isInvalidPeriod: Boolean =
-    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_PERIOD)
-
-  def isInvalidPayload: Boolean =
-    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_PAYLOAD)
-
-  def isInvalidNino: Boolean =
-    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_NINO)
-
-  def isInvalidType: Boolean =
-    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_TYPE)
-
 }
 
 trait PeriodMapper[P <: Period, D <: des.properties.Period] {
