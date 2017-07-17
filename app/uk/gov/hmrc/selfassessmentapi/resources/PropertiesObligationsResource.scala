@@ -21,6 +21,7 @@ import play.api.mvc.Action
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.ObligationsConnector
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType}
+import uk.gov.hmrc.selfassessmentapi.resources.Audit.auditObligationsRetrieval
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -33,8 +34,9 @@ object PropertiesObligationsResource extends BaseResource {
         response.filter {
           case 200 =>
             logger.debug("Properties obligations from DES = " + Json.stringify(response.json))
+            auditObligationsRetrieval(nino, None, request.authContext, response, UkPropertiesRetrieveObligations)
             response.obligations("ITSP") match {
-              case Right(obj) =>  obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+              case Right(obj) => obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
               case Left(ex) =>
                 logger.error(ex.msg)
                 InternalServerError(Json.toJson(Errors.InternalServerError))

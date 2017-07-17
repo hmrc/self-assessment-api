@@ -29,7 +29,8 @@ case class PeriodicUpdate(nino: Nino,
                           periodId: String,
                           affinityGroup: String,
                           transactionReference: Option[String],
-                          requestPayload: JsValue) extends AuditPayload {
+                          requestPayload: JsValue)
+    extends AuditPayload {
   override val auditType: String = "submitPeriodicUpdate"
 }
 
@@ -42,7 +43,8 @@ case class AnnualSummaryUpdate(nino: Nino,
                                taxYear: TaxYear,
                                affinityGroup: String,
                                transactionReference: Option[String],
-                               requestPayload: JsValue) extends AuditPayload {
+                               requestPayload: JsValue)
+    extends AuditPayload {
   override val auditType: String = "submitAnnualSummary"
 }
 
@@ -50,10 +52,8 @@ object AnnualSummaryUpdate {
   implicit val format: Format[AnnualSummaryUpdate] = Json.format[AnnualSummaryUpdate]
 }
 
-case class TaxCalculationTrigger(nino: Nino,
-                                 taxYear: TaxYear,
-                                 affinityGroup: String,
-                                 calculationId: SourceId) extends AuditPayload {
+case class TaxCalculationTrigger(nino: Nino, taxYear: TaxYear, affinityGroup: String, calculationId: SourceId)
+    extends AuditPayload {
   override val auditType: String = "triggerTaxCalculation"
 }
 
@@ -61,13 +61,20 @@ object TaxCalculationTrigger {
   implicit val format: Format[TaxCalculationTrigger] = Json.format[TaxCalculationTrigger]
 }
 
-case class TaxCalculationRequest(nino: Nino,
-                                 calculationId: SourceId,
-                                 affinityGroup: String,
-                                 responsePayload: JsValue) extends AuditPayload {
+case class TaxCalculationRequest(nino: Nino, calculationId: SourceId, affinityGroup: String, responsePayload: JsValue)
+    extends AuditPayload {
   override val auditType: String = "retrieveTaxCalculation"
 }
 
 object TaxCalculationRequest {
   implicit val format: Format[TaxCalculationRequest] = Json.format[TaxCalculationRequest]
+}
+
+case class RetrieveObligations(nino: Nino, sourceId: Option[SourceId], affinityGroup: String, responsePayload: JsValue)
+    extends AuditPayload {
+  override val auditType: String = "retrieveObligations"
+}
+
+object RetrieveObligations {
+  implicit val format: Format[RetrieveObligations] = Json.format[RetrieveObligations]
 }

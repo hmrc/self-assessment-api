@@ -40,4 +40,10 @@ class AuditPayloadSpec extends JsonSpec {
       roundTripJson(TaxCalculationRequest(Nino("AA999999A"), "abc", "individual", Json.obj()))
     }
   }
+
+  "RetrieveObligations" should {
+    "round trip" in {
+      roundTripJson(RetrieveObligations(Nino("AA999999A"), Some("abc"), "individual", Json.obj()))
+    }
+  }
 }
