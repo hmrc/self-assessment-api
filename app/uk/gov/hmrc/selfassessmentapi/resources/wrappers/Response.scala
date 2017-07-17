@@ -59,13 +59,9 @@ trait Response {
       NotFound
     case 400 if errorCodeIsIn(INVALID_PERIOD) => Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))
     case 400
-        if errorCodeIsIn(INVALID_ORIGINATOR_ID,
-                         INVALID_DATE_RANGE,
-                         INVALID_DATE_FROM,
-                         INVALID_DATE_TO,
-                         INVALID_STATUS,
-                         INVALID_TAX_YEAR) =>
+        if errorCodeIsIn(INVALID_ORIGINATOR_ID, INVALID_DATE_FROM, INVALID_DATE_TO, INVALID_STATUS, INVALID_TAX_YEAR) =>
       InternalServerError(toJson(Errors.InternalServerError))
+    case 403 if errorCodeIsIn(INVALID_DATE_RANGE)  => InternalServerError(toJson(Errors.InternalServerError))
     case 403                                       => NotFound
     case 404                                       => NotFound
     case 500 if errorCodeIsIn(SERVER_ERROR)        => InternalServerError(toJson(Errors.InternalServerError))
