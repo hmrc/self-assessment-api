@@ -14,6 +14,9 @@ The data for each _obligation period_ can be provided either as a single _update
 or as multiple smaller _update periods_, covering the whole period so long as there are no gaps, and no overlaps 
 amongst the _update periods_.
 
+If the information given in an _update_ covers more than one _obligation_ period, your software needs to split that 
+information to ensure it’s included in the correct _obligation_ period
+
 More accurate tax calculations can be provided when businesses' allowances and adjustments, and personal savings 
 and dividend income are also provided, though these details are not required to meet obligations.
 
