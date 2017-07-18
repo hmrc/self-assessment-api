@@ -1,6 +1,18 @@
 
 ### Please refer to [CHANGELOG-ET.md](https://github.com/hmrc/self-assessment-api/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to Sandbox Test Environment.
 
+## [0.129.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.129.0) 13-Jul-2017
+
+* Enable following API's in production.
+  * Self-employment business
+     * Get a self-employment update period
+  * UK property business
+     * Get a non-FHL UK property update period
+     * Get a FHL UK property update period
+* Allow lower-case NINO's for all end-points
+* Improve logging
+* Fix issue with parsing list periods Json received from backend
+
 ## [0.126.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.126.0) 03-Jul-2017
 
 * Enable following API's in production.
