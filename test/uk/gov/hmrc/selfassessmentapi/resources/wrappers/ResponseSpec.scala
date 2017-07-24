@@ -26,8 +26,8 @@ import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.contexts.{FilingOnlyAgent, Individual}
 import uk.gov.hmrc.selfassessmentapi.models.Errors
-import uk.gov.hmrc.selfassessmentapi.resources.AuthRequest
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode._
+import uk.gov.hmrc.selfassessmentapi.resources.AuthRequest
 
 class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
   "response filter" should {
@@ -48,13 +48,13 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
     "return the response unmodified if it contains a non-4xx error and the user is a FOA" in {
       implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent, fakeRequest)
 
-      new Response {
-        override val status: Int = 200
-
-        override def underlying: HttpResponse = HttpResponse(status)
+      val result = new Response {
+        override val status = 200
+        override def underlying = HttpResponse(status, responseHeaders = Map("CorrelationId" -> Seq("7777777")))
       }.filter {
         case _ => Ok
-      } shouldBe Ok
+      }
+      result shouldBe Ok.withHeaders("CorrelationId" -> "7777777")
     }
 
     "return the response unmodified if it contains a 4xx error and the user is not a FOA" in {
