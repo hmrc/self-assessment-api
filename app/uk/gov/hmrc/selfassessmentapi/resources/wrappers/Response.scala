@@ -51,7 +51,7 @@ trait Response {
       case _ => ((f andThen addCorrelationHeader) orElse errorMapping)(status)
     }
 
-  private def addCorrelationHeader(result: Result) = underlying.header("CorrelationId").fold(result)(correlationId => result.withHeaders("CorrelationId" -> correlationId))
+  private def addCorrelationHeader(result: Result) = underlying.header("X-CorrelationId").fold(result)(correlationId => result.withHeaders("CorrelationId" -> correlationId))
 
   private def errorMapping: PartialFunction[Int, Result] = {
     case 400 if errorCodeIsIn(INVALID_NINO)    => BadRequest(toJson(Errors.NinoInvalid))
