@@ -54,7 +54,7 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
       }.filter {
         case _ => Ok
       }
-      result shouldBe Ok.withHeaders("CorrelationId" -> "7777777")
+      result shouldBe Ok.withHeaders("X-CorrelationId" -> "7777777")
     }
 
     "return the response unmodified if it contains a 4xx error and the user is not a FOA" in {
