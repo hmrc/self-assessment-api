@@ -116,6 +116,9 @@ traits:
               Location:
                 example: /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}
                 description: Location of the resource created
+              X-CorrelationId:
+                example: 5968c22d620000620096db5f
+                description: Unique id for operation tracking
           400:
             body:
               application/json:
@@ -179,6 +182,10 @@ traits:
         securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
         responses:
           200:
+            headers:
+              X-CorrelationId:
+                example: 5968c22d620000620096db51
+                description: Unique id for operation tracking
             body:
               application/json:
                 type: !include schemas/SelfEmployments.json
@@ -247,6 +254,10 @@ traits:
           securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
           responses:
             200:
+              headers:
+                X-CorrelationId:
+                  example: 5968c22d620000620096db53
+                  description: Unique id for operation tracking
               body:
                 application/json:
                   type: !include schemas/SelfEmployment_Without_ID.json
@@ -271,6 +282,10 @@ traits:
             securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
             responses:
               200:
+                headers:
+                  X-CorrelationId:
+                    example: 5968c22d620000620096db53
+                    description: Unique id for operation tracking
                 body:
                   application/json:
                     type: !include schemas/Obligations.json
@@ -305,6 +320,9 @@ traits:
                   Location:
                     example: /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}/periods/{periodId}
                     description: Location of the resource created
+                  X-CorrelationId:
+                    example: 5968c22d620000620096db54
+                    description: Unique id for operation tracking
               400:
                 body:
                   application/json:
@@ -360,6 +378,10 @@ traits:
             securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
             responses:
               200:
+                headers:
+                  X-CorrelationId:
+                    example: 5968c22d620000620096db55
+                    description: Unique id for operation tracking
                 body:
                   application/json:
                     type: !include schemas/Periods.json
@@ -388,6 +410,10 @@ traits:
               securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
               responses:
                 200:
+                  headers:
+                    X-CorrelationId:
+                      example: 5968c22d620000620096db56
+                      description: Unique id for operation tracking
                   body:
                     application/json:
                       type: !include schemas/SE_Period_Without_ID.json
@@ -417,6 +443,10 @@ traits:
                   example: !include examples/self-employment/UpdatePeriod.json
               responses:
                 204:
+                  headers:
+                    X-CorrelationId:
+                      example: 5968c22d620000620096db57
+                      description: Unique id for operation tracking
                 400:
                   body:
                     application/json:
@@ -458,6 +488,10 @@ traits:
                 example: !include examples/self-employment/AnnualSummary.json
             responses:
               204:
+                headers:
+                  X-CorrelationId:
+                    example: 5968c22d620000620096db58
+                    description: Unique id for operation tracking
               400:
                 body:
                   application/json:
@@ -497,6 +531,10 @@ traits:
             securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
             responses:
               200:
+                headers:
+                  X-CorrelationId:
+                    example: 5968c22d620000620096db59
+                    description: Unique id for operation tracking
                 body:
                   application/json:
                     type: !include schemas/SE_AnnualSummary.json
@@ -532,6 +570,9 @@ traits:
         responses:
           201:
             headers:
+              X-CorrelationId:
+                example: 5968c22d620000620096db10
+                description: Unique id for operation tracking
               Location:
                 example: /self-assessment/ni/{nino}/uk-properties
                 description: Location of the resource created
@@ -565,6 +606,10 @@ traits:
         securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
         responses:
           200:
+            headers:
+              X-CorrelationId:
+                example: 5968c22d620000620096db10
+                description: Unique id for operation tracking
             body:
               application/json:
                 type: !include schemas/UkProperties.json
@@ -589,6 +634,10 @@ traits:
           securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
           responses:
             200:
+              headers:
+                X-CorrelationId:
+                  example: 5968c22d620000620096db11
+                  description: Unique id for operation tracking
               body:
                 application/json:
                   type: !include schemas/Obligations.json
@@ -621,6 +670,9 @@ traits:
             responses:
               201:
                 headers:
+                  X-CorrelationId:
+                    example: 5968c22d620000620096db11
+                    description: Unique id for operation tracking
                   Location:
                     example: /self-assessment/ni/{nino}/uk-properties/{propertyType}/periods/{periodId}
                     description: Location of the resource created
@@ -671,6 +723,10 @@ traits:
             securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
             responses:
               200:
+                headers:
+                  X-CorrelationId:
+                    example: 5968c22d620000620096db14
+                    description: Unique id for operation tracking
                 body:
                   application/json:
                     type: !include schemas/Periods.json
@@ -700,6 +756,10 @@ traits:
               securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
               responses:
                 200:
+                  headers:
+                    X-CorrelationId:
+                      example: 5968c22d620000620096db15
+                      description: Unique id for operation tracking
                   body:
                     application/json:
                       type: !include schemas/UK_PROP_OTHER_Period_Without_ID.json
@@ -729,6 +789,10 @@ traits:
                   example: !include examples/uk-properties/other/UpdatePeriod.json
               responses:
                 204:
+                  headers:
+                    X-CorrelationId:
+                      example: 5968c22d620000620096db16
+                      description: Unique id for operation tracking
                 400:
                   body:
                     application/json:
@@ -771,6 +835,10 @@ traits:
                   example: !include examples/uk-properties/other/AnnualSummary.json
               responses:
                 204:
+                  headers:
+                    X-CorrelationId:
+                      example: 5968c22d620000620096db17
+                      description: Unique id for operation tracking
                 400:
                   body:
                     application/json:
@@ -798,6 +866,10 @@ traits:
               securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
               responses:
                 200:
+                  headers:
+                    X-CorrelationId:
+                      example: 5968c22d620000620096db18
+                      description: Unique id for operation tracking
                   body:
                     application/json:
                       type: !include schemas/UK_PROP_OTHER_AnnualSummary.json
@@ -834,6 +906,9 @@ traits:
             responses:
               201:
                 headers:
+                  X-CorrelationId:
+                    example: 5968c22d620000620096db12
+                    description: Unique id for operation tracking
                   Location:
                     example: /self-assessment/ni/{nino}/uk-properties/{propertyType}/periods/{periodId}
                     description: Location of the resource created
@@ -880,6 +955,10 @@ traits:
             securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
             responses:
               200:
+                headers:
+                  X-CorrelationId:
+                    example: 5968c22d620000620096db13
+                    description: Unique id for operation tracking
                 body:
                   application/json:
                     type: !include schemas/Periods.json
@@ -909,6 +988,10 @@ traits:
               securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
               responses:
                 200:
+                  headers:
+                    X-CorrelationId:
+                      example: 5968c22d620000620096db14
+                      description: Unique id for operation tracking
                   body:
                     application/json:
                       type: !include schemas/UK_PROP_FHL_Period_Without_ID.json
@@ -938,6 +1021,10 @@ traits:
                   example: !include examples/uk-properties/fhl/UpdatePeriod.json
               responses:
                 204:
+                  headers:
+                    X-CorrelationId:
+                      example: 5968c22d620000620096db15
+                      description: Unique id for operation tracking
                 400:
                   body:
                     application/json:
@@ -980,6 +1067,10 @@ traits:
                   example: !include examples/uk-properties/fhl/AnnualSummary.json
               responses:
                 204:
+                  headers:
+                    X-CorrelationId:
+                      example: 5968c22d620000620096db16
+                      description: Unique id for operation tracking
                 400:
                   body:
                     application/json:
@@ -1007,6 +1098,10 @@ traits:
               securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
               responses:
                 200:
+                  headers:
+                    X-CorrelationId:
+                      example: 5968c22d620000620096db17
+                      description: Unique id for operation tracking
                   body:
                     application/json:
                       type: !include schemas/UK_PROP_FHL_AnnualSummary.json
