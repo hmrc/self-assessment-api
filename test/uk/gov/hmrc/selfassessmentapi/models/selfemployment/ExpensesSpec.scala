@@ -31,6 +31,9 @@ class ExpensesSpec extends JsonSpec {
                                              badDebt = Some(Expense(200, Some(100)))),
                                     "",
                                     ErrorCode.DEPRECIATION_DISALLOWABLE_AMOUNT)
+
+    "accept Expenses with depreciation expense where disallowable amount is not defined" in
+      roundTripJson(Expenses(depreciation = Some(Expense(200, None))))
   }
 
 }
