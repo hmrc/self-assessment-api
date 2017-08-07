@@ -59,5 +59,5 @@ object Expenses {
     .filter(
       ValidationError("the disallowableAmount for depreciation expenses must be the same as the amount",
                       ErrorCode.DEPRECIATION_DISALLOWABLE_AMOUNT)
-    )(_.depreciation.forall(e => e.amount == e.disallowableAmount.getOrElse(false)))
+    )(_.depreciation.forall(e => e.disallowableAmount.forall(_ == e.amount)))
 }
