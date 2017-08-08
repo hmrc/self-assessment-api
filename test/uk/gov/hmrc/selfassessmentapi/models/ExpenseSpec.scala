@@ -30,9 +30,5 @@ class ExpenseSpec extends JsonSpec {
 
     "reject an amount with more than 2 decimal places" in
       assertValidationErrorWithCode(Expense(10.123, None), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
-
-    "reject an expense where the disallowable amount is greater than the amount" in
-      assertValidationErrorWithCode(Expense(30.00, Some(50.00)), "", ErrorCode.INVALID_DISALLOWABLE_AMOUNT)
-
   }
 }

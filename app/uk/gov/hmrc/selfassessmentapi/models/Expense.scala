@@ -16,22 +16,15 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
-import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 case class Expense(amount: Amount, disallowableAmount: Option[Amount])
 
 object Expense {
+  implicit val writes = Json.writes[Expense]
   implicit val reads: Reads[Expense] = (
     (__ \ "amount").read[Amount](nonNegativeAmountValidator) and
     (__ \ "disallowableAmount").readNullable[Amount](nonNegativeAmountValidator)
     ) (Expense.apply _)
-    .filter(ValidationError("disallowableAmount must be equal to or less than amount", ErrorCode.INVALID_DISALLOWABLE_AMOUNT)
-    )(disallowableAmountValidator)
-
-  implicit val writes = Json.writes[Expense]
-
-  private def disallowableAmountValidator(expense: Expense) =
-    expense.disallowableAmount.forall(expense.amount >= _)
 }
