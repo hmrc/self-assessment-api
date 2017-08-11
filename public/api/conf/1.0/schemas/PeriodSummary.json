@@ -5,20 +5,18 @@
   "properties": {
     "id": {
       "title": "ID",
-      "description": "Unique identifier",
+      "description": "Unique period identifier for the income source",
       "type": "string"
     },
     "from": {
       "description" : "The start date of this update period",
       "title": "From date",
-      "type": "string",
-      "format": "date"
+      "$ref": "FullDate.json"
     },
     "to": {
       "description" : "The end date of this update period",
       "title": "To date",
-      "type": "string",
-      "format": "date"
+      "$ref": "FullDate.json"
     }
   },
   "required": [

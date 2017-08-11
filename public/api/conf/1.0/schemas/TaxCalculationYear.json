@@ -6,7 +6,7 @@
     "taxYear": {
       "title": "Tax Year",
       "description": "Tax year the calculation is requested for",
-      "type": "string"
+      "$ref": "tax-year.json"
     }
   },
   "required": [

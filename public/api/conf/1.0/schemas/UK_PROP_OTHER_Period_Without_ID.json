@@ -6,14 +6,12 @@
         "from": {
             "title": "From date",
             "description": "Start date for the period",
-            "type": "string",
-            "format": "date"
+            "$ref": "FullDate.json"
         },
         "to": {
             "title": "To date",
             "description": "End date for the period",
-            "type": "string",
-            "format": "date"
+            "$ref": "FullDate.json"
         },
         "incomes": {
             "$ref": "uk-properties/other/Incomes.json"

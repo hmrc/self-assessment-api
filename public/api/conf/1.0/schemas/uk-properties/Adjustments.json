@@ -10,7 +10,8 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
-      "maximum": 99999999999999.98
+      "maximum": 99999999999999.98,
+      "example": "100.25"
     },
     "privateUseAdjustment": {
       "title": "Private use adjustment",
@@ -18,7 +19,8 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
-      "maximum": 99999999999999.98
+      "maximum": 99999999999999.98,
+      "example": "100.25"
     },
     "balancingCharge": {
       "title": "Balancing charge",
@@ -26,7 +28,8 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
-      "maximum": 99999999999999.98
+      "maximum": 99999999999999.98,
+      "example": "100.25"
     }
   },
   "additionalProperties": false
