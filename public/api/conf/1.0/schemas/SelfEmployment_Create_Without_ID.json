@@ -18,8 +18,7 @@
     "commencementDate": {
       "title": "Business start date",
       "description": "Business start date, must be in the past.",
-      "type": "string",
-      "format": "date"
+      "$ref": "FullDate.json"
     },
     "tradingName": {
       "title": "Business trading name",
@@ -66,7 +65,8 @@
       "description": "Business postcode",
       "type": "string",
       "minLength": 1,
-      "maxLength": 10
+      "maxLength": 10,
+      "pattern":"^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$"
     }
   },
   "required": [
