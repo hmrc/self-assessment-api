@@ -28,7 +28,8 @@ import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{PeriodMapper, PropertiesPeriodResponse, ResponseMapper}
-import uk.gov.hmrc.selfassessmentapi.services.AuditService
+import uk.gov.hmrc.selfassessmentapi.services.AuditData
+import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -41,9 +42,9 @@ object PropertiesPeriodResource extends BaseResource {
       validateCreateRequest(id, nino, request) map {
         case Left(errorResult) => handleValidationErrors(errorResult)
         case Right((periodId, response)) =>
+          audit(makePeriodCreateAudit(nino, id, request.authContext, response, periodId))
           response.filter {
             case 200 =>
-              auditPeriodicCreate(nino, id, request.authContext, response, periodId)
               Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
           }
       }
@@ -79,7 +80,7 @@ object PropertiesPeriodResource extends BaseResource {
             response.filter {
               case 200 =>
                 id match {
-                  case PropertyType.FHL => toResult[FHL.Properties, des.properties.FHL.Properties](response)
+                  case PropertyType.FHL   => toResult[FHL.Properties, des.properties.FHL.Properties](response)
                   case PropertyType.OTHER => toResult[Other.Properties, des.properties.Other.Properties](response)
                 }
             }
@@ -96,10 +97,14 @@ object PropertiesPeriodResource extends BaseResource {
             id match {
               case PropertyType.FHL =>
                 ResponseMapper[FHL.Properties, des.properties.FHL.Properties]
-                  .allPeriods(response, getMaxPeriodTimeSpan).map(seq => Ok(Json.toJson(seq))).getOrElse(InternalServerError)
+                  .allPeriods(response, getMaxPeriodTimeSpan)
+                  .map(seq => Ok(Json.toJson(seq)))
+                  .getOrElse(InternalServerError)
               case PropertyType.OTHER =>
                 ResponseMapper[Other.Properties, des.properties.Other.Properties]
-                  .allPeriods(response, getMaxPeriodTimeSpan).map(seq => Ok(Json.toJson(seq))).getOrElse(InternalServerError)
+                  .allPeriods(response, getMaxPeriodTimeSpan)
+                  .map(seq => Ok(Json.toJson(seq)))
+                  .getOrElse(InternalServerError)
             }
         }
       }
@@ -119,7 +124,7 @@ object PropertiesPeriodResource extends BaseResource {
       implicit hc: HeaderCarrier): Future[Either[ErrorResult, (PeriodId, PropertiesPeriodResponse)]] =
     id match {
       case PropertyType.OTHER => validateAndCreate[Other.Properties, Other.Financials](nino, request)
-      case PropertyType.FHL => validateAndCreate[FHL.Properties, FHL.Financials](nino, request)
+      case PropertyType.FHL   => validateAndCreate[FHL.Properties, FHL.Financials](nino, request)
     }
 
   private def validateAndUpdate[P <: Period, F <: Financials](id: PropertyType,
@@ -136,16 +141,32 @@ object PropertiesPeriodResource extends BaseResource {
       implicit hc: HeaderCarrier): Future[Either[ErrorResult, PropertiesPeriodResponse]] =
     id match {
       case PropertyType.OTHER => validateAndUpdate[Other.Properties, Other.Financials](id, nino, period, request)
-      case PropertyType.FHL => validateAndUpdate[FHL.Properties, FHL.Financials](id, nino, period, request)
+      case PropertyType.FHL   => validateAndUpdate[FHL.Properties, FHL.Financials](id, nino, period, request)
     }
 
-  private def auditPeriodicCreate(nino: Nino,
-                                  id: PropertyType,
-                                  authCtx: AuthContext,
-                                  response: PropertiesPeriodResponse,
-                                  periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
-    AuditService.audit(payload =
-                         PeriodicUpdate(nino, id.toString, periodId, authCtx.toString, response.transactionReference, request.body),
-                       s"$id-property-periodic-create")
-  }
+  private def makePeriodCreateAudit(
+      nino: Nino,
+      id: PropertyType,
+      authCtx: AuthContext,
+      response: PropertiesPeriodResponse,
+      periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): AuditData[PeriodicUpdate] =
+    AuditData(
+      detail = PeriodicUpdate(
+        httpStatus = response.status,
+        nino = nino,
+        sourceId = id.toString,
+        periodId = periodId,
+        affinityGroup = authCtx.toString,
+        transactionReference = response.status / 100 match {
+          case 2 => response.transactionReference
+          case _ => None
+        },
+        requestPayload = request.body,
+        responsePayload = response.status match {
+          case 200 | 400 => Some(response.json)
+          case _         => None
+        }
+      ),
+      transactionName = s"$id-property-periodic-create"
+    )
 }

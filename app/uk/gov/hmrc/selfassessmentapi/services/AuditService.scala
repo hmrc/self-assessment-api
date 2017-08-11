@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.services
 
 import org.joda.time.{DateTime, DateTimeZone}
+import play.api.Logger
 import play.api.libs.json.{Format, Json}
 import play.api.mvc.Request
 import uk.gov.hmrc.play.audit.AuditExtensions
@@ -24,22 +25,35 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuditConnector
-import uk.gov.hmrc.selfassessmentapi.models.audit.AuditPayload
+import uk.gov.hmrc.selfassessmentapi.models.audit.AuditDetail
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.control.NonFatal
 
 trait AuditService {
+  val logger: Logger = Logger(this.getClass)
   val auditConnector: AuditConnector
 
-  def audit[T <: AuditPayload](payload: T, transactionName: String)
-                              (implicit hc: HeaderCarrier, fmt: Format[T], request: Request[_]): Unit = {
+  def audit[T <: AuditDetail](
+      auditData: AuditData[T])(implicit hc: HeaderCarrier, fmt: Format[T], request: Request[_]): Unit =
+    try {
+      sendEvent(detail = auditData.detail, transactionName = auditData.transactionName)
+    } catch {
+      case NonFatal(ex) =>
+        logger.error(s"An exception [$ex] occurred in the Audit service while sending event [$auditData]")
+    }
+
+  private def sendEvent[T <: AuditDetail](detail: T, transactionName: String)(implicit hc: HeaderCarrier,
+                                                                              fmt: Format[T],
+                                                                              request: Request[_]): Unit = {
     auditConnector.sendEvent(
       ExtendedDataEvent(
         auditSource = "self-assessment-api",
-        auditType = payload.auditType.toString,
+        auditType = detail.auditType.toString,
         tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(transactionName, request.path),
-        detail = Json.toJson(payload),
-        generatedAt = DateTime.now(DateTimeZone.UTC))
+        detail = Json.toJson(detail),
+        generatedAt = DateTime.now(DateTimeZone.UTC)
+      )
     )
   }
 }
@@ -47,3 +61,5 @@ trait AuditService {
 object AuditService extends AuditService {
   override lazy val auditConnector = MicroserviceAuditConnector
 }
+
+case class AuditData[T <: AuditDetail](detail: T, transactionName: String)

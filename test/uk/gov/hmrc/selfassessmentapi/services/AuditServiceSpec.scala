@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.services
 
-
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers._
 import org.mockito.Mockito._
@@ -41,18 +40,19 @@ class AuditServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
       val testService = new TestAuditService
 
       val auditPayload = PeriodicUpdate(
+        httpStatus = 200,
         nino = generateNino,
         sourceId = "abc",
         periodId = "def",
         affinityGroup = "individual",
         transactionReference = Some("ghi"),
-        requestPayload = Json.obj())
+        requestPayload = Json.obj(),
+        responsePayload = Some(Json.obj())
+      )
 
       when(mockRequest.path).thenReturn("path")
 
-      testService.audit(
-        payload = auditPayload,
-        transactionName = "jkl")
+      testService.audit(AuditData(detail = auditPayload, transactionName = "jkl"))
 
       val captor = ArgumentCaptor.forClass(classOf[ExtendedDataEvent])
       verify(mockAuditConnector).sendEvent(captor.capture)(any[HeaderCarrier], any[ExecutionContext])
