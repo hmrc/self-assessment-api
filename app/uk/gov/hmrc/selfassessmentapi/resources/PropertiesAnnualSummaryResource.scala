@@ -32,7 +32,8 @@ import uk.gov.hmrc.selfassessmentapi.models.properties.{
 }
 import uk.gov.hmrc.selfassessmentapi.models.{SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
-import uk.gov.hmrc.selfassessmentapi.services.AuditService
+import uk.gov.hmrc.selfassessmentapi.services.AuditData
+import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -45,10 +46,9 @@ object PropertiesAnnualSummaryResource extends BaseResource {
       validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) map {
         case Left(errorResult) => handleValidationErrors(errorResult)
         case Right(response) =>
+          audit(makeAnnualSummaryUpdateAudit(nino, propertyId, taxYear, request.authContext, response))
           response.filter {
-            case 200 =>
-              auditAnnualSummaryUpdate(nino, propertyId, taxYear, request.authContext, response)
-              NoContent
+            case 200 => NoContent
           }
       }
     }
@@ -78,14 +78,30 @@ object PropertiesAnnualSummaryResource extends BaseResource {
       case PropertyType.FHL   => validate[FHLPropertiesAnnualSummary, PropertiesAnnualSummaryResponse](body)(f)
     }
 
-  private def auditAnnualSummaryUpdate(
-      nino: Nino,
-      id: PropertyType,
-      taxYear: TaxYear,
-      authCtx: AuthContext,
-      response: PropertiesAnnualSummaryResponse)(implicit hc: HeaderCarrier, request: Request[JsValue]) = {
-    AuditService.audit(
-      AnnualSummaryUpdate(nino, id.toString, taxYear, authCtx.toString, response.transactionReference, request.body),
-      s"$id-property-annual-summary-update")
-  }
+  private def makeAnnualSummaryUpdateAudit(nino: Nino,
+                                         id: PropertyType,
+                                         taxYear: TaxYear,
+                                         authCtx: AuthContext,
+                                         response: PropertiesAnnualSummaryResponse)(
+      implicit hc: HeaderCarrier,
+      request: Request[JsValue]): AuditData[AnnualSummaryUpdate] =
+    AuditData(
+      detail = AnnualSummaryUpdate(
+        httpStatus = response.status,
+        nino = nino,
+        sourceId = id.toString,
+        taxYear = taxYear,
+        affinityGroup = authCtx.toString,
+        transactionReference = response.status / 100 match {
+          case 2 => response.transactionReference
+          case _ => None
+        },
+        requestPayload = request.body,
+        responsePayload = response.status match {
+          case 400 => Some(response.json)
+          case _   => None
+        }
+      ),
+      transactionName = s"$id-property-annual-summary-update"
+    )
 }

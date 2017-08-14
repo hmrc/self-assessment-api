@@ -23,7 +23,7 @@ import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.SourceId
 import uk.gov.hmrc.selfassessmentapi.models.audit.RetrieveObligations
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.ObligationsResponse
-import uk.gov.hmrc.selfassessmentapi.services.AuditService
+import uk.gov.hmrc.selfassessmentapi.services.AuditData
 
 sealed trait RetrieveObligationTransaction
 
@@ -36,12 +36,24 @@ case object SelfEmploymentRetrieveObligations extends RetrieveObligationTransact
 }
 
 object Audit {
-  def auditObligationsRetrieval(
-      nino: Nino,
-      id: Option[SourceId] = None,
-      authCtx: AuthContext,
-      response: ObligationsResponse,
-      transaction: RetrieveObligationTransaction)(implicit hc: HeaderCarrier, request: Request[_]): Unit =
-    AuditService.audit(payload = RetrieveObligations(nino, id, authCtx.toString, response.json),
-                       transactionName = transaction.toString)
+  def makeObligationsRetrievalAudit(nino: Nino,
+                                    id: Option[SourceId] = None,
+                                    authCtx: AuthContext,
+                                    response: ObligationsResponse,
+                                    transaction: RetrieveObligationTransaction)(
+      implicit hc: HeaderCarrier,
+      request: Request[_]): AuditData[RetrieveObligations] =
+    AuditData(
+      detail = RetrieveObligations(
+        httpStatus = response.status,
+        nino = nino,
+        sourceId = id,
+        affinityGroup = authCtx.toString,
+        responsePayload = response.status match {
+          case 200 | 400 => Some(response.json)
+          case _         => None
+        }
+      ),
+      transactionName = transaction.toString
+    )
 }

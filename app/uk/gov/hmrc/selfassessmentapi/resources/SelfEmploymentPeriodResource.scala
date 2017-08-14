@@ -23,12 +23,12 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext._
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
-import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentPeriodResponse
-import uk.gov.hmrc.selfassessmentapi.services.AuditService
+import uk.gov.hmrc.selfassessmentapi.services.AuditData
+import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -45,9 +45,9 @@ object SelfEmploymentPeriodResource extends BaseResource {
       } map {
         case Left(errorResult) => handleValidationErrors(errorResult)
         case Right((periodId, response)) =>
+          audit(makePeriodCreateAudit(nino, sourceId, request.authContext, response, periodId))
           response.filter {
             case 200 =>
-              auditPeriodicCreate(nino, sourceId, request.authContext, response, periodId)
               Created.withHeaders(LOCATION -> response.createLocationHeader(nino, sourceId, periodId))
           }
       }
@@ -87,17 +87,35 @@ object SelfEmploymentPeriodResource extends BaseResource {
     APIAction(nino, SourceType.SelfEmployments, Some("periods")).async(parse.empty) { implicit request =>
       connector.getAll(nino, id).map { response =>
         response.filter {
-          case 200 => response.allPeriods(getMaxPeriodTimeSpan).map(seq => Ok(Json.toJson(seq))).getOrElse(InternalServerError)
+          case 200 =>
+            response.allPeriods(getMaxPeriodTimeSpan).map(seq => Ok(Json.toJson(seq))).getOrElse(InternalServerError)
         }
       }
     }
 
-  private def auditPeriodicCreate(nino: Nino,
-                                  id: SourceId,
-                                  authCtx: AuthContext,
-                                  response: SelfEmploymentPeriodResponse,
-                                  periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): Unit = {
-    AuditService.audit(payload = PeriodicUpdate(nino, id, periodId, authCtx.toString, response.transactionReference, request.body),
-                       "self-employment-periodic-create")
-  }
+  private def makePeriodCreateAudit(
+      nino: Nino,
+      id: SourceId,
+      authCtx: AuthContext,
+      response: SelfEmploymentPeriodResponse,
+      periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): AuditData[PeriodicUpdate] =
+    AuditData(
+      detail = PeriodicUpdate(
+        httpStatus = response.status,
+        nino = nino,
+        sourceId = id,
+        periodId = periodId,
+        affinityGroup = authCtx.toString,
+        transactionReference = response.status / 100 match {
+          case 2 => response.transactionReference
+          case _ => None
+        },
+        requestPayload = request.body,
+        responsePayload = response.status match {
+          case 200 | 400 => Some(response.json)
+          case _         => None
+        }
+      ),
+      transactionName = "self-employment-periodic-create"
+    )
 }

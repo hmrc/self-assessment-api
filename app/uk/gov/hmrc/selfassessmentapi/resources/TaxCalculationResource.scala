@@ -26,7 +26,8 @@ import uk.gov.hmrc.selfassessmentapi.models.audit.{TaxCalculationRequest, TaxCal
 import uk.gov.hmrc.selfassessmentapi.models.calculation.CalculationRequest
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.TaxCalculationResponse
-import uk.gov.hmrc.selfassessmentapi.services.AuditService
+import uk.gov.hmrc.selfassessmentapi.services.AuditData
+import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -46,17 +47,17 @@ object TaxCalculationResource extends BaseResource {
         connector.requestCalculation(nino, req.taxYear)
       } map {
         case Left(errorResult) => handleValidationErrors(errorResult)
-        case Right(response) =>
+        case Right(response)   =>
+          audit(makeTaxCalcTriggerAudit(nino, request.authContext, response))
           response.filter {
             case 202 =>
-              auditTaxCalcTrigger(nino, request.authContext, response)
               Accepted(Json.parse(cannedEtaResponse))
                 .withHeaders(
                   LOCATION -> response.calcId
                     .map(id => s"/self-assessment/ni/$nino/calculations/$id")
                     .getOrElse(""))
             case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
-            case _ => unhandledResponse(response.status, logger)
+            case _                             => unhandledResponse(response.status, logger)
           }
       }
     }
@@ -64,38 +65,56 @@ object TaxCalculationResource extends BaseResource {
   def retrieveCalculation(nino: Nino, calcId: SourceId): Action[Unit] =
     APIAction(nino, SourceType.Calculation).async(parse.empty) { implicit request =>
       connector.retrieveCalculation(nino, calcId).map { response =>
+        audit(makeTaxCalcRequestAudit(nino, calcId, request.authContext, response))
         response.filter {
-          case 200 =>
-            auditTaxCalcRequest(nino, calcId, request.authContext, response)
-            Ok(Json.toJson(response.calculation))
-          case 204 => NoContent
-          case 400 if response.isInvalidCalcId => NotFound
+          case 200                                 => Ok(Json.toJson(response.calculation))
+          case 204                                 => NoContent
+          case 400 if response.isInvalidCalcId     => NotFound
           case 400 if response.isInvalidIdentifier => BadRequest(Json.toJson(Errors.NinoInvalid))
-          case 404 => NotFound
-          case _ => unhandledResponse(response.status, logger)
+          case 404                                 => NotFound
+          case _                                   => unhandledResponse(response.status, logger)
         }
       }
     }
 
-  private def auditTaxCalcTrigger(nino: Nino, authCtx: AuthContext, response: TaxCalculationResponse)(implicit hc: HeaderCarrier,
-                                                                                                      request: Request[JsValue]): Unit = {
-    AuditService.audit(payload =
-      TaxCalculationTrigger(
-        nino,
-        request.body.as[CalculationRequest].taxYear,
-        authCtx.toString,
-        response.calcId.getOrElse("")),
-      "trigger-tax-calculation")
-  }
+  private def makeTaxCalcTriggerAudit(nino: Nino, authCtx: AuthContext, response: TaxCalculationResponse)(
+      implicit hc: HeaderCarrier,
+      request: Request[JsValue]): AuditData[TaxCalculationTrigger] =
+    AuditData(
+      detail = TaxCalculationTrigger(
+        httpStatus = response.status,
+        nino = nino,
+        taxYear = request.body.as[CalculationRequest].taxYear,
+        affinityGroup = authCtx.toString,
+        calculationId = response.status / 100 match {
+          case 2 => Some(response.calcId.getOrElse(""))
+          case _ => None
+        },
+        responsePayload = response.status match {
+          case 202 | 400 => Some(response.json)
+          case _         => None
+        }
+      ),
+      transactionName = "trigger-tax-calculation"
+    )
 
-  private def auditTaxCalcRequest(nino: Nino, calcId: String, authCtx: AuthContext, response: TaxCalculationResponse)(
-    implicit hc: HeaderCarrier,
-    request: Request[_]): Unit = {
-    AuditService.audit(payload =
-      TaxCalculationRequest(
-        nino,
-        calcId,
-        authCtx.toString,
-        response.json), "retrieve-tax-calculation")
-  }
+  private def makeTaxCalcRequestAudit(nino: Nino,
+                                      calcId: String,
+                                      authCtx: AuthContext,
+                                      response: TaxCalculationResponse)(
+      implicit hc: HeaderCarrier,
+      request: Request[_]): AuditData[TaxCalculationRequest] =
+    AuditData(
+      detail = TaxCalculationRequest(
+        httpStatus = response.status,
+        nino = nino,
+        calculationId = calcId,
+        affinityGroup = authCtx.toString,
+        responsePayload = response.status match {
+          case 200 | 400 => Some(response.json)
+          case _         => None
+        }
+      ),
+      transactionName = "retrieve-tax-calculation"
+    )
 }

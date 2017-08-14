@@ -21,7 +21,8 @@ import play.api.mvc.Action
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.ObligationsConnector
 import uk.gov.hmrc.selfassessmentapi.models._
-import uk.gov.hmrc.selfassessmentapi.resources.Audit.auditObligationsRetrieval
+import uk.gov.hmrc.selfassessmentapi.resources.Audit.makeObligationsRetrievalAudit
+import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -31,10 +32,11 @@ object SelfEmploymentObligationsResource extends BaseResource {
   def retrieveObligations(nino: Nino, id: SourceId): Action[Unit] =
     APIAction(nino, SourceType.SelfEmployments, Some("obligations")).async(parse.empty) { implicit request =>
       connector.get(nino).map { response =>
+        audit(
+          makeObligationsRetrievalAudit(nino, Some(id), request.authContext, response, SelfEmploymentRetrieveObligations))
         response.filter {
           case 200 =>
             logger.debug("Self-employment obligations from DES = " + Json.stringify(response.json))
-            auditObligationsRetrieval(nino, Some(id), request.authContext, response, SelfEmploymentRetrieveObligations)
             response.obligations("ITSB", Some(id)) match {
               case Right(obj) => obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
               case Left(ex) =>

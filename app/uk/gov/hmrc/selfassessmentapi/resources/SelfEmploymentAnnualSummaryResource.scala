@@ -26,7 +26,8 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.AnnualSummaryUpdate
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentAnnualSummaryResponse
-import uk.gov.hmrc.selfassessmentapi.services.AuditService
+import uk.gov.hmrc.selfassessmentapi.services.AuditData
+import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -40,9 +41,9 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
       } map {
         case Left(errorResult) => handleValidationErrors(errorResult)
         case Right(response) =>
+          audit(makeAnnualSummaryUpdateAudit(nino, id, taxYear, request.authContext, response))
           response.filter {
             case 200 =>
-              auditAnnualSummaryUpdate(nino, id, taxYear, request.authContext, response)
               NoContent
           }
       }
@@ -58,13 +59,30 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
       }
     }
 
-  private def auditAnnualSummaryUpdate(
-      nino: Nino,
-      id: SourceId,
-      taxYear: TaxYear,
-      authCtx: AuthContext,
-      response: SelfEmploymentAnnualSummaryResponse)(implicit hc: HeaderCarrier, request: Request[JsValue]) = {
-    AuditService.audit(AnnualSummaryUpdate(nino, id, taxYear, authCtx.toString, response.transactionReference, request.body),
-                       "self-employment-annual-summary-update")
-  }
+  private def makeAnnualSummaryUpdateAudit(nino: Nino,
+                                           id: SourceId,
+                                           taxYear: TaxYear,
+                                           authCtx: AuthContext,
+                                           response: SelfEmploymentAnnualSummaryResponse)(
+      implicit hc: HeaderCarrier,
+      request: Request[JsValue]): AuditData[AnnualSummaryUpdate] =
+    AuditData(
+      detail = AnnualSummaryUpdate(
+        httpStatus = response.status,
+        nino = nino,
+        sourceId = id,
+        taxYear = taxYear,
+        affinityGroup = authCtx.toString,
+        transactionReference = response.status / 100 match {
+          case 2 => response.transactionReference
+          case _ => None
+        },
+        requestPayload = request.body,
+        responsePayload = response.status match {
+          case 400 => Some(response.json)
+          case _   => None
+        }
+      ),
+      transactionName = "self-employment-annual-summary-update"
+    )
 }

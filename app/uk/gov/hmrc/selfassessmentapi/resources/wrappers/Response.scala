@@ -40,38 +40,49 @@ trait Response {
   private def logResponse(): Unit =
     logger.error(s"DES error occurred with status code ${underlying.status} and body ${underlying.body}")
 
-  def filter[A](f: PartialFunction[Int, Result])(implicit request: AuthRequest[A]): Result =
+  def filter[A](pf: PartialFunction[Int, Result])(implicit request: AuthRequest[A]): Result =
     status / 100 match {
       case 4 if request.authContext == FilingOnlyAgent =>
         logResponse()
         BadRequest(toJson(Errors.InvalidRequest))
       case 4 | 5 =>
         logResponse()
-        (f orElse errorMapping)(status)
-      case _ => ((f andThen addCorrelationHeader) orElse errorMapping)(status)
+        (pf orElse errorMapping)(status)
+      case _ => ((pf andThen addCorrelationHeader) orElse errorMapping)(status)
     }
 
-  private def addCorrelationHeader(result: Result) = underlying.header("CorrelationId").fold(result)(correlationId => result.withHeaders("X-CorrelationId" -> correlationId))
+  private def addCorrelationHeader(result: Result) =
+    underlying
+      .header("CorrelationId")
+      .fold(result)(correlationId => result.withHeaders("X-CorrelationId" -> correlationId))
 
   private def errorMapping: PartialFunction[Int, Result] = {
-    case 400 if errorCodeIsIn(INVALID_NINO)    => BadRequest(toJson(Errors.NinoInvalid))
-    case 400 if errorCodeIsIn(INVALID_PAYLOAD) => BadRequest(toJson(Errors.InvalidRequest))
+    case 400 if errorCodeIsOneOf(INVALID_NINO)    => BadRequest(toJson(Errors.NinoInvalid))
+    case 400 if errorCodeIsOneOf(INVALID_PAYLOAD) => BadRequest(toJson(Errors.InvalidRequest))
     case 400
-        if errorCodeIsIn(INVALID_BUSINESSID, INVALID_INCOME_SOURCE, INVALID_TYPE, INVALID_IDENTIFIER, INVALID_CALCID) =>
+        if errorCodeIsOneOf(INVALID_BUSINESSID,
+                            INVALID_INCOME_SOURCE,
+                            INVALID_TYPE,
+                            INVALID_IDENTIFIER,
+                            INVALID_CALCID) =>
       NotFound
-    case 400 if errorCodeIsIn(INVALID_PERIOD) => Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))
+    case 400 if errorCodeIsOneOf(INVALID_PERIOD) => Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))
     case 400
-        if errorCodeIsIn(INVALID_ORIGINATOR_ID, INVALID_DATE_FROM, INVALID_DATE_TO, INVALID_STATUS, INVALID_TAX_YEAR) =>
+        if errorCodeIsOneOf(INVALID_ORIGINATOR_ID,
+                            INVALID_DATE_FROM,
+                            INVALID_DATE_TO,
+                            INVALID_STATUS,
+                            INVALID_TAX_YEAR) =>
       InternalServerError(toJson(Errors.InternalServerError))
-    case 403 if errorCodeIsIn(INVALID_DATE_RANGE)  => InternalServerError(toJson(Errors.InternalServerError))
-    case 403                                       => NotFound
-    case 404                                       => NotFound
-    case 500 if errorCodeIsIn(SERVER_ERROR)        => InternalServerError(toJson(Errors.InternalServerError))
-    case 503 if errorCodeIsIn(SERVICE_UNAVAILABLE) => InternalServerError(toJson(Errors.InternalServerError))
-    case _                                         => InternalServerError(toJson(Errors.InternalServerError))
+    case 403 if errorCodeIsOneOf(INVALID_DATE_RANGE)  => InternalServerError(toJson(Errors.InternalServerError))
+    case 403                                          => NotFound
+    case 404                                          => NotFound
+    case 500 if errorCodeIsOneOf(SERVER_ERROR)        => InternalServerError(toJson(Errors.InternalServerError))
+    case 503 if errorCodeIsOneOf(SERVICE_UNAVAILABLE) => InternalServerError(toJson(Errors.InternalServerError))
+    case _                                            => InternalServerError(toJson(Errors.InternalServerError))
   }
 
-  def errorCodeIsIn(errorCodes: DesErrorCode*): Boolean =
+  def errorCodeIsOneOf(errorCodes: DesErrorCode*): Boolean =
     json.asOpt[DesError].exists(errorCode => errorCodes.contains(errorCode.code))
 }
 
