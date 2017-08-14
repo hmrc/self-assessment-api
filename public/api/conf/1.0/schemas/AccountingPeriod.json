@@ -7,14 +7,12 @@
     "start": {
       "title": "Start date",
       "description": "Date your books or accounts start - the beginning of your accounting period",
-      "type": "string",
-      "format": "date"
+      "$ref": "FullDate.json"
     },
     "end": {
       "title": "End date",
       "description": "Date your books or accounts are made up to or the end of your accounting period",
-      "type": "string",
-      "format": "date"
+      "$ref": "FullDate.json"
     }
   },
   "required": [

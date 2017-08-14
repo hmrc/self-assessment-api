@@ -5,20 +5,18 @@
   "properties": {
     "id": {
       "title": "ID",
-      "description": "Unique identifier",
+      "description": "Unique period identifier for the business",
       "type": "string"
     },
     "from": {
       "title": "From date",
       "description": "Start date for the period",
-      "type": "string",
-      "format": "date"
+      "$ref": "FullDate.json"
     },
     "to": {
       "title": "To date",
       "description": "End date for the period",
-      "type": "string",
-      "format": "date"
+      "$ref": "FullDate.json"
     },
     "incomes": {
       "$ref": "self-employment/Incomes.json"

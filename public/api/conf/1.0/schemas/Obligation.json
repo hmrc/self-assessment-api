@@ -7,25 +7,23 @@
     "start": {
       "title": "Start date",
       "description": "The start date of this obligation period",
-      "type": "string",
-      "format": "date"
+      "$ref": "FullDate.json"
     },
     "end": {
       "title": "End date",
       "description": "The end date of this obligation period",
-      "type": "string",
-      "format": "date"
+      "$ref": "FullDate.json"
     },
     "due": {
       "title": "Due date",
       "description": "The due date for this obligation period",
-      "type": "string",
-      "format": "date"
+      "$ref": "FullDate.json"
     },
     "met": {
       "title": "Met",
       "description": "True if this obligation period has been met; false otherwise",
-      "type": "boolean"
+      "type": "boolean",
+      "example": "true or false"
     }
   },
   "required": [
