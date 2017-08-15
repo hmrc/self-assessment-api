@@ -10,6 +10,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "basisAdjustment": {
@@ -17,6 +18,8 @@
       "description": "If your basis period is not the same as your accounting period, enter the adjustment needed to arrive at the profit or loss for the basis period – if the adjustment needs to be taken off the profit figure, this should be negative",
       "type": "number",
       "multipleOf": 0.01,
+      "minimum": -99999999999999.98,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "overlapReliefUsed": {
@@ -25,6 +28,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "accountingAdjustment": {
@@ -33,6 +37,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "averagingAdjustment": {
@@ -40,6 +45,8 @@
       "description": "Averaging adjustment (only for farmers, market gardeners and creators of literary or artistic works)\n– if the adjustment needs to be taken off the profit figure, this should be negative",
       "type": "number",
       "multipleOf": 0.01,
+      "minimum": -99999999999999.98,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "lossBroughtForward": {
@@ -48,6 +55,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "outstandingBusinessIncome": {
@@ -56,6 +64,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "balancingChargeBPRA": {
@@ -64,6 +73,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "balancingChargeOther": {
@@ -72,6 +82,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "goodsAndServicesOwnUse": {
@@ -80,6 +91,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     }
   },

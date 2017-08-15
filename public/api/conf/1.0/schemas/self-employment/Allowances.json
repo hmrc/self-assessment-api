@@ -10,6 +10,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "capitalAllowanceMainPool": {
@@ -18,6 +19,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "zeroEmissionGoodsVehicleAllowance": {
@@ -26,6 +28,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "capitalAllowanceSpecialRatePool": {
@@ -34,6 +37,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "businessPremisesRenovationAllowance": {
@@ -42,6 +46,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "enhancedCapitalAllowance": {
@@ -50,6 +55,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     },
     "allowanceOnSales": {
@@ -58,6 +64,7 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
+      "maximum": 99999999999999.98,
       "example": "500.25"
     }
   },
