@@ -21,45 +21,46 @@ import play.api.Logger
 import play.api.libs.json.{Format, Json}
 import play.api.mvc.Request
 import uk.gov.hmrc.play.audit.AuditExtensions
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
+import uk.gov.hmrc.play.audit.http.connector.AuditResult.Failure
+import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuditConnector
 import uk.gov.hmrc.selfassessmentapi.models.audit.AuditDetail
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.util.control.NonFatal
 
 trait AuditService {
   val logger: Logger = Logger(this.getClass)
-  val auditConnector: AuditConnector
 
   def audit[T <: AuditDetail](
-      auditData: AuditData[T])(implicit hc: HeaderCarrier, fmt: Format[T], request: Request[_]): Unit =
+      auditData: AuditData[T])(implicit hc: HeaderCarrier, fmt: Format[T], request: Request[_]): Future[AuditResult] =
+    sendEvent(makeEvent(auditData.detail, auditData.transactionName), MicroserviceAuditConnector)
+
+  def makeEvent[T <: AuditDetail](detail: T, transactionName: String)(implicit hc: HeaderCarrier,
+                                                                      fmt: Format[T],
+                                                                      request: Request[_]): ExtendedDataEvent =
+    ExtendedDataEvent(
+      auditSource = "self-assessment-api",
+      auditType = detail.auditType.toString,
+      tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(transactionName, request.path),
+      detail = Json.toJson(detail),
+      generatedAt = DateTime.now(DateTimeZone.UTC)
+    )
+
+  def sendEvent(event: ExtendedDataEvent, connector: AuditConnector): Future[AuditResult] =
     try {
-      sendEvent(detail = auditData.detail, transactionName = auditData.transactionName)
+      connector.sendEvent(event)
     } catch {
       case NonFatal(ex) =>
-        logger.error(s"An exception [$ex] occurred in the Audit service while sending event [$auditData]")
+        val msg = s"An exception [$ex] occurred in the Audit service while sending event [$event]"
+        logger.error(msg)
+        Future.successful(Failure(msg, Some(ex)))
     }
-
-  private def sendEvent[T <: AuditDetail](detail: T, transactionName: String)(implicit hc: HeaderCarrier,
-                                                                              fmt: Format[T],
-                                                                              request: Request[_]): Unit = {
-    auditConnector.sendEvent(
-      ExtendedDataEvent(
-        auditSource = "self-assessment-api",
-        auditType = detail.auditType.toString,
-        tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(transactionName, request.path),
-        detail = Json.toJson(detail),
-        generatedAt = DateTime.now(DateTimeZone.UTC)
-      )
-    )
-  }
 }
 
-object AuditService extends AuditService {
-  override lazy val auditConnector = MicroserviceAuditConnector
-}
+object AuditService extends AuditService
 
 case class AuditData[T <: AuditDetail](detail: T, transactionName: String)

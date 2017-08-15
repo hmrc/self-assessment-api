@@ -27,6 +27,7 @@ class AuditDetailSpec extends JsonSpec {
     "round trip" in {
       roundTripJson(
         PeriodicUpdate(
+          auditType = "amendPeriodicUpdate",
           httpStatus = 200,
           nino = Nino("AA999999A"),
           sourceId = "abc",

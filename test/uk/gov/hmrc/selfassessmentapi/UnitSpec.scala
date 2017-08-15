@@ -17,18 +17,22 @@
 package uk.gov.hmrc.selfassessmentapi
 
 import org.joda.time.{DateTime, DateTimeZone}
-import org.scalatest.{Matchers, OptionValues, WordSpec}
+import org.scalatest.{AsyncWordSpec, Matchers, OptionValues, WordSpec}
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
-trait UnitSpec extends WordSpec with Matchers with OptionValues with TestUtils {
+trait BaseUnitSpec extends Matchers with OptionValues with TestUtils {
   implicit val timeout: FiniteDuration = 5 seconds
 
   def await[T](f: Future[T])(implicit duration: FiniteDuration = timeout): T =
     Await.result(f, duration)
 }
+
+trait UnitSpec extends WordSpec with BaseUnitSpec
+
+trait AsyncUnitSpec extends AsyncWordSpec with BaseUnitSpec
 
 trait TestUtils {
   private val ninoGenerator = NinoGenerator()

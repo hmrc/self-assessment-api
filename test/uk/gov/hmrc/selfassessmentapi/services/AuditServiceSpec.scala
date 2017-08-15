@@ -16,69 +16,79 @@
 
 package uk.gov.hmrc.selfassessmentapi.services
 
-import org.mockito.ArgumentCaptor
-import org.mockito.Matchers._
-import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
+import org.joda.time.DateTime
 import play.api.libs.json.Json
-import play.api.mvc.Request
 import uk.gov.hmrc.play.audit.AuditExtensions
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+import uk.gov.hmrc.play.audit.http.config.AuditingConfig
+import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Failure, Success}
+import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
+import uk.gov.hmrc.play.audit.model.{AuditEvent, ExtendedDataEvent}
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.logging.Authorization
-import uk.gov.hmrc.selfassessmentapi.UnitSpec
+import uk.gov.hmrc.selfassessmentapi.AsyncUnitSpec
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class AuditServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+class AuditServiceSpec extends AsyncUnitSpec {
 
-  "audit" should {
-    "send an audit event with the provided information when invoked" in {
+  private implicit val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("abcd")))
+
+  private class TestAuditService extends AuditService
+
+  val auditPayload = PeriodicUpdate(
+    auditType = "submitPeriodicUpdate",
+    httpStatus = 200,
+    nino = generateNino,
+    sourceId = "abc",
+    periodId = "def",
+    affinityGroup = "individual",
+    transactionReference = Some("ghi"),
+    requestPayload = Json.obj(),
+    responsePayload = Some(Json.obj())
+  )
+
+  val event = ExtendedDataEvent(
+    auditSource = "self-assessment-api",
+    auditType = auditPayload.auditType,
+    tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags("jkl", "path"),
+    detail = Json.toJson(auditPayload),
+    eventId = "someId",
+    generatedAt = DateTime.now()
+  )
+
+  "sendEvent" should {
+
+    "return Success if the audit was successful" in {
       val testService = new TestAuditService
+      val connector = new AuditConnector {
+        override def auditingConfig: AuditingConfig = ???
 
-      val auditPayload = PeriodicUpdate(
-        httpStatus = 200,
-        nino = generateNino,
-        sourceId = "abc",
-        periodId = "def",
-        affinityGroup = "individual",
-        transactionReference = Some("ghi"),
-        requestPayload = Json.obj(),
-        responsePayload = Some(Json.obj())
-      )
+        override def sendEvent(event: AuditEvent)(implicit hc: HeaderCarrier,
+                                                  ec: ExecutionContext): Future[AuditResult] =
+          Future.successful(Success)
+      }
 
-      when(mockRequest.path).thenReturn("path")
+      testService.sendEvent(event, connector) map { auditResult =>
+        assert(auditResult == Success)
+      }
+    }
 
-      testService.audit(AuditData(detail = auditPayload, transactionName = "jkl"))
+    "return Failure if an exception occurred when sending the audit event" in {
+      val testService = new TestAuditService
+      val ex = new RuntimeException("some non-fatal exception")
+      val connector = new AuditConnector {
+        override def auditingConfig: AuditingConfig = ???
 
-      val captor = ArgumentCaptor.forClass(classOf[ExtendedDataEvent])
-      verify(mockAuditConnector).sendEvent(captor.capture)(any[HeaderCarrier], any[ExecutionContext])
+        override def sendEvent(event: AuditEvent)(implicit hc: HeaderCarrier,
+                                                  ec: ExecutionContext): Future[AuditResult] =
+          throw ex
+      }
 
-      val event = captor.getValue
-
-      event shouldBe ExtendedDataEvent(
-        auditSource = "self-assessment-api",
-        auditType = auditPayload.auditType,
-        tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags("jkl", "path"),
-        detail = Json.toJson(auditPayload),
-        eventId = event.eventId,
-        generatedAt = event.generatedAt
-      )
+      testService.sendEvent(event, connector) map { auditResult =>
+        assert(auditResult.asInstanceOf[Failure].nested.contains(ex))
+      }
     }
   }
 
-  override protected def beforeEach(): Unit = {
-    reset(mockAuditConnector, mockRequest)
-  }
-
-  private implicit val hc = HeaderCarrier(authorization = Some(Authorization("abcd")))
-  private implicit val mockRequest = mock[Request[_]]
-  private val mockAuditConnector = mock[AuditConnector]
-
-  private class TestAuditService extends AuditService {
-    override val auditConnector: AuditConnector = mockAuditConnector
-  }
 }

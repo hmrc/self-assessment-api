@@ -62,6 +62,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
           } map {
             case Left(errorResult) => handleValidationErrors(errorResult)
             case Right(response) =>
+              audit(makePeriodUpdateAudit(nino, id, periodId, request.authContext, response))
               response.filter {
                 case 200 => NoContent
               }
@@ -101,6 +102,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
       periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): AuditData[PeriodicUpdate] =
     AuditData(
       detail = PeriodicUpdate(
+        auditType = "submitPeriodicUpdate",
         httpStatus = response.status,
         nino = nino,
         sourceId = id,
@@ -117,5 +119,30 @@ object SelfEmploymentPeriodResource extends BaseResource {
         }
       ),
       transactionName = "self-employment-periodic-create"
+    )
+
+  private def makePeriodUpdateAudit(nino: Nino,
+                                    id: SourceId,
+                                    periodId: PeriodId,
+                                    authCtx: AuthContext,
+                                    response: SelfEmploymentPeriodResponse)(
+      implicit hc: HeaderCarrier,
+      request: Request[JsValue]): AuditData[PeriodicUpdate] =
+    AuditData(
+      detail = PeriodicUpdate(
+        auditType = "amendPeriodicUpdate",
+        httpStatus = response.status,
+        nino = nino,
+        sourceId = id,
+        periodId = periodId,
+        affinityGroup = authCtx.toString,
+        transactionReference = None,
+        requestPayload = request.body,
+        responsePayload = response.status match {
+          case 400 => Some(response.json)
+          case _   => None
+        }
+      ),
+      transactionName = "self-employment-periodic-update"
     )
 }

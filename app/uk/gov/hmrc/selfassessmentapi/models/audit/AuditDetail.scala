@@ -27,7 +27,7 @@ sealed trait AuditDetail {
 }
 
 
-case class PeriodicUpdate(override val auditType: String = "submitPeriodicUpdate",
+case class PeriodicUpdate(override val auditType: String,
                           override val httpStatus: Int,
                           nino: Nino,
                           sourceId: SourceId,
