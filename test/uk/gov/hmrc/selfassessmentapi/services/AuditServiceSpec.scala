@@ -43,6 +43,7 @@ class AuditServiceSpec extends AsyncUnitSpec {
     sourceId = "abc",
     periodId = "def",
     affinityGroup = "individual",
+    agentCode = None,
     transactionReference = Some("ghi"),
     requestPayload = Json.obj(),
     responsePayload = Some(Json.obj())

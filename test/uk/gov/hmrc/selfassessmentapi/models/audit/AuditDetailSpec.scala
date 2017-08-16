@@ -33,6 +33,7 @@ class AuditDetailSpec extends JsonSpec {
           sourceId = "abc",
           periodId = "def",
           affinityGroup = "individual",
+          agentCode = None,
           transactionReference = Some("ghi"),
           requestPayload = Json.obj(),
           responsePayload = Some(Json.obj())
@@ -48,6 +49,7 @@ class AuditDetailSpec extends JsonSpec {
           nino = Nino("AA999999A"),
           taxYear = TaxYear("2017-18"),
           affinityGroup = "individual",
+          agentCode = None,
           calculationId = Some("abc"),
           responsePayload = Some(Json.obj())
         ))
@@ -61,6 +63,7 @@ class AuditDetailSpec extends JsonSpec {
                               nino = Nino("AA999999A"),
                               calculationId = "abc",
                               affinityGroup = "individual",
+                              agentCode = None,
                               responsePayload = Some(Json.obj())))
     }
   }
@@ -72,6 +75,7 @@ class AuditDetailSpec extends JsonSpec {
                             nino = Nino("AA999999A"),
                             sourceId = Some("abc"),
                             affinityGroup = "individual",
+                            agentCode = None,
                             responsePayload = Some(Json.obj())))
     }
   }

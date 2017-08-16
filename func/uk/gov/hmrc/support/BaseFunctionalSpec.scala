@@ -525,6 +525,7 @@ trait BaseFunctionalSpec extends TestApplication {
           """
             |{
             |  "internalId": "some-id",
+            |  "agentCode": "some-agent-code",
             |  "loginTimes": {
             |     "currentLogin": "2016-11-27T09:00:00.000Z",
             |     "previousLogin": "2016-11-01T12:00:00.000Z"
@@ -551,6 +552,7 @@ trait BaseFunctionalSpec extends TestApplication {
           """
             |{
             |  "internalId": "some-id",
+            |  "affinityGroup": "Agent",
             |  "loginTimes": {
             |     "currentLogin": "2016-11-27T09:00:00.000Z",
             |     "previousLogin": "2016-11-01T12:00:00.000Z"
@@ -565,6 +567,40 @@ trait BaseFunctionalSpec extends TestApplication {
           .withStatus(401)
           .withHeader("Content-Length", "0")
           .withHeader("WWW-Authenticate", "MDTP detail=\"InsufficientEnrolments\"")))
+
+      this
+    }
+
+    def clientIsFullyAuthorisedForTheResource: Givens = {
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .willReturn(aResponse().withStatus(200).withBody(
+          """
+            |{
+            |  "internalId": "some-id",
+            |  "loginTimes": {
+            |     "currentLogin": "2016-11-27T09:00:00.000Z",
+            |     "previousLogin": "2016-11-01T12:00:00.000Z"
+            |  }
+            |}
+          """.stripMargin)))
+
+      this
+    }
+
+    def agentIsFullyAuthorisedForTheResource: Givens = {
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .willReturn(aResponse().withStatus(200).withBody(
+          """
+            |{
+            |  "internalId": "some-id",
+            |  "affinityGroup": "Agent",
+            |  "agentCode": "some-agent-code",
+            |  "loginTimes": {
+            |     "currentLogin": "2016-11-27T09:00:00.000Z",
+            |     "previousLogin": "2016-11-01T12:00:00.000Z"
+            |  }
+            |}
+          """.stripMargin)))
 
       this
     }

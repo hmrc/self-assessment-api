@@ -10,7 +10,7 @@ class EmptyResponseFilterSpec extends BaseFunctionalSpec {
     "be applied when returning an HTTP 201 e.g.: creating a self-employment" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource
+        .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.willBeCreatedFor(nino)
         .when()
         .post(Jsons.SelfEmployment())
@@ -23,7 +23,7 @@ class EmptyResponseFilterSpec extends BaseFunctionalSpec {
     "be applied when returning an HTTP 409 e.g.: attempting to create a properties business more than once" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource
+        .clientIsFullyAuthorisedForTheResource
         .des().properties.willConflict(nino)
         .when()
         .post(Jsons.Properties()).to(s"/ni/$nino/uk-properties")

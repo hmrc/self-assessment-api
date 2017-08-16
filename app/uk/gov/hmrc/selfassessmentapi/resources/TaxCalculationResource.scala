@@ -86,6 +86,7 @@ object TaxCalculationResource extends BaseResource {
         nino = nino,
         taxYear = request.body.as[CalculationRequest].taxYear,
         affinityGroup = authCtx.toString,
+        agentCode = authCtx.agentCode,
         calculationId = response.status / 100 match {
           case 2 => Some(response.calcId.getOrElse(""))
           case _ => None
@@ -110,6 +111,7 @@ object TaxCalculationResource extends BaseResource {
         nino = nino,
         calculationId = calcId,
         affinityGroup = authCtx.toString,
+        agentCode = authCtx.agentCode,
         responsePayload = response.status match {
           case 200 | 400 => Some(response.json)
           case _         => None

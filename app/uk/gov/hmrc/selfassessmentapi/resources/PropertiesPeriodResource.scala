@@ -159,6 +159,7 @@ object PropertiesPeriodResource extends BaseResource {
         sourceId = id.toString,
         periodId = periodId,
         affinityGroup = authCtx.toString,
+        agentCode = authCtx.agentCode,
         transactionReference = response.status / 100 match {
           case 2 => response.transactionReference
           case _ => None
@@ -187,6 +188,7 @@ object PropertiesPeriodResource extends BaseResource {
         sourceId = id.toString,
         periodId = periodId,
         affinityGroup = authCtx.toString,
+        agentCode = authCtx.agentCode,
         transactionReference = None,
         requestPayload = request.body,
         responsePayload = response.status match {
