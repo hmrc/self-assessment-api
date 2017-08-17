@@ -107,7 +107,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
         nino = nino,
         sourceId = id,
         periodId = periodId,
-        affinityGroup = authCtx.toString,
+        affinityGroup = authCtx.affinityGroup,
         agentCode = authCtx.agentCode,
         transactionReference = response.status / 100 match {
           case 2 => response.transactionReference
@@ -136,7 +136,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
         nino = nino,
         sourceId = id,
         periodId = periodId,
-        affinityGroup = authCtx.toString,
+        affinityGroup = authCtx.affinityGroup,
         agentCode = authCtx.agentCode,
         transactionReference = None,
         requestPayload = request.body,
