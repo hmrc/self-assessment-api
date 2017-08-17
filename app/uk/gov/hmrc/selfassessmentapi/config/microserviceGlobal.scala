@@ -93,7 +93,7 @@ object MicroserviceLoggingFilter extends LoggingFilter with MicroserviceFilterSu
 
 class MicroserviceMonitoringFilter @Inject()(metrics: Metrics) extends MonitoringFilter with MicroserviceFilterSupport {
 
-  private[config] val sources = Seq("self-employments", "uk-properties")
+  private[config] val sources = Seq("self-employments", "uk-properties", "calculations")
 
   private val sourceIdLevel =
     sources.map(source => s".*[/]$source/.+" -> s"${sourceTypeToDocumentationName(source)}-id").toMap
