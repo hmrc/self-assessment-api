@@ -28,5 +28,6 @@ object SourceType extends Enumeration {
   def sourceTypeToDocumentationName(sourceType: String): String = sourceType match {
     case "self-employments" => "SelfEmployments"
     case "uk-properties" => "Properties"
+    case "calculations" => "Calculations"
   }
 }
