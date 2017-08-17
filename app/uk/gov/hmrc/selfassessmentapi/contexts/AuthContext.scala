@@ -16,16 +16,20 @@
 
 package uk.gov.hmrc.selfassessmentapi.contexts
 
-sealed trait AuthContext
+sealed trait AuthContext {
+  val affinityGroup: String
+  val agentCode: Option[String]
+}
 
 case object Individual extends AuthContext {
-  override def toString: String = "individual"
+  override val affinityGroup: String = "individual"
+  override val agentCode: Option[String] = None
 }
 
-case object Agent extends AuthContext {
-  override def toString: String = "agent"
+case class Agent(override val agentCode: Option[String]) extends AuthContext {
+  override val affinityGroup: String = "agent"
 }
 
-case object FilingOnlyAgent extends AuthContext {
-  override def toString: String = "filingOnlyAgent"
+case class FilingOnlyAgent(override val agentCode: Option[String]) extends AuthContext {
+  override val affinityGroup: String = "filingOnlyAgent"
 }

@@ -20,7 +20,7 @@ class SelfEmploymentAnnualSummaryFeatureSwitchSpec extends BaseFunctionalSpec {
 
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource
+        .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()
         .put(Json.toJson(SelfEmploymentAnnualSummary(None, None))).at(s"/ni/$nino/self-employments/abc/$taxYear")

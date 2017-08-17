@@ -21,7 +21,7 @@ class SelfEmploymentPeriodicSummaryFeatureSwitchSpec extends BaseFunctionalSpec 
     "not be visible if feature Switched Off" in {
       given()
         .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource
+        .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.willBeCreatedFor(nino)
         .when()
         .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")

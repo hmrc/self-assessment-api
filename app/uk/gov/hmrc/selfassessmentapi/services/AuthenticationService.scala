@@ -21,6 +21,8 @@ import play.api.libs.json.Json.toJson
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result}
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.authorise.{AffinityGroup, Enrolment}
+import uk.gov.hmrc.auth.core.retrieve.{Retrievals, ~}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.{HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuthConnector
@@ -45,11 +47,12 @@ object AuthenticationService extends AuthorisedFunctions {
   def authCheck(nino: Nino)(implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[AuthResult] =
     lookupService.mtdReferenceFor(nino).flatMap {
       case Right(id) => authoriseAsClient(id)
-      case Left(status) => status match {
-        case 400 =>  Future.successful(Left(BadRequest(toJson(NinoInvalid))))
-        case 403 =>  Future.successful(Left(Forbidden(toJson(ClientNotSubscribed))))
-        case 500 =>  Future.successful(Left(InternalServerError(toJson(Errors.InternalServerError))))
-      }
+      case Left(status) =>
+        status match {
+          case 400 => Future.successful(Left(BadRequest(toJson(NinoInvalid))))
+          case 403 => Future.successful(Left(Forbidden(toJson(ClientNotSubscribed))))
+          case 500 => Future.successful(Left(InternalServerError(toJson(Errors.InternalServerError))))
+        }
     }
 
   private def authoriseAsClient(mtdId: MtdId)(implicit hc: HeaderCarrier,
@@ -58,10 +61,10 @@ object AuthenticationService extends AuthorisedFunctions {
     authorised(
       Enrolment("HMRC-MTD-IT")
         .withIdentifier("MTDITID", mtdId.mtdId)
-        .withDelegatedAuthRule("mtd-it-auth")).retrieve(Retrievals.affinityGroup) {
-      case affinityGroup if affinityGroup.contains(AffinityGroup.Agent) =>
+        .withDelegatedAuthRule("mtd-it-auth")).retrieve(Retrievals.affinityGroup and Retrievals.agentCode) {
+      case affinityGroup ~ Some(agentCode) if affinityGroup.contains(AffinityGroup.Agent) =>
         logger.debug("Client authorisation succeeded as fully-authorised agent.")
-        Future.successful(Right(Agent))
+        Future.successful(Right(Agent(Some(agentCode))))
       case _ =>
         logger.debug("Client authorisation succeeded as fully-authorised individual.")
         Future.successful(Right(Individual))
@@ -71,15 +74,17 @@ object AuthenticationService extends AuthorisedFunctions {
   private def authoriseAsFOA(implicit hc: HeaderCarrier,
                              reqHeader: RequestHeader): PartialFunction[Throwable, Future[AuthResult]] = {
     case _: InsufficientEnrolments =>
-      authorised(AffinityGroup.Agent and Enrolment("HMRC-AS-AGENT")) { // If the user is an agent are they enrolled in Agent Services?
-        if (reqHeader.method == "GET") {
-          logger.debug("Client authorisation failed. Attempt to GET as a filing-only agent.")
-          Future.successful(Left(Forbidden(toJson(Errors.AgentNotAuthorized))))
-        } else {
-          logger.debug("Client authorisation succeeded as filing-only agent.")
-          Future.successful(Right(FilingOnlyAgent))
-        }
-      } recoverWith (unsubscribedAgentOrUnauthorisedClient orElse unhandledError) // Iff agent is not enrolled for the user or client affinityGroup is not Agent.
+      authorised(AffinityGroup.Agent and Enrolment("HMRC-AS-AGENT"))
+        .retrieve(Retrievals.agentCode) { // If the user is an agent are they enrolled in Agent Services?
+          case Some(agentCode) =>
+            if (reqHeader.method == "GET") {
+              logger.debug("Client authorisation failed. Attempt to GET as a filing-only agent.")
+              Future.successful(Left(Forbidden(toJson(Errors.AgentNotAuthorized))))
+            } else {
+              logger.debug("Client authorisation succeeded as filing-only agent.")
+              Future.successful(Right(FilingOnlyAgent(Some(agentCode))))
+            }
+        } recoverWith (unsubscribedAgentOrUnauthorisedClient orElse unhandledError) // Iff agent is not enrolled for the user or client affinityGroup is not Agent.
   }
 
   private def unsubscribedAgentOrUnauthorisedClient: PartialFunction[Throwable, Future[AuthResult]] = {
@@ -97,7 +102,7 @@ object AuthenticationService extends AuthorisedFunctions {
       Left(InternalServerError(toJson(Errors.InternalServerError("An internal server error occurred")))))
 
     locally { // http://www.scala-lang.org/old/node/3594
-      case e @ (_: AuthorisationException | Upstream5xxResponse(regex(_ *), _, _)) =>
+      case e @ (_: AuthorisationException | Upstream5xxResponse(regex(_*), _, _)) =>
         logger.error(s"Authorisation failed with unexpected exception. Bad token? Exception: [$e]")
         Future.successful(Left(Forbidden(toJson(Errors.BadToken))))
       case e: Upstream4xxResponse =>

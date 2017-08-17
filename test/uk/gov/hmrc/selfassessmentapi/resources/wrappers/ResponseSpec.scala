@@ -34,7 +34,7 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
     val fakeRequest = FakeRequest(Helpers.POST, "", FakeHeaders(), Json.obj())
 
     "return a BadRequest with a generic error if the response contains a 4xx error and the user is a FOA" in {
-      implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent, fakeRequest)
+      implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent(Some("agentCode")), fakeRequest)
 
       new Response {
         override val status: Int = 409
@@ -46,7 +46,7 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
     }
 
     "return the response unmodified if it contains a non-4xx error and the user is a FOA" in {
-      implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent, fakeRequest)
+      implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent(Some("agentCode")), fakeRequest)
 
       val result = new Response {
         override val status = 200
@@ -58,7 +58,7 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
     }
 
     "return the response unmodified if it contains a 4xx error and the user is not a FOA" in {
-      implicit val authReq = new AuthRequest[JsValue](Individual, fakeRequest)
+      implicit val authReq: AuthRequest[JsValue] = new AuthRequest[JsValue](Individual, fakeRequest)
 
       new Response {
         override val status: Int = 409

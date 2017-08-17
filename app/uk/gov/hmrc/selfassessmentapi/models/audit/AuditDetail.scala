@@ -33,6 +33,7 @@ case class PeriodicUpdate(override val auditType: String,
                           sourceId: SourceId,
                           periodId: String,
                           affinityGroup: String,
+                          agentCode: Option[String],
                           transactionReference: Option[String],
                           requestPayload: JsValue,
                           override val responsePayload: Option[JsValue])
@@ -48,6 +49,7 @@ case class AnnualSummaryUpdate(override val auditType: String = "submitAnnualSum
                                sourceId: SourceId,
                                taxYear: TaxYear,
                                affinityGroup: String,
+                               agentCode: Option[String],
                                transactionReference: Option[String],
                                requestPayload: JsValue,
                                override val responsePayload: Option[JsValue])
@@ -62,6 +64,7 @@ case class TaxCalculationTrigger(override val auditType: String = "triggerTaxCal
                                  nino: Nino,
                                  taxYear: TaxYear,
                                  affinityGroup: String,
+                                 agentCode: Option[String],
                                  calculationId: Option[SourceId],
                                  override val responsePayload: Option[JsValue])
     extends AuditDetail
@@ -75,6 +78,7 @@ case class TaxCalculationRequest(override val auditType: String = "retrieveTaxCa
                                  nino: Nino,
                                  calculationId: SourceId,
                                  affinityGroup: String,
+                                 agentCode: Option[String],
                                  override val responsePayload: Option[JsValue])
     extends AuditDetail
 
@@ -87,6 +91,7 @@ case class RetrieveObligations(override val auditType: String = "retrieveObligat
                                nino: Nino,
                                sourceId: Option[SourceId],
                                affinityGroup: String,
+                               agentCode: Option[String],
                                override val responsePayload: Option[JsValue])
     extends AuditDetail
 

@@ -41,11 +41,11 @@ trait Response {
     logger.error(s"DES error occurred with status code ${underlying.status} and body ${underlying.body}")
 
   def filter[A](pf: PartialFunction[Int, Result])(implicit request: AuthRequest[A]): Result =
-    status / 100 match {
-      case 4 if request.authContext == FilingOnlyAgent =>
+    (status / 100, request.authContext) match {
+      case (4, FilingOnlyAgent(_)) =>
         logResponse()
         BadRequest(toJson(Errors.InvalidRequest))
-      case 4 | 5 =>
+      case (4, _) | (5, _) =>
         logResponse()
         (pf orElse errorMapping)(status)
       case _ => ((pf andThen addCorrelationHeader) orElse errorMapping)(status)
