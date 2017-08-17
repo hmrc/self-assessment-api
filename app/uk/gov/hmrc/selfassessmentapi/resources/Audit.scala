@@ -48,7 +48,7 @@ object Audit {
         httpStatus = response.status,
         nino = nino,
         sourceId = id,
-        affinityGroup = authCtx.toString,
+        affinityGroup = authCtx.affinityGroup,
         agentCode = authCtx.agentCode,
         responsePayload = response.status match {
           case 200 | 400 => Some(response.json)

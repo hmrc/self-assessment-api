@@ -72,7 +72,7 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
         nino = nino,
         sourceId = id,
         taxYear = taxYear,
-        affinityGroup = authCtx.toString,
+        affinityGroup = authCtx.affinityGroup,
         agentCode = authCtx.agentCode,
         transactionReference = response.status / 100 match {
           case 2 => response.transactionReference
