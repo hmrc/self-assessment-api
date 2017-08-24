@@ -24,7 +24,7 @@ import play.api.mvc.Results._
 import play.api.test.{FakeHeaders, FakeRequest, Helpers}
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
-import uk.gov.hmrc.selfassessmentapi.contexts.{FilingOnlyAgent, Individual}
+import uk.gov.hmrc.selfassessmentapi.contexts.{Agent, FilingOnlyAgent, Individual}
 import uk.gov.hmrc.selfassessmentapi.models.Errors
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode._
 import uk.gov.hmrc.selfassessmentapi.resources.AuthRequest
@@ -77,17 +77,17 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
         (400,
          Seq(INVALID_BUSINESSID, INVALID_INCOME_SOURCE, INVALID_TYPE, INVALID_IDENTIFIER, INVALID_CALCID),
          NotFound),
-        (400, Seq(INVALID_PERIOD), Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))),
         (400,
-         Seq(INVALID_ORIGINATOR_ID,
-             INVALID_DATE_FROM,
-             INVALID_DATE_TO,
-             INVALID_STATUS,
-             INVALID_TAX_YEAR),
+         Seq(INVALID_ORIGINATOR_ID, INVALID_DATE_FROM, INVALID_DATE_TO, INVALID_STATUS, INVALID_TAX_YEAR),
          InternalServerError(toJson(Errors.InternalServerError))),
         (403, Seq(INVALID_DATE_RANGE), InternalServerError(toJson(Errors.InternalServerError))),
         (403, Seq.empty, NotFound),
+        (404, Seq(NOT_FOUND_INCOME_SOURCE), NotFound),
         (404, Seq.empty, NotFound),
+        (409, Seq(INVALID_PERIOD), BadRequest(toJson(Errors.businessError(Errors.InvalidPeriod)))),
+        (409, Seq(NOT_CONTIGUOUS_PERIOD), Forbidden(toJson(Errors.businessError(Errors.NotContiguousPeriod)))),
+        (409, Seq(OVERLAPS_IN_PERIOD), Forbidden(toJson(Errors.businessError(Errors.OverlappingPeriod)))),
+        (409, Seq(NOT_ALIGN_PERIOD), Forbidden(toJson(Errors.businessError(Errors.MisalignedPeriod)))),
         (500, Seq(SERVER_ERROR), InternalServerError(toJson(Errors.InternalServerError))),
         (503, Seq(SERVICE_UNAVAILABLE), InternalServerError(toJson(Errors.InternalServerError))),
         (500, Seq.empty, InternalServerError(toJson(Errors.InternalServerError)))
@@ -103,11 +103,11 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
             HttpResponse(
               status,
               Some(Json.parse(s"""
-                          |{
-                          |  "code": "${desErrCode.getOrElse("")}",
-                          |  "reason": ""
-                          |}
-              """.stripMargin))
+                                        |{
+                                        |  "code": "${desErrCode.getOrElse("")}",
+                                        |  "reason": ""
+                                        |}
+                            """.stripMargin))
             )
         }.filter(PartialFunction.empty) shouldBe apiErr
 
@@ -120,5 +120,34 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
           }
       }
     }
+
+    "return Forbidden with a list of errors if the response contains a 409 with multiple period validation errors" in {
+      implicit val authReq = new AuthRequest[JsValue](Agent(Some("agentCode")), fakeRequest)
+
+      new Response {
+        override val status: Int = 409
+
+        override def underlying: HttpResponse =
+          HttpResponse(
+            status,
+            Some(Json.parse(s"""
+                             |{
+                             |  "failures": [
+                               |              {
+                               |                "code": "NOT_CONTIGUOUS_PERIOD",
+                               |                "reason": ""
+                               |              },
+                               |              {
+                               |                "code": "NOT_ALIGN_PERIOD",
+                               |                "reason": ""
+                               |              }
+                             |              ]
+                             |}
+                            """.stripMargin))
+          )
+      }.filter(PartialFunction.empty) shouldBe Forbidden(
+        Json.toJson(Errors.businessError(Seq(Errors.NotContiguousPeriod, Errors.MisalignedPeriod))))
+    }
+
   }
 }
