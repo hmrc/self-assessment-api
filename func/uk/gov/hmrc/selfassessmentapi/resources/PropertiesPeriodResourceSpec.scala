@@ -87,7 +87,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .bodyIsLike(Jsons.Errors.invalidRequest("NO_INCOMES_AND_EXPENSES" -> "", "INVALID_PERIOD" -> ""))
       }
 
-      s"return code 403 when creating an overlapping period for $propertyType" in {
+      s"return code 403 when creating an overlapping period for $propertyType" ignore { //FIXME: needs to be adjusted as part of MTDSA-1131
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource

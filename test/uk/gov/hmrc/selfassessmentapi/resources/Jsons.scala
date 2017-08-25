@@ -39,22 +39,38 @@ object Jsons {
          |}
        """.stripMargin
 
-    val invalidNino: String = errorWithMessage("INVALID_NINO", "Submission has not passed validation. Invalid parameter NINO.")
+    val invalidNino: String =
+      errorWithMessage("INVALID_NINO", "Submission has not passed validation. Invalid parameter NINO.")
     val ninoInvalid: String = errorWithMessage("NINO_INVALID", "The provided Nino is invalid")
-    val invalidPayload: String = errorWithMessage("INVALID_PAYLOAD", "Submission has not passed validation. Invalid PAYLOAD.")
+    val invalidPayload: String =
+      errorWithMessage("INVALID_PAYLOAD", "Submission has not passed validation. Invalid PAYLOAD.")
     val invalidRequest: String = errorWithMessage("INVALID_REQUEST", "Invalid request")
-    val ninoNotFound: String = errorWithMessage("NOT_FOUND_NINO", "The remote endpoint has indicated that no data can be found.")
-    val desNotFound: String = errorWithMessage("NOT_FOUND", "The remote endpoint has indicated that no data can be found.")
+    val ninoNotFound: String =
+      errorWithMessage("NOT_FOUND_NINO", "The remote endpoint has indicated that no data can be found.")
+    val desNotFound: String =
+      errorWithMessage("NOT_FOUND", "The remote endpoint has indicated that no data can be found.")
     val duplicateTradingName: String = errorWithMessage("CONFLICT", "Duplicated trading name.")
     val notFound: String = errorWithMessage("NOT_FOUND", "Resource was not found")
-    val invalidPeriod: String = businessErrorWithMessage("INVALID_PERIOD" -> "Periods should be contiguous and have no gaps between one another")
-    val invalidOriginatorId: String = errorWithMessage("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
+    val invalidPeriod: String = businessErrorWithMessage(
+      "INVALID_PERIOD" -> "Periods should be contiguous and have no gaps between one another")
+    val overlappingPeriod: String = businessErrorWithMessage(
+      "OVERLAPPING_PERIOD" -> "Period overlaps with existing periods.")
+    val nonContiguousPeriod: String = businessErrorWithMessage(
+      "NOT_CONTIGUOUS_PERIOD" -> "Periods should be contiguous.")
+    val misalignedPeriod: String = businessErrorWithMessage(
+      "MISALIGNED_PERIOD" -> "Period is not within the accounting period.")
+    val misalignedAndOverlappingPeriod: String = businessErrorWithMessage(
+      "MISALIGNED_PERIOD" -> "Period is not within the accounting period.",
+      "OVERLAPPING_PERIOD" -> "Period overlaps with existing periods.")
+    val invalidOriginatorId: String =
+      errorWithMessage("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
     val internalServerError: String = errorWithMessage("INTERNAL_SERVER_ERROR", "An internal server error occurred")
     val invalidCalcId: String = errorWithMessage("INVALID_CALCID", "Submission has not passed validation")
     val unauthorised: String = errorWithMessage("UNAUTHORIZED", "Bearer token is missing or not authorized")
     val clientNotSubscribed: String = errorWithMessage("CLIENT_NOT_SUBSCRIBED", "The client is not subscribed to MTD")
     val agentNotAuthorised: String = errorWithMessage("AGENT_NOT_AUTHORIZED", "The agent is not authorized")
-    val agentNotSubscribed: String = errorWithMessage("AGENT_NOT_SUBSCRIBED", "The agent is not subscribed to agent services")
+    val agentNotSubscribed: String =
+      errorWithMessage("AGENT_NOT_SUBSCRIBED", "The agent is not subscribed to agent services")
 
     def invalidRequest(errors: (String, String)*): String = {
       s"""
@@ -74,7 +90,7 @@ object Jsons {
          |  "code": "BUSINESS_ERROR",
          |  "message": "Business validation error",
          |  "errors": [
-         |    ${ errors.map { error }.mkString(",") }
+         |    ${errors.map { error }.mkString(",")}
          |  ]
          |}
          """.stripMargin
@@ -86,11 +102,11 @@ object Jsons {
          |  "code": "BUSINESS_ERROR",
          |  "message": "Business validation error",
          |  "errors": [
-         |    ${
-        errors.map {
-          case (code, msg) => errorWithMessage(code, msg)
-        }.mkString(",")
-      }
+         |    ${errors
+           .map {
+             case (code, msg) => errorWithMessage(code, msg)
+           }
+           .mkString(",")}
          |  ]
          |}
          """.stripMargin
@@ -99,8 +115,7 @@ object Jsons {
 
   object Banks {
     def apply(accountName: String = "Savings Account"): JsValue = {
-      Json.parse(
-        s"""
+      Json.parse(s"""
            |{
            |  "accountName": "$accountName"
            |}
@@ -117,15 +132,13 @@ object Jsons {
          """.stripMargin
       }
 
-
       val untaxed = untaxedUkInterest.map { untaxed =>
         s"""
            |  "untaxedUkInterest": $untaxed
          """.stripMargin
       }
 
-      Json.parse(
-        s"""
+      Json.parse(s"""
            |{
            |  ${taxed.getOrElse("")}
            |  ${untaxed.getOrElse("")}
@@ -164,8 +177,7 @@ object Jsons {
           }
           .getOrElse("")
 
-      Json.parse(
-        s"""
+      Json.parse(s"""
            |{
            |  $from
            |  $to
@@ -214,18 +226,15 @@ object Jsons {
           }
           .getOrElse("")
 
-      Json.parse(
-        s"""
+      Json.parse(s"""
            |{
            |  $from
            |  $to
            |  "incomes": {
            |    "rentIncome": { "amount": $rentIncome, "taxDeducted": $rentIncomeTaxDeducted },
-           |    ${
-          premiumsOfLeaseGrant
-            .map(income => s""" "premiumsOfLeaseGrant": { "amount": $income },""")
-            .getOrElse("")
-        }
+           |    ${premiumsOfLeaseGrant
+                      .map(income => s""" "premiumsOfLeaseGrant": { "amount": $income },""")
+                      .getOrElse("")}
            |    "reversePremiums": { "amount": $reversePremiums }
            |  },
            |  "expenses": {
@@ -267,8 +276,7 @@ object Jsons {
                          lossBroughtForward: BigDecimal = 0.0,
                          privateUseAdjustment: BigDecimal = 0.0,
                          balancingCharge: BigDecimal = 0.0): JsValue = {
-      Json.parse(
-        s"""
+      Json.parse(s"""
            |{
            |  "allowances": {
            |    "annualInvestmentAllowance": $annualInvestmentAllowance,
@@ -291,8 +299,7 @@ object Jsons {
                            lossBroughtForward: BigDecimal = 0.0,
                            privateUseAdjustment: BigDecimal = 0.0,
                            balancingCharge: BigDecimal = 0.0): JsValue = {
-      Json.parse(
-        s"""
+      Json.parse(s"""
            |{
            |  "allowances": {
            |    "annualInvestmentAllowance": $annualInvestmentAllowance,
@@ -326,48 +333,39 @@ object Jsons {
               businessAddressLineFour: Option[String] = Some("United Kingdom"),
               businessPostcode: Option[String] = Some("A9 9AA")): JsValue = {
 
-      val cessation = cessationDate.map(date =>
-        s"""
+      val cessation = cessationDate.map(date => s"""
            |  "cessationDate": "$date",
          """.stripMargin).getOrElse("")
 
-      val commencement = commencementDate.map(date =>
-        s"""
+      val commencement = commencementDate.map(date => s"""
            |  "commencementDate": "$date",
        """.stripMargin).getOrElse("")
 
-      val businessDesc = businessDescription.map(desc =>
-        s"""
+      val businessDesc = businessDescription.map(desc => s"""
            |  "businessDescription": "$desc",
        """.stripMargin).getOrElse("")
 
-      val addrOne = businessAddressLineOne.map(line =>
-        s"""
+      val addrOne = businessAddressLineOne.map(line => s"""
            |  "businessAddressLineOne": "$line",
        """.stripMargin).getOrElse("")
 
-      val addrTwo = businessAddressLineTwo.map(line =>
-        s"""
+      val addrTwo = businessAddressLineTwo.map(line => s"""
            |  "businessAddressLineTwo": "$line",
        """.stripMargin).getOrElse("")
 
-      val addrThree = businessAddressLineThree.map(line =>
-        s"""
+      val addrThree = businessAddressLineThree.map(line => s"""
            |  "businessAddressLineThree": "$line",
        """.stripMargin).getOrElse("")
 
-      val addrFour = businessAddressLineFour.map(line =>
-        s"""
+      val addrFour = businessAddressLineFour.map(line => s"""
            |  "businessAddressLineFour": "$line",
        """.stripMargin).getOrElse("")
 
-      val addrPostcode = businessPostcode.map(code =>
-        s"""
+      val addrPostcode = businessPostcode.map(code => s"""
            |  "businessPostcode": "$code",
        """.stripMargin).getOrElse("")
 
-      Json.parse(
-        s"""
+      Json.parse(s"""
            |{
            |  "accountingPeriod": {
            |    "start": "$accPeriodStart",
@@ -395,8 +393,7 @@ object Jsons {
                businessAddressLineFour: String = "United Kingdom",
                businessPostcode: String = "A9 9AA"): JsValue = {
 
-      Json.parse(
-        s"""
+      Json.parse(s"""
            |{
            |  "tradingName": "$tradingName",
            |  "businessDescription": "$businessDescription",
@@ -426,8 +423,7 @@ object Jsons {
                       balancingChargeBPRA: BigDecimal = 500.25,
                       balancingChargeOther: BigDecimal = 500.25,
                       goodsAndServicesOwnUse: BigDecimal = 500.25): JsValue = {
-      Json.parse(
-        s"""
+      Json.parse(s"""
            |{
            |  "allowances": {
            |    "annualInvestmentAllowance": $annualInvestmentAllowance,
@@ -491,8 +487,7 @@ object Jsons {
           }
           .getOrElse("")
 
-      Json.parse(
-        s"""
+      Json.parse(s"""
            |{
            |  $from
            |  $to
@@ -524,8 +519,7 @@ object Jsons {
 
   object Dividends {
     def apply(amount: BigDecimal): JsValue = {
-      Json.parse(
-        s"""
+      Json.parse(s"""
            |{
            |  "ukDividends": $amount
            |}
@@ -744,8 +738,7 @@ object Jsons {
     }
 
     def eta(seconds: Int): JsValue = {
-      Json.parse(
-        s"""
+      Json.parse(s"""
            |{
            |  "etaSeconds": $seconds
            |}
@@ -753,8 +746,7 @@ object Jsons {
     }
 
     def request(taxYear: String = "2017-18"): JsValue = {
-      Json.parse(
-        s"""
+      Json.parse(s"""
            |{
            |  "taxYear": "$taxYear"
            |}
@@ -763,10 +755,11 @@ object Jsons {
   }
 
   object Obligations {
-    def apply(firstMet: Boolean = false, secondMet: Boolean = false,
-              thirdMet: Boolean = false, fourthMet: Boolean = false): JsValue = {
-      Json.parse(
-        s"""
+    def apply(firstMet: Boolean = false,
+              secondMet: Boolean = false,
+              thirdMet: Boolean = false,
+              fourthMet: Boolean = false): JsValue = {
+      Json.parse(s"""
            |{
            |  "obligations": [
            |    {

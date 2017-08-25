@@ -319,10 +319,11 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .isBadRequest
     }
 
-    "receive a modified HTTP 400 when they attempt to create more than one uk property business" in {
+    "receive an HTTP 400 when attempting to create a UK property business for an unauthorised agent" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
+        .des().properties.notFoundIncomeSourceFor(nino)
         .when()
         .post(Jsons.Properties())
         .to(s"/ni/$nino/uk-properties")
