@@ -1301,14 +1301,36 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def invalidPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
+        def overlappingPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
             post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
-                  .withStatus(400)
+                  .withStatus(409)
                   .withHeader("Content-Type", "application/json")
-                  .withBody(DesJsons.Errors.invalidPeriod)))
+                  .withBody(DesJsons.Errors.overlappingPeriod)))
+
+          givens
+        }
+
+        def misalignedPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            .willReturn(
+              aResponse()
+                .withStatus(409)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.misalignedPeriod)))
+
+          givens
+        }
+
+        def misalignedAndOverlappingPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            .willReturn(
+              aResponse()
+                .withStatus(409)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.misalignedAndOverlappingPeriod)))
 
           givens
         }

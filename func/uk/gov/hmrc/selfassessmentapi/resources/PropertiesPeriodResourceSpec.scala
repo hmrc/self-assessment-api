@@ -87,7 +87,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .bodyIsLike(Jsons.Errors.invalidRequest("NO_INCOMES_AND_EXPENSES" -> "", "INVALID_PERIOD" -> ""))
       }
 
-      s"return code 403 when creating an overlapping period for $propertyType" ignore { //FIXME: needs to be adjusted as part of MTDSA-1131
+      s"return code 403 when creating an overlapping period for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource
@@ -96,7 +96,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .willBeCreatedFor(nino)
           .des()
           .properties
-          .invalidPeriodFor(nino, propertyType)
+          .overlappingPeriodFor(nino, propertyType)
           .when()
           .post(Jsons.Properties())
           .to(s"/ni/$nino/uk-properties")
@@ -107,7 +107,54 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .to(s"%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(403)
-          .bodyIsLike(Jsons.Errors.invalidPeriod)
+          .bodyIsLike(Jsons.Errors.overlappingPeriod)
+      }
+
+      s"return code 403 when attempting to create a period that is misaligned with the accounting period for $propertyType" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .clientIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .willBeCreatedFor(nino)
+          .des()
+          .properties
+          .misalignedPeriodFor(nino, propertyType)
+          .when()
+          .post(Jsons.Properties())
+          .to(s"/ni/$nino/uk-properties")
+          .thenAssertThat()
+          .statusIs(201)
+          .when()
+          .post(misalignedPeriod(propertyType))
+          .to(s"%sourceLocation%/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(403)
+          .bodyIsLike(Jsons.Errors.misalignedPeriod)
+      }
+
+      s"return code 403 with multiple validation errors when attempting to create a period that is misaligned with the accounting period and overlaps an existing period for $propertyType" in {
+
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .clientIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .willBeCreatedFor(nino)
+          .des()
+          .properties
+          .misalignedAndOverlappingPeriodFor(nino, propertyType)
+          .when()
+          .post(Jsons.Properties())
+          .to(s"/ni/$nino/uk-properties")
+          .thenAssertThat()
+          .statusIs(201)
+          .when()
+          .post(misalignedAndOverlappingPeriod(propertyType))
+          .to(s"%sourceLocation%/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(403)
+          .bodyIsLike(Jsons.Errors.misalignedAndOverlappingPeriod)
       }
 
       s"return code 404 when attempting to create a period for a property that does not exist for $propertyType" in {
@@ -404,10 +451,14 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
     }
   }
 
-  def period(propertyType: PropertyType): JsValue = propertyType match {
+  def misalignedAndOverlappingPeriod(propertyType: PropertyType) = period(propertyType, from = Some("2017-08-04"), to = Some("2017-09-04"))
+
+  def misalignedPeriod(propertyType: PropertyType) = period(propertyType, from = Some("2017-08-04"), to = Some("2017-09-04"))
+
+  def period(propertyType: PropertyType, from: Option[String] = Some("2017-04-06"), to: Option[String] = Some("2018-04-05")): JsValue = propertyType match {
     case PropertyType.FHL =>
-      Jsons.Properties.fhlPeriod(fromDate = Some("2017-04-06"),
-                                 toDate = Some("2018-04-05"),
+      Jsons.Properties.fhlPeriod(fromDate = from,
+                                 toDate = to,
                                  rentIncome = 500,
                                  premisesRunningCosts = 20.20,
                                  repairsAndMaintenance = 11.25,
@@ -415,8 +466,8 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
                                  professionalFees = 1232.55,
                                  otherCost = 50.22)
     case PropertyType.OTHER =>
-      Jsons.Properties.otherPeriod(fromDate = Some("2017-04-06"),
-                                   toDate = Some("2018-04-05"),
+      Jsons.Properties.otherPeriod(fromDate = from,
+                                   toDate = to,
                                    rentIncome = 500,
                                    rentIncomeTaxDeducted = 250.55,
                                    premiumsOfLeaseGrant = Some(200.22),
