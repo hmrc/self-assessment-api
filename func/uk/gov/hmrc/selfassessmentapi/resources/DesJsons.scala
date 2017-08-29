@@ -67,12 +67,6 @@ object DesJsons {
     val invalidDateFrom: String =
       error("INVALID_DATE_FROM", "Submission has not passed validation. Invalid parameter from.")
     val invalidDateTo: String = error("INVALID_DATE_TO", "Submission has not passed validation. Invalid parameter to.")
-    val misalignedAndOverlappingPeriod: String = multiError(
-      ("NOT_ALIGN_PERIOD",
-       "The remote endpoint has indicated that the submission period is outside the Accounting Period."),
-      ("OVERLAPS_IN_PERIOD",
-       "The remote endpoint has indicated that the submission period overlaps another period submitted.")
-    )
   }
 
   object SelfEmployment {
