@@ -937,17 +937,6 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def misalignedAndOverlappingPeriodFor(nino: Nino, id: String = "abc"): Givens = {
-          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries"))
-            .willReturn(
-              aResponse()
-                .withStatus(409)
-                .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.Errors.misalignedAndOverlappingPeriod)))
-
-          givens
-        }
-
         def annualSummaryWillBeUpdatedFor(nino: Nino, id: String = "abc", taxYear: TaxYear = TaxYear("2017-18")): Givens = {
           stubFor(put(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/annual-summaries/${taxYear.toDesTaxYear}"))
             .willReturn(

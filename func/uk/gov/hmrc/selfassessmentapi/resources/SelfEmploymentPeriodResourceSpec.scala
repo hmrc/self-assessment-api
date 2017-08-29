@@ -205,31 +205,6 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Errors.misalignedPeriod)
     }
 
-    "return code 403 with multiple validation errors when attempting to create a period that is misaligned with the accounting period and overlaps an existing period" in {
-      val misalignedAndOverlappingPeriod = Jsons.SelfEmployment.period(fromDate = Some("2017-08-04"), toDate = Some("2017-09-04"))
-
-      given()
-        .userIsSubscribedToMtdFor(nino)
-        .clientIsFullyAuthorisedForTheResource
-        .des()
-        .selfEmployment
-        .willBeCreatedFor(nino)
-        .des()
-        .selfEmployment
-        .misalignedAndOverlappingPeriodFor(nino)
-        .when()
-        .post(Jsons.SelfEmployment())
-        .to(s"/ni/$nino/self-employments")
-        .thenAssertThat()
-        .statusIs(201)
-        .when()
-        .post(misalignedAndOverlappingPeriod)
-        .to(s"%sourceLocation%/periods")
-        .thenAssertThat()
-        .statusIs(403)
-        .bodyIsLike(Jsons.Errors.misalignedAndOverlappingPeriod)
-    }
-
     "return code 404 when attempting to create a period for a self-employment that does not exist" in {
       val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-06"), toDate = Some("2017-07-04"))
 
