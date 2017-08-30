@@ -133,30 +133,6 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .bodyIsLike(Jsons.Errors.misalignedPeriod)
       }
 
-      s"return code 403 with multiple validation errors when attempting to create a period that is misaligned with the accounting period and overlaps an existing period for $propertyType" in {
-
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .willBeCreatedFor(nino)
-          .des()
-          .properties
-          .misalignedAndOverlappingPeriodFor(nino, propertyType)
-          .when()
-          .post(Jsons.Properties())
-          .to(s"/ni/$nino/uk-properties")
-          .thenAssertThat()
-          .statusIs(201)
-          .when()
-          .post(misalignedAndOverlappingPeriod(propertyType))
-          .to(s"%sourceLocation%/$propertyType/periods")
-          .thenAssertThat()
-          .statusIs(403)
-          .bodyIsLike(Jsons.Errors.misalignedAndOverlappingPeriod)
-      }
-
       s"return code 404 when attempting to create a period for a property that does not exist for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
