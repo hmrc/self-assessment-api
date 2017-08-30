@@ -101,7 +101,7 @@ trait Response {
     case 403 if errorCodeIsOneOf(INVALID_DATE_RANGE) => InternalServerError(toJson(Errors.InternalServerError))
     case 403                                         => NotFound
     case 404                                         => NotFound
-    case 409 if errorCodeIsOneOf(INVALID_PERIOD)     => BadRequest(toJson(Errors.businessError(Errors.InvalidPeriod)))
+    case 409 if errorCodeIsOneOf(INVALID_PERIOD)     => BadRequest(toJson(toJson(Errors.InvalidRequest)))
     case 409 if errorCodeIsOneOf(NOT_CONTIGUOUS_PERIOD) =>
       Forbidden(toJson(Errors.businessError(Errors.NotContiguousPeriod)))
     case 409 if errorCodeIsOneOf(OVERLAPS_IN_PERIOD) =>
