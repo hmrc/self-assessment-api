@@ -35,7 +35,7 @@ class ValidationSpec extends JsonSpec {
     )(Foo.apply _)
       .validate(
         Seq(Validation(JsPath \ "a", (foo: Foo) => foo.a > foo.b, ValidationError("a should be greater than b")),
-            Validation(JsPath \ "b", (foo: Foo) => foo.a + foo.b == 50, ValidationError("a + b should be 5"))))
+            Validation(JsPath \ "b", (foo: Foo) => foo.a + foo.b == 5, ValidationError("a + b should be 5"))))
   }
 
   "validate" should {

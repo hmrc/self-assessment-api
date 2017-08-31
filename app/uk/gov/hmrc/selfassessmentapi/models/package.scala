@@ -22,6 +22,7 @@ import play.api.libs.json.{JsPath, Reads}
 
 import scala.io.{Codec, Source}
 import scala.util.Try
+import scala.util.matching.Regex
 
 package object models {
 
@@ -49,7 +50,7 @@ package object models {
   val nonNegativeAmountValidator: Reads[Amount] = Reads
     .of[Amount]
     .filter(ValidationError("amounts should be a non-negative number less than 99999999999999.98 with up to 2 decimal places",
-                            ErrorCode.INVALID_MONETARY_AMOUNT))(
+      ErrorCode.INVALID_MONETARY_AMOUNT))(
       amount => amount >= 0 && amount.scale < 3 && amount <= MAX_AMOUNT)
 
   val sicClassifications: Try[Seq[String]] =
@@ -63,5 +64,18 @@ package object models {
           }
       }
     } yield lines.getLines().toIndexedSeq
+
+
+  val postcodeValidator: Reads[String] = Reads
+    .of[String]
+    .filter(ValidationError("postcode must match \"^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$\"",
+      ErrorCode.INVALID_POSTCODE))(postcode =>
+      postcode.matches("^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$"))
+
+  def regexValidator(fieldName: String, regex: String): Reads[String] = Reads
+    .of[String]
+    .filter(ValidationError(s"$fieldName must match $regex",
+      ErrorCode.INVALID_FIELD_FORMAT))(field => field.matches(regex))
+
 
 }

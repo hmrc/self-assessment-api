@@ -75,7 +75,7 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
         (400, Seq(INVALID_NINO), BadRequest(toJson(Errors.NinoInvalid))),
         (400, Seq(INVALID_PAYLOAD), BadRequest(toJson(Errors.InvalidRequest))),
         (400,
-         Seq(INVALID_BUSINESSID, INVALID_INCOME_SOURCE, INVALID_TYPE, INVALID_IDENTIFIER, INVALID_CALCID),
+         Seq(NOT_FOUND_NINO, INVALID_INCOMESOURCEID, INVALID_BUSINESSID, INVALID_INCOME_SOURCE, INVALID_TYPE, INVALID_IDENTIFIER, INVALID_CALCID),
          NotFound),
         (400, Seq(INVALID_PERIOD), Forbidden(Json.toJson(Errors.businessError(Errors.InvalidPeriod)))),
         (400,

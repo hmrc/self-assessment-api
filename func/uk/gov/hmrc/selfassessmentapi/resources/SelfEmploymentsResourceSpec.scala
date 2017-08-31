@@ -158,10 +158,15 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .statusIs(400)
         .contentTypeIsJson()
         .bodyIsLike(Jsons.Errors.invalidRequest(
+          ("MANDATORY_FIELD_MISSING", "/accountingPeriod"),
+          ("MANDATORY_FIELD_MISSING", "/accountingType"),
+          ("MANDATORY_FIELD_MISSING", "/commencementDate"),
           ("MANDATORY_FIELD_MISSING", "/tradingName"),
           ("MANDATORY_FIELD_MISSING", "/businessDescription"),
           ("MANDATORY_FIELD_MISSING", "/businessAddressLineOne"),
-          ("MANDATORY_FIELD_MISSING", "/businessPostcode")))
+          ("MANDATORY_FIELD_MISSING", "/businessCountry"),
+          ("MANDATORY_FIELD_MISSING", "/paperless"),
+          ("MANDATORY_FIELD_MISSING", "/seasonal")))
     }
 
     "return code 400 (INVALID_BUSINESS_DESCRIPTION) when attempting to update a self-employment with an invalid business description" in {

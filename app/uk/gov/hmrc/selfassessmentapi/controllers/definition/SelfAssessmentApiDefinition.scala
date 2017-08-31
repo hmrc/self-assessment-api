@@ -51,7 +51,7 @@ class SelfAssessmentApiDefinition {
       ,
       Endpoint(
         uriPattern = "/ni/{nino}/self-employments/{selfEmploymentId}",
-        endpointName = "Update a self employment business",
+        endpointName = "Update self-employment business details",
         method = PUT,
         authType = USER,
         throttlingTier = UNLIMITED,

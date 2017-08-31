@@ -41,7 +41,7 @@ object SelfEmploymentConnector {
   def update(nino: Nino, business: SelfEmploymentUpdate, id: SourceId)(
       implicit hc: HeaderCarrier): Future[SelfEmploymentResponse] =
     httpPut[SelfEmploymentUpdate, SelfEmploymentResponse](
-      baseUrl + s"/income-tax-self-assessment/nino/$nino/business/$id",
+      baseUrl + s"/income-tax-self-assessment/nino/$nino/incomeSourceId/$id/regime/ITSA",
       business,
       SelfEmploymentResponse)
 }

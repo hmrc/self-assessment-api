@@ -188,13 +188,18 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
         AccountingType.CASH,
         Some(LocalDate.parse("2001-01-01")),
         None,
+        None,
         "RCDTS",
         None,
         Some("100 SuttonStreet"),
         Some("Wokingham"),
         Some("Surrey"),
         Some("London"),
-        Some("DH14EJ"))
+        Some("DH14EJ"),
+        None,
+        None,
+        None,
+        None)
     }
   }
 
@@ -342,25 +347,35 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
                                AccountingType.ACCRUAL,
                                Some(LocalDate.parse("2001-01-01")),
                                None,
+                               None,
                                "RCDTS",
                                None,
                                Some("100 SuttonStreet"),
                                Some("Wokingham"),
                                Some("Surrey"),
                                Some("London"),
-                               Some("DH14EJ")),
+                               Some("DH14EJ"),
+                               None,
+                               None,
+                               None,
+                               None),
         SelfEmploymentRetrieve(Some("123456789012346"),
                                AccountingPeriod(LocalDate.parse("2001-01-01"), LocalDate.parse("2001-01-01")),
                                AccountingType.CASH,
                                Some(LocalDate.parse("2001-01-01")),
                                None,
+                               None,
                                "RCDTS",
                                None,
                                Some("100 SuttonStreet"),
                                Some("Wokingham"),
                                Some("Surrey"),
                                Some("London"),
-                               Some("DH14EJ")))
+                               Some("DH14EJ"),
+                               None,
+                               None,
+                               None,
+                               None))
     }
   }
 }

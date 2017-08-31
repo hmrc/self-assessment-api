@@ -17,6 +17,8 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.selfassessmentapi.models.CessationReason
+import uk.gov.hmrc.selfassessmentapi.models.CessationReason._
 
 object Jsons {
 
@@ -387,24 +389,60 @@ object Jsons {
          """.stripMargin)
     }
 
-    def update(tradingName: String = "Acme Ltd",
+    def update(accPeriodStart: String = "2017-04-06",
+               accPeriodEnd: String = "2018-04-05",
+               accountingType: String = "CASH",
+               commencementDate: String = "2017-01-01",
+               cessationDate: String = "2017-01-02",
+               cessationReason: CessationReason = CessationReason.BANKRUPTCY,
+               tradingName: String = "Acme Ltd",
                businessDescription: String = "Accountancy services",
                businessAddressLineOne: String = "1 Acme Rd.",
                businessAddressLineTwo: String = "London",
                businessAddressLineThree: String = "Greater London",
                businessAddressLineFour: String = "United Kingdom",
-               businessPostcode: String = "A9 9AA"): JsValue = {
+               businessPostcode: Option[String] = Some("A9 9AA"),
+               businessCountry: String = "GB",
+               contactPrimaryPhoneNumber : String = "0734343434",
+               contactSecondaryPhoneNumber : String = "0734343434",
+               contactFaxNumber : String = "0734343434",
+               contactEmailAddress : String = "admin@mail.com",
+               paperless: Boolean = false,
+               seasonal: Boolean = false): JsValue = {
+
+      val addrPostcode = businessPostcode.map(code =>
+        s"""
+           |  "businessPostcode": "$code",
+       """.stripMargin).getOrElse("")
 
       Json.parse(
+
         s"""
            |{
+           |  "accountingPeriod": {
+           |    "start": "$accPeriodStart",
+           |    "end": "$accPeriodEnd"
+           |  },
+           |  "accountingType": "$accountingType",
+           |  "commencementDate": "$commencementDate",
+           |  "cessationDate": "$cessationDate",
+           |  "cessationReason": "$cessationReason",
            |  "tradingName": "$tradingName",
            |  "businessDescription": "$businessDescription",
            |  "businessAddressLineOne": "$businessAddressLineOne",
            |  "businessAddressLineTwo": "$businessAddressLineTwo",
            |  "businessAddressLineThree": "$businessAddressLineThree",
            |  "businessAddressLineFour": "$businessAddressLineFour",
-           |  "businessPostcode": "$businessPostcode"
+           |  $addrPostcode
+           |  "businessCountry": "$businessCountry",
+           |  "contactDetails": {
+           |    "contactPrimaryPhoneNumber": "$contactPrimaryPhoneNumber",
+           |    "contactSecondaryPhoneNumber": "$contactSecondaryPhoneNumber",
+           |    "contactFaxNumber": "$contactFaxNumber",
+           |    "contactEmailAddress": "$contactEmailAddress"
+           |  },
+           |  "paperless": $paperless,
+           |  "seasonal": $seasonal
            |}
          """.stripMargin)
     }
