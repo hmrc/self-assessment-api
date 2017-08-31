@@ -87,6 +87,7 @@ trait Response {
     case 400
         if errorCodeIsOneOf(INVALID_BUSINESSID,
                             INVALID_INCOME_SOURCE,
+                            INVALID_INCOMESOURCEID,
                             INVALID_TYPE,
                             INVALID_IDENTIFIER,
                             INVALID_CALCID) =>
