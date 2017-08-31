@@ -89,7 +89,7 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
         (403, Seq.empty, NotFound),
         (404, Seq(NOT_FOUND_INCOME_SOURCE), NotFound),
         (404, Seq.empty, NotFound),
-        (409, Seq(INVALID_PERIOD), BadRequest(toJson(Errors.InvalidPeriod))),
+        (409, Seq(INVALID_PERIOD), BadRequest(toJson(Errors.badRequest(Errors.InvalidPeriod)))),
         (409, Seq(NOT_CONTIGUOUS_PERIOD), Forbidden(toJson(Errors.businessError(Errors.NotContiguousPeriod)))),
         (409, Seq(OVERLAPS_IN_PERIOD), Forbidden(toJson(Errors.businessError(Errors.OverlappingPeriod)))),
         (409, Seq(NOT_ALIGN_PERIOD), Forbidden(toJson(Errors.businessError(Errors.MisalignedPeriod)))),

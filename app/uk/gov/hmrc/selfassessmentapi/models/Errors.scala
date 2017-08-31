@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.models
 
 
 import play.api.data.validation.ValidationError
-import play.api.libs.json.{JsValue, Json, Writes}
+import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.ErrorCode.ErrorCode
 
 object Errors {
@@ -68,6 +68,7 @@ object Errors {
   object InternalServerError extends Error("INTERNAL_SERVER_ERROR", "An internal server error occurred", None)
 
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")
+  def badRequest(error: Error) = BadRequest(Seq(error), "Invalid request")
   def badRequest(message: String) = BadRequest(Seq.empty, message)
 
   def businessError(error: Error): BusinessError = businessError(Seq(error))
