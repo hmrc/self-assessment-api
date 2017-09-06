@@ -366,10 +366,18 @@ traits:
                   application/json:
                     type: types.errorResponse
                     examples:
-                      invalidPeriod:
-                        description: If update periods are not contiguous
+                      notContiguousPeriod:
+                        description: If periods are not contiguous
                         value:
-                          code: INVALID_PERIOD
+                          code: NOT_CONTIGUOUS_PERIOD
+                      overlappingPeriod:
+                        description: If the period overlaps with existing periods
+                        value:
+                          code: OVERLAPPING_PERIOD
+                      misalignedPeriod:
+                        description: If the period is not within the accounting period
+                        value:
+                          code: MISALIGNED_PERIOD
           get:
             displayName: List all self-employment update periods
             description: List all self-employment update periods.

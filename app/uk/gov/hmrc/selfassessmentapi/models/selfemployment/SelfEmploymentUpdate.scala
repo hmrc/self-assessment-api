@@ -20,11 +20,9 @@ import org.joda.time.LocalDate
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.AccountingType._
 import uk.gov.hmrc.selfassessmentapi.models.CessationReason.CessationReason
-import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, ErrorCode, sicClassifications}
-import uk.gov.hmrc.selfassessmentapi.models.Validation._
+import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, ErrorCode, sicClassifications, _}
 
 
 case class SelfEmploymentUpdate(accountingPeriod: AccountingPeriod,

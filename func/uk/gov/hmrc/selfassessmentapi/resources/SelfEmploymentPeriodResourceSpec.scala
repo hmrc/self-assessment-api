@@ -8,29 +8,36 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
 
   "createPeriod" should {
     "return code 201 containing a location header containing from date and to date when creating a period" in {
-      val period = Jsons.SelfEmployment.period(
-        fromDate = Some("2017-04-06"),
-        toDate = Some("2017-07-04"))
+      val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-06"), toDate = Some("2017-07-04"))
 
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.willBeCreatedFor(nino)
-        .des().selfEmployment.periodWillBeCreatedFor(nino)
+        .des()
+        .selfEmployment
+        .willBeCreatedFor(nino)
+        .des()
+        .selfEmployment
+        .periodWillBeCreatedFor(nino)
         .when()
-        .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
+        .post(Jsons.SelfEmployment())
+        .to(s"/ni/$nino/self-employments")
         .thenAssertThat()
         .statusIs(201)
         .when()
-        .post(period).to(s"%sourceLocation%/periods")
+        .post(period)
+        .to(s"%sourceLocation%/periods")
         .thenAssertThat()
         .statusIs(201)
-        .responseContainsHeader("Location", s"/self-assessment/ni/$nino/self-employments/\\w+/periods/2017-04-06_2017-07-04".r)
+        .responseContainsHeader("Location",
+                                s"/self-assessment/ni/$nino/self-employments/\\w+/periods/2017-04-06_2017-07-04".r)
         .when()
         .get("/admin/metrics")
         .thenAssertThat()
-        .body(_ \ "timers" \ "Timer-API-SelfEmployments-POST" \ "count").is(1)
-        .body(_ \ "timers" \ "Timer-API-SelfEmployments-periods-POST" \ "count").is(1)
+        .body(_ \ "timers" \ "Timer-API-SelfEmployments-POST" \ "count")
+        .is(1)
+        .body(_ \ "timers" \ "Timer-API-SelfEmployments-periods-POST" \ "count")
+        .is(1)
     }
 
     "return code 400 when attempting to create a period with the 'from' and 'to' dates are in the incorrect order" in {
@@ -42,13 +49,17 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.willBeCreatedFor(nino)
+        .des()
+        .selfEmployment
+        .willBeCreatedFor(nino)
         .when()
-        .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
+        .post(Jsons.SelfEmployment())
+        .to(s"/ni/$nino/self-employments")
         .thenAssertThat()
         .statusIs(201)
         .when()
-        .post(period).to(s"%sourceLocation%/periods")
+        .post(period)
+        .to(s"%sourceLocation%/periods")
         .thenAssertThat()
         .statusIs(400)
         .contentTypeIsJson()
@@ -70,13 +81,17 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.willBeCreatedFor(nino)
+        .des()
+        .selfEmployment
+        .willBeCreatedFor(nino)
         .when()
-        .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
+        .post(Jsons.SelfEmployment())
+        .to(s"/ni/$nino/self-employments")
         .thenAssertThat()
         .statusIs(201)
         .when()
-        .post(Json.parse(period)).to(s"%sourceLocation%/periods")
+        .post(Json.parse(period))
+        .to(s"%sourceLocation%/periods")
         .thenAssertThat()
         .statusIs(400)
         .contentTypeIsJson()
@@ -93,42 +108,101 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
          """.stripMargin
 
       val expectedBody =
-        Jsons.Errors.invalidRequest(("INVALID_PERIOD", ""),
-                                    ("NO_INCOMES_AND_EXPENSES", ""))
+        Jsons.Errors.invalidRequest(("INVALID_PERIOD", ""), ("NO_INCOMES_AND_EXPENSES", ""))
 
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.willBeCreatedFor(nino)
+        .des()
+        .selfEmployment
+        .willBeCreatedFor(nino)
         .when()
-        .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
+        .post(Jsons.SelfEmployment())
+        .to(s"/ni/$nino/self-employments")
         .thenAssertThat()
         .statusIs(201)
         .when()
-        .post(Json.parse(period)).to(s"%sourceLocation%/periods")
+        .post(Json.parse(period))
+        .to(s"%sourceLocation%/periods")
         .thenAssertThat()
         .statusIs(400)
         .contentTypeIsJson()
         .bodyIsLike(expectedBody)
     }
 
-    "return code 403 when attempting to create a period whose date range overlaps" in {
+    "return code 403 when attempting to create a period that is not contiguous with existing periods" in {
+      val nonContiguousPeriod = Jsons.SelfEmployment.period(fromDate = Some("2017-08-04"), toDate = Some("2017-09-04"))
+
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des()
+        .selfEmployment
+        .willBeCreatedFor(nino)
+        .des()
+        .selfEmployment
+        .nonContiguousPeriodFor(nino)
+        .when()
+        .post(Jsons.SelfEmployment())
+        .to(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(201)
+        .when()
+        .post(nonContiguousPeriod)
+        .to(s"%sourceLocation%/periods")
+        .thenAssertThat()
+        .statusIs(403)
+        .bodyIsLike(Jsons.Errors.nonContiguousPeriod)
+    }
+
+    "return code 403 when attempting to create a period whose date range overlaps with another period" in {
       val overlappingPeriod = Jsons.SelfEmployment.period(fromDate = Some("2017-08-04"), toDate = Some("2017-09-04"))
 
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.willBeCreatedFor(nino)
-        .des().selfEmployment.invalidPeriodFor(nino)
+        .des()
+        .selfEmployment
+        .willBeCreatedFor(nino)
+        .des()
+        .selfEmployment
+        .overlappingPeriodFor(nino)
         .when()
-        .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
+        .post(Jsons.SelfEmployment())
+        .to(s"/ni/$nino/self-employments")
         .thenAssertThat()
         .statusIs(201)
         .when()
-        .post(overlappingPeriod).to(s"%sourceLocation%/periods")
+        .post(overlappingPeriod)
+        .to(s"%sourceLocation%/periods")
         .thenAssertThat()
         .statusIs(403)
-        .bodyIsLike(Jsons.Errors.invalidPeriod)
+        .bodyIsLike(Jsons.Errors.overlappingPeriod)
+    }
+
+    "return code 403 when attempting to create a period that is misaligned with the accounting period" in {
+      val misalignedPeriod = Jsons.SelfEmployment.period(fromDate = Some("2017-08-04"), toDate = Some("2017-09-04"))
+
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des()
+        .selfEmployment
+        .willBeCreatedFor(nino)
+        .des()
+        .selfEmployment
+        .misalignedPeriodFor(nino)
+        .when()
+        .post(Jsons.SelfEmployment())
+        .to(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(201)
+        .when()
+        .post(misalignedPeriod)
+        .to(s"%sourceLocation%/periods")
+        .thenAssertThat()
+        .statusIs(403)
+        .bodyIsLike(Jsons.Errors.misalignedPeriod)
     }
 
     "return code 404 when attempting to create a period for a self-employment that does not exist" in {
@@ -137,9 +211,12 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.periodWillBeNotBeCreatedFor(nino)
+        .des()
+        .selfEmployment
+        .periodWillBeNotBeCreatedFor(nino)
         .when()
-        .post(period).to(s"/ni/$nino/self-employments/abc/periods")
+        .post(period)
+        .to(s"/ni/$nino/self-employments/abc/periods")
         .thenAssertThat()
         .statusIs(404)
     }
@@ -150,9 +227,11 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().serverErrorFor(nino)
+        .des()
+        .serverErrorFor(nino)
         .when()
-        .post(period).to(s"/ni/$nino/self-employments/abc/periods")
+        .post(period)
+        .to(s"/ni/$nino/self-employments/abc/periods")
         .thenAssertThat()
         .statusIs(500)
         .bodyIsLike(Jsons.Errors.internalServerError)
@@ -164,9 +243,11 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().serviceUnavailableFor(nino)
+        .des()
+        .serviceUnavailableFor(nino)
         .when()
-        .post(period).to(s"/ni/$nino/self-employments/abc/periods")
+        .post(period)
+        .to(s"/ni/$nino/self-employments/abc/periods")
         .thenAssertThat()
         .statusIs(500)
         .bodyIsLike(Jsons.Errors.internalServerError)
@@ -176,7 +257,8 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().isATeapotFor(nino)
+        .des()
+        .isATeapotFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods")
         .thenAssertThat()
@@ -194,27 +276,35 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.periodWillBeUpdatedFor(nino, from = "2017-04-05", to = "2018-04-04")
+        .des()
+        .selfEmployment
+        .periodWillBeUpdatedFor(nino, from = "2017-04-05", to = "2018-04-04")
         .when()
-        .put(updatePeriod).at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
+        .put(updatePeriod)
+        .at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .thenAssertThat()
         .statusIs(204)
     }
 
     "return code 404 when attempting to update a non-existent period" in {
-      val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-06"),
-                                               toDate = Some("2017-07-04"),
-                                               turnover = 100.25,
-                                               otherIncome = 100.25,
-                                               costOfGoodsBought = (100.25, 50.25),
-                                               cisPaymentsToSubcontractors = (100.25, 50.25))
+      val period = Jsons.SelfEmployment.period(
+        fromDate = Some("2017-04-06"),
+        toDate = Some("2017-07-04"),
+        turnover = 100.25,
+        otherIncome = 100.25,
+        costOfGoodsBought = (100.25, 50.25),
+        cisPaymentsToSubcontractors = (100.25, 50.25)
+      )
 
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.periodWillNotBeUpdatedFor(nino, from = "2017-04-05", to = "2018-04-04")
+        .des()
+        .selfEmployment
+        .periodWillNotBeUpdatedFor(nino, from = "2017-04-05", to = "2018-04-04")
         .when()
-        .put(Json.toJson(period)).at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
+        .put(Json.toJson(period))
+        .at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .thenAssertThat()
         .statusIs(404)
     }
@@ -235,28 +325,32 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
         .when()
-        .put(Json.parse(period)).at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
+        .put(Json.parse(period))
+        .at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .thenAssertThat()
         .statusIs(400)
         .contentTypeIsJson()
         .bodyIsLike(expectedBody)
     }
 
-
     "return code 500 when we receive a status code from DES that we do not handle" in {
-      val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-06"),
-                                               toDate = Some("2017-07-04"),
-                                               turnover = 100.25,
-                                               otherIncome = 100.25,
-                                               costOfGoodsBought = (100.25, 50.25),
-                                               cisPaymentsToSubcontractors = (100.25, 50.25))
+      val period = Jsons.SelfEmployment.period(
+        fromDate = Some("2017-04-06"),
+        toDate = Some("2017-07-04"),
+        turnover = 100.25,
+        otherIncome = 100.25,
+        costOfGoodsBought = (100.25, 50.25),
+        cisPaymentsToSubcontractors = (100.25, 50.25)
+      )
 
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().isATeapotFor(nino)
+        .des()
+        .isATeapotFor(nino)
         .when()
-        .put(Json.toJson(period)).at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
+        .put(Json.toJson(period))
+        .at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .thenAssertThat()
         .statusIs(500)
     }
@@ -264,29 +358,33 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
 
   "retrievePeriod" should {
     "return code 200 when retrieving a period that exists" in {
-      val expectedBody = Jsons.SelfEmployment.period(fromDate = Some("2017-04-05"),
-                                                     toDate = Some("2018-04-04"),
-                                                     turnover = 200,
-                                                     otherIncome = 200,
-                                                     costOfGoodsBought = (200, 200),
-                                                     cisPaymentsToSubcontractors = (200, 200),
-                                                     staffCosts = (200, 200),
-                                                     travelCosts = (200, 200),
-                                                     premisesRunningCosts = (200, 200),
-                                                     maintenanceCosts = (200, 200),
-                                                     adminCosts = (200, 200),
-                                                     advertisingCosts = (200, 200),
-                                                     interest = (200, 200),
-                                                     financialCharges = (200, 200),
-                                                     badDebt = (200, 200),
-                                                     professionalFees = (200, 200),
-                                                     depreciation = (200, 200),
-                                                     otherExpenses = (200, 200))
+      val expectedBody = Jsons.SelfEmployment.period(
+        fromDate = Some("2017-04-05"),
+        toDate = Some("2018-04-04"),
+        turnover = 200,
+        otherIncome = 200,
+        costOfGoodsBought = (200, 200),
+        cisPaymentsToSubcontractors = (200, 200),
+        staffCosts = (200, 200),
+        travelCosts = (200, 200),
+        premisesRunningCosts = (200, 200),
+        maintenanceCosts = (200, 200),
+        adminCosts = (200, 200),
+        advertisingCosts = (200, 200),
+        interest = (200, 200),
+        financialCharges = (200, 200),
+        badDebt = (200, 200),
+        professionalFees = (200, 200),
+        depreciation = (200, 200),
+        otherExpenses = (200, 200)
+      )
 
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.periodWillBeReturnedFor(nino, from = "2017-04-05", to = "2018-04-04")
+        .des()
+        .selfEmployment
+        .periodWillBeReturnedFor(nino, from = "2017-04-05", to = "2018-04-04")
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .thenAssertThat()
@@ -300,8 +398,11 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.periodWillBeReturnedFor(nino, from = "2017-04-05", to = "2018-04-04")
-        .des().invalidNinoFor(nino)
+        .des()
+        .selfEmployment
+        .periodWillBeReturnedFor(nino, from = "2017-04-05", to = "2018-04-04")
+        .des()
+        .invalidNinoFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .thenAssertThat()
@@ -313,31 +414,34 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().invalidBusinessIdFor(nino)
+        .des()
+        .invalidBusinessIdFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods/def")
         .thenAssertThat()
         .statusIs(404)
     }
 
-
     "return code 404 when retrieving a period that does not exist" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.noPeriodFor(nino, from = "2017-04-06", to = "2018-04-05")
+        .des()
+        .selfEmployment
+        .noPeriodFor(nino, from = "2017-04-06", to = "2018-04-05")
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods/2017-04-06_2018-04-05")
         .thenAssertThat()
         .statusIs(404)
     }
 
-
     "return code 404 when retrieving a period that has got invalid dates in the periodId" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.periodWillBeReturnedFor(nino, from = "2017-05-04", to = "2018-06-31")
+        .des()
+        .selfEmployment
+        .periodWillBeReturnedFor(nino, from = "2017-05-04", to = "2018-06-31")
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods/2017-05-04_2017-06-31")
         .thenAssertThat()
@@ -348,7 +452,9 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.invalidDateFrom(nino, from = "2017-04-06", to = "2018-04-05")
+        .des()
+        .selfEmployment
+        .invalidDateFrom(nino, from = "2017-04-06", to = "2018-04-05")
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods/2017-04-06_2018-04-05")
         .thenAssertThat()
@@ -359,7 +465,9 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.invalidDateTo(nino, from = "2017-04-06", to = "2018-04-05")
+        .des()
+        .selfEmployment
+        .invalidDateTo(nino, from = "2017-04-06", to = "2018-04-05")
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods/2017-04-06_2018-04-05")
         .thenAssertThat()
@@ -370,7 +478,8 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().isATeapotFor(nino)
+        .des()
+        .isATeapotFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .thenAssertThat()
@@ -394,7 +503,9 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.periodsWillBeReturnedFor(nino)
+        .des()
+        .selfEmployment
+        .periodsWillBeReturnedFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods")
         .thenAssertThat()
@@ -410,7 +521,9 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.noPeriodsFor(nino)
+        .des()
+        .selfEmployment
+        .noPeriodsFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods")
         .thenAssertThat()
@@ -422,7 +535,8 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().invalidNinoFor(nino)
+        .des()
+        .invalidNinoFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods")
         .thenAssertThat()
@@ -434,7 +548,8 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().invalidBusinessIdFor(nino)
+        .des()
+        .invalidBusinessIdFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods")
         .thenAssertThat()
@@ -445,7 +560,9 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.doesNotExistPeriodFor(nino)
+        .des()
+        .selfEmployment
+        .doesNotExistPeriodFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods")
         .thenAssertThat()
@@ -456,7 +573,9 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.invalidPeriodsJsonFor(nino)
+        .des()
+        .selfEmployment
+        .invalidPeriodsJsonFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods")
         .thenAssertThat()
@@ -467,7 +586,8 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().isATeapotFor(nino)
+        .des()
+        .isATeapotFor(nino)
         .when()
         .get(s"/ni/$nino/self-employments/abc/periods")
         .thenAssertThat()

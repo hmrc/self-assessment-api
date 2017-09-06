@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.models
 
 
 import play.api.data.validation.ValidationError
-import play.api.libs.json.{JsValue, Json, Writes}
+import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.ErrorCode.ErrorCode
 
 object Errors {
@@ -56,7 +56,10 @@ object Errors {
 
   object NinoInvalid extends Error("NINO_INVALID", "The provided Nino is invalid", None)
   object InvalidRequest extends Error("INVALID_REQUEST", "Invalid request", None)
-  object InvalidPeriod extends Error("INVALID_PERIOD", "Periods should be contiguous and have no gaps between one another", Some(""))
+  object InvalidPeriod extends Error("INVALID_PERIOD", "The period 'from' date should come before the 'to' date", Some(""))
+  object NotContiguousPeriod extends Error("NOT_CONTIGUOUS_PERIOD", "Periods should be contiguous.", Some(""))
+  object OverlappingPeriod extends Error("OVERLAPPING_PERIOD", "Period overlaps with existing periods.", Some(""))
+  object MisalignedPeriod extends Error("MISALIGNED_PERIOD", "Period is not within the accounting period.", Some(""))
   object ClientNotSubscribed extends Error("CLIENT_NOT_SUBSCRIBED", "The client is not subscribed to MTD", None)
   object AgentNotAuthorized extends Error("AGENT_NOT_AUTHORIZED", "The agent is not authorized", None)
   object AgentNotSubscribed extends Error("AGENT_NOT_SUBSCRIBED", "The agent is not subscribed to agent services", None)
@@ -65,6 +68,7 @@ object Errors {
   object InternalServerError extends Error("INTERNAL_SERVER_ERROR", "An internal server error occurred", None)
 
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")
+  def badRequest(error: Error) = BadRequest(Seq(error), "Invalid request")
   def badRequest(message: String) = BadRequest(Seq.empty, message)
 
   def businessError(error: Error): BusinessError = businessError(Seq(error))

@@ -904,13 +904,35 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def invalidPeriodFor(nino: Nino, id: String = "abc"): Givens = {
+        def overlappingPeriodFor(nino: Nino, id: String = "abc"): Givens = {
           stubFor(post(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries"))
             .willReturn(
               aResponse()
-                .withStatus(400)
+                .withStatus(409)
                 .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.Errors.invalidPeriod)))
+                .withBody(DesJsons.Errors.overlappingPeriod)))
+
+          givens
+        }
+
+        def nonContiguousPeriodFor(nino: Nino, id: String = "abc"): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries"))
+            .willReturn(
+              aResponse()
+                .withStatus(409)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.nonContiguousPeriod)))
+
+          givens
+        }
+
+        def misalignedPeriodFor(nino: Nino, id: String = "abc"): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summaries"))
+            .willReturn(
+              aResponse()
+                .withStatus(409)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.misalignedPeriod)))
 
           givens
         }
@@ -1161,7 +1183,18 @@ trait BaseFunctionalSpec extends TestApplication {
                   .withHeader("Content-Type", "application/json")
                   .withBody(DesJsons.Errors.propertyConflict)
               ))
+          givens
+        }
 
+        def notFoundIncomeSourceFor(nino: Nino): Givens = {
+          stubFor(
+          post(urlEqualTo(s"/income-tax-self-assessment/nino/$nino/properties"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.notFoundIncomeSource)
+            ))
           givens
         }
 
@@ -1268,14 +1301,25 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def invalidPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
+        def overlappingPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
             post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
-                  .withStatus(400)
+                  .withStatus(409)
                   .withHeader("Content-Type", "application/json")
-                  .withBody(DesJsons.Errors.invalidPeriod)))
+                  .withBody(DesJsons.Errors.overlappingPeriod)))
+
+          givens
+        }
+
+        def misalignedPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            .willReturn(
+              aResponse()
+                .withStatus(409)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.misalignedPeriod)))
 
           givens
         }

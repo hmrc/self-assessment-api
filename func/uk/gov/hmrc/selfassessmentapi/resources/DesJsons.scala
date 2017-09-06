@@ -1,6 +1,6 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
+import play.api.libs.json._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.models.des.properties.{Common, FHL, Other}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
@@ -19,10 +19,22 @@ object DesJsons {
        """.stripMargin
     }
 
+    private def multiError(codeReason: (String, String)*): String = {
+      val errors = codeReason map {
+        case (code, reason) =>
+          JsObject(Seq("code" -> JsString(code), "reason" -> JsString(reason)))
+      }
+      Json
+        .obj("failures" -> errors)
+        .toString()
+    }
+
     val invalidNino: String = error("INVALID_NINO", "Submission has not passed validation. Invalid parameter NINO.")
     val invalidPayload: String = error("INVALID_PAYLOAD", "Submission has not passed validation. Invalid PAYLOAD.")
     val ninoNotFound: String = error("NOT_FOUND_NINO", "The remote endpoint has indicated that no data can be found.")
-    val notFoundProperty: String = error("NOT_FOUND_PROPERTY", "The remote endpoint has indicated that no data can be found for the given property type.")
+    val notFoundProperty: String = error(
+      "NOT_FOUND_PROPERTY",
+      "The remote endpoint has indicated that no data can be found for the given property type.")
     val notFound: String = error("NOT_FOUND", "The remote endpoint has indicated that no data can be found.")
     val tradingNameConflict: String = error("CONFLICT", "Duplicated trading name.")
     val serverError: String =
@@ -32,14 +44,28 @@ object DesJsons {
       error("TOO_MANY_SOURCES", "You may only have a maximum of one self-employment source.")
     val invalidPeriod: String =
       error("INVALID_PERIOD", "The remote endpoint has indicated that a overlapping period was submitted.")
+    val overlappingPeriod: String =
+      error("OVERLAPS_IN_PERIOD",
+            "The remote endpoint has indicated that the submission period overlaps another period submitted.")
+    val nonContiguousPeriod: String =
+      error(
+        "NOT_CONTIGUOUS_PERIOD",
+        "The remote endpoint has indicated that the submission period is not contiguous with another period submission.")
+    val misalignedPeriod: String =
+      error("NOT_ALIGN_PERIOD",
+            "The remote endpoint has indicated that the submission period is outside the Accounting Period.")
     val invalidObligation: String = error("INVALID_REQUEST", "Accounting period should be greater than 6 months.")
     val invalidBusinessId: String = error("INVALID_BUSINESSID", "Submission has not passed validation. Invalid parameter businessId.")
     val invalidOriginatorId: String =
       error("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
     val invalidCalcId: String = error("INVALID_CALCID", "Submission has not passed validation")
     val propertyConflict: String = error("CONFLICT", "Property already exists.")
-    val invalidIncomeSource: String = error("INVALID_INCOME_SOURCE", "The remote endpoint has indicated that the taxpayer does not have an associated property.")
-    val invalidDateFrom: String = error("INVALID_DATE_FROM", "Submission has not passed validation. Invalid parameter from.")
+    val invalidIncomeSource: String = error(
+      "INVALID_INCOME_SOURCE",
+      "The remote endpoint has indicated that the taxpayer does not have an associated property.")
+    val notFoundIncomeSource: String = error("NOT_FOUND_INCOME_SOURCE", "The remote endpoint has indicated that no data can be found for the given income source id.")
+    val invalidDateFrom: String =
+      error("INVALID_DATE_FROM", "Submission has not passed validation. Invalid parameter from.")
     val invalidDateTo: String = error("INVALID_DATE_TO", "Submission has not passed validation. Invalid parameter to.")
   }
 
@@ -361,8 +387,6 @@ object DesJsons {
       """.stripMargin
     }
 
-
-
     object Period {
       def createResponse(id: String = "123456789012345"): String = {
         s"""
@@ -400,18 +424,23 @@ object DesJsons {
               professionalFees: BigDecimal = 0,
               other: BigDecimal = 0): JsValue =
         Json.toJson(
-          FHL.Properties(transactionReference = Some(transactionReference),
+          FHL.Properties(
+            transactionReference = Some(transactionReference),
             from = from,
             to = to,
             financials = Some(
               FHL
-                .Financials(incomes = Some(FHL.Incomes(rentIncome = Some(Common.Income(rentIncome)))),
-                  deductions = Some(
-                    FHL.Deductions(premisesRunningCosts = Some(premisesRunningCosts),
-                      repairsAndMaintenance = Some(repairsAndMaintenance),
-                      financialCosts = Some(financialCosts),
-                      professionalFees = Some(professionalFees),
-                      other = Some(other)))))))
+                .Financials(
+                  incomes = Some(FHL.Incomes(rentIncome = Some(Common.Income(rentIncome)))),
+                  deductions = Some(FHL.Deductions(
+                    premisesRunningCosts = Some(premisesRunningCosts),
+                    repairsAndMaintenance = Some(repairsAndMaintenance),
+                    financialCosts = Some(financialCosts),
+                    professionalFees = Some(professionalFees),
+                    other = Some(other)
+                  ))
+                ))
+          ))
 
       def other(transactionReference: String = "12345",
                 from: String = "",
@@ -428,33 +457,36 @@ object DesJsons {
                 other: Option[BigDecimal] = Some(0)): JsValue =
         Json.toJson(
           Other
-            .Properties(transactionReference = Some(transactionReference),
+            .Properties(
+              transactionReference = Some(transactionReference),
               from = from,
               to = to,
-              financials = Some(
-                Other.Financials(incomes = Some(Other.Incomes(rentIncome =
-                  Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
-                  premiumsOfLeaseGrant = premiumsOfLeaseGrant,
-                  reversePremiums = reversePremiums)),
-                  deductions = Some(Other.Deductions(
-                    premisesRunningCosts = premisesRunningCosts,
-                    repairsAndMaintenance = repairsAndMaintenance,
-                    financialCosts = financialCosts,
-                    professionalFees = professionalFees,
-                    costOfServices = costOfServices,
-                    other = other))))))
+              financials = Some(Other.Financials(
+                incomes = Some(Other.Incomes(rentIncome = Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
+                                             premiumsOfLeaseGrant = premiumsOfLeaseGrant,
+                                             reversePremiums = reversePremiums)),
+                deductions = Some(Other.Deductions(
+                  premisesRunningCosts = premisesRunningCosts,
+                  repairsAndMaintenance = repairsAndMaintenance,
+                  financialCosts = financialCosts,
+                  professionalFees = professionalFees,
+                  costOfServices = costOfServices,
+                  other = other
+                ))
+              ))
+            ))
 
       def periods(propertyType: PropertyType): String =
         propertyType match {
           case PropertyType.FHL =>
             Json
               .arr(fhl(transactionReference = "abc", from = "2017-04-06", to = "2017-07-04"),
-                fhl(transactionReference = "def", from = "2017-07-05", to = "2017-08-04"))
+                   fhl(transactionReference = "def", from = "2017-07-05", to = "2017-08-04"))
               .toString()
           case PropertyType.OTHER =>
             Json
               .arr(other(transactionReference = "abc", from = "2017-04-06", to = "2017-07-04"),
-                other(transactionReference = "def", from = "2017-07-05", to = "2017-08-04"))
+                   other(transactionReference = "def", from = "2017-07-05", to = "2017-08-04"))
               .toString()
         }
     }
