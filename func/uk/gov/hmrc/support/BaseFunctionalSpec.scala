@@ -31,7 +31,7 @@ trait BaseFunctionalSpec extends TestApplication {
     def responseContainsHeader(name: String, pattern: Regex): Assertions = {
       response.header(name) match {
         case Some(h) => h should fullyMatch regex pattern
-        case _ => fail("Header [$name] not found in the response headers")
+        case _ => fail(s"Header [$name] not found in the response headers")
       }
       this
     }
@@ -992,10 +992,10 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def willBeUpdatedFor(nino: Nino, id: String = "abc"): Givens = {
-          stubFor(put(urlEqualTo(s"/income-tax-self-assessment/nino/$nino/business/$id"))
+          stubFor(put(urlEqualTo(s"/income-tax-self-assessment/nino/$nino/incomeSourceId/$id/regime/ITSA"))
             .willReturn(
               aResponse()
-                .withStatus(204)))
+                .withStatus(200)))
 
           givens
         }

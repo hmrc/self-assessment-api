@@ -71,8 +71,7 @@ case class APIVersion(
 
 case class Access(`type`: String, whitelistedApplicationIds: Seq[String])
 
-case class Endpoint(
-                     uriPattern: String,
+case class Endpoint(uriPattern: String,
                      endpointName: String,
                      method: HttpMethod,
                      authType: AuthType,

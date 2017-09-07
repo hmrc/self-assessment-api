@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Contact Details",
+  "description": "Contact Details",
+  "type": "object",
+  "properties": {
+    "contactPrimaryPhoneNumber": {
+      "title": "Business contact primary phone number",
+      "description": "Business contact primary phone number",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 24,
+      "pattern":"^[A-Z0-9 )/(*#-]+$"
+    },
+    "contactSecondaryPhoneNumber": {
+      "title": "Business contact secondary phone number",
+      "description": "Business contact secondary phone number",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 24,
+      "pattern":"^[A-Z0-9 )/(*#-]+$"
+    },
+    "contactFaxNumber": {
+      "title": "Business contact fax number",
+      "description": "Business contact fax number",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 24,
+      "pattern":"^[A-Z0-9 )/(*#-]+$"
+    },
+    "contactEmailAddress": {
+      "title": "Business contact email address",
+      "description": "Business contact email email",
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 132
+    }
+  },
+  "additionalProperties": false
+}

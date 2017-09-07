@@ -29,6 +29,17 @@
       "format": "date",
       "$ref": "FullDate.json"
     },
+    "cessationReason": {
+      "title": "Business cessation reason",
+      "description": "Business cessation reason.",
+      "type": "string",
+      "enum": [
+        "Bankruptcy",
+        "Death",
+        "Voluntary Closure",
+        "Others"
+      ]
+    },
     "tradingName": {
       "title": "Business trading name",
       "description": "Business trading name",
@@ -76,6 +87,27 @@
       "minLength": 1,
       "maxLength": 10,
       "pattern":"^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$"
+    },
+    "businessCountry": {
+      "title": "Business country",
+      "description": "Business country, ISO 3166-1 alpha-2",
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 2,
+      "pattern":"^[A-Z]{2}$"
+    },
+    "contactDetails": {
+      "$ref": "ContactDetails.json"
+    },
+    "paperless": {
+      "title": "Business communication is digital or paper",
+      "description": "Business communication is digital or paper",
+      "type": "boolean"
+    },
+    "seasonal": {
+      "title": "Business is a seasonal business or not flag",
+      "description": "Business is a seasonal business or not flag",
+      "type": "boolean"
     }
   },
   "required": [

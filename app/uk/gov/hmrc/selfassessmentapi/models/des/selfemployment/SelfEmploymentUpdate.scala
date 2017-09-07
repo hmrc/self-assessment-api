@@ -18,24 +18,62 @@ package uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 
 import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.selfassessmentapi.models
+import uk.gov.hmrc.selfassessmentapi.models.AccountingType
+import uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
-case class SelfEmploymentUpdate(tradingName: String, typeOfBusiness: String, addressDetails: SelfEmploymentAddress)
+case class SelfEmploymentUpdate(nino: Option[String] = None,
+                                utr: Option[String] = None,
+                                accountingPeriodStartDate: String,
+                                accountingPeriodEndDate: String,
+                                tradingName: String,
+                                addressDetails: SelfEmploymentAddress,
+                                contactDetails: Option[ContactDetails] = None,
+                                typeOfBusiness: String,
+                                tradingStartDate: String,
+                                cashOrAccruals: Boolean,
+                                paperless: Boolean,
+                                seasonal: Boolean,
+                                cessationDate: Option[String] = None,
+                                reasonForCessation: Option[String] = None)
 
 object SelfEmploymentUpdate {
   implicit val writes: Writes[SelfEmploymentUpdate] = Json.writes[SelfEmploymentUpdate]
 
   def from(apiSelfEmployment: models.selfemployment.SelfEmploymentUpdate): SelfEmploymentUpdate = {
     SelfEmploymentUpdate(
+      accountingPeriodStartDate = apiSelfEmployment.accountingPeriod.start.toString,
+      accountingPeriodEndDate = apiSelfEmployment.accountingPeriod.end.toString,
       tradingName = apiSelfEmployment.tradingName,
+      addressDetails = SelfEmploymentAddress(apiSelfEmployment.businessAddressLineOne,
+        apiSelfEmployment.businessAddressLineTwo,
+        apiSelfEmployment.businessAddressLineThree,
+        apiSelfEmployment.businessAddressLineFour,
+        apiSelfEmployment.businessPostcode,
+        apiSelfEmployment.businessCountry),
+      contactDetails = ContactDetails.from(apiSelfEmployment.contactDetails),
       typeOfBusiness = apiSelfEmployment.businessDescription,
-      addressDetails = SelfEmploymentAddress(
-        addressLine1 = apiSelfEmployment.businessAddressLineOne,
-        addressLine2 = apiSelfEmployment.businessAddressLineTwo,
-        addressLine3 = apiSelfEmployment.businessAddressLineThree,
-        addressLine4 = apiSelfEmployment.businessAddressLineFour,
-        postalCode = Some(apiSelfEmployment.businessPostcode)
-      )
+      tradingStartDate = apiSelfEmployment.commencementDate.toString,
+      cashOrAccruals = AccountingType.toDesBoolean(apiSelfEmployment.accountingType),
+      paperless = apiSelfEmployment.paperless,
+      seasonal = apiSelfEmployment.seasonal,
+      cessationDate = None,
+      reasonForCessation = None
     )
   }
 
+
+}
+
+case class ContactDetails(contactPrimaryPhoneNumber: Option[String],
+                          contactSecondaryPhoneNumber: Option[String],
+                          contactFaxNumber: Option[String],
+                          contactEmailAddress: Option[String])
+
+object ContactDetails {
+  implicit val writes: Writes[ContactDetails] = Json.writes[ContactDetails]
+
+  def from(contactDetails: Option[selfemployment.ContactDetails]): Option[ContactDetails] =
+    contactDetails map { cd =>
+      ContactDetails(cd.contactPrimaryPhoneNumber, cd.contactSecondaryPhoneNumber, cd.contactFaxNumber, cd.contactEmailAddress)
+    }
 }

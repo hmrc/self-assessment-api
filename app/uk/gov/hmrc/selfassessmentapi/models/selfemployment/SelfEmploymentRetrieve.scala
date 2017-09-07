@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 import org.joda.time.LocalDate
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.AccountingType._
+import uk.gov.hmrc.selfassessmentapi.models.CessationReason.CessationReason
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.UnableToMapAccountingType
 
@@ -27,13 +28,20 @@ case class SelfEmploymentRetrieve(id: Option[SourceId] = None,
                                   accountingType: AccountingType,
                                   commencementDate: Option[LocalDate],
                                   cessationDate: Option[LocalDate],
+                                  cessationReason: Option[CessationReason],
                                   tradingName: String,
                                   businessDescription: Option[String],
                                   businessAddressLineOne: Option[String],
                                   businessAddressLineTwo: Option[String],
                                   businessAddressLineThree: Option[String],
                                   businessAddressLineFour: Option[String],
-                                  businessPostcode: Option[String])
+                                  businessPostcode: Option[String],
+                                  businessCountry: Option[String],
+                                  contactDetails: Option[ContactDetails],
+                                  paperless: Option[Boolean],
+                                  seasonal: Option[Boolean])
+
+
 
 object SelfEmploymentRetrieve  {
 
@@ -48,13 +56,18 @@ object SelfEmploymentRetrieve  {
             accountingType = accountingType,
             commencementDate = desSelfEmployment.tradingStartDate.map(LocalDate.parse),
             cessationDate = None,
+            cessationReason = None,
             tradingName = desSelfEmployment.tradingName,
             businessDescription = desSelfEmployment.typeOfBusiness,
             businessAddressLineOne = desSelfEmployment.addressDetails.map(_.addressLine1),
             businessAddressLineTwo = desSelfEmployment.addressDetails.flatMap(_.addressLine2),
             businessAddressLineThree = desSelfEmployment.addressDetails.flatMap(_.addressLine3),
             businessAddressLineFour = desSelfEmployment.addressDetails.flatMap(_.addressLine4),
-            businessPostcode = desSelfEmployment.addressDetails.flatMap(_.postalCode)))
+            businessPostcode = desSelfEmployment.addressDetails.flatMap(_.postalCode),
+            businessCountry = None,
+            contactDetails = None,
+            paperless = None,
+            seasonal = None))
         case None => Left(UnableToMapAccountingType(s"Could not find accounting type (cash or accruals) in DES response $desSelfEmployment"))
       }
     }

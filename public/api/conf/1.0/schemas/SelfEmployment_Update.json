@@ -3,6 +3,39 @@
   "title": "Self-employment source of income",
   "type": "object",
   "properties": {
+    "accountingPeriod": {
+      "$ref": "AccountingPeriod.json"
+    },
+    "accountingType": {
+      "title": "Accounting type",
+      "description": "CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUAL.",
+      "type": "string",
+      "enum": [
+        "CASH",
+        "ACCRUAL"
+      ]
+    },
+    "commencementDate": {
+      "title": "Business start date",
+      "description": "Business start date, must be in the past.",
+      "$ref": "FullDate.json"
+    },
+    "cessationDate": {
+      "title": "Business cessation date",
+      "description": "Business cessation date, must be in the past.",
+      "$ref": "FullDate.json"
+    },
+    "cessationReason": {
+      "title": "Business cessation reason",
+      "description": "Business cessation reason.",
+      "type": "string",
+      "enum": [
+        "Bankruptcy",
+        "Death",
+        "Voluntary Closure",
+        "Others"
+      ]
+    },
     "tradingName": {
       "title": "Business trading name",
       "description": "Business trading name",
@@ -20,28 +53,32 @@
       "description": "First line of the business address",
       "type": "string",
       "minLength": 1,
-      "maxLength": 35
+      "maxLength": 35,
+      "pattern":"^[A-Za-z0-9 \\-,.&'\\/]{1,35}$"
     },
     "businessAddressLineTwo": {
       "title": "Business address line two",
       "description": "Second line of the business address",
       "type": "string",
       "minLength": 1,
-      "maxLength": 35
+      "maxLength": 35,
+      "pattern":"^[A-Za-z0-9 \\-,.&'\\/]{1,35}$"
     },
     "businessAddressLineThree": {
       "title": "Business address line three",
       "description": "Third line of the business address",
       "type": "string",
       "minLength": 1,
-      "maxLength": 35
+      "maxLength": 35,
+      "pattern":"^[A-Za-z0-9 \\-,.&'\\/]{1,35}$"
     },
     "businessAddressLineFour": {
       "title": "Business address line four",
       "description": "Fourth line of the business address",
       "type": "string",
       "minLength": 1,
-      "maxLength": 35
+      "maxLength": 35,
+      "pattern":"^[A-Za-z0-9 \\-,.&'\\/]{1,35}$"
     },
     "businessPostcode": {
       "title": "Business postcode",
@@ -50,13 +87,36 @@
       "minLength": 1,
       "maxLength": 10,
       "pattern":"^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$"
+    },
+    "businessCountry": {
+      "title": "Business country",
+      "description": "Business country, ISO 3166-1 alpha-2",
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 2,
+      "pattern":"^[A-Z]{2}$"
+    },
+    "contactDetails": {
+      "$ref": "ContactDetails.json"
+    },
+    "paperless": {
+      "title": "Business communication is digital or paper",
+      "description": "Business communication is digital or paper",
+      "type": "boolean"
+    },
+    "seasonal": {
+      "title": "Business is a seasonal business or not flag",
+      "description": "Business is a seasonal business or not flag",
+      "type": "boolean"
     }
   },
   "required": [
+    "accountingPeriod",
+    "accountingType",
     "tradingName",
     "businessDescription",
     "businessAddressLineOne",
-    "businessPostcode"
+    "businessCountry"
   ],
   "additionalProperties": false
 }

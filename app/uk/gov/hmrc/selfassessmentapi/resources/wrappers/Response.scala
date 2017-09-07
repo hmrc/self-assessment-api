@@ -85,7 +85,9 @@ trait Response {
     case 400 if errorCodeIsOneOf(INVALID_NINO)    => BadRequest(toJson(Errors.NinoInvalid))
     case 400 if errorCodeIsOneOf(INVALID_PAYLOAD) => BadRequest(toJson(Errors.InvalidRequest))
     case 400
-        if errorCodeIsOneOf(INVALID_BUSINESSID,
+        if errorCodeIsOneOf(NOT_FOUND_NINO,
+                            INVALID_INCOMESOURCEID,
+                            INVALID_BUSINESSID,
                             INVALID_INCOME_SOURCE,
                             INVALID_INCOMESOURCEID,
                             INVALID_TYPE,

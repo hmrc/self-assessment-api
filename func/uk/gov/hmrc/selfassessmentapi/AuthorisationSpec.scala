@@ -175,4 +175,5 @@ class AuthorisationSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Errors.agentNotAuthorised)
     }
   }
+
 }
