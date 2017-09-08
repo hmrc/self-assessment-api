@@ -44,6 +44,13 @@ trait JsonSpec extends UnitSpec {
     )
   }
 
+  def assertJsonValidationPasses[T: Format](json: JsValue): Unit = {
+    json.validate[T].fold(
+      invalid => fail(invalid.seq.mkString(", ")),
+      _ => succeed
+    )
+  }
+
   def assertValidationErrorWithCode[T: Format](obj: T, path: String, error: ErrorCode): Unit =
     assertValidationErrorsWithCode[T](Json.toJson(obj), Map(path -> Seq(error)))
 

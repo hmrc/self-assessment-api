@@ -34,10 +34,10 @@
       "description": "Business cessation reason.",
       "type": "string",
       "enum": [
-        "Bankruptcy",
-        "Death",
-        "Voluntary Closure",
-        "Others"
+        "BANKRUPTCY",
+        "DEATH",
+        "VOLUNTARY_CLOSURE",
+        "OTHERS"
       ]
     },
     "tradingName": {

@@ -30,10 +30,10 @@
       "description": "Business cessation reason.",
       "type": "string",
       "enum": [
-        "Bankruptcy",
-        "Death",
-        "Voluntary Closure",
-        "Others"
+        "BANKRUPTCY",
+        "DEATH",
+        "VOLUNTARY_CLOSURE",
+        "OTHERS"
       ]
     },
     "tradingName": {
@@ -81,8 +81,8 @@
       "pattern":"^[A-Za-z0-9 \\-,.&'\\/]{1,35}$"
     },
     "businessPostcode": {
-      "title": "Business postcode",
-      "description": "Business postcode",
+      "title": "Business postcode, mandatory when country is GB",
+      "description": "Business postcode, mandatory when country is GB",
       "type": "string",
       "minLength": 1,
       "maxLength": 10,
@@ -113,10 +113,13 @@
   "required": [
     "accountingPeriod",
     "accountingType",
+    "commencementDate",
     "tradingName",
     "businessDescription",
     "businessAddressLineOne",
-    "businessCountry"
+    "businessCountry",
+    "paperless",
+    "seasonal"
   ],
   "additionalProperties": false
 }
