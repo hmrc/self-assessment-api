@@ -28,11 +28,6 @@ object AccountingType extends Enumeration {
     case AccountingType.ACCRUAL => "accruals"
   }
 
-  val toDesBoolean: AccountingType => Boolean = {
-    case AccountingType.CASH => true
-    case AccountingType.ACCRUAL =>  false
-  }
-
   val fromDes: String => Option[AccountingType] = {
     case "cash" => Some(AccountingType.CASH)
     case "accruals" => Some(AccountingType.ACCRUAL)

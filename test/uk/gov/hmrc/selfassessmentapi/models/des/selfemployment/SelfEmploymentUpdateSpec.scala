@@ -50,7 +50,7 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
     "correctly map a API self-employment update into a DES self-employment update" in {
       desUpdate.accountingPeriodStartDate shouldBe apiUpdate.accountingPeriod.start.toString
       desUpdate.accountingPeriodEndDate shouldBe apiUpdate.accountingPeriod.end.toString
-      desUpdate.cashOrAccruals shouldBe AccountingType.toDesBoolean(apiUpdate.accountingType)
+      desUpdate.cashOrAccruals shouldBe AccountingType.toDes(apiUpdate.accountingType)
       desUpdate.tradingStartDate shouldBe apiUpdate.commencementDate.toString
       desUpdate.tradingName shouldBe apiUpdate.tradingName
       desUpdate.typeOfBusiness shouldBe apiUpdate.businessDescription
