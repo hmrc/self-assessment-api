@@ -64,7 +64,7 @@ object SelfEmploymentRetrieve  {
             businessAddressLineThree = desSelfEmployment.addressDetails.flatMap(_.addressLine3),
             businessAddressLineFour = desSelfEmployment.addressDetails.flatMap(_.addressLine4),
             businessPostcode = desSelfEmployment.addressDetails.flatMap(_.postalCode),
-            businessCountry = None,
+            businessCountry = desSelfEmployment.addressDetails.map(_.countryCode),
             contactDetails = None,
             paperless = None,
             seasonal = None))

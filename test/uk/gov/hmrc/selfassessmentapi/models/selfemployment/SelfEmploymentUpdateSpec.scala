@@ -110,9 +110,15 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
     }
 
     "return a error when country is GB and postcode is not provided" in {
-      val jsonOne = Jsons.SelfEmployment.update(businessPostcode = None)
+      val jsonOne = Jsons.SelfEmployment.update(businessPostcode =  None)
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("" -> Seq(ErrorCode.INVALID_POSTCODE)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("" -> Seq(ErrorCode.MANDATORY_FIELD_MISSING)))
+    }
+
+    "pass when country is FR and postcode is not provided" in {
+      val jsonOne = Jsons.SelfEmployment.update(businessPostcode =  None, businessCountry = "FR")
+
+      assertJsonValidationPasses[SelfEmploymentUpdate](jsonOne)
     }
 
     "return a error when providing a country that is not 2 characters in length" in {

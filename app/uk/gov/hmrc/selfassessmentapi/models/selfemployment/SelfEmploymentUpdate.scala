@@ -77,7 +77,10 @@ object SelfEmploymentUpdate {
     ) (SelfEmploymentUpdate.apply _).filter(
     ValidationError(
       "businessPostcode mandatory when businessCountry = GB",
-      ErrorCode.INVALID_POSTCODE)) { se => se.businessCountry == "GB" && se.businessPostcode.isDefined }
+      ErrorCode.MANDATORY_FIELD_MISSING)) { se =>
+    if (se.businessCountry == "GB") se.businessPostcode.isDefined
+    else true
+  }
 }
 
 case class ContactDetails(contactPrimaryPhoneNumber: Option[String],

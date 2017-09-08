@@ -196,7 +196,7 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
         Some("Surrey"),
         Some("London"),
         Some("DH14EJ"),
-        None,
+        Some("GB"),
         None,
         None,
         None)
@@ -355,7 +355,7 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
                                Some("Surrey"),
                                Some("London"),
                                Some("DH14EJ"),
-                               None,
+                               Some("GB"),
                                None,
                                None,
                                None),
@@ -372,7 +372,7 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
                                Some("Surrey"),
                                Some("London"),
                                Some("DH14EJ"),
-                               None,
+                               Some("GB"),
                                None,
                                None,
                                None))
