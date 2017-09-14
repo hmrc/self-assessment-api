@@ -5,8 +5,8 @@
   },
   "accountingType": "CASH",
   "commencementDate": "2016-01-01",
-  "cessationDate": "2018-04-05",
-  "cessationReason": "BANKRUPTCY",
+  "effectiveDate": "2018-04-05",
+  "cessationReason": "005",
   "tradingName": "Acme Ltd.",
   "description": "Accountancy services",
   "address": {

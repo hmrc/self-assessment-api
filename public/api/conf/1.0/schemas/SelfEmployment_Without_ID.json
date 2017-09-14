@@ -30,15 +30,7 @@
       "$ref": "FullDate.json"
     },
     "cessationReason": {
-      "title": "Business cessation reason",
-      "description": "Business cessation reason.",
-      "type": "string",
-      "enum": [
-        "BANKRUPTCY",
-        "DEATH",
-        "VOLUNTARY_CLOSURE",
-        "OTHERS"
-      ]
+      "$ref": "CessationReason.json"
     },
     "tradingName": {
       "title": "Business trading name",

@@ -20,21 +20,13 @@
       "description": "Business start date, must be in the past.",
       "$ref": "FullDate.json"
     },
-    "cessationDate": {
-      "title": "Business cessation date",
-      "description": "Business cessation date, must be in the past.",
-      "$ref": "FullDate.json"
-    },
     "cessationReason": {
-      "title": "Business cessation reason",
-      "description": "Business cessation reason.",
-      "type": "string",
-      "enum": [
-        "BANKRUPTCY",
-        "DEATH",
-        "VOLUNTARY_CLOSURE",
-        "OTHERS"
-      ]
+      "$ref": "CessationReason.json"
+    },
+    "effectiveDate": {
+      "title": "Effective date for change of business details",
+      "description": "Effective date on which the business details changes were made",
+      "$ref": "FullDate.json"
     },
     "tradingName": {
       "title": "Business trading name",
@@ -73,7 +65,8 @@
     "description",
     "address",
     "paperless",
-    "seasonal"
+    "seasonal",
+    "effectiveDate"
   ],
   "additionalProperties": false
 }
