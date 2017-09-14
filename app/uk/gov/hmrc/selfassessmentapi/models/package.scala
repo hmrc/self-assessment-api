@@ -74,8 +74,14 @@ package object models {
 
   def regexValidator(fieldName: String, regex: String): Reads[String] = Reads
     .of[String]
-    .filter(ValidationError(s"$fieldName must match $regex",
-      ErrorCode.INVALID_FIELD_FORMAT))(field => field.matches(regex))
+    .filter(ValidationError(s"$fieldName cannot be blank spaces and must match $regex",
+      ErrorCode.INVALID_FIELD_FORMAT))(field => field.trim.length > 0 && field.matches(regex))
+
+  def stringRegex(maxLength: Int) = s"^[A-Za-z0-9 \\-,.&'\\/]{1,$maxLength}$$"
+
+  def lengthIs(length: Int): Reads[String] =
+    Reads.of[String].filter(ValidationError(s"field length must be $length characters", ErrorCode.INVALID_FIELD_LENGTH)
+    )(name => name.length == length)
 
 
 }

@@ -8,18 +8,20 @@
   "cessationDate": "2018-04-05",
   "cessationReason": "BANKRUPTCY",
   "tradingName": "Acme Ltd.",
-  "businessDescription": "Accountancy services",
-  "businessAddressLineOne": "1 Acme Rd.",
-  "businessAddressLineTwo": "London",
-  "businessAddressLineThree": "Greater London",
-  "businessAddressLineFour": "United Kingdom",
-  "businessPostcode": "A9 9AA",
-  "businessCountry": "GB",
+  "description": "Accountancy services",
+  "address": {
+    "lineOne": "1 Acme Rd.",
+    "lineTwo": "London",
+    "lineThree": "Greater London",
+    "lineFour": "United Kingdom",
+    "postcode": "A9 9AA",
+    "country": "GB"
+  },
   "contactDetails": {
-    "contactPrimaryPhoneNumber": "07712345678",
-    "contactSecondaryPhoneNumber": "07712345678",
-    "contactFaxNumber": "07712345678",
-    "contactEmailAddress": "admin@acmeltd.com"
+    "primaryPhoneNumber": "07712345678",
+    "secondaryPhoneNumber": "07712345678",
+    "faxNumber": "07712345678",
+    "emailAddress": "admin@acmeltd.com"
   },
   "paperless": false,
   "seasonal": false

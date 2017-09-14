@@ -20,6 +20,7 @@ import org.joda.time.LocalDate
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import uk.gov.hmrc.emailaddress.EmailAddress
 import uk.gov.hmrc.selfassessmentapi.models.AccountingType._
 import uk.gov.hmrc.selfassessmentapi.models.CessationReason.CessationReason
 import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, ErrorCode, sicClassifications, _}
@@ -31,24 +32,13 @@ case class SelfEmploymentUpdate(accountingPeriod: AccountingPeriod,
                                 cessationDate: Option[LocalDate],
                                 cessationReason: Option[CessationReason],
                                 tradingName: String,
-                                businessDescription: String,
-                                businessAddressLineOne: String,
-                                businessAddressLineTwo: Option[String],
-                                businessAddressLineThree: Option[String],
-                                businessAddressLineFour: Option[String],
-                                businessPostcode: Option[String],
-                                businessCountry: String,
+                                description: String,
+                                address: Address,
                                 contactDetails: Option[ContactDetails],
                                 paperless: Boolean,
                                 seasonal: Boolean)
 
 object SelfEmploymentUpdate {
-
-  def stringRegex(maxLength: Int) = s"^[A-Za-z0-9 \\-,.&'\\/]{1,$maxLength}$$"
-
-  def lengthIs(length: Int): Reads[String] =
-    Reads.of[String].filter(ValidationError(s"field length must be $length characters", ErrorCode.INVALID_FIELD_LENGTH)
-    )(name => name.length == length)
 
   private val validateSIC: Reads[String] =
     Reads.of[String].filter(ValidationError("business description must be a string that conforms to the UK SIC 2007 classifications", ErrorCode.INVALID_BUSINESS_DESCRIPTION)
@@ -64,44 +54,35 @@ object SelfEmploymentUpdate {
       (__ \ "cessationDate").readNullable[LocalDate] and
       (__ \ "cessationReason").readNullable[CessationReason] and
       (__ \ "tradingName").read[String](regexValidator("tradingName", stringRegex(105))) and
-      (__ \ "businessDescription").read[String](validateSIC) and //FIXME Need to revisit and fix the format after confirmation from business
-      (__ \ "businessAddressLineOne").read[String](regexValidator("businessAddressLineOne", stringRegex(35))) and
-      (__ \ "businessAddressLineTwo").readNullable[String](regexValidator("businessAddressLineTwo", stringRegex(35))) and
-      (__ \ "businessAddressLineThree").readNullable[String](regexValidator("businessAddressLineThree", stringRegex(35))) and
-      (__ \ "businessAddressLineFour").readNullable[String](regexValidator("businessAddressLineFour", stringRegex(35))) and
-      (__ \ "businessPostcode").readNullable[String](postcodeValidator) and
-      (__ \ "businessCountry").read[String](lengthIs(2)) and
+      (__ \ "description").read[String](validateSIC) and //FIXME Need to revisit and fix the format after confirmation from business
+      (__ \ "address").read[Address] and
       (__ \ "contactDetails").readNullable[ContactDetails] and
       (__ \ "paperless").read[Boolean] and
       (__ \ "seasonal").read[Boolean]
-    ) (SelfEmploymentUpdate.apply _).filter(
-    ValidationError(
-      "businessPostcode mandatory when businessCountry = GB",
-      ErrorCode.MANDATORY_FIELD_MISSING)) { se =>
-    if (se.businessCountry == "GB") se.businessPostcode.isDefined
-    else true
-  }
+    ) (SelfEmploymentUpdate.apply _)
 }
 
-case class ContactDetails(contactPrimaryPhoneNumber: Option[String],
-                          contactSecondaryPhoneNumber: Option[String],
-                          contactFaxNumber: Option[String],
-                          contactEmailAddress: Option[String])
+case class ContactDetails(primaryPhoneNumber: Option[String],
+                          secondaryPhoneNumber: Option[String],
+                          faxNumber: Option[String],
+                          emailAddress: Option[String])
 
 object ContactDetails {
-  def contactDetailsRegex(maxLength: Int) = s"^[A-Z0-9 )/(*#-]+{1,$maxLength}$$"
+  def contactDetailsRegex(maxLength: Int) = s"^[A-Z0-9 )/(*#-]{1,$maxLength}$$"
 
-  def lengthIsBetween(minLength: Int, maxLength: Int): Reads[String] =
-    Reads.of[String].filter(ValidationError(s"field length must be between $minLength and $maxLength characters", ErrorCode.INVALID_FIELD_LENGTH)
-    )(name => name.length <= maxLength && name.length >= minLength)
+  private val emailValidator: Reads[String] =
+    Reads.of[String].filter(ValidationError("Email should be valid and must be 3 to 132 characters", ErrorCode.INVALID_FIELD_FORMAT)
+    )(email => email.length >= 3 && email.length <= 132 && EmailAddress.isValid(email)
+  )
+
 
   implicit val writes: Writes[ContactDetails] = Json.writes[ContactDetails]
 
   implicit val reads: Reads[ContactDetails] = (
-    (__ \ "contactPrimaryPhoneNumber").readNullable[String](regexValidator("contactPrimaryPhoneNumber", contactDetailsRegex(24))) and
-      (__ \ "contactSecondaryPhoneNumber").readNullable[String](regexValidator("contactSecondaryPhoneNumber", contactDetailsRegex(24))) and
-      (__ \ "contactFaxNumber").readNullable[String](regexValidator("contactFaxNumber", contactDetailsRegex(24))) and
-      (__ \ "contactEmailAddress").readNullable[String](lengthIsBetween(3, 132))
+    (__ \ "primaryPhoneNumber").readNullable[String](regexValidator("primaryPhoneNumber", contactDetailsRegex(24))) and
+      (__ \ "secondaryPhoneNumber").readNullable[String](regexValidator("secondaryPhoneNumber", contactDetailsRegex(24))) and
+      (__ \ "faxNumber").readNullable[String](regexValidator("faxNumber", contactDetailsRegex(24))) and
+      (__ \ "emailAddress").readNullable[String](emailValidator)
     ) (ContactDetails.apply _)
 
 }

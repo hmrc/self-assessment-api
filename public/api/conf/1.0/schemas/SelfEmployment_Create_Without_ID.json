@@ -27,46 +27,13 @@
       "minLength": 1,
       "maxLength": 105
     },
-    "businessDescription": {
+    "description": {
       "title": "Business description",
       "description": "A description that conforms to the SIC 2007 standard trade classifications",
       "type": "string"
     },
-    "businessAddressLineOne": {
-      "title": "Business address line one",
-      "description": "First line of the business address",
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 35
-    },
-    "businessAddressLineTwo": {
-      "title": "Business address line two",
-      "description": "Second line of the business address",
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 35
-    },
-    "businessAddressLineThree": {
-      "title": "Business address line three",
-      "description": "Third line of the business address",
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 35
-    },
-    "businessAddressLineFour": {
-      "title": "Business address line four",
-      "description": "Fourth line of the business address",
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 35
-    },
-    "businessPostcode": {
-      "title": "Business postcode",
-      "description": "Business postcode",
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 10,
-      "pattern":"^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$"
+    "address": {
+      "$ref": "Address.json"
     }
   },
   "required": [
@@ -74,9 +41,8 @@
     "accountingType",
     "commencementDate",
     "tradingName",
-    "businessDescription",
-    "businessAddressLineOne",
-    "businessPostcode"
+    "description",
+    "address"
   ],
   "additionalProperties": false
 }

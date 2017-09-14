@@ -4,31 +4,31 @@
   "description": "Contact Details",
   "type": "object",
   "properties": {
-    "contactPrimaryPhoneNumber": {
+    "primaryPhoneNumber": {
       "title": "Business contact primary phone number",
       "description": "Business contact primary phone number",
       "type": "string",
       "minLength": 1,
       "maxLength": 24,
-      "pattern":"^[A-Z0-9 )/(*#-]+$"
+      "pattern":"^[A-Z0-9 )/(*#-]{1,24}$"
     },
-    "contactSecondaryPhoneNumber": {
+    "secondaryPhoneNumber": {
       "title": "Business contact secondary phone number",
       "description": "Business contact secondary phone number",
       "type": "string",
       "minLength": 1,
       "maxLength": 24,
-      "pattern":"^[A-Z0-9 )/(*#-]+$"
+      "pattern":"^[A-Z0-9 )/(*#-]{1,24}$"
     },
-    "contactFaxNumber": {
+    "faxNumber": {
       "title": "Business contact fax number",
       "description": "Business contact fax number",
       "type": "string",
       "minLength": 1,
       "maxLength": 24,
-      "pattern":"^[A-Z0-9 )/(*#-]+$"
+      "pattern":"^[A-Z0-9 )/(*#-]{1,24}$"
     },
-    "contactEmailAddress": {
+    "emailAddress": {
       "title": "Business contact email address",
       "description": "Business contact email email",
       "type": "string",

@@ -44,14 +44,14 @@ object SelfEmploymentUpdate {
       accountingPeriodStartDate = apiSelfEmployment.accountingPeriod.start.toString,
       accountingPeriodEndDate = apiSelfEmployment.accountingPeriod.end.toString,
       tradingName = apiSelfEmployment.tradingName,
-      addressDetails = SelfEmploymentAddress(apiSelfEmployment.businessAddressLineOne,
-        apiSelfEmployment.businessAddressLineTwo,
-        apiSelfEmployment.businessAddressLineThree,
-        apiSelfEmployment.businessAddressLineFour,
-        apiSelfEmployment.businessPostcode,
-        apiSelfEmployment.businessCountry),
+      addressDetails = SelfEmploymentAddress(apiSelfEmployment.address.lineOne,
+        apiSelfEmployment.address.lineTwo,
+        apiSelfEmployment.address.lineThree,
+        apiSelfEmployment.address.lineFour,
+        apiSelfEmployment.address.postcode,
+        apiSelfEmployment.address.country),
       contactDetails = ContactDetails.from(apiSelfEmployment.contactDetails),
-      typeOfBusiness = apiSelfEmployment.businessDescription,
+      typeOfBusiness = apiSelfEmployment.description,
       tradingStartDate = apiSelfEmployment.commencementDate.toString,
       cashOrAccruals = AccountingType.toDes(apiSelfEmployment.accountingType),
       paperless = apiSelfEmployment.paperless,
@@ -64,16 +64,16 @@ object SelfEmploymentUpdate {
 
 }
 
-case class ContactDetails(contactPrimaryPhoneNumber: Option[String],
-                          contactSecondaryPhoneNumber: Option[String],
-                          contactFaxNumber: Option[String],
-                          contactEmailAddress: Option[String])
+case class ContactDetails(primaryPhoneNumber: Option[String],
+                          secondaryPhoneNumber: Option[String],
+                          faxNumber: Option[String],
+                          emailAddress: Option[String])
 
 object ContactDetails {
   implicit val writes: Writes[ContactDetails] = Json.writes[ContactDetails]
 
   def from(contactDetails: Option[selfemployment.ContactDetails]): Option[ContactDetails] =
     contactDetails map { cd =>
-      ContactDetails(cd.contactPrimaryPhoneNumber, cd.contactSecondaryPhoneNumber, cd.contactFaxNumber, cd.contactEmailAddress)
+      ContactDetails(cd.primaryPhoneNumber, cd.secondaryPhoneNumber, cd.faxNumber, cd.emailAddress)
     }
 }

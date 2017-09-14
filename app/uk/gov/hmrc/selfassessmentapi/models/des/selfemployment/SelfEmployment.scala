@@ -19,7 +19,8 @@ package uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models
-import uk.gov.hmrc.selfassessmentapi.models.AccountingType
+import uk.gov.hmrc.selfassessmentapi.models.{AccountingType, des}
+import uk.gov.hmrc.selfassessmentapi.models.selfemployment.Address
 
 case class Business(businessDetails: Seq[SelfEmployment])
 
@@ -33,13 +34,8 @@ object Business {
                        accountingPeriodStartDate = apiSelfEmployment.accountingPeriod.start.toString,
                        accountingPeriodEndDate = apiSelfEmployment.accountingPeriod.end.toString,
                        tradingName = apiSelfEmployment.tradingName,
-                       addressDetails = Some(
-                         SelfEmploymentAddress(addressLine1 = apiSelfEmployment.businessAddressLineOne,
-                                               addressLine2 = apiSelfEmployment.businessAddressLineTwo,
-                                               addressLine3 = apiSelfEmployment.businessAddressLineThree,
-                                               addressLine4 = apiSelfEmployment.businessAddressLineFour,
-                                               postalCode = Some(apiSelfEmployment.businessPostcode))),
-                       typeOfBusiness = Some(apiSelfEmployment.businessDescription),
+                       addressDetails = Some(SelfEmploymentAddress.from(apiSelfEmployment.address)),
+                       typeOfBusiness = Some(apiSelfEmployment.description),
                        tradingStartDate = Some(apiSelfEmployment.commencementDate.toString),
                        cashOrAccruals = AccountingType.toDes(apiSelfEmployment.accountingType))))
   }
@@ -74,13 +70,8 @@ object SelfEmployment {
                    accountingPeriodStartDate = apiSelfEmployment.accountingPeriod.start.toString,
                    accountingPeriodEndDate = apiSelfEmployment.accountingPeriod.end.toString,
                    tradingName = apiSelfEmployment.tradingName,
-                   addressDetails = Some(
-                     SelfEmploymentAddress(addressLine1 = apiSelfEmployment.businessAddressLineOne,
-                                           addressLine2 = apiSelfEmployment.businessAddressLineTwo,
-                                           addressLine3 = apiSelfEmployment.businessAddressLineThree,
-                                           addressLine4 = apiSelfEmployment.businessAddressLineFour,
-                                           postalCode = Some(apiSelfEmployment.businessPostcode))),
-                   typeOfBusiness = Some(apiSelfEmployment.businessDescription),
+                   addressDetails = Some(SelfEmploymentAddress.from(apiSelfEmployment.address)),
+                   typeOfBusiness = Some(apiSelfEmployment.description),
                    tradingStartDate = Some(apiSelfEmployment.commencementDate.toString),
                    cashOrAccruals = AccountingType.toDes(apiSelfEmployment.accountingType))
   }
@@ -97,4 +88,13 @@ case class SelfEmploymentAddress(addressLine1: String,
 object SelfEmploymentAddress {
   implicit val writes: Writes[SelfEmploymentAddress] = Json.writes[SelfEmploymentAddress]
   implicit val reads: Reads[SelfEmploymentAddress] = Json.reads[SelfEmploymentAddress]
+
+  def from(address: Address): SelfEmploymentAddress = {
+    SelfEmploymentAddress(address.lineOne,
+      address.lineTwo,
+      address.lineThree,
+      address.lineFour,
+      address.postcode,
+      address.country)
+  }
 }

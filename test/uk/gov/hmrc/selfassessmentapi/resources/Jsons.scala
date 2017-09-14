@@ -328,12 +328,13 @@ object Jsons {
               commencementDate: Option[String] = Some("2017-01-01"),
               cessationDate: Option[String] = Some("2017-01-02"),
               tradingName: String = "Acme Ltd",
-              businessDescription: Option[String] = Some("Accountancy services"),
-              businessAddressLineOne: Option[String] = Some("1 Acme Rd."),
-              businessAddressLineTwo: Option[String] = Some("London"),
-              businessAddressLineThree: Option[String] = Some("Greater London"),
-              businessAddressLineFour: Option[String] = Some("United Kingdom"),
-              businessPostcode: Option[String] = Some("A9 9AA")): JsValue = {
+              description: Option[String] = Some("Accountancy services"),
+              lineOne: Option[String] = Some("1 Acme Rd."),
+              lineTwo: Option[String] = Some("London"),
+              lineThree: Option[String] = Some("Greater London"),
+              lineFour: Option[String] = Some("United Kingdom"),
+              postcode: Option[String] = Some("A9 9AA"),
+              country: Option[String] = Some("GB")): JsValue = {
 
       val cessation = cessationDate.map(date => s"""
            |  "cessationDate": "$date",
@@ -343,28 +344,32 @@ object Jsons {
            |  "commencementDate": "$date",
        """.stripMargin).getOrElse("")
 
-      val businessDesc = businessDescription.map(desc => s"""
-           |  "businessDescription": "$desc",
+      val businessDesc = description.map(desc => s"""
+           |  "description": "$desc",
        """.stripMargin).getOrElse("")
 
-      val addrOne = businessAddressLineOne.map(line => s"""
-           |  "businessAddressLineOne": "$line",
+      val addrOne = lineOne.map(line => s"""
+           |  "lineOne": "$line",
        """.stripMargin).getOrElse("")
 
-      val addrTwo = businessAddressLineTwo.map(line => s"""
-           |  "businessAddressLineTwo": "$line",
+      val addrTwo = lineTwo.map(line => s"""
+           |  "lineTwo": "$line",
        """.stripMargin).getOrElse("")
 
-      val addrThree = businessAddressLineThree.map(line => s"""
-           |  "businessAddressLineThree": "$line",
+      val addrThree = lineThree.map(line => s"""
+           |  "lineThree": "$line",
        """.stripMargin).getOrElse("")
 
-      val addrFour = businessAddressLineFour.map(line => s"""
-           |  "businessAddressLineFour": "$line",
+      val addrFour = lineFour.map(line => s"""
+           |  "lineFour": "$line",
        """.stripMargin).getOrElse("")
 
-      val addrPostcode = businessPostcode.map(code => s"""
-           |  "businessPostcode": "$code",
+      val addrPostcode = postcode.map(code => s"""
+           |  "postcode": "$code",
+       """.stripMargin).getOrElse("")
+
+      val addrCountry = country.map(code => s"""
+           |  "country": "$code"
        """.stripMargin).getOrElse("")
 
       Json.parse(s"""
@@ -376,11 +381,14 @@ object Jsons {
            |  $cessation
            |  $commencement
            |  $businessDesc
+           |  "address": {
            |  $addrOne
            |  $addrTwo
            |  $addrThree
            |  $addrFour
            |  $addrPostcode
+           |  $addrCountry
+           |  },
            |  "accountingType": "$accountingType",
            |  "tradingName": "$tradingName"
            |}
@@ -394,23 +402,23 @@ object Jsons {
                cessationDate: String = "2017-01-02",
                cessationReason: CessationReason = CessationReason.BANKRUPTCY,
                tradingName: String = "Acme Ltd",
-               businessDescription: String = "Accountancy services",
-               businessAddressLineOne: String = "1 Acme Rd.",
-               businessAddressLineTwo: String = "London",
-               businessAddressLineThree: String = "Greater London",
-               businessAddressLineFour: String = "United Kingdom",
-               businessPostcode: Option[String] = Some("A9 9AA"),
-               businessCountry: String = "GB",
-               contactPrimaryPhoneNumber : String = "0734343434",
-               contactSecondaryPhoneNumber : String = "0734343434",
-               contactFaxNumber : String = "0734343434",
-               contactEmailAddress : String = "admin@mail.com",
+               description: String = "Accountancy services",
+               lineOne: String = "1 Acme Rd.",
+               lineTwo: String = "London",
+               lineThree: String = "Greater London",
+               lineFour: String = "United Kingdom",
+               postcode: Option[String] = Some("A9 9AA"),
+               country: String = "GB",
+               primaryPhoneNumber : String = "0734343434",
+               secondaryPhoneNumber : String = "0734343434",
+               faxNumber : String = "0734343434",
+               emailAddress : String = "admin@mail.com",
                paperless: Boolean = false,
                seasonal: Boolean = false): JsValue = {
 
-      val addrPostcode = businessPostcode.map(code =>
+      val addrPostcode = postcode.map(code =>
         s"""
-           |  "businessPostcode": "$code",
+           |  "postcode": "$code",
        """.stripMargin).getOrElse("")
 
       Json.parse(
@@ -425,18 +433,20 @@ object Jsons {
            |  "cessationDate": "$cessationDate",
            |  "cessationReason": "$cessationReason",
            |  "tradingName": "$tradingName",
-           |  "businessDescription": "$businessDescription",
-           |  "businessAddressLineOne": "$businessAddressLineOne",
-           |  "businessAddressLineTwo": "$businessAddressLineTwo",
-           |  "businessAddressLineThree": "$businessAddressLineThree",
-           |  "businessAddressLineFour": "$businessAddressLineFour",
-           |  $addrPostcode
-           |  "businessCountry": "$businessCountry",
+           |  "description": "$description",
+           |  "address": {
+           |    "lineOne": "$lineOne",
+           |    "lineTwo": "$lineTwo",
+           |    "lineThree": "$lineThree",
+           |    "lineFour": "$lineFour",
+           |    $addrPostcode
+           |    "country": "$country"
+           |  },
            |  "contactDetails": {
-           |    "contactPrimaryPhoneNumber": "$contactPrimaryPhoneNumber",
-           |    "contactSecondaryPhoneNumber": "$contactSecondaryPhoneNumber",
-           |    "contactFaxNumber": "$contactFaxNumber",
-           |    "contactEmailAddress": "$contactEmailAddress"
+           |    "primaryPhoneNumber": "$primaryPhoneNumber",
+           |    "secondaryPhoneNumber": "$secondaryPhoneNumber",
+           |    "faxNumber": "$faxNumber",
+           |    "emailAddress": "$emailAddress"
            |  },
            |  "paperless": $paperless,
            |  "seasonal": $seasonal

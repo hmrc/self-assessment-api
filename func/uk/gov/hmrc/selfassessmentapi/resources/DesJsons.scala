@@ -79,12 +79,13 @@ object DesJsons {
               commencementDate: String = "2017-01-01",
               cessationDate: Option[String] = Some("2017-01-02"),
               tradingName: String = "Acme Ltd",
-              businessDescription: String = "Accountancy services",
-              businessAddressLineOne: String = "1 Acme Rd.",
-              businessAddressLineTwo: String = "London",
-              businessAddressLineThree: String = "Greater London",
-              businessAddressLineFour: String = "United Kingdom",
-              businessPostcode: String = "A9 9AA"): String = {
+              description: String = "Accountancy services",
+              addressLineOne: String = "1 Acme Rd.",
+              addressLineTwo: String = "London",
+              addressLineThree: String = "Greater London",
+              addressLineFour: String = "United Kingdom",
+              postcode: String = "A9 9AA",
+              country: String = "GB"): String = {
       s"""
          |{
          |   "safeId": "XE00001234567890",
@@ -98,12 +99,12 @@ object DesJsons {
          |         "accountingPeriodEndDate": "$accPeriodEnd",
          |         "tradingName": "$tradingName",
          |         "businessAddressDetails": {
-         |            "addressLine1": "$businessAddressLineOne",
-         |            "addressLine2": "$businessAddressLineTwo",
-         |            "addressLine3": "$businessAddressLineThree",
-         |            "addressLine4": "$businessAddressLineFour",
-         |            "postalCode": "$businessPostcode",
-         |            "countryCode": "GB"
+         |            "addressLine1": "$addressLineOne",
+         |            "addressLine2": "$addressLineTwo",
+         |            "addressLine3": "$addressLineThree",
+         |            "addressLine4": "$addressLineFour",
+         |            "postalCode": "$postcode",
+         |            "countryCode": "$country"
          |         },
          |         "businessContactDetails": {
          |            "phoneNumber": "01332752856",

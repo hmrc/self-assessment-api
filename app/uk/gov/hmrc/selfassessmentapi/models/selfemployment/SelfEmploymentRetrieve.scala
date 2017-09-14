@@ -30,22 +30,16 @@ case class SelfEmploymentRetrieve(id: Option[SourceId] = None,
                                   cessationDate: Option[LocalDate],
                                   cessationReason: Option[CessationReason],
                                   tradingName: String,
-                                  businessDescription: Option[String],
-                                  businessAddressLineOne: Option[String],
-                                  businessAddressLineTwo: Option[String],
-                                  businessAddressLineThree: Option[String],
-                                  businessAddressLineFour: Option[String],
-                                  businessPostcode: Option[String],
-                                  businessCountry: Option[String],
+                                  description: Option[String],
+                                  address: Option[Address],
                                   contactDetails: Option[ContactDetails],
                                   paperless: Option[Boolean],
                                   seasonal: Option[Boolean])
 
 
+object SelfEmploymentRetrieve {
 
-object SelfEmploymentRetrieve  {
-
-  implicit val from =  new DesTransformValidator[des.selfemployment.SelfEmployment, SelfEmploymentRetrieve] {
+  implicit val from = new DesTransformValidator[des.selfemployment.SelfEmployment, SelfEmploymentRetrieve] {
     def from(desSelfEmployment: des.selfemployment.SelfEmployment): Either[DesTransformError, SelfEmploymentRetrieve] = {
       AccountingType.fromDes(desSelfEmployment.cashOrAccruals) match {
         case Some(accountingType) =>
@@ -58,13 +52,8 @@ object SelfEmploymentRetrieve  {
             cessationDate = None,
             cessationReason = None,
             tradingName = desSelfEmployment.tradingName,
-            businessDescription = desSelfEmployment.typeOfBusiness,
-            businessAddressLineOne = desSelfEmployment.addressDetails.map(_.addressLine1),
-            businessAddressLineTwo = desSelfEmployment.addressDetails.flatMap(_.addressLine2),
-            businessAddressLineThree = desSelfEmployment.addressDetails.flatMap(_.addressLine3),
-            businessAddressLineFour = desSelfEmployment.addressDetails.flatMap(_.addressLine4),
-            businessPostcode = desSelfEmployment.addressDetails.flatMap(_.postalCode),
-            businessCountry = desSelfEmployment.addressDetails.map(_.countryCode),
+            description = desSelfEmployment.typeOfBusiness,
+            address = desSelfEmployment.addressDetails.map(Address.from),
             contactDetails = None,
             paperless = None,
             seasonal = None))
