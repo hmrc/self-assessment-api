@@ -30,10 +30,11 @@
     },
     "emailAddress": {
       "title": "Business contact email address",
-      "description": "Business contact email email",
+      "description": "Business contact email address",
       "type": "string",
       "minLength": 3,
-      "maxLength": 132
+      "maxLength": 132,
+      "pattern": "^([a-zA-Z0-9.!#$%&’'*+/=?^_`{|}~-]+)@([a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)$"
     }
   },
   "additionalProperties": false
