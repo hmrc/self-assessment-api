@@ -4,7 +4,7 @@
   "description": "Business Address",
   "type": "object",
   "properties": {
-    "addressLineOne": {
+    "lineOne": {
       "title": "Business address line one",
       "description": "First line of the business address",
       "type": "string",
@@ -12,7 +12,7 @@
       "maxLength": 35,
       "pattern": "^[A-Za-z0-9 \\-,.&'\\/]{1,25}$"
     },
-    "addressLineTwo": {
+    "lineTwo": {
       "title": "Business address line two",
       "description": "Second line of the business address",
       "type": "string",
@@ -20,7 +20,7 @@
       "maxLength": 35,
       "pattern": "^[A-Za-z0-9 \\-,.&'\\/]{1,25}$"
     },
-    "addressLineThree": {
+    "lineThree": {
       "title": "Business address line three",
       "description": "Third line of the business address",
       "type": "string",
@@ -28,7 +28,7 @@
       "maxLength": 35,
       "pattern": "^[A-Za-z0-9 \\-,.&'\\/]{1,25}$"
     },
-    "addressLineFour": {
+    "lineFour": {
       "title": "Business address line four",
       "description": "Fourth line of the business address",
       "type": "string",
@@ -54,7 +54,7 @@
     }
   },
   "required": [
-    "addressLineOne",
+    "lineOne",
     "country"
   ],
   "additionalProperties": false
