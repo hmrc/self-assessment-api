@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 import org.joda.time.LocalDate
 import uk.gov.hmrc.selfassessmentapi.models
 import uk.gov.hmrc.selfassessmentapi.models.AccountingType.AccountingType
+import uk.gov.hmrc.selfassessmentapi.models.selfemployment.Address
 import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
@@ -31,12 +32,14 @@ class SelfEmploymentSpec extends JsonSpec {
       commencementDate = LocalDate.parse("2017-04-01"),
       cessationDate = None,
       tradingName = "Acme Ltd.",
-      businessDescription = "Accountancy services",
-      businessAddressLineOne = "Acme Rd.",
-      businessAddressLineTwo = Some("London"),
-      businessAddressLineThree = Some("Greater London"),
-      businessAddressLineFour = Some("United Kingdom"),
-      businessPostcode = "A9 9AA")
+      description = "Accountancy services",
+      address = Address("Acme Rd.",
+        Some("London"),
+        Some("Greater London"),
+        Some("United Kingdom"),
+        Some("A9 9AA"),
+        "GB")
+    )
   }
 
   "constructing a DES SelfEmployment using our API SelfEmployment" should {

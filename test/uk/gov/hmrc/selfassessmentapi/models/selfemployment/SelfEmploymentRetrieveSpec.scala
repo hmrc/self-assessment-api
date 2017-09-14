@@ -47,12 +47,13 @@ class SelfEmploymentRetrieveSpec extends UnitSpec {
       selfEmployment.accountingPeriod shouldBe AccountingPeriod(LocalDate.parse("2017-01-04"),
                                                                 LocalDate.parse("2017-01-05"))
       selfEmployment.tradingName shouldBe "Acme Ltd."
-      selfEmployment.businessAddressLineOne shouldBe Some("1 Acme Rd.")
-      selfEmployment.businessAddressLineTwo shouldBe Some("London")
-      selfEmployment.businessAddressLineThree shouldBe Some("Greater London")
-      selfEmployment.businessAddressLineFour shouldBe Some("United Kingdom")
-      selfEmployment.businessPostcode shouldBe Some("A9 9AA")
-      selfEmployment.businessDescription shouldBe Some("Accountancy services")
+      selfEmployment.address.get.lineOne shouldBe "1 Acme Rd."
+      selfEmployment.address.get.lineTwo shouldBe Some("London")
+      selfEmployment.address.get.lineThree shouldBe Some("Greater London")
+      selfEmployment.address.get.lineFour shouldBe Some("United Kingdom")
+      selfEmployment.address.get.postcode shouldBe Some("A9 9AA")
+      selfEmployment.address.get.country shouldBe "GB"
+      selfEmployment.description shouldBe Some("Accountancy services")
       selfEmployment.commencementDate shouldBe Some(LocalDate.parse("2017-04-01"))
       selfEmployment.accountingType shouldBe AccountingType.CASH
       selfEmployment.cessationDate shouldBe None

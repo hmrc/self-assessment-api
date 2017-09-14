@@ -9,11 +9,14 @@
     "commencementDate": "2016-01-01",
     "cessationDate": "2018-04-05",
     "tradingName": "Acme Ltd.",
-    "businessDescription": "Accountancy services",
-    "businessAddressLineOne": "1 Acme Rd.",
-    "businessAddressLineTwo": "London",
-    "businessAddressLineThree": "Greater London",
-    "businessAddressLineFour": "United Kingdom",
-    "businessPostcode": "A9 9AA"
+    "description": "Accountancy services",
+    "address": {
+      "lineOne": "1 Acme Rd.",
+      "lineTwo": "London",
+      "lineThree": "Greater London",
+      "lineFour": "United Kingdom",
+      "postcode": "A9 9AA",
+      "country": "GB"
+    }
   }
 ]

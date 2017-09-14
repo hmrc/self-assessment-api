@@ -28,9 +28,8 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
           "/accountingType" -> Seq("error.path.missing"),
           "/commencementDate" -> Seq("error.path.missing"),
           "/tradingName" -> Seq("error.path.missing"),
-          "/businessDescription" -> Seq("error.path.missing"),
-          "/businessAddressLineOne" -> Seq("error.path.missing"),
-          "/businessCountry" -> Seq("error.path.missing"),
+          "/description" -> Seq("error.path.missing"),
+          "/address" -> Seq("error.path.missing"),
           "/paperless" -> Seq("error.path.missing"),
           "/seasonal" -> Seq("error.path.missing")))
     }
@@ -40,131 +39,151 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
       val jsonTwo = Jsons.SelfEmployment.update(tradingName = "a" * 106)
       val jsonThree = Jsons.SelfEmployment.update(tradingName = "currency £$ inc")
       val jsonFour = Jsons.SelfEmployment.update(tradingName = "test (@ ^ *) name")
+      val jsonFive = Jsons.SelfEmployment.update(tradingName = "          ")
 
       assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/tradingName" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
       assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/tradingName" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
       assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/tradingName" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
       assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonFour, Map("/tradingName" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonFive, Map("/tradingName" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
     }
 
     "return a error when providing an empty business description" in {
-      val json = Jsons.SelfEmployment.update(businessDescription = "")
+      val json = Jsons.SelfEmployment.update(description = "")
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](json, Map("/businessDescription" -> Seq(ErrorCode.INVALID_BUSINESS_DESCRIPTION)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](json, Map("/description" -> Seq(ErrorCode.INVALID_BUSINESS_DESCRIPTION)))
     }
 
     "return a error when providing a business description that does not conform to the UK SIC 2007 classifications" in {
-      val json = Jsons.SelfEmployment.update(businessDescription = "silly-business")
+      val json = Jsons.SelfEmployment.update(description = "silly-business")
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](json, Map("/businessDescription" -> Seq(ErrorCode.INVALID_BUSINESS_DESCRIPTION)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](json, Map("/description" -> Seq(ErrorCode.INVALID_BUSINESS_DESCRIPTION)))
     }
 
     "return a error when providing a first address line that is not between 1 and 35 characters in length and does not have the valid format" in {
-      val jsonOne = Jsons.SelfEmployment.update(businessAddressLineOne = "")
-      val jsonTwo = Jsons.SelfEmployment.update(businessAddressLineOne = "a" * 36)
-      val jsonThree = Jsons.SelfEmployment.update(businessAddressLineOne = "Line 1(£$)" )
+      val jsonOne = Jsons.SelfEmployment.update(lineOne = "")
+      val jsonTwo = Jsons.SelfEmployment.update(lineOne = "a" * 36)
+      val jsonThree = Jsons.SelfEmployment.update(lineOne = "Line 1(£$)" )
+      val jsonFour = Jsons.SelfEmployment.update(lineOne = "    " )
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/businessAddressLineOne" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/businessAddressLineOne" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/businessAddressLineOne" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/address/lineOne" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/address/lineOne" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/address/lineOne" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonFour, Map("/address/lineOne" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
     }
 
     "return a error when providing a second address line that is not between 1 and 35 characters in length and does not have the valid format" in {
-      val jsonOne = Jsons.SelfEmployment.update(businessAddressLineTwo = "")
-      val jsonTwo = Jsons.SelfEmployment.update(businessAddressLineTwo = "a" * 36)
-      val jsonThree = Jsons.SelfEmployment.update(businessAddressLineTwo = "Line 1(£$)" )
+      val jsonOne = Jsons.SelfEmployment.update(lineTwo = "")
+      val jsonTwo = Jsons.SelfEmployment.update(lineTwo = "a" * 36)
+      val jsonThree = Jsons.SelfEmployment.update(lineTwo = "Line 1(£$)" )
+      val jsonFour = Jsons.SelfEmployment.update(lineTwo = "      " )
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/businessAddressLineTwo" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/businessAddressLineTwo" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/businessAddressLineTwo" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/address/lineTwo" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/address/lineTwo" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/address/lineTwo" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonFour, Map("/address/lineTwo" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
     }
 
     "return a error when providing a third address line that is not between 1 and 35 characters in length and does not have the valid format" in {
-      val jsonOne = Jsons.SelfEmployment.update(businessAddressLineThree = "")
-      val jsonTwo = Jsons.SelfEmployment.update(businessAddressLineThree = "a" * 36)
-      val jsonThree = Jsons.SelfEmployment.update(businessAddressLineThree = "Line 1(£$)" )
+      val jsonOne = Jsons.SelfEmployment.update(lineThree = "")
+      val jsonTwo = Jsons.SelfEmployment.update(lineThree = "a" * 36)
+      val jsonThree = Jsons.SelfEmployment.update(lineThree = "Line 1(£$)" )
+      val jsonFour = Jsons.SelfEmployment.update(lineThree = "      " )
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/businessAddressLineThree" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/businessAddressLineThree" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/businessAddressLineThree" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/address/lineThree" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/address/lineThree" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/address/lineThree" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonFour, Map("/address/lineThree" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
     }
 
     "return a error when providing a fourth address line that is not between 1 and 35 characters in length and does not have the valid format" in {
-      val jsonOne = Jsons.SelfEmployment.update(businessAddressLineFour = "")
-      val jsonTwo = Jsons.SelfEmployment.update(businessAddressLineFour = "a" * 36)
-      val jsonThree = Jsons.SelfEmployment.update(businessAddressLineFour = "Line 1(£$)" )
+      val jsonOne = Jsons.SelfEmployment.update(lineFour = "")
+      val jsonTwo = Jsons.SelfEmployment.update(lineFour = "a" * 36)
+      val jsonThree = Jsons.SelfEmployment.update(lineFour = "Line 1(£$)" )
+      val jsonFour = Jsons.SelfEmployment.update(lineFour = "      " )
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/businessAddressLineFour" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/businessAddressLineFour" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/businessAddressLineFour" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/address/lineFour" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/address/lineFour" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/address/lineFour" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonFour, Map("/address/lineFour" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
     }
 
     "return a error when providing a postcode that is not between 1 and 10 characters in length and does not have the valid format" in {
-      val jsonOne = Jsons.SelfEmployment.update(businessPostcode = Some(""))
-      val jsonTwo = Jsons.SelfEmployment.update(businessPostcode = Some("a" * 11))
-      val jsonThree = Jsons.SelfEmployment.update(businessPostcode = Some("1(£$)") )
+      val jsonOne = Jsons.SelfEmployment.update(postcode = Some(""))
+      val jsonTwo = Jsons.SelfEmployment.update(postcode = Some("a" * 11))
+      val jsonThree = Jsons.SelfEmployment.update(postcode = Some("1(£$)") )
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/businessPostcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/businessPostcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/businessPostcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/address/postcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/address/postcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/address/postcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
     }
 
     "return a error when country is GB and postcode is not provided" in {
-      val jsonOne = Jsons.SelfEmployment.update(businessPostcode =  None)
+      val jsonOne = Jsons.SelfEmployment.update(postcode =  None)
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("" -> Seq(ErrorCode.MANDATORY_FIELD_MISSING)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/address" -> Seq(ErrorCode.MANDATORY_FIELD_MISSING)))
     }
 
     "pass when country is FR and postcode is not provided" in {
-      val jsonOne = Jsons.SelfEmployment.update(businessPostcode =  None, businessCountry = "FR")
+      val jsonOne = Jsons.SelfEmployment.update(postcode =  None, country = "FR")
 
       assertJsonValidationPasses[SelfEmploymentUpdate](jsonOne)
     }
 
     "return a error when providing a country that is not 2 characters in length" in {
-      val jsonOne = Jsons.SelfEmployment.update(businessCountry = "")
-      val jsonTwo = Jsons.SelfEmployment.update(businessCountry = "Great Britain")
+      val jsonOne = Jsons.SelfEmployment.update(country = "")
+      val jsonTwo = Jsons.SelfEmployment.update(country = "Great Britain")
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/businessCountry" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/businessCountry" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/address/country" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/address/country" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
     }
 
-    "return a error when providing a contactPrimaryPhoneNumber that is not between 1 and 24 characters in length and does not have the valid format" in {
-      val jsonOne = Jsons.SelfEmployment.update(contactPrimaryPhoneNumber = "")
-      val jsonTwo = Jsons.SelfEmployment.update(contactPrimaryPhoneNumber = "a" * 25)
-      val jsonThree = Jsons.SelfEmployment.update(contactPrimaryPhoneNumber = "1(£$)" )
+    "return a error when providing a primaryPhoneNumber that is not between 1 and 24 characters in length and does not have the valid format" in {
+      val jsonOne = Jsons.SelfEmployment.update(primaryPhoneNumber = "")
+      val jsonTwo = Jsons.SelfEmployment.update(primaryPhoneNumber = "1" * 25)
+      val jsonThree = Jsons.SelfEmployment.update(primaryPhoneNumber = "1(£$)" )
+      val jsonFour = Jsons.SelfEmployment.update(primaryPhoneNumber = "      " )
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/contactDetails/contactPrimaryPhoneNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/contactDetails/contactPrimaryPhoneNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/contactDetails/contactPrimaryPhoneNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/contactDetails/primaryPhoneNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/contactDetails/primaryPhoneNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/contactDetails/primaryPhoneNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonFour, Map("/contactDetails/primaryPhoneNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
     }
 
-    "return a error when providing a contactSecondaryPhoneNumber that is not between 1 and 24 characters in length and does not have the valid format" in {
-      val jsonOne = Jsons.SelfEmployment.update(contactSecondaryPhoneNumber = "")
-      val jsonTwo = Jsons.SelfEmployment.update(contactSecondaryPhoneNumber = "a" * 25)
-      val jsonThree = Jsons.SelfEmployment.update(contactSecondaryPhoneNumber = "1(£$)" )
+    "return a error when providing a secondaryPhoneNumber that is not between 1 and 24 characters in length and does not have the valid format" in {
+      val jsonOne = Jsons.SelfEmployment.update(secondaryPhoneNumber = "")
+      val jsonTwo = Jsons.SelfEmployment.update(secondaryPhoneNumber = "1" * 25)
+      val jsonThree = Jsons.SelfEmployment.update(secondaryPhoneNumber = "1(£$)" )
+      val jsonFour = Jsons.SelfEmployment.update(secondaryPhoneNumber = "      " )
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/contactDetails/contactSecondaryPhoneNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/contactDetails/contactSecondaryPhoneNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/contactDetails/contactSecondaryPhoneNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/contactDetails/secondaryPhoneNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/contactDetails/secondaryPhoneNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/contactDetails/secondaryPhoneNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonFour, Map("/contactDetails/secondaryPhoneNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
     }
 
-    "return a error when providing a contactFaxNumber that is not between 1 and 24 characters in length and does not have the valid format" in {
-      val jsonOne = Jsons.SelfEmployment.update(contactFaxNumber = "")
-      val jsonTwo = Jsons.SelfEmployment.update(contactFaxNumber = "a" * 25)
-      val jsonThree = Jsons.SelfEmployment.update(contactFaxNumber = "1(£$)" )
+    "return a error when providing a faxNumber that is not between 1 and 24 characters in length and does not have the valid format" in {
+      val jsonOne = Jsons.SelfEmployment.update(faxNumber = "")
+      val jsonTwo = Jsons.SelfEmployment.update(faxNumber = "1" * 25)
+      val jsonThree = Jsons.SelfEmployment.update(faxNumber = "1(£$)" )
+      val jsonFour = Jsons.SelfEmployment.update(faxNumber = "      " )
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/contactDetails/contactFaxNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/contactDetails/contactFaxNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/contactDetails/contactFaxNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/contactDetails/faxNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/contactDetails/faxNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/contactDetails/faxNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonFour, Map("/contactDetails/faxNumber" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
     }
 
-    "return a error when providing a contactEmailAddress that is not between 3 and 132" in {
-      val jsonOne = Jsons.SelfEmployment.update(contactEmailAddress = "a" * 2)
-      val jsonTwo = Jsons.SelfEmployment.update(contactEmailAddress = "a" * 133)
+    "return a error when providing a emailAddress that is not valid" in {
+      val jsonOne = Jsons.SelfEmployment.update(emailAddress = "a" * 2)
+      val jsonTwo = Jsons.SelfEmployment.update(emailAddress = "a" * 133)
+      val jsonThree = Jsons.SelfEmployment.update(emailAddress = "admin at mail.com")
+      val jsonFour = Jsons.SelfEmployment.update(emailAddress = "admin@")
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/contactDetails/contactEmailAddress" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/contactDetails/contactEmailAddress" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne, Map("/contactDetails/emailAddress" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo, Map("/contactDetails/emailAddress" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree, Map("/contactDetails/emailAddress" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonFour, Map("/contactDetails/emailAddress" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
     }
   }
 }

@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType}
-import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentRetrieve
+import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{Address, SelfEmploymentRetrieve}
 
 class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
   private val nino = generateNino
@@ -30,7 +30,8 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
   "createLocation" should {
     "return a string containing the location with an ID extracted from some JSON" in {
       val json =
-        Json.parse("""
+        Json.parse(
+          """
             |{
             | "incomeSources": [
             |   {
@@ -66,7 +67,8 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
     }
 
     "return UnmatchedIncomeId if the supplied self-employment id does not match or is not found in the response" in {
-      val json = Json.parse("""
+      val json = Json.parse(
+        """
           |{
           |   "safeId": "XE00001234567890",
           |   "nino": "AA123456A",
@@ -104,7 +106,8 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
     }
 
     "return UnableToMapAccountingType if the accounting type cannot be found in the response" in {
-      val json = Json.parse("""
+      val json = Json.parse(
+        """
           |{
           |   "safeId": "XE00001234567890",
           |   "nino": "AA123456A",
@@ -191,12 +194,14 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
         None,
         "RCDTS",
         None,
-        Some("100 SuttonStreet"),
-        Some("Wokingham"),
-        Some("Surrey"),
-        Some("London"),
-        Some("DH14EJ"),
-        Some("GB"),
+        Some(
+          Address("100 SuttonStreet",
+            Some("Wokingham"),
+            Some("Surrey"),
+            Some("London"),
+            Some("DH14EJ"),
+            "GB")
+        ),
         None,
         None,
         None)
@@ -343,39 +348,43 @@ class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
       val response = SelfEmploymentResponse(HttpResponse(200, Some(json)))
       response.listSelfEmployment.right.value should contain theSameElementsAs Seq(
         SelfEmploymentRetrieve(Some("123456789012345"),
-                               AccountingPeriod(LocalDate.parse("2001-01-01"), LocalDate.parse("2001-01-01")),
-                               AccountingType.ACCRUAL,
-                               Some(LocalDate.parse("2001-01-01")),
-                               None,
-                               None,
-                               "RCDTS",
-                               None,
-                               Some("100 SuttonStreet"),
-                               Some("Wokingham"),
-                               Some("Surrey"),
-                               Some("London"),
-                               Some("DH14EJ"),
-                               Some("GB"),
-                               None,
-                               None,
-                               None),
+          AccountingPeriod(LocalDate.parse("2001-01-01"), LocalDate.parse("2001-01-01")),
+          AccountingType.ACCRUAL,
+          Some(LocalDate.parse("2001-01-01")),
+          None,
+          None,
+          "RCDTS",
+          None,
+          Some(
+            Address("100 SuttonStreet",
+              Some("Wokingham"),
+              Some("Surrey"),
+              Some("London"),
+              Some("DH14EJ"),
+              "GB")
+          ),
+          None,
+          None,
+          None),
         SelfEmploymentRetrieve(Some("123456789012346"),
-                               AccountingPeriod(LocalDate.parse("2001-01-01"), LocalDate.parse("2001-01-01")),
-                               AccountingType.CASH,
-                               Some(LocalDate.parse("2001-01-01")),
-                               None,
-                               None,
-                               "RCDTS",
-                               None,
-                               Some("100 SuttonStreet"),
-                               Some("Wokingham"),
-                               Some("Surrey"),
-                               Some("London"),
-                               Some("DH14EJ"),
-                               Some("GB"),
-                               None,
-                               None,
-                               None))
+          AccountingPeriod(LocalDate.parse("2001-01-01"), LocalDate.parse("2001-01-01")),
+          AccountingType.CASH,
+          Some(LocalDate.parse("2001-01-01")),
+          None,
+          None,
+          "RCDTS",
+          None,
+          Some(
+            Address("100 SuttonStreet",
+              Some("Wokingham"),
+              Some("Surrey"),
+              Some("London"),
+              Some("DH14EJ"),
+              "GB")
+          ),
+          None,
+          None,
+          None))
     }
   }
 }

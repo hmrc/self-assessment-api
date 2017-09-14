@@ -21,6 +21,7 @@ import uk.gov.hmrc.selfassessmentapi.models
 import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.models.selfemployment.Address
 
 class SelfEmploymentUpdateSpec extends JsonSpec {
   "from" should {
@@ -31,17 +32,17 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
                                                                 cessationDate = None,
                                                                 cessationReason = None,
                                                                 tradingName = "Foo Consulting",
-                                                                businessDescription = "Absorbable haemostatics (manufacture)",
-                                                                businessAddressLineOne = "17 Profitable Road",
-                                                                businessAddressLineTwo = Some("Sussex"),
-                                                                businessAddressLineThree = Some("UK"),
-                                                                businessAddressLineFour = None,
-                                                                businessPostcode = Some("W11 7QT"),
-                                                                businessCountry = "GB",
-                                                                contactDetails = Some(selfemployment.ContactDetails(contactPrimaryPhoneNumber = Some( "077723232"),
-                                                                  contactSecondaryPhoneNumber =  Some("077723232"),
-                                                                  contactFaxNumber =  Some("077723232"),
-                                                                  contactEmailAddress =  Some("admin@mail.com"))),
+                                                                description = "Absorbable haemostatics (manufacture)",
+                                                                address = Address("17 Profitable Road",
+                                                                                  Some("Sussex"),
+                                                                                  Some("UK"),
+                                                                                  None,
+                                                                                  Some("W11 7QT"),
+                                                                                  "GB"),
+                                                                contactDetails = Some(selfemployment.ContactDetails(primaryPhoneNumber = Some( "077723232"),
+                                                                  secondaryPhoneNumber =  Some("077723232"),
+                                                                  faxNumber =  Some("077723232"),
+                                                                  emailAddress =  Some("admin@mail.com"))),
                                                                 paperless = false,
                                                                 seasonal = false)
 
@@ -53,13 +54,13 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
       desUpdate.cashOrAccruals shouldBe AccountingType.toDes(apiUpdate.accountingType)
       desUpdate.tradingStartDate shouldBe apiUpdate.commencementDate.toString
       desUpdate.tradingName shouldBe apiUpdate.tradingName
-      desUpdate.typeOfBusiness shouldBe apiUpdate.businessDescription
-      desUpdate.addressDetails.addressLine1 shouldBe apiUpdate.businessAddressLineOne
-      desUpdate.addressDetails.addressLine2 shouldBe apiUpdate.businessAddressLineTwo
-      desUpdate.addressDetails.addressLine3 shouldBe apiUpdate.businessAddressLineThree
-      desUpdate.addressDetails.addressLine4 shouldBe apiUpdate.businessAddressLineFour
-      desUpdate.addressDetails.postalCode shouldBe apiUpdate.businessPostcode
-      desUpdate.addressDetails.countryCode shouldBe apiUpdate.businessCountry
+      desUpdate.typeOfBusiness shouldBe apiUpdate.description
+      desUpdate.addressDetails.addressLine1 shouldBe apiUpdate.address.lineOne
+      desUpdate.addressDetails.addressLine2 shouldBe apiUpdate.address.lineTwo
+      desUpdate.addressDetails.addressLine3 shouldBe apiUpdate.address.lineThree
+      desUpdate.addressDetails.addressLine4 shouldBe apiUpdate.address.lineFour
+      desUpdate.addressDetails.postalCode shouldBe apiUpdate.address.postcode
+      desUpdate.addressDetails.countryCode shouldBe apiUpdate.address.country
       desUpdate.contactDetails shouldBe ContactDetails.from(apiUpdate.contactDetails)
       desUpdate.paperless shouldBe apiUpdate.paperless
       desUpdate.seasonal shouldBe apiUpdate.seasonal
