@@ -286,7 +286,7 @@ object DesJsons {
            |   "annualNonFinancials": {
            |      "businessDetailsChangedRecently": true,
            |      "payClass2Nics": false,
-           |      "exemptFromPayingClass2Nics": true
+           |      "exemptFromPayingClass4Nics": true
            |   }
            |}
        """.stripMargin

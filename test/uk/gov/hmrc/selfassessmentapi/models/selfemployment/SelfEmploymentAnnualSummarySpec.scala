@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
+import uk.gov.hmrc.selfassessmentapi.models.Class4NicsExemptionCode.{NON_RESIDENT, DIVER}
+import uk.gov.hmrc.selfassessmentapi.models.{Class4NicInfo, ErrorCode, des}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
-import uk.gov.hmrc.selfassessmentapi.models.des
-import uk.gov.hmrc.selfassessmentapi.models.ErrorCode
 
 class SelfEmploymentAnnualSummarySpec extends JsonSpec {
   "format" should {
@@ -44,13 +44,14 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
           balancingChargeBPRA = Some(10.55),
           balancingChargeOther = Some(5.55),
           goodsAndServicesOwnUse = Some(12.23)
-        )))
+        )),
+        Some(NonFinancials(Some(Class4NicInfo(Some(true), Some(NON_RESIDENT))))))
 
       roundTripJson(summary)
     }
 
     "round trip empty json" in {
-      roundTripJson(SelfEmploymentAnnualSummary(None, None))
+      roundTripJson(SelfEmploymentAnnualSummary(None, None, None))
     }
   }
 
@@ -58,7 +59,8 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
     "reject annual summaries where allowances.businessPremisesRenovationAllowance is not defined but adjustments.balancingChargeBPRA is defined" in {
       val summary = SelfEmploymentAnnualSummary(
         Some(Allowances(businessPremisesRenovationAllowance = Some(0))),
-        Some(Adjustments(balancingChargeBPRA = Some(200.90))))
+        Some(Adjustments(balancingChargeBPRA = Some(200.90))),
+        None)
 
       assertValidationErrorWithCode(summary, "", ErrorCode.INVALID_BALANCING_CHARGE_BPRA)
     }
@@ -66,7 +68,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
     "accept annual summaries with only businessPremisesRenovationAllowance defined" in {
       val summary = SelfEmploymentAnnualSummary(
         Some(Allowances(businessPremisesRenovationAllowance = Some(0))),
-        None)
+        None, None)
 
       assertValidationPasses(summary)
     }
@@ -96,12 +98,17 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
           enhanceCapitalAllowance = Some(200.25),
           allowanceOnSales = Some(200.25),
           zeroEmissionGoodsVehicleAllowance = Some(200.25)
+        )),
+        annualNonFinancials = Some(des.selfemployment.AnnualNonFinancials(
+          businessDetailsChangedRecently = None,
+          payClass2Nics = None,
+          exemptFromPayingClass4Nics = Some(true),
+          exemptFromPayingClass4NicsReason = Some("003")
         ))
       )
 
       val apiSummary = SelfEmploymentAnnualSummary.from(desSelfEmployment)
       val adjustments = apiSummary.adjustments.get
-      val allowances = apiSummary.allowances.get
 
       adjustments.includedNonTaxableProfits shouldBe Some(200.25)
       adjustments.basisAdjustment shouldBe Some(200.25)
@@ -114,6 +121,8 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
       adjustments.balancingChargeOther shouldBe Some(200.25)
       adjustments.goodsAndServicesOwnUse shouldBe Some(200.25)
 
+      val allowances = apiSummary.allowances.get
+
       allowances.annualInvestmentAllowance shouldBe Some(200.25)
       allowances.capitalAllowanceMainPool shouldBe Some(200.25)
       allowances.capitalAllowanceSpecialRatePool shouldBe Some(200.25)
@@ -121,6 +130,10 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
       allowances.enhancedCapitalAllowance shouldBe Some(200.25)
       allowances.allowanceOnSales shouldBe Some(200.25)
       allowances.zeroEmissionGoodsVehicleAllowance shouldBe Some(200.25)
+
+      val nonFinancials = apiSummary.nonFinancials.get
+      nonFinancials.class4NicInfo.get.exemptionCode shouldBe Some(DIVER)
+      nonFinancials.class4NicInfo.get.isExempt shouldBe Some(true)
     }
   }
 }

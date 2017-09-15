@@ -8,6 +8,9 @@
     },
     "allowances": {
       "$ref": "self-employment/Allowances.json"
+    },
+    "nonFinancials": {
+      "$ref": "self-employment/NonFinancials.json"
     }
   },
   "additionalProperties": false
