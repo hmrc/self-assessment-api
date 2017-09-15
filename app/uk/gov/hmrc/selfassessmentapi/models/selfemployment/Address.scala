@@ -41,7 +41,7 @@ object Address {
       (__ \ "country").read[String](lengthIs(2))
     ) (Address.apply _).filter(
     ValidationError(
-      "businessPostcode mandatory when businessCountry = GB",
+      "postcode mandatory when country = GB",
       ErrorCode.MANDATORY_FIELD_MISSING)) { address =>
     if (address.country == "GB") address.postcode.isDefined
     else true

@@ -71,7 +71,7 @@ object ContactDetails {
   def contactDetailsRegex(maxLength: Int) = s"^[A-Z0-9 )/(*#-]{1,$maxLength}$$"
 
   private val emailValidator: Reads[String] =
-    Reads.of[String].filter(ValidationError("Email should be valid and must be 3 to 132 characters", ErrorCode.INVALID_FIELD_FORMAT)
+    Reads.of[String].filter(ValidationError("Email must be 3 to 132 characters and must match ^([a-zA-Z0-9.!#$%&’'*+/=?^_`{|}~-]+)@([a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)$", ErrorCode.INVALID_FIELD_FORMAT)
     )(email => email.length >= 3 && email.length <= 132 && EmailAddress.isValid(email)
   )
 
