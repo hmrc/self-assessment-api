@@ -16,19 +16,16 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
-import uk.gov.hmrc.selfassessmentapi.models.ErrorCode.{INVALID_VALUE, MANDATORY_FIELD_MISSING}
+import uk.gov.hmrc.selfassessmentapi.models.ErrorCode.MANDATORY_FIELD_MISSING
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
 class Class4NicInfoSpec extends JsonSpec {
 
   "Class4NicInfo" should {
 
-    "do successful round trip" in roundTripJson(Class4NicInfo(Some(true), Some("001")))
+    "do successful round trip" in roundTripJson(Class4NicInfo(Some(true), Some(Class4NicsExemptionCode.NON_RESIDENT)))
 
     "reject if exemption code is missing" in
       assertValidationErrorWithCode(Class4NicInfo(Some(true), None), "", MANDATORY_FIELD_MISSING)
-
-    "reject if exemption code is invalid" in
-      assertValidationErrorWithCode(Class4NicInfo(Some(true), Some("abc")), "", INVALID_VALUE)
   }
 }

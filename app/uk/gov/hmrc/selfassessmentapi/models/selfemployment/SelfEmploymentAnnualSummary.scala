@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.models.{Class4NicInfo, ErrorCode, des}
+import uk.gov.hmrc.selfassessmentapi.models.{Class4NicInfo, Class4NicsExemptionCode, ErrorCode, des}
 
 case class SelfEmploymentAnnualSummary(allowances: Option[Allowances],
                                        adjustments: Option[Adjustments],
@@ -77,7 +77,8 @@ object SelfEmploymentAnnualSummary {
       NonFinancials(
         Some(
           Class4NicInfo(isExempt = info.exemptFromPayingClass4Nics,
-                        exemptionCode = info.exemptFromPayingClass4NicsReason)
+                        exemptionCode = info.exemptFromPayingClass4NicsReason.map(Class4NicsExemptionCode.withName(_))
+          )
         )
       )
     }

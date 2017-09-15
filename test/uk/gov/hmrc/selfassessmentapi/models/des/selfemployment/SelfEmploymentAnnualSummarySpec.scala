@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 
 import uk.gov.hmrc.selfassessmentapi.models.Class4NicInfo
+import uk.gov.hmrc.selfassessmentapi.models.Class4NicsExemptionCode.DIVER
 import uk.gov.hmrc.selfassessmentapi.{UnitSpec, models}
 
 class SelfEmploymentAnnualSummarySpec extends UnitSpec {
@@ -43,7 +44,7 @@ class SelfEmploymentAnnualSummarySpec extends UnitSpec {
           balancingChargeOther = Some(200.50),
           goodsAndServicesOwnUse = Some(200.50))),
         nonFinancials = Some(models.selfemployment.NonFinancials(
-          class4NicInfo = Some(Class4NicInfo(Some(true), Some("003")))
+          class4NicInfo = Some(Class4NicInfo(Some(true), Some(DIVER)))
         )))
 
       val desSummary: SelfEmploymentAnnualSummary = SelfEmploymentAnnualSummary.from(apiSummary)

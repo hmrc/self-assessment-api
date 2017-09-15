@@ -61,7 +61,10 @@ object SelfEmploymentAnnualSummary {
         businessDetailsChangedRecently = None,
         payClass2Nics = None,
         exemptFromPayingClass4Nics = info.class4NicInfo.flatMap(_.isExempt),
-        exemptFromPayingClass4NicsReason = info.class4NicInfo.flatMap(_.exemptionCode)
+        exemptFromPayingClass4NicsReason = for {
+          class4Nics <- info.class4NicInfo
+          excemptionCode <- class4Nics.exemptionCode
+        } yield excemptionCode.toString
       )
     }
 

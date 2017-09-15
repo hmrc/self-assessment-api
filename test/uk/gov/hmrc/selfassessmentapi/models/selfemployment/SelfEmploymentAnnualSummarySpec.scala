@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
-import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
+import uk.gov.hmrc.selfassessmentapi.models.Class4NicsExemptionCode.{NON_RESIDENT, DIVER}
 import uk.gov.hmrc.selfassessmentapi.models.{Class4NicInfo, ErrorCode, des}
+import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
 class SelfEmploymentAnnualSummarySpec extends JsonSpec {
   "format" should {
@@ -44,7 +45,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
           balancingChargeOther = Some(5.55),
           goodsAndServicesOwnUse = Some(12.23)
         )),
-        Some(NonFinancials(Some(Class4NicInfo(Some(true), Some("004"))))))
+        Some(NonFinancials(Some(Class4NicInfo(Some(true), Some(NON_RESIDENT))))))
 
       roundTripJson(summary)
     }
@@ -131,7 +132,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
       allowances.zeroEmissionGoodsVehicleAllowance shouldBe Some(200.25)
 
       val nonFinancials = apiSummary.nonFinancials.get
-      nonFinancials.class4NicInfo.get.exemptionCode shouldBe Some("003")
+      nonFinancials.class4NicInfo.get.exemptionCode shouldBe Some(DIVER)
       nonFinancials.class4NicInfo.get.isExempt shouldBe Some(true)
     }
   }
