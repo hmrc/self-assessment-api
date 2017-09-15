@@ -19,17 +19,19 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.models.des
-import uk.gov.hmrc.selfassessmentapi.models.ErrorCode
+import uk.gov.hmrc.selfassessmentapi.models.{Class4NicInfo, ErrorCode, des}
 
-case class SelfEmploymentAnnualSummary(allowances: Option[Allowances], adjustments: Option[Adjustments])
+case class SelfEmploymentAnnualSummary(allowances: Option[Allowances],
+                                       adjustments: Option[Adjustments],
+                                       nonFinancials: Option[NonFinancials])
 
 object SelfEmploymentAnnualSummary {
   implicit val writes: Writes[SelfEmploymentAnnualSummary] = Json.writes[SelfEmploymentAnnualSummary]
 
   implicit val reads: Reads[SelfEmploymentAnnualSummary] = (
     (__ \ "allowances").readNullable[Allowances] and
-      (__ \ "adjustments").readNullable[Adjustments]
+      (__ \ "adjustments").readNullable[Adjustments] and
+      (__ \ "nonFinancials").readNullable[NonFinancials]
   )(SelfEmploymentAnnualSummary.apply _).filter(
     ValidationError(
       "Balancing charge on BPRA (Business Premises Renovation Allowance) can only be claimed when there is a value for BPRA.",
@@ -71,6 +73,15 @@ object SelfEmploymentAnnualSummary {
       )
     }
 
-    SelfEmploymentAnnualSummary(allowances, adjustments)
+    val nonFinancials = desSummary.annualNonFinancials.map { info =>
+      NonFinancials(
+        Some(
+          Class4NicInfo(isExempt = info.exemptFromPayingClass4Nics,
+                        exemptionCode = info.exemptFromPayingClass4NicsReason)
+        )
+      )
+    }
+
+    SelfEmploymentAnnualSummary(allowances, adjustments, nonFinancials)
   }
 }

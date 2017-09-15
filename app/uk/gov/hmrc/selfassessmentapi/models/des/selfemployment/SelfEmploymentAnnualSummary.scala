@@ -21,7 +21,8 @@ import uk.gov.hmrc.selfassessmentapi.models
 
 
 case class SelfEmploymentAnnualSummary(annualAdjustments: Option[AnnualAdjustments],
-                                       annualAllowances: Option[AnnualAllowances])
+                                       annualAllowances: Option[AnnualAllowances],
+                                       annualNonFinancials: Option[AnnualNonFinancials])
 
 object SelfEmploymentAnnualSummary {
   implicit val reads: Reads[SelfEmploymentAnnualSummary] = Json.reads[SelfEmploymentAnnualSummary]
@@ -55,9 +56,19 @@ object SelfEmploymentAnnualSummary {
       )
     }
 
+    val nonFinancials = apiSummary.nonFinancials.map { info =>
+      AnnualNonFinancials(
+        businessDetailsChangedRecently = None,
+        payClass2Nics = None,
+        exemptFromPayingClass4Nics = info.class4NicInfo.flatMap(_.isExempt),
+        exemptFromPayingClass4NicsReason = info.class4NicInfo.flatMap(_.exemptionCode)
+      )
+    }
+
     SelfEmploymentAnnualSummary(
       annualAdjustments = adjustments,
-      annualAllowances = allowances)
+      annualAllowances = allowances,
+      annualNonFinancials = nonFinancials)
   }
 
 }
@@ -91,3 +102,13 @@ object AnnualAllowances {
   implicit val writes: Writes[AnnualAllowances] = Json.writes[AnnualAllowances]
 }
 
+case class AnnualNonFinancials(businessDetailsChangedRecently: Option[Boolean],
+                               payClass2Nics: Option[Boolean],
+                               exemptFromPayingClass4Nics: Option[Boolean],
+                               exemptFromPayingClass4NicsReason: Option[String])
+
+object AnnualNonFinancials{
+  implicit val reads: Reads[AnnualNonFinancials] = Json.reads[AnnualNonFinancials]
+  implicit val writes: Writes[AnnualNonFinancials] = Json.writes[AnnualNonFinancials]
+
+}
