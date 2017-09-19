@@ -473,8 +473,8 @@ object Jsons {
                       goodsAndServicesOwnUse: BigDecimal = 500.25,
                       businessDetailsChangedRecently: Boolean = true,
                       payClass2Nics: Boolean = false,
-                      exemptFromPayingClass4Nics: Boolean = true,
-                      exemptFromPayingClass4NicsReason: String = "003"): JsValue = {
+                      isExempt: Boolean = true,
+                      exemptionCode: String = "003"): JsValue = {
       Json.parse(s"""
            |{
            |  "allowances": {
@@ -498,11 +498,11 @@ object Jsons {
            |    "balancingChargeOther": $balancingChargeOther,
            |    "goodsAndServicesOwnUse": $goodsAndServicesOwnUse
            |  },
-           |    "annualNonFinancials": {
-           |    "businessDetailsChangedRecently": $businessDetailsChangedRecently,
-           |    "payClass2Nics": $payClass2Nics,
-           |    "exemptFromPayingClass4Nics": $exemptFromPayingClass4Nics,
-           |    "exemptFromPayingClass4NicsReason": $exemptFromPayingClass4NicsReason
+           |  "nonFinancials": {
+           |    "class4NicInfo": {
+           |      "isExempt": $isExempt,
+           |      "exemptionCode": "$exemptionCode"
+           |    }
            |  }
            |}
        """.stripMargin)
