@@ -61,8 +61,7 @@ object SelfEmploymentUpdate {
       cashOrAccruals = AccountingType.toDes(apiSelfEmployment.accountingType),
       paperless = apiSelfEmployment.paperless,
       seasonal = apiSelfEmployment.seasonal,
-      cessationDate =
-        if (apiSelfEmployment.cessationReason.isDefined) Some(apiSelfEmployment.effectiveDate.toString) else None,
+      cessationDate = apiSelfEmployment.cessationReason.map(_ => apiSelfEmployment.effectiveDate.toString),
       reasonForCessation = Some(apiSelfEmployment.cessationReason.toString),
       effectiveDate = apiSelfEmployment.effectiveDate.toString
     )
