@@ -165,7 +165,8 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
           ("MANDATORY_FIELD_MISSING", "/description"),
           ("MANDATORY_FIELD_MISSING", "/address"),
           ("MANDATORY_FIELD_MISSING", "/paperless"),
-          ("MANDATORY_FIELD_MISSING", "/seasonal")))
+          ("MANDATORY_FIELD_MISSING", "/seasonal"),
+          ("MANDATORY_FIELD_MISSING", "/effectiveDate")))
     }
 
     "return code 400 (INVALID_BUSINESS_DESCRIPTION) when attempting to update a self-employment with an invalid business description" in {
