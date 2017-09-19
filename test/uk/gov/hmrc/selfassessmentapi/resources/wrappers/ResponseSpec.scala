@@ -34,7 +34,8 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
     val fakeRequest = FakeRequest(Helpers.POST, "", FakeHeaders(), Json.obj())
 
     "return a BadRequest with a generic error if the response contains a 4xx error and the user is a FOA" in {
-      implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent(Some("agentCode")), fakeRequest)
+      implicit val authReq: AuthRequest[JsValue] =
+        new AuthRequest[JsValue](FilingOnlyAgent(Some("agentCode"), Some("agentReference")), fakeRequest)
 
       new Response {
         override val status: Int = 409
@@ -46,7 +47,8 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
     }
 
     "return the response unmodified if it contains a non-4xx error and the user is a FOA" in {
-      implicit val authReq = new AuthRequest[JsValue](FilingOnlyAgent(Some("agentCode")), fakeRequest)
+      implicit val authReq =
+        new AuthRequest[JsValue](FilingOnlyAgent(Some("agentCode"), Some("agentReference")), fakeRequest)
 
       val result = new Response {
         override val status = 200
@@ -75,7 +77,9 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
         (400, Seq(INVALID_NINO), BadRequest(toJson(Errors.NinoInvalid))),
         (400, Seq(INVALID_PAYLOAD), BadRequest(toJson(Errors.InvalidRequest))),
         (400,
-         Seq(NOT_FOUND_NINO, INVALID_INCOMESOURCEID, INVALID_BUSINESSID,
+         Seq(NOT_FOUND_NINO,
+             INVALID_INCOMESOURCEID,
+             INVALID_BUSINESSID,
              INVALID_INCOME_SOURCE,
              INVALID_INCOMESOURCEID,
              INVALID_TYPE,
@@ -127,7 +131,7 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
     }
 
     "return Forbidden with a list of errors if the response contains a 409 with multiple period validation errors" in {
-      implicit val authReq = new AuthRequest[JsValue](Agent(Some("agentCode")), fakeRequest)
+      implicit val authReq = new AuthRequest[JsValue](Agent(Some("agentCode"), Some("agentReference")), fakeRequest)
 
       new Response {
         override val status: Int = 409

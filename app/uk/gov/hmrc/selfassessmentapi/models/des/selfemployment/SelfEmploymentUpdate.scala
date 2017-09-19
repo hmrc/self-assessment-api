@@ -34,7 +34,10 @@ case class SelfEmploymentUpdate(nino: Option[String] = None,
                                 paperless: Boolean,
                                 seasonal: Boolean,
                                 cessationDate: Option[String] = None,
-                                reasonForCessation: Option[String] = None)
+                                effectiveDate: String,
+                                reasonForCessation: Option[String] = None,
+                                agentId: Option[String] = None,
+                                changedDate: Option[String] = None)
 
 object SelfEmploymentUpdate {
   implicit val writes: Writes[SelfEmploymentUpdate] = Json.writes[SelfEmploymentUpdate]
@@ -44,23 +47,25 @@ object SelfEmploymentUpdate {
       accountingPeriodStartDate = apiSelfEmployment.accountingPeriod.start.toString,
       accountingPeriodEndDate = apiSelfEmployment.accountingPeriod.end.toString,
       tradingName = apiSelfEmployment.tradingName,
-      addressDetails = SelfEmploymentAddress(apiSelfEmployment.address.lineOne,
+      addressDetails = SelfEmploymentAddress(
+        apiSelfEmployment.address.lineOne,
         apiSelfEmployment.address.lineTwo,
         apiSelfEmployment.address.lineThree,
         apiSelfEmployment.address.lineFour,
         apiSelfEmployment.address.postcode,
-        apiSelfEmployment.address.country),
+        apiSelfEmployment.address.country
+      ),
       contactDetails = ContactDetails.from(apiSelfEmployment.contactDetails),
       typeOfBusiness = apiSelfEmployment.description,
       tradingStartDate = apiSelfEmployment.commencementDate.toString,
       cashOrAccruals = AccountingType.toDes(apiSelfEmployment.accountingType),
       paperless = apiSelfEmployment.paperless,
       seasonal = apiSelfEmployment.seasonal,
-      cessationDate = None,
-      reasonForCessation = None
+      cessationDate = apiSelfEmployment.cessationReason.map(_ => apiSelfEmployment.effectiveDate.toString),
+      reasonForCessation = Some(apiSelfEmployment.cessationReason.toString),
+      effectiveDate = apiSelfEmployment.effectiveDate.toString
     )
   }
-
 
 }
 

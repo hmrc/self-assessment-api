@@ -4,7 +4,7 @@ import play.api.test.FakeApplication
 import uk.gov.hmrc.selfassessmentapi.resources.Jsons
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
-class AuthorisationSpec extends BaseFunctionalSpec {
+class AuthorisationServiceSpec extends BaseFunctionalSpec {
 
   private val conf = Map("Test.microservice.services.auth.enabled" -> true)
 
@@ -119,7 +119,7 @@ class AuthorisationSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Errors.internalServerError)
     }
 
-    "receive 200 if the user is are authorised for the resource as a client" in {
+    "receive 200 if the user is authorised for the resource as a client" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource

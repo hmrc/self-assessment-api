@@ -511,10 +511,24 @@ trait BaseFunctionalSpec extends TestApplication {
           """
             |{
             |  "internalId": "some-id",
+            |  "affinityGroup": "Agent",
+            |  "agentCode": "some-agent-code",
             |  "loginTimes": {
             |     "currentLogin": "2016-11-27T09:00:00.000Z",
             |     "previousLogin": "2016-11-01T12:00:00.000Z"
-            |  }
+            |  },
+            |  "authorisedEnrolments": [
+            |   {
+            |         "key":"HMRC-AS-AGENT",
+            |         "identifiers":[
+            |            {
+            |               "key":"AgentReferenceNumber",
+            |               "value":"1000051409"
+            |            }
+            |         ],
+            |         "state":"Activated"
+            |      }
+            |  ]
             |}
           """.stripMargin)))
 
@@ -525,11 +539,24 @@ trait BaseFunctionalSpec extends TestApplication {
           """
             |{
             |  "internalId": "some-id",
+            |  "affinityGroup": "Agent",
             |  "agentCode": "some-agent-code",
             |  "loginTimes": {
             |     "currentLogin": "2016-11-27T09:00:00.000Z",
             |     "previousLogin": "2016-11-01T12:00:00.000Z"
-            |  }
+            |  },
+            |  "authorisedEnrolments": [
+            |   {
+            |         "key":"HMRC-AS-AGENT",
+            |         "identifiers":[
+            |            {
+            |               "key":"AgentReferenceNumber",
+            |               "value":"1000051409"
+            |            }
+            |         ],
+            |         "state":"Activated"
+            |      }
+            |  ]
             |}
           """.stripMargin)))
 
@@ -577,10 +604,23 @@ trait BaseFunctionalSpec extends TestApplication {
           """
             |{
             |  "internalId": "some-id",
+            |  "affinityGroup": "Individual",
             |  "loginTimes": {
             |     "currentLogin": "2016-11-27T09:00:00.000Z",
             |     "previousLogin": "2016-11-01T12:00:00.000Z"
-            |  }
+            |  },
+            |  "authorisedEnrolments": [
+            |   {
+            |         "key":"HMRC-AS-AGENT",
+            |         "identifiers":[
+            |            {
+            |               "key":"AgentReferenceNumber",
+            |               "value":"1000051409"
+            |            }
+            |         ],
+            |         "state":"Activated"
+            |      }
+            |  ]
             |}
           """.stripMargin)))
 
@@ -598,7 +638,19 @@ trait BaseFunctionalSpec extends TestApplication {
             |  "loginTimes": {
             |     "currentLogin": "2016-11-27T09:00:00.000Z",
             |     "previousLogin": "2016-11-01T12:00:00.000Z"
-            |  }
+            |  },
+            |  "authorisedEnrolments": [
+            |   {
+            |         "key":"HMRC-AS-AGENT",
+            |         "identifiers":[
+            |            {
+            |               "key":"AgentReferenceNumber",
+            |               "value":"1000051409"
+            |            }
+            |         ],
+            |         "state":"Activated"
+            |      }
+            |  ]
             |}
           """.stripMargin)))
 

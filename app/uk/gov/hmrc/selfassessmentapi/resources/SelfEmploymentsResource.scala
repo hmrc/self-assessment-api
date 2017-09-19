@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import org.joda.time.{DateTime, DateTimeUtils, DateTimeZone}
 import play.api.libs.json.{JsArray, JsValue, Json, Writes}
 import play.api.mvc.{Action, Result}
 import uk.gov.hmrc.domain.Nino
@@ -53,7 +54,7 @@ object SelfEmploymentsResource extends BaseResource {
   def update(nino: Nino, id: SourceId): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments).async(parse.json) { implicit request =>
       validate[SelfEmploymentUpdate, SelfEmploymentResponse](request.body) { selfEmployment =>
-        connector.update(nino, des.selfemployment.SelfEmploymentUpdate.from(selfEmployment), id)
+        connector.update(nino, addRequestData(des.selfemployment.SelfEmploymentUpdate.from(selfEmployment)), id)
       } map {
         case Left(errorResult) => handleValidationErrors(errorResult)
         case Right(response) =>
@@ -62,6 +63,11 @@ object SelfEmploymentsResource extends BaseResource {
           }
       }
     }
+
+  def addRequestData(desSeUpdate: des.selfemployment.SelfEmploymentUpdate)(
+      implicit request: AuthRequest[JsValue]): des.selfemployment.SelfEmploymentUpdate =
+    desSeUpdate.copy(agentId = request.authContext.agentReference,
+                     changedDate = Some(DateTime.now(DateTimeZone.UTC).toString))
 
   def retrieve(nino: Nino, id: SourceId): Action[Unit] =
     APIAction(nino, SourceType.SelfEmployments).async(parse.empty) { implicit request =>
@@ -93,7 +99,7 @@ object SelfEmploymentsResource extends BaseResource {
       case error @ Left(DesTransformError(msg)) =>
         error match {
           case Left(ParseError(_)) => logger.error(msg)
-          case _ => logger.warn(msg)
+          case _                   => logger.warn(msg)
         }
         InternalServerError(Json.toJson(Errors.InternalServerError))
       case Right(se) => Ok(Json.toJson(se))
