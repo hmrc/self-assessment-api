@@ -29,7 +29,7 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
     val apiUpdate = models.selfemployment.SelfEmploymentUpdate(accountingPeriod = AccountingPeriod(LocalDate.parse("2017-04-01"), LocalDate.parse("2017-04-02")),
                                                                 accountingType = AccountingType.CASH,
                                                                 commencementDate = LocalDate.parse("2017-04-01"),
-                                                                cessationDate = None,
+                                                                effectiveDate = LocalDate.parse("2017-04-01"),
                                                                 cessationReason = None,
                                                                 tradingName = "Foo Consulting",
                                                                 description = "Absorbable haemostatics (manufacture)",

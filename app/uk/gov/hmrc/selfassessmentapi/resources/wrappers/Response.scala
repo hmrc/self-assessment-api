@@ -42,7 +42,7 @@ trait Response {
 
   def filter[A](pf: PartialFunction[Int, Result])(implicit request: AuthRequest[A]): Result =
     (status / 100, request.authContext) match {
-      case (4, FilingOnlyAgent(_)) =>
+      case (4, FilingOnlyAgent(_, _)) =>
         logResponse()
         BadRequest(toJson(Errors.InvalidRequest))
       case (4, _) | (5, _) =>

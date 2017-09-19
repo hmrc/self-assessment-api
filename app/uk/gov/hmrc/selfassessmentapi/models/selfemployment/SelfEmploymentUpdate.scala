@@ -25,11 +25,10 @@ import uk.gov.hmrc.selfassessmentapi.models.AccountingType._
 import uk.gov.hmrc.selfassessmentapi.models.CessationReason.CessationReason
 import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, ErrorCode, sicClassifications, _}
 
-
 case class SelfEmploymentUpdate(accountingPeriod: AccountingPeriod,
                                 accountingType: AccountingType,
                                 commencementDate: LocalDate,
-                                cessationDate: Option[LocalDate],
+                                effectiveDate: LocalDate,
                                 cessationReason: Option[CessationReason],
                                 tradingName: String,
                                 description: String,
@@ -41,25 +40,33 @@ case class SelfEmploymentUpdate(accountingPeriod: AccountingPeriod,
 object SelfEmploymentUpdate {
 
   private val validateSIC: Reads[String] =
-    Reads.of[String].filter(ValidationError("business description must be a string that conforms to the UK SIC 2007 classifications", ErrorCode.INVALID_BUSINESS_DESCRIPTION)
-    )(name => sicClassifications.get.contains(name))
+    Reads
+      .of[String]
+      .filter(ValidationError("business description must be a string that conforms to the UK SIC 2007 classifications",
+                              ErrorCode.INVALID_BUSINESS_DESCRIPTION))(name => sicClassifications.get.contains(name))
 
+  val effectiveDateValidator: Reads[LocalDate] = Reads
+    .of[LocalDate]
+    .filter(
+      ValidationError("effective date should be today or in the past", ErrorCode.DATE_NOT_IN_THE_PAST)
+    )(date => date.isBefore(LocalDate.now()) || date.isEqual(LocalDate.now()))
 
   implicit val writes: Writes[SelfEmploymentUpdate] = Json.writes[SelfEmploymentUpdate]
 
   implicit val reads: Reads[SelfEmploymentUpdate] = (
     (__ \ "accountingPeriod").read[AccountingPeriod] and
       (__ \ "accountingType").read[AccountingType] and
-      (__ \ "commencementDate").read[LocalDate] and
-      (__ \ "cessationDate").readNullable[LocalDate] and
+      (__ \ "commencementDate").read[LocalDate] and //FIXME should validate commencement date on update
+      (__ \ "effectiveDate").read[LocalDate](effectiveDateValidator) and
       (__ \ "cessationReason").readNullable[CessationReason] and
       (__ \ "tradingName").read[String](regexValidator("tradingName", stringRegex(105))) and
-      (__ \ "description").read[String](validateSIC) and //FIXME Need to revisit and fix the format after confirmation from business
+      (__ \ "description")
+        .read[String](validateSIC) and //FIXME Need to revisit and fix the format after confirmation from business
       (__ \ "address").read[Address] and
       (__ \ "contactDetails").readNullable[ContactDetails] and
       (__ \ "paperless").read[Boolean] and
       (__ \ "seasonal").read[Boolean]
-    ) (SelfEmploymentUpdate.apply _)
+  )(SelfEmploymentUpdate.apply _)
 }
 
 case class ContactDetails(primaryPhoneNumber: Option[String],
@@ -80,9 +87,10 @@ object ContactDetails {
 
   implicit val reads: Reads[ContactDetails] = (
     (__ \ "primaryPhoneNumber").readNullable[String](regexValidator("primaryPhoneNumber", contactDetailsRegex(24))) and
-      (__ \ "secondaryPhoneNumber").readNullable[String](regexValidator("secondaryPhoneNumber", contactDetailsRegex(24))) and
+      (__ \ "secondaryPhoneNumber")
+        .readNullable[String](regexValidator("secondaryPhoneNumber", contactDetailsRegex(24))) and
       (__ \ "faxNumber").readNullable[String](regexValidator("faxNumber", contactDetailsRegex(24))) and
       (__ \ "emailAddress").readNullable[String](emailValidator)
-    ) (ContactDetails.apply _)
+  )(ContactDetails.apply _)
 
 }
