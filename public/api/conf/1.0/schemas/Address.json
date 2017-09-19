@@ -10,7 +10,7 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 35,
-      "pattern": "^[A-Za-z0-9 \\-,.&'\\/]{1,25}$"
+      "pattern": "^[A-Za-z0-9 \\-,.&'\\/]{1,35}$"
     },
     "lineTwo": {
       "title": "Business address line two",
@@ -18,7 +18,7 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 35,
-      "pattern": "^[A-Za-z0-9 \\-,.&'\\/]{1,25}$"
+      "pattern": "^[A-Za-z0-9 \\-,.&'\\/]{1,35}$"
     },
     "lineThree": {
       "title": "Business address line three",
@@ -26,7 +26,7 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 35,
-      "pattern": "^[A-Za-z0-9 \\-,.&'\\/]{1,25}$"
+      "pattern": "^[A-Za-z0-9 \\-,.&'\\/]{1,35}$"
     },
     "lineFour": {
       "title": "Business address line four",
@@ -34,11 +34,11 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 35,
-      "pattern": "^[A-Za-z0-9 \\-,.&'\\/]{1,25}$"
+      "pattern": "^[A-Za-z0-9 \\-,.&'\\/]{1,35}$"
     },
     "postcode": {
-      "title": "Business postcode",
-      "description": "Business postcode",
+      "title": "Business postcode, mandatory when country is GB",
+      "description": "Business postcode, mandatory when country is GB",
       "type": "string",
       "minLength": 1,
       "maxLength": 10,

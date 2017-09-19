@@ -19,5 +19,11 @@
     "businessPremisesRenovationAllowance": 500.25,
     "enhancedCapitalAllowance": 500.25,
     "allowanceOnSales": 500.25
+  },
+  "nonFinancials": {
+    "class4NicInfo":{
+      "isExempt": true,
+      "exemptionCode": "003"
+    }
   }
 }
