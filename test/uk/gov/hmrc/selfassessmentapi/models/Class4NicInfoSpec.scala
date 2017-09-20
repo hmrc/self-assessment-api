@@ -16,16 +16,22 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
-import uk.gov.hmrc.selfassessmentapi.models.ErrorCode.MANDATORY_FIELD_MISSING
+import uk.gov.hmrc.selfassessmentapi.models.Class4NicsExemptionCode.NON_RESIDENT
+import uk.gov.hmrc.selfassessmentapi.models.ErrorCode._
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
 class Class4NicInfoSpec extends JsonSpec {
 
   "Class4NicInfo" should {
 
-    "do successful round trip" in roundTripJson(Class4NicInfo(Some(true), Some(Class4NicsExemptionCode.NON_RESIDENT)))
+    "do successful round trip" in roundTripJson(Class4NicInfo(Some(true), Some(NON_RESIDENT)))
 
-    "reject if exemption code is missing" in
+    "pass if not exempt and the exemption code not defined" in roundTripJson(Class4NicInfo(Some(false), None))
+
+    "reject if exempt but tee exemption code is missing" in
       assertValidationErrorWithCode(Class4NicInfo(Some(true), None), "", MANDATORY_FIELD_MISSING)
+
+    "reject if not exempt and the exemption code defined" in
+      assertValidationErrorWithCode(Class4NicInfo(Some(false), Some(NON_RESIDENT)), "", INVALID_VALUE)
   }
 }
