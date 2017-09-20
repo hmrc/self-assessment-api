@@ -288,7 +288,7 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
            |  "accountingType": "CASH",
            |  "commencementDate": "2016-01-01",
            |  "effectiveDate": "2017-04-05",
-           |  "cessationReason": "DEATH",
+           |  "cessationReason": "001",
            |  "tradingName": " Acme Ltd. ",
            |  "description": "Accountancy services",
            |  "address": {

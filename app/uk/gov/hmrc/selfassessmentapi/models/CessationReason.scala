@@ -17,28 +17,19 @@
 package uk.gov.hmrc.selfassessmentapi.models
 
 import play.api.libs.json.Format
-import uk.gov.hmrc.selfassessmentapi.models.AccountingType._
+import uk.gov.hmrc.selfassessmentapi.models
 
 object CessationReason extends Enumeration {
   type CessationReason = Value
 
-  val BANKRUPTCY, DEATH, VOLUNTARY_CLOSURE, OTHERS = Value
-
-  val toDes: CessationReason => String = {
-    case CessationReason.BANKRUPTCY => "Bankruptcy"
-    case CessationReason.DEATH => "Death"
-    case CessationReason.VOLUNTARY_CLOSURE => "Voluntary Closure"
-    case CessationReason.OTHERS => "Others"
-  }
-
-  val fromDes: String => Option[CessationReason] = {
-    case "Bankruptcy" => Some(CessationReason.BANKRUPTCY)
-    case "Death" => Some(CessationReason.DEATH)
-    case "Voluntary Closure" => Some(CessationReason.VOLUNTARY_CLOSURE)
-    case "Others" => Some(CessationReason.OTHERS)
-    case _ => None
-  }
+  val Retirement: models.CessationReason.Value = Value("001")
+  val Emigration: models.CessationReason.Value = Value("002")
+  val BusinessIncorporated: models.CessationReason.Value = Value("003")
+  val BusinessHasBecomeAPartnership: models.CessationReason.Value = Value("004")
+  val Bankruptcy: models.CessationReason.Value = Value("005")
+  val Other: models.CessationReason.Value = Value("006")
+  val DontWantToSay: models.CessationReason.Value = Value("007")
 
   implicit val format: Format[CessationReason] =
-    EnumJson.enumFormat(CessationReason, Some("CessationReason should be either BANKRUPTCY, DEATH, VOLUNTARY_CLOSURE or OTHERS"))
+    EnumJson.enumFormat(CessationReason, Some("CessationReason should be either 001, 002, 003, 004, 005, 006 or 007"))
 }

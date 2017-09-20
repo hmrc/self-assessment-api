@@ -85,10 +85,10 @@ object ContactDetails {
   implicit val writes: Writes[ContactDetails] = Json.writes[ContactDetails]
 
   implicit val reads: Reads[ContactDetails] = (
-    (__ \ "primaryPhoneNumber").readNullable[String](regexValidator("primaryPhoneNumber", contactDetailsRegex(24))).map(a => a.map(_.trim)) and
+    (__ \ "primaryPhoneNumber").readNullable[String](regexValidator("primaryPhoneNumber", contactDetailsRegex(24))).map(_.map(_.trim)) and
       (__ \ "secondaryPhoneNumber")
-        .readNullable[String](regexValidator("secondaryPhoneNumber", contactDetailsRegex(24))).map(a => a.map(_.trim)) and
-      (__ \ "faxNumber").readNullable[String](regexValidator("faxNumber", contactDetailsRegex(24))).map(a => a.map(_.trim)) and
+        .readNullable[String](regexValidator("secondaryPhoneNumber", contactDetailsRegex(24))).map(_.map(_.trim)) and
+      (__ \ "faxNumber").readNullable[String](regexValidator("faxNumber", contactDetailsRegex(24))).map(_.map(_.trim)) and
       (__ \ "emailAddress").readNullable[String](emailValidator)
   )(ContactDetails.apply _)
 

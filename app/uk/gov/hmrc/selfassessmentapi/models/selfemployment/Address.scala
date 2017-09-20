@@ -34,9 +34,9 @@ object Address {
 
   implicit val reads: Reads[Address] = (
     (__ \ "lineOne").read[String] (regexValidator("lineOne", stringRegex(35))).map(_.trim) and
-      (__ \ "lineTwo").readNullable[String](regexValidator("lineTwo", stringRegex(35))).map(a => a.map(_.trim)) and
-      (__ \ "lineThree").readNullable[String](regexValidator("lineThree", stringRegex(35))).map(a => a.map(_.trim)) and
-      (__ \ "lineFour").readNullable[String](regexValidator("lineFour", stringRegex(35))).map(a => a.map(_.trim)) and
+      (__ \ "lineTwo").readNullable[String](regexValidator("lineTwo", stringRegex(35))).map(_.map(_.trim)) and
+      (__ \ "lineThree").readNullable[String](regexValidator("lineThree", stringRegex(35))).map(_.map(_.trim)) and
+      (__ \ "lineFour").readNullable[String](regexValidator("lineFour", stringRegex(35))).map(_.map(_.trim)) and
       (__ \ "postalCode").readNullable[String](postcodeValidator) and
       (__ \ "countryCode").read[String](lengthIs(2))
     ) (Address.apply _).filter(
