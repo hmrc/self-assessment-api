@@ -66,6 +66,7 @@ object SelfEmployment {
   private def lengthIsBetween(minLength: Int, maxLength: Int): Reads[String] =
     Reads
       .of[String]
+      .map(_.trim)
       .filter(
         ValidationError(s"field length must be between $minLength and $maxLength characters",
           ErrorCode.INVALID_FIELD_LENGTH))(name => name.length <= maxLength && name.length >= minLength)

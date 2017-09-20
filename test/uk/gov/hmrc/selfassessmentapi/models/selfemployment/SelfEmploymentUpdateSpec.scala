@@ -155,42 +155,42 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
         Map("/address/lineFour" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
     }
 
-    "return a error when providing a postcode that is not between 1 and 10 characters in length and does not have the valid format" in {
-      val jsonOne = Jsons.SelfEmployment.update(postcode = Some(""))
-      val jsonTwo = Jsons.SelfEmployment.update(postcode = Some("a" * 11))
-      val jsonThree = Jsons.SelfEmployment.update(postcode = Some("1(£$)"))
+    "return a error when providing a postalCode that is not between 1 and 10 characters in length and does not have the valid format" in {
+      val jsonOne = Jsons.SelfEmployment.update(postalCode = Some(""))
+      val jsonTwo = Jsons.SelfEmployment.update(postalCode = Some("a" * 11))
+      val jsonThree = Jsons.SelfEmployment.update(postalCode = Some("1(£$)"))
 
       assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne,
-                                                           Map("/address/postcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
+                                                           Map("/address/postalCode" -> Seq(ErrorCode.INVALID_POSTCODE)))
       assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo,
-                                                           Map("/address/postcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
+                                                           Map("/address/postalCode" -> Seq(ErrorCode.INVALID_POSTCODE)))
       assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree,
-                                                           Map("/address/postcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
+                                                           Map("/address/postalCode" -> Seq(ErrorCode.INVALID_POSTCODE)))
     }
 
-    "return a error when country is GB and postcode is not provided" in {
-      val jsonOne = Jsons.SelfEmployment.update(postcode = None)
+    "return a error when countryCode is GB and postalCode is not provided" in {
+      val jsonOne = Jsons.SelfEmployment.update(postalCode = None)
 
       assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne,
                                                            Map("/address" -> Seq(ErrorCode.MANDATORY_FIELD_MISSING)))
     }
 
-    "pass when country is FR and postcode is not provided" in {
-      val jsonOne = Jsons.SelfEmployment.update(postcode = None, country = "FR")
+    "pass when countryCode is FR and postcode is not provided" in {
+      val jsonOne = Jsons.SelfEmployment.update(postalCode = None, countryCode = "FR")
 
       assertJsonValidationPasses[SelfEmploymentUpdate](jsonOne)
     }
 
-    "return a error when providing a country that is not 2 characters in length" in {
-      val jsonOne = Jsons.SelfEmployment.update(country = "")
-      val jsonTwo = Jsons.SelfEmployment.update(country = "Great Britain")
+    "return a error when providing a countryCode that is not 2 characters in length" in {
+      val jsonOne = Jsons.SelfEmployment.update(countryCode = "")
+      val jsonTwo = Jsons.SelfEmployment.update(countryCode = "Great Britain")
 
       assertValidationErrorsWithCode[SelfEmploymentUpdate](
         jsonOne,
-        Map("/address/country" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
+        Map("/address/countryCode" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
       assertValidationErrorsWithCode[SelfEmploymentUpdate](
         jsonTwo,
-        Map("/address/country" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
+        Map("/address/countryCode" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
     }
 
     "return a error when providing a primaryPhoneNumber that is not between 1 and 24 characters in length and does not have the valid format" in {
@@ -275,9 +275,50 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
 
     "return a DATE_NOT_IN_THE_PAST error when using an effective date in the future" in {
       val input =
-        Jsons.SelfEmployment.update(postcode = None, country = "FR", effectiveDate = LocalDate.now.plusDays(1).toString)
+        Jsons.SelfEmployment.update(postalCode = None, countryCode = "FR", effectiveDate = LocalDate.now.plusDays(1).toString)
       assertValidationErrorsWithCode[SelfEmploymentUpdate](input,
                                                            Map("/effectiveDate" -> Seq(ErrorCode.DATE_NOT_IN_THE_PAST)))
+    }
+
+    "return a trimmed trading name, address and contact details after json is de-serialised" in {
+      val json =
+        s"""
+           |{
+           |  "accountingPeriod": {"start": "2017-04-06", "end" : "2018-04-05"},
+           |  "accountingType": "CASH",
+           |  "commencementDate": "2016-01-01",
+           |  "effectiveDate": "2017-04-05",
+           |  "cessationReason": "DEATH",
+           |  "tradingName": " Acme Ltd. ",
+           |  "description": "Accountancy services",
+           |  "address": {
+           |    "lineOne": " 1 Acme Rd. ",
+           |    "lineTwo": " London ",
+           |    "lineThree": " Greater London ",
+           |    "lineFour": " United Kingdom ",
+           |    "postalCode": "A9 9AA",
+           |    "countryCode": "GB"
+           |  },
+           |  "contactDetails": {
+           |    "primaryPhoneNumber": " 07712345678 ",
+           |    "secondaryPhoneNumber": " 07712345678 ",
+           |    "faxNumber": " 07712345678 ",
+           |    "emailAddress": "admin@acmeltd.com"
+           |  },
+           |  "paperless": false,
+           |  "seasonal": false
+           |}
+         """.stripMargin
+
+      val se = Json.parse(json).validate[SelfEmploymentUpdate].get
+      se.tradingName shouldBe "Acme Ltd."
+      se.address.lineOne shouldBe "1 Acme Rd."
+      se.address.lineTwo shouldBe Some("London")
+      se.address.lineThree shouldBe Some("Greater London")
+      se.address.lineFour shouldBe Some("United Kingdom")
+      se.contactDetails.get.primaryPhoneNumber shouldBe Some("07712345678")
+      se.contactDetails.get.secondaryPhoneNumber shouldBe Some("07712345678")
+      se.contactDetails.get.faxNumber shouldBe Some("07712345678")
     }
   }
 }

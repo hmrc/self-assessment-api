@@ -106,8 +106,8 @@ class SelfEmploymentSpec extends JsonSpec {
            |    "lineTwo": "London",
            |    "lineThree": "Greater London",
            |    "lineFour": "United Kingdom",
-           |    "postcode": "A9 9AA",
-           |    "country": "GB"
+           |    "postalCode": "A9 9AA",
+           |    "countryCode": "GB"
            |  }
            |}
          """.stripMargin
@@ -169,28 +169,55 @@ class SelfEmploymentSpec extends JsonSpec {
       assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/address/lineFour" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
     }
 
-    "return a error when providing a postcode that is not between 1 and 10 characters in length" in {
-      val jsonOne = Jsons.SelfEmployment(postcode = Some(""))
-      val jsonTwo = Jsons.SelfEmployment(postcode = Some("a" * 11))
+    "return a error when providing a postalCode that is not between 1 and 10 characters in length" in {
+      val jsonOne = Jsons.SelfEmployment(postalCode = Some(""))
+      val jsonTwo = Jsons.SelfEmployment(postalCode = Some("a" * 11))
 
-      assertValidationErrorsWithCode[SelfEmployment](jsonOne, Map("/address/postcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
-      assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/address/postcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
+      assertValidationErrorsWithCode[SelfEmployment](jsonOne, Map("/address/postalCode" -> Seq(ErrorCode.INVALID_POSTCODE)))
+      assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/address/postalCode" -> Seq(ErrorCode.INVALID_POSTCODE)))
     }
 
-    "return an error when providing a postcode with an invalid format" in {
-      val jsonOne = Jsons.SelfEmployment(postcode = Some("!?"))
-      val jsonTwo = Jsons.SelfEmployment(postcode = Some("a" * 9))
+    "return an error when providing a postalCode with an invalid format" in {
+      val jsonOne = Jsons.SelfEmployment(postalCode = Some("!?"))
+      val jsonTwo = Jsons.SelfEmployment(postalCode = Some("a" * 9))
 
-      assertValidationErrorsWithCode[SelfEmployment](jsonOne, Map("/address/postcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
-      assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/address/postcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
+      assertValidationErrorsWithCode[SelfEmployment](jsonOne, Map("/address/postalCode" -> Seq(ErrorCode.INVALID_POSTCODE)))
+      assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/address/postalCode" -> Seq(ErrorCode.INVALID_POSTCODE)))
     }
 
-    "return a error when providing a country that is not 2 characters in length" in {
-      val jsonOne = Jsons.SelfEmployment(country = Some(""))
-      val jsonTwo = Jsons.SelfEmployment(country = Some("Great Britain"))
+    "return a error when providing a countryCode that is not 2 characters in length" in {
+      val jsonOne = Jsons.SelfEmployment(countryCode = Some(""))
+      val jsonTwo = Jsons.SelfEmployment(countryCode = Some("Great Britain"))
 
-      assertValidationErrorsWithCode[SelfEmployment](jsonOne, Map("/address/country" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
-      assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/address/country" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
+      assertValidationErrorsWithCode[SelfEmployment](jsonOne, Map("/address/countryCode" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
+      assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/address/countryCode" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
+    }
+
+
+    "return a trimmed trading name after json is de-serialised" in {
+      val json =
+        s"""
+           |{
+           |  "accountingPeriod": {"start": "2017-04-06", "end" : "2018-04-05"},
+           |  "accountingType": "CASH",
+           |  "commencementDate": "2016-01-01",
+           |  "cessationDate": "2018-04-05",
+           |  "tradingName": "      Acme Ltd.           ",
+           |  "description": "Accountancy services",
+           |  "address": {
+           |    "lineOne": "1 Acme Rd.",
+           |    "lineTwo": "London",
+           |    "lineThree": "Greater London",
+           |    "lineFour": "United Kingdom",
+           |    "postalCode": "A9 9AA",
+           |    "countryCode": "GB"
+           |  }
+           |}
+         """.stripMargin
+
+      val se = Json.parse(json).validate[SelfEmployment].get
+      se.tradingName shouldBe "Acme Ltd."
+
     }
   }
 

@@ -59,8 +59,8 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
       desUpdate.addressDetails.addressLine2 shouldBe apiUpdate.address.lineTwo
       desUpdate.addressDetails.addressLine3 shouldBe apiUpdate.address.lineThree
       desUpdate.addressDetails.addressLine4 shouldBe apiUpdate.address.lineFour
-      desUpdate.addressDetails.postalCode shouldBe apiUpdate.address.postcode
-      desUpdate.addressDetails.countryCode shouldBe apiUpdate.address.country
+      desUpdate.addressDetails.postalCode shouldBe apiUpdate.address.postalCode
+      desUpdate.addressDetails.countryCode shouldBe apiUpdate.address.countryCode
       desUpdate.contactDetails shouldBe ContactDetails.from(apiUpdate.contactDetails)
       desUpdate.paperless shouldBe apiUpdate.paperless
       desUpdate.seasonal shouldBe apiUpdate.seasonal

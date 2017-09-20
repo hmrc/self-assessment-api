@@ -68,14 +68,15 @@ package object models {
 
   val postcodeValidator: Reads[String] = Reads
     .of[String]
-    .filter(ValidationError("postcode must match \"^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$\"",
+    .filter(ValidationError("postalCode must match \"^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$\"",
       ErrorCode.INVALID_POSTCODE))(postcode =>
       postcode.matches("^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$"))
 
   def regexValidator(fieldName: String, regex: String): Reads[String] = Reads
     .of[String]
+    .map(_.trim)
     .filter(ValidationError(s"$fieldName cannot be blank spaces and must match $regex",
-      ErrorCode.INVALID_FIELD_FORMAT))(field => field.trim.length > 0 && field.matches(regex))
+      ErrorCode.INVALID_FIELD_FORMAT))(field => field.matches(regex))
 
   def stringRegex(maxLength: Int) = s"^[A-Za-z0-9 \\-,.&'\\/]{1,$maxLength}$$"
 

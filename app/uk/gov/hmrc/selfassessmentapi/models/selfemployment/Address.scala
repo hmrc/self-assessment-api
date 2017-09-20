@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{Json, Reads, Writes, __}
+import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models._
 
 
@@ -26,24 +26,24 @@ case class Address(lineOne: String,
                    lineTwo: Option[String],
                    lineThree: Option[String],
                    lineFour: Option[String],
-                   postcode: Option[String],
-                   country: String)
+                   postalCode: Option[String],
+                   countryCode: String)
 
 object Address {
   implicit val writes: Writes[Address] = Json.writes[Address]
 
   implicit val reads: Reads[Address] = (
-    (__ \ "lineOne").read[String](regexValidator("lineOne", stringRegex(35))) and
-      (__ \ "lineTwo").readNullable[String](regexValidator("lineTwo", stringRegex(35))) and
-      (__ \ "lineThree").readNullable[String](regexValidator("lineThree", stringRegex(35))) and
-      (__ \ "lineFour").readNullable[String](regexValidator("lineFour", stringRegex(35))) and
-      (__ \ "postcode").readNullable[String](postcodeValidator) and
-      (__ \ "country").read[String](lengthIs(2))
+    (__ \ "lineOne").read[String] (regexValidator("lineOne", stringRegex(35))).map(_.trim) and
+      (__ \ "lineTwo").readNullable[String](regexValidator("lineTwo", stringRegex(35))).map(a => a.map(_.trim)) and
+      (__ \ "lineThree").readNullable[String](regexValidator("lineThree", stringRegex(35))).map(a => a.map(_.trim)) and
+      (__ \ "lineFour").readNullable[String](regexValidator("lineFour", stringRegex(35))).map(a => a.map(_.trim)) and
+      (__ \ "postalCode").readNullable[String](postcodeValidator) and
+      (__ \ "countryCode").read[String](lengthIs(2))
     ) (Address.apply _).filter(
     ValidationError(
-      "postcode mandatory when country = GB",
+      "postalCode mandatory when countryCode = GB",
       ErrorCode.MANDATORY_FIELD_MISSING)) { address =>
-    if (address.country == "GB") address.postcode.isDefined
+    if (address.countryCode == "GB") address.postalCode.isDefined
     else true
   }
 
