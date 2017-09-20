@@ -45,10 +45,17 @@ object Class4NicInfo {
       (__ \ "exemptionCode").readNullable[Class4NicsExemptionCode]
     )(Class4NicInfo.apply _)
     .filter(ValidationError(s"Exemption code must be present", MANDATORY_FIELD_MISSING))(isExemptionCodePresent)
+    .filter(ValidationError(s"Exemption code must not be present", INVALID_VALUE))(isExemptionCodeAbsent)
 
   private def isExemptionCodePresent(class4Exemption: Class4NicInfo) =
     (class4Exemption.isExempt, class4Exemption.exemptionCode) match {
       case (Some(true), None) => false
+      case _ => true
+    }
+
+  private def isExemptionCodeAbsent(class4Exemption: Class4NicInfo) =
+    (class4Exemption.isExempt, class4Exemption.exemptionCode) match {
+      case (Some(false), Some(_)) => false
       case _ => true
     }
 }
