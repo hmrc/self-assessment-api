@@ -64,7 +64,7 @@ object SelfEmploymentsResource extends BaseResource {
       }
     }
 
-  def addRequestData(desSeUpdate: des.selfemployment.SelfEmploymentUpdate)(
+  private def addRequestData(desSeUpdate: des.selfemployment.SelfEmploymentUpdate)(
       implicit request: AuthRequest[JsValue]): des.selfemployment.SelfEmploymentUpdate =
     desSeUpdate.copy(agentId = request.authContext.agentReference,
                      changedDate = Some(DateTime.now(DateTimeZone.UTC).toString))

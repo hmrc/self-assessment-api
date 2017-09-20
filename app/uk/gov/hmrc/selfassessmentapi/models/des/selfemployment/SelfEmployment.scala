@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models
+import uk.gov.hmrc.selfassessmentapi.models.CessationReason.CessationReason
 import uk.gov.hmrc.selfassessmentapi.models.{AccountingType, des}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.Address
 
@@ -49,7 +50,9 @@ case class SelfEmployment(incomeSourceId: Option[String],
                           addressDetails: Option[SelfEmploymentAddress],
                           typeOfBusiness: Option[String],
                           tradingStartDate: Option[String],
-                          cashOrAccruals: String)
+                          cashOrAccruals: String,
+                          cessationReason: Option[String] = None,
+                          cessationDate: Option[String] = None)
 
 object SelfEmployment {
   implicit val writes: Writes[SelfEmployment] = Json.writes[SelfEmployment]
@@ -62,7 +65,9 @@ object SelfEmployment {
       (__ \ "businessAddressDetails").readNullable[SelfEmploymentAddress] and
       (__ \ "typeOfBusiness").readNullable[String] and
       (__ \ "tradingStartDate").readNullable[String] and
-      (__ \ "cashOrAccruals").read[String]
+      (__ \ "cashOrAccruals").read[String] and
+      (__ \ "cessationReason").readNullable[String] and
+      (__ \ "cessationDate").readNullable[String]
   )(SelfEmployment.apply _)
 
   def from(apiSelfEmployment: models.selfemployment.SelfEmployment): SelfEmployment = {

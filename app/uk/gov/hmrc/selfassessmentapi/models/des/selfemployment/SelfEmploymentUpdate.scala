@@ -62,7 +62,7 @@ object SelfEmploymentUpdate {
       paperless = apiSelfEmployment.paperless,
       seasonal = apiSelfEmployment.seasonal,
       cessationDate = apiSelfEmployment.cessationReason.map(_ => apiSelfEmployment.effectiveDate.toString),
-      reasonForCessation = Some(apiSelfEmployment.cessationReason.toString),
+      reasonForCessation = apiSelfEmployment.cessationReason.map(_.toString),
       effectiveDate = apiSelfEmployment.effectiveDate.toString
     )
   }

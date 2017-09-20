@@ -400,7 +400,7 @@ object Jsons {
                accountingType: String = "CASH",
                commencementDate: String = "2017-01-01",
                effectiveDate: String = "2017-01-02",
-               cessationReason: CessationReason = CessationReason.BANKRUPTCY,
+               cessationReason: CessationReason = CessationReason.Bankruptcy,
                tradingName: String = "Acme Ltd",
                description: String = "Accountancy services",
                lineOne: String = "1 Acme Rd.",
