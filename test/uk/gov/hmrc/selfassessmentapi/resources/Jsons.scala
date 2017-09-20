@@ -470,7 +470,11 @@ object Jsons {
                       outstandingBusinessIncome: BigDecimal = 500.25,
                       balancingChargeBPRA: BigDecimal = 500.25,
                       balancingChargeOther: BigDecimal = 500.25,
-                      goodsAndServicesOwnUse: BigDecimal = 500.25): JsValue = {
+                      goodsAndServicesOwnUse: BigDecimal = 500.25,
+                      businessDetailsChangedRecently: Boolean = true,
+                      payClass2Nics: Boolean = false,
+                      isExempt: Boolean = true,
+                      exemptionCode: String = "003"): JsValue = {
       Json.parse(s"""
            |{
            |  "allowances": {
@@ -493,6 +497,12 @@ object Jsons {
            |    "balancingChargeBPRA": $balancingChargeBPRA,
            |    "balancingChargeOther": $balancingChargeOther,
            |    "goodsAndServicesOwnUse": $goodsAndServicesOwnUse
+           |  },
+           |  "nonFinancials": {
+           |    "class4NicInfo": {
+           |      "isExempt": $isExempt,
+           |      "exemptionCode": "$exemptionCode"
+           |    }
            |  }
            |}
        """.stripMargin)
