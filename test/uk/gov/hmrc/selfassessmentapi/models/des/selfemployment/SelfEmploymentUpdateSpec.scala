@@ -30,7 +30,7 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
                                                                 accountingType = AccountingType.CASH,
                                                                 commencementDate = LocalDate.parse("2017-04-01"),
                                                                 effectiveDate = LocalDate.parse("2017-04-01"),
-                                                                cessationReason = None,
+                                                                cessationReason = Some(CessationReason.Bankruptcy),
                                                                 tradingName = "Foo Consulting",
                                                                 description = "Absorbable haemostatics (manufacture)",
                                                                 address = Address("17 Profitable Road",
@@ -64,6 +64,9 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
       desUpdate.contactDetails shouldBe ContactDetails.from(apiUpdate.contactDetails)
       desUpdate.paperless shouldBe apiUpdate.paperless
       desUpdate.seasonal shouldBe apiUpdate.seasonal
+      desUpdate.effectiveDate shouldBe "2017-04-01"
+      desUpdate.cessationDate shouldBe Some("2017-04-01")
+      desUpdate.reasonForCessation shouldBe Some(CessationReason.Bankruptcy.toString)
     }
 
   }
