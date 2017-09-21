@@ -1,6 +1,21 @@
 
 ### Please refer to [CHANGELOG-ET.md](https://github.com/hmrc/self-assessment-api/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to Sandbox Test Environment.
 
+## [0.136.2](https://github.com/hmrc/self-assessment-api/releases/tag/v0.136.2) 21-Sep-2017
+
+Fix application.raml to include the correct error scenarios for update period BVR's 
+
+## [0.136.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.136.0) 20-Sep-2017
+
+* New errors responses are being returned after implementation of BVR's
+  * MISALIGNED_PERIOD - period being submitted/created is not within the accounting period
+  * NOT_CONTIGUOUS_PERIOD - period being submitted/created is not contiguous with the previous period
+  * OVERLAPPING_PERIOD - period being submitted/created overlaps with any of the previously submitted periods
+* Impacted API's
+  * Create a self-employment update period
+  * Create a non-FHL UK property update period
+  * Create a FHL UK property update period
+     
 ## [0.132.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.132.0) 27-Jul-2017
 
 * Enable the following APIs in production:
