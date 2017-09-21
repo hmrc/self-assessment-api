@@ -18,25 +18,29 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
 import org.joda.time.LocalDate
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
-import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, des}
+import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, CessationReason, des}
 
 class SelfEmploymentRetrieveSpec extends UnitSpec {
   def createDesSelfEmployment(accountingType: String = "cash"): des.selfemployment.SelfEmployment = {
-    des.selfemployment.SelfEmployment(incomeSourceId = Some("abc"),
-                       accountingPeriodStartDate = "2017-01-04",
-                       accountingPeriodEndDate = "2017-01-05",
-                       tradingName = "Acme Ltd.",
-                       addressDetails = Some(
-                         des.selfemployment.SelfEmploymentAddress(
-                           addressLine1 = "1 Acme Rd.",
-                           addressLine2 = Some("London"),
-                           addressLine3 = Some("Greater London"),
-                           addressLine4 = Some("United Kingdom"),
-                           postalCode = Some("A9 9AA")
-                         )),
-                       typeOfBusiness = Some("Accountancy services"),
-                       tradingStartDate = Some("2017-04-01"),
-                       cashOrAccruals = accountingType)
+    des.selfemployment.SelfEmployment(
+      incomeSourceId = Some("abc"),
+      accountingPeriodStartDate = "2017-01-04",
+      accountingPeriodEndDate = "2017-01-05",
+      tradingName = "Acme Ltd.",
+      addressDetails = Some(
+        des.selfemployment.SelfEmploymentAddress(
+          addressLine1 = "1 Acme Rd.",
+          addressLine2 = Some("London"),
+          addressLine3 = Some("Greater London"),
+          addressLine4 = Some("United Kingdom"),
+          postalCode = Some("A9 9AA")
+        )),
+      typeOfBusiness = Some("Accountancy services"),
+      tradingStartDate = Some("2017-04-01"),
+      cashOrAccruals = accountingType,
+      cessationDate = Some("2017-05-01"),
+      cessationReason = Some(CessationReason.Bankruptcy.toString)
+    )
   }
 
   "constructing a API SelfEmploymentRetrieve using the DES SelfEmployment" should {
@@ -56,11 +60,13 @@ class SelfEmploymentRetrieveSpec extends UnitSpec {
       selfEmployment.description shouldBe Some("Accountancy services")
       selfEmployment.commencementDate shouldBe Some(LocalDate.parse("2017-04-01"))
       selfEmployment.accountingType shouldBe AccountingType.CASH
-      selfEmployment.cessationDate shouldBe None
+      selfEmployment.cessationDate shouldBe Some(LocalDate.parse("2017-05-01"))
+      selfEmployment.cessationReason shouldBe Some(CessationReason.Bankruptcy)
     }
 
     "correctly map the accrual accounting type" in {
-      val selfEmployment = SelfEmploymentRetrieve.from.from(createDesSelfEmployment(accountingType = "accruals")).right.get
+      val selfEmployment =
+        SelfEmploymentRetrieve.from.from(createDesSelfEmployment(accountingType = "accruals")).right.get
 
       selfEmployment.accountingType shouldBe AccountingType.ACCRUAL
     }

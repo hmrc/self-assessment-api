@@ -2,6 +2,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json._
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.models.CessationReason
 import uk.gov.hmrc.selfassessmentapi.models.des.properties.{Common, FHL, Other}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
@@ -77,7 +78,8 @@ object DesJsons {
               accPeriodEnd: String = "2018-04-05",
               accountingType: String = "cash",
               commencementDate: String = "2017-01-01",
-              cessationDate: Option[String] = Some("2017-01-02"),
+              cessationDate: String = "2017-01-02",
+              cessationReason: String = CessationReason.Bankruptcy.toString,
               tradingName: String = "Acme Ltd",
               description: String = "Accountancy services",
               addressLineOne: String = "1 Acme Rd.",
@@ -114,7 +116,9 @@ object DesJsons {
          |         },
          |         "tradingStartDate": "$commencementDate",
          |         "cashOrAccruals": "$accountingType",
-         |         "seasonal": true
+         |         "seasonal": true,
+         |         "cessationDate": "$cessationDate",
+         |         "cessationReason": "$cessationReason"
          |      }
          |   ]
          |}
