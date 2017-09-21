@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.selfassessmentapi
 
+import org.joda.time.LocalDate
 import play.api.Logger
 import play.api.data.validation.ValidationError
 import play.api.libs.json.{JsPath, Reads}
 
 import scala.io.{Codec, Source}
 import scala.util.Try
-import scala.util.matching.Regex
 
 package object models {
 
@@ -84,5 +84,10 @@ package object models {
     Reads.of[String].filter(ValidationError(s"field length must be $length characters", ErrorCode.INVALID_FIELD_LENGTH)
     )(name => name.length == length)
 
+  val commencementDateValidator: Reads[LocalDate] = Reads
+    .of[LocalDate]
+    .filter(
+      ValidationError("commencement date should be today or in the past", ErrorCode.DATE_NOT_IN_THE_PAST)
+    )(date => date.isBefore(LocalDate.now()) || date.isEqual(LocalDate.now()))
 
 }
