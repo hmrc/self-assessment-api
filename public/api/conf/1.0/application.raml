@@ -77,7 +77,7 @@ traits:
                   description: The client is not subscribed to MTD
                   value:
                     code: CLIENT_NOT_SUBSCRIBED
-  overlappingPeriod:
+  periodBVRs:
     responses:
       403:
         body:
@@ -85,9 +85,17 @@ traits:
             type: types.errorResponse
             examples:
               overlappingPeriod:
-                description: A period cannot overlap with another period
+                description: If update period overlaps with any of the existing update periods
                 value:
                   code: OVERLAPPING_PERIOD
+              misAlignedPeriod:
+                description: If update period is not within the accounting period
+                value:
+                  code: MISALIGNED_PERIOD
+              nonContiguousPeriod:
+                description: If update periods are not contiguous
+                value:
+                  code: NOT_CONTIGUOUS_PERIOD
 
 /self-assessment:
   /ni/{nino}:
@@ -316,7 +324,7 @@ traits:
                          Submissions which do not include any incomes or expenses are invalid.
                          You should submit zero values if you do not have incomes or expenses.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
-            is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+            is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader, periodBVRs]
             (annotations.scope): "write:self-assessment"
             securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
             body:
@@ -369,23 +377,6 @@ traits:
                         description: No incomes and expenses are supplied
                         value:
                           code: NO_INCOMES_AND_EXPENSES
-              403:
-                body:
-                  application/json:
-                    type: types.errorResponse
-                    examples:
-                      notContiguousPeriod:
-                        description: If periods are not contiguous
-                        value:
-                          code: NOT_CONTIGUOUS_PERIOD
-                      overlappingPeriod:
-                        description: If the period overlaps with existing periods
-                        value:
-                          code: OVERLAPPING_PERIOD
-                      misalignedPeriod:
-                        description: If the period is not within the accounting period
-                        value:
-                          code: MISALIGNED_PERIOD
           get:
             displayName: List all self-employment update periods
             description: List all self-employment update periods.
@@ -677,7 +668,7 @@ traits:
                          Submissions  which do not include any incomes or expenses are invalid.
                          You should submit zero values if you do not have incomes or expenses.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
-            is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, overlappingPeriod]
+            is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, periodBVRs]
             (annotations.scope): "write:self-assessment"
             securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
             body:
@@ -913,7 +904,7 @@ traits:
                          Submissions which do not include any incomes or expenses are invalid.
                          You should submit zero values if you do not have incomes or expenses.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
-            is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, overlappingPeriod]
+            is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, periodBVRs]
             (annotations.scope): "write:self-assessment"
             securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
             body:
