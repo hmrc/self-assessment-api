@@ -85,4 +85,12 @@ package object models {
     )(name => name.length == length)
 
 
+  implicit class Trimmer(reads: Reads[String]) {
+    def trim: Reads[String] = reads.map(_.trim)
+  }
+
+  implicit class NullableTrimmer(reads: Reads[Option[String]]) {
+    def trimNullable: Reads[Option[String]] = reads.map(_.map(_.trim))
+  }
+
 }
