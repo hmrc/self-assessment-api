@@ -90,4 +90,12 @@ package object models {
       ValidationError("commencement date should be today or in the past", ErrorCode.DATE_NOT_IN_THE_PAST)
     )(date => date.isBefore(LocalDate.now()) || date.isEqual(LocalDate.now()))
 
+  implicit class Trimmer(reads: Reads[String]) {
+    def trim: Reads[String] = reads.map(_.trim)
+  }
+
+  implicit class NullableTrimmer(reads: Reads[Option[String]]) {
+    def trimNullable: Reads[Option[String]] = reads.map(_.map(_.trim))
+  }
+
 }
