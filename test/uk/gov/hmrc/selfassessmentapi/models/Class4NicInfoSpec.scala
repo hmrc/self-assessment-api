@@ -35,9 +35,9 @@ class Class4NicInfoSpec extends JsonSpec {
       assertValidationErrorWithCode(Class4NicInfo(Some(false), Some(NON_RESIDENT)), "", INVALID_VALUE)
 
     "reject if only the exemption code is defined" in
-      assertValidationErrorWithCode(Class4NicInfo(None, Some(NON_RESIDENT)), "", INVALID_REQUEST)
+      assertValidationErrorWithCode(Class4NicInfo(None, Some(NON_RESIDENT)), "", INVALID_VALUE)
 
     "reject if empty element is provided" in
-      assertValidationErrorWithCode(Class4NicInfo(None, None), "", INVALID_REQUEST)
+      assertValidationErrorWithCode(Class4NicInfo(None, None), "", INVALID_VALUE)
   }
 }
