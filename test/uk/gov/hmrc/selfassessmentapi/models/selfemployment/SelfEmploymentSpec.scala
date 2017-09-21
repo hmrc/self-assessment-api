@@ -32,7 +32,7 @@ class SelfEmploymentSpec extends JsonSpec {
       assertJsonIs(input, expectedOutput)
     }
 
-    "return a COMMENCEMENT_DATE_NOT_IN_THE_PAST error when using a commencement date in the future" in {
+    "return a DATE_NOT_IN_THE_PAST error when using a commencement date in the future" in {
       val input = SelfEmployment(Some("myid"), AccountingPeriod(LocalDate.parse("2017-04-01"), LocalDate.parse("2017-04-02")),
         AccountingType.CASH, LocalDate.now.plusDays(1), None, "Acme Ltd.", "Accountancy services", Address("Acme Rd.", None, None, None, Some("A9 9AA"), "GB"))
       assertValidationErrorWithCode(input,

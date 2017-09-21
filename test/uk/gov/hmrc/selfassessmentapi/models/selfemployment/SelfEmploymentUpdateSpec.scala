@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.models.ErrorCode
+import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, CessationReason, ErrorCode}
 import uk.gov.hmrc.selfassessmentapi.resources.{JsonSpec, Jsons}
 
 class SelfEmploymentUpdateSpec extends JsonSpec {
@@ -38,6 +38,23 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
           "/effectiveDate" -> Seq("error.path.missing")
         )
       )
+    }
+
+    "return a DATE_NOT_IN_THE_PAST error when using a commencement date in the future" in {
+      val input = SelfEmploymentUpdate(
+        AccountingPeriod(LocalDate.parse("2017-04-01"), LocalDate.parse("2017-04-02")),
+        AccountingType.CASH,
+        LocalDate.now.plusDays(1),
+        LocalDate.now,
+        Some(CessationReason.Bankruptcy),
+        "Acme Ltd.",
+        "Accountancy services",
+        Address("Acme Rd.", None, None, None, Some("A9 9AA"), "GB"),
+        contactDetails = None,
+        paperless = true,
+        seasonal = true
+      )
+      assertValidationErrorWithCode(input, "/commencementDate", ErrorCode.DATE_NOT_IN_THE_PAST)
     }
 
     "return a error when providing a trading name that is not between 1 and 105 in length and does not have the valid format" in {
@@ -160,12 +177,15 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
       val jsonTwo = Jsons.SelfEmployment.update(postalCode = Some("a" * 11))
       val jsonThree = Jsons.SelfEmployment.update(postalCode = Some("1(£$)"))
 
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonOne,
-                                                           Map("/address/postalCode" -> Seq(ErrorCode.INVALID_POSTCODE)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonTwo,
-                                                           Map("/address/postalCode" -> Seq(ErrorCode.INVALID_POSTCODE)))
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](jsonThree,
-                                                           Map("/address/postalCode" -> Seq(ErrorCode.INVALID_POSTCODE)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](
+        jsonOne,
+        Map("/address/postalCode" -> Seq(ErrorCode.INVALID_POSTCODE)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](
+        jsonTwo,
+        Map("/address/postalCode" -> Seq(ErrorCode.INVALID_POSTCODE)))
+      assertValidationErrorsWithCode[SelfEmploymentUpdate](
+        jsonThree,
+        Map("/address/postalCode" -> Seq(ErrorCode.INVALID_POSTCODE)))
     }
 
     "return a error when countryCode is GB and postalCode is not provided" in {
@@ -273,11 +293,13 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
         Map("/contactDetails/emailAddress" -> Seq(ErrorCode.INVALID_FIELD_FORMAT)))
     }
 
-    "return a DATE_NOT_IN_THE_PAST error when using an effective date in the future" in {
+    "return a DATE_IN_THE_FUTURE error when using an effective date in the future" in {
       val input =
-        Jsons.SelfEmployment.update(postalCode = None, countryCode = "FR", effectiveDate = LocalDate.now.plusDays(1).toString)
+        Jsons.SelfEmployment.update(postalCode = None,
+                                    countryCode = "FR",
+                                    effectiveDate = LocalDate.now.plusDays(1).toString)
       assertValidationErrorsWithCode[SelfEmploymentUpdate](input,
-                                                           Map("/effectiveDate" -> Seq(ErrorCode.DATE_NOT_IN_THE_PAST)))
+                                                           Map("/effectiveDate" -> Seq(ErrorCode.DATE_IN_THE_FUTURE)))
     }
 
     "return a trimmed trading name, address and contact details after json is de-serialised" in {

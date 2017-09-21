@@ -57,12 +57,6 @@ object SelfEmployment {
       )
   }
 
-  val commencementDateValidator: Reads[LocalDate] = Reads
-    .of[LocalDate]
-    .filter(
-      ValidationError("commencement date should be today or in the past", ErrorCode.DATE_NOT_IN_THE_PAST)
-    )(date => date.isBefore(LocalDate.now()) || date.isEqual(LocalDate.now()))
-
   private def lengthIsBetween(minLength: Int, maxLength: Int): Reads[String] =
     Reads
       .of[String]
