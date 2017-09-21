@@ -48,7 +48,7 @@ object SelfEmploymentUpdate {
   val effectiveDateValidator: Reads[LocalDate] = Reads
     .of[LocalDate]
     .filter(
-      ValidationError("effective date should be today or in the past", ErrorCode.DATE_NOT_IN_THE_PAST)
+      ValidationError("effective date should be today or in the past", ErrorCode.DATE_IN_THE_FUTURE)
     )(date => date.isBefore(LocalDate.now()) || date.isEqual(LocalDate.now()))
 
   implicit val writes: Writes[SelfEmploymentUpdate] = Json.writes[SelfEmploymentUpdate]
@@ -56,7 +56,7 @@ object SelfEmploymentUpdate {
   implicit val reads: Reads[SelfEmploymentUpdate] = (
     (__ \ "accountingPeriod").read[AccountingPeriod] and
       (__ \ "accountingType").read[AccountingType] and
-      (__ \ "commencementDate").read[LocalDate] and //FIXME should validate commencement date on update
+      (__ \ "commencementDate").read[LocalDate](commencementDateValidator) and
       (__ \ "effectiveDate").read[LocalDate](effectiveDateValidator) and
       (__ \ "cessationReason").readNullable[CessationReason] and
       (__ \ "tradingName").read[String](regexValidator("tradingName", stringRegex(105))).map(_.trim) and

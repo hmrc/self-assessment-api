@@ -146,7 +146,7 @@ traits:
                     value:
                       code: INVALID_DATE
                   commencementDateInThePast:
-                    description: commencementDate not in past
+                    description: Commencement date should be today or in the past
                     value:
                       code: DATE_NOT_IN_THE_PAST
                   startDateInvalid:
@@ -261,6 +261,14 @@ traits:
                       description: Invalid postcode
                       value:
                         code: INVALID_POSTCODE
+                    effectiveDate:
+                      description: Effective date should be today or in the past
+                      value:
+                        code: DATE_IN_THE_FUTURE
+                    commencementDateInThePast:
+                      description: Commencement date should be today or in the past
+                      value:
+                        code: DATE_NOT_IN_THE_PAST
             404:
         get:
           displayName: Get a self-employment business
