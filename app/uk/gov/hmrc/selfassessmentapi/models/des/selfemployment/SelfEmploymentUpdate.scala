@@ -37,7 +37,8 @@ case class SelfEmploymentUpdate(nino: Option[String] = None,
                                 effectiveDate: String,
                                 reasonForCessation: Option[String] = None,
                                 agentId: Option[String] = None,
-                                changedDate: Option[String] = None)
+                                changedDate: Option[String] = None,
+                                incomeSource: Option[String] = None)
 
 object SelfEmploymentUpdate {
   implicit val writes: Writes[SelfEmploymentUpdate] = Json.writes[SelfEmploymentUpdate]

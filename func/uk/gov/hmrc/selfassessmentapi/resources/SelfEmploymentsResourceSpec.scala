@@ -203,7 +203,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
 
   "retrieve" should {
     "return code 200 when retrieving a self-employment resource that exists" in {
-      val expectedSelfEmployment = Jsons.SelfEmployment(cessationDate = None, description = None)
+      val expectedSelfEmployment = Jsons.SelfEmployment(description = None)
 
       given()
         .userIsSubscribedToMtdFor(nino)

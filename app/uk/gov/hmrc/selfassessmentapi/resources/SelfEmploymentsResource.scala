@@ -16,15 +16,15 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import org.joda.time.{DateTime, DateTimeUtils, DateTimeZone}
+import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json.{JsArray, JsValue, Json, Writes}
 import play.api.mvc.{Action, Result}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
+import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.Business
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmployment, SelfEmploymentUpdate}
-import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers._
 
 import scala.concurrent.ExecutionContext.Implicits._
