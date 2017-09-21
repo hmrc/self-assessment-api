@@ -517,6 +517,10 @@ traits:
                         description: Mandatory field missing (from and to fields)
                         value:
                           code: MANDATORY_FIELD_MISSING
+                      mandatoryField2:
+                        description: Exemption code must be present if the exempt flag set to true
+                        value:
+                          code: MANDATORY_FIELD_MISSING
                       invalidMonetaryAmount1:
                         description: valid non-negative amount not provided where expected (except averagingAdjustment and basisAdjustment)
                         value:
@@ -529,6 +533,18 @@ traits:
                         description: Balancing charge on sale or cessation of business use (Box 58) can only have a value > 0 in if BPRA (Box 54) is also > 0
                         value:
                           code: INVALID_BALANCING_CHARGE_BPRA
+                      invalidValue:
+                        description: Empty class4NicInfo element provided
+                        value:
+                          code: INVALID_VALUE
+                      invalidValue2:
+                        description: Exemption code must not be present if the exempt flag set to false
+                        value:
+                          code: INVALID_VALUE
+                      invalidValue3:
+                        description: Exemption code must be present only if the exempt flag is set to true
+                        value:
+                          code: INVALID_VALUE
               404:
           get:
             displayName: Get a self-employment annual summary

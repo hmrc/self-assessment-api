@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "id": "class4-exemption-code",
-  "description": "Class 4 exemption codes.",
+  "description": "Class 4 exemption codes - becomes mandatory if isExempt flag is set to true",
   "oneOf": [
     { "enum": ["001"], "description": "Non Resident"},
     { "enum": ["002"], "description": "Trustee"},
