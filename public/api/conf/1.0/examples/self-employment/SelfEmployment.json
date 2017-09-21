@@ -14,8 +14,8 @@
     "lineTwo": "London",
     "lineThree": "Greater London",
     "lineFour": "United Kingdom",
-    "postcode": "A9 9AA",
-    "country": "GB"
+    "postalCode": "A9 9AA",
+    "countryCode": "GB"
   },
   "contactDetails": {
     "primaryPhoneNumber": "07712345678",

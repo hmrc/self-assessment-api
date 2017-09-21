@@ -84,8 +84,8 @@ object DesJsons {
               addressLineTwo: String = "London",
               addressLineThree: String = "Greater London",
               addressLineFour: String = "United Kingdom",
-              postcode: String = "A9 9AA",
-              country: String = "GB"): String = {
+              postalCode: String = "A9 9AA",
+              countryCode: String = "GB"): String = {
       s"""
          |{
          |   "safeId": "XE00001234567890",
@@ -103,8 +103,8 @@ object DesJsons {
          |            "addressLine2": "$addressLineTwo",
          |            "addressLine3": "$addressLineThree",
          |            "addressLine4": "$addressLineFour",
-         |            "postalCode": "$postcode",
-         |            "countryCode": "$country"
+         |            "postalCode": "$postalCode",
+         |            "countryCode": "$countryCode"
          |         },
          |         "businessContactDetails": {
          |            "phoneNumber": "01332752856",

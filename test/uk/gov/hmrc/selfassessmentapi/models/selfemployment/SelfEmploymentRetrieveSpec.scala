@@ -51,8 +51,8 @@ class SelfEmploymentRetrieveSpec extends UnitSpec {
       selfEmployment.address.get.lineTwo shouldBe Some("London")
       selfEmployment.address.get.lineThree shouldBe Some("Greater London")
       selfEmployment.address.get.lineFour shouldBe Some("United Kingdom")
-      selfEmployment.address.get.postcode shouldBe Some("A9 9AA")
-      selfEmployment.address.get.country shouldBe "GB"
+      selfEmployment.address.get.postalCode shouldBe Some("A9 9AA")
+      selfEmployment.address.get.countryCode shouldBe "GB"
       selfEmployment.description shouldBe Some("Accountancy services")
       selfEmployment.commencementDate shouldBe Some(LocalDate.parse("2017-04-01"))
       selfEmployment.accountingType shouldBe AccountingType.CASH

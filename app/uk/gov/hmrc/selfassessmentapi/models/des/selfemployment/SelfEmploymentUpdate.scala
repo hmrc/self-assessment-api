@@ -52,9 +52,8 @@ object SelfEmploymentUpdate {
         apiSelfEmployment.address.lineTwo,
         apiSelfEmployment.address.lineThree,
         apiSelfEmployment.address.lineFour,
-        apiSelfEmployment.address.postcode,
-        apiSelfEmployment.address.country
-      ),
+        apiSelfEmployment.address.postalCode,
+        apiSelfEmployment.address.countryCode),
       contactDetails = ContactDetails.from(apiSelfEmployment.contactDetails),
       typeOfBusiness = apiSelfEmployment.description,
       tradingStartDate = apiSelfEmployment.commencementDate.toString,

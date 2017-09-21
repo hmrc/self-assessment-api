@@ -59,7 +59,7 @@ object SelfEmploymentUpdate {
       (__ \ "commencementDate").read[LocalDate] and //FIXME should validate commencement date on update
       (__ \ "effectiveDate").read[LocalDate](effectiveDateValidator) and
       (__ \ "cessationReason").readNullable[CessationReason] and
-      (__ \ "tradingName").read[String](regexValidator("tradingName", stringRegex(105))) and
+      (__ \ "tradingName").read[String](regexValidator("tradingName", stringRegex(105))).map(_.trim) and
       (__ \ "description")
         .read[String](validateSIC) and //FIXME Need to revisit and fix the format after confirmation from business
       (__ \ "address").read[Address] and
@@ -79,17 +79,16 @@ object ContactDetails {
 
   private val emailValidator: Reads[String] =
     Reads.of[String].filter(ValidationError("Email must be 3 to 132 characters and must match ^([a-zA-Z0-9.!#$%&’'*+/=?^_`{|}~-]+)@([a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)$", ErrorCode.INVALID_FIELD_FORMAT)
-    )(email => email.length >= 3 && email.length <= 132 && EmailAddress.isValid(email)
-  )
+    )(email => email.length >= 3 && email.length <= 132 && EmailAddress.isValid(email))
 
 
   implicit val writes: Writes[ContactDetails] = Json.writes[ContactDetails]
 
   implicit val reads: Reads[ContactDetails] = (
-    (__ \ "primaryPhoneNumber").readNullable[String](regexValidator("primaryPhoneNumber", contactDetailsRegex(24))) and
+    (__ \ "primaryPhoneNumber").readNullable[String](regexValidator("primaryPhoneNumber", contactDetailsRegex(24))).map(_.map(_.trim)) and
       (__ \ "secondaryPhoneNumber")
-        .readNullable[String](regexValidator("secondaryPhoneNumber", contactDetailsRegex(24))) and
-      (__ \ "faxNumber").readNullable[String](regexValidator("faxNumber", contactDetailsRegex(24))) and
+        .readNullable[String](regexValidator("secondaryPhoneNumber", contactDetailsRegex(24))).map(_.map(_.trim)) and
+      (__ \ "faxNumber").readNullable[String](regexValidator("faxNumber", contactDetailsRegex(24))).map(_.map(_.trim)) and
       (__ \ "emailAddress").readNullable[String](emailValidator)
   )(ContactDetails.apply _)
 

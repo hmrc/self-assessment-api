@@ -333,8 +333,8 @@ object Jsons {
               lineTwo: Option[String] = Some("London"),
               lineThree: Option[String] = Some("Greater London"),
               lineFour: Option[String] = Some("United Kingdom"),
-              postcode: Option[String] = Some("A9 9AA"),
-              country: Option[String] = Some("GB")): JsValue = {
+              postalCode: Option[String] = Some("A9 9AA"),
+              countryCode: Option[String] = Some("GB")): JsValue = {
 
       val cessation = cessationDate.map(date => s"""
            |  "cessationDate": "$date",
@@ -364,12 +364,12 @@ object Jsons {
            |  "lineFour": "$line",
        """.stripMargin).getOrElse("")
 
-      val addrPostcode = postcode.map(code => s"""
-           |  "postcode": "$code",
+      val addrPostcode = postalCode.map(code => s"""
+           |  "postalCode": "$code",
        """.stripMargin).getOrElse("")
 
-      val addrCountry = country.map(code => s"""
-           |  "country": "$code"
+      val addrCountry = countryCode.map(code => s"""
+           |  "countryCode": "$code"
        """.stripMargin).getOrElse("")
 
       Json.parse(s"""
@@ -407,8 +407,8 @@ object Jsons {
                lineTwo: String = "London",
                lineThree: String = "Greater London",
                lineFour: String = "United Kingdom",
-               postcode: Option[String] = Some("A9 9AA"),
-               country: String = "GB",
+               postalCode: Option[String] = Some("A9 9AA"),
+               countryCode: String = "GB",
                primaryPhoneNumber : String = "0734343434",
                secondaryPhoneNumber : String = "0734343434",
                faxNumber : String = "0734343434",
@@ -416,9 +416,9 @@ object Jsons {
                paperless: Boolean = false,
                seasonal: Boolean = false): JsValue = {
 
-      val addrPostcode = postcode.map(code =>
+      val addrPostcode = postalCode.map(code =>
         s"""
-           |  "postcode": "$code",
+           |  "postalCode": "$code",
        """.stripMargin).getOrElse("")
 
       Json.parse(
@@ -440,7 +440,7 @@ object Jsons {
            |    "lineThree": "$lineThree",
            |    "lineFour": "$lineFour",
            |    $addrPostcode
-           |    "country": "$country"
+           |    "countryCode": "$countryCode"
            |  },
            |  "contactDetails": {
            |    "primaryPhoneNumber": "$primaryPhoneNumber",

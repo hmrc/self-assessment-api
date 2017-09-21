@@ -99,7 +99,7 @@ object SelfEmploymentAddress {
       address.lineTwo,
       address.lineThree,
       address.lineFour,
-      address.postcode,
-      address.country)
+      address.postalCode,
+      address.countryCode)
   }
 }
