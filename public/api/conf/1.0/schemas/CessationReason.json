@@ -9,7 +9,8 @@
     { "enum": ["004"], "description": "Business has become a partnership"},
     { "enum": ["005"], "description": "Bankruptcy"},
     { "enum": ["006"], "description": "Other"},
-    { "enum": ["007"], "description": "Don’t want to say"}
+    { "enum": ["007"], "description": "Don’t want to say"},
+    { "enum": ["008"], "description": "Deceased"}
   ],
   "example": "005"
 }
