@@ -138,6 +138,17 @@ class AuthorisationServiceSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(200)
     }
+
+    "receive 200 if the user is authorised for the resource as a fully-authorised agent but could not retrieve agent code" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .agentIsFullyAuthorisedForTheResourceNoAgentCode
+        .when()
+        .get(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(200)
+    }
+
   }
 
   "if the user is authorised as a filing-only agent they" should {
@@ -173,6 +184,18 @@ class AuthorisationServiceSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(403)
         .bodyIsLike(Jsons.Errors.agentNotAuthorised)
+    }
+
+    "be able to make POST requests but don't have an agentCode" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsPartiallyAuthorisedForTheResourceNoAgentCode
+        .des().selfEmployment.willBeCreatedFor(nino)
+        .when()
+        .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(201)
+        .contentTypeIsJson()
     }
   }
 

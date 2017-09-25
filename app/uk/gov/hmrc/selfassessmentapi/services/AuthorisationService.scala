@@ -67,10 +67,14 @@ object AuthorisationService extends AuthorisedFunctions {
     authorised(
       Enrolment("HMRC-MTD-IT")
         .withIdentifier("MTDITID", mtdId.mtdId)
-        .withDelegatedAuthRule("mtd-it-auth")).retrieve(Retrievals.affinityGroup and Retrievals.agentCode and Retrievals.authorisedEnrolments) {
-      case affinityGroup ~ Some(agentCode) ~ enrolments if affinityGroup.contains(AffinityGroup.Agent) =>
+        .withDelegatedAuthRule("mtd-it-auth"))
+      .retrieve(Retrievals.affinityGroup and Retrievals.agentCode and Retrievals.authorisedEnrolments) {
+        case Some(AffinityGroup.Agent) ~ Some(agentCode) ~ enrolments =>
           logger.debug("Client authorisation succeeded as fully-authorised agent.")
-        Future.successful(Right(Agent(agentCode = Some(agentCode), agentReference = getAgentReference(enrolments))))
+          Future.successful(Right(Agent(agentCode = Some(agentCode), agentReference = getAgentReference(enrolments))))
+        case Some(AffinityGroup.Agent) ~ None ~ enrolments =>
+          logger.debug("Client authorisation succeeded as fully-authorised agent but could not retrieve agentCode.")
+          Future.successful(Right(Agent(agentCode = None, agentReference = getAgentReference(enrolments))))
         case _ =>
           logger.debug("Client authorisation succeeded as fully-authorised individual.")
           Future.successful(Right(Individual))
@@ -82,14 +86,22 @@ object AuthorisationService extends AuthorisedFunctions {
     case _: InsufficientEnrolments =>
       authorised(AffinityGroup.Agent and Enrolment("HMRC-AS-AGENT"))
         .retrieve(Retrievals.agentCode and Retrievals.authorisedEnrolments) { // If the user is an agent are they enrolled in Agent Services?
-          case Some(agentCode) ~ enrolments =>
+          case optAgentCode ~ enrolments =>
             if (reqHeader.method == "GET") {
               logger.debug("Client authorisation failed. Attempt to GET as a filing-only agent.")
               Future.successful(Left(Forbidden(toJson(Errors.AgentNotAuthorized))))
-            } else {
-              logger.debug("Client authorisation succeeded as filing-only agent.")
-              Future.successful(Right(FilingOnlyAgent(agentCode = Some(agentCode), agentReference = getAgentReference(enrolments))))
-            }
+            } else
+              optAgentCode match {
+                case Some(agentCode) =>
+                  logger.debug("Client authorisation succeeded as filing-only agent.")
+                  Future.successful(
+                    Right(FilingOnlyAgent(agentCode = Some(agentCode), agentReference = getAgentReference(enrolments))))
+                case None =>
+                  logger.debug("Agent code was not returned by auth for agent user")
+                  Future.successful(
+                    Right(FilingOnlyAgent(agentCode = None, agentReference = getAgentReference(enrolments))))
+
+              }
         } recoverWith (unsubscribedAgentOrUnauthorisedClient orElse unhandledError) // Iff agent is not enrolled for the user or client affinityGroup is not Agent.
   }
 
