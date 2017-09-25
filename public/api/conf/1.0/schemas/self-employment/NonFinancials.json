@@ -20,6 +20,12 @@
         }
       },
       "additionalProperties": false
+    },
+    "payVoluntaryClass2Nic": {
+      "title": "Pay voluntary Class 2 NIC",
+      "description": "True if the taxpayer wants to make voluntary payments for class 2 nics on this source of income; false otherwise",
+      "type": "boolean",
+      "example": "true or false"
     }
   },
   "additionalProperties": false

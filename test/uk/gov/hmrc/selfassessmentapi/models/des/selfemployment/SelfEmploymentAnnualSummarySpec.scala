@@ -44,8 +44,7 @@ class SelfEmploymentAnnualSummarySpec extends UnitSpec {
           balancingChargeOther = Some(200.50),
           goodsAndServicesOwnUse = Some(200.50))),
         nonFinancials = Some(models.selfemployment.NonFinancials(
-          class4NicInfo = Some(Class4NicInfo(Some(true), Some(DIVER)))
-        )))
+          class4NicInfo = Some(Class4NicInfo(Some(true), Some(DIVER))), Some(false))))
 
       val desSummary: SelfEmploymentAnnualSummary = SelfEmploymentAnnualSummary.from(apiSummary)
 
@@ -74,6 +73,7 @@ class SelfEmploymentAnnualSummarySpec extends UnitSpec {
       val nonFinancials = desSummary.annualNonFinancials.get
       nonFinancials.exemptFromPayingClass4Nics shouldBe Some(true)
       nonFinancials.exemptFromPayingClass4NicsReason shouldBe Some("003")
+      nonFinancials.payClass2Nics shouldBe Some(false)
     }
   }
 }

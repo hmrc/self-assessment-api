@@ -16,13 +16,18 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
-import play.api.libs.json.Json
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.Class4NicInfo
 
 
-case class NonFinancials(class4NicInfo: Option[Class4NicInfo])
+case class NonFinancials(class4NicInfo: Option[Class4NicInfo], payVoluntaryClass2Nic: Option[Boolean])
 
 object NonFinancials {
   implicit val writes = Json.writes[NonFinancials]
-  implicit val reads = Json.reads[NonFinancials]
+
+  implicit val reads: Reads[NonFinancials] = (
+    (__ \ "class4NicInfo").readNullable[Class4NicInfo] and
+      (__ \ "payVoluntaryClass2Nic").readNullable[Boolean]
+    ) (NonFinancials.apply _)
 }

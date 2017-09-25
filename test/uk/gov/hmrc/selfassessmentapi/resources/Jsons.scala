@@ -472,7 +472,7 @@ object Jsons {
                       balancingChargeOther: BigDecimal = 500.25,
                       goodsAndServicesOwnUse: BigDecimal = 500.25,
                       businessDetailsChangedRecently: Boolean = true,
-                      payClass2Nics: Boolean = false,
+                      payVoluntaryClass2Nic: Boolean = false,
                       isExempt: Boolean = true,
                       exemptionCode: String = "003"): JsValue = {
       Json.parse(s"""
@@ -502,7 +502,8 @@ object Jsons {
            |    "class4NicInfo": {
            |      "isExempt": $isExempt,
            |      "exemptionCode": "$exemptionCode"
-           |    }
+           |    },
+           |    "payVoluntaryClass2Nic": $payVoluntaryClass2Nic
            |  }
            |}
        """.stripMargin)

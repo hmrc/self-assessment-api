@@ -45,7 +45,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
           balancingChargeOther = Some(5.55),
           goodsAndServicesOwnUse = Some(12.23)
         )),
-        Some(NonFinancials(Some(Class4NicInfo(Some(true), Some(NON_RESIDENT))))))
+        Some(NonFinancials(Some(Class4NicInfo(Some(true), Some(NON_RESIDENT))), Some(false))))
 
       roundTripJson(summary)
     }
@@ -101,7 +101,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
         )),
         annualNonFinancials = Some(des.selfemployment.AnnualNonFinancials(
           businessDetailsChangedRecently = None,
-          payClass2Nics = None,
+          payClass2Nics = Some(false),
           exemptFromPayingClass4Nics = Some(true),
           exemptFromPayingClass4NicsReason = Some("003")
         ))
@@ -134,6 +134,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
       val nonFinancials = apiSummary.nonFinancials.get
       nonFinancials.class4NicInfo.get.exemptionCode shouldBe Some(DIVER)
       nonFinancials.class4NicInfo.get.isExempt shouldBe Some(true)
+      nonFinancials.payVoluntaryClass2Nic shouldBe Some(false)
     }
   }
 }
