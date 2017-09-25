@@ -59,12 +59,12 @@ object SelfEmploymentAnnualSummary {
     val nonFinancials = apiSummary.nonFinancials.map { info =>
       AnnualNonFinancials(
         businessDetailsChangedRecently = None,
-        payClass2Nics = None,
+        payClass2Nics = info.payVoluntaryClass2Nic,
         exemptFromPayingClass4Nics = info.class4NicInfo.flatMap(_.isExempt),
         exemptFromPayingClass4NicsReason = for {
           class4Nics <- info.class4NicInfo
-          excemptionCode <- class4Nics.exemptionCode
-        } yield excemptionCode.toString
+          exemptionCode <- class4Nics.exemptionCode
+        } yield exemptionCode.toString
       )
     }
 

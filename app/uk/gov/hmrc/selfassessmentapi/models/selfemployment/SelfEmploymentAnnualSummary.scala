@@ -77,9 +77,10 @@ object SelfEmploymentAnnualSummary {
       NonFinancials(
         Some(
           Class4NicInfo(isExempt = info.exemptFromPayingClass4Nics,
-                        exemptionCode = info.exemptFromPayingClass4NicsReason.map(Class4NicsExemptionCode.withName(_))
+                        exemptionCode = info.exemptFromPayingClass4NicsReason.map(Class4NicsExemptionCode.withName)
           )
-        )
+        ),
+        info.payClass2Nics
       )
     }
 

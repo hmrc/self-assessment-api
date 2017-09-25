@@ -24,6 +24,7 @@
     "class4NicInfo":{
       "isExempt": true,
       "exemptionCode": "003"
-    }
+    },
+    "payVoluntaryClass2Nic": true
   }
 }
