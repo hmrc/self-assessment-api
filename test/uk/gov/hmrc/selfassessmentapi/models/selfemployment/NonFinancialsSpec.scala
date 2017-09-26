@@ -32,6 +32,16 @@ class NonFinancialsSpec extends UnitSpec {
       nonFinancials.get.payVoluntaryClass2Nic shouldBe Some(true)
     }
 
+    "correctly map class4NicInfo from des AnnualNonFinancials to API NonFinancials" in {
+      val desNonFinancials = Some(AnnualNonFinancials(None, Some(true), Some(false), None))
+
+      val nonFinancials = NonFinancials.from(desNonFinancials)
+
+      nonFinancials.get.class4NicInfo.get.isExempt shouldBe Some(false)
+      nonFinancials.get.class4NicInfo.get.exemptionCode shouldBe None
+      nonFinancials.get.payVoluntaryClass2Nic shouldBe Some(true)
+    }
+
 
     "return None for class4NicInfo when both the class4Nic data are None" in {
       val desNonFinancials = Some(AnnualNonFinancials(None, Some(true), None, None))
@@ -42,5 +52,4 @@ class NonFinancialsSpec extends UnitSpec {
       nonFinancials.get.payVoluntaryClass2Nic shouldBe Some(true)
     }
   }
-
 }

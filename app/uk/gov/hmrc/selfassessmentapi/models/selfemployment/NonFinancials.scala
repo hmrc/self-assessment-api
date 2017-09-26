@@ -35,12 +35,12 @@ object NonFinancials {
   def from(annualNonFinancials: Option[des.selfemployment.AnnualNonFinancials]) = {
     annualNonFinancials map { info =>
       (info.exemptFromPayingClass4Nics, info.exemptFromPayingClass4NicsReason) match {
-        case (Some(_), Some(_)) =>
+        case (None, None) =>
+          NonFinancials(None, info.payClass2Nics)
+        case _ =>
           NonFinancials(Some(Class4NicInfo(isExempt = info.exemptFromPayingClass4Nics,
             exemptionCode = info.exemptFromPayingClass4NicsReason.map(Class4NicsExemptionCode.withName))),
             info.payClass2Nics)
-        case _ =>
-          NonFinancials(None, info.payClass2Nics)
       }
     }
   }
