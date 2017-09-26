@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.Class4NicInfo
+import uk.gov.hmrc.selfassessmentapi.models._
 
 
 case class NonFinancials(class4NicInfo: Option[Class4NicInfo], payVoluntaryClass2Nic: Option[Boolean])
@@ -30,4 +31,18 @@ object NonFinancials {
     (__ \ "class4NicInfo").readNullable[Class4NicInfo] and
       (__ \ "payVoluntaryClass2Nic").readNullable[Boolean]
     ) (NonFinancials.apply _)
+
+  def from(annualNonFinancials: Option[des.selfemployment.AnnualNonFinancials]) = {
+    annualNonFinancials map { info =>
+      (info.exemptFromPayingClass4Nics, info.exemptFromPayingClass4NicsReason) match {
+        case (Some(_), Some(_)) =>
+          NonFinancials(Some(Class4NicInfo(isExempt = info.exemptFromPayingClass4Nics,
+            exemptionCode = info.exemptFromPayingClass4NicsReason.map(Class4NicsExemptionCode.withName))),
+            info.payClass2Nics)
+        case _ =>
+          NonFinancials(None, info.payClass2Nics)
+      }
+    }
+  }
+
 }
