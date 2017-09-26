@@ -32,14 +32,14 @@ object SelfEmploymentAnnualSummary {
     (__ \ "allowances").readNullable[Allowances] and
       (__ \ "adjustments").readNullable[Adjustments] and
       (__ \ "nonFinancials").readNullable[NonFinancials]
-  )(SelfEmploymentAnnualSummary.apply _).filter(
+    ) (SelfEmploymentAnnualSummary.apply _).filter(
     ValidationError(
       "Balancing charge on BPRA (Business Premises Renovation Allowance) can only be claimed when there is a value for BPRA.",
       ErrorCode.INVALID_BALANCING_CHARGE_BPRA)) { annualSummary => validateBalancingChargeBPRA(annualSummary) }
 
   private def validateBalancingChargeBPRA(annualSummary: SelfEmploymentAnnualSummary): Boolean = {
     annualSummary.adjustments.forall { adjustments =>
-      adjustments.balancingChargeBPRA.forall{ _ =>
+      adjustments.balancingChargeBPRA.forall { _ =>
         annualSummary.allowances.exists(_.businessPremisesRenovationAllowance.exists(_ > 0))
       }
     }
@@ -73,16 +73,7 @@ object SelfEmploymentAnnualSummary {
       )
     }
 
-    val nonFinancials = desSummary.annualNonFinancials.map { info =>
-      NonFinancials(
-        Some(
-          Class4NicInfo(isExempt = info.exemptFromPayingClass4Nics,
-                        exemptionCode = info.exemptFromPayingClass4NicsReason.map(Class4NicsExemptionCode.withName)
-          )
-        ),
-        info.payClass2Nics
-      )
-    }
+    val nonFinancials = NonFinancials.from(desSummary.annualNonFinancials)
 
     SelfEmploymentAnnualSummary(allowances, adjustments, nonFinancials)
   }
