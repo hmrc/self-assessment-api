@@ -56,6 +56,8 @@ object Errors {
 
   object NinoInvalid extends Error("NINO_INVALID", "The provided Nino is invalid", None)
   object InvalidRequest extends Error("INVALID_REQUEST", "Invalid request", None)
+  object BothExpensesSupplied extends Error("BOTH_EXPENSES_SUPPLIED", "Elements: expenses and consolidatedElements cannot be both specified at the same time", None)
+  object NotAllowedSimplifiedExpenses extends Error("NOT_ALLOWED_SIMPLIFIED_EXPENSES", "The submission contains simplified expenses but the accumulative turnover amount exceeds the threshold", Some(""))
   object InvalidPeriod extends Error("INVALID_PERIOD", "The period 'from' date should come before the 'to' date", Some(""))
   object NotContiguousPeriod extends Error("NOT_CONTIGUOUS_PERIOD", "Periods should be contiguous.", Some(""))
   object OverlappingPeriod extends Error("OVERLAPPING_PERIOD", "Period overlaps with existing periods.", Some(""))

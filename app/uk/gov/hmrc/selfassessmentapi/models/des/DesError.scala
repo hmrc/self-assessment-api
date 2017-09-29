@@ -62,7 +62,10 @@ object DesErrorCode extends Enumeration {
   NOT_ALIGN_PERIOD,
   INVALID_INCOMESOURCEID,
   NOT_FOUND_INCOME_SOURCE,
+  BOTH_EXPENSES_SUPPLIED,
+  NOT_ALLOWED_SIMPLIFIED_EXPENSES,
   INVALID_DATE_RANGE = Value
 
-  implicit val format: Format[DesErrorCode] = EnumJson.enumFormat(DesErrorCode, Some("DesErrorCode is invalid"))
+  implicit val format: Format[DesErrorCode] = EnumJson.enumFormat(DesErrorCode,
+    Some(s"Recognized DesErrorCode values: ${DesErrorCode.values.mkString(", ")}"))
 }
