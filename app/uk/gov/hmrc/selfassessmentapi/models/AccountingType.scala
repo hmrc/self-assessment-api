@@ -35,5 +35,5 @@ object AccountingType extends Enumeration {
   }
 
   implicit val format: Format[AccountingType] =
-    EnumJson.enumFormat(AccountingType, Some("AccountingType should be either CASH or ACCRUAL"))
+    EnumJson.enumFormat(AccountingType, Some(s"AccountingType should be one of: ${AccountingType.values.mkString(", ")}"))
 }

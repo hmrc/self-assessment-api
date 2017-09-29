@@ -32,5 +32,5 @@ object CessationReason extends Enumeration {
   val Deceased: models.CessationReason.Value = Value("008")
 
   implicit val format: Format[CessationReason] =
-    EnumJson.enumFormat(CessationReason, Some("CessationReason should be either 001, 002, 003, 004, 005, 006, 007 or 008"))
+    EnumJson.enumFormat(CessationReason, Some(s"CessationReason should one of: ${CessationReason.values.mkString(", ")}"))
 }

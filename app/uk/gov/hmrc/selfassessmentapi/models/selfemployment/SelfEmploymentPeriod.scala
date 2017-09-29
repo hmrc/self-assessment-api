@@ -20,14 +20,17 @@ import org.joda.time.LocalDate
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.models.ErrorCode.{ErrorCode => _, apply => _, _}
 import uk.gov.hmrc.selfassessmentapi.models.Validation._
+import uk.gov.hmrc.selfassessmentapi.models._
+
 
 case class SelfEmploymentPeriod(id: Option[String],
                                 from: LocalDate,
                                 to: LocalDate,
                                 incomes: Option[Incomes],
-                                expenses: Option[Expenses])
+                                expenses: Option[Expenses],
+                                consolidatedExpenses: Option[Amount] = None) // TODO remove the default Value
     extends Period
 
 object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
@@ -86,15 +89,20 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
       (__ \ "from").read[LocalDate] and
       (__ \ "to").read[LocalDate] and
       (__ \ "incomes").readNullable[Incomes] and
-      (__ \ "expenses").readNullable[Expenses]
+      (__ \ "expenses").readNullable[Expenses] and
+      (__ \ "consolidatedExpenses").readNullable[Amount](nonNegativeAmountValidator)
   )(SelfEmploymentPeriod.apply _)
+    .filter(ValidationError(s"Both expenses and consolidatedExpenses elements cannot be present at the same time",
+      BOTH_EXPENSES_SUPPLIED))(periodXorSimplifiedPeriod)
     .validate(
       Seq(Validation(JsPath(),
                      periodDateValidator,
-                     ValidationError("the period 'from' date should come before the 'to' date",
-                                     ErrorCode.INVALID_PERIOD)),
+                     ValidationError("the period 'from' date should come before the 'to' date", INVALID_PERIOD)),
           Validation(JsPath(),
                      financialsValidator,
-                     ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))))
+                     ValidationError("No incomes and expenses are supplied", NO_INCOMES_AND_EXPENSES))))
 
+
+  private def periodXorSimplifiedPeriod(period: SelfEmploymentPeriod) = (period.expenses.isEmpty && period.consolidatedExpenses.isEmpty) ||
+                                                                        (period.expenses.isDefined ^ period.consolidatedExpenses.isDefined)
 }

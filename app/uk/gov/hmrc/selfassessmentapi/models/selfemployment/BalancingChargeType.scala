@@ -20,6 +20,8 @@ import uk.gov.hmrc.selfassessmentapi.models.EnumJson
 
 object BalancingChargeType extends Enumeration {
   type BalancingChargeType = Value
-  val BPRA, Other = Value
-  implicit val balancingChargeCategory = EnumJson.enumFormat(BalancingChargeType, Some("Self Employment Balancing charge type is invalid"))
+  val BPRA =  Value("BPRA")
+  val Other = Value("Other")
+  implicit val balancingChargeCategory = EnumJson.enumFormat(BalancingChargeType,
+    Some(s"Self Employment Balancing charge type should be one of: ${BalancingChargeType.values.mkString(", ")}"))
 }

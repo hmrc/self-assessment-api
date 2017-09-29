@@ -7,6 +7,7 @@ import uk.gov.hmrc.support.BaseFunctionalSpec
 class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
 
   "createPeriod" should {
+
     "return code 201 containing a location header containing from date and to date when creating a period" in {
       val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-06"), toDate = Some("2017-07-04"))
 
@@ -40,11 +41,66 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .is(1)
     }
 
+    "return code 201 containing a location header containing from date and to date when creating a period with consolidated expenses" in {
+
+      val period = Jsons.SelfEmployment.periodWithSimplifiedExpenses(fromDate = Some("2017-04-06"),
+                                                                     toDate = Some("2017-07-04"),
+                                                                     consolidatedExpenses = Some(1234))
+
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des()
+        .selfEmployment
+        .willBeCreatedFor(nino)
+        .des()
+        .selfEmployment
+        .periodWillBeCreatedFor(nino)
+        .when()
+        .post(Jsons.SelfEmployment())
+        .to(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(201)
+        .when()
+        .post(period)
+        .to(s"%sourceLocation%/periods")
+        .thenAssertThat()
+        .statusIs(201)
+        .responseContainsHeader("Location",
+                                s"/self-assessment/ni/$nino/self-employments/\\w+/periods/2017-04-06_2017-07-04".r)
+    }
+
     "return code 400 when attempting to create a period with the 'from' and 'to' dates are in the incorrect order" in {
 
       val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-01"), toDate = Some("2017-03-31"))
 
       val expectedBody = Jsons.Errors.invalidRequest(("INVALID_PERIOD", ""))
+
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des()
+        .selfEmployment
+        .willBeCreatedFor(nino)
+        .when()
+        .post(Jsons.SelfEmployment())
+        .to(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(201)
+        .when()
+        .post(period)
+        .to(s"%sourceLocation%/periods")
+        .thenAssertThat()
+        .statusIs(400)
+        .contentTypeIsJson()
+        .bodyIsLike(expectedBody)
+    }
+
+    "return code 400 when attempting to create a period where the paylod contains both the 'expenses' and 'consolidatedExpenses'" in {
+
+      val period = Jsons.SelfEmployment.period(fromDate = Some("2017-04-06"), toDate = Some("2017-07-04"), consolidatedExpenses = Some(12345))
+
+      val expectedBody = Jsons.Errors.invalidRequest(("BOTH_EXPENSES_SUPPLIED", ""))
 
       given()
         .userIsSubscribedToMtdFor(nino)

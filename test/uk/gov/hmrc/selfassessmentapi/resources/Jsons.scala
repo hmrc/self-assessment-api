@@ -509,6 +509,48 @@ object Jsons {
        """.stripMargin)
     }
 
+    def periodWithSimplifiedExpenses(fromDate: Option[String] = None,
+                                     toDate: Option[String] = None,
+                                     turnover: BigDecimal = 0,
+                                     otherIncome: BigDecimal = 0,
+                                     consolidatedExpenses: Option[BigDecimal]) = {
+
+      val (from,to) = fromToDates(fromDate, toDate)
+
+      Json.parse(s"""
+                    |{
+                    |  $from
+                    |  $to
+                    |  "incomes": {
+                    |    "turnover": { "amount": $turnover },
+                    |    "other": { "amount": $otherIncome }
+                    |  }
+                    |
+                    |  ${consolidatedExpenses.fold("")(se => s""","consolidatedExpenses": $se""")}
+                    |
+                    |}
+                  """.stripMargin)
+    }
+
+    private def fromToDates(fromDate: Option[String] = None,
+                            toDate: Option[String] = None) = {
+      (fromDate
+          .map { date =>
+            s"""
+               | "from": "$date",
+         """.stripMargin
+          }
+          .getOrElse(""),
+        toDate
+          .map { date =>
+            s"""
+               | "to": "$date",
+         """.stripMargin
+          }
+          .getOrElse("")
+      )
+    }
+
     def period(fromDate: Option[String] = None,
                toDate: Option[String] = None,
                turnover: BigDecimal = 0,
@@ -526,25 +568,10 @@ object Jsons {
                badDebt: (BigDecimal, BigDecimal) = (0, 0),
                professionalFees: (BigDecimal, BigDecimal) = (0, 0),
                depreciation: (BigDecimal, BigDecimal) = (0, 0),
-               otherExpenses: (BigDecimal, BigDecimal) = (0, 0)): JsValue = {
+               otherExpenses: (BigDecimal, BigDecimal) = (0, 0),
+               consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
 
-      val from =
-        fromDate
-          .map { date =>
-            s"""
-               | "from": "$date",
-         """.stripMargin
-          }
-          .getOrElse("")
-
-      val to =
-        toDate
-          .map { date =>
-            s"""
-               | "to": "$date",
-         """.stripMargin
-          }
-          .getOrElse("")
+      val (from,to) = fromToDates(fromDate, toDate)
 
       Json.parse(s"""
            |{
@@ -570,6 +597,9 @@ object Jsons {
            |    "depreciation": { "amount": ${depreciation._1}, "disallowableAmount": ${depreciation._2} },
            |    "other": { "amount": ${otherExpenses._1}, "disallowableAmount": ${otherExpenses._2} }
            |  }
+           |
+           |  ${consolidatedExpenses.fold("")(se => s""","consolidatedExpenses": $se""")}
+           |
            |}
        """.stripMargin)
     }

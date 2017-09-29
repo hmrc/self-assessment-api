@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.models
 
 import play.api.libs.json.Format
+import uk.gov.hmrc.selfassessmentapi.models.ErrorCode.ErrorCode
 
 object ErrorCode extends Enumeration {
   type ErrorCode = Value
@@ -32,6 +33,7 @@ object ErrorCode extends Enumeration {
   DATE_IN_THE_FUTURE,
   START_DATE_INVALID,
   INVALID_VALUE,
+  BOTH_EXPENSES_SUPPLIED,
   INVALID_TYPE,
   INVALID_PERIOD,
   INVALID_ACCOUNTING_PERIOD,
@@ -52,5 +54,6 @@ object ErrorCode extends Enumeration {
   MANDATORY_FIELD_MISSING,
   NO_INCOMES_AND_EXPENSES = Value
 
-  implicit val format: Format[ErrorCode] = EnumJson.enumFormat(ErrorCode, Some("ErrorCode is invalid"))
+  implicit val format: Format[ErrorCode] = EnumJson.enumFormat(ErrorCode,
+    Some(s"Recognized ErrorCode values: ${ErrorCode.values.mkString(", ")}"))
 }

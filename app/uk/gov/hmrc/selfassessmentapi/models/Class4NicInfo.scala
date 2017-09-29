@@ -33,7 +33,8 @@ object Class4NicsExemptionCode extends Enumeration {
   val ITTOIA_2005 = Value("004")
   val OVER_STATE_PENSION_AGE = Value("005")
   val UNDER_16 = Value("006")
-  implicit val format = EnumJson.enumFormat(Class4NicsExemptionCode)
+  implicit val format = EnumJson.enumFormat(Class4NicsExemptionCode,
+    Some(s"Class 4 NICs exemption code should be one of: ${Class4NicsExemptionCode.values.mkString(", ")}"))
 }
 
 object Class4NicInfo {

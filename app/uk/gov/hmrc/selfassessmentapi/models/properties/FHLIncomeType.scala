@@ -21,5 +21,6 @@ import uk.gov.hmrc.selfassessmentapi.models.EnumJson
 object FHLIncomeType extends Enumeration {
   type FHLIncomeType = Value
   val RentIncome = Value("rentIncome")
-  implicit val types = EnumJson.enumFormat(FHLIncomeType, Some("FHL Income type is invalid"))
+  implicit val types = EnumJson.enumFormat(FHLIncomeType,
+    Some(s"FHL Income should be: ${FHLIncomeType.values.mkString(", ")}"))
 }
