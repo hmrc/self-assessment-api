@@ -101,6 +101,8 @@ trait Response {
                             INVALID_STATUS,
                             INVALID_TAX_YEAR) =>
       InternalServerError(toJson(Errors.InternalServerError))
+    case 403 if errorCodeIsOneOf(MISSING_EXEMPTION_INDICATOR) => BadRequest(toJson(Errors.badRequest(Errors.MissingExemptionIndicator)))
+    case 403 if errorCodeIsOneOf(MISSING_EXEMPTION_REASON) => BadRequest(toJson(Errors.badRequest(Errors.MandatoryFieldMissing)))
     case 403 if errorCodeIsOneOf(INVALID_DATE_RANGE) => InternalServerError(toJson(Errors.InternalServerError))
     case 403                                         => NotFound
     case 404                                         => NotFound

@@ -90,6 +90,8 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
          Seq(INVALID_ORIGINATOR_ID, INVALID_DATE_FROM, INVALID_DATE_TO, INVALID_STATUS, INVALID_TAX_YEAR),
          InternalServerError(toJson(Errors.InternalServerError))),
         (403, Seq(INVALID_DATE_RANGE), InternalServerError(toJson(Errors.InternalServerError))),
+        (403, Seq(MISSING_EXEMPTION_INDICATOR), BadRequest(toJson(Errors.badRequest(Errors.MissingExemptionIndicator)))),
+        (403, Seq(MISSING_EXEMPTION_REASON), BadRequest(toJson(Errors.badRequest(Errors.MandatoryFieldMissing)))),
         (403, Seq.empty, NotFound),
         (404, Seq(NOT_FOUND_INCOME_SOURCE), NotFound),
         (404, Seq.empty, NotFound),
