@@ -103,7 +103,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
           businessDetailsChangedRecently = None,
           payClass2Nics = Some(false),
           exemptFromPayingClass4Nics = Some(true),
-          exemptFromPayingClass4NicsReason = Some("003")
+          class4NicsExemptionReason = Some("003")
         ))
       )
 

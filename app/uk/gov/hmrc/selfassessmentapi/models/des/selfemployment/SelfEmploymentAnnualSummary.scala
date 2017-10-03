@@ -61,7 +61,7 @@ object SelfEmploymentAnnualSummary {
         businessDetailsChangedRecently = None,
         payClass2Nics = info.payVoluntaryClass2Nic,
         exemptFromPayingClass4Nics = info.class4NicInfo.flatMap(_.isExempt),
-        exemptFromPayingClass4NicsReason = for {
+        class4NicsExemptionReason = for {
           class4Nics <- info.class4NicInfo
           exemptionCode <- class4Nics.exemptionCode
         } yield exemptionCode.toString
@@ -108,7 +108,7 @@ object AnnualAllowances {
 case class AnnualNonFinancials(businessDetailsChangedRecently: Option[Boolean],
                                payClass2Nics: Option[Boolean],
                                exemptFromPayingClass4Nics: Option[Boolean],
-                               exemptFromPayingClass4NicsReason: Option[String])
+                               class4NicsExemptionReason: Option[String])
 
 object AnnualNonFinancials{
   implicit val reads: Reads[AnnualNonFinancials] = Json.reads[AnnualNonFinancials]
