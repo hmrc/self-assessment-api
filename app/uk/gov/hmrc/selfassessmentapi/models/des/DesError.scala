@@ -64,6 +64,10 @@ object DesErrorCode extends Enumeration {
   NOT_FOUND_INCOME_SOURCE,
   BOTH_EXPENSES_SUPPLIED,
   NOT_ALLOWED_SIMPLIFIED_EXPENSES,
+  NOT_UNDER_16,
+  NOT_OVER_STATE_PENSION,
+  MISSING_EXEMPTION_INDICATOR,
+  MISSING_EXEMPTION_REASON,
   INVALID_DATE_RANGE = Value
 
   implicit val format: Format[DesErrorCode] = EnumJson.enumFormat(DesErrorCode,

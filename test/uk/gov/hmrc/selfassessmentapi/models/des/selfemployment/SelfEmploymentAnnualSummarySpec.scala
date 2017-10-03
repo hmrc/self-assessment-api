@@ -72,7 +72,7 @@ class SelfEmploymentAnnualSummarySpec extends UnitSpec {
 
       val nonFinancials = desSummary.annualNonFinancials.get
       nonFinancials.exemptFromPayingClass4Nics shouldBe Some(true)
-      nonFinancials.exemptFromPayingClass4NicsReason shouldBe Some("003")
+      nonFinancials.class4NicsExemptionReason shouldBe Some("003")
       nonFinancials.payClass2Nics shouldBe Some(false)
     }
   }

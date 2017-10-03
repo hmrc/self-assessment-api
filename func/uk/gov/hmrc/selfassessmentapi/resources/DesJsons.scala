@@ -291,7 +291,7 @@ object DesJsons {
            |      "businessDetailsChangedRecently": true,
            |      "payClass2Nics": false,
            |      "exemptFromPayingClass4Nics": true,
-           |      "exemptFromPayingClass4NicsReason": "003"
+           |      "class4NicsExemptionReason": "003"
            |   }
            |}
        """.stripMargin
