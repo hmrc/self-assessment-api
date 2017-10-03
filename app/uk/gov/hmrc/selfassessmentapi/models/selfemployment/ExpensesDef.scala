@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models.properties
+package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
-import uk.gov.hmrc.selfassessmentapi.models.EnumJson
+import uk.gov.hmrc.selfassessmentapi.models.Amount
 
-object FHLIncomeType extends Enumeration {
-  type FHLIncomeType = Value
-  val RentIncome = Value("rentIncome")
-  implicit val types = EnumJson.enumFormat(FHLIncomeType,
-    Some(s"FHL Income should be: ${FHLIncomeType.values.mkString(", ")}"))
+trait ExpensesDef {
+
+  val expenses: Option[Expenses]
+  val consolidatedExpenses: Option[Amount]
+
+  def singleExpensesTypeSpecified = (expenses.isEmpty && consolidatedExpenses.isEmpty) ||
+    (expenses.isDefined ^ consolidatedExpenses.isDefined)
 }

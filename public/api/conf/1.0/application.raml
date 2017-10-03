@@ -385,6 +385,14 @@ traits:
                         description: No incomes and expenses are supplied
                         value:
                           code: NO_INCOMES_AND_EXPENSES
+                      bothExpensesSupplied:
+                        description: Both expenses and consolidatedExpenses can not be present at the same time
+                        value:
+                          code: BOTH_EXPENSES_SUPPLIED
+                      notAllowedSimplifiedExpenses:
+                        description: Consolidated expenses are not allowed for this customer
+                        value:
+                          code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
           get:
             displayName: List all self-employment update periods
             description: List all self-employment update periods.

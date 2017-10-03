@@ -26,5 +26,6 @@ object PropertyType extends Enumeration {
   val OTHER = Value("other")
 
   implicit val format: Format[PropertyType] =
-    EnumJson.enumFormat(PropertyType, Some("Property business type is invalid"))
+    EnumJson.enumFormat(PropertyType,
+      Some(s"Property business type should be one of: ${PropertyType.values.mkString(", ")}"))
 }

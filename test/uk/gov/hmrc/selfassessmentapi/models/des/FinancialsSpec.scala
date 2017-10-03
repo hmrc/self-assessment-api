@@ -43,7 +43,8 @@ class FinancialsSpec extends JsonSpec {
             staffCosts = Some(Expense(10.10, Some(10.10))),
             travelCosts = Some(Expense(10.10, Some(10.10))),
             other = Some(Expense(10.10, Some(10.10)))
-          )))
+          )),
+        consolidatedExpenses = None)
 
       val desUpdate = Financials.from(apiUpdate)
       val desIncomes = desUpdate.incomes.get
