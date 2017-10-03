@@ -534,7 +534,7 @@ traits:
                         value:
                           code: MANDATORY_FIELD_MISSING
                       mandatoryField2:
-                        description: Exemption code must be present if the exempt flag set to true
+                        description: Exemption code value must be present if the exempt flag is set to true
                         value:
                           code: MANDATORY_FIELD_MISSING
                       invalidMonetaryAmount1:
@@ -554,13 +554,26 @@ traits:
                         value:
                           code: INVALID_VALUE
                       invalidValue2:
-                        description: Exemption code must not be present if the exempt flag set to false
+                        description: Exemption code must not be present if the exempt flag is set to false
                         value:
                           code: INVALID_VALUE
                       invalidValue3:
                         description: Exemption code must be present only if the exempt flag is set to true
                         value:
                           code: INVALID_VALUE
+              403:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notUnder16:
+                        description: The Individual's age is equal to or greater than 16 years old on the 6th April of current tax year
+                        value:
+                          code: NOT_UNDER_16
+                      notOverStatePension:
+                        description: The Individual's age is less than their State Pension age on the 6th April of current tax year.
+                        value:
+                          code: NOT_OVER_STATE_PENSION
               404:
           get:
             displayName: Get a self-employment annual summary
