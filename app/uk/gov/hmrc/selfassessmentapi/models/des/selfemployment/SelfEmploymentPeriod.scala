@@ -62,33 +62,33 @@ object Financials {
           depreciation = exp.depreciation.map(expense2Deduction),
           other = exp.other.map(expense2Deduction))
       ).fold {
-        apiSePeriod.consolidatedExpenses.map(se => Deductions(consolidatedExpenses = Option(se)))
+        apiSePeriod.consolidatedExpenses.map(se => Deductions(simplifiedExpenses = Option(se)))
       }(Option(_))) // FIXME if incomes and deductions are None we don't want to create Financials(None, None)
   }
   def from(sePeriodUpdate: models.selfemployment.SelfEmploymentPeriodUpdate): Financials =
-    Financials(incomes = sePeriodUpdate.incomes.map(
-                 inc =>
-                   Incomes(
-                     turnover = inc.turnover.map(_.amount),
-                     other = inc.other.map(_.amount)
-                 )),
-               deductions = sePeriodUpdate.expenses.map(
-                 exp =>
-                   Deductions(costOfGoods = exp.costOfGoodsBought.map(expense2Deduction),
-                              constructionIndustryScheme = exp.cisPaymentsToSubcontractors.map(expense2Deduction),
-                              staffCosts = exp.staffCosts.map(expense2Deduction),
-                              travelCosts = exp.travelCosts.map(expense2Deduction),
-                              premisesRunningCosts = exp.premisesRunningCosts.map(expense2Deduction),
-                              maintenanceCosts = exp.maintenanceCosts.map(expense2Deduction),
-                              adminCosts = exp.adminCosts.map(expense2Deduction),
-                              advertisingCosts = exp.advertisingCosts.map(expense2Deduction),
-                              interest = exp.interest.map(expense2Deduction),
-                              financialCharges = exp.financialCharges.map(expense2Deduction),
-                              badDebt = exp.badDebt.map(expense2Deduction),
-                              professionalFees = exp.professionalFees.map(expense2Deduction),
-                              depreciation = exp.depreciation.map(expense2Deduction),
-                              other = exp.other.map(expense2Deduction),
-                              consolidatedExpenses = None)))
+    Financials(incomes = sePeriodUpdate.incomes.map( inc =>
+        Incomes(
+          turnover = inc.turnover.map(_.amount),
+          other = inc.other.map(_.amount)
+        )),
+      deductions = sePeriodUpdate.expenses.map( exp =>
+        Deductions(costOfGoods = exp.costOfGoodsBought.map(expense2Deduction),
+            constructionIndustryScheme = exp.cisPaymentsToSubcontractors.map(expense2Deduction),
+            staffCosts = exp.staffCosts.map(expense2Deduction),
+            travelCosts = exp.travelCosts.map(expense2Deduction),
+            premisesRunningCosts = exp.premisesRunningCosts.map(expense2Deduction),
+            maintenanceCosts = exp.maintenanceCosts.map(expense2Deduction),
+            adminCosts = exp.adminCosts.map(expense2Deduction),
+            advertisingCosts = exp.advertisingCosts.map(expense2Deduction),
+            interest = exp.interest.map(expense2Deduction),
+            financialCharges = exp.financialCharges.map(expense2Deduction),
+            badDebt = exp.badDebt.map(expense2Deduction),
+            professionalFees = exp.professionalFees.map(expense2Deduction),
+            depreciation = exp.depreciation.map(expense2Deduction),
+            other = exp.other.map(expense2Deduction))
+      ).fold {
+         sePeriodUpdate.consolidatedExpenses.map(se => Deductions(simplifiedExpenses = Option(se)))
+      }(Option(_)))
 }
 
 case class Incomes(turnover: Option[BigDecimal], other: Option[BigDecimal])
@@ -111,7 +111,7 @@ case class Deductions(costOfGoods: Option[Deduction] = None,
                       professionalFees: Option[Deduction] = None,
                       depreciation: Option[Deduction] = None,
                       other: Option[Deduction] = None,
-                      consolidatedExpenses: Option[BigDecimal] = None)
+                      simplifiedExpenses: Option[BigDecimal] = None)
 
 object Deductions {
   implicit val writes: Writes[Deductions] = Json.writes[Deductions]

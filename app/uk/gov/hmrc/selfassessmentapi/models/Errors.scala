@@ -57,7 +57,7 @@ object Errors {
   object NinoInvalid extends Error("NINO_INVALID", "The provided Nino is invalid", None)
   object InvalidRequest extends Error("INVALID_REQUEST", "Invalid request", None)
   object BothExpensesSupplied extends Error("BOTH_EXPENSES_SUPPLIED", "Elements: expenses and consolidatedElements cannot be both specified at the same time", None)
-  object NotAllowedSimplifiedExpenses extends Error("NOT_ALLOWED_SIMPLIFIED_EXPENSES", "The submission contains simplified expenses but the accumulative turnover amount exceeds the threshold", Some(""))
+  object NotAllowedConsolidatedExpenses extends Error("NOT_ALLOWED_CONSOLIDATED_EXPENSES", "The submission contains consolidated expenses but the accumulative turnover amount exceeds the threshold", Some(""))
   object InvalidPeriod extends Error("INVALID_PERIOD", "The period 'from' date should come before the 'to' date", Some(""))
   object NotUnder16 extends Error("NOT_UNDER_16", "The Individual's age is equal to or greater than 16 years old on the 6th April of current tax year.", Some("/nonFinancials/class4NicInfo/exemptionCode"))
   object NotOverStatePension extends Error("NOT_OVER_STATE_PENSION", "The Individual's age is less than their State Pension age on the 6th April of current tax year.", Some("/nonFinancials/class4NicInfo/exemptionCode"))

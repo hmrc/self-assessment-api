@@ -20,7 +20,7 @@ import org.joda.time.LocalDate
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.models.ErrorCode.{ErrorCode => _, apply => _, _}
+import uk.gov.hmrc.selfassessmentapi.models.ErrorCode._
 import uk.gov.hmrc.selfassessmentapi.models.Validation._
 import uk.gov.hmrc.selfassessmentapi.models._
 
@@ -30,8 +30,8 @@ case class SelfEmploymentPeriod(id: Option[String],
                                 to: LocalDate,
                                 incomes: Option[Incomes],
                                 expenses: Option[Expenses],
-                                consolidatedExpenses: Option[Amount] = None) // TODO remove the default Value
-    extends Period
+                                consolidatedExpenses: Option[Amount])
+    extends Period with ExpensesDef
 
 object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
 
@@ -41,8 +41,15 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
       from = LocalDate.parse(desPeriod.from),
       to = LocalDate.parse(desPeriod.to),
       incomes = fromDESIncomes(desPeriod),
-      expenses = fromDESExpenses(desPeriod)
+      expenses = fromDESExpenses(desPeriod),
+      consolidatedExpenses = fromDesConsolidatedExpenses(desPeriod)
     )
+
+  private def fromDesConsolidatedExpenses(desPeriod: des.selfemployment.SelfEmploymentPeriod): Option[Amount] =
+   (for {
+      financials <- desPeriod.financials
+      deductions <- financials.deductions
+    } yield deductions.simplifiedExpenses).flatten
 
   private def fromDESIncomes(desPeriod: des.selfemployment.SelfEmploymentPeriod): Option[Incomes] = {
     desPeriod.financials.flatMap(_.incomes.map { incomes =>
@@ -51,6 +58,7 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
   }
 
   private def fromDESExpenses(desPeriod: des.selfemployment.SelfEmploymentPeriod): Option[Expenses] = {
+
     desPeriod.financials.flatMap(_.deductions.map { deductions =>
       Expenses(
         cisPaymentsToSubcontractors = deductions.constructionIndustryScheme.map(deduction =>
@@ -76,7 +84,9 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
         travelCosts = deductions.travelCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         other = deductions.other.map(deduction => Expense(deduction.amount, deduction.disallowableAmount))
       )
-    })
+    }).fold[Option[Expenses]](None){ex =>
+      if (ex.hasExpenses) Some(ex) else None
+    }
   }
 
   implicit val writes: Writes[SelfEmploymentPeriod] = Json.writes[SelfEmploymentPeriod]
@@ -93,7 +103,7 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
       (__ \ "consolidatedExpenses").readNullable[Amount](nonNegativeAmountValidator)
   )(SelfEmploymentPeriod.apply _)
     .filter(ValidationError(s"Both expenses and consolidatedExpenses elements cannot be present at the same time",
-      BOTH_EXPENSES_SUPPLIED))(periodXorSimplifiedPeriod)
+      BOTH_EXPENSES_SUPPLIED))(_.singleExpensesTypeSpecified)
     .validate(
       Seq(Validation(JsPath(),
                      periodDateValidator,
@@ -103,6 +113,4 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
                      ValidationError("No incomes and expenses are supplied", NO_INCOMES_AND_EXPENSES))))
 
 
-  private def periodXorSimplifiedPeriod(period: SelfEmploymentPeriod) = (period.expenses.isEmpty && period.consolidatedExpenses.isEmpty) ||
-                                                                        (period.expenses.isDefined ^ period.consolidatedExpenses.isDefined)
 }
