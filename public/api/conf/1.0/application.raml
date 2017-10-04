@@ -396,7 +396,7 @@ traits:
                     type: types.errorResponse
                     examples:
                       notAllowedConsolidatedExpenses:
-                        description: Consolidated expenses are not allowed for this customer
+                        description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
                         value:
                           code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
           get:
@@ -513,7 +513,7 @@ traits:
                       type: types.errorResponse
                       examples:
                         notAllowedConsolidatedExpenses:
-                          description: Consolidated expenses are not allowed for this customer
+                          description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
                           value:
                             code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
 
