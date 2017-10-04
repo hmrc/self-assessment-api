@@ -111,7 +111,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().isATeapotFor(nino)
         .when()
-        .put(Jsons.SelfEmployment.update()).at(s"/ni/$nino/self-employments/$taxYear")
+        .put(Jsons.SelfEmployment.update()).at(s"/ni/$nino/self-employments/abc/$taxYear")
         .thenAssertThat()
         .statusIs(500)
     }

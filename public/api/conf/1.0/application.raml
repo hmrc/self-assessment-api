@@ -219,57 +219,6 @@ traits:
             displayName: Self-employment ID
             description: An identifier for the self-employment business, unique to the customer
             type: string
-        put:
-          displayName: Update self-employment business details [test only]
-          description: Update self-employment business details. This API is not available in production.
-          (annotations.sandboxData): !include scenarios/agent-scenarios.md
-          is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
-          (annotations.scope): "write:self-assessment"
-          securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
-          body:
-            application/json:
-              type: !include schemas/SelfEmployment_Update.json
-              example: !include examples/self-employment/SelfEmploymentUpdate.json
-          responses:
-            204:
-            400:
-              body:
-                application/json:
-                  type: types.errorResponse
-                  examples:
-                    invalidNino:
-                      description: Invalid NINO
-                      value:
-                        code: NINO_INVALID
-                    mandatoryField:
-                      description: Mandatory field missing
-                      value:
-                        code: MANDATORY_FIELD_MISSING
-                    invalidFieldLength:
-                      description: Invalid field length
-                      value:
-                        code: INVALID_FIELD_LENGTH
-                    invalidFieldFormat:
-                      description: Invalid field format
-                      value:
-                        code: INVALID_FIELD_FORMAT
-                    invalidBusinessDescription:
-                      description: Invalid business description
-                      value:
-                        code: INVALID_BUSINESS_DESCRIPTION
-                    invalidPostcode:
-                      description: Invalid postcode
-                      value:
-                        code: INVALID_POSTCODE
-                    effectiveDate:
-                      description: Effective date should be today or in the past
-                      value:
-                        code: DATE_IN_THE_FUTURE
-                    commencementDateInThePast:
-                      description: Commencement date should be today or in the past
-                      value:
-                        code: DATE_NOT_IN_THE_PAST
-            404:
         get:
           displayName: Get a self-employment business
           description: Get a self-employment business
