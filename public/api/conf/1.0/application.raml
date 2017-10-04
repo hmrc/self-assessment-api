@@ -331,7 +331,7 @@ traits:
             description: Create a self-employment update period for submission of periodic data i.e incomes and expenses.
                          Submissions which do not include any incomes or expenses are invalid.
                          You should submit zero values if you do not have incomes or expenses.
-                         A valid payload may contain either expenses or consolidatedExpenses elmeents.
+                         A valid payload may contain either expenses or consolidatedExpenses elements.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader, periodBVRs]
             (annotations.scope): "write:self-assessment"
@@ -463,7 +463,7 @@ traits:
               description: Update a self-employment update period.
                            Submissions  which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
-                           A valid payload may contain either expenses or consolidatedExpenses elmeents.
+                           A valid payload may contain either expenses or consolidatedExpenses elements.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
