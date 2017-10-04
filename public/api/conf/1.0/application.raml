@@ -280,6 +280,7 @@ traits:
             description: Create a self-employment update period for submission of periodic data i.e incomes and expenses.
                          Submissions which do not include any incomes or expenses are invalid.
                          You should submit zero values if you do not have incomes or expenses.
+                         Valid payload may contain either expenses or consolidatedExpenses elements.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader, periodBVRs]
             (annotations.scope): "write:self-assessment"
@@ -338,8 +339,13 @@ traits:
                         description: Both expenses and consolidatedExpenses can not be present at the same time
                         value:
                           code: BOTH_EXPENSES_SUPPLIED
-                      notAllowedSimplifiedExpenses:
-                        description: Consolidated expenses are not allowed for this customer
+              403:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notAllowedConsolidatedExpenses:
+                        description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
                         value:
                           code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
           get:
@@ -406,6 +412,7 @@ traits:
               description: Update a self-employment update period.
                            Submissions  which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
+                           Valid payload may contain either expenses or consolidatedExpenses elements.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -429,6 +436,10 @@ traits:
                           description: Invalid NINO
                           value:
                             code: NINO_INVALID
+                        invalidMonetaryAmount:
+                          description: income or expense is not a non-negative amount or up to 2 decimal places
+                          value:
+                            code: INVALID_MONETARY_AMOUNT
                         invalidDisallowableAmount:
                           description: disallowableAmount > amount (except for depreciation expenseType)
                           value:
@@ -441,6 +452,20 @@ traits:
                           description: No incomes and expenses are supplied
                           value:
                             code: NO_INCOMES_AND_EXPENSES
+                        bothExpensesSupplied:
+                          description: Both expenses and consolidatedExpenses can not be present at the same time
+                          value:
+                            code: BOTH_EXPENSES_SUPPLIED
+                403:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notAllowedConsolidatedExpenses:
+                          description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
+                          value:
+                            code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
+
                 404:
         /{taxYear}:
           uriParameters:
