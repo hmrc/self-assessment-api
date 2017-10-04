@@ -9,7 +9,28 @@
     },
     "expenses": {
       "$ref": "self-employment/Expenses.json"
+    },
+    "consolidatedExpenses": {
+      "title": "Consolidated expenses",
+      "description": "Sum of all expenses for the specified period",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "1000.45"
     }
   },
+  "oneOf": [
+    {
+      "required": [
+        "expenses"
+      ]
+    },
+    {
+      "required": [
+        "consolidatedExpenses"
+      ]
+    }
+  ],
   "additionalProperties": false
 }
