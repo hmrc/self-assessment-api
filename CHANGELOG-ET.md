@@ -11,3 +11,4 @@
   * Impacted API's
     * Update a Self employment Annual summary
     * Get a Self employment Annual summary
+* Temporarily disabled the test-only endpoint _Update a self-employment business_. Awaiting clear steer from business. 
