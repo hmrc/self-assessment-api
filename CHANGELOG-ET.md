@@ -1,4 +1,4 @@
-## [0.138.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.138.0) Scheduled for Deployment on 05-Oct-2017
+## [0.138.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.138.0) 05-Oct-2017
 
 * 3LA - Taxpayer can submit/amend consolidated expenses for Self employment
   * Impacted API's
