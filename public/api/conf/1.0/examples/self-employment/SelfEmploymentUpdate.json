@@ -1,28 +1,9 @@
 {
-  "effectiveDate": "2018-04-05",
-  "accountingPeriod": {
-    "start": "2017-04-06",
-    "end": "2018-04-05"
-  },
-  "accountingType": "CASH",
-  "commencementDate": "2016-01-01",
-  "cessationReason": "005",
   "tradingName": "Acme Ltd.",
-  "description": "Accountancy services",
-  "address": {
-    "lineOne": "1 Acme Rd.",
-    "lineTwo": "London",
-    "lineThree": "Greater London",
-    "lineFour": "United Kingdom",
-    "postalCode": "A9 9AA",
-    "countryCode": "GB"
-  },
-  "contactDetails": {
-    "primaryPhoneNumber": "07712345678",
-    "secondaryPhoneNumber": "07712345678",
-    "faxNumber": "07712345678",
-    "emailAddress": "admin@acmeltd.com"
-  },
-  "paperless": false,
-  "seasonal": false
+  "businessDescription": "Accountancy services",
+  "businessAddressLineOne": "1 Acme Rd.",
+  "businessAddressLineTwo": "London",
+  "businessAddressLineThree": "Greater London",
+  "businessAddressLineFour": "United Kingdom",
+  "businessPostcode": "A9 9AA"
 }

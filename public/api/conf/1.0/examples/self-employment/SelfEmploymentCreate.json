@@ -6,13 +6,10 @@
   "accountingType": "CASH",
   "commencementDate": "2016-01-01",
   "tradingName": "Acme Ltd.",
-  "description": "Accountancy services",
-  "address": {
-    "lineOne": "1 Acme Rd.",
-    "lineTwo": "London",
-    "lineThree": "Greater London",
-    "lineFour": "United Kingdom",
-    "postalCode": "A9 9AA",
-    "countryCode": "GB"
-  }
+  "businessDescription": "Accountancy services",
+  "businessAddressLineOne": "1 Acme Rd.",
+  "businessAddressLineTwo": "London",
+  "businessAddressLineThree": "Greater London",
+  "businessAddressLineFour": "United Kingdom",
+  "businessPostcode": "A9 9AA"
 }

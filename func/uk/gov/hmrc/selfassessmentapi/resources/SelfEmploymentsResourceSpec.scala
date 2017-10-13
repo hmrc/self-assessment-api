@@ -159,19 +159,14 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .statusIs(400)
         .contentTypeIsJson()
         .bodyIsLike(Jsons.Errors.invalidRequest(
-          ("MANDATORY_FIELD_MISSING", "/accountingPeriod"),
-          ("MANDATORY_FIELD_MISSING", "/accountingType"),
-          ("MANDATORY_FIELD_MISSING", "/commencementDate"),
           ("MANDATORY_FIELD_MISSING", "/tradingName"),
-          ("MANDATORY_FIELD_MISSING", "/description"),
-          ("MANDATORY_FIELD_MISSING", "/address"),
-          ("MANDATORY_FIELD_MISSING", "/paperless"),
-          ("MANDATORY_FIELD_MISSING", "/seasonal"),
-          ("MANDATORY_FIELD_MISSING", "/effectiveDate")))
+          ("MANDATORY_FIELD_MISSING", "/businessDescription"),
+          ("MANDATORY_FIELD_MISSING", "/businessAddressLineOne"),
+          ("MANDATORY_FIELD_MISSING", "/businessPostcode")))
     }
 
     "return code 400 (INVALID_BUSINESS_DESCRIPTION) when attempting to update a self-employment with an invalid business description" in {
-      val updatedSelfEmployment = Jsons.SelfEmployment.update(description = "invalid")
+      val updatedSelfEmployment = Jsons.SelfEmployment.update(businessDescription = "invalid")
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -187,7 +182,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
         .statusIs(400)
         .contentTypeIsJson()
         .bodyIsLike(Jsons.Errors.invalidRequest(
-          ("INVALID_BUSINESS_DESCRIPTION", "/description")))
+          ("INVALID_BUSINESS_DESCRIPTION", "/businessDescription")))
     }
 
     "return code 500 when we receive a status code from DES that we do not handle" in {
@@ -204,7 +199,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
 
   "retrieve" should {
     "return code 200 when retrieving a self-employment resource that exists" in {
-      val expectedSelfEmployment = Jsons.SelfEmployment(description = None)
+      val expectedSelfEmployment = Jsons.SelfEmployment(cessationDate = None, businessDescription = None)
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -329,7 +324,7 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
       val expectedBody =
         s"""
            |[
-           |  ${Jsons.SelfEmployment(cessationDate = None, description = None).toString()}
+           |  ${Jsons.SelfEmployment(cessationDate = None, businessDescription = None).toString()}
            |]
          """.stripMargin
 
