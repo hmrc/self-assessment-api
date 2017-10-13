@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "incomeSourceID": {
+        "description": "Identifies the employment",
+        "type": "string"
+      },
+      "latestDate": {
+        "$ref": "DateString.json",
+        "description": "latest date for which income data has been supplies"
+      },
+      "netPay": {
+        "$ref": "MonetaryPos.json",
+        "description": "The net pay YTD for the employment"
+      },
+      "benefitsAndExpenses": {
+        "$ref": "MonetaryPos.json",
+        "description": "Benefits and expenses relating to the employment"
+      },
+      "allowableExpenses": {
+        "$ref": "MonetaryPos.json",
+        "description": "Allowable expenses relating to the employment"
+      }
+    },
+    "required": [
+      "incomeSourceID",
+      "latestDate",
+      "netPay",
+      "benefitsAndExpenses",
+      "allowableExpenses"
+    ],
+    "additionalProperties": false
+  }
+}

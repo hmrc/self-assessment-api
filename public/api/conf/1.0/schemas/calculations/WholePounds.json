@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Defines amounts given in whole pounds between 0.00 and 99.99",
+  "type": "number",
+  "minimum": 0,
+  "maximum": 99999999,
+  "multipleOf": 1
+}

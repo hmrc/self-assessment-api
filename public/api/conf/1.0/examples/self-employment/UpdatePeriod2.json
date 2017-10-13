@@ -1,0 +1,7 @@
+{
+  "incomes": {
+    "turnover": { "amount": 100.25 },
+    "other": { "amount": 100.25 }
+  },
+  "consolidatedExpenses": 100.25
+}

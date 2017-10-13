@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "incomeSourceID": {
+        "description": "Identifies the self-employment income source",
+        "type": "string"
+      },
+      "latestDate": {
+        "$ref": "DateString.json",
+        "description": "the latest date to which source data applies"
+      },
+      "accountStartDate": {
+        "$ref": "DateString.json",
+        "description": "the accounting period start date"
+      },
+      "accountEndDate": {
+        "$ref": "DateString.json",
+        "description": "the accounting period end date"
+      },
+      "taxableIncome": {
+        "$ref": "MonetaryPos.json",
+        "description": "the taxable profit from the self-employment"
+      },
+      "finalised": {
+        "description": "Indicates if the taxable income for this self-employment is finalised",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "incomeSourceID",
+      "latestDate",
+      "taxableIncome"
+    ],
+    "additionalProperties": false
+  }
+}

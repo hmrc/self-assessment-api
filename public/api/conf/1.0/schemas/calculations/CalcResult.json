@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "incomeTaxNicYtd": {
+      "$ref": "MonetaryPosNeg.json",
+      "description": "Total of calculated Income Tax and National Insurance"
+    },
+    "incomeTaxNicDelta": {
+      "$ref": "MonetaryPosNeg.json",
+      "description": "Difference between the total of calculated Income Tax and National Insurance in this calculation and the previous calculation performed"
+    },
+    "crystallised": {
+      "description": "Indicates if the data represents the crystallised position for the Tax Year; if N then it is Year to Date",
+      "type": "boolean"
+    },
+    "nationalRegime": {
+      "description": "This defines the national tax rates and rules to be applied. Values are UK and Scotland, May Change in future",
+      "enum": [
+        "UK",
+        "Scotland"
+      ]
+    },
+    "totalTaxableIncome": {
+      "$ref": "MonetaryPos.json",
+      "description": "Total Taxable Income. This is Total Income Received less the Total of Allowances and Deductions"
+    },
+    "taxableIncome": {
+      "$ref": "TaxableIncome.json",
+      "description": "An object breaking down how taxable income is derived"
+    },
+    "totalIncomeTax": {
+      "$ref": "MonetaryPos.json",
+      "description": "Total calculated Income Tax after allowances and reliefs"
+    },
+    "incomeTax": {
+      "$ref": "IncomeTax.json",
+      "description": "An object detailing the calculation of Income Tax"
+    },
+    "totalNic": {
+      "$ref": "MonetaryPos.json",
+      "description": "Total Calculated National Insurance Contributions"
+    },
+    "nic": {
+      "$ref": "Nic.json",
+      "description": "An object detailing the calculation of National Insurance Contributions"
+    },
+    "eoyEstimate": {
+      "$ref": "EoyEstimate.json",
+      "description": "An object containing end of year estimates"
+    },
+    "msgCount": {
+      "description": "Count of messages",
+      "type": "number"
+    },
+    "msg": {
+      "$ref": "MsgArray.json",
+      "description": "An array of messages"
+    },
+    "previousCalc": {
+      "$ref": "PreviousCalc.json",
+      "description": "An object detailing the previous calculation (used to derive the delta calculation)"
+    },
+    "annualAllowances": {
+      "$ref": "AnnualAllowances.json",
+      "description": "An object defining annual allowances"
+    }
+  },
+  "required": [
+    "incomeTaxNicYtd",
+    "incomeTaxNicDelta",
+    "crystallised",
+    "nationalRegime",
+    "totalTaxableIncome",
+    "taxableIncome",
+    "totalIncomeTax",
+    "incomeTax",
+    "totalNic",
+    "nic",
+    "msgCount",
+    "annualAllowances"
+  ],
+  "additionalProperties": false
+}

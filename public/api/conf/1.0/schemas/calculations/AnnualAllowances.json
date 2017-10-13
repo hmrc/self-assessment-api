@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "personalAllowance": {
+      "$ref": "WholePounds.json",
+      "description": "The full Personal Allowance applicable to the Tax Year"
+    },
+    "reducedPersonalAllowanceThreshold": {
+      "$ref": "WholePounds.json",
+      "description": "The income threshold at which the Personal Allowance is reduced"
+    },
+    "reducedPersonalisedAllowance": {
+      "$ref": "WholePounds.json",
+      "description": "Reduced annual personal allowance if annual (or estimated annual) income exceeds the income threshold. Estimated annual income will be used for non-finalised calculations"
+    }
+  },
+  "required": [
+    "personalAllowance"
+  ],
+  "additionalProperties": false
+}
