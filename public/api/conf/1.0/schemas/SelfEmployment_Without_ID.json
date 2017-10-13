@@ -29,9 +29,6 @@
       "format": "date",
       "$ref": "FullDate.json"
     },
-    "cessationReason": {
-      "$ref": "CessationReason.json"
-    },
     "tradingName": {
       "title": "Business trading name",
       "description": "Business trading name",
@@ -39,26 +36,46 @@
       "minLength": 1,
       "maxLength": 105
     },
-    "description": {
+    "businessDescription": {
       "title": "Business description",
       "description": "A description that conforms to the SIC 2007 standard trade classifications",
       "type": "string"
     },
-    "address": {
-      "$ref": "Address.json"
+    "businessAddressLineOne": {
+      "title": "Business address line one",
+      "description": "First line of the business address",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 35
     },
-    "contactDetails": {
-      "$ref": "ContactDetails.json"
+    "businessAddressLineTwo": {
+      "title": "Business address line two",
+      "description": "Second line of the business address",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 35
     },
-    "paperless": {
-      "title": "Business communication is digital or paper",
-      "description": "Business communication is digital or paper",
-      "type": "boolean"
+    "businessAddressLineThree": {
+      "title": "Business address line three",
+      "description": "Third line of the business address",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 35
     },
-    "seasonal": {
-      "title": "Business is a seasonal business or not flag",
-      "description": "Business is a seasonal business or not flag",
-      "type": "boolean"
+    "businessAddressLineFour": {
+      "title": "Business address line four",
+      "description": "Fourth line of the business address",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 35
+    },
+    "businessPostcode": {
+      "title": "Business postcode",
+      "description": "Business postcode",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10,
+      "pattern":"^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$"
     }
   },
   "required": [

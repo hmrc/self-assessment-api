@@ -328,129 +328,83 @@ object Jsons {
               commencementDate: Option[String] = Some("2017-01-01"),
               cessationDate: Option[String] = Some("2017-01-02"),
               tradingName: String = "Acme Ltd",
-              description: Option[String] = Some("Accountancy services"),
-              lineOne: Option[String] = Some("1 Acme Rd."),
-              lineTwo: Option[String] = Some("London"),
-              lineThree: Option[String] = Some("Greater London"),
-              lineFour: Option[String] = Some("United Kingdom"),
-              postalCode: Option[String] = Some("A9 9AA"),
-              countryCode: Option[String] = Some("GB")): JsValue = {
+              businessDescription: Option[String] = Some("Accountancy services"),
+              businessAddressLineOne: Option[String] = Some("1 Acme Rd."),
+              businessAddressLineTwo: Option[String] = Some("London"),
+              businessAddressLineThree: Option[String] = Some("Greater London"),
+              businessAddressLineFour: Option[String] = Some("United Kingdom"),
+              businessPostcode: Option[String] = Some("A9 9AA")): JsValue = {
 
       val cessation = cessationDate.map(date => s"""
-           |  "cessationDate": "$date",
+                                                   |  "cessationDate": "$date",
          """.stripMargin).getOrElse("")
 
       val commencement = commencementDate.map(date => s"""
-           |  "commencementDate": "$date",
+                                                         |  "commencementDate": "$date",
        """.stripMargin).getOrElse("")
 
-      val businessDesc = description.map(desc => s"""
-           |  "description": "$desc",
+      val businessDesc = businessDescription.map(desc => s"""
+                                                            |  "businessDescription": "$desc",
        """.stripMargin).getOrElse("")
 
-      val addrOne = lineOne.map(line => s"""
-           |  "lineOne": "$line",
+      val addrOne = businessAddressLineOne.map(line => s"""
+                                                          |  "businessAddressLineOne": "$line",
        """.stripMargin).getOrElse("")
 
-      val addrTwo = lineTwo.map(line => s"""
-           |  "lineTwo": "$line",
+      val addrTwo = businessAddressLineTwo.map(line => s"""
+                                                          |  "businessAddressLineTwo": "$line",
        """.stripMargin).getOrElse("")
 
-      val addrThree = lineThree.map(line => s"""
-           |  "lineThree": "$line",
+      val addrThree = businessAddressLineThree.map(line => s"""
+                                                              |  "businessAddressLineThree": "$line",
        """.stripMargin).getOrElse("")
 
-      val addrFour = lineFour.map(line => s"""
-           |  "lineFour": "$line",
+      val addrFour = businessAddressLineFour.map(line => s"""
+                                                            |  "businessAddressLineFour": "$line",
        """.stripMargin).getOrElse("")
 
-      val addrPostcode = postalCode.map(code => s"""
-           |  "postalCode": "$code",
-       """.stripMargin).getOrElse("")
-
-      val addrCountry = countryCode.map(code => s"""
-           |  "countryCode": "$code"
+      val addrPostcode = businessPostcode.map(code => s"""
+                                                         |  "businessPostcode": "$code",
        """.stripMargin).getOrElse("")
 
       Json.parse(s"""
-           |{
-           |  "accountingPeriod": {
-           |    "start": "$accPeriodStart",
-           |    "end": "$accPeriodEnd"
-           |  },
-           |  $cessation
-           |  $commencement
-           |  $businessDesc
-           |  "address": {
-           |  $addrOne
-           |  $addrTwo
-           |  $addrThree
-           |  $addrFour
-           |  $addrPostcode
-           |  $addrCountry
-           |  },
-           |  "accountingType": "$accountingType",
-           |  "tradingName": "$tradingName"
-           |}
+                    |{
+                    |  "accountingPeriod": {
+                    |    "start": "$accPeriodStart",
+                    |    "end": "$accPeriodEnd"
+                    |  },
+                    |  $cessation
+                    |  $commencement
+                    |  $businessDesc
+                    |  $addrOne
+                    |  $addrTwo
+                    |  $addrThree
+                    |  $addrFour
+                    |  $addrPostcode
+                    |  "accountingType": "$accountingType",
+                    |  "tradingName": "$tradingName"
+                    |}
          """.stripMargin)
     }
 
-    def update(accPeriodStart: String = "2017-04-06",
-               accPeriodEnd: String = "2018-04-05",
-               accountingType: String = "CASH",
-               commencementDate: String = "2017-01-01",
-               effectiveDate: String = "2017-01-02",
-               cessationReason: CessationReason = CessationReason.Bankruptcy,
-               tradingName: String = "Acme Ltd",
-               description: String = "Accountancy services",
-               lineOne: String = "1 Acme Rd.",
-               lineTwo: String = "London",
-               lineThree: String = "Greater London",
-               lineFour: String = "United Kingdom",
-               postalCode: Option[String] = Some("A9 9AA"),
-               countryCode: String = "GB",
-               primaryPhoneNumber : String = "0734343434",
-               secondaryPhoneNumber : String = "0734343434",
-               faxNumber : String = "0734343434",
-               emailAddress : String = "admin@mail.com",
-               paperless: Boolean = false,
-               seasonal: Boolean = false): JsValue = {
+    def update(tradingName: String = "Acme Ltd",
+               businessDescription: String = "Accountancy services",
+               businessAddressLineOne: String = "1 Acme Rd.",
+               businessAddressLineTwo: String = "London",
+               businessAddressLineThree: String = "Greater London",
+               businessAddressLineFour: String = "United Kingdom",
+               businessPostcode: String = "A9 9AA"): JsValue = {
 
-      val addrPostcode = postalCode.map(code =>
-        s"""
-           |  "postalCode": "$code",
-       """.stripMargin).getOrElse("")
-
-      Json.parse(
-        s"""
-           |{
-           |  "accountingPeriod": {
-           |    "start": "$accPeriodStart",
-           |    "end": "$accPeriodEnd"
-           |  },
-           |  "accountingType": "$accountingType",
-           |  "commencementDate": "$commencementDate",
-           |  "effectiveDate": "$effectiveDate",
-           |  "cessationReason": "$cessationReason",
-           |  "tradingName": "$tradingName",
-           |  "description": "$description",
-           |  "address": {
-           |    "lineOne": "$lineOne",
-           |    "lineTwo": "$lineTwo",
-           |    "lineThree": "$lineThree",
-           |    "lineFour": "$lineFour",
-           |    $addrPostcode
-           |    "countryCode": "$countryCode"
-           |  },
-           |  "contactDetails": {
-           |    "primaryPhoneNumber": "$primaryPhoneNumber",
-           |    "secondaryPhoneNumber": "$secondaryPhoneNumber",
-           |    "faxNumber": "$faxNumber",
-           |    "emailAddress": "$emailAddress"
-           |  },
-           |  "paperless": $paperless,
-           |  "seasonal": $seasonal
-           |}
+      Json.parse(s"""
+                    |{
+                    |  "tradingName": "$tradingName",
+                    |  "businessDescription": "$businessDescription",
+                    |  "businessAddressLineOne": "$businessAddressLineOne",
+                    |  "businessAddressLineTwo": "$businessAddressLineTwo",
+                    |  "businessAddressLineThree": "$businessAddressLineThree",
+                    |  "businessAddressLineFour": "$businessAddressLineFour",
+                    |  "businessPostcode": "$businessPostcode"
+                    |}
          """.stripMargin)
     }
 

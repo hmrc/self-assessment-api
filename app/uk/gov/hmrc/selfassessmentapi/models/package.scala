@@ -72,23 +72,20 @@ package object models {
       ErrorCode.INVALID_POSTCODE))(postcode =>
       postcode.matches("^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$"))
 
-  def regexValidator(fieldName: String, regex: String): Reads[String] = Reads
-    .of[String]
-    .map(_.trim)
-    .filter(ValidationError(s"$fieldName cannot be blank spaces and must match $regex",
-      ErrorCode.INVALID_FIELD_FORMAT))(field => field.matches(regex))
-
-  def stringRegex(maxLength: Int) = s"^[A-Za-z0-9 \\-,.&'\\/]{1,$maxLength}$$"
-
-  def lengthIs(length: Int): Reads[String] =
-    Reads.of[String].filter(ValidationError(s"field length must be $length characters", ErrorCode.INVALID_FIELD_LENGTH)
-    )(name => name.length == length)
-
   val commencementDateValidator: Reads[LocalDate] = Reads
     .of[LocalDate]
     .filter(
       ValidationError("commencement date should be today or in the past", ErrorCode.DATE_NOT_IN_THE_PAST)
     )(date => date.isBefore(LocalDate.now()) || date.isEqual(LocalDate.now()))
+
+  def lengthIsBetween(minLength: Int, maxLength: Int): Reads[String] =
+    Reads
+      .of[String]
+      .map(_.trim)
+      .filter(
+        ValidationError(s"field length must be between $minLength and $maxLength characters",
+          ErrorCode.INVALID_FIELD_LENGTH))(name => name.length <= maxLength && name.length >= minLength)
+
 
   implicit class Trimmer(reads: Reads[String]) {
     def trim: Reads[String] = reads.map(_.trim)

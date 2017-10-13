@@ -16,15 +16,14 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json.{JsArray, JsValue, Json, Writes}
 import play.api.mvc.{Action, Result}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
-import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.Business
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmployment, SelfEmploymentUpdate}
+import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers._
 
 import scala.concurrent.ExecutionContext.Implicits._
@@ -45,29 +44,25 @@ object SelfEmploymentsResource extends BaseResource {
               Forbidden(
                 Json.toJson(
                   Errors.businessError(Error(ErrorCode.TOO_MANY_SOURCES.toString,
-                                             s"The maximum number of Self-Employment incomes sources is 1",
-                                             Some("")))))
+                    s"The maximum number of Self-Employment incomes sources is 1",
+                    Some("")))))
           }
       }
     }
 
+  // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def update(nino: Nino, id: SourceId): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments).async(parse.json) { implicit request =>
       validate[SelfEmploymentUpdate, SelfEmploymentResponse](request.body) { selfEmployment =>
-        connector.update(nino, addRequestData(des.selfemployment.SelfEmploymentUpdate.from(selfEmployment)), id)
+        connector.update(nino, des.selfemployment.SelfEmploymentUpdate.from(selfEmployment), id)
       } map {
         case Left(errorResult) => handleValidationErrors(errorResult)
         case Right(response) =>
           response.filter {
-            case 200 => NoContent
+            case 204 => NoContent
           }
       }
     }
-
-  private def addRequestData(desSeUpdate: des.selfemployment.SelfEmploymentUpdate)(
-      implicit request: AuthRequest[JsValue]): des.selfemployment.SelfEmploymentUpdate =
-    desSeUpdate.copy(agentId = request.authContext.agentReference,
-                     changedDate = Some(DateTime.now(DateTimeZone.UTC).toString))
 
   def retrieve(nino: Nino, id: SourceId): Action[Unit] =
     APIAction(nino, SourceType.SelfEmployments).async(parse.empty) { implicit request =>
@@ -88,7 +83,7 @@ object SelfEmploymentsResource extends BaseResource {
     }
 
   private def handleRetrieve[T](selfEmployments: Either[DesTransformError, T], resultOnEmptyData: Result)(
-      implicit w: Writes[T]): Result =
+    implicit w: Writes[T]): Result =
     selfEmployments match {
       case error @ Left(EmptyBusinessData(_) | EmptySelfEmployments(_)) =>
         logger.warn(error.left.get.msg)
@@ -99,7 +94,7 @@ object SelfEmploymentsResource extends BaseResource {
       case error @ Left(DesTransformError(msg)) =>
         error match {
           case Left(ParseError(_)) => logger.error(msg)
-          case _                   => logger.warn(msg)
+          case _ => logger.warn(msg)
         }
         InternalServerError(Json.toJson(Errors.InternalServerError))
       case Right(se) => Ok(Json.toJson(se))

@@ -16,59 +16,32 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 
-import org.joda.time.LocalDate
 import uk.gov.hmrc.selfassessmentapi.models
-import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
-import uk.gov.hmrc.selfassessmentapi.models._
-import uk.gov.hmrc.selfassessmentapi.models.selfemployment.Address
 
 class SelfEmploymentUpdateSpec extends JsonSpec {
   "from" should {
 
-    val apiUpdate = models.selfemployment.SelfEmploymentUpdate(accountingPeriod = AccountingPeriod(LocalDate.parse("2017-04-01"), LocalDate.parse("2017-04-02")),
-                                                                accountingType = AccountingType.CASH,
-                                                                commencementDate = LocalDate.parse("2017-04-01"),
-                                                                effectiveDate = LocalDate.parse("2017-04-01"),
-                                                                cessationReason = Some(CessationReason.Bankruptcy),
-                                                                tradingName = "Foo Consulting",
-                                                                description = "Absorbable haemostatics (manufacture)",
-                                                                address = Address("17 Profitable Road",
-                                                                                  Some("Sussex"),
-                                                                                  Some("UK"),
-                                                                                  None,
-                                                                                  Some("W11 7QT"),
-                                                                                  "GB"),
-                                                                contactDetails = Some(selfemployment.ContactDetails(primaryPhoneNumber = Some( "077723232"),
-                                                                  secondaryPhoneNumber =  Some("077723232"),
-                                                                  faxNumber =  Some("077723232"),
-                                                                  emailAddress =  Some("admin@mail.com"))),
-                                                                paperless = false,
-                                                                seasonal = false)
+    val apiUpdate = models.selfemployment.SelfEmploymentUpdate(tradingName = "Foo Consulting",
+      businessDescription =
+        "Absorbable haemostatics (manufacture)",
+      businessAddressLineOne = "17 Profitable Road",
+      businessAddressLineTwo = Some("Sussex"),
+      businessAddressLineThree = Some("UK"),
+      businessAddressLineFour = None,
+      businessPostcode = "W11 7QT")
 
     val desUpdate = SelfEmploymentUpdate.from(apiUpdate)
 
     "correctly map a API self-employment update into a DES self-employment update" in {
-      desUpdate.accountingPeriodStartDate shouldBe apiUpdate.accountingPeriod.start.toString
-      desUpdate.accountingPeriodEndDate shouldBe apiUpdate.accountingPeriod.end.toString
-      desUpdate.cashOrAccruals shouldBe AccountingType.toDes(apiUpdate.accountingType)
-      desUpdate.tradingStartDate shouldBe apiUpdate.commencementDate.toString
       desUpdate.tradingName shouldBe apiUpdate.tradingName
-      desUpdate.typeOfBusiness shouldBe apiUpdate.description
-      desUpdate.addressDetails.addressLine1 shouldBe apiUpdate.address.lineOne
-      desUpdate.addressDetails.addressLine2 shouldBe apiUpdate.address.lineTwo
-      desUpdate.addressDetails.addressLine3 shouldBe apiUpdate.address.lineThree
-      desUpdate.addressDetails.addressLine4 shouldBe apiUpdate.address.lineFour
-      desUpdate.addressDetails.postalCode shouldBe apiUpdate.address.postalCode
-      desUpdate.addressDetails.countryCode shouldBe apiUpdate.address.countryCode
-      desUpdate.contactDetails shouldBe ContactDetails.from(apiUpdate.contactDetails)
-      desUpdate.paperless shouldBe apiUpdate.paperless
-      desUpdate.seasonal shouldBe apiUpdate.seasonal
-      desUpdate.effectiveDate shouldBe "2017-04-01"
-      desUpdate.cessationDate shouldBe Some("2017-04-01")
-      desUpdate.reasonForCessation shouldBe Some(CessationReason.Bankruptcy.toString)
+      desUpdate.typeOfBusiness shouldBe apiUpdate.businessDescription
+      desUpdate.addressDetails.addressLine1 shouldBe apiUpdate.businessAddressLineOne
+      desUpdate.addressDetails.addressLine2 shouldBe apiUpdate.businessAddressLineTwo
+      desUpdate.addressDetails.addressLine3 shouldBe apiUpdate.businessAddressLineThree
+      desUpdate.addressDetails.addressLine4 shouldBe apiUpdate.businessAddressLineFour
+      desUpdate.addressDetails.postalCode contains apiUpdate.businessPostcode
     }
-
   }
 
 }
