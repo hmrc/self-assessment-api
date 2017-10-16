@@ -29,8 +29,12 @@ case class SelfEmployment(id: Option[SourceId] = None,
                           commencementDate: LocalDate,
                           cessationDate: Option[LocalDate],
                           tradingName: String,
-                          description: String,
-                          address: Address)
+                          businessDescription: String,
+                          businessAddressLineOne: String,
+                          businessAddressLineTwo: Option[String],
+                          businessAddressLineThree: Option[String],
+                          businessAddressLineFour: Option[String],
+                          businessPostcode: String)
 
 object SelfEmployment {
   def from(desSelfEmployment: des.selfemployment.SelfEmployment): Option[SelfEmployment] = {
@@ -38,6 +42,7 @@ object SelfEmployment {
       accountingType <- AccountingType.fromDes(desSelfEmployment.cashOrAccruals)
       commencementDate <- desSelfEmployment.tradingStartDate
       address <- desSelfEmployment.addressDetails
+      addressPostcode <- address.postalCode
     } yield
       SelfEmployment(
         id = desSelfEmployment.incomeSourceId,
@@ -47,30 +52,19 @@ object SelfEmployment {
         commencementDate = LocalDate.parse(commencementDate),
         cessationDate = None,
         tradingName = desSelfEmployment.tradingName,
-        description = desSelfEmployment.typeOfBusiness.getOrElse(""), // FIXME: Not returned in DES response, it should be there...
-        address = Address(address.addressLine1,
-          address.addressLine2,
-          address.addressLine3,
-          address.addressLine4,
-          address.postalCode,
-          address.countryCode)
-      )
+        businessDescription = desSelfEmployment.typeOfBusiness.getOrElse(""), // FIXME: Not returned in DES response, it should be there...
+        businessAddressLineOne = address.addressLine1,
+        businessAddressLineTwo = address.addressLine2,
+        businessAddressLineThree = address.addressLine3,
+        businessAddressLineFour = address.addressLine4,
+        businessPostcode = addressPostcode)
   }
-
-  private def lengthIsBetween(minLength: Int, maxLength: Int): Reads[String] =
-    Reads
-      .of[String]
-      .map(_.trim)
-      .filter(
-        ValidationError(s"field length must be between $minLength and $maxLength characters",
-          ErrorCode.INVALID_FIELD_LENGTH))(name => name.length <= maxLength && name.length >= minLength)
 
   private val validateSIC: Reads[String] =
     Reads
       .of[String]
       .filter(ValidationError("business description must be a string that conforms to the UK SIC 2007 classifications",
         ErrorCode.INVALID_BUSINESS_DESCRIPTION))(name => sicClassifications.get.contains(name))
-
 
   implicit val writes: Writes[SelfEmployment] = Json.writes[SelfEmployment]
 
@@ -81,7 +75,11 @@ object SelfEmployment {
       (__ \ "commencementDate").read[LocalDate](commencementDateValidator) and
       Reads.pure[Option[LocalDate]](None) and
       (__ \ "tradingName").read[String](lengthIsBetween(1, 105)) and
-      (__ \ "description").read[String](validateSIC) and
-      (__ \ "address").read[Address]
-    ) (SelfEmployment.apply _)
+      (__ \ "businessDescription").read[String](validateSIC) and
+      (__ \ "businessAddressLineOne").read[String](lengthIsBetween(1, 35)) and
+      (__ \ "businessAddressLineTwo").readNullable[String](lengthIsBetween(1, 35)) and
+      (__ \ "businessAddressLineThree").readNullable[String](lengthIsBetween(1, 35)) and
+      (__ \ "businessAddressLineFour").readNullable[String](lengthIsBetween(1, 35)) and
+      (__ \ "businessPostcode").read[String](lengthIsBetween(1, 10) keepAnd postcodeValidator)
+    )(SelfEmployment.apply _)
 }
