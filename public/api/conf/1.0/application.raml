@@ -288,7 +288,13 @@ traits:
             body:
               application/json:
                 type: !include schemas/SE_Period_Without_ID.json
-                example: !include examples/self-employment/Period.json
+                examples:
+                 example-1:
+                  description: Full expense details example
+                  value: !include examples/self-employment/Period.json
+                 example-2:
+                  description: Consolidated expenses example
+                  value: !include examples/self-employment/Period2.json
             responses:
               201:
                 headers:
@@ -408,8 +414,8 @@ traits:
                             code: NINO_INVALID
                 404:
             put:
-              displayName: Update a self-employment update period
-              description: Update a self-employment update period.
+              displayName: Amend a self-employment periodic update
+              description: Amend a self-employment periodic update.
                            Submissions  which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
                            Valid payload may contain either expenses or consolidatedExpenses elements.
@@ -420,7 +426,13 @@ traits:
               body:
                 application/json:
                   type: !include schemas/SE_UpdatePeriod.json
-                  example: !include examples/self-employment/UpdatePeriod.json
+                  examples:
+                    example-1:
+                      description: Full expense details example
+                      value: !include examples/self-employment/UpdatePeriod.json
+                    example-2:
+                      description: Consolidated expenses example
+                      value: !include examples/self-employment/UpdatePeriod2.json
               responses:
                 204:
                   headers:
@@ -474,8 +486,8 @@ traits:
               type: string
               example: 2017-18
           put:
-            displayName: Update a self-employment annual summary
-            description: Update a self-employment annual summary for a tax year.
+            displayName: Amend a self-employment annual summary
+            description: Amend a self-employment annual summary for a tax year.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
             (annotations.scope): "write:self-assessment"
@@ -802,8 +814,8 @@ traits:
                             code: NINO_INVALID
                 404:
             put:
-              displayName: Update a non-FHL UK property update period
-              description: Update a non-FHL UK property update period.
+              displayName: Amend a non-FHL UK property periodic update
+              description: Amend a non-FHL UK property periodic update.
                            Submissions  which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
@@ -1034,8 +1046,8 @@ traits:
                             code: NINO_INVALID
                 404:
             put:
-              displayName: Update a FHL UK property update period
-              description: Update a FHL UK property update period.
+              displayName: Amend a FHL UK property periodic update
+              description: Amend a FHL UK property periodic update.
                            Submissions which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md

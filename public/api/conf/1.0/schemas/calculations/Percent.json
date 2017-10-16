@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Defines a percentage rate (to 2 decimal places), between 0.00 and 99.99",
+  "type": "number",
+  "minimum": 0.0,
+  "maximum": 99.99,
+  "multipleOf": 0.01
+}

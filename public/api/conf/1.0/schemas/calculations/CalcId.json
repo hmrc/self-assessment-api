@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "The calculation ID – an 8 digit number with leading zeros that is unique to the identifier in the calculation input",
+  "type": "string",
+  "minLength": 8,
+  "maxLength": 8,
+  "pattern": "^[0-9]{8}$"
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "totalPay": {
+      "$ref": "MonetaryPos.json",
+      "description": "Net pay from all Employments"
+    },
+    "totalBenefitsAndExpenses": {
+      "$ref": "MonetaryPos.json",
+      "description": "Total of Benefits and Expenses from all employments"
+    },
+    "totalAllowableExpenses": {
+      "$ref": "MonetaryPos.json",
+      "description": "Total allowable expenses across all employments"
+    },
+    "employment": {
+      "$ref": "EmploymentIncome.json",
+      "description": "An array for each employment"
+    }
+  },
+  "required": [
+    "totalPay",
+    "totalBenefitsAndExpenses",
+    "totalAllowableExpenses",
+    "employment"
+  ],
+  "additionalProperties": false
+}

@@ -58,7 +58,7 @@ case class CalcResult(incomeTaxNicYtd: Amount,
                       totalIncomeTax: Amount,
                       incomeTax: IncomeTax,
                       totalNic: Amount,
-                      nic: Nic,
+                      nic: Option[Nic],
                       eoyEstimate: Option[EoyEstimate],
                       msgCount: Int,
                       msg: Option[Seq[Msg]],
@@ -291,7 +291,7 @@ object AllowancesAndReliefs {
 }
 
 
-case class Nic(class2: Option[Class2], class4: Class4)
+case class Nic(class2: Option[Class2], class4: Option[Class4])
 
 object Nic {
   implicit val writes: Writes[Nic] = Json.writes[Nic]

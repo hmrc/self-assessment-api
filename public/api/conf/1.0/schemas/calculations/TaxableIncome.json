@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "totalIncomeReceived": {
+      "$ref": "MonetaryPos.json",
+      "description": "The total of income received"
+    },
+    "incomeReceived": {
+      "$ref": "IncomeReceived.json",
+      "description": "An object breaking down income received by income sources"
+    },
+    "totalAllowancesAndDeductions": {
+      "$ref": "MonetaryPos.json",
+      "description": "Total of allowances and deductions"
+    },
+    "allowancesAndDeductions": {
+      "$ref": "AllowancesAndDeductions.json",
+      "description": "An object detailing allowances and deductions"
+    }
+  },
+  "required": [
+    "totalIncomeReceived",
+    "totalAllowancesAndDeductions",
+    "allowancesAndDeductions"
+  ],
+  "additionalProperties": false
+}
