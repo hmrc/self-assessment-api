@@ -11,10 +11,6 @@
       "description": "An object relating to NIC Class 4 Calculation"
     }
   },
-  "required": [
-    "class2",
-    "class4"
-  ],
   "additionalProperties": false,
   "definitions": {
     "class2Object": {

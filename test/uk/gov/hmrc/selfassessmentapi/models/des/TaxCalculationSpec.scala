@@ -241,30 +241,34 @@ class TaxCalculationSpec extends JsonSpec {
             )
           ),
           totalNic = BigDecimal("1000.25"),
-          nic = Nic(
-            class2 = Some(
-              Class2(
-                amount = BigDecimal("1000.25"),
-                weekRate = BigDecimal("1000.25"),
-                weeks = 1,
-                limit = 99999999,
-                apportionedLimit = 2
-              )
-            ),
-            class4 =
-              Class4(
-                totalAmount = BigDecimal("1000.25"),
-                band = Seq(
-                  Class4Band(
-                    name = "abcdefghijklm",
-                    rate = BigDecimal("99.99"),
-                    threshold = Some(99999999),
-                    apportionedThreshold = Some(99999999),
-                    income = BigDecimal("1000.25"),
-                    amount = BigDecimal("1000.25")
+          nic = Some(
+            Nic(
+              class2 = Some(
+                Class2(
+                  amount = BigDecimal("1000.25"),
+                  weekRate = BigDecimal("1000.25"),
+                  weeks = 1,
+                  limit = 99999999,
+                  apportionedLimit = 2
+                )
+              ),
+              class4 =
+                Some(
+                  Class4(
+                    totalAmount = BigDecimal("1000.25"),
+                    band = Seq(
+                      Class4Band(
+                        name = "abcdefghijklm",
+                        rate = BigDecimal("99.99"),
+                        threshold = Some(99999999),
+                        apportionedThreshold = Some(99999999),
+                        income = BigDecimal("1000.25"),
+                        amount = BigDecimal("1000.25")
+                      )
+                    )
                   )
                 )
-              )
+            )
           ),
           eoyEstimate = Some(
             EoyEstimate(
@@ -311,7 +315,7 @@ class TaxCalculationSpec extends JsonSpec {
     )
 
     "round trip" in {
-        roundTripJson(validCalcDetail)
+      roundTripJson(validCalcDetail)
     }
 
     val jsonTransformer = __.json.update(__.read[JsObject].map { o =>
