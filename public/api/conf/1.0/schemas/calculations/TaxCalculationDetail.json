@@ -1,11 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "CalculationResponse",
+  "title": "TaxCalculationDetail",
   "type": "object",
-  "required:": [
-    "incomeTaxYTD",
-    "incomeTaxThisPeriod"
-  ],
   "definitions": {
     "monetary": {
       "type": "number",
@@ -30,14 +26,6 @@
     }
   },
   "properties": {
-    "incomeTaxYTD": {
-      "$ref": "#/definitions/monetary",
-      "description": "Details the amount of income tax is due based on the year to date figures supplied"
-    },
-    "incomeTaxThisPeriod": {
-      "$ref": "#/definitions/monetary",
-      "description": "Details the amount of income tax is due this period. This is based on the incomeTaxYTD less the amount in the same data item from the calculation result from the preceding period"
-    },
     "payFromAllEmployments": {
       "type": "number",
       "description": "Pay from all employments"
@@ -833,5 +821,6 @@
       "description": "Proportion reduced allowance limit"
     }
   },
+  "required:": [],
   "additionalProperties": false
 }
