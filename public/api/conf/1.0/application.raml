@@ -280,6 +280,7 @@ traits:
             description: Create a self-employment update period for submission of periodic data i.e incomes and expenses.
                          Submissions which do not include any incomes or expenses are invalid.
                          You should submit zero values if you do not have incomes or expenses.
+                         Valid payload may contain either expenses or consolidatedExpenses elements.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader, periodBVRs]
             (annotations.scope): "write:self-assessment"
@@ -287,7 +288,13 @@ traits:
             body:
               application/json:
                 type: !include schemas/SE_Period_Without_ID.json
-                example: !include examples/self-employment/Period.json
+                examples:
+                 example-1:
+                  description: Full expense details example
+                  value: !include examples/self-employment/Period.json
+                 example-2:
+                  description: Consolidated expenses example
+                  value: !include examples/self-employment/Period2.json
             responses:
               201:
                 headers:
@@ -338,8 +345,13 @@ traits:
                         description: Both expenses and consolidatedExpenses can not be present at the same time
                         value:
                           code: BOTH_EXPENSES_SUPPLIED
-                      notAllowedSimplifiedExpenses:
-                        description: Consolidated expenses are not allowed for this customer
+              403:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notAllowedConsolidatedExpenses:
+                        description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
                         value:
                           code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
           get:
@@ -402,10 +414,11 @@ traits:
                             code: NINO_INVALID
                 404:
             put:
-              displayName: Update a self-employment update period
-              description: Update a self-employment update period.
+              displayName: Amend a self-employment periodic update
+              description: Amend a self-employment periodic update.
                            Submissions  which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
+                           Valid payload may contain either expenses or consolidatedExpenses elements.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -413,7 +426,13 @@ traits:
               body:
                 application/json:
                   type: !include schemas/SE_UpdatePeriod.json
-                  example: !include examples/self-employment/UpdatePeriod.json
+                  examples:
+                    example-1:
+                      description: Full expense details example
+                      value: !include examples/self-employment/UpdatePeriod.json
+                    example-2:
+                      description: Consolidated expenses example
+                      value: !include examples/self-employment/UpdatePeriod2.json
               responses:
                 204:
                   headers:
@@ -429,6 +448,10 @@ traits:
                           description: Invalid NINO
                           value:
                             code: NINO_INVALID
+                        invalidMonetaryAmount:
+                          description: income or expense is not a non-negative amount or up to 2 decimal places
+                          value:
+                            code: INVALID_MONETARY_AMOUNT
                         invalidDisallowableAmount:
                           description: disallowableAmount > amount (except for depreciation expenseType)
                           value:
@@ -441,6 +464,20 @@ traits:
                           description: No incomes and expenses are supplied
                           value:
                             code: NO_INCOMES_AND_EXPENSES
+                        bothExpensesSupplied:
+                          description: Both expenses and consolidatedExpenses can not be present at the same time
+                          value:
+                            code: BOTH_EXPENSES_SUPPLIED
+                403:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notAllowedConsolidatedExpenses:
+                          description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
+                          value:
+                            code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
+
                 404:
         /{taxYear}:
           uriParameters:
@@ -449,8 +486,8 @@ traits:
               type: string
               example: 2017-18
           put:
-            displayName: Update a self-employment annual summary
-            description: Update a self-employment annual summary for a tax year.
+            displayName: Amend a self-employment annual summary
+            description: Amend a self-employment annual summary for a tax year.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
             (annotations.scope): "write:self-assessment"
@@ -777,8 +814,8 @@ traits:
                             code: NINO_INVALID
                 404:
             put:
-              displayName: Update a non-FHL UK property update period
-              description: Update a non-FHL UK property update period.
+              displayName: Amend a non-FHL UK property periodic update
+              description: Amend a non-FHL UK property periodic update.
                            Submissions  which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
@@ -1009,8 +1046,8 @@ traits:
                             code: NINO_INVALID
                 404:
             put:
-              displayName: Update a FHL UK property update period
-              description: Update a FHL UK property update period.
+              displayName: Amend a FHL UK property periodic update
+              description: Amend a FHL UK property periodic update.
                            Submissions which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
