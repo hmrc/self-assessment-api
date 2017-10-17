@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "class2": {
+      "$ref": "#/definitions/class2Object",
+      "description": "An object relating to NIC Class 2 Calculation"
+    },
+    "class4": {
+      "$ref": "#/definitions/class4Object",
+      "description": "An object relating to NIC Class 4 Calculation"
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "class2Object": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "$ref": "MonetaryPos.json",
+          "description": "Calculated amount of NIC Class 2"
+        },
+        "weekRate": {
+          "$ref": "MonetaryPos.json",
+          "description": "The weekly rate"
+        },
+        "weeks": {
+          "description": "the number of weeks applied in calculation",
+          "type": "number"
+        },
+        "limit": {
+          "$ref": "WholePounds.json",
+          "description": "Annual limit for NIC Class 2"
+        },
+        "apportionedLimit": {
+          "$ref": "WholePounds.json",
+          "description": "Apportioned annual limit for NIC Class 2"
+        }
+      },
+      "required": [
+        "amount",
+        "weekRate",
+        "weeks",
+        "limit",
+        "apportionedLimit"
+      ],
+      "additionalProperties": false
+    },
+    "class4Object": {
+      "type": "object",
+      "properties": {
+        "totalAmount": {
+          "$ref": "MonetaryPos.json",
+          "description": "Calculated amount of NIC Class 4"
+        },
+        "band": {
+          "$ref": "#/definitions/nic4BandArray",
+          "description": "An array detailing bands relating to NIC Class 4"
+        }
+      },
+      "required": [
+        "totalAmount",
+        "band"
+      ],
+      "additionalProperties": false
+    },
+    "nic4BandArray": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The name of the Tax band",
+            "type": "string"
+          },
+          "rate": {
+            "$ref": "Percent.json",
+            "description": "The Tax band rate expressed as a percentage"
+          },
+          "threshold": {
+            "$ref": "WholePounds.json",
+            "description": "The upper threshold of the band"
+          },
+          "apportionedThreshold": {
+            "$ref": "WholePounds.json",
+            "description": "The apportioned upper threshold of the band"
+          },
+          "income": {
+            "$ref": "MonetaryPos.json",
+            "description": "Income attributed to the tax band"
+          },
+          "amount": {
+            "$ref": "MonetaryPos.json",
+            "description": "The calculated amount of income tax for the band (bandIncome x bandRate)"
+          }
+        },
+        "required": [
+          "name",
+          "rate",
+          "income",
+          "amount"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

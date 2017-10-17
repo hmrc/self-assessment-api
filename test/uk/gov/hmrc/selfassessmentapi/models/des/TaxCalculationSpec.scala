@@ -16,247 +16,313 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.des
 
+import org.joda.time.LocalDate
 import play.api.libs.json.{Json, _}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
+
 
 class TaxCalculationSpec extends JsonSpec {
   "TaxCalculation" should {
 
-    val validCalcDetail = TaxCalculationDetail(
-      DetailsA(
-        payFromAllEmployments = Some(200.22),
-        benefitsAndExpensesReceived = Some(200.22),
-        allowableExpenses = Some(200.22),
-        payFromAllEmploymentsAfterExpenses = Some(200.22),
-        shareSchemes = Some(200.22),
-        profitFromSelfEmployment = Some(200.22),
-        profitFromPartnerships = Some(200.22),
-        profitFromUkLandAndProperty = Some(200.22),
-        foreignIncome = Some(200.22),
-        dividendsFromForeignCompanies = Some(200.22),
-        trustsAndEstates = Some(200.22),
-        interestReceivedFromUkBanksAndBuildingSocieties = Some(200.22),
-        dividendsFromUkCompanies = Some(200.22),
-        ukPensionsAndStateBenefits = Some(200.22),
-        gainsOnLifeInsurance = Some(200.22),
-        otherIncome = Some(200.22),
-        totalIncomeReceived = Some(200.22),
-        paymentsIntoARetirementAnnuity = Some(200.22),
-        foreignTaxOnEstates = Some(200.22),
-        incomeTaxRelief = Some(200.22),
-        incomeTaxReliefReducedToMaximumAllowable = Some(200.22),
-        annuities = Some(200.22)
-      ),
-      DetailsB(
-        giftOfInvestmentsAndPropertyToCharity = Some(200.22),
-        personalAllowance = Some(200.22),
-        marriageAllowanceTransfer = Some(200.22),
-        blindPersonAllowance = Some(200.22),
-        blindPersonSurplusAllowanceFromSpouse = Some(200.22),
-        incomeExcluded = Some(200.22),
-        totalIncomeAllowancesUsed = Some(200.22),
-        totalIncomeOnWhichTaxIsDue = Some(200.22),
-        payPensionsExtender = Some(200.22),
-        giftExtender = Some(200.22),
-        extendedBR = Some(200.22),
-        payPensionsProfitAtBRT = Some(200.22),
-        incomeTaxOnPayPensionsProfitAtBRT = Some(200.22),
-        payPensionsProfitAtHRT = Some(200.22),
-        incomeTaxOnPayPensionsProfitAtHRT = Some(200.22),
-        payPensionsProfitAtART = Some(200.22),
-        incomeTaxOnPayPensionsProfitAtART = Some(200.22),
-        netPropertyFinanceCosts = Some(200.22),
-        interestReceivedAtStartingRate = Some(200.22),
-        incomeTaxOnInterestReceivedAtStartingRate = Some(200.22),
-        interestReceivedAtZeroRate = Some(200.22),
-        incomeTaxOnInterestReceivedAtZeroRate = Some(200.22)
-      ),
-      DetailsC(
-        interestReceivedAtBRT = Some(200.22),
-        incomeTaxOnInterestReceivedAtBRT = Some(200.22),
-        interestReceivedAtHRT = Some(200.22),
-        incomeTaxOnInterestReceivedAtHRT = Some(200.22),
-        interestReceivedAtART = Some(200.22),
-        incomeTaxOnInterestReceivedAtART = Some(200.22),
-        dividendsAtZeroRate = Some(200.22),
-        incomeTaxOnDividendsAtZeroRate = Some(200.22),
-        dividendsAtBRT = Some(200.22),
-        incomeTaxOnDividendsAtBRT = Some(200.22),
-        dividendsAtHRT = Some(200.22),
-        incomeTaxOnDividendsAtHRT = Some(200.22),
-        dividendsAtART = Some(200.22),
-        incomeTaxOnDividendsAtART = Some(200.22),
-        totalIncomeOnWhichTaxHasBeenCharged = Some(200.22),
-        taxOnOtherIncome = Some(200.22),
-        incomeTaxDue = Some(200.22),
-        incomeTaxCharged = Some(200.22),
-        deficiencyRelief = Some(200.22),
-        topSlicingRelief = Some(200.22),
-        ventureCapitalTrustRelief = Some(200.22),
-        enterpriseInvestmentSchemeRelief = Some(200.22)
-      ),
-      DetailsD(
-        seedEnterpriseInvestmentSchemeRelief = Some(200.22),
-        communityInvestmentTaxRelief = Some(200.22),
-        socialInvestmentTaxRelief = Some(200.22),
-        maintenanceAndAlimonyPaid = Some(200.22),
-        marriedCouplesAllowance = Some(200.22),
-        marriedCouplesAllowanceRelief = Some(200.22),
-        surplusMarriedCouplesAllowance = Some(200.22),
-        surplusMarriedCouplesAllowanceRelief = Some(200.22),
-        notionalTaxFromLifePolicies = Some(200.22),
-        notionalTaxFromDividendsAndOtherIncome = Some(200.22),
-        foreignTaxCreditRelief = Some(200.22),
-        incomeTaxDueAfterAllowancesAndReliefs = Some(200.22),
-        giftAidPaymentsAmount = Some(200.22),
-        giftAidTaxDue = Some(200.22),
-        capitalGainsTaxDue = Some(200.22),
-        remittanceForNonDomiciles = Some(200.22),
-        highIncomeChildBenefitCharge = Some(200.22),
-        totalGiftAidTaxReduced = Some(200.22),
-        incomeTaxDueAfterGiftAidReduction = Some(200.22),
-        annuityAmount = Some(200.22),
-        taxDueOnAnnuity = Some(200.22),
-        taxCreditsOnDividendsFromUkCompanies = Some(200.22)
-      ),
-      DetailsE(
-        incomeTaxDueAfterDividendTaxCredits = Some(200.22),
-        nationalInsuranceContributionAmount = Some(200.22),
-        nationalInsuranceContributionCharge = Some(200.22),
-        nationalInsuranceContributionSupAmount = Some(200.22),
-        nationalInsuranceContributionSupCharge = Some(200.22),
-        totalClass4Charge = Some(200.22),
-        nationalInsuranceClass1Amount = Some(200.22),
-        nationalInsuranceClass2Amount = Some(200.22),
-        nicTotal = Some(200.22),
-        underpaidTaxForPreviousYears = Some(200.22),
-        studentLoanRepayments = Some(200.22),
-        pensionChargesGross = Some(200.22),
-        pensionChargesTaxPaid = Some(200.22),
-        totalPensionSavingCharges = Some(200.22),
-        pensionLumpSumAmount = Some(200.22),
-        pensionLumpSumRate = Some(200.22),
-        statePensionLumpSumAmount = Some(200.22),
-        remittanceBasisChargeForNonDomiciles = Some(200.22),
-        additionalTaxDueOnPensions = Some(200.22),
-        additionalTaxReliefDueOnPensions = Some(200.22),
-        incomeTaxDueAfterPensionDeductions = Some(200.22),
-        employmentsPensionsAndBenefits = Some(200.22)
-      ),
-      DetailsF(
-        outstandingDebtCollectedThroughPaye = Some(200.22),
-        payeTaxBalance = Some(200.22),
-        cisAndTradingIncome = Some(200.22),
-        partnerships = Some(200.22),
-        ukLandAndPropertyTaxPaid = Some(200.22),
-        foreignIncomeTaxPaid = Some(200.22),
-        trustAndEstatesTaxPaid = Some(200.22),
-        overseasIncomeTaxPaid = Some(200.22),
-        interestReceivedTaxPaid = Some(200.22),
-        voidISAs = Some(200.22),
-        otherIncomeTaxPaid = Some(200.22),
-        underpaidTaxForPriorYear = Some(200.22),
-        totalTaxDeducted = Some(200.22),
-        incomeTaxOverpaid = Some(200.22),
-        incomeTaxDueAfterDeductions = Some(200.22),
-        propertyFinanceTaxDeduction = Some(200.22),
-        taxableCapitalGains = Some(200.22),
-        capitalGainAtEntrepreneurRate = Some(200.22),
-        incomeTaxOnCapitalGainAtEntrepreneurRate = Some(200.22),
-        capitalGrainsAtLowerRate = Some(200.22),
-        incomeTaxOnCapitalGainAtLowerRate = Some(200.22),
-        capitalGainAtHigherRate = Some(200.22)
-      ),
-      DetailsG(
-        incomeTaxOnCapitalGainAtHigherTax = Some(200.22),
-        capitalGainsTaxAdjustment = Some(200.22),
-        foreignTaxCreditReliefOnCapitalGains = Some(200.22),
-        liabilityFromOffShoreTrusts = Some(200.22),
-        taxOnGainsAlreadyCharged = Some(200.22),
-        totalCapitalGainsTax = Some(200.22),
-        incomeAndCapitalGainsTaxDue = Some(200.22),
-        taxRefundedInYear = Some(200.22),
-        unpaidTaxCalculatedForEarlierYears = Some(200.22),
-        marriageAllowanceTransferAmount = Some(200.22),
-        marriageAllowanceTransferRelief = Some(200.22),
-        marriageAllowanceTransferMaximumAllowable = Some(200.22),
-        nationalRegime = Some("abc"),
-        allowance = Some(200),
-        limitBRT = Some(200),
-        limitHRT = Some(200),
-        rateBRT = Some(200.22),
-        rateHRT = Some(200.22),
-        rateART = Some(200.22),
-        limitAIA = Some(200),
-        allowanceBRT = Some(200),
-        interestAllowanceHRT = Some(200)
-      ),
-      DetailsH(
-        interestAllowanceBRT = Some(200),
-        dividendAllowance = Some(200),
-        dividendBRT = Some(200.22),
-        dividendHRT = Some(200.22),
-        dividendART = Some(200.22),
-        class2NICsLimit = Some(200),
-        class2NICsPerWeek = Some(200.22),
-        class4NICsLimitBR = Some(200),
-        class4NICsLimitHR = Some(200),
-        class4NICsBRT = Some(200.22),
-        class4NICsHRT = Some(200.22),
-        proportionAllowance = Some(200),
-        proportionLimitBRT = Some(200),
-        proportionLimitHRT = Some(200),
-        proportionalTaxDue = Some(200.22),
-        proportionInterestAllowanceBRT = Some(200),
-        proportionInterestAllowanceHRT = Some(200),
-        proportionDividendAllowance = Some(200),
-        proportionPayPensionsProfitAtART = Some(200),
-        proportionIncomeTaxOnPayPensionsProfitAtART = Some(200),
-        proportionPayPensionsProfitAtBRT = Some(200),
-        proportionIncomeTaxOnPayPensionsProfitAtBRT = Some(200)
-      ),
-      DetailsI(
-        proportionPayPensionsProfitAtHRT = Some(200),
-        proportionIncomeTaxOnPayPensionsProfitAtHRT = Some(200),
-        proportionInterestReceivedAtZeroRate = Some(200),
-        proportionIncomeTaxOnInterestReceivedAtZeroRate = Some(200),
-        proportionInterestReceivedAtBRT = Some(200),
-        proportionIncomeTaxOnInterestReceivedAtBRT = Some(200),
-        proportionInterestReceivedAtHRT = Some(200),
-        proportionIncomeTaxOnInterestReceivedAtHRT = Some(200),
-        proportionInterestReceivedAtART = Some(200),
-        proportionIncomeTaxOnInterestReceivedAtART = Some(200),
-        proportionDividendsAtZeroRate = Some(200),
-        proportionIncomeTaxOnDividendsAtZeroRate = Some(200),
-        proportionDividendsAtBRT = Some(200),
-        proportionIncomeTaxOnDividendsAtBRT = Some(200),
-        proportionDividendsAtHRT = Some(200),
-        proportionIncomeTaxOnDividendsAtHRT = Some(200),
-        proportionDividendsAtART = Some(200),
-        proportionIncomeTaxOnDividendsAtART = Some(200),
-        proportionClass2NICsLimit = Some(200),
-        proportionClass4NICsLimitBR = Some(200),
-        proportionClass4NICsLimitHR = Some(200),
-        proportionReducedAllowanceLimit = Some(200)
+
+    val validCalcDetail = TaxCalculation(
+      calcOutput = CalcOutput(
+        calcName = "abcdefghijklmnopqr",
+        calcVersion = "abcdef",
+        calcVersionDate = new LocalDate("2016-01-01"),
+        calcID = "12345678",
+        sourceName = "abcdefghijklmno",
+        sourceRef = "abcdefghijklmnopqrs",
+        identifier = "abcdefghijklm",
+        year = 2016,
+        periodFrom = new LocalDate("2016-01-01"),
+        periodTo = new LocalDate("2016-01-01"),
+        calcAmount = BigDecimal("1000.25"),
+        calcTimestamp = "4498-07-06T21:42:24.294Z",
+        calcResult = CalcResult(
+          incomeTaxNicYtd = BigDecimal("1000.25"),
+          incomeTaxNicDelta = BigDecimal("1000.25"),
+          crystallised = true,
+          nationalRegime = "UK",
+          totalTaxableIncome = BigDecimal("1000.25"),
+          taxableIncome = TaxableIncome(
+            totalIncomeReceived = BigDecimal("1000.25"),
+            incomeReceived = Some(IncomeReceived(
+              a = IncomeReceivedA(
+                employmentIncome = Some(BigDecimal("1000.25")),
+                employments = Some(Employments(
+                  totalPay = BigDecimal("1000.25"),
+                  totalBenefitsAndExpenses = BigDecimal("1000.25"),
+                  totalAllowableExpenses = BigDecimal("1000.25"),
+                  employment = Seq(Employment(
+                    incomeSourceID = "abcdefghijklm",
+                    latestDate = new LocalDate("2016-01-01"),
+                    netPay = BigDecimal("1000.25"),
+                    benefitsAndExpenses = BigDecimal("1000.25"),
+                    allowableExpenses = BigDecimal("1000.25")
+                  )))),
+                shareSchemeIncome = Some(BigDecimal("1000.25")),
+                shareSchemes = Some(IncomeDetails(
+                  incomeSourceID = Some("abcdefghijklm"),
+                  latestDate = Some(new LocalDate("2016-01-01"))
+                )),
+                selfEmploymentIncome = Some(BigDecimal("1000.25")),
+                selfEmployment = Some(
+                  Seq(SelfEmployment(
+                    incomeSourceID = "abcdefghijklm",
+                    latestDate = new LocalDate("2016-01-01"),
+                    accountStartDate = Some(new LocalDate("2016-01-01")),
+                    accountEndDate = Some(new LocalDate("2016-01-01")),
+                    taxableIncome = BigDecimal("1000.25"),
+                    finalised = Some(true)
+                  )
+                  )),
+                partnershipIncome = Some(BigDecimal("1000.25")),
+                partnership = Some(
+                  Seq(
+                    Partnership(
+                      incomeSourceID = "abcdefghijklm",
+                      latestDate = new LocalDate("2016-01-01"),
+                      taxableIncome = BigDecimal("1000.25")
+                    )
+                  )
+                ),
+                ukPropertyIncome = Some(BigDecimal("1000.25")),
+                ukProperty = Some(
+                  UkProperty(
+                    latestDate = new LocalDate("2016-01-01"),
+                    taxableProfit = Some(BigDecimal("1000.25")),
+                    taxableProfitFhlUk = Some(BigDecimal("1000.25")),
+                    taxableProfitFhlEea = Some(BigDecimal("1000.25")),
+                    finalised = Some(true)
+                  )
+                ),
+                foreignIncome = Some(BigDecimal("1000.25")),
+                foreign = Some(IncomeDetails(
+                  incomeSourceID = Some("abcdefghijklm"),
+                  latestDate = Some(new LocalDate("2016-01-01"))
+                )),
+                foreignDividendIncome = Some(BigDecimal("1000.25"))
+              ),
+              b = IncomeReceivedB(
+                foreignDividends = Some(
+                  IncomeDetails(
+                    incomeSourceID = Some("abcdefghijklm"),
+                    latestDate = Some(new LocalDate("2016-01-01"))
+                  )
+                ),
+                trustsIncome = Some(BigDecimal("1000.25")),
+                trusts = Some(
+                  IncomeDetails(
+                    incomeSourceID = Some("abcdefghijklm"),
+                    latestDate = Some(new LocalDate("2016-01-01"))
+                  )
+                ),
+                bbsiIncome = Some(BigDecimal("1000.25")),
+                bbsi = Some(
+                  Bbsi(
+                    incomeSourceID = "abcdefghijklm",
+                    latestDate = new LocalDate("2016-01-01"),
+                    interestReceived = BigDecimal("1000.25")
+                  )
+                ),
+                ukDividendIncome = Some(BigDecimal("1000.25")),
+                ukDividends = Some(
+                  IncomeDetails(
+                    incomeSourceID = Some("abcdefghijklm"),
+                    latestDate = Some(new LocalDate("2016-01-01"))
+                  )
+                ),
+                ukPensionsIncome = Some(BigDecimal("1000.25")),
+                ukPensions = Some(
+                  IncomeDetails(
+                    incomeSourceID = Some("abcdefghijklm"),
+                    latestDate = Some(new LocalDate("2016-01-01"))
+                  )
+                ),
+                gainsOnLifeInsuranceIncome = Some(BigDecimal("1000.25")),
+                gainsOnLifeInsurance = Some(
+                  IncomeDetails(
+                    incomeSourceID = Some("abcdefghijklm"),
+                    latestDate = Some(new LocalDate("2016-01-01"))
+                  )
+                ),
+                otherIncome = Some(BigDecimal("1000.25"))
+              )
+            )),
+            totalAllowancesAndDeductions = BigDecimal("1000.25"),
+            allowancesAndDeductions = AllowancesAndDeductions(
+              paymentsIntoARetirementAnnuity = Some(BigDecimal("1000.25")),
+              foreignTaxOnEstates = Some(BigDecimal("1000.25")),
+              incomeTaxRelief = Some(BigDecimal("1000.25")),
+              annuities = Some(BigDecimal("1000.25")),
+              giftOfInvestmentsAndPropertyToCharity = Some(BigDecimal("1000.25")),
+              apportionedPersonalAllowance = BigDecimal("1000.25"),
+              marriageAllowanceTransfer = Some(BigDecimal("1000.25")),
+              blindPersonAllowance = Some(BigDecimal("1000.25")),
+              blindPersonSurplusAllowanceFromSpouse = Some(BigDecimal("1000.25")),
+              incomeExcluded = Some(BigDecimal("1000.25"))
+            )
+          ),
+          totalIncomeTax = BigDecimal("1000.25"),
+          incomeTax = IncomeTax(
+            totalBeforeReliefs = BigDecimal("1000.25"),
+            taxableIncome = BigDecimal("1000.25"),
+            payPensionsProfit = Some(
+              Profit(
+                totalAmount = BigDecimal("1000.25"),
+                taxableIncome = BigDecimal("1000.25"),
+                band = Seq(
+                  Band(
+                    name = "abcdefghijklm",
+                    rate = BigDecimal("99.99"),
+                    threshold = Some(99999999),
+                    apportionedThreshold = Some(99999999),
+                    income = BigDecimal("1000.25"),
+                    taxAmount = BigDecimal("1000.25")
+                  )
+                )
+              )
+            ),
+            savingsAndGains = Some(
+              Profit(
+                totalAmount = BigDecimal("1000.25"),
+                taxableIncome = BigDecimal("1000.25"),
+                band = Seq(
+                  Band(
+                    name = "abcdefghijklm",
+                    rate = BigDecimal("99.99"),
+                    threshold = Some(99999999),
+                    apportionedThreshold = Some(99999999),
+                    income = BigDecimal("1000.25"),
+                    taxAmount = BigDecimal("1000.25")
+                  )
+                )
+              )
+            ),
+            dividends = Some(
+              Profit(
+                totalAmount = BigDecimal("1000.25"),
+                taxableIncome = BigDecimal("1000.25"),
+                band = Seq(
+                  Band(
+                    name = "abcdefghijklm",
+                    rate = BigDecimal("99.99"),
+                    threshold = Some(99999999),
+                    apportionedThreshold = Some(99999999),
+                    income = BigDecimal("1000.25"),
+                    taxAmount = BigDecimal("1000.25")
+                  )
+                )
+              )
+            ),
+            excludedIncome = Some(BigDecimal("1000.25")),
+            totalAllowancesAndReliefs = BigDecimal("1000.25"),
+            allowancesAndReliefs = Some(
+              AllowancesAndReliefs(
+                deficiencyRelief = Some(BigDecimal("1000.25")),
+                topSlicingRelief = Some(BigDecimal("1000.25")),
+                ventureCapitalTrustRelief = Some(BigDecimal("1000.25")),
+                enterpriseInvestmentSchemeRelief = Some(BigDecimal("1000.25")),
+                seedEnterpriseInvestmentSchemeRelief = Some(BigDecimal("1000.25")),
+                communityInvestmentTaxRelief = Some(BigDecimal("1000.25")),
+                socialInvestmentTaxRelief = Some(BigDecimal("1000.25")),
+                maintenanceAndAlimonyPaid = Some(BigDecimal("1000.25")),
+                marriedCoupleAllowanceRate = Some(BigDecimal("1000.25")),
+                marriedCoupleAllowanceAmount = Some(BigDecimal("1000.25")),
+                marriedCoupleAllowanceRelief = Some(BigDecimal("1000.25")),
+                surplusMarriedCoupleAllowanceAmount = Some(BigDecimal("1000.25")),
+                surplusMarriedCoupleAllowanceRelief = Some(BigDecimal("1000.25")),
+                notionalTaxFromLifePolicies = Some(BigDecimal("1000.25")),
+                notionalTaxFromDividendsAndOtherIncome = Some(BigDecimal("1000.25")),
+                foreignTaxCreditRelief = Some(BigDecimal("1000.25")),
+                propertyFinanceRelief = Some(BigDecimal("1000.25"))
+              )
+            )
+          ),
+          totalNic = BigDecimal("1000.25"),
+          nic = Some(
+            Nic(
+              class2 = Some(
+                Class2(
+                  amount = BigDecimal("1000.25"),
+                  weekRate = BigDecimal("1000.25"),
+                  weeks = 1,
+                  limit = 99999999,
+                  apportionedLimit = 2
+                )
+              ),
+              class4 =
+                Some(
+                  Class4(
+                    totalAmount = BigDecimal("1000.25"),
+                    band = Seq(
+                      Class4Band(
+                        name = "abcdefghijklm",
+                        rate = BigDecimal("99.99"),
+                        threshold = Some(99999999),
+                        apportionedThreshold = Some(99999999),
+                        income = BigDecimal("1000.25"),
+                        amount = BigDecimal("1000.25")
+                      )
+                    )
+                  )
+                )
+            )
+          ),
+          eoyEstimate = Some(
+            EoyEstimate(
+              incomeSource = Seq(
+                IncomeSource(
+                  id = Some("abcdefghijklm"),
+                  `type` = Some("01"),
+                  taxableIncome = Some(99999999),
+                  supplied = Some(true),
+                  finalised = Some(true)
+                )
+              ),
+              totalTaxableIncome = 99999999,
+              incomeTaxAmount = 99999999,
+              nic2 = 99999999,
+              nic4 = 99999999,
+              totalNicAmount = 99999999,
+              incomeTaxNicAmount = 2
+            )
+          ),
+          msgCount = 1,
+          msg = Some(
+            Seq(
+              Msg(
+                `type` = "abcdefghijklm",
+                text = "abcdefghijklm"
+              )
+            )
+          ),
+          previousCalc = Some(
+            PreviousCalc(
+              calcTimestamp = "4498-07-06T21:42:24.294Z",
+              calcID = "00000000",
+              calcAmount = BigDecimal("1000.25")
+            )
+          ),
+          annualAllowances = AnnualAllowancez(
+            personalAllowance = 99999999,
+            reducedPersonalAllowanceThreshold = 99999999,
+            reducedPersonalisedAllowance = 99999999
+          )
+        )
       )
     )
 
     "round trip" in {
-      val calc = TaxCalculation(
-        incomeTaxYTD = 500.55,
-        incomeTaxThisPeriod = 239.21,
-        calcDetail = Some(validCalcDetail),
-        previousCalc = Some(PreviousTaxCalculation("abc", "abc", 123.45))
-      )
-
-      roundTripJson(calc)
+      roundTripJson(validCalcDetail)
     }
 
     val jsonTransformer = __.json.update(__.read[JsObject].map { o =>
       o ++ Json.obj("allowance" -> "foo", "limitBRT" -> "100.50")
     })
 
-    val invalidTaxCalcDetailJson = Json.toJson[TaxCalculationDetail](validCalcDetail).transform(jsonTransformer).get
+    val invalidTaxCalcDetailJson = Json.toJson[TaxCalculation](validCalcDetail).transform(jsonTransformer).get
 
     "reject non-integer fields for xxx" in {
       assertValidationErrorsWithMessage(invalidTaxCalcDetailJson, Map("" -> Seq("Value is not an integer")))

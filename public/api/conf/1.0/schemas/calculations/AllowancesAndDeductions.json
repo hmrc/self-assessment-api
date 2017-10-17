@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "paymentsIntoARetirementAnnuity": {
+      "$ref": "MonetaryPos.json",
+      "description": "Payments into a retirement annuity contract etc."
+    },
+    "foreignTaxOnEstates": {
+      "$ref": "MonetaryPos.json",
+      "description": "Foreign tax on estates (tax credit relief not claimed)"
+    },
+    "incomeTaxRelief": {
+      "$ref": "MonetaryPos.json",
+      "description": "Income tax relief"
+    },
+    "annuities": {
+      "$ref": "MonetaryPos.json",
+      "description": "Annuities"
+    },
+    "giftOfInvestmentsAndPropertyToCharity": {
+      "$ref": "MonetaryPos.json",
+      "description": "Gift of investments and property to charity"
+    },
+    "apportionedPersonalAllowance": {
+      "$ref": "MonetaryPos.json",
+      "description": "The apportioned Personal Allowance from annual allowance or reduced personal allowance (if applicable)"
+    },
+    "marriageAllowanceTransfer": {
+      "$ref": "MonetaryPos.json",
+      "description": "Marriage Allowance transfer"
+    },
+    "blindPersonAllowance": {
+      "$ref": "MonetaryPos.json",
+      "description": "Blind Person's Allowance"
+    },
+    "blindPersonSurplusAllowanceFromSpouse": {
+      "$ref": "MonetaryPos.json",
+      "description": "Blind Person's surplus allowance from spouse"
+    },
+    "incomeExcluded": {
+      "$ref": "MonetaryPos.json",
+      "description": "Income excluded from this calculation"
+    }
+  },
+  "required": [
+    "apportionedPersonalAllowance"
+  ],
+  "additionalProperties": false
+}
