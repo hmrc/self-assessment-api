@@ -17,11 +17,12 @@
 package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.BusinessDetailsResponse
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
+import play.api.libs.concurrent.Execution.Implicits._
 
 trait BusinessDetailsConnector {
   private lazy val baseUrl: String = AppContext.desUrl

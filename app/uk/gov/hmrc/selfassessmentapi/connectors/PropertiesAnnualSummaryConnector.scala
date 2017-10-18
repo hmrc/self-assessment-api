@@ -17,7 +17,6 @@
 package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.des.{FHLPropertiesAnnualSummary, OtherPropertiesAnnualSummary}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesAnnualSummary
@@ -26,13 +25,15 @@ import uk.gov.hmrc.selfassessmentapi.models.{TaxYear, des, properties}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
+import scala.concurrent.ExecutionContext
 
 object PropertiesAnnualSummaryConnector {
 
   private lazy val baseUrl: String = AppContext.desUrl
 
   def update(nino: Nino, propertyType: PropertyType, taxYear: TaxYear, update: PropertiesAnnualSummary)(
-      implicit hc: HeaderCarrier): Future[PropertiesAnnualSummaryResponse] = {
+      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesAnnualSummaryResponse] = {
     val url
       : String = baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"
     update match {
@@ -50,7 +51,7 @@ object PropertiesAnnualSummaryConnector {
   }
 
   def get(nino: Nino, propertyType: PropertyType, taxYear: TaxYear)(
-      implicit hc: HeaderCarrier): Future[PropertiesAnnualSummaryResponse] =
+      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesAnnualSummaryResponse] =
     httpGet[PropertiesAnnualSummaryResponse](
       baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}",
       PropertiesAnnualSummaryResponse(propertyType, _))

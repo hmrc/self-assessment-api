@@ -18,8 +18,8 @@ package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
 import org.joda.time.LocalDate
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
+import uk.gov.hmrc.http.HttpResponse
 
 class ObligationsResponseSpec extends UnitSpec {
 

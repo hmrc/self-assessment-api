@@ -22,12 +22,12 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import play.api.mvc.Results._
 import play.api.test.{FakeHeaders, FakeRequest, Helpers}
-import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.contexts.{Agent, FilingOnlyAgent, Individual}
 import uk.gov.hmrc.selfassessmentapi.models.Errors
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode._
 import uk.gov.hmrc.selfassessmentapi.resources.AuthRequest
+import uk.gov.hmrc.http.HttpResponse
 
 class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
   "response filter" should {

@@ -18,12 +18,12 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.mvc.Request
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.SourceId
 import uk.gov.hmrc.selfassessmentapi.models.audit.RetrieveObligations
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.ObligationsResponse
 import uk.gov.hmrc.selfassessmentapi.services.AuditData
+import uk.gov.hmrc.http.HeaderCarrier
 
 sealed trait RetrieveObligationTransaction
 

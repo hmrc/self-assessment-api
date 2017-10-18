@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
-import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.Validation._
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
+import play.api.data.validation.ValidationError
 
 class ValidationSpec extends JsonSpec {
   case class Foo(a: Int, b: Int)

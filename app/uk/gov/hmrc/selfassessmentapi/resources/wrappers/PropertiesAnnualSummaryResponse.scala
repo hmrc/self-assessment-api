@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType._
 import uk.gov.hmrc.selfassessmentapi.models.properties.{
@@ -25,6 +24,7 @@ import uk.gov.hmrc.selfassessmentapi.models.properties.{
   PropertiesAnnualSummary,
   PropertyType
 }
+import uk.gov.hmrc.http.HttpResponse
 
 case class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlying: HttpResponse) extends Response {
   def annualSummary: Option[PropertiesAnnualSummary] = propertyType match {

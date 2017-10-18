@@ -19,7 +19,6 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, Request}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesAnnualSummaryConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.audit.AnnualSummaryUpdate
@@ -37,6 +36,7 @@ import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 object PropertiesAnnualSummaryResource extends BaseResource {
   private val connector = PropertiesAnnualSummaryConnector

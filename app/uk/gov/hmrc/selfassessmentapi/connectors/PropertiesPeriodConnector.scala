@@ -18,7 +18,6 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 
 import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
@@ -26,6 +25,8 @@ import uk.gov.hmrc.selfassessmentapi.models.{Financials, Period, PeriodId, des}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesPeriodResponse
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
+import scala.concurrent.ExecutionContext.Implicits.global
 
 trait PropertiesPeriodConnector[P <: Period, F <: Financials] {
   def create(nino: Nino, properties: P)(implicit hc: HeaderCarrier): Future[PropertiesPeriodResponse]
@@ -83,4 +84,5 @@ object PropertiesPeriodConnector {
     httpGet[PropertiesPeriodResponse](
       baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries",
       PropertiesPeriodResponse)
+
 }

@@ -54,7 +54,7 @@ class DividendsRepository(implicit mongo: () => DB)
           BSONDocument("nino" -> nino.nino),
           d
         ).map { res =>
-          if (res.hasErrors) logger.error(s"Database error occurred. Error: ${res.errmsg} Code: ${res.code}")
+          if (!res.writeErrors.isEmpty) logger.error(s"Database error occurred. Error: ${res.errmsg} Code: ${res.code}")
           res.ok && res.nModified > 0
         }
       case _ => Future.successful(false)

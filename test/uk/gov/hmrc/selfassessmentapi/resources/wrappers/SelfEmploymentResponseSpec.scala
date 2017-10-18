@@ -19,10 +19,10 @@ package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 import org.joda.time.LocalDate
 import org.scalatest.EitherValues
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentRetrieve
+import uk.gov.hmrc.http.HttpResponse
 
 class SelfEmploymentResponseSpec extends UnitSpec with EitherValues {
   private val nino = generateNino
