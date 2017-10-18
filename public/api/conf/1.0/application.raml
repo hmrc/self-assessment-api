@@ -276,11 +276,11 @@ traits:
               404:
         /periods:
           post:
-            displayName: Create a self-employment update period
-            description: Create a self-employment update period for submission of periodic data i.e incomes and expenses.
+            displayName: Create a self-employment periodic update
+            description: Create a self-employment periodic update for submission of periodic data i.e incomes and expenses.
                          Submissions which do not include any incomes or expenses are invalid.
                          You should submit zero values if you do not have incomes or expenses.
-                         Valid payload may contain either expenses or consolidatedExpenses elements.
+                         <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader, periodBVRs]
             (annotations.scope): "write:self-assessment"
@@ -387,8 +387,8 @@ traits:
                 description: Update period ID
                 type: string
             get:
-              displayName: Get a self-employment update period
-              description: Get a single self-employment update period for a given identifier.
+              displayName: Get a self-employment periodic update
+              description: Get a single self-employment periodic update for a given identifier.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "read:self-assessment"
@@ -402,7 +402,13 @@ traits:
                   body:
                     application/json:
                       type: !include schemas/SE_Period_Without_ID.json
-                      example: !include examples/self-employment/Period.json
+                      examples:
+                       example-1:
+                        description: Periodic update with full expense details example
+                        value: !include examples/self-employment/Period.json
+                       example-2:
+                        description: Periodic update with consolidated expenses example
+                        value: !include examples/self-employment/Period2.json
                 400:
                   body:
                     application/json:
@@ -418,7 +424,7 @@ traits:
               description: Amend a self-employment periodic update.
                            Submissions  which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
-                           Valid payload may contain either expenses or consolidatedExpenses elements.
+                           <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
