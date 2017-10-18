@@ -5,7 +5,7 @@
   "properties": {
     "id": {
       "title": "ID",
-      "description": "Unique period identifier for the income source",
+      "description": "An identifier for the self-employment business, unique to the customer",
       "type": "string"
     },
     "accountingPeriod": {
@@ -80,6 +80,7 @@
     }
   },
   "required": [
+    "id",
     "accountingPeriod",
     "accountingType",
     "tradingName"
