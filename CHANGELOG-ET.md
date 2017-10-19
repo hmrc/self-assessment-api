@@ -1,3 +1,12 @@
+
+## [0.140.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.140.0) 19-Oct-2017
+
+* JSON schema rollback for breaking changes which were introduced in 0.138.0
+  * List all self employment businesses
+  * Add a self employment business
+  * Get a self employment business
+* Documentation improvements
+
 ## [0.138.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.138.0) 05-Oct-2017
 
 * 3LA - Taxpayer can submit/amend consolidated expenses for Self employment
