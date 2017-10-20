@@ -14,12 +14,18 @@ uses:
   types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
 
 documentation:
+  - title: Context
+    content: !include docs/context.md
   - title: Overview
     content: !include docs/overview.md
-  - title: Sandbox
-    content: !include docs/sandbox.md
   - title: Terminology
     content: !include docs/terminology.md
+  - title: Changelog
+    content: !include docs/changeLog.md
+  - title: Technical support
+    content: !include docs/technicalSupport.md
+  - title: Sandbox
+    content: !include docs/sandbox.md
   - title: Versioning
     content: !include https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/versioning.md
   - title: Errors
@@ -384,7 +390,7 @@ traits:
           /{periodId}:
             uriParameters:
               periodId:
-                description: Update period ID
+                description: An identifier for the update period, unique to the customer's self-employment business.
                 type: string
             get:
               displayName: Get a self-employment periodic update
@@ -403,12 +409,12 @@ traits:
                     application/json:
                       type: !include schemas/SE_Period_Without_ID.json
                       examples:
-                       example-1:
-                        description: Periodic update with full expense details example
-                        value: !include examples/self-employment/Period.json
-                       example-2:
-                        description: Periodic update with consolidated expenses example
-                        value: !include examples/self-employment/Period2.json
+                        example-1:
+                          description: Periodic update with full expense details example
+                          value: !include examples/self-employment/Period.json
+                        example-2:
+                          description: Periodic update with consolidated expenses example
+                          value: !include examples/self-employment/Period2.json
                 400:
                   body:
                     application/json:
@@ -424,8 +430,8 @@ traits:
               description: Amend a self-employment periodic update.
                            Submissions  which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
+                           Valid payload may contain either expenses or consolidatedExpenses elements.
                            <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
-              (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
               securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
@@ -868,8 +874,8 @@ traits:
                 type: string
                 example: 2017-18
             put:
-              displayName: Update a non-FHL UK property business annual summary
-              description: Update a non-FHL UK property business annual summary for a tax year.
+              displayName: Amend a non-FHL UK property business annual summary
+              description: Amend a non-FHL UK property business annual summary for a tax year.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -1100,8 +1106,8 @@ traits:
                 type: string
                 example: 2017-18
             put:
-              displayName: Update a FHL UK property business annual summary
-              description: Update a FHL UK property business annual summary for a tax year.
+              displayName: Amend a FHL UK property business annual summary
+              description: Amend a FHL UK property business annual summary for a tax year.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
