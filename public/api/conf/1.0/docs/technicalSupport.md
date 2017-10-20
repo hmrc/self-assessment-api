@@ -3,7 +3,3 @@ Technical issues with the API can be raised via the Software Development Support
 ### Notes ###
 * some APIs may be marked “test only” - this means that they are not available for use in production and may change
 * some APIs may be marked “canned” - this means they will return a pre-defined response that may not align with the data provided
-
-### Changelog ###
-
-The changelog can be found in API [Github](https://github.com/hmrc/self-assessment-api/blob/master/CHANGELOG.md) repository.
