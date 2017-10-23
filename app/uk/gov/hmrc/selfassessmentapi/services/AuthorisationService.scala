@@ -21,19 +21,18 @@ import play.api.libs.json.Json.toJson
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.{AffinityGroup, Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.{Retrievals, ~}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.{HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuthConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.{Agent, AuthContext, FilingOnlyAgent, Individual}
 import uk.gov.hmrc.selfassessmentapi.models.Errors.{ClientNotSubscribed, NinoInvalid}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, MtdId}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 import scala.util.matching.Regex
+import uk.gov.hmrc.http.{ HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse }
 
 object AuthorisationService extends AuthorisedFunctions {
   type AuthResult = Either[Result, AuthContext]
@@ -44,7 +43,7 @@ object AuthorisationService extends AuthorisedFunctions {
 
   private val logger = Logger(AuthorisationService.getClass)
 
-  def authCheck(nino: Nino)(implicit hc: HeaderCarrier, reqHeader: RequestHeader): Future[AuthResult] =
+  def authCheck(nino: Nino)(implicit hc: HeaderCarrier, reqHeader: RequestHeader, ec: ExecutionContext): Future[AuthResult] =
     lookupService.mtdReferenceFor(nino).flatMap {
       case Right(id) => authoriseAsClient(id)
       case Left(status) =>
@@ -62,7 +61,8 @@ object AuthorisationService extends AuthorisedFunctions {
       .map(_.value)
 
   private def authoriseAsClient(mtdId: MtdId)(implicit hc: HeaderCarrier,
-                                              requestHeader: RequestHeader): Future[AuthResult] = {
+                                              requestHeader: RequestHeader,
+                                              ec: ExecutionContext): Future[AuthResult] = {
     logger.debug("Attempting to authorise user as a fully-authorised individual.")
     authorised(
       Enrolment("HMRC-MTD-IT")
@@ -82,7 +82,8 @@ object AuthorisationService extends AuthorisedFunctions {
   }
 
   private def authoriseAsFOA(implicit hc: HeaderCarrier,
-                             reqHeader: RequestHeader): PartialFunction[Throwable, Future[AuthResult]] = {
+                             reqHeader: RequestHeader,
+                             ec: ExecutionContext): PartialFunction[Throwable, Future[AuthResult]] = {
     case _: InsufficientEnrolments =>
       authorised(AffinityGroup.Agent and Enrolment("HMRC-AS-AGENT"))
         .retrieve(Retrievals.agentCode and Retrievals.authorisedEnrolments) { // If the user is an agent are they enrolled in Agent Services?

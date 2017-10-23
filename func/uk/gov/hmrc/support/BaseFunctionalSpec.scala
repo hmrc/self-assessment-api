@@ -8,7 +8,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode.LENIENT
 import play.api.libs.json._
 import uk.gov.hmrc.api.controllers.ErrorNotFound
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.{ErrorNotImplemented, Period, TaxYear}
@@ -169,7 +169,7 @@ trait BaseFunctionalSpec extends TestApplication {
     private def extractPathElement[T](path: String)(implicit reads: Reads[T]): Option[T] = {
       val pathSeq = path.filter(!_.isWhitespace).split('\\').toSeq.filter(!_.isEmpty)
 
-      def op(js: Option[JsValue], pathElement: String) = {
+      def op(js: Option[JsValue], pathElement: String): Option[JsValue] = {
         val pattern = """(.*)\((\d+)\)""".r
         js match {
           case Some(v) =>

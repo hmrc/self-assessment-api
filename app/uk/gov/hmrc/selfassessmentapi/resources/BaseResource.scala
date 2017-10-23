@@ -25,7 +25,7 @@ import uk.gov.hmrc.selfassessmentapi.contexts.{AuthContext, Individual}
 import uk.gov.hmrc.selfassessmentapi.models.SourceType.SourceType
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
 
 trait BaseResource extends BaseController {

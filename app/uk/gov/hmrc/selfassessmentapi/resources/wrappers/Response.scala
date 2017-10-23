@@ -22,12 +22,12 @@ import play.api.libs.json.JsValue
 import play.api.libs.json.Json.toJson
 import play.api.mvc.Result
 import play.api.mvc.Results._
-import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode.{DesErrorCode, _}
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, MultiDesError}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, PeriodSummary, des}
 import uk.gov.hmrc.selfassessmentapi.resources.AuthRequest
+import uk.gov.hmrc.http.HttpResponse
 
 trait Response {
   val logger: Logger = Logger(this.getClass)

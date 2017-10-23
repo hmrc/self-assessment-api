@@ -32,13 +32,10 @@ import uk.gov.hmrc.api.config.{ServiceLocatorConfig, ServiceLocatorRegistration}
 import uk.gov.hmrc.api.connector.ServiceLocatorConnector
 import uk.gov.hmrc.api.controllers.{ErrorAcceptHeaderInvalid, ErrorNotFound, HeaderValidator}
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.auth.filter.{AuthorisationFilter, FilterConfig}
+import uk.gov.hmrc.auth.filter.FilterConfig
+import uk.gov.hmrc.play.auth.microservice.filters.AuthorisationFilter
 import uk.gov.hmrc.kenshoo.monitoring.MonitoringFilter
-import uk.gov.hmrc.play.audit.filters.AuditFilter
 import uk.gov.hmrc.play.config.{AppName, RunMode}
-import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
-import uk.gov.hmrc.play.http.logging.filters.LoggingFilter
-import uk.gov.hmrc.play.http.{HeaderCarrier, NotImplementedException}
 import uk.gov.hmrc.play.microservice.bootstrap.DefaultMicroserviceGlobal
 import uk.gov.hmrc.play.scheduling._
 import uk.gov.hmrc.selfassessmentapi.config.simulation.{
@@ -52,17 +49,23 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.GovTestScenarioHeader
 
 import scala.collection.immutable.ListMap
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
 import scala.util.matching.Regex
+import uk.gov.hmrc.http.{ HeaderCarrier, NotImplementedException }
+import uk.gov.hmrc.play.microservice.filters.{ AuditFilter, LoggingFilter, MicroserviceFilterSupport }
+import uk.gov.hmrc.play.auth.controllers.AuthParamsControllerConfig
+import uk.gov.hmrc.play.config.ControllerConfig
 
 case class ControllerConfigParams(needsHeaderValidation: Boolean = true,
                                   needsLogging: Boolean = true,
                                   needsAuditing: Boolean = true,
                                   needsTaxYear: Boolean = true)
 
-object ControllerConfiguration {
+object ControllerConfiguration extends ControllerConfig {
+
   private implicit val regexValueReader: ValueReader[Regex] = StringReader.stringValueReader.map(_.r)
+
   private implicit val controllerParamsReader = ValueReader.relative[ControllerConfigParams] { config =>
     ControllerConfigParams(
       needsHeaderValidation = config.getAs[Boolean]("needsHeaderValidation").getOrElse(true),
@@ -147,9 +150,18 @@ object AgentSimulationFilter extends Filter with MicroserviceFilterSupport {
   }
 }
 
+object AuthParamsControllerConfiguration extends AuthParamsControllerConfig {
+  lazy val controllerConfigs = ControllerConfiguration.controllerConfigs
+}
+
 object MicroserviceAuthFilter extends AuthorisationFilter with MicroserviceFilterSupport {
-  override def config: FilterConfig = FilterConfig(ControllerConfiguration.controllerConfigs)
-  override def connector: AuthConnector = MicroserviceAuthConnector
+
+  override def authConnector = MicroserviceAuthConnector
+
+  override def authParamsConfig = AuthParamsControllerConfiguration
+
+  override def controllerNeedsAuth(controllerName: String): Boolean = ControllerConfiguration.paramsForController(controllerName).needsAuth
+
 }
 
 object HeaderValidatorFilter extends Filter with HeaderValidator with MicroserviceFilterSupport {

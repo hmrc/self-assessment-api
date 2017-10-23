@@ -17,27 +17,27 @@
 package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.SelfEmploymentAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentAnnualSummaryResponse
 
-import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
+import scala.concurrent.{ExecutionContext, Future}
 
 object SelfEmploymentAnnualSummaryConnector {
 
   private lazy val baseUrl: String = AppContext.desUrl
 
   def update(nino: Nino, id: SourceId, taxYear: TaxYear, update: SelfEmploymentAnnualSummary)(
-      implicit hc: HeaderCarrier): Future[SelfEmploymentAnnualSummaryResponse] =
+      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentAnnualSummaryResponse] =
     httpPut[SelfEmploymentAnnualSummary, SelfEmploymentAnnualSummaryResponse](
       baseUrl + s"/income-store/nino/$nino/self-employments/$id/annual-summaries/${taxYear.toDesTaxYear}",
       update,
       SelfEmploymentAnnualSummaryResponse)
 
   def get(nino: Nino, id: SourceId, taxYear: TaxYear)(
-      implicit hc: HeaderCarrier): Future[SelfEmploymentAnnualSummaryResponse] =
+      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentAnnualSummaryResponse] =
     httpGet[SelfEmploymentAnnualSummaryResponse](
       baseUrl + s"/income-store/nino/$nino/self-employments/$id/annual-summaries/${taxYear.toDesTaxYear}",
       SelfEmploymentAnnualSummaryResponse)

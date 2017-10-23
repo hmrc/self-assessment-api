@@ -18,11 +18,11 @@ package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
 import play.api.libs.json.Reads
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
 import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId, PeriodSummary, des}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.Response.periodsExceeding
+import uk.gov.hmrc.http.HttpResponse
 
 case class PropertiesPeriodResponse(underlying: HttpResponse) extends Response {
   def createLocationHeader(nino: Nino, id: PropertyType, periodId: PeriodId): String =

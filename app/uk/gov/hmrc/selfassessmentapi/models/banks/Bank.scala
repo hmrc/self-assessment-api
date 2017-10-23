@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.banks
 
-import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, SourceId}
+import play.api.data.validation.ValidationError
 
 case class Bank(id: Option[SourceId] = None,
                 accountName: Option[String])

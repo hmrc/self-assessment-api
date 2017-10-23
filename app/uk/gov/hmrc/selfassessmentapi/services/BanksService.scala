@@ -24,14 +24,13 @@ import uk.gov.hmrc.selfassessmentapi.repositories.BanksRepository
 import uk.gov.hmrc.selfassessmentapi.models.SourceId
 import uk.gov.hmrc.selfassessmentapi.models.banks.Bank
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait BanksMongoService {
 
   val mongoRepository: BanksRepository
 
-  def create(nino: Nino, bank: Bank): Future[Option[SourceId]] = {
+  def create(nino: Nino, bank: Bank)(implicit ec: ExecutionContext): Future[Option[SourceId]] = {
     val id = BSONObjectID.generate
     val newBank =
       domain.Bank(id, id.stringify, nino, DateTime.now(DateTimeZone.UTC),
@@ -42,7 +41,7 @@ trait BanksMongoService {
     }
   }
 
-  def update(nino: Nino, bank: Bank, id: SourceId): Future[Boolean] = {
+  def update(nino: Nino, bank: Bank, id: SourceId)(implicit ec: ExecutionContext): Future[Boolean] = {
     mongoRepository.retrieve(id, nino).flatMap {
       case Some(oldBank) =>
         mongoRepository.update(id, nino, oldBank.copy(accountName = bank.accountName))
@@ -50,10 +49,10 @@ trait BanksMongoService {
     }
   }
 
-  def retrieve(nino: Nino, id: SourceId): Future[Option[Bank]] =
+  def retrieve(nino: Nino, id: SourceId)(implicit ec: ExecutionContext): Future[Option[Bank]] =
     mongoRepository.retrieve(id, nino).map(_.map(_.toModel(true)))
 
-  def retrieveAll(nino: Nino): Future[Seq[Bank]] =
+  def retrieveAll(nino: Nino)(implicit ec: ExecutionContext): Future[Seq[Bank]] =
     mongoRepository.retrieveAll(nino).map(_.map(_.toModel()))
 
 }

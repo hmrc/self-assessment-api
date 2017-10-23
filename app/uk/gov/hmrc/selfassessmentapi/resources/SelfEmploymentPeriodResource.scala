@@ -19,7 +19,6 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, Request}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext._
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
@@ -30,8 +29,9 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentPeriodResp
 import uk.gov.hmrc.selfassessmentapi.services.AuditData
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 object SelfEmploymentPeriodResource extends BaseResource {
   private val connector = SelfEmploymentPeriodConnector

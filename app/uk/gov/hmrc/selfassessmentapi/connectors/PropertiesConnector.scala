@@ -17,26 +17,26 @@
 package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.properties.Properties
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
 
-import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
+import scala.concurrent.{ExecutionContext, Future}
 
 object PropertiesConnector {
 
   private lazy val baseUrl: String = AppContext.desUrl
 
-  def create(nino: Nino, properties: Properties)(implicit hc: HeaderCarrier): Future[PropertiesResponse] = {
+  def create(nino: Nino, properties: Properties)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesResponse] = {
     httpPost[des.properties.Properties, PropertiesResponse](
       baseUrl + s"/income-tax-self-assessment/nino/$nino/properties",
       des.properties.Properties.from(properties),
       PropertiesResponse)
   }
 
-  def retrieve(nino: Nino)(implicit hc: HeaderCarrier): Future[PropertiesResponse] =
+  def retrieve(nino: Nino)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesResponse] =
     httpGet[PropertiesResponse](baseUrl + s"/registration/business-details/nino/$nino", PropertiesResponse)
 
 }

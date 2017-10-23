@@ -21,8 +21,8 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
+import uk.gov.hmrc.http.HttpResponse
 
 class SelfEmploymentPeriodResponseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
   private val mockResponse = mock[HttpResponse]

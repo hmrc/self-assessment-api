@@ -18,20 +18,19 @@ package uk.gov.hmrc.selfassessmentapi.services
 
 import play.api.Logger
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.BusinessDetailsConnector
 import uk.gov.hmrc.selfassessmentapi.models.MtdId
 import uk.gov.hmrc.selfassessmentapi.repositories.MtdReferenceRepository
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
+import scala.concurrent.{ExecutionContext, Future}
 
 trait MtdRefLookupService {
   private val logger = Logger(MtdRefLookupService.getClass)
   val businessConnector: BusinessDetailsConnector
   val repository: MtdReferenceRepository
 
-  def mtdReferenceFor(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Int, MtdId]] = {
+  def mtdReferenceFor(nino: Nino)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Int, MtdId]] = {
     repository.retrieve(nino).flatMap {
       case Some(mtdId) =>
         logger.debug("NINO to MTD Ref lookup cache hit.")
@@ -42,7 +41,7 @@ trait MtdRefLookupService {
     }
   }
 
-  private def cacheReferenceFor(nino: Nino)(implicit hc: HeaderCarrier): Future[Either[Int, MtdId]] = {
+  private def cacheReferenceFor(nino: Nino)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Int, MtdId]] = {
     businessConnector.get(nino).map { response =>
       response.status match {
         case 200 =>

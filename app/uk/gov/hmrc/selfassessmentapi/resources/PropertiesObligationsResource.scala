@@ -24,7 +24,7 @@ import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType}
 import uk.gov.hmrc.selfassessmentapi.resources.Audit.makeObligationsRetrievalAudit
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 
 object PropertiesObligationsResource extends BaseResource {
   private val connector = ObligationsConnector

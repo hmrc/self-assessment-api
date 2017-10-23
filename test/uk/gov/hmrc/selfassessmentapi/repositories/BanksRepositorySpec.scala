@@ -23,6 +23,8 @@ import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
 import uk.gov.hmrc.selfassessmentapi.domain.Bank
 import uk.gov.hmrc.selfassessmentapi.models.banks.BankAnnualSummary
 
+import scala.concurrent.ExecutionContext.Implicits.global
+ 
 class BanksRepositorySpec extends MongoEmbeddedDatabase {
   private val repo = new BanksRepository
   private val nino = generateNino

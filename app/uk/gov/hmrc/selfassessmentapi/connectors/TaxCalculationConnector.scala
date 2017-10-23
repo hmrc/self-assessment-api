@@ -18,23 +18,23 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.TaxCalculationResponse
 
-import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
+import scala.concurrent.{ExecutionContext, Future}
 
 object TaxCalculationConnector {
 
   private lazy val baseUrl: String = AppContext.desUrl
 
-  def requestCalculation(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier): Future[TaxCalculationResponse] =
+  def requestCalculation(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaxCalculationResponse] =
     httpPost[JsValue, TaxCalculationResponse](
       baseUrl + s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation", Json.obj(),
       TaxCalculationResponse)
 
-  def retrieveCalculation(nino: Nino, calcId: SourceId)(implicit hc: HeaderCarrier): Future[TaxCalculationResponse] =
+  def retrieveCalculation(nino: Nino, calcId: SourceId)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaxCalculationResponse] =
     httpGet[TaxCalculationResponse](baseUrl + s"/calculation-store/calculation-data/$nino/calcId/$calcId",
                                     TaxCalculationResponse)
 }

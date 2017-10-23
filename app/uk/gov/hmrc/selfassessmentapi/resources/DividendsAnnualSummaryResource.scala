@@ -24,7 +24,7 @@ import uk.gov.hmrc.selfassessmentapi.models.dividends.Dividends
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.DividendsAnnualSummaryService
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 
 object DividendsAnnualSummaryResource extends BaseResource {
 

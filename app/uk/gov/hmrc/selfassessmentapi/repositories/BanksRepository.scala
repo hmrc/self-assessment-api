@@ -29,8 +29,7 @@ import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.selfassessmentapi.domain.Bank
 import uk.gov.hmrc.selfassessmentapi.models.SourceId
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class BanksRepository(implicit mongo: () => DB) extends ReactiveRepository[Bank, BSONObjectID](
   "banks",
@@ -43,35 +42,35 @@ class BanksRepository(implicit mongo: () => DB) extends ReactiveRepository[Bank,
     Index(Seq(("nino", Ascending), ("sourceId", Ascending)), name = Some("ba_nino_sourceId"), unique = true),
     Index(Seq(("lastModifiedDateTime", Ascending)), name = Some("ba_lastmodified"), unique = false))
 
-  def retrieve(id: SourceId, nino: Nino): Future[Option[Bank]] = {
+  def retrieve(id: SourceId, nino: Nino)(implicit ec: ExecutionContext): Future[Option[Bank]] = {
     find("nino" -> nino.nino, "sourceId" -> id).map(_.headOption)
   }
 
-  def retrieveAll(nino: Nino): Future[Seq[Bank]] = {
+  def retrieveAll(nino: Nino)(implicit ec: ExecutionContext): Future[Seq[Bank]] = {
     find("nino" -> nino.nino)
   }
 
-  def create(bank: Bank): Future[Boolean] = {
+  def create(bank: Bank)(implicit ec: ExecutionContext): Future[Boolean] = {
     insert(bank).map { res =>
-      if (res.hasErrors) logger.error(s"Database error occurred. Error: ${res.errmsg} Code: ${res.code}")
+      if (!res.writeErrors.isEmpty) logger.error(s"Database error occurred. Errors: ${res.writeErrors} Code: ${res.code}")
       res.ok
     }
   }
 
-  def update(id: SourceId, nino: Nino, newBank: Bank): Future[Boolean] = {
+  def update(id: SourceId, nino: Nino, newBank: Bank)(implicit ec: ExecutionContext): Future[Boolean] = {
     domainFormatImplicit.writes(newBank.copy(lastModifiedDateTime = DateTime.now(DateTimeZone.UTC))) match {
       case d @ JsObject(_) => collection.update(
         BSONDocument("nino" -> nino.nino, "sourceId" -> id),
         d
       ).map { res =>
-        if (res.hasErrors) logger.error(s"Database error occurred. Error: ${res.errmsg} Code: ${res.code}")
+        if (!res.writeErrors.isEmpty) logger.error(s"Database error occurred. Error: ${res.errmsg} Code: ${res.code}")
         res.ok && res.nModified > 0
       }
       case _ => Future.successful(false)
     }
   }
 
-  def deleteAllBeforeDate(lastModifiedDateTime: DateTime): Future[Int] = {
+  def deleteAllBeforeDate(lastModifiedDateTime: DateTime)(implicit ec: ExecutionContext): Future[Int] = {
     val query = BSONDocument("lastModifiedDateTime" ->
       BSONDocument("$lte" -> BSONDateTime(lastModifiedDateTime.getMillis)))
 
