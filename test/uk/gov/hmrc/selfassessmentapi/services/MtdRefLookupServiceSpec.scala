@@ -25,8 +25,8 @@ import uk.gov.hmrc.selfassessmentapi.repositories.MtdReferenceRepository
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.BusinessDetailsResponse
 
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
+import uk.gov.hmrc.http.HeaderCarrier
 
 class MtdRefLookupServiceSpec extends UnitSpec with MockitoSugar {
   implicit val hc: HeaderCarrier = HeaderCarrier()

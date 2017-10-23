@@ -23,7 +23,7 @@ import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesConnector
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 
 object PropertiesResource extends BaseResource {
   private val connector = PropertiesConnector

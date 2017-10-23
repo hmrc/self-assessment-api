@@ -49,7 +49,7 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.GovTestScenarioHeader
 
 import scala.collection.immutable.ListMap
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
 import scala.util.matching.Regex
 import uk.gov.hmrc.http.{ HeaderCarrier, NotImplementedException }

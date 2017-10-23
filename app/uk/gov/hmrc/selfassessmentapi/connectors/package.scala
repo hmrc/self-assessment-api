@@ -22,11 +22,9 @@ import uk.gov.hmrc.selfassessmentapi.config.{AppContext, WSHttp}
 import uk.gov.hmrc.selfassessmentapi.resources.GovTestScenarioHeader
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.Response
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpReads, HttpResponse }
 import uk.gov.hmrc.http.logging.Authorization
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 package object connectors {
   private val logger = Logger("connectors")

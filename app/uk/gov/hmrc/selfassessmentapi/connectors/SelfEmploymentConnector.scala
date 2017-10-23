@@ -22,9 +22,8 @@ import uk.gov.hmrc.selfassessmentapi.models.SourceId
 import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.{Business, SelfEmploymentUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentResponse
 
-import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 object SelfEmploymentConnector {
 

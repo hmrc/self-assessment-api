@@ -20,9 +20,8 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.ObligationsResponse
 
-import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 object ObligationsConnector {
   private lazy val baseUrl: String = AppContext.desUrl

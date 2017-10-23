@@ -20,14 +20,13 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.BusinessDetailsResponse
 
-import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
-import play.api.libs.concurrent.Execution.Implicits._
+import scala.concurrent.{ExecutionContext, Future}
 
 trait BusinessDetailsConnector {
   private lazy val baseUrl: String = AppContext.desUrl
 
-  def get(nino: Nino)(implicit hc: HeaderCarrier): Future[BusinessDetailsResponse] =
+  def get(nino: Nino)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[BusinessDetailsResponse] =
     httpGet[BusinessDetailsResponse](baseUrl + s"/registration/business-details/nino/$nino",
                                      BusinessDetailsResponse)
 }

@@ -28,8 +28,8 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.TaxCalculationResponse
 import uk.gov.hmrc.selfassessmentapi.services.AuditData
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import uk.gov.hmrc.http.HeaderCarrier
+import play.api.libs.concurrent.Execution.Implicits._
 
 object TaxCalculationResource extends BaseResource {
   private val connector = TaxCalculationConnector

@@ -24,7 +24,7 @@ import uk.gov.hmrc.selfassessmentapi.models.banks.BankAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.BanksAnnualSummaryService
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 
 object BanksAnnualSummaryResource extends BaseResource {
   private val annualSummaryService = BanksAnnualSummaryService

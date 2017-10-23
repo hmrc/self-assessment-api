@@ -22,9 +22,8 @@ import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.properties.Properties
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
 
-import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 object PropertiesConnector {
 

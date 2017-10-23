@@ -28,8 +28,8 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentAnnualSumm
 import uk.gov.hmrc.selfassessmentapi.services.AuditData
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import uk.gov.hmrc.http.HeaderCarrier
+import play.api.libs.concurrent.Execution.Implicits._
 
 object SelfEmploymentAnnualSummaryResource extends BaseResource {
   private val connector = SelfEmploymentAnnualSummaryConnector

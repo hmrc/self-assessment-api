@@ -31,7 +31,7 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{PeriodMapper, Propertie
 import uk.gov.hmrc.selfassessmentapi.services.AuditData
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
 
 object PropertiesPeriodResource extends BaseResource {

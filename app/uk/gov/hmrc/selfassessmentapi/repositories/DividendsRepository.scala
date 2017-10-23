@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.repositories
 
-import org.joda.time.{DateTime, DateTimeZone, LocalDate}
+import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json.JsObject
 import play.modules.reactivemongo.MongoDbConnection
 import reactivemongo.api.DB
@@ -28,8 +28,7 @@ import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.selfassessmentapi.domain.Dividends
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 class DividendsRepository(implicit mongo: () => DB)
   extends ReactiveRepository[Dividends, BSONObjectID](
@@ -43,11 +42,11 @@ class DividendsRepository(implicit mongo: () => DB)
     Index(Seq(("lastModifiedDateTime", Ascending)), name = Some("dividends_lastmodified"), unique = false)
   )
 
-  def retrieve(nino: Nino): Future[Option[Dividends]] = find("nino" -> nino.nino).map(_.headOption)
+  def retrieve(nino: Nino)(implicit ec: ExecutionContext): Future[Option[Dividends]] = find("nino" -> nino.nino).map(_.headOption)
 
-  def create(dividends: Dividends): Future[Boolean] = insert(dividends).map(_.ok)
+  def create(dividends: Dividends)(implicit ec: ExecutionContext): Future[Boolean] = insert(dividends).map(_.ok)
 
-  def update(nino: Nino, dividends: Dividends): Future[Boolean] = {
+  def update(nino: Nino, dividends: Dividends)(implicit ec: ExecutionContext): Future[Boolean] = {
     domainFormatImplicit.writes(dividends.copy(lastModifiedDateTime = DateTime.now(DateTimeZone.UTC))) match {
       case d @ JsObject(_) =>
         collection.update(
@@ -61,7 +60,7 @@ class DividendsRepository(implicit mongo: () => DB)
     }
   }
 
-  def deleteAllBeforeDate(lastModifiedDateTime: DateTime): Future[Int] = {
+  def deleteAllBeforeDate(lastModifiedDateTime: DateTime)(implicit ec: ExecutionContext): Future[Int] = {
     val query = BSONDocument("lastModifiedDateTime" ->
       BSONDocument("$lt" -> BSONDateTime(lastModifiedDateTime.getMillis)))
 

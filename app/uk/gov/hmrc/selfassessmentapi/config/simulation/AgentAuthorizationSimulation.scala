@@ -21,11 +21,10 @@ import play.api.mvc.{RequestHeader, Result}
 import play.api.mvc.Results.Status
 import uk.gov.hmrc.selfassessmentapi.models.{ErrorAgentNotAuthorized, ErrorAgentBadRequest}
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 object AgentAuthorizationSimulation extends Simulation {
-  override def apply(f: RequestHeader => Future[Result], rh: RequestHeader, method: String): Future[Result] = {
+  override def apply(f: RequestHeader => Future[Result], rh: RequestHeader, method: String)(implicit ec: ExecutionContext): Future[Result] = {
     method match {
       case "GET" =>
         Future.successful(

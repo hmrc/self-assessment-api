@@ -22,7 +22,7 @@ import play.api.mvc.Result
 import play.api.mvc.Results.{BadRequest, InternalServerError}
 import uk.gov.hmrc.selfassessmentapi.models.{ErrorResult, Errors, GenericErrorResult, ValidationErrorResult}
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
 
 package object resources {

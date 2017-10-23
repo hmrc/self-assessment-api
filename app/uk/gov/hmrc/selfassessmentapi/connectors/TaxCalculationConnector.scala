@@ -22,9 +22,8 @@ import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.TaxCalculationResponse
 
-import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 object TaxCalculationConnector {
 
