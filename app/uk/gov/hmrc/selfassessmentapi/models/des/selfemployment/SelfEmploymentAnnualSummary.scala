@@ -40,7 +40,16 @@ object SelfEmploymentAnnualSummary {
         outstandingBusinessIncome = adj.outstandingBusinessIncome,
         balancingChargeBpra = adj.balancingChargeBPRA,
         balancingChargeOther = adj.balancingChargeOther,
-        goodsAndServicesOwnUse = adj.goodsAndServicesOwnUse
+        goodsAndServicesOwnUse = adj.goodsAndServicesOwnUse,
+        overlapProfitCarriedForward = adj.overlapProfitCarriedForward,
+        adjustedProfit = adj.adjustedProfit,
+        adjustedLoss = adj.adjustedLoss,
+        lossOffsetAgainstOtherIncome = adj.lossOffsetAgainstOtherIncome,
+        lossCarriedBackOffsetAgainstIncomeOrCGT = adj.lossCarriedBackOffsetAgainstIncomeOrCGT,
+        lossCarriedForwardTotal = adj.lossCarriedForwardTotal,
+        cisDeductionsTotal = adj.cisDeductionsTotal,
+        taxDeductionsFromTradingIncome = adj.taxDeductionsFromTradingIncome,
+        class4NICProfitAdjustment = adj.class4NICProfitAdjustment
       )
     }
 
@@ -52,7 +61,8 @@ object SelfEmploymentAnnualSummary {
         zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionGoodsVehicleAllowance,
         businessPremisesRenovationAllowance = allow.businessPremisesRenovationAllowance,
         enhanceCapitalAllowance = allow.enhancedCapitalAllowance,
-        allowanceOnSales = allow.allowanceOnSales
+        allowanceOnSales = allow.allowanceOnSales,
+        capitalAllowanceSingleAssetPool = allow.capitalAllowanceSingleAssetPool
       )
     }
 
@@ -85,7 +95,16 @@ case class AnnualAdjustments(includedNonTaxableProfits: Option[BigDecimal],
                              outstandingBusinessIncome: Option[BigDecimal],
                              balancingChargeBpra: Option[BigDecimal],
                              balancingChargeOther: Option[BigDecimal],
-                             goodsAndServicesOwnUse: Option[BigDecimal])
+                             goodsAndServicesOwnUse: Option[BigDecimal],
+                             overlapProfitCarriedForward: Option[BigDecimal],
+                             adjustedProfit: Option[BigDecimal],
+                             adjustedLoss: Option[BigDecimal],
+                             lossOffsetAgainstOtherIncome: Option[BigDecimal],
+                             lossCarriedBackOffsetAgainstIncomeOrCGT: Option[BigDecimal],
+                             lossCarriedForwardTotal: Option[BigDecimal],
+                             cisDeductionsTotal: Option[BigDecimal],
+                             taxDeductionsFromTradingIncome: Option[BigDecimal],
+                             class4NICProfitAdjustment: Option[BigDecimal])
 
 object AnnualAdjustments {
   implicit val reads: Reads[AnnualAdjustments] = Json.reads[AnnualAdjustments]
@@ -98,7 +117,8 @@ case class AnnualAllowances(annualInvestmentAllowance: Option[BigDecimal],
                             zeroEmissionGoodsVehicleAllowance: Option[BigDecimal],
                             businessPremisesRenovationAllowance: Option[BigDecimal],
                             enhanceCapitalAllowance: Option[BigDecimal],
-                            allowanceOnSales: Option[BigDecimal])
+                            allowanceOnSales: Option[BigDecimal],
+                            capitalAllowanceSingleAssetPool: Option[BigDecimal])
 
 object AnnualAllowances {
   implicit val reads: Reads[AnnualAllowances] = Json.reads[AnnualAllowances]
