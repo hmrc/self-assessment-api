@@ -21,3 +21,18 @@
     * Update a Self employment Annual summary
     * Get a Self employment Annual summary
 * Temporarily disabled the test-only endpoint _Update a self-employment business_. Awaiting clear steer from business. 
+
+
+# UNRELEASED TAGS
+
+## [0.141.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.141.0) UNRELEASED
+
+* MTDSA-1149: Documentation improvements
+  * Copy changes as per the User research
+  * Fixed issue: Made id field in List all self-employment businesses mandatory. It was wrongly documented as optional
+  * Updated the description of id field in List all self-employment businesses to An identifier for the self-employment business, unique to the customer.
+  * The sample list periods response includes 2 elements for List all self-employment update periods, List all non-FHL UK property update periods, List all FHL UK property update periods
+  * End-point name change: Update a non-FHL UK property business annual summary --> Amend a non-FHL UK property business annual summary
+  * End-point name change: Update a FHL UK property business annual summary --> Amend a FHL UK property business annual summary
+  * Fixed issue: Made id field as mandatory for List all self-employment update periods, List all non-FHL UK property update periods, List all FHL UK property update periods. It was wrongly documented as optional
+  * All dates and taxYear fields are updated with format and example
