@@ -57,7 +57,17 @@ object SelfEmploymentAnnualSummary {
         outstandingBusinessIncome = adj.outstandingBusinessIncome,
         balancingChargeBPRA = adj.balancingChargeBpra,
         balancingChargeOther = adj.balancingChargeOther,
-        goodsAndServicesOwnUse = adj.goodsAndServicesOwnUse
+        goodsAndServicesOwnUse = adj.goodsAndServicesOwnUse,
+        overlapProfitCarriedForward = adj.overlapProfitCarriedForward,
+        adjustedProfit = adj.adjustedProfit,
+        adjustedLoss = adj.adjustedLoss,
+        lossOffsetAgainstOtherIncome = adj.lossOffsetAgainstOtherIncome,
+        lossCarriedBackOffsetAgainstIncomeOrCGT = adj.lossCarriedBackOffsetAgainstIncomeOrCGT,
+        lossCarriedForwardTotal = adj.lossCarriedForwardTotal,
+        cisDeductionsTotal = adj.cisDeductionsTotal,
+        taxDeductionsFromTradingIncome = adj.taxDeductionsFromTradingIncome,
+        class4NICProfitAdjustment = adj.class4NICProfitAdjustment
+
       )
     }
 
@@ -69,7 +79,8 @@ object SelfEmploymentAnnualSummary {
         businessPremisesRenovationAllowance = allow.businessPremisesRenovationAllowance,
         enhancedCapitalAllowance = allow.enhanceCapitalAllowance,
         allowanceOnSales = allow.allowanceOnSales,
-        zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionGoodsVehicleAllowance
+        zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionGoodsVehicleAllowance,
+        capitalAllowanceSingleAssetPool = allow.capitalAllowanceSingleAssetPool
       )
     }
 

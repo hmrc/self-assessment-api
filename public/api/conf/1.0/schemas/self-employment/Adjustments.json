@@ -93,6 +93,87 @@
       "minimum": 0,
       "maximum": 99999999999999.98,
       "example": "500.25"
+    },
+    "overlapProfitCarriedForward": {
+      "title": "Overlap profit carried forward ",
+      "description": "Any overlap profit you carried forward from previous years plus any new overlap profits in the tax year\n or minus any overlap relief you used this year.",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "adjustedProfit": {
+      "title": "Adjusted Profit for the year ",
+      "description": "Adjusted Profit for the year ",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "adjustedLoss": {
+      "title": "Adjusted Loss for the year",
+      "description": "Adjusted Loss for the year",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "lossOffsetAgainstOtherIncome": {
+      "title": "Loss from this tax year set off against other income",
+      "description": "Loss from this tax year set off against other income",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "lossCarriedBackOffsetAgainstIncomeOrCGT": {
+      "title": "Loss to be carried back to previous years and set off against income or capital gains",
+      "description": "Loss to be carried back to previous years and set off against income or capital gains.\n Don't make this claim in you use cash basis. if you use cash basis, you can only claim for terminal loss relief.",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "lossCarriedForwardTotal": {
+      "title": "Total loss to carry forward after all other set-offs",
+      "description": "Total loss to carry forward after all other set-offs - you can carry forward your loss, or the amount\n of loss not used against income or capital gains, to set against any future profits from the same business.",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "cisDeductionsTotal": {
+      "title": "Total Construction Industry Scheme (CIS) deductions taken from your payments by contractors",
+      "description": "Total Construction Industry Scheme (CIS) deductions taken from your payments by contractors \n- if you're a subcontractor, add up all your deductions made by contractors in tax year.",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "taxDeductionsFromTradingIncome": {
+      "title": "Other tax taken off trading income",
+      "description": "If you have any other tax taken off (not CIS deductions) Other tax taken off trading income",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "class4NICProfitAdjustment": {
+      "title": "Adjustment to profits chargeable to Class 4 National Insurance Contributions",
+      "description": "Adjustment to profits chargeable to Class 4 National Insurance Contributions",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
     }
   },
   "additionalProperties": false

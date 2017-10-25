@@ -88,7 +88,16 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
           outstandingBusinessIncome = Some(200.25),
           balancingChargeBpra = Some(200.25),
           balancingChargeOther = Some(200.25),
-          goodsAndServicesOwnUse = Some(200.25)
+          goodsAndServicesOwnUse = Some(200.25),
+          overlapProfitCarriedForward = Some(10),
+          adjustedProfit = Some(10.23),
+          adjustedLoss = Some(20.25),
+          lossOffsetAgainstOtherIncome = Some(10.15),
+          lossCarriedBackOffsetAgainstIncomeOrCGT = Some(10.25),
+          lossCarriedForwardTotal = Some(12.25),
+          cisDeductionsTotal = Some(10.05),
+          taxDeductionsFromTradingIncome = Some(12.25),
+          class4NICProfitAdjustment = Some(25.10)
         )),
         annualAllowances = Some(des.selfemployment.AnnualAllowances(
           annualInvestmentAllowance = Some(200.25),
@@ -97,7 +106,8 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
           businessPremisesRenovationAllowance = Some(200.25),
           enhanceCapitalAllowance = Some(200.25),
           allowanceOnSales = Some(200.25),
-          zeroEmissionGoodsVehicleAllowance = Some(200.25)
+          zeroEmissionGoodsVehicleAllowance = Some(200.25),
+          capitalAllowanceSingleAssetPool = Some(123.23)
         )),
         annualNonFinancials = Some(des.selfemployment.AnnualNonFinancials(
           businessDetailsChangedRecently = None,
@@ -120,6 +130,15 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
       adjustments.balancingChargeBPRA shouldBe Some(200.25)
       adjustments.balancingChargeOther shouldBe Some(200.25)
       adjustments.goodsAndServicesOwnUse shouldBe Some(200.25)
+      adjustments.overlapProfitCarriedForward shouldBe Some(10)
+      adjustments.adjustedProfit shouldBe Some(10.23)
+      adjustments.adjustedLoss shouldBe Some(20.25)
+      adjustments.lossOffsetAgainstOtherIncome shouldBe Some(10.15)
+      adjustments.lossCarriedBackOffsetAgainstIncomeOrCGT shouldBe Some(10.25)
+      adjustments.lossCarriedForwardTotal shouldBe Some(12.25)
+      adjustments.cisDeductionsTotal shouldBe Some(10.05)
+      adjustments.taxDeductionsFromTradingIncome shouldBe Some(12.25)
+      adjustments.class4NICProfitAdjustment shouldBe Some(25.10)
 
       val allowances = apiSummary.allowances.get
 
@@ -130,6 +149,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
       allowances.enhancedCapitalAllowance shouldBe Some(200.25)
       allowances.allowanceOnSales shouldBe Some(200.25)
       allowances.zeroEmissionGoodsVehicleAllowance shouldBe Some(200.25)
+      allowances.capitalAllowanceSingleAssetPool shouldBe Some(123.23)
 
       val nonFinancials = apiSummary.nonFinancials.get
       nonFinancials.class4NicInfo.get.exemptionCode shouldBe Some(DIVER)

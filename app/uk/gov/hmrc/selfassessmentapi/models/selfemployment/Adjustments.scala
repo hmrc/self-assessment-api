@@ -31,7 +31,16 @@ case class Adjustments(includedNonTaxableProfits: Option[BigDecimal] = None,
                        outstandingBusinessIncome: Option[BigDecimal] = None,
                        balancingChargeBPRA: Option[BigDecimal] = None,
                        balancingChargeOther: Option[BigDecimal] = None,
-                       goodsAndServicesOwnUse: Option[Amount] = None)
+                       goodsAndServicesOwnUse: Option[Amount] = None,
+                       overlapProfitCarriedForward: Option[BigDecimal] = None,
+                       adjustedProfit: Option[BigDecimal] = None,
+                       adjustedLoss: Option[BigDecimal] = None,
+                       lossOffsetAgainstOtherIncome: Option[BigDecimal] = None,
+                       lossCarriedBackOffsetAgainstIncomeOrCGT: Option[BigDecimal] = None,
+                       lossCarriedForwardTotal: Option[BigDecimal] = None,
+                       cisDeductionsTotal: Option[BigDecimal] = None,
+                       taxDeductionsFromTradingIncome: Option[BigDecimal] = None,
+                       class4NICProfitAdjustment: Option[BigDecimal] = None)
 
 object Adjustments {
   import uk.gov.hmrc.selfassessmentapi.domain.JsonFormatters.SelfEmploymentFormatters.balancingChargeTypeFormat
@@ -39,7 +48,7 @@ object Adjustments {
   implicit val writes: Writes[Adjustments] = Json.writes[Adjustments]
 
   implicit val reads: Reads[Adjustments] = (
-    (__ \ "includedNonTaxableProfits").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "includedNonTaxableProfits").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "basisAdjustment").readNullable[BigDecimal](amountValidator) and
       (__ \ "overlapReliefUsed").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "accountingAdjustment").readNullable[BigDecimal](nonNegativeAmountValidator) and
@@ -48,22 +57,15 @@ object Adjustments {
       (__ \ "outstandingBusinessIncome").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "balancingChargeBPRA").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "balancingChargeOther").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "goodsAndServicesOwnUse").readNullable[Amount](nonNegativeAmountValidator)
-    ) (
-    (nonTaxableProfits, basisAdj, overlapRelief, accountingAdj, averagingAdj, lossBroughtFwd, outstandingIncome, balancingChargeBPRA,
-     balancingChargeOther, goodsAndServices) =>
-      Adjustments(nonTaxableProfits, basisAdj, overlapRelief, accountingAdj, averagingAdj, lossBroughtFwd, outstandingIncome,
-        balancingChargeBPRA, balancingChargeOther, goodsAndServices))
-
-  lazy val example = Adjustments(
-    includedNonTaxableProfits = Some(BigDecimal(50.00)),
-    basisAdjustment = Some(BigDecimal(20.10)),
-    overlapReliefUsed = Some(BigDecimal(500.00)),
-    accountingAdjustment = Some(BigDecimal(10.50)),
-    averagingAdjustment = Some(BigDecimal(-400.99)),
-    lossBroughtForward = Some(BigDecimal(10000.00)),
-    outstandingBusinessIncome = Some(BigDecimal(50.00)),
-    balancingChargeBPRA = Some(BigDecimal(50.55)),
-    balancingChargeOther = Some(BigDecimal(50.55)),
-    goodsAndServicesOwnUse = Some(50.55))
+      (__ \ "goodsAndServicesOwnUse").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "overlapProfitCarriedForward").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "adjustedProfit").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "adjustedLoss").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "lossOffsetAgainstOtherIncome").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "lossCarriedBackOffsetAgainstIncomeOrCGT").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "lossCarriedForwardTotal").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "cisDeductionsTotal").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "taxDeductionsFromTradingIncome").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "class4NICProfitAdjustment").readNullable[BigDecimal](nonNegativeAmountValidator)
+    ) (Adjustments.apply _)
 }

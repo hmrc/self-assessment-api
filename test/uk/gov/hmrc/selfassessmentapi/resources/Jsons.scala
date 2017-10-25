@@ -425,6 +425,16 @@ object Jsons {
                       balancingChargeBPRA: BigDecimal = 500.25,
                       balancingChargeOther: BigDecimal = 500.25,
                       goodsAndServicesOwnUse: BigDecimal = 500.25,
+                      capitalAllowanceSingleAssetPool: BigDecimal = 500.25,
+                      overlapProfitCarriedForward: BigDecimal = 500.25,
+                      adjustedProfit: BigDecimal = 500.25,
+                      adjustedLoss: BigDecimal = 500.25,
+                      lossOffsetAgainstOtherIncome: BigDecimal = 500.25,
+                      lossCarriedBackOffsetAgainstIncomeOrCGT: BigDecimal = 500.25,
+                      lossCarriedForwardTotal: BigDecimal = 500.25,
+                      cisDeductionsTotal: BigDecimal = 500.25,
+                      taxDeductionsFromTradingIncome: BigDecimal = 500.25,
+                      class4NICProfitAdjustment: BigDecimal = 500.25,
                       businessDetailsChangedRecently: Boolean = true,
                       payVoluntaryClass2Nic: Boolean = false,
                       isExempt: Boolean = true,
@@ -438,7 +448,8 @@ object Jsons {
            |    "businessPremisesRenovationAllowance": $businessPremisesRenovationAllowance,
            |    "enhancedCapitalAllowance": $enhancedCapitalAllowance,
            |    "allowanceOnSales": $allowanceOnSales,
-           |    "zeroEmissionGoodsVehicleAllowance": $zeroEmissionGoodsVehicleAllowance
+           |    "zeroEmissionGoodsVehicleAllowance": $zeroEmissionGoodsVehicleAllowance,
+           |    "capitalAllowanceSingleAssetPool": $capitalAllowanceSingleAssetPool
            |  },
            |  "adjustments": {
            |    "includedNonTaxableProfits": $includedNonTaxableProfits,
@@ -450,7 +461,16 @@ object Jsons {
            |    "outstandingBusinessIncome": $outstandingBusinessIncome,
            |    "balancingChargeBPRA": $balancingChargeBPRA,
            |    "balancingChargeOther": $balancingChargeOther,
-           |    "goodsAndServicesOwnUse": $goodsAndServicesOwnUse
+           |    "goodsAndServicesOwnUse": $goodsAndServicesOwnUse,
+           |    "overlapProfitCarriedForward": $overlapProfitCarriedForward,
+           |    "adjustedProfit": $adjustedProfit,
+           |    "adjustedLoss": $adjustedLoss,
+           |    "lossOffsetAgainstOtherIncome": $lossOffsetAgainstOtherIncome,
+           |    "lossCarriedBackOffsetAgainstIncomeOrCGT": $lossCarriedBackOffsetAgainstIncomeOrCGT,
+           |    "lossCarriedForwardTotal": $lossCarriedForwardTotal,
+           |    "cisDeductionsTotal": $cisDeductionsTotal,
+           |    "taxDeductionsFromTradingIncome": $taxDeductionsFromTradingIncome,
+           |    "class4NICProfitAdjustment": $class4NICProfitAdjustment
            |  },
            |  "nonFinancials": {
            |    "class4NicInfo": {
