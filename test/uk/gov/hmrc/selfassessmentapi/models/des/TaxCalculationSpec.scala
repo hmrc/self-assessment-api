@@ -238,6 +238,25 @@ class TaxCalculationSpec extends JsonSpec {
         proportionClass4NICsLimitBR = Some(200),
         proportionClass4NICsLimitHR = Some(200),
         proportionReducedAllowanceLimit = Some(200)
+      ),
+      DetailsJ(
+        eoyEstimate = Some(
+          EndOfYearEstimate(
+            incomeSource = Seq(IncomeSource(
+              id = Some("incomeSourceId"),
+              `type` = "01",
+              taxableIncome = 1000.25,
+              supplied = false,
+              finalised = Some(true)
+            )),
+            totalTaxableIncome = Some(1000.25),
+            incomeTaxAmount = Some(1000.25),
+            nic2 = Some(1000.25),
+            nic4 = Some(1000.25),
+            totalNicAmount = Some(1000.25),
+            incomeTaxNicAmount = Some(1000.25)
+          )
+        )
       )
     )
 
