@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Annual summary",
+  "type": "object",
+  "properties": {
+    "adjustments": {
+      "$ref": "self-employment/Adjustments_GET.json"
+    },
+    "allowances": {
+      "$ref": "self-employment/Allowances.json"
+    },
+    "nonFinancials": {
+      "$ref": "self-employment/NonFinancials.json"
+    }
+  },
+  "additionalProperties": false
+}
