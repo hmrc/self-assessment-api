@@ -148,7 +148,7 @@
       "maximum": 99999999999999.98,
       "example": "500.25"
     },
-    "class4NICProfitAdjustment": {
+    "class4NicProfitAdjustment": {
       "title": "Adjustment to profits chargeable to Class 4 National Insurance Contributions",
       "description": "Adjustment to profits chargeable to Class 4 National Insurance Contributions",
       "type": "number",

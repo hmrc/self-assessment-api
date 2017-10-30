@@ -66,7 +66,7 @@ object SelfEmploymentAnnualSummary {
         lossCarriedForwardTotal = adj.lossCarriedForwardTotal,
         cisDeductionsTotal = adj.cisDeductionsTotal,
         taxDeductionsFromTradingIncome = adj.taxDeductionsFromTradingIncome,
-        class4NICProfitAdjustment = adj.class4NICProfitAdjustment
+        class4NicProfitAdjustment = adj.class4NicProfitAdjustment
 
       )
     }

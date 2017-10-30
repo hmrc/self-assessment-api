@@ -40,7 +40,7 @@ case class Adjustments(includedNonTaxableProfits: Option[BigDecimal] = None,
                        lossCarriedForwardTotal: Option[BigDecimal] = None,
                        cisDeductionsTotal: Option[BigDecimal] = None,
                        taxDeductionsFromTradingIncome: Option[BigDecimal] = None,
-                       class4NICProfitAdjustment: Option[BigDecimal] = None)
+                       class4NicProfitAdjustment: Option[BigDecimal] = None)
 
 object Adjustments {
   import uk.gov.hmrc.selfassessmentapi.domain.JsonFormatters.SelfEmploymentFormatters.balancingChargeTypeFormat
@@ -66,6 +66,6 @@ object Adjustments {
       (__ \ "lossCarriedForwardTotal").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "cisDeductionsTotal").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "taxDeductionsFromTradingIncome").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "class4NICProfitAdjustment").readNullable[BigDecimal](nonNegativeAmountValidator)
+      (__ \ "class4NicProfitAdjustment").readNullable[BigDecimal](nonNegativeAmountValidator)
     ) (Adjustments.apply _)
 }
