@@ -434,7 +434,7 @@ object Jsons {
                       lossCarriedForwardTotal: BigDecimal = 500.25,
                       cisDeductionsTotal: BigDecimal = 500.25,
                       taxDeductionsFromTradingIncome: BigDecimal = 500.25,
-                      class4NICProfitAdjustment: BigDecimal = 500.25,
+                      class4NicProfitAdjustment: BigDecimal = 500.25,
                       businessDetailsChangedRecently: Boolean = true,
                       payVoluntaryClass2Nic: Boolean = false,
                       isExempt: Boolean = true,
@@ -470,7 +470,7 @@ object Jsons {
            |    "lossCarriedForwardTotal": $lossCarriedForwardTotal,
            |    "cisDeductionsTotal": $cisDeductionsTotal,
            |    "taxDeductionsFromTradingIncome": $taxDeductionsFromTradingIncome,
-           |    "class4NICProfitAdjustment": $class4NICProfitAdjustment
+           |    "class4NicProfitAdjustment": $class4NicProfitAdjustment
            |  },
            |  "nonFinancials": {
            |    "class4NicInfo": {

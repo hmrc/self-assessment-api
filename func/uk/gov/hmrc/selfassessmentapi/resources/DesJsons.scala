@@ -285,7 +285,7 @@ object DesJsons {
            |      "lossCarriedForwardTotal": 500.25,
            |      "cisDeductionsTotal": 500.25,
            |      "taxDeductionsFromTradingIncome": 500.25,
-           |      "class4NICProfitAdjustment": 500.25
+           |      "class4NicProfitAdjustment": 500.25
            |   },
            |   "annualAllowances": {
            |      "annualInvestmentAllowance": 200.00,

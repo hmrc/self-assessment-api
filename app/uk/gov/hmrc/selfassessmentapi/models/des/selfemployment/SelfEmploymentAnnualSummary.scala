@@ -49,7 +49,7 @@ object SelfEmploymentAnnualSummary {
         lossCarriedForwardTotal = adj.lossCarriedForwardTotal,
         cisDeductionsTotal = adj.cisDeductionsTotal,
         taxDeductionsFromTradingIncome = adj.taxDeductionsFromTradingIncome,
-        class4NICProfitAdjustment = adj.class4NICProfitAdjustment
+        class4NicProfitAdjustment = adj.class4NicProfitAdjustment
       )
     }
 
@@ -104,7 +104,7 @@ case class AnnualAdjustments(includedNonTaxableProfits: Option[BigDecimal],
                              lossCarriedForwardTotal: Option[BigDecimal],
                              cisDeductionsTotal: Option[BigDecimal],
                              taxDeductionsFromTradingIncome: Option[BigDecimal],
-                             class4NICProfitAdjustment: Option[BigDecimal])
+                             class4NicProfitAdjustment: Option[BigDecimal])
 
 object AnnualAdjustments {
   implicit val reads: Reads[AnnualAdjustments] = Json.reads[AnnualAdjustments]

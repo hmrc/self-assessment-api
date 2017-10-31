@@ -97,7 +97,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
           lossCarriedForwardTotal = Some(12.25),
           cisDeductionsTotal = Some(10.05),
           taxDeductionsFromTradingIncome = Some(12.25),
-          class4NICProfitAdjustment = Some(25.10)
+          class4NicProfitAdjustment = Some(25.10)
         )),
         annualAllowances = Some(des.selfemployment.AnnualAllowances(
           annualInvestmentAllowance = Some(200.25),
@@ -138,7 +138,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
       adjustments.lossCarriedForwardTotal shouldBe Some(12.25)
       adjustments.cisDeductionsTotal shouldBe Some(10.05)
       adjustments.taxDeductionsFromTradingIncome shouldBe Some(12.25)
-      adjustments.class4NICProfitAdjustment shouldBe Some(25.10)
+      adjustments.class4NicProfitAdjustment shouldBe Some(25.10)
 
       val allowances = apiSummary.allowances.get
 
