@@ -21,38 +21,9 @@ import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 import play.api.libs.json.Json.toJson
 
 class ExpensesSpec extends JsonSpec {
-
   "Expenses" should {
-
     "round trip in" in
-      roundTripJson(Expenses(depreciation = Some(Expense(200, Some(200))), badDebt = Some(Expense(200, Some(100)))))
-
-    "reject Expenses with depreciation expense where disallowable amount is not equal to amount" in
-      assertValidationErrorWithCode(
-        Expenses(depreciation = Some(Expense(200, Some(100))), badDebt = Some(Expense(200, Some(100)))),
-        "/depreciation/disallowableAmount",
-        ErrorCode.DEPRECIATION_DISALLOWABLE_AMOUNT
-      )
-
-    "reject Expenses where the disallowable amount is greater than the amount" in
-      assertValidationErrorWithCode(Expenses(costOfGoodsBought = Some(Expense(30.00, Some(50.00)))),
-                                    "/costOfGoodsBought/disallowableAmount",
-                                    ErrorCode.INVALID_DISALLOWABLE_AMOUNT)
-
-    "reject Expenses with multiple validation errors" in
-      assertValidationErrorsWithCode[Expenses](
-        toJson(
-          Expenses(depreciation = Some(Expense(200, Some(100))),
-                   badDebt = Some(Expense(200, Some(100))),
-                   costOfGoodsBought = Some(Expense(30.00, Some(50.00))))),
-        Map(
-          "/depreciation/disallowableAmount" -> Seq(ErrorCode.DEPRECIATION_DISALLOWABLE_AMOUNT),
-          "/costOfGoodsBought/disallowableAmount" -> Seq(ErrorCode.INVALID_DISALLOWABLE_AMOUNT)
-        )
-      )
-
-    "accept Expenses with depreciation expense where disallowable amount is not defined" in
-      roundTripJson(Expenses(depreciation = Some(Expense(200, None))))
+      roundTripJson(Expenses(depreciation = Some(200), badDebt = Some(200)))
   }
 
 }

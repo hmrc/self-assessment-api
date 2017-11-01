@@ -33,28 +33,23 @@ object Generators {
       other <- Gen.option(genSimpleIncome)
     } yield Incomes(turnover = turnover, other = other)
 
-  def genExpense(depreciation: Boolean = false): Gen[Expense] =
-    for {
-      amount <- amount
-      disallowableAmount <- Gen.option(amountGen(0, amount))
-    } yield Expense(amount = amount, disallowableAmount = if (depreciation) Some(amount) else disallowableAmount)
 
   val genExpenses: Gen[Expenses] =
     for {
-      costOfGoodsBought <- Gen.option(genExpense())
-      cisPaymentsToSubcontractors <- Gen.option(genExpense())
-      staffCosts <- Gen.option(genExpense())
-      travelCosts <- Gen.option(genExpense())
-      premisesRunningCosts <- Gen.option(genExpense())
-      maintenanceCosts <- Gen.option(genExpense())
-      adminCosts <- Gen.option(genExpense())
-      advertisingCosts <- Gen.option(genExpense())
-      interest <- Gen.option(genExpense())
-      financialCharges <- Gen.option(genExpense())
-      badDebt <- Gen.option(genExpense())
-      professionalFees <- Gen.option(genExpense())
-      depreciation <- Gen.option(genExpense(depreciation = true))
-      other <- Gen.option(genExpense())
+      costOfGoodsBought <- Gen.option(amount)
+      cisPaymentsToSubcontractors <- Gen.option(amount)
+      staffCosts <- Gen.option(amount)
+      travelCosts <- Gen.option(amount)
+      premisesRunningCosts <- Gen.option(amount)
+      maintenanceCosts <- Gen.option(amount)
+      adminCosts <- Gen.option(amount)
+      advertisingCosts <- Gen.option(amount)
+      interest <- Gen.option(amount)
+      financialCharges <- Gen.option(amount)
+      badDebt <- Gen.option(amount)
+      professionalFees <- Gen.option(amount)
+      depreciation <- Gen.option(amount)
+      other <- Gen.option(amount)
     } yield
       Expenses(costOfGoodsBought = costOfGoodsBought,
                cisPaymentsToSubcontractors = cisPaymentsToSubcontractors,

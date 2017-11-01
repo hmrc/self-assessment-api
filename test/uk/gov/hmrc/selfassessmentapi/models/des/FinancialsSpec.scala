@@ -29,20 +29,20 @@ class FinancialsSpec extends JsonSpec {
           Some(models.selfemployment.Incomes(turnover = Some(SimpleIncome(10.10)), other = Some(SimpleIncome(10.10)))),
         expenses = Some(
           models.selfemployment.Expenses(
-            cisPaymentsToSubcontractors = Some(Expense(10.10, Some(10.10))),
-            depreciation = Some(Expense(10.10, Some(10.10))),
-            costOfGoodsBought = Some(Expense(10.10, Some(10.10))),
-            professionalFees = Some(Expense(10.10, Some(10.10))),
-            badDebt = Some(Expense(10.10, Some(10.10))),
-            adminCosts = Some(Expense(10.10, Some(10.10))),
-            advertisingCosts = Some(Expense(10.10, Some(10.10))),
-            financialCharges = Some(Expense(10.10, Some(10.10))),
-            interest = Some(Expense(10.10, Some(10.10))),
-            maintenanceCosts = Some(Expense(10.10, Some(10.10))),
-            premisesRunningCosts = Some(Expense(10.10, Some(10.10))),
-            staffCosts = Some(Expense(10.10, Some(10.10))),
-            travelCosts = Some(Expense(10.10, Some(10.10))),
-            other = Some(Expense(10.10, Some(10.10)))
+            cisPaymentsToSubcontractors = Some(10.10),
+            depreciation = Some(10.10),
+            costOfGoodsBought = Some(10.10),
+            professionalFees = Some(10.10),
+            badDebt = Some(10.10),
+            adminCosts = Some(10.10),
+            advertisingCosts = Some(10.10),
+            financialCharges = Some(10.10),
+            interest = Some(10.10),
+            maintenanceCosts = Some(10.10),
+            premisesRunningCosts = Some(10.10),
+            staffCosts = Some(10.10),
+            travelCosts = Some(10.10),
+            other = Some(10.10)
           )),
         consolidatedExpenses = None)
 
@@ -53,20 +53,20 @@ class FinancialsSpec extends JsonSpec {
       desIncomes.turnover shouldBe Some(10.10)
       desIncomes.other shouldBe Some(10.10)
 
-      desDeductions.constructionIndustryScheme shouldBe Some(Deduction(10.10, Some(10.10)))
-      desDeductions.depreciation shouldBe Some(Deduction(10.10, Some(10.10)))
-      desDeductions.costOfGoods shouldBe Some(Deduction(10.10, Some(10.10)))
-      desDeductions.professionalFees shouldBe Some(Deduction(10.10, Some(10.10)))
-      desDeductions.badDebt shouldBe Some(Deduction(10.10, Some(10.10)))
-      desDeductions.adminCosts shouldBe Some(Deduction(10.10, Some(10.10)))
-      desDeductions.advertisingCosts shouldBe Some(Deduction(10.10, Some(10.10)))
-      desDeductions.financialCharges shouldBe Some(Deduction(10.10, Some(10.10)))
-      desDeductions.interest shouldBe Some(Deduction(10.10, Some(10.10)))
-      desDeductions.maintenanceCosts shouldBe Some(Deduction(10.10, Some(10.10)))
-      desDeductions.premisesRunningCosts shouldBe Some(Deduction(10.10, Some(10.10)))
-      desDeductions.staffCosts shouldBe Some(Deduction(10.10, Some(10.10)))
-      desDeductions.travelCosts shouldBe Some(Deduction(10.10, Some(10.10)))
-      desDeductions.other shouldBe Some(Deduction(10.10, Some(10.10)))
+      desDeductions.constructionIndustryScheme shouldBe Some(Deduction(10.10, None))
+      desDeductions.depreciation shouldBe Some(Deduction(10.10, None))
+      desDeductions.costOfGoods shouldBe Some(Deduction(10.10, None))
+      desDeductions.professionalFees shouldBe Some(Deduction(10.10, None))
+      desDeductions.badDebt shouldBe Some(Deduction(10.10, None))
+      desDeductions.adminCosts shouldBe Some(Deduction(10.10, None))
+      desDeductions.advertisingCosts shouldBe Some(Deduction(10.10, None))
+      desDeductions.financialCharges shouldBe Some(Deduction(10.10, None))
+      desDeductions.interest shouldBe Some(Deduction(10.10, None))
+      desDeductions.maintenanceCosts shouldBe Some(Deduction(10.10, None))
+      desDeductions.premisesRunningCosts shouldBe Some(Deduction(10.10, None))
+      desDeductions.staffCosts shouldBe Some(Deduction(10.10, None))
+      desDeductions.travelCosts shouldBe Some(Deduction(10.10, None))
+      desDeductions.other shouldBe Some(Deduction(10.10, None))
     }
   }
 }

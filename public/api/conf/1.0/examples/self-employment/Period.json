@@ -6,61 +6,19 @@
     "other": { "amount": 100.25 }
   },
   "expenses": {
-    "costOfGoodsBought": {
-      "amount": 100.25,
-      "disallowableAmount": 50.25
-    },
-    "cisPaymentsToSubcontractors": {
-      "amount": 100.25,
-      "disallowableAmount": 50.25
-    },
-    "staffCosts": {
-      "amount": 100.25,
-      "disallowableAmount": 50.25
-    },
-    "travelCosts": {
-      "amount": 100.25,
-      "disallowableAmount": 50.25
-    },
-    "premisesRunningCosts": {
-      "amount": 100.25,
-      "disallowableAmount": 50.25
-    },
-    "maintenanceCosts": {
-      "amount": 100.25,
-      "disallowableAmount": 50.25
-    },
-    "adminCosts": {
-      "amount": 100.25,
-      "disallowableAmount": 50.25
-    },
-    "advertisingCosts": {
-      "amount": 100.25,
-      "disallowableAmount": 50.25
-    },
-    "interest": {
-      "amount": 100.25,
-      "disallowableAmount": 50.25
-    },
-    "financialCharges": {
-      "amount": 100.25,
-      "disallowableAmount": 50.25
-    },
-    "badDebt": {
-      "amount": 100.25,
-      "disallowableAmount": 50.25
-    },
-    "professionalFees": {
-      "amount": 100.25,
-      "disallowableAmount": 50.25
-    },
-    "depreciation": {
-      "amount": 100.25,
-      "disallowableAmount": 100.25
-    },
-    "other": {
-      "amount": 100.25,
-      "disallowableAmount": 50.25
-    }
+    "costOfGoodsBought":  100.25,
+    "cisPaymentsToSubcontractors": 100.25,
+    "staffCosts": 100.25,
+    "travelCosts": 100.25,
+    "premisesRunningCosts": 100.25,
+    "maintenanceCosts": 100.25,
+    "adminCosts": 100.25,
+    "advertisingCosts": 100.25,
+    "interest": 100.25,
+    "financialCharges": 100.25,
+    "badDebt": 100.25,
+    "professionalFees": 100.25,
+    "depreciation": 100.25,
+    "other": 100.25
   }
 }
