@@ -326,8 +326,8 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
     "return code 204 when updating a period that exists" in {
       val updatePeriod = Jsons.SelfEmployment.period(turnover = 200.25,
                                                      otherIncome = 100.25,
-                                                     costOfGoodsBought = (200.25, 50.25),
-                                                     cisPaymentsToSubcontractors = (100.25, 55.25))
+                                                     costOfGoodsBought = 200.25,
+                                                     cisPaymentsToSubcontractors = 100.25)
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -348,8 +348,8 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         toDate = Some("2017-07-04"),
         turnover = 100.25,
         otherIncome = 100.25,
-        costOfGoodsBought = (100.25, 50.25),
-        cisPaymentsToSubcontractors = (100.25, 50.25)
+        costOfGoodsBought = 100.25,
+        cisPaymentsToSubcontractors = 100.25
       )
 
       given()
@@ -395,8 +395,8 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         toDate = Some("2017-07-04"),
         turnover = 100.25,
         otherIncome = 100.25,
-        costOfGoodsBought = (100.25, 50.25),
-        cisPaymentsToSubcontractors = (100.25, 50.25)
+        costOfGoodsBought = 100.25,
+        cisPaymentsToSubcontractors = 100.25
       )
 
       given()
@@ -419,20 +419,20 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         toDate = Some("2018-04-04"),
         turnover = 200,
         otherIncome = 200,
-        costOfGoodsBought = (200, 200),
-        cisPaymentsToSubcontractors = (200, 200),
-        staffCosts = (200, 200),
-        travelCosts = (200, 200),
-        premisesRunningCosts = (200, 200),
-        maintenanceCosts = (200, 200),
-        adminCosts = (200, 200),
-        advertisingCosts = (200, 200),
-        interest = (200, 200),
-        financialCharges = (200, 200),
-        badDebt = (200, 200),
-        professionalFees = (200, 200),
-        depreciation = (200, 200),
-        otherExpenses = (200, 200)
+        costOfGoodsBought = 200,
+        cisPaymentsToSubcontractors = 200,
+        staffCosts = 200,
+        travelCosts = 200,
+        premisesRunningCosts = 200,
+        maintenanceCosts = 200,
+        adminCosts = 200,
+        advertisingCosts = 200,
+        interest = 200,
+        financialCharges = 200,
+        badDebt = 200,
+        professionalFees = 200,
+        depreciation = 200,
+        otherExpenses = 200
       )
 
       given()

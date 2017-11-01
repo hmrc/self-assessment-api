@@ -1,0 +1,9 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Amount",
+  "type": "number",
+  "multipleOf": 0.01,
+  "minimum": 0,
+  "maximum": 99999999999999.98,
+  "example": "1000.45"
+}

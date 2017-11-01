@@ -58,33 +58,27 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
   }
 
   private def fromDESExpenses(desPeriod: des.selfemployment.SelfEmploymentPeriod): Option[Expenses] = {
-
-    desPeriod.financials.flatMap(_.deductions.map { deductions =>
+    (for {
+      financials <- desPeriod.financials
+      deductions <- financials.deductions
+    } yield {
       Expenses(
-        cisPaymentsToSubcontractors = deductions.constructionIndustryScheme.map(deduction =>
-          Expense(deduction.amount, deduction.disallowableAmount)),
-        depreciation =
-          deductions.depreciation.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        costOfGoodsBought =
-          deductions.costOfGoods.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        professionalFees =
-          deductions.professionalFees.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        badDebt = deductions.badDebt.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        adminCosts = deductions.adminCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        advertisingCosts =
-          deductions.advertisingCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        financialCharges =
-          deductions.financialCharges.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        interest = deductions.interest.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        maintenanceCosts =
-          deductions.maintenanceCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        premisesRunningCosts =
-          deductions.premisesRunningCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        staffCosts = deductions.staffCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        travelCosts = deductions.travelCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        other = deductions.other.map(deduction => Expense(deduction.amount, deduction.disallowableAmount))
+        cisPaymentsToSubcontractors = deductions.constructionIndustryScheme.map(_.amount),
+        depreciation = deductions.depreciation.map(_.amount),
+        costOfGoodsBought = deductions.costOfGoods.map(_.amount),
+        professionalFees = deductions.professionalFees.map(_.amount),
+        badDebt = deductions.badDebt.map(_.amount),
+        adminCosts = deductions.adminCosts.map(_.amount),
+        advertisingCosts = deductions.advertisingCosts.map(_.amount),
+        financialCharges = deductions.financialCharges.map(_.amount),
+        interest = deductions.interest.map(_.amount),
+        maintenanceCosts = deductions.maintenanceCosts.map(_.amount),
+        premisesRunningCosts = deductions.premisesRunningCosts.map(_.amount),
+        staffCosts = deductions.staffCosts.map(_.amount),
+        travelCosts = deductions.travelCosts.map(_.amount),
+        other = deductions.other.map(_.amount)
       )
-    }).fold[Option[Expenses]](None){ex =>
+    }).fold[Option[Expenses]](None){ ex =>
       if (ex.hasExpenses) Some(ex) else None
     }
   }
