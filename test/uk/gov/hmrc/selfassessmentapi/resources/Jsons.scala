@@ -794,7 +794,34 @@ object Jsons {
            |    "proportionClass2NICsLimit": 200,
            |    "proportionClass4NICsLimitBR": 200,
            |    "proportionClass4NICsLimitHR": 200,
-           |    "proportionReducedAllowanceLimit": 200
+           |    "proportionReducedAllowanceLimit": 200,
+           |      "eoyEstimate":{  
+           |          "selfEmployment":[  
+           |          {
+           |              "id":"selfEmploymentId1",
+           |              "taxableIncome":89999999.99,
+           |              "supplied":true,
+           |              "finalised":true
+           |          },
+           |          {
+           |              "id":"selfEmploymentId2",
+           |              "taxableIncome":89999999.99,
+           |              "supplied":true,
+           |              "finalised":true
+                      }
+           |          ],
+           |          "ukProperty":[{  
+           |              "taxableIncome":89999999.99,
+           |              "supplied":true,
+           |              "finalised":true
+           |           }],
+           |           "totalTaxableIncome":89999999.99,
+           |           "incomeTaxAmount":89999999.99,
+           |           "nic2":89999999.99,
+           |           "nic4":89999999.99,
+           |           "totalNicAmount":9999999.99,
+           |           "incomeTaxNicAmount":999999.99
+           |    }
            |}
          """.stripMargin
       )

@@ -804,7 +804,45 @@ object DesJsons {
          |         "proportionClass2NICsLimit":200,
          |         "proportionClass4NICsLimitBR":200,
          |         "proportionClass4NICsLimitHR":200,
-         |         "proportionReducedAllowanceLimit":200
+         |         "proportionReducedAllowanceLimit":200,
+         |            "eoyEstimate": {
+         |              "incomeSource": [
+         |              {
+         |                "id": "selfEmploymentId1",
+         |                "type": "03",
+         |                "taxableIncome": 89999999.99,
+         |                "supplied": true,
+         |                "finalised": true
+         |              },
+         |              {
+         |                "id": "selfEmploymentId2",
+         |                "type": "03",
+         |                "taxableIncome": 89999999.99,
+         |                "supplied": true,
+         |                "finalised": true
+         |              },
+         |              {
+         |                "id": "ukPropertyId",
+         |                "type": "05",
+         |                "taxableIncome": 89999999.99,
+         |                "supplied": true,
+         |                "finalised": true
+         |              },
+         |              {
+         |                "id": "otherIncomeId",
+         |                "type": "02",
+         |                "taxableIncome": 89999999.99,
+         |                "supplied": true,
+         |                "finalised": true
+         |              }
+         |            ],
+         |            "totalTaxableIncome": 89999999.99,
+         |            "incomeTaxAmount": 89999999.99,
+         |            "nic2": 89999999.99,
+         |            "nic4": 89999999.99,
+         |            "totalNicAmount": 9999999.99,
+         |            "incomeTaxNicAmount": 999999.99
+         |          }
          |      },
          |      "previousCalc":{
          |         "calcTimestamp":"4498-07-06T21:42:24.294Z",
