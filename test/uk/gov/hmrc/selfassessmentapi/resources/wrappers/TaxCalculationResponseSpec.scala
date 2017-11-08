@@ -294,12 +294,12 @@ class TaxCalculationResponseSpec extends UnitSpec  {
 
     "end of year estimates parse UK property income" in {
       val estimate = response.calculation.value.j.value.eoyEstimate
-      estimate.value.ukProperty should (contain (PropertyIncomeSource(89999999.99, true, Some(true))))
+      estimate.value.ukProperty.value should (contain (PropertyIncomeSource(89999999.99, true, Some(true))))
     }
 
     "end of year estimates parse self-employment income" in {
       val estimate = response.calculation.value.j.value.eoyEstimate
-      estimate.value.selfEmployment should (contain (SelfEmploymentIncomeSource(Some("selfEmploymentId1"), 89999999.99, true, Some(true))))
+      estimate.value.selfEmployment.value should (contain (SelfEmploymentIncomeSource(Some("selfEmploymentId1"), 89999999.99, true, Some(true))))
     }
 
   }
