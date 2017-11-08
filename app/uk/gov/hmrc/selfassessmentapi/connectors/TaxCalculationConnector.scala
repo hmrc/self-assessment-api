@@ -35,6 +35,6 @@ object TaxCalculationConnector {
       TaxCalculationResponse)
 
   def retrieveCalculation(nino: Nino, calcId: SourceId)(implicit hc: HeaderCarrier): Future[TaxCalculationResponse] =
-    httpGet[TaxCalculationResponse](baseUrl + s"/calculation-store/calculation-data/$nino/calcId/$calcId",
+    httpGet[TaxCalculationResponse](baseUrl + s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId",
                                     TaxCalculationResponse)
 }

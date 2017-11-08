@@ -28,7 +28,6 @@ object OtherDetails {
   implicit val writes: OWrites[OtherDetails] = Json.writes[OtherDetails]
 }
 
-
 case class ApiTaxCalculation(a: Option[ApiTaxCalculation.DetailsA],
                              b: Option[ApiTaxCalculation.DetailsB],
                              c: Option[ApiTaxCalculation.DetailsC],
@@ -71,8 +70,8 @@ object ApiTaxCalculation {
   }
 
   case class EndOfYearEstimate(
-    selfEmployment: Seq[SelfEmploymentIncomeSource],
-    ukProperty: Seq[PropertyIncomeSource],
+    selfEmployment: Option[Seq[SelfEmploymentIncomeSource]],
+    ukProperty: Option[Seq[PropertyIncomeSource]],
     totalTaxableIncome: Option[BigDecimal],
     incomeTaxAmount: Option[BigDecimal],
     nic2: Option[BigDecimal],
@@ -80,12 +79,12 @@ object ApiTaxCalculation {
     totalNicAmount: Option[BigDecimal],
     incomeTaxNicAmount: Option[BigDecimal]
   )
-  
+
   object EndOfYearEstimate {
-  
+
     implicit val reads: Reads[EndOfYearEstimate] = Json.reads[EndOfYearEstimate]
     implicit val writes: Writes[EndOfYearEstimate] = Json.writes[EndOfYearEstimate]
-  
+
   }
 
   type DetailsA = des.DetailsA
@@ -124,13 +123,19 @@ object ApiTaxCalculation {
     )
   }
 
-  private def convertDetailsJ(calcDetail: TaxCalculationDetail) = 
+  private def convertDetailsJ(calcDetail: TaxCalculationDetail) =
     DetailsJ(calcDetail.j.eoyEstimate.map(convertEstimate(_)))
 
-  private def convertEstimate(estimate: des.EndOfYearEstimate) =
+  private def convertEstimate(estimate: des.EndOfYearEstimate) = {
+
+    def noneOrNotEmpty[A](seq: Seq[A]): Option[Seq[A]] = seq match {
+      case Nil => None
+      case properties => Some(properties)
+    }
+
     EndOfYearEstimate(
-      selfEmployment = convertSelfEmploymentSources(estimate.incomeSource),
-      ukProperty = convertPropertyIncomeSources(estimate.incomeSource),
+      selfEmployment = noneOrNotEmpty(convertSelfEmploymentSources(estimate.incomeSource)),
+      ukProperty = noneOrNotEmpty(convertPropertyIncomeSources(estimate.incomeSource)),
       totalTaxableIncome = estimate.totalTaxableIncome,
       incomeTaxAmount = estimate.incomeTaxAmount,
       nic2 = estimate.nic2,
@@ -138,6 +143,8 @@ object ApiTaxCalculation {
       totalNicAmount = estimate.totalNicAmount,
       incomeTaxNicAmount = estimate.incomeTaxNicAmount
     )
+
+  }
 
   private def convertPropertyIncomeSources(incomes: Seq[des.IncomeSource]): Seq[PropertyIncomeSource] =
     incomes

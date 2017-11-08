@@ -1216,7 +1216,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
       object taxCalculation {
         def isReadyFor(nino: Nino, calcId: String = "abc"): Givens = {
-          stubFor(get(urlMatching(s"/calculation-store/calculation-data/$nino/calcId/$calcId"))
+          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -1238,7 +1238,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def isNotReadyFor(nino: Nino, calcId: String = "abc"): Givens = {
-          stubFor(get(urlMatching(s"/calculation-store/calculation-data/$nino/calcId/$calcId"))
+          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
             .willReturn(
               aResponse()
                 .withStatus(204)))
@@ -1247,7 +1247,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def doesNotExistFor(nino: Nino, calcId: String = "abc"): Givens = {
-          stubFor(get(urlMatching(s"/calculation-store/calculation-data/$nino/calcId/$calcId"))
+          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
             .willReturn(
               aResponse()
                 .withStatus(404)
@@ -1258,7 +1258,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def invalidCalculationIdFor(nino: Nino, calcId: String = "abc"): Givens = {
-          stubFor(get(urlMatching(s"/calculation-store/calculation-data/$nino/calcId/$calcId"))
+          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
             .willReturn(
               aResponse()
                 .withStatus(400)

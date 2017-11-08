@@ -17,9 +17,9 @@
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
-import uk.gov.hmrc.http.HttpResponse
 import play.api.libs.json.Json
 import uk.gov.hmrc.selfassessmentapi.models.calculation.ApiTaxCalculation.{PropertyIncomeSource, SelfEmploymentIncomeSource}
+import uk.gov.hmrc.play.http.HttpResponse
 
 class TaxCalculationResponseSpec extends UnitSpec  {
 
@@ -294,12 +294,12 @@ class TaxCalculationResponseSpec extends UnitSpec  {
 
     "end of year estimates parse UK property income" in {
       val estimate = response.calculation.value.j.value.eoyEstimate
-      estimate.value.ukProperty should (contain (PropertyIncomeSource(89999999.99, true, Some(true))))
+      estimate.value.ukProperty.value should (contain (PropertyIncomeSource(89999999.99, true, Some(true))))
     }
 
     "end of year estimates parse self-employment income" in {
       val estimate = response.calculation.value.j.value.eoyEstimate
-      estimate.value.selfEmployment should (contain (SelfEmploymentIncomeSource(Some("selfEmploymentId1"), 89999999.99, true, Some(true))))
+      estimate.value.selfEmployment.value should (contain (SelfEmploymentIncomeSource(Some("selfEmploymentId1"), 89999999.99, true, Some(true))))
     }
 
   }
