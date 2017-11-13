@@ -31,7 +31,7 @@ case class SelfEmploymentPeriod(id: Option[String],
                                 incomes: Option[Incomes],
                                 expenses: Option[Expenses],
                                 consolidatedExpenses: Option[Amount])
-    extends Period with ExpensesDef
+    extends Period with ExpensesDef[Expenses]
 
 object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
 
@@ -92,7 +92,7 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
   implicit val writes: Writes[SelfEmploymentPeriod] = Json.writes[SelfEmploymentPeriod]
 
   private def financialsValidator(period: SelfEmploymentPeriod): Boolean =
-    period.incomes.exists(_.hasIncomes)  || period.expenses.exists(_.hasExpenses)
+    period.incomes.exists(_.hasIncomes) || period.expenses.exists(_.hasExpenses) || period.consolidatedExpenses.isDefined
 
   implicit val reads: Reads[SelfEmploymentPeriod] = (
     Reads.pure(None) and
