@@ -202,30 +202,30 @@
   "eoyEstimate": {
     "selfEmployment": [
       {
-        "id": "selfEmploymentId1",
-        "taxableIncome": 89999999.99,
-        "supplied": true,
-        "finalised": true
+        "id": "{selfEmploymentId1}",
+        "taxableIncome": 200.22,
+        "supplied": false,
+        "finalised": false
       },
       {
-        "id": "selfEmploymentId2",
-        "taxableIncome": 89999999.99,
-        "supplied": true,
-        "finalised": true
+        "id": "{selfEmploymentId2}",
+        "taxableIncome": 200.22,
+        "supplied": false,
+        "finalised": false
       }
     ],
     "ukProperty": [
       {
-        "taxableIncome": 89999999.99,
-        "supplied": true,
-        "finalised": true
+        "taxableIncome": 200.22,
+        "supplied": false,
+        "finalised": false
       }
     ],
-    "totalTaxableIncome": 89999999.99,
-    "incomeTaxAmount": 89999999.99,
-    "nic2": 89999999.99,
-    "nic4": 89999999.99,
-    "totalNicAmount": 9999999.99,
-    "incomeTaxNicAmount": 999999.99
+    "totalTaxableIncome": 200.22,
+    "incomeTaxAmount": 200.22,
+    "nic2": 200.22,
+    "nic4": 200.22,
+    "totalNicAmount": 200.22,
+    "incomeTaxNicAmount": 200.22
   }
 }
