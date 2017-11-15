@@ -36,3 +36,7 @@
   * End-point name change: Update a FHL UK property business annual summary --> Amend a FHL UK property business annual summary
   * Fixed issue: Made id field as mandatory for List all self-employment update periods, List all non-FHL UK property update periods, List all FHL UK property update periods. It was wrongly documented as optional
   * All dates and taxYear fields are updated with format and example
+  
+## [0.141.1](https://github.com/hmrc/self-assessment-api/releases/tag/v0.141.1) UNRELEASED
+
+* MTDSA-1227: Adding End-Of-Year Estimate to tax calculation response
