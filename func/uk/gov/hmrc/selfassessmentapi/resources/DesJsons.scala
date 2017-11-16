@@ -799,28 +799,28 @@ object DesJsons {
          |              "incomeSource": [
          |              {
          |                "id": "selfEmploymentId1",
-         |                "type": "03",
+         |                "type": "01",
          |                "taxableIncome": 89999999.99,
          |                "supplied": true,
          |                "finalised": true
          |              },
          |              {
          |                "id": "selfEmploymentId2",
-         |                "type": "03",
+         |                "type": "01",
          |                "taxableIncome": 89999999.99,
          |                "supplied": true,
          |                "finalised": true
          |              },
          |              {
          |                "id": "ukPropertyId",
-         |                "type": "05",
+         |                "type": "02",
          |                "taxableIncome": 89999999.99,
          |                "supplied": true,
          |                "finalised": true
          |              },
          |              {
          |                "id": "otherIncomeId",
-         |                "type": "02",
+         |                "type": "03",
          |                "taxableIncome": 89999999.99,
          |                "supplied": true,
          |                "finalised": true
