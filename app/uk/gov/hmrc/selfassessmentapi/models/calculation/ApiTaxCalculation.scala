@@ -148,7 +148,7 @@ object ApiTaxCalculation {
 
   private def convertPropertyIncomeSources(incomes: Seq[des.IncomeSource]): Seq[PropertyIncomeSource] =
     incomes
-      .filter{ _.`type` == "05" }
+      .filter{ _.`type` == "02" }
       .map(convertPropertyIncomeSource)
 
   private def convertPropertyIncomeSource(income: des.IncomeSource): PropertyIncomeSource =
@@ -160,7 +160,7 @@ object ApiTaxCalculation {
 
   private def convertSelfEmploymentSources(incomes: Seq[des.IncomeSource]): Seq[SelfEmploymentIncomeSource] =
     incomes
-      .filter{ _.`type` == "03" }
+      .filter{ _.`type` == "01" }
       .map(convertSelfEmploymentSource)
 
   private def convertSelfEmploymentSource(income: des.IncomeSource): SelfEmploymentIncomeSource =
