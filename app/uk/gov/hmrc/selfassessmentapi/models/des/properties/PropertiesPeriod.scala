@@ -72,10 +72,10 @@ object FHL {
 
     def from(financials: Option[properties.FHL.Financials]): Option[Financials] =
       financials.flatMap { f =>
-        (f.incomes, f.expenses) match {
-          case (None, None) => None
-          case (incomes, expenses) => Some(Financials(incomes = incomes.map(Incomes.from),
-            deductions = expenses.map(Deductions.from).fold(financials.map(f => Deductions(simplifiedExpenses = f.consolidatedExpenses))) (Option(_))
+        (f.incomes, f.expenses, f.consolidatedExpenses) match {
+          case (None, None, None) => None
+          case (incomes, expenses, consolidatedExpenses) => Some(Financials(incomes = incomes.map(Incomes.from),
+            deductions = expenses.map(Deductions.from).fold(financials.map(f => Deductions(simplifiedExpenses = consolidatedExpenses))) (Option(_))
           ))
         }
       }
@@ -134,10 +134,10 @@ object Other {
 
     def from(financials: Option[properties.Other.Financials]): Option[Financials] =
     financials.flatMap { f =>
-      (f.incomes, f.expenses) match {
-        case (None, None) => None
-        case (incomes, expenses) => Some(Financials(incomes = incomes.map(Incomes.from),
-          deductions = expenses.map(Deductions.from).fold(financials.map(f => Deductions(simplifiedExpenses = f.consolidatedExpenses))) (Option(_))
+      (f.incomes, f.expenses, f.consolidatedExpenses) match {
+        case (None, None, None) => None
+        case (incomes, expenses, consolidatedExpenses) => Some(Financials(incomes = incomes.map(Incomes.from),
+          deductions = expenses.map(Deductions.from).fold(financials.map(f => Deductions(simplifiedExpenses = consolidatedExpenses))) (Option(_))
         ))
       }
     }

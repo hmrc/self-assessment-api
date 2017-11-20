@@ -138,7 +138,7 @@ object FHL {
     implicit val writes: Writes[Financials] = Json.writes[Financials]
 
     private def financialsValidator(financials: Financials): Boolean =
-      financials.incomes.exists(_.hasIncomes) || financials.expenses.exists(_.hasExpenses)
+      financials.incomes.exists(_.hasIncomes) || financials.expenses.exists(_.hasExpenses) || financials.consolidatedExpenses.isDefined
 
     implicit val reads: Reads[Financials] = (
       (__ \ "incomes").readNullable[Incomes] and
@@ -158,7 +158,8 @@ object FHL {
         (f.incomes, f.deductions) match {
           case (None, None) => None
           case (incomes, deductions) =>
-            Some(Financials(incomes = incomes.map(Incomes.from), expenses = deductions.map(Expenses.from),
+            Some(Financials(incomes = incomes.map(Incomes.from),
+              expenses = deductions.map(Expenses.from).fold[Option[Expenses]](None)(ex => if (ex.hasExpenses) Some(ex) else None),
               consolidatedExpenses = deductions.flatMap(_.simplifiedExpenses)))
         }
       }
@@ -313,7 +314,8 @@ object Other {
         (f.incomes, f.deductions) match {
           case (None, None) => None
           case (incomes, deductions) =>
-            Some(Financials(incomes = incomes.map(Incomes.from), expenses = deductions.map(Expenses.from),
+            Some(Financials(incomes = incomes.map(Incomes.from),
+              expenses = deductions.map(Expenses.from).fold[Option[Expenses]](None)(ex => if (ex.hasExpenses) Some(ex) else None),
               consolidatedExpenses = deductions.flatMap(_.simplifiedExpenses)))
         }
       }
