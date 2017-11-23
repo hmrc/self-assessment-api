@@ -112,7 +112,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         consolidatedExpense <- Gen.option(amount)
       } yield FHL.Financials(incomes, expenses, consolidatedExpense)) retryUntil { f =>
         (f.incomes.exists(_.hasIncomes) || f.expenses.exists(_.hasExpenses) || f.consolidatedExpenses.isDefined) &&
-          !(f.expenses.exists(_.hasExpenses) &&  f.consolidatedExpenses.isDefined)
+          !(f.expenses.isDefined &&  f.consolidatedExpenses.isDefined)
       }
 
 
@@ -122,7 +122,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         expenses <- Gen.option(genExpenses)
         consolidatedExpense <- Gen.option(amount)
       } yield FHL.Financials(incomes, expenses, consolidatedExpense)) retryUntil { f =>
-        f.expenses.exists(_.hasExpenses) && f.consolidatedExpenses.isDefined
+        f.expenses.isDefined && f.consolidatedExpenses.isDefined
       }
 
     def genPropertiesPeriod(invalidPeriod: Boolean = false, nullFinancials: Boolean = false, bothExpenses: Boolean = false): Gen[FHL.Properties] =
@@ -182,7 +182,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         consolidatedExpense <- Gen.option(amount)
       } yield Other.Financials(incomes, expenses, consolidatedExpense)) retryUntil { f =>
         (f.incomes.exists(_.hasIncomes) || f.expenses.exists(_.hasExpenses) || f.consolidatedExpenses.isDefined) &&
-          !(f.expenses.exists(_.hasExpenses) &&  f.consolidatedExpenses.isDefined)
+          !(f.expenses.isDefined &&  f.consolidatedExpenses.isDefined)
       }
 
 
@@ -192,7 +192,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         expenses <- Gen.option(genExpenses)
         consolidatedExpense <- Gen.option(amount)
       } yield Other.Financials(incomes, expenses, consolidatedExpense)) retryUntil { f =>
-          f.expenses.exists(_.hasExpenses) && f.consolidatedExpenses.isDefined
+          f.expenses.isDefined && f.consolidatedExpenses.isDefined
       }
 
     def genPropertiesPeriod(invalidPeriod: Boolean = false, nullFinancials: Boolean = false, bothExpenses: Boolean = false): Gen[Other.Properties] =

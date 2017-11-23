@@ -51,7 +51,7 @@ object FHL {
     }
 
     private def bothExpensesValidator(period: Properties): Boolean = {
-      val expensesPassed = period.financials.exists(_.expenses.exists(_.hasExpenses))
+      val expensesPassed = period.financials.exists(_.expenses.isDefined)
       val consolidatedExpensesPassed = period.financials.exists(_.consolidatedExpenses.isDefined)
       !expensesPassed && !consolidatedExpensesPassed || expensesPassed ^ consolidatedExpensesPassed
     }
@@ -193,7 +193,7 @@ object Other {
     }
 
     private def bothExpensesValidator(period: Properties): Boolean = {
-      val expensesPassed = period.financials.exists(_.expenses.exists(_.hasExpenses))
+      val expensesPassed = period.financials.exists(_.expenses.isDefined)
       val consolidatedExpensesPassed = period.financials.exists(_.consolidatedExpenses.isDefined)
       val result = !expensesPassed && !consolidatedExpensesPassed || expensesPassed ^ consolidatedExpensesPassed
       result
