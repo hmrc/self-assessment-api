@@ -75,7 +75,7 @@ class SelfEmploymentPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChec
       SelfEmploymentPeriod(None, if (invalidPeriod) to else from, if (invalidPeriod) from else to, incomes, expenses, None)
     }) retryUntil { period =>
       if (nullFinancials) period.incomes.isEmpty && period.expenses.isEmpty
-      else period.incomes.exists(_.hasIncomes) || period.expenses.exists(_.hasExpenses)
+      else period.incomes.exists(_.hasIncomes) || period.expenses.exists(_.hasExpenses) || period.consolidatedExpenses.isDefined
     }
 
 }

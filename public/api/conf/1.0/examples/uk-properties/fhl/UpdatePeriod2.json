@@ -1,0 +1,8 @@
+{
+  "incomes": {
+    "rentIncome": {
+      "amount": 100.25
+    }
+  },
+  "consolidatedExpenses": 100.25
+}

@@ -42,7 +42,7 @@ class SelfEmploymentPeriodUpdateSpec extends JsonSpec with GeneratorDrivenProper
         SelfEmploymentPeriodUpdate(incomes, expenses, None)
       }) retryUntil { period =>
         if (nullFinancials) period.incomes.isEmpty && period.expenses.isEmpty
-        else period.incomes.exists(_.hasIncomes) || period.expenses.exists(_.hasExpenses)
+        else period.incomes.exists(_.hasIncomes) || period.expenses.exists(_.hasExpenses) || period.consolidatedExpenses.isDefined
       }
 
   }

@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models.selfemployment
+package uk.gov.hmrc.selfassessmentapi.models
 
-import uk.gov.hmrc.selfassessmentapi.models.Amount
+trait ExpensesDef[T] {
 
-trait ExpensesDef {
-
-  val expenses: Option[Expenses]
+  val expenses: Option[T]
   val consolidatedExpenses: Option[Amount]
 
   def singleExpensesTypeSpecified = (expenses.isEmpty && consolidatedExpenses.isEmpty) ||

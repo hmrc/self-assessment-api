@@ -26,13 +26,13 @@ import uk.gov.hmrc.selfassessmentapi.models._
 
 case class SelfEmploymentPeriodUpdate(incomes: Option[Incomes],
                                       expenses: Option[Expenses],
-                                      consolidatedExpenses: Option[Amount]) extends ExpensesDef
+                                      consolidatedExpenses: Option[Amount]) extends ExpensesDef[Expenses]
 
 object SelfEmploymentPeriodUpdate {
   implicit val writes: Writes[SelfEmploymentPeriodUpdate] = Json.writes[SelfEmploymentPeriodUpdate]
 
   private def financialsValidator(sePeriodUpdate: SelfEmploymentPeriodUpdate): Boolean =
-    sePeriodUpdate.incomes.exists(_.hasIncomes) || sePeriodUpdate.expenses.exists(_.hasExpenses)
+    sePeriodUpdate.incomes.exists(_.hasIncomes) || sePeriodUpdate.expenses.exists(_.hasExpenses) || sePeriodUpdate.consolidatedExpenses.isDefined
 
   implicit val reads: Reads[SelfEmploymentPeriodUpdate] = (
     (__ \ "incomes").readNullable[Incomes] and
