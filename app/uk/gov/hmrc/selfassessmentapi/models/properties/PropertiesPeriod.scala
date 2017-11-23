@@ -62,7 +62,7 @@ object FHL {
         (__ \ "to").read[LocalDate] and
         (__ \ "incomes").readNullable[Incomes] and
         (__ \ "expenses").readNullable[Expenses] and
-        (__ \ "consolidatedExpenses").readNullable[Amount]
+        (__ \ "consolidatedExpenses").readNullable[Amount](nonNegativeAmountValidator)
       ) ((id, from, to, incomes, expenses, consolidatedExpenses) => {
       val financials = (incomes, expenses, consolidatedExpenses) match {
         case (None, None, None) => None
@@ -205,7 +205,7 @@ object Other {
         (__ \ "to").read[LocalDate] and
         (__ \ "incomes").readNullable[Incomes] and
         (__ \ "expenses").readNullable[Expenses] and
-        (__ \ "consolidatedExpenses").readNullable[Amount]
+        (__ \ "consolidatedExpenses").readNullable[Amount](nonNegativeAmountValidator)
       ) ((id, from, to, incomes, expenses, consolidatedExpenses) => {
       val financials = (incomes, expenses, consolidatedExpenses) match {
         case (None, None, None) => None
