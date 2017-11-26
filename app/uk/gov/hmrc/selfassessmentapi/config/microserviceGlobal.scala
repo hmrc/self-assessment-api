@@ -23,6 +23,7 @@ import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.{StringReader, ValueReader}
 import play.api.http.HttpEntity
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -31,31 +32,23 @@ import play.routing.Router.Tags
 import uk.gov.hmrc.api.config.{ServiceLocatorConfig, ServiceLocatorRegistration}
 import uk.gov.hmrc.api.connector.ServiceLocatorConnector
 import uk.gov.hmrc.api.controllers.{ErrorAcceptHeaderInvalid, ErrorNotFound, HeaderValidator}
-import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.auth.filter.FilterConfig
-import uk.gov.hmrc.play.auth.microservice.filters.AuthorisationFilter
+import uk.gov.hmrc.http.{HeaderCarrier, NotImplementedException}
 import uk.gov.hmrc.kenshoo.monitoring.MonitoringFilter
-import uk.gov.hmrc.play.config.{AppName, RunMode}
+import uk.gov.hmrc.play.auth.controllers.AuthParamsControllerConfig
+import uk.gov.hmrc.play.auth.microservice.filters.AuthorisationFilter
+import uk.gov.hmrc.play.config.{AppName, ControllerConfig, RunMode}
 import uk.gov.hmrc.play.microservice.bootstrap.DefaultMicroserviceGlobal
+import uk.gov.hmrc.play.microservice.filters.{AuditFilter, LoggingFilter, MicroserviceFilterSupport}
 import uk.gov.hmrc.play.scheduling._
-import uk.gov.hmrc.selfassessmentapi.config.simulation.{
-  AgentAuthorizationSimulation,
-  AgentSubscriptionSimulation,
-  ClientSubscriptionSimulation
-}
+import uk.gov.hmrc.selfassessmentapi.config.simulation.{AgentAuthorizationSimulation, AgentSubscriptionSimulation, ClientSubscriptionSimulation}
 import uk.gov.hmrc.selfassessmentapi.models.SourceType.sourceTypeToDocumentationName
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear.taxYearFormat
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.GovTestScenarioHeader
 
 import scala.collection.immutable.ListMap
-import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
 import scala.util.matching.Regex
-import uk.gov.hmrc.http.{ HeaderCarrier, NotImplementedException }
-import uk.gov.hmrc.play.microservice.filters.{ AuditFilter, LoggingFilter, MicroserviceFilterSupport }
-import uk.gov.hmrc.play.auth.controllers.AuthParamsControllerConfig
-import uk.gov.hmrc.play.config.ControllerConfig
 
 case class ControllerConfigParams(needsHeaderValidation: Boolean = true,
                                   needsLogging: Boolean = true,
@@ -137,6 +130,13 @@ object SetContentTypeFilter extends Filter with MicroserviceFilterSupport {
     f(rh).map(_.as("application/json"))
 }
 
+object SetXContentTypeOptionsFilter extends Filter with MicroserviceFilterSupport {
+  val xContentTypeOptionsHeader = "X-Content-Type-Options"
+  override def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
+    f(rh).map(_.withHeaders((xContentTypeOptionsHeader, "nosniff")))
+  }
+}
+
 object AgentSimulationFilter extends Filter with MicroserviceFilterSupport {
   override def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
     val method = rh.method
@@ -207,7 +207,7 @@ object MicroserviceGlobal
   }
 
   override def microserviceFilters: Seq[EssentialFilter] =
-    Seq(HeaderValidatorFilter, EmptyResponseFilter, SetContentTypeFilter) ++ enabledFilters ++
+    Seq(HeaderValidatorFilter, EmptyResponseFilter, SetContentTypeFilter, SetXContentTypeOptionsFilter) ++ enabledFilters ++
       Seq(application.injector.instanceOf[MicroserviceMonitoringFilter]) ++ defaultMicroserviceFilters
 
   override lazy val scheduledJobs: Seq[ScheduledJob] = createScheduledJobs()
