@@ -1049,6 +1049,10 @@ traits:
                         description: Both expenses and consolidatedExpenses can not be present at the same time
                         value:
                           code: BOTH_EXPENSES_SUPPLIED
+                      invalidTaxDeducted:
+                        description: taxDeducted > amount
+                        value:
+                          code: INVALID_TAX_DEDUCTION_AMOUNT
               403:
                 body:
                   application/json:
@@ -1180,6 +1184,10 @@ traits:
                           description: Both expenses and consolidatedExpenses can not be present at the same time
                           value:
                             code: BOTH_EXPENSES_SUPPLIED
+                        invalidTaxDeducted:
+                          description: taxDeducted > amount
+                          value:
+                            code: INVALID_TAX_DEDUCTION_AMOUNT
                 403:
                   body:
                     application/json:

@@ -434,6 +434,7 @@ object DesJsons {
               from: String = "",
               to: String = "",
               rentIncome: BigDecimal = 0,
+              rentIncomeTaxDeducted: Option[BigDecimal] = Some(0),
               premisesRunningCosts: BigDecimal = 0,
               repairsAndMaintenance: BigDecimal = 0,
               financialCosts: BigDecimal = 0,
@@ -447,7 +448,7 @@ object DesJsons {
             financials = Some(
               FHL
                 .Financials(
-                  incomes = Some(FHL.Incomes(rentIncome = Some(Common.Income(rentIncome)))),
+                  incomes = Some(FHL.Incomes(rentIncome = Some(Common.Income(rentIncome, rentIncomeTaxDeducted)))),
                   deductions = Some(FHL.Deductions(
                     premisesRunningCosts = Some(premisesRunningCosts),
                     repairsAndMaintenance = Some(repairsAndMaintenance),

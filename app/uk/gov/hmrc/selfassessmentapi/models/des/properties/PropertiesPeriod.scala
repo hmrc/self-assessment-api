@@ -29,9 +29,6 @@ object Common {
 
     def fromIncome(o: models.Income): Income =
       Income(amount = o.amount, taxDeducted = o.taxDeducted)
-
-    def fromSimpleIncome(o: models.SimpleIncome): Income =
-      Income(amount = o.amount)
   }
 
 }
@@ -44,7 +41,7 @@ object FHL {
     implicit val format: OFormat[Incomes] = Json.format[Incomes]
 
     def from(o: properties.FHL.Incomes): Incomes =
-      Incomes(rentIncome = o.rentIncome.map(Income.fromSimpleIncome))
+      Incomes(rentIncome = o.rentIncome.map(Income.fromIncome))
   }
 
   case class Deductions(premisesRunningCosts: Option[BigDecimal] = None,

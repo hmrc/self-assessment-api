@@ -88,7 +88,7 @@ object FHL {
         financials = Financials.from(o.financials))
   }
 
-  case class Incomes(rentIncome: Option[SimpleIncome] = None) {
+  case class Incomes(rentIncome: Option[Income] = None) {
     def hasIncomes: Boolean = rentIncome.isDefined
   }
 
@@ -96,7 +96,7 @@ object FHL {
     implicit val format: Format[Incomes] = Json.format[Incomes]
 
     def from(o: des.properties.FHL.Incomes): Incomes =
-      Incomes(rentIncome = o.rentIncome.map(income => SimpleIncome(amount = income.amount)))
+      Incomes(rentIncome = o.rentIncome.map(income => Income(amount = income.amount, taxDeducted = income.taxDeducted)))
   }
 
   case class Expense(amount: Amount)

@@ -87,11 +87,15 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
   val amount: Gen[BigDecimal] = amountGen(0, 5000)
 
   object FHLGen {
-    val genSimpleIncome: Gen[SimpleIncome] = for (amount <- amount) yield SimpleIncome(amount)
+    val genIncome: Gen[Income] =
+      for {
+        amount <- amount
+        taxDeducted <- Gen.option(amountGen(0, amount))
+      } yield Income(amount, taxDeducted)
 
     val genIncomes: Gen[FHL.Incomes] =
       for {
-        rentIncome <- Gen.option(genSimpleIncome)
+        rentIncome <- Gen.option(genIncome)
       } yield FHL.Incomes(rentIncome = rentIncome)
 
     val genExpense: Gen[FHL.Expense] = for (amount <- amount) yield FHL.Expense(amount)
