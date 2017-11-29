@@ -207,7 +207,7 @@ object MicroserviceGlobal
   }
 
   override def microserviceFilters: Seq[EssentialFilter] =
-    Seq(HeaderValidatorFilter, EmptyResponseFilter, SetContentTypeFilter, SetXContentTypeOptionsFilter) ++ enabledFilters ++
+    Seq(SetXContentTypeOptionsFilter, HeaderValidatorFilter, EmptyResponseFilter, SetContentTypeFilter) ++ enabledFilters ++
       Seq(application.injector.instanceOf[MicroserviceMonitoringFilter]) ++ defaultMicroserviceFilters
 
   override lazy val scheduledJobs: Seq[ScheduledJob] = createScheduledJobs()

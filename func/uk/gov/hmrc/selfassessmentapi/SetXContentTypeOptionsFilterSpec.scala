@@ -7,6 +7,16 @@ import uk.gov.hmrc.support.BaseFunctionalSpec
 class SetXContentTypeOptionsFilterSpec extends BaseFunctionalSpec {
 
   "SetXContentTypeOptionsFilter  filter should" should {
+
+    "be applied for api definition" in {
+      given()
+        .when()
+        .get("/api/definition")
+        .thenAssertThat()
+        .statusIs(200)
+        .responseContainsHeader(SetXContentTypeOptionsFilter.xContentTypeOptionsHeader, "nosniff".r)
+    }
+
     "be applied when returning an HTTP 201 e.g.: creating a self-employment" in {
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -32,5 +42,19 @@ class SetXContentTypeOptionsFilterSpec extends BaseFunctionalSpec {
         .responseContainsHeader(SetXContentTypeOptionsFilter.xContentTypeOptionsHeader, "nosniff".r)
     }
 
+
+    "be applied when returning an HTTP 406 without accept header e.g.: creating a self-employment" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().selfEmployment.willBeCreatedFor(nino)
+        .when()
+        .post(Jsons.SelfEmployment())
+        .to(s"/ni/$nino/self-employments")
+        .withoutAcceptHeader()
+        .thenAssertThat()
+        .statusIs(406)
+        .responseContainsHeader(SetXContentTypeOptionsFilter.xContentTypeOptionsHeader, "nosniff".r)
+    }
   }
 }
