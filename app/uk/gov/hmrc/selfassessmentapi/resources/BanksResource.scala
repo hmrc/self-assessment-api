@@ -34,7 +34,7 @@ object BanksResource extends BaseResource {
       validate[Bank, Option[SourceId]](request.body) { bank =>
         service.create(nino, bank)
       } map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right(Some(id)) => Created.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/savings-accounts/$id")
         case Right(None) => InternalServerError
       }
@@ -45,7 +45,7 @@ object BanksResource extends BaseResource {
       validate[Bank, Boolean](request.body) { bank =>
         service.update(nino, bank, id)
       } map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right(true) => NoContent
         case Right(false) if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
         case _ => NotFound

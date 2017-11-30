@@ -125,6 +125,9 @@ trait Response {
     case _                                            => InternalServerError(toJson(Errors.InternalServerError))
   }
 
+  def errorCodeIs(errorCode: DesErrorCode): Boolean =
+    json.asOpt[DesError].exists(_.code == errorCode)
+
   def errorCodeIsOneOf(errorCodes: DesErrorCode*): Boolean =
     json.asOpt[DesError].exists(errorCode => errorCodes.contains(errorCode.code))
 

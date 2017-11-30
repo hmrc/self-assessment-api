@@ -46,7 +46,7 @@ object TaxCalculationResource extends BaseResource {
       validate[CalculationRequest, TaxCalculationResponse](request.body) { req =>
         connector.requestCalculation(nino, req.taxYear)
       } map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right(response)   =>
           audit(makeTaxCalcTriggerAudit(nino, request.authContext, response))
           response.filter {

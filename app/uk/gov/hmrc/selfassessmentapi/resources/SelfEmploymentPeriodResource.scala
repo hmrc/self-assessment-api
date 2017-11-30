@@ -43,7 +43,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
           .create(nino, sourceId, period)
           .map((period.periodId, _))
       } map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right((periodId, response)) =>
           audit(makePeriodCreateAudit(nino, sourceId, request.authContext, response, periodId))
           response.filter {
@@ -60,7 +60,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
           validate[SelfEmploymentPeriodUpdate, SelfEmploymentPeriodResponse](request.body) { period =>
             connector.update(nino, id, from, to, period)
           } map {
-            case Left(errorResult) => handleValidationErrors(errorResult)
+            case Left(errorResult) => handleErrors(errorResult)
             case Right(response) =>
               audit(makePeriodUpdateAudit(nino, id, periodId, request.authContext, response))
               response.filter {

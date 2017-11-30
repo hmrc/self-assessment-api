@@ -35,7 +35,7 @@ object DividendsAnnualSummaryResource extends BaseResource {
       validate[Dividends, Boolean](request.body) { dividends =>
         service.updateAnnualSummary(nino, taxYear, dividends)
       } map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right(true) => NoContent
         case _ => InternalServerError
       }

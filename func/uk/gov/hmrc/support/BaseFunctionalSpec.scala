@@ -475,7 +475,6 @@ trait BaseFunctionalSpec extends TestApplication {
       this
     }
 
-
     def userIsNotAuthorisedForTheResource: Givens = {
       stubFor(post(urlPathEqualTo(s"/auth/authorise"))
         .willReturn(aResponse()
@@ -1006,7 +1005,6 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-
         def noPeriodFor(nino: Nino, id: String = "abc", from: String, to: String): Givens = {
           stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summary-detail?from=$from&to=$to"))
             .willReturn(
@@ -1017,7 +1015,6 @@ trait BaseFunctionalSpec extends TestApplication {
 
           givens
         }
-
 
         def invalidDateFrom(nino: Nino, id: String = "abc", from: String, to: String): Givens = {
           stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summary-detail?from=$from&to=$to"))
@@ -1212,6 +1209,49 @@ trait BaseFunctionalSpec extends TestApplication {
 
           givens
         }
+
+        def endOfYearStatementReadyToBeFinalised(nino: Nino, id: String = "abc", taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(post(urlEqualTo(s"/nino/$nino/self-employments/$id/statements/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(204)
+                .withBody("")))
+
+          givens
+        }
+
+        def endOfYearStatementMissingPeriod(nino: Nino, id: String = "abc", taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(post(urlEqualTo(s"/nino/$nino/self-employments/$id/statements/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(403)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.periodicUpdateMissing)))
+
+          givens
+        }
+
+        def endOfYearStatementIsLate(nino: Nino, id: String = "abc", taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(post(urlEqualTo(s"/nino/$nino/self-employments/$id/statements/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(403)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.lateSubmission)))
+
+          givens
+        }
+
+        def endOfYearStatementIsAlreadyFinalised(nino: Nino, id: String = "abc", taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(post(urlEqualTo(s"/nino/$nino/self-employments/$id/statements/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(403)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.alreadyFinalised)))
+
+          givens
+        }
       }
 
       object taxCalculation {
@@ -1307,7 +1347,6 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
       }
-
 
       object properties {
 
@@ -1651,7 +1690,6 @@ trait BaseFunctionalSpec extends TestApplication {
 
           givens
         }
-
 
         def invalidPeriodUpdateFor(nino: Nino, propertyType: PropertyType, from: String = "2017-04-06", to: String = "2018-04-05"): Givens = {
           stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))

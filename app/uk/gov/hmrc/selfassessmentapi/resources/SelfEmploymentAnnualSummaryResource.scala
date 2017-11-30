@@ -39,7 +39,7 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
       validate[SelfEmploymentAnnualSummary, SelfEmploymentAnnualSummaryResponse](request.body) { summary =>
         connector.update(nino, id, taxYear, des.selfemployment.SelfEmploymentAnnualSummary.from(summary))
       } map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right(response) =>
           audit(makeAnnualSummaryUpdateAudit(nino, id, taxYear, request.authContext, response))
           response.filter {

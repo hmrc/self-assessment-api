@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models
+package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import uk.gov.hmrc.selfassessmentapi.models.Errors.BusinessError
+import uk.gov.hmrc.http.HttpResponse
 
-sealed trait ErrorResult
-
-case class GenericErrorResult(message: String) extends ErrorResult
-
-case class ValidationErrorResult(validationErrors: ValidationErrors) extends ErrorResult
-
-case class AuthorisationErrorResult(error: BusinessError) extends ErrorResult
+case class EmptyResponse(underlying: HttpResponse) extends Response

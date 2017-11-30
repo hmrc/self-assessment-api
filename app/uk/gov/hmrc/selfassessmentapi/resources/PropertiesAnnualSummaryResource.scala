@@ -44,7 +44,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
   def updateAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.Properties, Some("annual")).async(parse.json) { implicit request =>
       validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right(response) =>
           audit(makeAnnualSummaryUpdateAudit(nino, propertyId, taxYear, request.authContext, response))
           response.filter {
