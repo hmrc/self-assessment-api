@@ -17,9 +17,9 @@
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
+import uk.gov.hmrc.http.HttpResponse
 import play.api.libs.json.Json
 import uk.gov.hmrc.selfassessmentapi.models.calculation.ApiTaxCalculation.{PropertyIncomeSource, SelfEmploymentIncomeSource}
-import uk.gov.hmrc.play.http.HttpResponse
 
 class TaxCalculationResponseSpec extends UnitSpec  {
 
