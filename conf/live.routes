@@ -20,6 +20,9 @@ GET /ni/:nino/self-employments/:id/periods/:periodId    uk.gov.hmrc.selfassessme
 PUT /ni/:nino/self-employments/:id/:taxYear    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentAnnualSummaryResource.updateAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 GET /ni/:nino/self-employments/:id/:taxYear    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentAnnualSummaryResource.retrieveAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 
+# Self-Employment End-of-Period Statements
+POST /ni/:nino/self-employments/:id/statements/:taxYear    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentStatementResource.finaliseEndOfPeriodStatement(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+
 ####################
 #    Properties    #
 ####################

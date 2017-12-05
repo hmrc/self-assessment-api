@@ -99,3 +99,16 @@ object RetrieveObligations {
   implicit val format: Format[RetrieveObligations] = Json.format[RetrieveObligations]
 }
 
+case class EndOfPeriodStatementDeclaration(override val auditType: String = "declareEndOfYearStatement",
+                               override val httpStatus: Int,
+                               nino: Nino,
+                               sourceId: SourceId,
+                               taxYear: TaxYear,
+                               affinityGroup: String,
+                               agentCode: Option[String],
+                               override val responsePayload: Option[JsValue] = None)
+    extends AuditDetail
+
+object EndOfPeriodStatementDeclaration {
+  implicit val format: Format[EndOfPeriodStatementDeclaration] = Json.format[EndOfPeriodStatementDeclaration]
+}

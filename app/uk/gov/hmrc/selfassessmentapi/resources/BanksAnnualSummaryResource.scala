@@ -34,7 +34,7 @@ object BanksAnnualSummaryResource extends BaseResource {
       validate[BankAnnualSummary, Boolean](request.body) {
         annualSummaryService.updateAnnualSummary(nino, id, taxYear, _)
       } map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right(true) => NoContent
         case Right(false) if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
         case _ => NotFound

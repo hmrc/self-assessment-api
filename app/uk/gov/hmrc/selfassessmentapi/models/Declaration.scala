@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
-import uk.gov.hmrc.selfassessmentapi.models.Errors.BusinessError
+import play.api.libs.json._
 
-sealed trait ErrorResult
+case class Declaration(finalised: Boolean)
 
-case class GenericErrorResult(message: String) extends ErrorResult
+object Declaration {
 
-case class ValidationErrorResult(validationErrors: ValidationErrors) extends ErrorResult
+  implicit val format: Reads[Declaration] = Json.reads[Declaration]
 
-case class AuthorisationErrorResult(error: BusinessError) extends ErrorResult
+}

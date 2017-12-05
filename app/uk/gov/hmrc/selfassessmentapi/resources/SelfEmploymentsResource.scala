@@ -36,7 +36,7 @@ object SelfEmploymentsResource extends BaseResource {
       validate[SelfEmployment, SelfEmploymentResponse](request.body) { selfEmployment =>
         connector.create(nino, Business.from(selfEmployment))
       } map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right(response) =>
           response.filter {
             case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino).getOrElse(""))
@@ -56,7 +56,7 @@ object SelfEmploymentsResource extends BaseResource {
       validate[SelfEmploymentUpdate, SelfEmploymentResponse](request.body) { selfEmployment =>
         connector.update(nino, des.selfemployment.SelfEmploymentUpdate.from(selfEmployment), id)
       } map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right(response) =>
           response.filter {
             case 204 => NoContent

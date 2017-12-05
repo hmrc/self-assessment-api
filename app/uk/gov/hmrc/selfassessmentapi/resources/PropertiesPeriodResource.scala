@@ -40,7 +40,7 @@ object PropertiesPeriodResource extends BaseResource {
   def createPeriod(nino: Nino, id: PropertyType): Action[JsValue] =
     APIAction(nino, SourceType.Properties, Some("periods")).async(parse.json) { implicit request =>
       validateCreateRequest(id, nino, request) map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right((periodId, response)) =>
           audit(makePeriodCreateAudit(nino, id, request.authContext, response, periodId))
           response.filter {
@@ -55,7 +55,7 @@ object PropertiesPeriodResource extends BaseResource {
       periodId match {
         case Period(from, to) =>
           validateUpdateRequest(id, nino, Period(from, to), request) map {
-            case Left(errorResult) => handleValidationErrors(errorResult)
+            case Left(errorResult) => handleErrors(errorResult)
             case Right(response) =>
               audit(makePeriodUpdateAudit(nino, id, periodId, request.authContext, response))
               response.filter {

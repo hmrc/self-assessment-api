@@ -34,7 +34,7 @@ object PropertiesResource extends BaseResource {
         connector.create(nino, props)
       } map {
         case Left(errorResult) =>
-          handleValidationErrors(errorResult)
+          handleErrors(errorResult)
         case Right(response) =>
           response.filter {
             case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino))
