@@ -604,6 +604,54 @@ traits:
                         value:
                           code: TAX_YEAR_INVALID
               404:
+          /statement:
+            post:
+              displayName: Finalise end-of-period statement.
+              description: Finalise th end-of-period statement for this tax year.
+              (annotations.sandboxData): !include scenarios/agent-scenarios.md
+              is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+              (annotations.scope): "write:self-assessment"
+              securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
+              body:
+                application/json:
+                  type: !include schemas/Declaration.json
+                  example: !include examples/self-employment/Declaration.json
+              responses:
+                204:
+                400:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        invalidNino:
+                          description: Invalid NINO
+                          value:
+                            code: NINO_INVALID
+                        invalidTaxYear:
+                          description: Invalid taxYear
+                          value:
+                            code: TAX_YEAR_INVALID
+                403:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notFinalised:
+                          description: Statement not declared as finalised.
+                          value:
+                            code: NOT_FINALISED
+                        periodicUpdateMissing:
+                          description: Periodic update missing for this period
+                          value:
+                            code: PERIODIC_UPDATE_MISSING
+                        lateSubmission:
+                          description: End-of-period statement cannot be submitted for this period later than 31 January
+                          value:
+                            code: LATE_SUBMISSION
+                        alreadyFinalised:
+                          description: Statement for this period has already been finalised.
+                          value:
+                            code: ALREADY_FINALISED
     /uk-properties:
       (annotations.group):
         name: UK property business
