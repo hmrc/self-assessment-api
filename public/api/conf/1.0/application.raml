@@ -606,8 +606,8 @@ traits:
               404:
           /statement:
             post:
-              displayName: Finalise end-of-period statement.
-              description: Finalise th end-of-period statement for this tax year.
+              displayName: Submit Self-Employment End-of-Period Statement
+              description: Finalise the self-employment, end-of-period statement for this tax year.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -645,7 +645,7 @@ traits:
                           value:
                             code: PERIODIC_UPDATE_MISSING
                         lateSubmission:
-                          description: End-of-period statement cannot be submitted for this period later than 31 January
+                          description: End-of-period statement cannot be submitted for this period later than 31 January Y2
                           value:
                             code: LATE_SUBMISSION
                         alreadyFinalised:
