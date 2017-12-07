@@ -73,8 +73,8 @@ object Errors {
   object InternalServerError extends Error("INTERNAL_SERVER_ERROR", "An internal server error occurred", None)
   object NotFinalisedDeclaration extends Error("NOT_FINALISED", "The statement cannot be accepted without a declaration it is finalised.", Some("/finalised"))
   object PeriodicUpdateMissing extends Error("PERIODIC_UPDATE_MISSING", "End-of-period statement cannot be accepted until all periodic updates have been submitted.", None)
-  object LateSubmission extends Error("LATE_SUBMISSION", "End-of-period statement cannot be submitted for this period later than 31 January 20XX.", None)
-  object AlreadyFinalised extends Error("ALREADY_FINALISED", "End-of-period statement cannot be submitted for this period later than 31 January 20XX.", None)
+  object LateSubmission extends Error("LATE_SUBMISSION", "End-of-period statement cannot be submitted for this period later than 31 January Y2.", None)
+  object AlreadyFinalised extends Error("ALREADY_FINALISED", "End-of-period statement for this period is already finalised. ", None)
 
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")
   def badRequest(error: Error) = BadRequest(Seq(error), "Invalid request")
