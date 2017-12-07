@@ -19,5 +19,17 @@
             <td><p>CLIENT_NOT_SUBSCRIBED</p></td>
             <td><p>Simulate client subscription to MTD check failure</p></td>
         </tr>
+        <tr>
+            <td><p>PERIODIC_UPDATE_MISSING</p></td>
+            <td><p>Simulate agent subscription check failure</p></td>
+        </tr>
+        <tr>
+            <td><p>LATE_SUBMISSION</p></td>
+            <td><p>Simulate agent subscription check failure</p></td>
+        </tr>
+        <tr>
+            <td><p>ALREADY_FINALISED</p></td>
+            <td><p>Simulate agent subscription check failure</p></td>
+        </tr>
     </tbody>
 </table>

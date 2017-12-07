@@ -500,7 +500,7 @@ traits:
           put:
             displayName: Amend a self-employment annual summary
             description: Amend a self-employment annual summary for a tax year.
-            (annotations.sandboxData): !include scenarios/agent-scenarios.md
+            (annotations.sandboxData): !include scenarios/declaration-scenarios.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
             (annotations.scope): "write:self-assessment"
             securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
