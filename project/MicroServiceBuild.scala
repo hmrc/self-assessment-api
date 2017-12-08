@@ -16,6 +16,7 @@ object MicroServiceBuild extends Build with MicroService {
   override lazy val playSettings: Seq[Setting[_]] = Seq(
     routesImport += "uk.gov.hmrc.selfassessmentapi.resources.Binders._"
   )
+
 }
 
 private object AppDependencies {
@@ -31,7 +32,8 @@ private object AppDependencies {
     "uk.gov.hmrc" %% "domain" % "5.0.0",
     "uk.gov.hmrc" %% "play-hmrc-api" % "2.0.0",
     "uk.gov.hmrc" %% "play-scheduling" % "4.1.0",
-    "ai.x" %% "play-json-extensions" % "0.8.0"
+    "ai.x" %% "play-json-extensions" % "0.8.0",
+    "org.typelevel" %% "cats-core" % "1.0.0-RC1"
   )
 
   trait TestDependencies {

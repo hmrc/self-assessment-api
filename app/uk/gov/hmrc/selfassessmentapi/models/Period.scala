@@ -21,13 +21,18 @@ import org.joda.time.LocalDate
 import scala.util.{Failure, Success, Try}
 
 trait Period {
+
   val from: LocalDate
   val to: LocalDate
 
   def periodId: String = Period.id(from, to)
+
+  def valid = from.equals(to) || from.isBefore(to)
+
 }
 
 object Period {
+
   val periodPattern = """(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})""".r
 
   def id(f: LocalDate, t: LocalDate): String = s"${f}_$t"
@@ -47,4 +52,5 @@ object Period {
       case _ => None
     }
   }
+
 }

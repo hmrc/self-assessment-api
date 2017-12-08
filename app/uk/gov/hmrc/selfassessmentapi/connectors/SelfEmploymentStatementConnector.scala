@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.models.{SourceId, TaxYear}
+import uk.gov.hmrc.selfassessmentapi.models.{SourceId, Period}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.EmptyResponse
 
@@ -27,7 +27,7 @@ object SelfEmploymentStatementConnector {
 
   private lazy val baseUrl = AppContext.desUrl
 
-  def create(nino: Nino, id: SourceId, year: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] =
-    httpEmptyPost[EmptyResponse](s"$baseUrl/nino/$nino/self-employments/$id/statements/${year.toDesTaxYear}", EmptyResponse)
+  def create(nino: Nino, id: SourceId, accountingPeriod: Period)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] =
+    httpEmptyPost[EmptyResponse](s"$baseUrl/income-store/nino/$nino/self-employments/$id/accounting-periods/${accountingPeriod.periodId}/statement", EmptyResponse)
 
 }

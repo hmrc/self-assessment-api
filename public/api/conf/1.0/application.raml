@@ -604,54 +604,75 @@ traits:
                         value:
                           code: TAX_YEAR_INVALID
               404:
-          /statement:
-            post:
-              displayName: Submit Self-Employment End-of-Period Statement
-              description: Finalise the self-employment, end-of-period statement for this tax year.
-              (annotations.sandboxData): !include scenarios/declaration-scenarios.md
-              is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
-              (annotations.scope): "write:self-assessment"
-              securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
-              body:
-                application/json:
-                  type: !include schemas/Declaration.json
-                  example: !include examples/self-employment/Declaration.json
-              responses:
-                204:
-                400:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        invalidNino:
-                          description: Invalid NINO
-                          value:
-                            code: NINO_INVALID
-                        invalidTaxYear:
-                          description: Invalid taxYear
-                          value:
-                            code: TAX_YEAR_INVALID
-                403:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notFinalised:
-                          description: Statement not declared as finalised.
-                          value:
-                            code: NOT_FINALISED
-                        periodicUpdateMissing:
-                          description: Periodic update missing for this period
-                          value:
-                            code: PERIODIC_UPDATE_MISSING
-                        lateSubmission:
-                          description: End-of-period statement cannot be submitted for this period later than 31 January Y2
-                          value:
-                            code: LATE_SUBMISSION
-                        alreadyFinalised:
-                          description: Statement for this period has already been finalised.
-                          value:
-                            code: ALREADY_FINALISED
+        /end-of-period-statements:
+          /from:
+            /{start}:
+              /to:
+                /{end}:
+                  uriParameters:
+                    start:
+                      description: Valid ISO 8601 date for the start of the accounting period
+                      type: string
+                      example: 2017-12-31
+                    end:
+                      description: Valid ISO 8601 date for the end of the accounting period
+                      type: string
+                      example: 2018-12-31
+                  post:
+                    displayName: Submit Self-Employment End-of-Period Statement
+                    description: Finalise the self-employment, end-of-period statement for this accounting period.
+                    (annotations.sandboxData): !include scenarios/declaration-scenarios.md
+                    is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+                    (annotations.scope): "write:self-assessment"
+                    securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
+                    body:
+                      application/json:
+                        type: !include schemas/Declaration.json
+                        example: !include examples/self-employment/Declaration.json
+                    responses:
+                      204:
+                      400:
+                        body:
+                          application/json:
+                            type: types.errorResponse
+                            examples:
+                              invalidNino:
+                                description: Invalid NINO
+                                value:
+                                  code: NINO_INVALID
+                              invalidDateRange:
+                                description: Invalid accounting period, i.e. when the start date is the later than the end date.
+                                value:
+                                  code: INVALID_DATE_RANGE
+                              invalidDate:
+                                description: Invalid date in accounting period range.
+                                value:
+                                  code: INVALID_DATE
+                              earlySubmission:
+                                description: You cannot submit a statement before the end of your accounting period.
+                                value:
+                                  code: EARLY_SUBMISSION
+                      403:
+                        body:
+                          application/json:
+                            type: types.errorResponse
+                            examples:
+                              notFinalised:
+                                description: Statement not declared as finalised.
+                                value:
+                                  code: NOT_FINALISED
+                              periodicUpdateMissing:
+                                description: Periodic update missing for this period
+                                value:
+                                  code: PERIODIC_UPDATE_MISSING
+                              alreadyFinalised:
+                                description: Statement for this period has already been finalised.
+                                value:
+                                  code: ALREADY_FINALISED
+                              nonMatchingPeriod:
+                                description: You cannot submit a statement with a period that does not match the accounting period of your business.
+                                value:
+                                  code: NON_MATCHING_PERIOD
     /uk-properties:
       (annotations.group):
         name: UK property business

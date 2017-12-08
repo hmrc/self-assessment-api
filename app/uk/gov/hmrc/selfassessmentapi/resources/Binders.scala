@@ -24,6 +24,9 @@ import uk.gov.hmrc.selfassessmentapi.models.SourceType.SourceType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.{SourceType, TaxYear}
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.LocalDate
+import scala.util.{Try, Success, Failure}
 
 object Binders {
 
@@ -55,7 +58,7 @@ object Binders {
     }
   }
 
-  implicit def sourceTypeBinder(implicit stringBinder: PathBindable[String]) = new PathBindable[SourceType] {
+  implicit val sourceTypeBinder = new PathBindable[SourceType] {
 
     def unbind(key: String, `type`: SourceType): String = `type`.toString
 
@@ -67,7 +70,7 @@ object Binders {
     }
   }
 
-  implicit def propertyTypeBinder(implicit stringBinder: PathBindable[String]) = new PathBindable[PropertyType] {
+  implicit val propertyTypeBinder = new PathBindable[PropertyType] {
 
     override def unbind(key: String, value: PropertyType): String = value.toString
 
@@ -79,4 +82,20 @@ object Binders {
     }
 
   }
+
+
+  val format: String = "yyy-MM-dd"
+
+  implicit val datePathBinder = new PathBindable[LocalDate] {
+
+    override def unbind(key: String, date: LocalDate): String = date.toString
+
+    override def bind(key: String, dateString: String): Either[String, LocalDate] =
+      Try{ DateTimeFormat.forPattern(format).parseLocalDate(dateString) } match {
+        case Success(v) => Right(v)
+        case Failure(_) => Left("ERROR_INVALID_DATE")
+      }
+
+  }
+
 }

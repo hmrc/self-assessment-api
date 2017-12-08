@@ -74,6 +74,8 @@ object Errors {
   object NotFinalisedDeclaration extends Error("NOT_FINALISED", "The statement cannot be accepted without a declaration it is finalised.", Some("/finalised"))
   object PeriodicUpdateMissing extends Error("PERIODIC_UPDATE_MISSING", "End-of-period statement cannot be accepted until all periodic updates have been submitted.", None)
   object AlreadyFinalised extends Error("ALREADY_FINALISED", "End-of-period statement for this period is already finalised. ", None)
+  object InvalidDateRange extends Error("INVALID_DATE_RANGE", "The start date must be the same day or before the from date.", None)
+  object EarlySubmission extends Error("EARLY_SUBMISSION", "You cannot submit your end-of-period statement before the from date.", None)
 
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")
   def badRequest(error: Error) = BadRequest(Seq(error), "Invalid request")
