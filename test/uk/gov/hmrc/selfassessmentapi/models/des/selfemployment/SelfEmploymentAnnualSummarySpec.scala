@@ -28,7 +28,6 @@ class SelfEmploymentAnnualSummarySpec extends UnitSpec {
           annualInvestmentAllowance = Some(200.50),
           capitalAllowanceMainPool = Some(200.50),
           capitalAllowanceSpecialRatePool = Some(200.50),
-          businessPremisesRenovationAllowance = Some(200.50),
           enhancedCapitalAllowance = Some(200.50),
           allowanceOnSales = Some(200.50),
           zeroEmissionGoodsVehicleAllowance = Some(200.50))),
@@ -53,7 +52,6 @@ class SelfEmploymentAnnualSummarySpec extends UnitSpec {
       allowances.annualInvestmentAllowance shouldBe Some(200.50)
       allowances.capitalAllowanceMainPool shouldBe Some(200.50)
       allowances.capitalAllowanceSpecialRatePool shouldBe Some(200.50)
-      allowances.businessPremisesRenovationAllowance shouldBe Some(200.50)
       allowances.enhanceCapitalAllowance shouldBe Some(200.50)
       allowances.allowanceOnSales shouldBe Some(200.50)
       allowances.zeroEmissionGoodsVehicleAllowance shouldBe Some(200.50)
