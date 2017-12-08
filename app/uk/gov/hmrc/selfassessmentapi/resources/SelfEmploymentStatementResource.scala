@@ -30,7 +30,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.services.AuditData
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 import uk.gov.hmrc.selfassessmentapi.models.audit.EndOfPeriodStatementDeclaration
-import scala.concurrent.Future
 
 import scala.concurrent.ExecutionContext.Implicits._
 
@@ -50,7 +49,6 @@ object SelfEmploymentStatementResource extends BaseResource {
         response.filter {
           case 204                                                  => NoContent
           case 403 if response.errorCodeIs(PERIODIC_UPDATE_MISSING) => Forbidden(Json.toJson(Errors.businessError(Errors.PeriodicUpdateMissing)))
-          case 403 if response.errorCodeIs(LATE_SUBMISSION)         => Forbidden(Json.toJson(Errors.businessError(Errors.LateSubmission)))
           case 403 if response.errorCodeIs(ALREADY_FINALISED)       => Forbidden(Json.toJson(Errors.businessError(Errors.AlreadyFinalised)))
         }
       }

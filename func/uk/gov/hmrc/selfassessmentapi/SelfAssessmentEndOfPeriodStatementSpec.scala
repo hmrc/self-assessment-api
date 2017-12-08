@@ -43,18 +43,6 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .bodyHasPath("\\errors(0)\\code", "PERIODIC_UPDATE_MISSING")
     }
 
-    "fail when statement is finalised late" in {
-      given()
-        .userIsSubscribedToMtdFor(nino)
-        .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.endOfYearStatementIsLate(nino)
-        .when()
-        .post(s"/ni/$nino/self-employments/abc/$taxYear/statement", Some(Json.parse("""{ "finalised": true }""")))
-        .thenAssertThat()
-        .statusIs(403)
-        .bodyHasPath("\\errors(0)\\code", "LATE_SUBMISSION")
-    }
-
     "fail when statement is already finalised" in {
       given()
         .userIsSubscribedToMtdFor(nino)
