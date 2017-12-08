@@ -33,10 +33,9 @@ case class Adjustments(includedNonTaxableProfits: Option[BigDecimal] = None,
                        balancingChargeOther: Option[BigDecimal] = None,
                        goodsAndServicesOwnUse: Option[Amount] = None,
                        overlapProfitCarriedForward: Option[BigDecimal] = None,
+                       overlapProfitBroughtForward: Option[BigDecimal] = None,
                        adjustedProfit: Option[BigDecimal] = None,
                        adjustedLoss: Option[BigDecimal] = None,
-                       lossOffsetAgainstOtherIncome: Option[BigDecimal] = None,
-                       lossCarriedBackOffsetAgainstIncomeOrCGT: Option[BigDecimal] = None,
                        lossCarriedForwardTotal: Option[BigDecimal] = None,
                        cisDeductionsTotal: Option[BigDecimal] = None,
                        taxDeductionsFromTradingIncome: Option[BigDecimal] = None,
@@ -59,10 +58,9 @@ object Adjustments {
       (__ \ "balancingChargeOther").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "goodsAndServicesOwnUse").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "overlapProfitCarriedForward").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "overlapProfitBroughtForward").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "adjustedProfit").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "adjustedLoss").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "lossOffsetAgainstOtherIncome").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "lossCarriedBackOffsetAgainstIncomeOrCGT").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "lossCarriedForwardTotal").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "cisDeductionsTotal").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "taxDeductionsFromTradingIncome").readNullable[BigDecimal](nonNegativeAmountValidator) and

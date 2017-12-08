@@ -11,8 +11,7 @@
     "balancingChargeOther": 500.25,
     "goodsAndServicesOwnUse": 500.25,
     "overlapProfitCarriedForward": 500.25,
-    "lossOffsetAgainstOtherIncome": 500.25,
-    "lossCarriedBackOffsetAgainstIncomeOrCGT": 500.25,
+    "overlapProfitBroughtForward": 500.25,
     "lossCarriedForwardTotal": 500.25,
     "cisDeductionsTotal": 500.25,
     "taxDeductionsFromTradingIncome": 500.25,
@@ -23,7 +22,6 @@
     "capitalAllowanceMainPool": 500.25,
     "capitalAllowanceSpecialRatePool": 500.25,
     "zeroEmissionGoodsVehicleAllowance": 500.25,
-    "businessPremisesRenovationAllowance": 500.25,
     "enhancedCapitalAllowance": 500.25,
     "allowanceOnSales": 500.25,
     "capitalAllowanceSingleAssetPool": 500.25

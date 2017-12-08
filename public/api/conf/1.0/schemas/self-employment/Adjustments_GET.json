@@ -96,7 +96,16 @@
     },
     "overlapProfitCarriedForward": {
       "title": "Overlap profit carried forward ",
-      "description": "Any overlap profit you carried forward from previous years plus any new overlap profits in the tax year\n or minus any overlap relief you used this year.",
+      "description": "Any overlap profit carried forward from previous years plus any new overlap profits from this year\n or minus any overlap relief used this year that is available to carry forward.",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "overlapProfitBroughtForward": {
+      "title": "Overlap profit brought forward ",
+      "description": "Overlap profit that has been brought forward from previous years to use in the current year.",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
@@ -115,24 +124,6 @@
     "adjustedLoss": {
       "title": "Adjusted Loss for the year",
       "description": "Adjusted Loss for the year",
-      "type": "number",
-      "multipleOf": 0.01,
-      "minimum": 0,
-      "maximum": 99999999999999.98,
-      "example": "500.25"
-    },
-    "lossOffsetAgainstOtherIncome": {
-      "title": "Loss from this tax year set off against other income",
-      "description": "Loss from this tax year set off against other income",
-      "type": "number",
-      "multipleOf": 0.01,
-      "minimum": 0,
-      "maximum": 99999999999999.98,
-      "example": "500.25"
-    },
-    "lossCarriedBackOffsetAgainstIncomeOrCGT": {
-      "title": "Loss to be carried back to previous years and set off against income or capital gains",
-      "description": "Loss to be carried back to previous years and set off against income or capital gains.\n Don't make this claim in you use cash basis. if you use cash basis, you can only claim for terminal loss relief.",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,

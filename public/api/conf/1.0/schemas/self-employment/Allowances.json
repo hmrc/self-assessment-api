@@ -40,15 +40,6 @@
       "maximum": 99999999999999.98,
       "example": "500.25"
     },
-    "businessPremisesRenovationAllowance": {
-      "title": "Business Premises Renovation Allowance",
-      "description": "Business Premises Renovation Allowance if converting or renovating unused qualifying business premises",
-      "type": "number",
-      "multipleOf": 0.01,
-      "minimum": 0,
-      "maximum": 99999999999999.98,
-      "example": "500.25"
-    },
     "enhancedCapitalAllowance": {
       "title": "Enhanced capital allowance",
       "description": "100% and other enhanced capital allowances",
