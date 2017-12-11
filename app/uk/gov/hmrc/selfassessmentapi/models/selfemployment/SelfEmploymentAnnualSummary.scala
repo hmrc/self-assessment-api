@@ -48,8 +48,6 @@ object SelfEmploymentAnnualSummary {
         goodsAndServicesOwnUse = adj.goodsAndServicesOwnUse,
         overlapProfitCarriedForward = adj.overlapProfitCarriedForward,
         overlapProfitBroughtForward = adj.overlapProfitBroughtForward,
-        adjustedProfit = adj.adjustedProfit,
-        adjustedLoss = adj.adjustedLoss,
         lossCarriedForwardTotal = adj.lossCarriedForwardTotal,
         cisDeductionsTotal = adj.cisDeductionsTotal,
         taxDeductionsFromTradingIncome = adj.taxDeductionsFromTradingIncome,

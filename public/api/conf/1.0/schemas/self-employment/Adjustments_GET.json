@@ -112,24 +112,6 @@
       "maximum": 99999999999999.98,
       "example": "500.25"
     },
-    "adjustedProfit": {
-      "title": "Adjusted Profit for the year ",
-      "description": "Adjusted Profit for the year ",
-      "type": "number",
-      "multipleOf": 0.01,
-      "minimum": 0,
-      "maximum": 99999999999999.98,
-      "example": "500.25"
-    },
-    "adjustedLoss": {
-      "title": "Adjusted Loss for the year",
-      "description": "Adjusted Loss for the year",
-      "type": "number",
-      "multipleOf": 0.01,
-      "minimum": 0,
-      "maximum": 99999999999999.98,
-      "example": "500.25"
-    },
     "lossCarriedForwardTotal": {
       "title": "Total loss to carry forward after all other set-offs",
       "description": "Total loss to carry forward after all other set-offs - you can carry forward your loss, or the amount\n of loss not used against income or capital gains, to set against any future profits from the same business.",

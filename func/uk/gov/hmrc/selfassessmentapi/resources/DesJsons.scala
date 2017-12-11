@@ -282,8 +282,6 @@ object DesJsons {
            |      "goodsAndServicesOwnUse": 200.00,
            |      "overlapProfitCarriedForward": 500.25,
            |      "overlapProfitBroughtForward": 500.25,
-           |      "adjustedProfit": 500.25,
-           |      "adjustedLoss": 500.25,
            |      "lossCarriedForwardTotal": 500.25,
            |      "cisDeductionsTotal": 500.25,
            |      "taxDeductionsFromTradingIncome": 500.25,
