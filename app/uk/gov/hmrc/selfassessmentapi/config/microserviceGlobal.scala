@@ -24,7 +24,7 @@ import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.{StringReader, ValueReader}
 import play.api.http.HttpEntity
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.libs.json.Json
+import play.api.libs.json.Json.toJson
 import play.api.mvc.Results._
 import play.api.mvc._
 import play.api.{Application, Configuration, Play}
@@ -171,7 +171,7 @@ object HeaderValidatorFilter extends Filter with HeaderValidator with Microservi
       controller.forall(name => ControllerConfiguration.controllerParamsConfig(name).needsHeaderValidation)
 
     if (!needsHeaderValidation || acceptHeaderValidationRules(rh.headers.get("Accept"))) next(rh)
-    else Future.successful(Status(ErrorAcceptHeaderInvalid.httpStatusCode)(Json.toJson(ErrorAcceptHeaderInvalid)))
+    else Future.successful(Status(ErrorAcceptHeaderInvalid.httpStatusCode)(toJson(ErrorAcceptHeaderInvalid)))
   }
 }
 
@@ -224,7 +224,7 @@ object MicroserviceGlobal
       ex match {
         case _ =>
           ex.getCause match {
-            case ex: NotImplementedException => NotImplemented(Json.toJson(ErrorNotImplemented))
+            case ex: NotImplementedException => NotImplemented(toJson(ErrorNotImplemented))
             case _                           => result
           }
       }
@@ -232,16 +232,18 @@ object MicroserviceGlobal
   }
 
   override def onBadRequest(request: RequestHeader, error: String) = {
+    import ErrorCode._
+
     super.onBadRequest(request, error).map { result =>
       error match {
-        case "ERROR_INVALID_SOURCE_TYPE" => NotFound(Json.toJson(ErrorNotFound))
-        case "ERROR_TAX_YEAR_INVALID" =>
-          BadRequest(Json.toJson(ErrorBadRequest(ErrorCode.TAX_YEAR_INVALID, "Tax year invalid")))
-        case "ERROR_NINO_INVALID" =>
-          BadRequest(Json.toJson(ErrorBadRequest(ErrorCode.NINO_INVALID, "The provided Nino is invalid")))
-        case "ERROR_INVALID_PROPERTY_TYPE" => NotFound(Json.toJson(ErrorNotFound))
+        case "ERROR_INVALID_SOURCE_TYPE"   => NotFound(toJson(ErrorNotFound))
+        case "ERROR_TAX_YEAR_INVALID"      => BadRequest(toJson(ErrorBadRequest(TAX_YEAR_INVALID, "Tax year invalid")))
+        case "ERROR_NINO_INVALID"          => BadRequest(toJson(ErrorBadRequest(NINO_INVALID, "The provided Nino is invalid")))
+        case "ERROR_INVALID_DATE"          => BadRequest(toJson(ErrorBadRequest(INVALID_DATE, "The provided dates are invalid")))
+        case "ERROR_INVALID_PROPERTY_TYPE" => NotFound(toJson(ErrorNotFound))
         case _                             => result
       }
     }
   }
+
 }

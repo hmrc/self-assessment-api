@@ -17,6 +17,7 @@ import uk.gov.hmrc.selfassessmentapi.{NinoGenerator, TestApplication}
 
 import scala.collection.mutable
 import scala.util.matching.Regex
+import org.joda.time.LocalDate
 
 trait BaseFunctionalSpec extends TestApplication {
 
@@ -1210,8 +1211,8 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def endOfYearStatementReadyToBeFinalised(nino: Nino, id: String = "abc", taxYear: TaxYear = TaxYear("2017-18")): Givens = {
-          stubFor(post(urlEqualTo(s"/nino/$nino/self-employments/$id/statements/${taxYear.toDesTaxYear}"))
+        def endOfYearStatementReadyToBeFinalised(nino: Nino, start: LocalDate, end: LocalDate, id: String = "abc"): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/accounting-periods/${start}_${end}/statement"))
             .willReturn(
               aResponse()
                 .withStatus(204)
@@ -1220,8 +1221,8 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def endOfYearStatementMissingPeriod(nino: Nino, id: String = "abc", taxYear: TaxYear = TaxYear("2017-18")): Givens = {
-          stubFor(post(urlEqualTo(s"/nino/$nino/self-employments/$id/statements/${taxYear.toDesTaxYear}"))
+        def endOfYearStatementMissingPeriod(nino: Nino, start: LocalDate, end: LocalDate, id: String = "abc"): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/accounting-periods/${start}_${end}/statement"))
             .willReturn(
               aResponse()
                 .withStatus(403)
@@ -1231,8 +1232,8 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def endOfYearStatementIsLate(nino: Nino, id: String = "abc", taxYear: TaxYear = TaxYear("2017-18")): Givens = {
-          stubFor(post(urlEqualTo(s"/nino/$nino/self-employments/$id/statements/${taxYear.toDesTaxYear}"))
+        def endOfYearStatementIsLate(nino: Nino, start: LocalDate, end: LocalDate, id: String = "abc"): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/accounting-periods/${start}_${end}/statement"))
             .willReturn(
               aResponse()
                 .withStatus(403)
@@ -1242,8 +1243,8 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def endOfYearStatementIsAlreadyFinalised(nino: Nino, id: String = "abc", taxYear: TaxYear = TaxYear("2017-18")): Givens = {
-          stubFor(post(urlEqualTo(s"/nino/$nino/self-employments/$id/statements/${taxYear.toDesTaxYear}"))
+        def endOfYearStatementIsAlreadyFinalised(nino: Nino, start: LocalDate, end: LocalDate, id: String = "abc"): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/accounting-periods/${start}_${end}/statement"))
             .willReturn(
               aResponse()
                 .withStatus(403)

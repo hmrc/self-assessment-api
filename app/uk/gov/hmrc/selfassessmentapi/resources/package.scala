@@ -20,10 +20,19 @@ import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results.{BadRequest, Forbidden, InternalServerError}
-import uk.gov.hmrc.selfassessmentapi.models.{AuthorisationErrorResult, ErrorResult, Errors, GenericErrorResult, ValidationErrorResult}
-
+import uk.gov.hmrc.selfassessmentapi.models.{
+  PathValidationErrorResult,
+  AuthorisationErrorResult,
+  ErrorResult,
+  Errors,
+  GenericErrorResult,
+  ValidationErrorResult
+}
 import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
+import cats.data.EitherT
+import cats.implicits._
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.Response
 
 package object resources {
 
@@ -34,36 +43,64 @@ package object resources {
     InternalServerError(Json.toJson(Errors.InternalServerError("An internal server error occurred")))
   }
 
-  def handleErrors(errorResult: ErrorResult): Result = {
-    errorResult match {
-      case GenericErrorResult(message)     => BadRequest(Json.toJson(Errors.badRequest(message)))
-      case ValidationErrorResult(errors)   => BadRequest(Json.toJson(Errors.badRequest(errors)))
-      case AuthorisationErrorResult(error) => Forbidden(Json.toJson(error))
-    }
+  def handleErrors(errorResult: ErrorResult): Result = errorResult match {
+    case GenericErrorResult(message)      => BadRequest(Json.toJson(Errors.badRequest(message)))
+    case ValidationErrorResult(errors)    => BadRequest(Json.toJson(Errors.badRequest(errors)))
+    case AuthorisationErrorResult(error)  => Forbidden(Json.toJson(error))
+    case PathValidationErrorResult(error) => BadRequest(Json.toJson(error))
   }
 
-  def validate[T](jsValue: JsValue)(implicit reads: Reads[T]): Future[Either[ErrorResult, T]] =
-    jsValue.validate[T] match {
-      case JsSuccess(payload, _) => Future.successful(Right(payload))
-      case JsError(errors)       => Future.successful(Left(ValidationErrorResult(errors)))
+  type BusinessResult[T] = EitherT[Future, ErrorResult, T]
+
+  object BusinessResult {
+
+    def apply[T](eventuallyErrorOrResult: Future[Either[ErrorResult, T]]): BusinessResult[T] =
+      new EitherT(eventuallyErrorOrResult)
+
+    def apply[T](errorOrResult: Either[ErrorResult, T]): BusinessResult[T] =
+      EitherT.fromEither(errorOrResult)
+
+    def success[T](value: T): BusinessResult[T] = EitherT.fromEither(Right(value))
+
+    def failure[T](error: ErrorResult): BusinessResult[T] = EitherT.fromEither(Left(error))
+
+    def desToResult[R <: Response](handleSuccess: R => Result)(businessResult: BusinessResult[R]): Future[Result] = {
+      for {
+        desResponseOrError <- businessResult.value
+      } yield desResponseOrError match {
+        case Left(errors)       => handleErrors(errors)
+        case Right(desResponse) => handleSuccess(desResponse)
+      }
     }
+
+  }
+
+  def validateJson[T](json: JsValue)(implicit reads: Reads[T]): BusinessResult[T] =
+    BusinessResult{ 
+      for {
+        errors <- json.validate[T].asEither.left
+      } yield ValidationErrorResult(errors)
+    }
+
+  def validate[T](value: T)(validate: PartialFunction[T, Errors.Error]): BusinessResult[T] =
+    if(validate.isDefinedAt(value)) BusinessResult.failure(PathValidationErrorResult(validate(value)))
+    else                            BusinessResult.success(value)
+
+  def authorise[T](value: T)(auth: PartialFunction[T, Errors.Error]): BusinessResult[T] = 
+    if(auth.isDefinedAt(value)) BusinessResult.failure(AuthorisationErrorResult(Errors.businessError(auth(value))))
+    else                        BusinessResult.success(value)
+
+  def execute[T](f: Unit => Future[T]): BusinessResult[T] =
+    BusinessResult(
+      for {
+        result <- f(())
+      } yield (Right(result))
+    )
 
   def validate[T, R](jsValue: JsValue)(f: T => Future[R])(implicit reads: Reads[T]): Future[Either[ErrorResult, R]] =
     jsValue.validate[T] match {
       case JsSuccess(payload, _) => f(payload).map(Right(_))
       case JsError(errors)       => Future.successful(Left(ValidationErrorResult(errors)))
     }
-
-  def authorise[T, R](valueOrError: Either[ErrorResult, T], auth: T => Option[Errors.Error])(f: T => Future[R]): Future[Either[ErrorResult, R]] = {
-    def authorise(value: T) = auth(value) match {
-      case Some(authError) => Future.successful(Left(AuthorisationErrorResult(Errors.businessError(authError))))
-      case  _              => f(value).map(Right(_))
-    }
-
-    valueOrError match {
-      case Right(value) => authorise(value)
-      case Left(error)  => Future.successful(Left(error))
-    }
-  }
 
 }
