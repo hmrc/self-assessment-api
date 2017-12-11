@@ -70,8 +70,6 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
           goodsAndServicesOwnUse = Some(200.25),
           overlapProfitCarriedForward = Some(10),
           overlapProfitBroughtForward = Some(10),
-          adjustedProfit = Some(10.23),
-          adjustedLoss = Some(20.25),
           lossCarriedForwardTotal = Some(12.25),
           cisDeductionsTotal = Some(10.05),
           taxDeductionsFromTradingIncome = Some(12.25),
@@ -108,8 +106,6 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
       adjustments.balancingChargeOther shouldBe Some(200.25)
       adjustments.goodsAndServicesOwnUse shouldBe Some(200.25)
       adjustments.overlapProfitCarriedForward shouldBe Some(10)
-      adjustments.adjustedProfit shouldBe Some(10.23)
-      adjustments.adjustedLoss shouldBe Some(20.25)
       adjustments.lossCarriedForwardTotal shouldBe Some(12.25)
       adjustments.cisDeductionsTotal shouldBe Some(10.05)
       adjustments.taxDeductionsFromTradingIncome shouldBe Some(12.25)
