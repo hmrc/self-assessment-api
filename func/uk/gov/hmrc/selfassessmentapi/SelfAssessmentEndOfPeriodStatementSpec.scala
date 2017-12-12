@@ -122,6 +122,19 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .bodyHasPath("\\code", "EARLY_SUBMISSION")
     }
 
+    "fail when statement period does not match accounting period" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().selfEmployment.endOfYearStatementDoesNotMatchPeriod(nino, start, end)
+        .when()
+        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": true }""")))
+        .thenAssertThat()
+        .statusIs(403)
+        .bodyHasPath("\\code", "BUSINESS_ERROR")
+        .bodyHasPath("\\errors(0)\\code", "NON_MATCHING_PERIOD")
+    }
+
   }
 
 }
