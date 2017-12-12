@@ -1,6 +1,30 @@
 
 ### Please refer to [CHANGELOG-ET.md](https://github.com/hmrc/self-assessment-api/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to Sandbox Test Environment.
 
+## [0.141.3](https://github.com/hmrc/self-assessment-api/releases/tag/v0.141.3) 12-Dec-2017
+* 3LA - Taxpayer can submit/amend consolidated expenses for Self employment
+  * Impacted API's
+    * Create a Self Employment Update Period
+    * Update a Self Employment Update Period
+    * Get a Self Employment Update Period
+* Class4 NIC’s exemptions and Class2 NIC’s Voluntary payment. 
+  * Taxpayer can update HMRC if they are exempt from Class4 NIC's payments
+  * Taxpayer can update HMRC if they want to make voluntary Class2 NIC payments
+  * Impacted API's
+    * Update a Self employment Annual summary
+    * Get a Self employment Annual summary
+* Temporarily disabled the test-only endpoint _Update a self-employment business_.
+* Tax calculation response now includes EndOfYear estimates for each income source calculated based on the information provided
+* Documentation improvements and fixes
+  * Copy changes as per the User research
+  * Fixed issue: Made id field in List all self-employment businesses mandatory. It was wrongly documented as optional
+  * Updated the description of id field in List all self-employment businesses to An identifier for the self-employment business, unique to the customer.
+  * The sample list periods response includes 2 elements for List all self-employment update periods, List all non-FHL UK property update periods, List all FHL UK property update periods
+  * End-point name change: Update a non-FHL UK property business annual summary --> Amend a non-FHL UK property business annual summary
+  * End-point name change: Update a FHL UK property business annual summary --> Amend a FHL UK property business annual summary
+  * Fixed issue: Made id field as mandatory for List all self-employment update periods, List all non-FHL UK property update periods, List all FHL UK property update periods. It was wrongly documented as optional
+  * All dates and taxYear fields are updated with format and example
+
 ## [0.136.2](https://github.com/hmrc/self-assessment-api/releases/tag/v0.136.2) 21-Sep-2017
 
 Fix application.raml to include the correct error scenarios for update period BVR's 
