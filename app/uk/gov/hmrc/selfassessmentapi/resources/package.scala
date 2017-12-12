@@ -76,7 +76,7 @@ package object resources {
   }
 
   def validateJson[T](json: JsValue)(implicit reads: Reads[T]): BusinessResult[T] =
-    BusinessResult{ 
+    BusinessResult {
       for {
         errors <- json.validate[T].asEither.left
       } yield ValidationErrorResult(errors)
@@ -86,16 +86,16 @@ package object resources {
     if(validate.isDefinedAt(value)) BusinessResult.failure(PathValidationErrorResult(validate(value)))
     else                            BusinessResult.success(value)
 
-  def authorise[T](value: T)(auth: PartialFunction[T, Errors.Error]): BusinessResult[T] = 
+  def authorise[T](value: T)(auth: PartialFunction[T, Errors.Error]): BusinessResult[T] =
     if(auth.isDefinedAt(value)) BusinessResult.failure(AuthorisationErrorResult(Errors.businessError(auth(value))))
     else                        BusinessResult.success(value)
 
   def execute[T](f: Unit => Future[T]): BusinessResult[T] =
-    BusinessResult(
+    BusinessResult {
       for {
         result <- f(())
       } yield (Right(result))
-    )
+    }
 
   def validate[T, R](jsValue: JsValue)(f: T => Future[R])(implicit reads: Reads[T]): Future[Either[ErrorResult, R]] =
     jsValue.validate[T] match {

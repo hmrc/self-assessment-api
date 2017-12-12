@@ -70,7 +70,7 @@ object DesJsons {
     val invalidDateTo: String = error("INVALID_DATE_TO", "Submission has not passed validation. Invalid parameter to.")
     val periodicUpdateMissing: String = error("PERIODIC_UPDATE_MISSING", "Cannot finalise statement with missing periodic update")
     val lateSubmission = error("LATE_SUBMISSION", "End-of-period statement cannot be submitted for this period later than 31 January 20XX.")
-    val alreadyFinalised = error("ALREADY_FINALISED", "End-of-period statement for this period is already finalised.")
+    val nonMatchingPeriod = error("NON_MATCHING_PERIOD", "Statement period does not match you accounting period.")
   }
 
   object SelfEmployment {
