@@ -618,7 +618,7 @@ traits:
                       description: Valid ISO 8601 date for the end of the accounting period
                       type: string
                       example: 2018-12-31
-                  post:
+                  put:
                     displayName: Submit Self-Employment End-of-Period Statement
                     description: Finalise the self-employment, end-of-period statement for this accounting period.
                     (annotations.sandboxData): !include scenarios/declaration-scenarios.md
@@ -665,10 +665,6 @@ traits:
                                 description: Periodic update missing for this period
                                 value:
                                   code: PERIODIC_UPDATE_MISSING
-                              alreadyFinalised:
-                                description: Statement for this period has already been finalised.
-                                value:
-                                  code: ALREADY_FINALISED
                               nonMatchingPeriod:
                                 description: You cannot submit a statement with a period that does not match the accounting period of your business.
                                 value:

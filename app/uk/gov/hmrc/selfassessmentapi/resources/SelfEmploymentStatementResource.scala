@@ -51,7 +51,6 @@ object SelfEmploymentStatementResource extends BaseResource {
         desResponse.filter {
           case 204                                                     => NoContent
           case 403 if desResponse.errorCodeIs(PERIODIC_UPDATE_MISSING) => Forbidden(businessJsonError(Errors.PeriodicUpdateMissing))
-          case 403 if desResponse.errorCodeIs(ALREADY_FINALISED)       => Forbidden(businessJsonError(Errors.AlreadyFinalised))
         }
 
       }

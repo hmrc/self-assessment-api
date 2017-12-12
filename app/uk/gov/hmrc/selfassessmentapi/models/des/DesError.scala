@@ -69,8 +69,7 @@ object DesErrorCode extends Enumeration {
   MISSING_EXEMPTION_INDICATOR,
   MISSING_EXEMPTION_REASON,
   INVALID_DATE_RANGE,
-  PERIODIC_UPDATE_MISSING,
-  ALREADY_FINALISED = Value
+  PERIODIC_UPDATE_MISSING = Value
 
   implicit val format: Format[DesErrorCode] = EnumJson.enumFormat(DesErrorCode,
     Some(s"Recognized DesErrorCode values: ${DesErrorCode.values.mkString(", ")}"))

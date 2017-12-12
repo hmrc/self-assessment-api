@@ -24,10 +24,6 @@
             <td><p>Simulate a missing periodic update check failure</p></td>
         </tr>
         <tr>
-            <td><p>ALREADY_FINALISED</p></td>
-            <td><p>Simulate an already finalised check failure</p></td>
-        </tr>
-        <tr>
             <td><p>EARLY_SUBMISSION</p></td>
             <td><p>Simulate an early submission check failure</p></td>
         </tr>
