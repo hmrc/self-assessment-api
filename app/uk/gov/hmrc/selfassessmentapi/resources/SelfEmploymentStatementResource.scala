@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.mvc._
 import play.api.libs.json._
+import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.models.{Declaration, Errors, SourceId, SourceType}
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentStatementConnector
@@ -30,6 +30,7 @@ import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 import uk.gov.hmrc.selfassessmentapi.models.audit.EndOfPeriodStatementDeclaration
 import org.joda.time.LocalDate
 import uk.gov.hmrc.selfassessmentapi.models.Period
+import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
 
 import scala.concurrent.ExecutionContext.Implicits._
 import cats.implicits._
@@ -98,4 +99,37 @@ object SelfEmploymentStatementResource extends BaseResource {
       transactionName = s"$id-end-of-year-statement-finalised"
     )
 
+  def retrieveStatementsById(nino: Nino, id: SourceId, params: ObligationQueryParams): Action[Unit] =
+  APIAction(nino, SourceType.SelfEmployments, Some("statements")).async(parse.empty) { implicit request =>
+    connector.get(nino).map { response =>
+      response.filter {
+        case 200 =>
+          logger.debug("Self-employment statements from DES = " + Json.stringify(response.json))
+          // ITEOY is made up for now, it needs to be agreed with the des folks!
+          response.statement("ITSB", id, params) match {
+            case Right(obj) => obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+            case Left(ex) =>
+              logger.error(ex.msg)
+              InternalServerError(Json.toJson(Errors.InternalServerError))
+          }
+      }
+    }
+  }
+
+  def retrieveStatements(nino: Nino, params: ObligationQueryParams): Action[Unit] =
+  APIAction(nino, SourceType.SelfEmployments, Some("statements")).async(parse.empty) { implicit request =>
+    connector.get(nino).map { response =>
+      response.filter {
+        case 200 =>
+          logger.debug("Self-employment statements from DES = " + Json.stringify(response.json))
+          // ITEOY is made up for now, it needs to be agreed with the des folks!
+          response.statement("ITSB", params) match {
+            case Right(obj) => obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+            case Left(ex) =>
+              logger.error(ex.msg)
+              InternalServerError(Json.toJson(Errors.InternalServerError))
+          }
+      }
+    }
+  }
 }

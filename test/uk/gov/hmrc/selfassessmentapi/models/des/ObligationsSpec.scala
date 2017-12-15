@@ -82,11 +82,11 @@ class ObligationsSpec extends JsonSpec {
 
   "isFulfilled" should {
     "return true if the obligation is fulfilled" in {
-      createObligationDetails(status = "F").isFulfilled shouldBe true
+      createObligationDetails(status = "F").isFinalised shouldBe true
     }
 
     "return false if the obligation is not fulfilled" in {
-      createObligationDetails(status = "O").isFulfilled shouldBe false
+      createObligationDetails(status = "O").isFinalised shouldBe false
     }
   }
 }

@@ -1335,6 +1335,18 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def returnEndOfPeriodStatementsFor(nino: Nino, id: String = "abc"): Givens = {
+          stubFor(get(urlEqualTo(s"/income-tax-self-assessment/obligation-data/$nino"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withHeader("CorrelationId", "abc")
+                .withBody(DesJsons.Obligations())))
+
+          givens
+        }
+
         def receivesObligationsTestHeader(nino: Nino, headerValue: String, id: String = "abc"): Givens = {
           stubFor(
             get(urlEqualTo(s"/income-tax-self-assessment/obligation-data/$nino"))

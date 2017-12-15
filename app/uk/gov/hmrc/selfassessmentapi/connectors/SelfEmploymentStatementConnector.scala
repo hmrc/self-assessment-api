@@ -16,12 +16,13 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
-import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.models.{SourceId, Period}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.selfassessmentapi.resources.wrappers.EmptyResponse
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
+import uk.gov.hmrc.selfassessmentapi.models.{Period, SourceId}
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{EmptyResponse, SelfEmploymentStatementResponse}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 object SelfEmploymentStatementConnector {
 
@@ -29,5 +30,9 @@ object SelfEmploymentStatementConnector {
 
   def create(nino: Nino, id: SourceId, accountingPeriod: Period)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] =
     httpEmptyPost[EmptyResponse](s"$baseUrl/income-store/nino/$nino/self-employments/$id/accounting-periods/${accountingPeriod.periodId}/statement", EmptyResponse)
+
+  def get(nino: Nino)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentStatementResponse] = {
+    httpGet[SelfEmploymentStatementResponse](baseUrl + s"/income-tax-self-assessment/obligation-data/$nino", SelfEmploymentStatementResponse)
+  }
 
 }

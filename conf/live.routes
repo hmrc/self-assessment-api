@@ -1,4 +1,10 @@
 ####################
+# This static route needs to be defined before /ni/:nino/self-employments since both of them match the same request url
+####################
+GET /ni/:nino/self-employments/:id/end-of-period-statements/obligations   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentStatementResource.retrieveStatementsById(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, queryParams: uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams)
+GET /ni/:nino/self-employments/end-of-period-statements/obligations   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentStatementResource.retrieveStatements(nino: uk.gov.hmrc.domain.Nino, queryParams: uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams)
+
+####################
 # Self-Employments #
 ####################
 GET /ni/:nino/self-employments   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentsResource.retrieveAll(nino: uk.gov.hmrc.domain.Nino)

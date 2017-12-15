@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
@@ -89,6 +90,74 @@ class BindersSpec extends UnitSpec {
       val result = Binders.propertyTypeBinder.bind("propertyType", "invalid")
       result shouldEqual Left("ERROR_INVALID_PROPERTY_TYPE")
     }
+  }
+
+  "obligationQueryParamsBinder.bind" should {
+
+    "bind \"from\", \"to\" dates and a \"status\"" in {
+      val result = Binders.obligationQueryParamsBinder.bind("", Map("from" -> Seq("2017-02-13"), "to" -> Seq("2017-12-13"),
+        "status" -> Seq("O")))
+      val oqp = result.get.right.get
+      oqp.from.get shouldEqual new LocalDate("2017-02-13")
+      oqp.to.get shouldEqual new LocalDate("2017-12-13")
+      oqp.status.get shouldEqual "O"
+    }
+
+    "bind \"to\" date and a \"status\"" in {
+      val result = Binders.obligationQueryParamsBinder.bind("", Map("to" -> Seq("2017-12-13"), "status" -> Seq("F")))
+      val oqp = result.get.right.get
+      oqp.from.isDefined shouldBe false
+      oqp.to.get shouldEqual new LocalDate("2017-12-13")
+      oqp.status.get shouldEqual "F"
+    }
+
+    "error if \"from\" and \"to\" dates are more than 366 days apart" in {
+      val result = Binders.obligationQueryParamsBinder.bind("", Map("from" -> Seq("2017-02-13"), "to" -> Seq("2029-12-13"),
+        "status" -> Seq("F")))
+      val oqp = result.get.left.get
+      oqp shouldEqual "INVALID_DATE_RANGE"
+    }
+
+    "error if \"from\" date is invalid" in {
+      val result = Binders.obligationQueryParamsBinder.bind("", Map("from" -> Seq("201R-02-13"), "to" -> Seq("2019-12-13")))
+      val oqp = result.get.left.get
+      oqp shouldEqual "INVALID_DATE_FROM"
+    }
+
+    "error if \"to\" date is invalid" in {
+      val result = Binders.obligationQueryParamsBinder.bind("", Map("from" -> Seq("2017-02-13"), "to" -> Seq("201Z-12-13")))
+      val oqp = result.get.left.get
+      oqp shouldEqual "INVALID_DATE_TO"
+    }
+
+    "error if status is other than 'O' or 'F'" in {
+      val result = Binders.obligationQueryParamsBinder.bind("", Map("status" -> Seq("Z")))
+      val oqp = result.get.left.get
+      oqp shouldEqual "INVALID_STATUS"
+    }
+  }
+
+  "periodQueryParamsBinder.bind" should {
+
+    "bind \"from\", \"to\" dates " in {
+      val result = Binders.obligationQueryParamsBinder.bind("", Map("from" -> Seq("2017-02-13"), "to" -> Seq("2017-12-13")))
+      val oqp = result.get.right.get
+      oqp.from.get shouldEqual new LocalDate("2017-02-13")
+      oqp.to.get shouldEqual new LocalDate("2017-12-13")
+    }
+
+    "error if \"from\" date is invalid" in {
+      val result = Binders.obligationQueryParamsBinder.bind("", Map("from" -> Seq("201R-02-13"), "to" -> Seq("2019-12-13")))
+      val oqp = result.get.left.get
+      oqp shouldEqual "INVALID_DATE_FROM"
+    }
+
+    "error if \"to\" date is invalid" in {
+      val result = Binders.obligationQueryParamsBinder.bind("", Map("from" -> Seq("2017-02-13"), "to" -> Seq("201Z-12-13")))
+      val oqp = result.get.left.get
+      oqp shouldEqual "INVALID_DATE_TO"
+    }
+
   }
 
 }

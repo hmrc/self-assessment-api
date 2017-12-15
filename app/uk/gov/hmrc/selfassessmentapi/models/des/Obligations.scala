@@ -36,7 +36,7 @@ case class ObligationDetail(status: String,
                             inboundCorrespondenceDateReceived: Option[String],
                             inboundCorrespondenceDueDate: String,
                             periodKey: String) {
-  def isFulfilled: Boolean = status == "F"
+  def isFinalised: Boolean = status == "F"
 }
 
 object ObligationDetail {
