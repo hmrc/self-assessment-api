@@ -100,8 +100,8 @@ case class SelfEmploymentStatementResponse(underlying: HttpResponse) extends Res
           Right(
             Some(
               (for {
-                entry <- sourceIdToErrorOrEopsObligation.foldLeft(Map[Option[SourceId], Seq[EDE]]())(merge)
-              } yield EopsObligations(entry._1, entry._2.map (_.right.get))).toSeq
+                (id, eopsObligation) <- sourceIdToErrorOrEopsObligation.foldLeft(Map[Option[SourceId], Seq[EDE]]())(merge)
+              } yield EopsObligations(id, eopsObligation.map (_.right.get))).toSeq
             )
           )
       }
