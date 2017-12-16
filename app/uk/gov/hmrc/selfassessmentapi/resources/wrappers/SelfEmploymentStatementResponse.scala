@@ -87,7 +87,7 @@ case class SelfEmploymentStatementResponse(underlying: HttpResponse) extends Res
 
       type EDE  = Either[DesTransformError, EopsObligation]
 
-      def merge(map: Map[Option[SourceId], Seq[EDE]], tuple: (Option[SourceId], EDE)) : Map[Option[SourceId],Seq[EDE]] = {
+      def reorder(map: Map[Option[SourceId], Seq[EDE]], tuple: (Option[SourceId], EDE)) = {
         if (map.keySet.contains(tuple._1))
           map.updated(tuple._1, map(tuple._1) :+ tuple._2)
         else
@@ -100,8 +100,8 @@ case class SelfEmploymentStatementResponse(underlying: HttpResponse) extends Res
           Right(
             Some(
               (for {
-                (id, eopsObligation) <- sourceIdToErrorOrEopsObligation.foldLeft(Map[Option[SourceId], Seq[EDE]]())(merge)
-              } yield EopsObligations(id, eopsObligation.map (_.right.get))).toSeq
+                (id, obligation) <- sourceIdToErrorOrEopsObligation.foldLeft(Map[Option[SourceId], Seq[EDE]]())(reorder)
+              } yield EopsObligations(id, obligation.map (_.right.get))).toSeq
             )
           )
       }

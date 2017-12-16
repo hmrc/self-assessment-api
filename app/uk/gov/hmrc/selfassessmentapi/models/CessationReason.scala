@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
-import akka.actor.FSM.->
 import play.api.libs.json.Format
 import uk.gov.hmrc.selfassessmentapi.models
 
@@ -34,14 +33,4 @@ object CessationReason extends Enumeration {
 
   implicit val format: Format[CessationReason] =
     EnumJson.enumFormat(CessationReason, Some(s"CessationReason should one of: ${CessationReason.values.mkString(", ")}"))
-
-  def main(args: Array[String]): Unit = {
-
-    def merge(map: Map[Option[String], Seq[String]], tuple: (Option[String], String)) : Map[Option[String],Seq[String]] = {
-      if (map.keySet.exists(_ == tuple._1)) map.updated(tuple._1, map(tuple._1) :+ tuple._2) else map + (tuple._1 -> Seq(tuple._2))
-    }
-
-    println(Seq((None -> "aaa"),(Some("1") -> "bbb"),(Some("2") -> "ccc"),(Some("1") -> "uuu"))
-      .foldLeft(Map[Option[String],Seq[String]]())(merge))
-  }
 }
