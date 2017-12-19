@@ -20,7 +20,7 @@ import play.api.libs.json._
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.models.{Declaration, Errors, SourceId, SourceType}
-import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentStatementConnector
+import uk.gov.hmrc.selfassessmentapi.connectors.{ObligationsConnector, SelfEmploymentStatementConnector}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{EmptyResponse, Response}
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode._
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
@@ -37,7 +37,8 @@ import cats.implicits._
 
 object SelfEmploymentStatementResource extends BaseResource {
 
-  private val connector = SelfEmploymentStatementConnector
+  private val statementConnector = SelfEmploymentStatementConnector
+  private val obligationsConnector = ObligationsConnector
 
   def finaliseEndOfPeriodStatement(nino: Nino, id: SourceId, start: LocalDate, end: LocalDate): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments).async(parse.json) { implicit request =>
@@ -71,7 +72,7 @@ object SelfEmploymentStatementResource extends BaseResource {
 
           _ <- authorise(declaration) { case _ if (!declaration.finalised) => Errors.NotFinalisedDeclaration }
 
-          desResponse <- execute[EmptyResponse] { _ => connector.create(nino, id, accountingPeriod) }
+          desResponse <- execute[EmptyResponse] { _ => statementConnector.create(nino, id, accountingPeriod) }
         } yield desResponse
       }
 
@@ -99,14 +100,14 @@ object SelfEmploymentStatementResource extends BaseResource {
       transactionName = s"$id-end-of-year-statement-finalised"
     )
 
-  def retrieveStatementsById(nino: Nino, id: SourceId, params: ObligationQueryParams): Action[Unit] =
+  def retrieveObligationsById(nino: Nino, id: SourceId, params: ObligationQueryParams): Action[Unit] =
   APIAction(nino, SourceType.SelfEmployments, Some("statements")).async(parse.empty) { implicit request =>
-    connector.get(nino).map { response =>
+    obligationsConnector.get(nino).map { response =>
       response.filter {
         case 200 =>
           logger.debug("Self-employment statements from DES = " + Json.stringify(response.json))
           // ITEOY is made up for now, it needs to be agreed with the des folks!
-          response.statement("ITSB", id, params) match {
+          response.obligations("ITSBEOPS", Some(id)) match {
             case Right(obj) => obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
             case Left(ex) =>
               logger.error(ex.msg)
@@ -116,20 +117,4 @@ object SelfEmploymentStatementResource extends BaseResource {
     }
   }
 
-  def retrieveStatements(nino: Nino, params: ObligationQueryParams): Action[Unit] =
-  APIAction(nino, SourceType.SelfEmployments, Some("statements")).async(parse.empty) { implicit request =>
-    connector.get(nino).map { response =>
-      response.filter {
-        case 200 =>
-          logger.debug("Self-employment statements from DES = " + Json.stringify(response.json))
-          // ITEOY is made up for now, it needs to be agreed with the des folks!
-          response.statement("ITSB", params) match {
-            case Right(obj) => obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
-            case Left(ex) =>
-              logger.error(ex.msg)
-              InternalServerError(Json.toJson(Errors.InternalServerError))
-          }
-      }
-    }
-  }
 }

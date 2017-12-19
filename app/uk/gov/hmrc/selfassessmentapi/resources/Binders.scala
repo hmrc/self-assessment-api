@@ -25,7 +25,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.models.SourceType.SourceType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
-import uk.gov.hmrc.selfassessmentapi.models.{SourceId, SourceType, TaxYear}
+import uk.gov.hmrc.selfassessmentapi.models.{SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
 
 import scala.util.{Failure, Success, Try}
@@ -109,35 +109,23 @@ object Binders {
     if (value.matches(regex)) value else throw new IllegalArgumentException
 
 
-  def fromQueryParam(stringBinder: QueryStringBindable[String],
-                     params: Map[String, Seq[String]]): OptEither[LocalDate] = {
-    stringBinder.bind("from", params).map {
+  def dateQueryFrom(stringBinder: QueryStringBindable[String], params: Map[String, Seq[String]],
+                    paramName : String, errorCode : String): OptEither[LocalDate] = {
+    stringBinder.bind(paramName, params).map {
       case Right(value) =>
         (for {
           _ <- Try(matches(value, fromToDateRegex))
           res <- Try(Right(new LocalDate(value)))
-        } yield res).getOrElse(Left("INVALID_DATE_FROM"))
-      case Left(_) => Left("INVALID_DATE_FROM")
+        } yield res).getOrElse(Left(errorCode))
+      case Left(_) => Left(errorCode)
     }
   }
 
-  def toQueryParam(stringBinder: QueryStringBindable[String],
-                   params: Map[String, Seq[String]]): OptEither[LocalDate] = {
-    stringBinder.bind("to", params).map {
-      case Right(value) =>
-        (for {
-          _ <- Try(matches(value, fromToDateRegex))
-          res <- Try(Right(new LocalDate(value)))
-        } yield res).getOrElse(Left("INVALID_DATE_TO"))
-      case Left(_) => Left("INVALID_DATE_TO")
-    }
-  }
 
   implicit def obligationQueryParamsBinder(implicit stringBinder: QueryStringBindable[String]) =
     new QueryStringBindable[ObligationQueryParams] {
 
-      def fromAndToWithinFourYears(fromOpt: OptEither[LocalDate],
-                                   toOpt: OptEither[LocalDate]) =
+      def validDateRange(fromOpt: OptEither[LocalDate], toOpt: OptEither[LocalDate]) =
         for {
           from <- fromOpt
           if from.isRight
@@ -145,45 +133,26 @@ object Binders {
           if to.isRight
         } yield
           (from.right.get, to.right.get) match {
-            case (from, to) if from.plusDays(4 * 356).isBefore(to) =>
-              Left("INVALID_DATE_RANGE")
+            case (from, to) if to.isBefore(from) => Left("INVALID_DATE_RANGE")
             case _ => Right(()) // object wrapped in Right irrelevant
           }
 
-      private def statusValid(statusOpt: OptEither[String]) =
-        for {
-          status <- statusOpt
-          if status.isRight
-        } yield
-          status.right.get match {
-            case status if !Set("O", "F", "A").contains(status.toUpperCase) =>
-              Left("INVALID_STATUS")
-            case _ => Right(()) // object wrapped in Right irrelevant
-          }
 
-      override def bind(key: String, params: Map[String, Seq[String]])
-      : OptEither[ObligationQueryParams] = {
+      override def bind(key: String, params: Map[String, Seq[String]]) : OptEither[ObligationQueryParams] = {
 
-        val from = fromQueryParam(stringBinder, params)
-        val to = toQueryParam(stringBinder, params)
-        val status = stringBinder.bind("status", params)
+        val from = dateQueryFrom(stringBinder, params, "from", "INVALID_DATE_FROM")
+        val to = dateQueryFrom(stringBinder, params, "to", "INVALID_DATE_TO")
 
         val errors = for {
           paramOpt <- Seq(from,
             to,
-            fromAndToWithinFourYears(from, to),
-            statusValid(status))
+            validDateRange(from, to))
           param <- paramOpt
           if param.isLeft
         } yield param.left.get
 
-
-
         if (errors.isEmpty) {
-          Some(
-            Right(
-              ObligationQueryParams(from.map(_.right.get),
-                to.map(_.right.get), status.map(_.right.get))))
+          Some(Right(ObligationQueryParams(from.map(_.right.get), to.map(_.right.get))))
         } else {
           Some(Left(errors.head))
         }
