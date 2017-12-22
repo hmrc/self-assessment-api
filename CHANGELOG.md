@@ -1,6 +1,10 @@
 
 ### Please refer to [CHANGELOG-ET.md](https://github.com/hmrc/self-assessment-api/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to Sandbox Test Environment.
 
+## [0.141.4](https://github.com/hmrc/self-assessment-api/releases/tag/v0.141.4) 21-Dec-2017
+
+* Documentation updated to say, In production it can take up to an hour for the obligation to be updated
+
 ## [0.141.3](https://github.com/hmrc/self-assessment-api/releases/tag/v0.141.3) 12-Dec-2017
 * 3LA - Taxpayer can submit/amend consolidated expenses for Self employment
   * Impacted API's

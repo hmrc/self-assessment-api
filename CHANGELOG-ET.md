@@ -1,3 +1,7 @@
+## [0.143.2](https://github.com/hmrc/self-assessment-api/releases/tag/v0.143.2) 21-Dec-2017
+
+* Documentation updated to say, In production it can take up to an hour for the obligation to be updated
+
 ## [0.143.1](https://github.com/hmrc/self-assessment-api/releases/tag/v0.143.1) 14-Dec-2017
 
 * New API to facilitate taxpayer can submit End-Of-Period Statement (EOPS) for their Self Employment business 
