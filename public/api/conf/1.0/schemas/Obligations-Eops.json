@@ -5,7 +5,7 @@
   "properties": {
     "obligations": {
       "title": "Obligations",
-      "description": "A list of all obligations, sorted by start date",
+      "description": "A list of EOPS obligations, sorted by start date",
       "type": "array",
       "items": {
         "$ref": "Obligation-Eops.json"
