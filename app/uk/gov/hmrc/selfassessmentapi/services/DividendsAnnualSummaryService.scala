@@ -23,20 +23,19 @@ import uk.gov.hmrc.selfassessmentapi.repositories.DividendsRepository
 import uk.gov.hmrc.selfassessmentapi.models
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 trait DividendsAnnualSummaryService {
   val repository: DividendsRepository
 
-  def updateAnnualSummary(nino: Nino, taxYear: TaxYear, newDividends: models.dividends.Dividends): Future[Boolean] = {
+  def updateAnnualSummary(nino: Nino, taxYear: TaxYear, newDividends: models.dividends.Dividends)(implicit ec: ExecutionContext): Future[Boolean] = {
     repository.retrieve(nino).flatMap {
       case Some(resource) => repository.update(nino, resource.copy(dividends = resource.dividends.updated(taxYear, newDividends)))
       case None => repository.create(Dividends(BSONObjectID.generate, nino, Map(taxYear -> newDividends)))
     }
   }
 
-  def retrieveAnnualSummary(nino: Nino, taxYear: TaxYear): Future[Option[models.dividends.Dividends]] = {
+  def retrieveAnnualSummary(nino: Nino, taxYear: TaxYear)(implicit ec: ExecutionContext): Future[Option[models.dividends.Dividends]] = {
     repository.retrieve(nino).map {
       case Some(resource) => resource.dividends.get(taxYear)
       case None => Some(models.dividends.Dividends(None))

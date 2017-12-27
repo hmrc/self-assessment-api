@@ -16,9 +16,8 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
-
 import play.api.data.validation.ValidationError
-import play.api.libs.json.{JsValue, Json, Writes}
+import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.ErrorCode.ErrorCode
 
 object Errors {
@@ -56,7 +55,13 @@ object Errors {
 
   object NinoInvalid extends Error("NINO_INVALID", "The provided Nino is invalid", None)
   object InvalidRequest extends Error("INVALID_REQUEST", "Invalid request", None)
+  object BothExpensesSupplied extends Error("BOTH_EXPENSES_SUPPLIED", "Elements: expenses and consolidatedElements cannot be both specified at the same time", None)
+  object NotAllowedConsolidatedExpenses extends Error("NOT_ALLOWED_CONSOLIDATED_EXPENSES", "The submission contains consolidated expenses but the accumulative turnover amount exceeds the threshold", Some(""))
   object InvalidPeriod extends Error("INVALID_PERIOD", "The period 'from' date should come before the 'to' date", Some(""))
+  object NotUnder16 extends Error("NOT_UNDER_16", "The Individual's age is equal to or greater than 16 years old on the 6th April of current tax year.", Some("/nonFinancials/class4NicInfo/exemptionCode"))
+  object NotOverStatePension extends Error("NOT_OVER_STATE_PENSION", "The Individual's age is less than their State Pension age on the 6th April of current tax year.", Some("/nonFinancials/class4NicInfo/exemptionCode"))
+  object MissingExemptionIndicator extends Error("INVALID_VALUE", "Exemption code must be present only if the exempt flag is set to true", Some("/nonFinancials/class4NicInfo"))
+  object MandatoryFieldMissing extends Error("MANDATORY_FIELD_MISSING", "Exemption code value must be present if the exempt flag is set to true", Some("/nonFinancials/class4NicInfo"))
   object NotContiguousPeriod extends Error("NOT_CONTIGUOUS_PERIOD", "Periods should be contiguous.", Some(""))
   object OverlappingPeriod extends Error("OVERLAPPING_PERIOD", "Period overlaps with existing periods.", Some(""))
   object MisalignedPeriod extends Error("MISALIGNED_PERIOD", "Period is not within the accounting period.", Some(""))
@@ -66,8 +71,14 @@ object Errors {
   object BadToken extends Error("UNAUTHORIZED", "Bearer token is missing or not authorized", None)
   object BadRequest extends Error("INVALID_REQUEST", "Invalid request", None)
   object InternalServerError extends Error("INTERNAL_SERVER_ERROR", "An internal server error occurred", None)
+  object NotFinalisedDeclaration extends Error("NOT_FINALISED", "The statement cannot be accepted without a declaration it is finalised.", Some("/finalised"))
+  object PeriodicUpdateMissing extends Error("PERIODIC_UPDATE_MISSING", "End-of-period statement cannot be accepted until all periodic updates have been submitted.", None)
+  object InvalidDateRange extends Error("INVALID_DATE_RANGE", "The start date must be the same day or before the from date.", None)
+  object EarlySubmission extends Error("EARLY_SUBMISSION", "You cannot submit a statement before the end of your accounting period.", None)
+  object NonMatchingPeriod extends Error("NON_MATCHING_PERIOD", "You cannot submit your end-of-period statement for a period that does not match your accounting period.", None)
 
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")
+  def badRequest(error: Error) = BadRequest(Seq(error), "Invalid request")
   def badRequest(message: String) = BadRequest(Seq.empty, message)
 
   def businessError(error: Error): BusinessError = businessError(Seq(error))
@@ -94,9 +105,11 @@ object Errors {
     playError.message match {
       case "error.expected.jodadate.format" => Error("INVALID_DATE", "please provide a date in ISO format (i.e. YYYY-MM-DD)", Some(errorPath))
       case "error.path.missing" => Error("MANDATORY_FIELD_MISSING", "a mandatory field is missing", Some(errorPath))
+      case "error.expected.numberformatexception" => Error("INVALID_NUMERIC_VALUE", "please provide a numeric field", Some(errorPath))
+      case "error.expected.jsstring" => Error("INVALID_STRING_VALUE", "please provide a string field", Some(errorPath))
+      case "error.expected.jsboolean" => Error("INVALID_BOOLEAN_VALUE", "please provide a valid boolean field", Some(errorPath))
       case _ => Error("UNMAPPED_PLAY_ERROR", playError.message, Some(errorPath))
     }
   }
-
 
 }

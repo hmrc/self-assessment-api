@@ -27,6 +27,99 @@
       "maximum": 99.99,
       "multipleOf": 0.01,
       "description": "Defines a percentage rate (to 2 decimal places), between 0.00 and 99.99"
+    },
+    "endOfYearEstimate": {
+      "type": "object",
+      "properties": {
+        "selfEmployment": {
+          "$ref": "#/definitions/selfEmployment",
+          "description": "An array of self-employment income sources"
+        },
+        "ukProperty": {
+          "$ref": "#/definitions/ukProperty",
+          "description": "An array of UK property income sources"
+        },
+        "totalTaxableIncome": {
+          "$ref": "#/definitions/monetary",
+          "description": "Sum of estimated taxable income for all income sources"
+        },
+        "incomeTaxAmount": {
+          "$ref": "#/definitions/monetary",
+          "description": "Calculated Income tax amount from estimated taxable income"
+        },
+        "nic2": {
+          "$ref": "#/definitions/monetary",
+          "description": "Calculated NIC Class 2 from estimates"
+        },
+        "nic4": {
+          "$ref": "#/definitions/monetary",
+          "description": "Calculated NIC Class 4 from estimates"
+        },
+        "totalNicAmount": {
+          "$ref": "#/definitions/monetary",
+          "description": "Sum of National Insurance amounts"
+        },
+        "incomeTaxNicAmount": {
+          "$ref": "#/definitions/monetary",
+          "description": "Total of calculated Income Tax and National Insurance from estimated annual taxable income"
+        }
+      }
+    },
+    "selfEmployment": {
+      "description": "An array of annualised estimated income by income source",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+           "id": {
+             "description": "The Income Source ID",
+             "type": "string"
+           },
+           "taxableIncome": {
+             "$ref": "#/definitions/monetary",
+             "description": "Estimated taxable income for source"
+           },
+           "supplied": {
+             "description": "Indicates if the estimate taxable income is supplied by the taxpayer (true) or calculated (false)",
+             "type": "boolean"
+           },
+           "finalised": {
+             "description": "Indicates if the income source has been finalised for the tax year (only applies to self-employment and UK Property income types)",
+             "type": "boolean"
+           }
+        },
+        "required": [
+          "id", "taxableIncome", "supplied"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ukProperty": {
+      "description": "An array of annualised estimated income by income source",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+           "taxableIncome": {
+             "$ref": "#/definitions/monetary",
+             "description": "Estimated taxable income for source"
+           },
+           "supplied": {
+             "description": "Indicates if the estimate taxable income is supplied by the taxpayer (true) or calculated (false)",
+             "type": "boolean"
+           },
+           "finalised": {
+             "description": "Indicates if the income source has been finalised for the tax year (only applies to self-employment and UK Property income types)",
+             "type": "boolean"
+           }
+        },
+        "required": [
+          "taxableIncome", "supplied"
+        ],
+        "additionalProperties": false
+      }
     }
   },
   "properties": {
@@ -831,6 +924,10 @@
     "proportionReducedAllowanceLimit": {
       "$ref": "#/definitions/wholePounds",
       "description": "Proportion reduced allowance limit"
+    },
+    "eoyEstimate": {
+      "$ref": "#/definitions/endOfYearEstimate",
+      "description": "End-of-year estimate"
     }
   },
   "additionalProperties": false

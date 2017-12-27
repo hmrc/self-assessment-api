@@ -23,13 +23,13 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
   "from" should {
 
     val apiUpdate = models.selfemployment.SelfEmploymentUpdate(tradingName = "Foo Consulting",
-                                                               businessDescription =
-                                                                 "Absorbable haemostatics (manufacture)",
-                                                               businessAddressLineOne = "17 Profitable Road",
-                                                               businessAddressLineTwo = Some("Sussex"),
-                                                               businessAddressLineThree = Some("UK"),
-                                                               businessAddressLineFour = None,
-                                                               businessPostcode = "W11 7QT")
+      businessDescription =
+        "Absorbable haemostatics (manufacture)",
+      businessAddressLineOne = "17 Profitable Road",
+      businessAddressLineTwo = Some("Sussex"),
+      businessAddressLineThree = Some("UK"),
+      businessAddressLineFour = None,
+      businessPostcode = "W11 7QT")
 
     val desUpdate = SelfEmploymentUpdate.from(apiUpdate)
 

@@ -16,10 +16,11 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import uk.gov.hmrc.play.http.HttpResponse
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.calculation.ApiTaxCalculation
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
+import play.api.libs.json.{JsError, JsSuccess}
 
 case class TaxCalculationResponse(underlying: HttpResponse) extends Response {
   def calcId: Option[String] = {
@@ -33,10 +34,10 @@ case class TaxCalculationResponse(underlying: HttpResponse) extends Response {
   }
 
   def calculation: Option[ApiTaxCalculation] = {
-    (json \ "calcResult").asOpt[des.TaxCalculation] match {
-      case x @ Some(_) => x.map(ApiTaxCalculation.from)
-      case None => {
-        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
+    (json \ "calcResult").validate[des.TaxCalculation] match {
+      case JsSuccess(calcResult, _) => Some(ApiTaxCalculation.from(calcResult))
+      case JsError(errors) => {
+        logger.error(s"The response from DES does not match the expected format ($errors). JSON: [$json]")
         None
       }
     }

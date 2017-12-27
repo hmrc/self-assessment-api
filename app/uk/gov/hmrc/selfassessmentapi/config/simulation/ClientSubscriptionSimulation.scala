@@ -21,9 +21,10 @@ import play.api.mvc.{RequestHeader, Result}
 import uk.gov.hmrc.selfassessmentapi.models.ErrorClientNotSubscribedToMTD
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 
 object ClientSubscriptionSimulation extends Simulation {
-  override def apply(f: (RequestHeader) => Future[Result], rh: RequestHeader, method: String): Future[Result] = {
+  override def apply(f: (RequestHeader) => Future[Result], rh: RequestHeader, method: String)(implicit ec: ExecutionContext): Future[Result] = {
     Future.successful(Status(ErrorClientNotSubscribedToMTD.httpStatusCode)(Json.toJson(ErrorClientNotSubscribedToMTD)))
   }
 }

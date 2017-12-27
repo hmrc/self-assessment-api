@@ -23,20 +23,20 @@ import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, d
 class SelfEmploymentRetrieveSpec extends UnitSpec {
   def createDesSelfEmployment(accountingType: String = "cash"): des.selfemployment.SelfEmployment = {
     des.selfemployment.SelfEmployment(incomeSourceId = Some("abc"),
-                       accountingPeriodStartDate = "2017-01-04",
-                       accountingPeriodEndDate = "2017-01-05",
-                       tradingName = "Acme Ltd.",
-                       addressDetails = Some(
-                         des.selfemployment.SelfEmploymentAddress(
-                           addressLine1 = "1 Acme Rd.",
-                           addressLine2 = Some("London"),
-                           addressLine3 = Some("Greater London"),
-                           addressLine4 = Some("United Kingdom"),
-                           postalCode = Some("A9 9AA")
-                         )),
-                       typeOfBusiness = Some("Accountancy services"),
-                       tradingStartDate = Some("2017-04-01"),
-                       cashOrAccruals = accountingType)
+      accountingPeriodStartDate = "2017-01-04",
+      accountingPeriodEndDate = "2017-01-05",
+      tradingName = "Acme Ltd.",
+      addressDetails = Some(
+        des.selfemployment.SelfEmploymentAddress(
+          addressLine1 = "1 Acme Rd.",
+          addressLine2 = Some("London"),
+          addressLine3 = Some("Greater London"),
+          addressLine4 = Some("United Kingdom"),
+          postalCode = Some("A9 9AA")
+        )),
+      typeOfBusiness = Some("Accountancy services"),
+      tradingStartDate = Some("2017-04-01"),
+      cashOrAccruals = accountingType)
   }
 
   "constructing a API SelfEmploymentRetrieve using the DES SelfEmployment" should {
@@ -45,7 +45,7 @@ class SelfEmploymentRetrieveSpec extends UnitSpec {
 
       selfEmployment.id shouldBe Some("abc")
       selfEmployment.accountingPeriod shouldBe AccountingPeriod(LocalDate.parse("2017-01-04"),
-                                                                LocalDate.parse("2017-01-05"))
+        LocalDate.parse("2017-01-05"))
       selfEmployment.tradingName shouldBe "Acme Ltd."
       selfEmployment.businessAddressLineOne shouldBe Some("1 Acme Rd.")
       selfEmployment.businessAddressLineTwo shouldBe Some("London")

@@ -2,6 +2,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json._
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.models.CessationReason
 import uk.gov.hmrc.selfassessmentapi.models.des.properties.{Common, FHL, Other}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
@@ -67,6 +68,9 @@ object DesJsons {
     val invalidDateFrom: String =
       error("INVALID_DATE_FROM", "Submission has not passed validation. Invalid parameter from.")
     val invalidDateTo: String = error("INVALID_DATE_TO", "Submission has not passed validation. Invalid parameter to.")
+    val periodicUpdateMissing: String = error("PERIODIC_UPDATE_MISSING", "Cannot finalise statement with missing periodic update")
+    val lateSubmission = error("LATE_SUBMISSION", "End-of-period statement cannot be submitted for this period later than 31 January 20XX.")
+    val nonMatchingPeriod = error("NON_MATCHING_PERIOD", "Statement period does not match you accounting period.")
   }
 
   object SelfEmployment {
@@ -77,14 +81,16 @@ object DesJsons {
               accPeriodEnd: String = "2018-04-05",
               accountingType: String = "cash",
               commencementDate: String = "2017-01-01",
-              cessationDate: Option[String] = Some("2017-01-02"),
+              cessationDate: String = "2017-01-02",
+              cessationReason: String = CessationReason.Bankruptcy.toString,
               tradingName: String = "Acme Ltd",
-              businessDescription: String = "Accountancy services",
-              businessAddressLineOne: String = "1 Acme Rd.",
-              businessAddressLineTwo: String = "London",
-              businessAddressLineThree: String = "Greater London",
-              businessAddressLineFour: String = "United Kingdom",
-              businessPostcode: String = "A9 9AA"): String = {
+              description: String = "Accountancy services",
+              addressLineOne: String = "1 Acme Rd.",
+              addressLineTwo: String = "London",
+              addressLineThree: String = "Greater London",
+              addressLineFour: String = "United Kingdom",
+              postalCode: String = "A9 9AA",
+              countryCode: String = "GB"): String = {
       s"""
          |{
          |   "safeId": "XE00001234567890",
@@ -98,12 +104,12 @@ object DesJsons {
          |         "accountingPeriodEndDate": "$accPeriodEnd",
          |         "tradingName": "$tradingName",
          |         "businessAddressDetails": {
-         |            "addressLine1": "$businessAddressLineOne",
-         |            "addressLine2": "$businessAddressLineTwo",
-         |            "addressLine3": "$businessAddressLineThree",
-         |            "addressLine4": "$businessAddressLineFour",
-         |            "postalCode": "$businessPostcode",
-         |            "countryCode": "GB"
+         |            "addressLine1": "$addressLineOne",
+         |            "addressLine2": "$addressLineTwo",
+         |            "addressLine3": "$addressLineThree",
+         |            "addressLine4": "$addressLineFour",
+         |            "postalCode": "$postalCode",
+         |            "countryCode": "$countryCode"
          |         },
          |         "businessContactDetails": {
          |            "phoneNumber": "01332752856",
@@ -113,7 +119,9 @@ object DesJsons {
          |         },
          |         "tradingStartDate": "$commencementDate",
          |         "cashOrAccruals": "$accountingType",
-         |         "seasonal": true
+         |         "seasonal": true,
+         |         "cessationDate": "$cessationDate",
+         |         "cessationReason": "$cessationReason"
          |      }
          |   ]
          |}
@@ -271,21 +279,28 @@ object DesJsons {
            |      "outstandingBusinessIncome": 200.00,
            |      "balancingChargeBpra": 200.00,
            |      "balancingChargeOther": 200.00,
-           |      "goodsAndServicesOwnUse": 200.00
+           |      "goodsAndServicesOwnUse": 200.00,
+           |      "overlapProfitCarriedForward": 500.25,
+           |      "overlapProfitBroughtForward": 500.25,
+           |      "lossCarriedForwardTotal": 500.25,
+           |      "cisDeductionsTotal": 500.25,
+           |      "taxDeductionsFromTradingIncome": 500.25,
+           |      "class4NicProfitAdjustment": 500.25
            |   },
            |   "annualAllowances": {
            |      "annualInvestmentAllowance": 200.00,
            |      "capitalAllowanceMainPool": 200.00,
            |      "capitalAllowanceSpecialRatePool": 200.00,
            |      "zeroEmissionGoodsVehicleAllowance": 200.00,
-           |      "businessPremisesRenovationAllowance": 200.00,
            |      "enhanceCapitalAllowance": 200.00,
-           |      "allowanceOnSales": 200.00
+           |      "allowanceOnSales": 200.00,
+           |      "capitalAllowanceSingleAssetPool": 500.25
            |   },
            |   "annualNonFinancials": {
            |      "businessDetailsChangedRecently": true,
            |      "payClass2Nics": false,
-           |      "exemptFromPayingClass2Nics": true
+           |      "exemptFromPayingClass4Nics": true,
+           |      "class4NicsExemptionReason": "003"
            |   }
            |}
        """.stripMargin
@@ -418,6 +433,7 @@ object DesJsons {
               from: String = "",
               to: String = "",
               rentIncome: BigDecimal = 0,
+              rentIncomeTaxDeducted: Option[BigDecimal] = Some(0),
               premisesRunningCosts: BigDecimal = 0,
               repairsAndMaintenance: BigDecimal = 0,
               financialCosts: BigDecimal = 0,
@@ -431,7 +447,7 @@ object DesJsons {
             financials = Some(
               FHL
                 .Financials(
-                  incomes = Some(FHL.Incomes(rentIncome = Some(Common.Income(rentIncome)))),
+                  incomes = Some(FHL.Incomes(rentIncome = Some(Common.Income(rentIncome, rentIncomeTaxDeducted)))),
                   deductions = Some(FHL.Deductions(
                     premisesRunningCosts = Some(premisesRunningCosts),
                     repairsAndMaintenance = Some(repairsAndMaintenance),
@@ -788,7 +804,45 @@ object DesJsons {
          |         "proportionClass2NICsLimit":200,
          |         "proportionClass4NICsLimitBR":200,
          |         "proportionClass4NICsLimitHR":200,
-         |         "proportionReducedAllowanceLimit":200
+         |         "proportionReducedAllowanceLimit":200,
+         |            "eoyEstimate": {
+         |              "incomeSource": [
+         |              {
+         |                "id": "selfEmploymentId1",
+         |                "type": "01",
+         |                "taxableIncome": 89999999.99,
+         |                "supplied": true,
+         |                "finalised": true
+         |              },
+         |              {
+         |                "id": "selfEmploymentId2",
+         |                "type": "01",
+         |                "taxableIncome": 89999999.99,
+         |                "supplied": true,
+         |                "finalised": true
+         |              },
+         |              {
+         |                "id": "ukPropertyId",
+         |                "type": "02",
+         |                "taxableIncome": 89999999.99,
+         |                "supplied": true,
+         |                "finalised": true
+         |              },
+         |              {
+         |                "id": "otherIncomeId",
+         |                "type": "03",
+         |                "taxableIncome": 89999999.99,
+         |                "supplied": true,
+         |                "finalised": true
+         |              }
+         |            ],
+         |            "totalTaxableIncome": 89999999.99,
+         |            "incomeTaxAmount": 89999999.99,
+         |            "nic2": 89999999.99,
+         |            "nic4": 89999999.99,
+         |            "totalNicAmount": 9999999.99,
+         |            "incomeTaxNicAmount": 999999.99
+         |          }
          |      },
          |      "previousCalc":{
          |         "calcTimestamp":"4498-07-06T21:42:24.294Z",

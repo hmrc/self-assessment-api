@@ -17,6 +17,8 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.selfassessmentapi.models.CessationReason
+import uk.gov.hmrc.selfassessmentapi.models.CessationReason._
 
 object Jsons {
 
@@ -157,7 +159,8 @@ object Jsons {
                   repairsAndMaintenance: BigDecimal = 0,
                   financialCosts: BigDecimal = 0,
                   professionalFees: BigDecimal = 0,
-                  otherCost: BigDecimal = 0): JsValue = {
+                  otherCost: BigDecimal = 0,
+                  consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
 
       val from =
         fromDate
@@ -173,6 +176,16 @@ object Jsons {
           .map { date =>
             s"""
                | "to": "$date",
+         """.stripMargin
+          }
+          .getOrElse("")
+
+
+      val ce =
+        consolidatedExpenses
+          .map { ce =>
+            s"""
+               | , "consolidatedExpenses": "$ce"
          """.stripMargin
           }
           .getOrElse("")
@@ -191,6 +204,7 @@ object Jsons {
            |    "professionalFees": { "amount": $professionalFees },
            |    "other": { "amount": $otherCost }
            |  }
+           |  $ce
            |}
        """.stripMargin)
     }
@@ -206,7 +220,8 @@ object Jsons {
                     financialCosts: BigDecimal = 0,
                     professionalFees: BigDecimal = 0,
                     costOfServices: BigDecimal = 0,
-                    otherCost: BigDecimal = 0): JsValue = {
+                    otherCost: BigDecimal = 0,
+                    consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
 
       val from =
         fromDate
@@ -225,6 +240,16 @@ object Jsons {
          """.stripMargin
           }
           .getOrElse("")
+
+      val ce =
+        consolidatedExpenses
+          .map { ce =>
+            s"""
+               | , "consolidatedExpenses": "$ce"
+         """.stripMargin
+          }
+          .getOrElse("")
+
 
       Json.parse(s"""
            |{
@@ -245,6 +270,7 @@ object Jsons {
            |    "costOfServices": { "amount": $costOfServices },
            |    "other": { "amount": $otherCost }
            |  }
+           |  $ce
            |}
        """.stripMargin)
     }
@@ -334,54 +360,54 @@ object Jsons {
               businessPostcode: Option[String] = Some("A9 9AA")): JsValue = {
 
       val cessation = cessationDate.map(date => s"""
-           |  "cessationDate": "$date",
+                                                   |  "cessationDate": "$date",
          """.stripMargin).getOrElse("")
 
       val commencement = commencementDate.map(date => s"""
-           |  "commencementDate": "$date",
+                                                         |  "commencementDate": "$date",
        """.stripMargin).getOrElse("")
 
       val businessDesc = businessDescription.map(desc => s"""
-           |  "businessDescription": "$desc",
+                                                            |  "businessDescription": "$desc",
        """.stripMargin).getOrElse("")
 
       val addrOne = businessAddressLineOne.map(line => s"""
-           |  "businessAddressLineOne": "$line",
+                                                          |  "businessAddressLineOne": "$line",
        """.stripMargin).getOrElse("")
 
       val addrTwo = businessAddressLineTwo.map(line => s"""
-           |  "businessAddressLineTwo": "$line",
+                                                          |  "businessAddressLineTwo": "$line",
        """.stripMargin).getOrElse("")
 
       val addrThree = businessAddressLineThree.map(line => s"""
-           |  "businessAddressLineThree": "$line",
+                                                              |  "businessAddressLineThree": "$line",
        """.stripMargin).getOrElse("")
 
       val addrFour = businessAddressLineFour.map(line => s"""
-           |  "businessAddressLineFour": "$line",
+                                                            |  "businessAddressLineFour": "$line",
        """.stripMargin).getOrElse("")
 
       val addrPostcode = businessPostcode.map(code => s"""
-           |  "businessPostcode": "$code",
+                                                         |  "businessPostcode": "$code",
        """.stripMargin).getOrElse("")
 
       Json.parse(s"""
-           |{
-           |  "accountingPeriod": {
-           |    "start": "$accPeriodStart",
-           |    "end": "$accPeriodEnd"
-           |  },
-           |  $cessation
-           |  $commencement
-           |  $businessDesc
-           |  $addrOne
-           |  $addrTwo
-           |  $addrThree
-           |  $addrFour
-           |  $addrPostcode
-           |  "accountingType": "$accountingType",
-           |  "tradingName": "$tradingName"
-           |}
+                    |{
+                    |  "accountingPeriod": {
+                    |    "start": "$accPeriodStart",
+                    |    "end": "$accPeriodEnd"
+                    |  },
+                    |  $cessation
+                    |  $commencement
+                    |  $businessDesc
+                    |  $addrOne
+                    |  $addrTwo
+                    |  $addrThree
+                    |  $addrFour
+                    |  $addrPostcode
+                    |  "accountingType": "$accountingType",
+                    |  "tradingName": "$tradingName"
+                    |}
          """.stripMargin)
     }
 
@@ -394,22 +420,21 @@ object Jsons {
                businessPostcode: String = "A9 9AA"): JsValue = {
 
       Json.parse(s"""
-           |{
-           |  "tradingName": "$tradingName",
-           |  "businessDescription": "$businessDescription",
-           |  "businessAddressLineOne": "$businessAddressLineOne",
-           |  "businessAddressLineTwo": "$businessAddressLineTwo",
-           |  "businessAddressLineThree": "$businessAddressLineThree",
-           |  "businessAddressLineFour": "$businessAddressLineFour",
-           |  "businessPostcode": "$businessPostcode"
-           |}
+                    |{
+                    |  "tradingName": "$tradingName",
+                    |  "businessDescription": "$businessDescription",
+                    |  "businessAddressLineOne": "$businessAddressLineOne",
+                    |  "businessAddressLineTwo": "$businessAddressLineTwo",
+                    |  "businessAddressLineThree": "$businessAddressLineThree",
+                    |  "businessAddressLineFour": "$businessAddressLineFour",
+                    |  "businessPostcode": "$businessPostcode"
+                    |}
          """.stripMargin)
     }
 
     def annualSummary(annualInvestmentAllowance: BigDecimal = 500.25,
                       capitalAllowanceMainPool: BigDecimal = 500.25,
                       capitalAllowanceSpecialRatePool: BigDecimal = 500.25,
-                      businessPremisesRenovationAllowance: BigDecimal = 500.25,
                       enhancedCapitalAllowance: BigDecimal = 500.25,
                       allowanceOnSales: BigDecimal = 500.25,
                       zeroEmissionGoodsVehicleAllowance: BigDecimal = 500.25,
@@ -422,17 +447,28 @@ object Jsons {
                       outstandingBusinessIncome: BigDecimal = 500.25,
                       balancingChargeBPRA: BigDecimal = 500.25,
                       balancingChargeOther: BigDecimal = 500.25,
-                      goodsAndServicesOwnUse: BigDecimal = 500.25): JsValue = {
+                      goodsAndServicesOwnUse: BigDecimal = 500.25,
+                      capitalAllowanceSingleAssetPool: BigDecimal = 500.25,
+                      overlapProfitCarriedForward: BigDecimal = 500.25,
+                      overlapProfitBroughtForward: BigDecimal = 500.25,
+                      lossCarriedForwardTotal: BigDecimal = 500.25,
+                      cisDeductionsTotal: BigDecimal = 500.25,
+                      taxDeductionsFromTradingIncome: BigDecimal = 500.25,
+                      class4NicProfitAdjustment: BigDecimal = 500.25,
+                      businessDetailsChangedRecently: Boolean = true,
+                      payVoluntaryClass2Nic: Boolean = false,
+                      isExempt: Boolean = true,
+                      exemptionCode: String = "003"): JsValue = {
       Json.parse(s"""
            |{
            |  "allowances": {
            |    "annualInvestmentAllowance": $annualInvestmentAllowance,
            |    "capitalAllowanceMainPool": $capitalAllowanceMainPool,
            |    "capitalAllowanceSpecialRatePool": $capitalAllowanceSpecialRatePool,
-           |    "businessPremisesRenovationAllowance": $businessPremisesRenovationAllowance,
            |    "enhancedCapitalAllowance": $enhancedCapitalAllowance,
            |    "allowanceOnSales": $allowanceOnSales,
-           |    "zeroEmissionGoodsVehicleAllowance": $zeroEmissionGoodsVehicleAllowance
+           |    "zeroEmissionGoodsVehicleAllowance": $zeroEmissionGoodsVehicleAllowance,
+           |    "capitalAllowanceSingleAssetPool": $capitalAllowanceSingleAssetPool
            |  },
            |  "adjustments": {
            |    "includedNonTaxableProfits": $includedNonTaxableProfits,
@@ -444,10 +480,65 @@ object Jsons {
            |    "outstandingBusinessIncome": $outstandingBusinessIncome,
            |    "balancingChargeBPRA": $balancingChargeBPRA,
            |    "balancingChargeOther": $balancingChargeOther,
-           |    "goodsAndServicesOwnUse": $goodsAndServicesOwnUse
+           |    "goodsAndServicesOwnUse": $goodsAndServicesOwnUse,
+           |    "overlapProfitCarriedForward": $overlapProfitCarriedForward,
+           |    "overlapProfitBroughtForward": $overlapProfitBroughtForward,
+           |    "lossCarriedForwardTotal": $lossCarriedForwardTotal,
+           |    "cisDeductionsTotal": $cisDeductionsTotal,
+           |    "taxDeductionsFromTradingIncome": $taxDeductionsFromTradingIncome,
+           |    "class4NicProfitAdjustment": $class4NicProfitAdjustment
+           |  },
+           |  "nonFinancials": {
+           |    "class4NicInfo": {
+           |      "isExempt": $isExempt,
+           |      "exemptionCode": "$exemptionCode"
+           |    },
+           |    "payVoluntaryClass2Nic": $payVoluntaryClass2Nic
            |  }
            |}
        """.stripMargin)
+    }
+
+    def periodWithSimplifiedExpenses(fromDate: Option[String] = None,
+                                     toDate: Option[String] = None,
+                                     turnover: BigDecimal = 0,
+                                     otherIncome: BigDecimal = 0,
+                                     consolidatedExpenses: Option[BigDecimal]) = {
+
+      val (from,to) = fromToDates(fromDate, toDate)
+
+      Json.parse(s"""
+                    |{
+                    |  $from
+                    |  $to
+                    |  "incomes": {
+                    |    "turnover": { "amount": $turnover },
+                    |    "other": { "amount": $otherIncome }
+                    |  }
+                    |
+                    |  ${consolidatedExpenses.fold("")(se => s""","consolidatedExpenses": $se""")}
+                    |
+                    |}
+                  """.stripMargin)
+    }
+
+    private def fromToDates(fromDate: Option[String] = None,
+                            toDate: Option[String] = None) = {
+      (fromDate
+          .map { date =>
+            s"""
+               | "from": "$date",
+         """.stripMargin
+          }
+          .getOrElse(""),
+        toDate
+          .map { date =>
+            s"""
+               | "to": "$date",
+         """.stripMargin
+          }
+          .getOrElse("")
+      )
     }
 
     def period(fromDate: Option[String] = None,
@@ -467,25 +558,10 @@ object Jsons {
                badDebt: (BigDecimal, BigDecimal) = (0, 0),
                professionalFees: (BigDecimal, BigDecimal) = (0, 0),
                depreciation: (BigDecimal, BigDecimal) = (0, 0),
-               otherExpenses: (BigDecimal, BigDecimal) = (0, 0)): JsValue = {
+               otherExpenses: (BigDecimal, BigDecimal) = (0, 0),
+               consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
 
-      val from =
-        fromDate
-          .map { date =>
-            s"""
-               | "from": "$date",
-         """.stripMargin
-          }
-          .getOrElse("")
-
-      val to =
-        toDate
-          .map { date =>
-            s"""
-               | "to": "$date",
-         """.stripMargin
-          }
-          .getOrElse("")
+      val (from,to) = fromToDates(fromDate, toDate)
 
       Json.parse(s"""
            |{
@@ -511,6 +587,9 @@ object Jsons {
            |    "depreciation": { "amount": ${depreciation._1}, "disallowableAmount": ${depreciation._2} },
            |    "other": { "amount": ${otherExpenses._1}, "disallowableAmount": ${otherExpenses._2} }
            |  }
+           |
+           |  ${consolidatedExpenses.fold("")(se => s""","consolidatedExpenses": $se""")}
+           |
            |}
        """.stripMargin)
     }
@@ -731,7 +810,34 @@ object Jsons {
            |    "proportionClass2NICsLimit": 200,
            |    "proportionClass4NICsLimitBR": 200,
            |    "proportionClass4NICsLimitHR": 200,
-           |    "proportionReducedAllowanceLimit": 200
+           |    "proportionReducedAllowanceLimit": 200,
+           |      "eoyEstimate":{  
+           |          "selfEmployment":[  
+           |          {
+           |              "id":"selfEmploymentId1",
+           |              "taxableIncome":89999999.99,
+           |              "supplied":true,
+           |              "finalised":true
+           |          },
+           |          {
+           |              "id":"selfEmploymentId2",
+           |              "taxableIncome":89999999.99,
+           |              "supplied":true,
+           |              "finalised":true
+                      }
+           |          ],
+           |          "ukProperty":[{  
+           |              "taxableIncome":89999999.99,
+           |              "supplied":true,
+           |              "finalised":true
+           |           }],
+           |           "totalTaxableIncome":89999999.99,
+           |           "incomeTaxAmount":89999999.99,
+           |           "nic2":89999999.99,
+           |           "nic4":89999999.99,
+           |           "totalNicAmount":9999999.99,
+           |           "incomeTaxNicAmount":999999.99
+           |    }
            |}
          """.stripMargin
       )

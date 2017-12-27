@@ -14,12 +14,18 @@ uses:
   types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
 
 documentation:
+  - title: Context
+    content: !include docs/context.md
   - title: Overview
     content: !include docs/overview.md
-  - title: Sandbox
-    content: !include docs/sandbox.md
   - title: Terminology
     content: !include docs/terminology.md
+  - title: Changelog
+    content: !include docs/changeLog.md
+  - title: Technical support
+    content: !include docs/technicalSupport.md
+  - title: Sandbox
+    content: !include docs/sandbox.md
   - title: Versioning
     content: !include https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/versioning.md
   - title: Errors
@@ -77,7 +83,7 @@ traits:
                   description: The client is not subscribed to MTD
                   value:
                     code: CLIENT_NOT_SUBSCRIBED
-  overlappingPeriod:
+  periodBVRs:
     responses:
       403:
         body:
@@ -85,9 +91,17 @@ traits:
             type: types.errorResponse
             examples:
               overlappingPeriod:
-                description: A period cannot overlap with another period
+                description: If update period overlaps with any of the existing update periods
                 value:
                   code: OVERLAPPING_PERIOD
+              misAlignedPeriod:
+                description: If update period is not within the accounting period
+                value:
+                  code: MISALIGNED_PERIOD
+              nonContiguousPeriod:
+                description: If update periods are not contiguous
+                value:
+                  code: NOT_CONTIGUOUS_PERIOD
 
 /self-assessment:
   /ni/{nino}:
@@ -138,7 +152,7 @@ traits:
                     value:
                       code: INVALID_DATE
                   commencementDateInThePast:
-                    description: commencementDate not in past
+                    description: Commencement date should be today or in the past
                     value:
                       code: DATE_NOT_IN_THE_PAST
                   startDateInvalid:
@@ -157,6 +171,10 @@ traits:
                     description: Invalid field length
                     value:
                       code: INVALID_FIELD_LENGTH
+                  invalidFieldFormat:
+                    description: Invalid field format
+                    value:
+                      code: INVALID_FIELD_FORMAT
                   invalidBusinessDescription:
                     description: Invalid business description
                     value:
@@ -207,45 +225,6 @@ traits:
             displayName: Self-employment ID
             description: An identifier for the self-employment business, unique to the customer
             type: string
-        put:
-          displayName: Update a self-employment business [test only]
-          description: Update a self-employment business. This API is not available in production.
-          (annotations.sandboxData): !include scenarios/agent-scenarios.md
-          is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
-          (annotations.scope): "write:self-assessment"
-          securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
-          body:
-            application/json:
-              type: !include schemas/SelfEmployment_Update.json
-              example: !include examples/self-employment/SelfEmploymentUpdate.json
-          responses:
-            204:
-            400:
-              body:
-                application/json:
-                  type: types.errorResponse
-                  examples:
-                    invalidNino:
-                      description: Invalid NINO
-                      value:
-                        code: NINO_INVALID
-                    mandatoryField:
-                      description: Mandatory field missing
-                      value:
-                        code: MANDATORY_FIELD_MISSING
-                    invalidFieldLength:
-                      description: Invalid field length
-                      value:
-                        code: INVALID_FIELD_LENGTH
-                    invalidBusinessDescription:
-                      description: Invalid business description
-                      value:
-                        code: INVALID_BUSINESS_DESCRIPTION
-                    invalidPostcode:
-                      description: Invalid postcode
-                      value:
-                        code: INVALID_POSTCODE
-            404:
         get:
           displayName: Get a self-employment business
           description: Get a self-employment business
@@ -303,18 +282,25 @@ traits:
               404:
         /periods:
           post:
-            displayName: Create a self-employment update period
-            description: Create a self-employment update period for submission of periodic data i.e incomes and expenses.
+            displayName: Create a self-employment periodic update
+            description: Create a self-employment periodic update for submission of periodic data i.e incomes and expenses.
                          Submissions which do not include any incomes or expenses are invalid.
                          You should submit zero values if you do not have incomes or expenses.
+                         <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
-            is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+            is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader, periodBVRs]
             (annotations.scope): "write:self-assessment"
             securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
             body:
               application/json:
                 type: !include schemas/SE_Period_Without_ID.json
-                example: !include examples/self-employment/Period.json
+                examples:
+                 example-1:
+                  description: Full expense details example
+                  value: !include examples/self-employment/Period.json
+                 example-2:
+                  description: Consolidated expenses example
+                  value: !include examples/self-employment/Period2.json
             responses:
               201:
                 headers:
@@ -361,23 +347,19 @@ traits:
                         description: No incomes and expenses are supplied
                         value:
                           code: NO_INCOMES_AND_EXPENSES
+                      bothExpensesSupplied:
+                        description: Both expenses and consolidatedExpenses can not be present at the same time
+                        value:
+                          code: BOTH_EXPENSES_SUPPLIED
               403:
                 body:
                   application/json:
                     type: types.errorResponse
                     examples:
-                      notContiguousPeriod:
-                        description: If periods are not contiguous
+                      notAllowedConsolidatedExpenses:
+                        description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
                         value:
-                          code: NOT_CONTIGUOUS_PERIOD
-                      overlappingPeriod:
-                        description: If the period overlaps with existing periods
-                        value:
-                          code: OVERLAPPING_PERIOD
-                      misalignedPeriod:
-                        description: If the period is not within the accounting period
-                        value:
-                          code: MISALIGNED_PERIOD
+                          code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
           get:
             displayName: List all self-employment update periods
             description: List all self-employment update periods.
@@ -408,11 +390,11 @@ traits:
           /{periodId}:
             uriParameters:
               periodId:
-                description: Update period ID
+                description: An identifier for the update period, unique to the customer's self-employment business.
                 type: string
             get:
-              displayName: Get a self-employment update period
-              description: Get a single self-employment update period for a given identifier.
+              displayName: Get a self-employment periodic update
+              description: Get a single self-employment periodic update for a given identifier.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "read:self-assessment"
@@ -426,7 +408,13 @@ traits:
                   body:
                     application/json:
                       type: !include schemas/SE_Period_Without_ID.json
-                      example: !include examples/self-employment/Period.json
+                      examples:
+                        example-1:
+                          description: Periodic update with full expense details example
+                          value: !include examples/self-employment/Period.json
+                        example-2:
+                          description: Periodic update with consolidated expenses example
+                          value: !include examples/self-employment/Period2.json
                 400:
                   body:
                     application/json:
@@ -438,18 +426,25 @@ traits:
                             code: NINO_INVALID
                 404:
             put:
-              displayName: Update a self-employment update period
-              description: Update a self-employment update period.
+              displayName: Amend a self-employment periodic update
+              description: Amend a self-employment periodic update.
                            Submissions  which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
-              (annotations.sandboxData): !include scenarios/agent-scenarios.md
+                           Valid payload may contain either expenses or consolidatedExpenses elements.
+                           <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
               securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
               body:
                 application/json:
                   type: !include schemas/SE_UpdatePeriod.json
-                  example: !include examples/self-employment/UpdatePeriod.json
+                  examples:
+                    example-1:
+                      description: Full expense details example
+                      value: !include examples/self-employment/UpdatePeriod.json
+                    example-2:
+                      description: Consolidated expenses example
+                      value: !include examples/self-employment/UpdatePeriod2.json
               responses:
                 204:
                   headers:
@@ -465,6 +460,10 @@ traits:
                           description: Invalid NINO
                           value:
                             code: NINO_INVALID
+                        invalidMonetaryAmount:
+                          description: income or expense is not a non-negative amount or up to 2 decimal places
+                          value:
+                            code: INVALID_MONETARY_AMOUNT
                         invalidDisallowableAmount:
                           description: disallowableAmount > amount (except for depreciation expenseType)
                           value:
@@ -477,6 +476,20 @@ traits:
                           description: No incomes and expenses are supplied
                           value:
                             code: NO_INCOMES_AND_EXPENSES
+                        bothExpensesSupplied:
+                          description: Both expenses and consolidatedExpenses can not be present at the same time
+                          value:
+                            code: BOTH_EXPENSES_SUPPLIED
+                403:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notAllowedConsolidatedExpenses:
+                          description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
+                          value:
+                            code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
+
                 404:
         /{taxYear}:
           uriParameters:
@@ -485,16 +498,16 @@ traits:
               type: string
               example: 2017-18
           put:
-            displayName: Update a self-employment annual summary
-            description: Update a self-employment annual summary for a tax year.
+            displayName: Amend a self-employment annual summary
+            description: Amend a self-employment annual summary for a tax year.
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
             (annotations.scope): "write:self-assessment"
             securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
             body:
               application/json:
-                type: !include schemas/SE_AnnualSummary.json
-                example: !include examples/self-employment/AnnualSummary.json
+                type: !include schemas/SE_AnnualSummary_PUT.json
+                example: !include examples/self-employment/AnnualSummary_PUT.json
             responses:
               204:
                 headers:
@@ -518,6 +531,10 @@ traits:
                         description: Mandatory field missing (from and to fields)
                         value:
                           code: MANDATORY_FIELD_MISSING
+                      mandatoryField2:
+                        description: Exemption code value must be present if the exempt flag is set to true
+                        value:
+                          code: MANDATORY_FIELD_MISSING
                       invalidMonetaryAmount1:
                         description: valid non-negative amount not provided where expected (except averagingAdjustment and basisAdjustment)
                         value:
@@ -530,6 +547,31 @@ traits:
                         description: Balancing charge on sale or cessation of business use (Box 58) can only have a value > 0 in if BPRA (Box 54) is also > 0
                         value:
                           code: INVALID_BALANCING_CHARGE_BPRA
+                      invalidValue:
+                        description: Empty class4NicInfo element provided
+                        value:
+                          code: INVALID_VALUE
+                      invalidValue2:
+                        description: Exemption code must not be present if the exempt flag is set to false
+                        value:
+                          code: INVALID_VALUE
+                      invalidValue3:
+                        description: Exemption code must be present only if the exempt flag is set to true
+                        value:
+                          code: INVALID_VALUE
+              403:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notUnder16:
+                        description: The Individual's age is equal to or greater than 16 years old on the 6th April of current tax year
+                        value:
+                          code: NOT_UNDER_16
+                      notOverStatePension:
+                        description: The Individual's age is less than their State Pension age on the 6th April of current tax year.
+                        value:
+                          code: NOT_OVER_STATE_PENSION
               404:
           get:
             displayName: Get a self-employment annual summary
@@ -546,8 +588,8 @@ traits:
                     description: Unique id for operation tracking
                 body:
                   application/json:
-                    type: !include schemas/SE_AnnualSummary.json
-                    example: !include examples/self-employment/AnnualSummary.json
+                    type: !include schemas/SE_AnnualSummary_GET.json
+                    example: !include examples/self-employment/AnnualSummary_GET.json
               400:
                 body:
                   application/json:
@@ -562,6 +604,71 @@ traits:
                         value:
                           code: TAX_YEAR_INVALID
               404:
+        /end-of-period-statements:
+          /from:
+            /{start}:
+              /to:
+                /{end}:
+                  uriParameters:
+                    start:
+                      description: Valid ISO 8601 date for the start of the accounting period
+                      type: string
+                      example: 2017-12-31
+                    end:
+                      description: Valid ISO 8601 date for the end of the accounting period
+                      type: string
+                      example: 2018-12-31
+                  put:
+                    displayName: Submit Self-Employment End-of-Period Statement
+                    description: Finalise the self-employment, end-of-period statement for this accounting period.
+                    (annotations.sandboxData): !include scenarios/declaration-scenarios.md
+                    is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+                    (annotations.scope): "write:self-assessment"
+                    securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
+                    body:
+                      application/json:
+                        type: !include schemas/Declaration.json
+                        example: !include examples/self-employment/Declaration.json
+                    responses:
+                      204:
+                      400:
+                        body:
+                          application/json:
+                            type: types.errorResponse
+                            examples:
+                              invalidNino:
+                                description: Invalid NINO
+                                value:
+                                  code: NINO_INVALID
+                              invalidDateRange:
+                                description: Invalid accounting period, i.e. when the start date is the later than the end date.
+                                value:
+                                  code: INVALID_DATE_RANGE
+                              invalidDate:
+                                description: Invalid date in accounting period range.
+                                value:
+                                  code: INVALID_DATE
+                              earlySubmission:
+                                description: You cannot submit a statement before the end of your accounting period.
+                                value:
+                                  code: EARLY_SUBMISSION
+                      403:
+                        body:
+                          application/json:
+                            type: types.errorResponse
+                            examples:
+                              notFinalised:
+                                description: Statement not declared as finalised.
+                                value:
+                                  code: NOT_FINALISED
+                              periodicUpdateMissing:
+                                description: Periodic update missing for this period
+                                value:
+                                  code: PERIODIC_UPDATE_MISSING
+                              nonMatchingPeriod:
+                                description: You cannot submit a statement with a period that does not match the accounting period of your business.
+                                value:
+                                  code: NON_MATCHING_PERIOD
     /uk-properties:
       (annotations.group):
         name: UK property business
@@ -668,14 +775,21 @@ traits:
             description: Create a non-FHL UK property update period for submission of periodic data i.e incomes and expenses.
                          Submissions  which do not include any incomes or expenses are invalid.
                          You should submit zero values if you do not have incomes or expenses.
+                         <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
-            is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, overlappingPeriod]
+            is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, periodBVRs]
             (annotations.scope): "write:self-assessment"
             securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
             body:
               application/json:
                 type: !include schemas/UK_PROP_OTHER_Period_Without_ID.json
-                example: !include examples/uk-properties/other/Period.json
+                examples:
+                 example-1:
+                  description: Full expense details example
+                  value: !include examples/uk-properties/other/Period.json
+                 example-2:
+                  description: Consolidated expenses example
+                  value: !include examples/uk-properties/other/Period2.json
             responses:
               201:
                 headers:
@@ -718,6 +832,19 @@ traits:
                         description: No incomes and expenses are supplied
                         value:
                           code: NO_INCOMES_AND_EXPENSES
+                      bothExpensesSupplied:
+                        description: Both expenses and consolidatedExpenses can not be present at the same time
+                        value:
+                          code: BOTH_EXPENSES_SUPPLIED
+              403:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notAllowedConsolidatedExpenses:
+                        description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
+                        value:
+                          code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
               409:
                 body:
                   application/json:
@@ -772,7 +899,13 @@ traits:
                   body:
                     application/json:
                       type: !include schemas/UK_PROP_OTHER_Period_Without_ID.json
-                      example: !include examples/uk-properties/other/Period.json
+                      examples:
+                        example-1:
+                          description: Periodic update with full expense details example
+                          value: !include examples/uk-properties/other/Period.json
+                        example-2:
+                          description: Periodic update with consolidated expenses example
+                          value: !include examples/uk-properties/other/Period2.json
                 400:
                   body:
                     application/json:
@@ -784,10 +917,11 @@ traits:
                             code: NINO_INVALID
                 404:
             put:
-              displayName: Update a non-FHL UK property update period
-              description: Update a non-FHL UK property update period.
+              displayName: Amend a non-FHL UK property periodic update
+              description: Amend a non-FHL UK property periodic update.
                            Submissions  which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
+                           <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -795,7 +929,13 @@ traits:
               body:
                 application/json:
                   type: !include schemas/UK_PROP_OTHER_UpdatePeriod.json
-                  example: !include examples/uk-properties/other/UpdatePeriod.json
+                  examples:
+                    example-1:
+                      description: Periodic update with full expense details example
+                      value: !include examples/uk-properties/other/UpdatePeriod.json
+                    example-2:
+                      description: Periodic update with consolidated expenses example
+                      value: !include examples/uk-properties/other/UpdatePeriod2.json
               responses:
                 204:
                   headers:
@@ -823,6 +963,19 @@ traits:
                           description: No incomes and expenses are supplied
                           value:
                             code: NO_INCOMES_AND_EXPENSES
+                        bothExpensesSupplied:
+                          description: Both expenses and consolidatedExpenses can not be present at the same time
+                          value:
+                            code: BOTH_EXPENSES_SUPPLIED
+                403:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notAllowedConsolidatedExpenses:
+                          description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
+                          value:
+                            code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
                 404:
         /{taxYear}:
             displayName: Annual Summary
@@ -832,8 +985,8 @@ traits:
                 type: string
                 example: 2017-18
             put:
-              displayName: Update a non-FHL UK property business annual summary
-              description: Update a non-FHL UK property business annual summary for a tax year.
+              displayName: Amend a non-FHL UK property business annual summary
+              description: Amend a non-FHL UK property business annual summary for a tax year.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -904,14 +1057,21 @@ traits:
             description: Create a FHL UK property update period for submission of periodic data i.e incomes and expenses.
                          Submissions which do not include any incomes or expenses are invalid.
                          You should submit zero values if you do not have incomes or expenses.
+                         <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
-            is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, overlappingPeriod]
+            is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, periodBVRs]
             (annotations.scope): "write:self-assessment"
             securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
             body:
               application/json:
                 type: !include schemas/UK_PROP_FHL_Period_Without_ID.json
-                example: !include examples/uk-properties/fhl/Period.json
+                examples:
+                 example-1:
+                  description: Full expense details example
+                  value: !include examples/uk-properties/fhl/Period.json
+                 example-2:
+                  description: Consolidated expenses example
+                  value: !include examples/uk-properties/fhl/Period2.json
             responses:
               201:
                 headers:
@@ -950,6 +1110,23 @@ traits:
                         description: No incomes and expenses are supplied
                         value:
                           code: NO_INCOMES_AND_EXPENSES
+                      bothExpensesSupplied:
+                        description: Both expenses and consolidatedExpenses can not be present at the same time
+                        value:
+                          code: BOTH_EXPENSES_SUPPLIED
+                      invalidTaxDeducted:
+                        description: taxDeducted > amount
+                        value:
+                          code: INVALID_TAX_DEDUCTION_AMOUNT
+              403:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notAllowedConsolidatedExpenses:
+                        description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
+                        value:
+                          code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
               409:
                 body:
                   application/json:
@@ -1004,7 +1181,13 @@ traits:
                   body:
                     application/json:
                       type: !include schemas/UK_PROP_FHL_Period_Without_ID.json
-                      example: !include examples/uk-properties/fhl/Period.json
+                      examples:
+                        example-1:
+                          description: Periodic update with full expense details example
+                          value: !include examples/uk-properties/fhl/Period.json
+                        example-2:
+                          description: Periodic update with consolidated expenses example
+                          value: !include examples/uk-properties/fhl/Period2.json
                 400:
                   body:
                     application/json:
@@ -1016,10 +1199,11 @@ traits:
                             code: NINO_INVALID
                 404:
             put:
-              displayName: Update a FHL UK property update period
-              description: Update a FHL UK property update period.
+              displayName: Amend a FHL UK property periodic update
+              description: Amend a FHL UK property periodic update.
                            Submissions which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
+                           <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -1027,7 +1211,13 @@ traits:
               body:
                 application/json:
                   type: !include schemas/UK_PROP_FHL_UpdatePeriod.json
-                  example: !include examples/uk-properties/fhl/UpdatePeriod.json
+                  examples:
+                    example-1:
+                      description: Periodic update with full expense details example
+                      value: !include examples/uk-properties/fhl/UpdatePeriod.json
+                    example-2:
+                      description: Periodic update with consolidated expenses example
+                      value: !include examples/uk-properties/fhl/UpdatePeriod2.json
               responses:
                 204:
                   headers:
@@ -1055,6 +1245,23 @@ traits:
                           description: No incomes and expenses are supplied
                           value:
                             code: NO_INCOMES_AND_EXPENSES
+                        bothExpensesSupplied:
+                          description: Both expenses and consolidatedExpenses can not be present at the same time
+                          value:
+                            code: BOTH_EXPENSES_SUPPLIED
+                        invalidTaxDeducted:
+                          description: taxDeducted > amount
+                          value:
+                            code: INVALID_TAX_DEDUCTION_AMOUNT
+                403:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notAllowedConsolidatedExpenses:
+                          description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
+                          value:
+                            code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
                 404:
         /{taxYear}:
             displayName: Annual Summary
@@ -1064,8 +1271,8 @@ traits:
                 type: string
                 example: 2017-18
             put:
-              displayName: Update a FHL UK property business annual summary
-              description: Update a FHL UK property business annual summary for a tax year.
+              displayName: Amend a FHL UK property business annual summary
+              description: Amend a FHL UK property business annual summary for a tax year.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"

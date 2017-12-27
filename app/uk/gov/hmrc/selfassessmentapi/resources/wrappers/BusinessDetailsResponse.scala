@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.MtdId
+import uk.gov.hmrc.http.HttpResponse
 
 case class BusinessDetailsResponse(underlying: HttpResponse) extends Response {
   def mtdId: Option[MtdId] =

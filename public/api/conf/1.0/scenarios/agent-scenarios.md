@@ -18,6 +18,6 @@
         <tr>
             <td><p>CLIENT_NOT_SUBSCRIBED</p></td>
             <td><p>Simulate client subscription to MTD check failure</p></td>
-        </tr>        
+        </tr>
     </tbody>
 </table>

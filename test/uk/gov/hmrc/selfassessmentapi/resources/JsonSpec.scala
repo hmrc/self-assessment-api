@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import play.api.data.validation.ValidationError
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.models.ErrorCode.ErrorCode
+import play.api.data.validation.ValidationError
 
 trait JsonSpec extends UnitSpec {
 
@@ -41,6 +41,13 @@ trait JsonSpec extends UnitSpec {
     json.validate[T].fold(
       invalid => fail(invalid.seq.mkString(", ")),
       valid => valid shouldEqual o
+    )
+  }
+
+  def assertJsonValidationPasses[T: Format](json: JsValue): Unit = {
+    json.validate[T].fold(
+      invalid => fail(invalid.seq.mkString(", ")),
+      _ => succeed
     )
   }
 

@@ -36,6 +36,7 @@ class FinancialsSpec extends JsonSpec {
             badDebt = Some(Expense(10.10, Some(10.10))),
             adminCosts = Some(Expense(10.10, Some(10.10))),
             advertisingCosts = Some(Expense(10.10, Some(10.10))),
+            businessEntertainmentCosts = Some(Expense(10.10, Some(10.10))),
             financialCharges = Some(Expense(10.10, Some(10.10))),
             interest = Some(Expense(10.10, Some(10.10))),
             maintenanceCosts = Some(Expense(10.10, Some(10.10))),
@@ -43,7 +44,8 @@ class FinancialsSpec extends JsonSpec {
             staffCosts = Some(Expense(10.10, Some(10.10))),
             travelCosts = Some(Expense(10.10, Some(10.10))),
             other = Some(Expense(10.10, Some(10.10)))
-          )))
+          )),
+        consolidatedExpenses = None)
 
       val desUpdate = Financials.from(apiUpdate)
       val desIncomes = desUpdate.incomes.get
@@ -59,6 +61,7 @@ class FinancialsSpec extends JsonSpec {
       desDeductions.badDebt shouldBe Some(Deduction(10.10, Some(10.10)))
       desDeductions.adminCosts shouldBe Some(Deduction(10.10, Some(10.10)))
       desDeductions.advertisingCosts shouldBe Some(Deduction(10.10, Some(10.10)))
+      desDeductions.businessEntertainmentCosts shouldBe Some(Deduction(10.10, Some(10.10)))
       desDeductions.financialCharges shouldBe Some(Deduction(10.10, Some(10.10)))
       desDeductions.interest shouldBe Some(Deduction(10.10, Some(10.10)))
       desDeductions.maintenanceCosts shouldBe Some(Deduction(10.10, Some(10.10)))

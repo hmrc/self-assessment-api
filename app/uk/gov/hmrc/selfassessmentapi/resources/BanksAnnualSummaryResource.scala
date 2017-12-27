@@ -24,7 +24,7 @@ import uk.gov.hmrc.selfassessmentapi.models.banks.BankAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.BanksAnnualSummaryService
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 
 object BanksAnnualSummaryResource extends BaseResource {
   private val annualSummaryService = BanksAnnualSummaryService
@@ -34,7 +34,7 @@ object BanksAnnualSummaryResource extends BaseResource {
       validate[BankAnnualSummary, Boolean](request.body) {
         annualSummaryService.updateAnnualSummary(nino, id, taxYear, _)
       } map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right(true) => NoContent
         case Right(false) if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
         case _ => NotFound

@@ -22,6 +22,7 @@ import uk.gov.hmrc.play.http._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpException, HttpResponse, Upstream4xxResponse, Upstream5xxResponse }
 
 trait HttpErrorRateMeter extends KenshooMetric {
   def meterName[T](serviceName: String, statusCode: Int): String = {

@@ -16,32 +16,22 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
-import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.des
-import uk.gov.hmrc.selfassessmentapi.models.ErrorCode
 
-case class SelfEmploymentAnnualSummary(allowances: Option[Allowances], adjustments: Option[Adjustments])
+case class SelfEmploymentAnnualSummary(allowances: Option[Allowances],
+                                       adjustments: Option[Adjustments],
+                                       nonFinancials: Option[NonFinancials])
 
 object SelfEmploymentAnnualSummary {
   implicit val writes: Writes[SelfEmploymentAnnualSummary] = Json.writes[SelfEmploymentAnnualSummary]
 
   implicit val reads: Reads[SelfEmploymentAnnualSummary] = (
     (__ \ "allowances").readNullable[Allowances] and
-      (__ \ "adjustments").readNullable[Adjustments]
-  )(SelfEmploymentAnnualSummary.apply _).filter(
-    ValidationError(
-      "Balancing charge on BPRA (Business Premises Renovation Allowance) can only be claimed when there is a value for BPRA.",
-      ErrorCode.INVALID_BALANCING_CHARGE_BPRA)) { annualSummary => validateBalancingChargeBPRA(annualSummary) }
-
-  private def validateBalancingChargeBPRA(annualSummary: SelfEmploymentAnnualSummary): Boolean = {
-    annualSummary.adjustments.forall { adjustments =>
-      adjustments.balancingChargeBPRA.forall{ _ =>
-        annualSummary.allowances.exists(_.businessPremisesRenovationAllowance.exists(_ > 0))
-      }
-    }
-  }
+      (__ \ "adjustments").readNullable[Adjustments] and
+      (__ \ "nonFinancials").readNullable[NonFinancials]
+    ) (SelfEmploymentAnnualSummary.apply _)
 
   def from(desSummary: des.selfemployment.SelfEmploymentAnnualSummary): SelfEmploymentAnnualSummary = {
     val adjustments = desSummary.annualAdjustments.map { adj =>
@@ -55,7 +45,14 @@ object SelfEmploymentAnnualSummary {
         outstandingBusinessIncome = adj.outstandingBusinessIncome,
         balancingChargeBPRA = adj.balancingChargeBpra,
         balancingChargeOther = adj.balancingChargeOther,
-        goodsAndServicesOwnUse = adj.goodsAndServicesOwnUse
+        goodsAndServicesOwnUse = adj.goodsAndServicesOwnUse,
+        overlapProfitCarriedForward = adj.overlapProfitCarriedForward,
+        overlapProfitBroughtForward = adj.overlapProfitBroughtForward,
+        lossCarriedForwardTotal = adj.lossCarriedForwardTotal,
+        cisDeductionsTotal = adj.cisDeductionsTotal,
+        taxDeductionsFromTradingIncome = adj.taxDeductionsFromTradingIncome,
+        class4NicProfitAdjustment = adj.class4NicProfitAdjustment
+
       )
     }
 
@@ -64,13 +61,15 @@ object SelfEmploymentAnnualSummary {
         annualInvestmentAllowance = allow.annualInvestmentAllowance,
         capitalAllowanceMainPool = allow.capitalAllowanceMainPool,
         capitalAllowanceSpecialRatePool = allow.capitalAllowanceSpecialRatePool,
-        businessPremisesRenovationAllowance = allow.businessPremisesRenovationAllowance,
         enhancedCapitalAllowance = allow.enhanceCapitalAllowance,
         allowanceOnSales = allow.allowanceOnSales,
-        zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionGoodsVehicleAllowance
+        zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionGoodsVehicleAllowance,
+        capitalAllowanceSingleAssetPool = allow.capitalAllowanceSingleAssetPool
       )
     }
 
-    SelfEmploymentAnnualSummary(allowances, adjustments)
+    val nonFinancials = NonFinancials.from(desSummary.annualNonFinancials)
+
+    SelfEmploymentAnnualSummary(allowances, adjustments, nonFinancials)
   }
 }

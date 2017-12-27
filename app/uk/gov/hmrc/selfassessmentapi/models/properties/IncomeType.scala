@@ -23,5 +23,6 @@ object IncomeType extends Enumeration {
   val RentIncome = Value("rentIncome")
   val PremiumsOfLeaseGrant = Value("premiumsOfLeaseGrant")
   val ReversePremiums = Value("reversePremiums")
-  implicit val types = EnumJson.enumFormat(IncomeType, Some("UK Property Income type is invalid"))
+  implicit val types = EnumJson.enumFormat(IncomeType,
+    Some(s"UK Property Income type should be one of: ${IncomeType.values.mkString(", ")}"))
 }

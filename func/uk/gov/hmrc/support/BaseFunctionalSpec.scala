@@ -8,7 +8,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode.LENIENT
 import play.api.libs.json._
 import uk.gov.hmrc.api.controllers.ErrorNotFound
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.{ErrorNotImplemented, Period, TaxYear}
@@ -17,6 +17,7 @@ import uk.gov.hmrc.selfassessmentapi.{NinoGenerator, TestApplication}
 
 import scala.collection.mutable
 import scala.util.matching.Regex
+import org.joda.time.LocalDate
 
 trait BaseFunctionalSpec extends TestApplication {
 
@@ -31,7 +32,7 @@ trait BaseFunctionalSpec extends TestApplication {
     def responseContainsHeader(name: String, pattern: Regex): Assertions = {
       response.header(name) match {
         case Some(h) => h should fullyMatch regex pattern
-        case _ => fail("Header [$name] not found in the response headers")
+        case _ => fail(s"Header [$name] not found in the response headers")
       }
       this
     }
@@ -169,7 +170,7 @@ trait BaseFunctionalSpec extends TestApplication {
     private def extractPathElement[T](path: String)(implicit reads: Reads[T]): Option[T] = {
       val pathSeq = path.filter(!_.isWhitespace).split('\\').toSeq.filter(!_.isEmpty)
 
-      def op(js: Option[JsValue], pathElement: String) = {
+      def op(js: Option[JsValue], pathElement: String): Option[JsValue] = {
         val pattern = """(.*)\((\d+)\)""".r
         js match {
           case Some(v) =>
@@ -475,7 +476,6 @@ trait BaseFunctionalSpec extends TestApplication {
       this
     }
 
-
     def userIsNotAuthorisedForTheResource: Givens = {
       stubFor(post(urlPathEqualTo(s"/auth/authorise"))
         .willReturn(aResponse()
@@ -511,10 +511,24 @@ trait BaseFunctionalSpec extends TestApplication {
           """
             |{
             |  "internalId": "some-id",
+            |  "affinityGroup": "Agent",
+            |  "agentCode": "some-agent-code",
             |  "loginTimes": {
             |     "currentLogin": "2016-11-27T09:00:00.000Z",
             |     "previousLogin": "2016-11-01T12:00:00.000Z"
-            |  }
+            |  },
+            |  "authorisedEnrolments": [
+            |   {
+            |         "key":"HMRC-AS-AGENT",
+            |         "identifiers":[
+            |            {
+            |               "key":"AgentReferenceNumber",
+            |               "value":"1000051409"
+            |            }
+            |         ],
+            |         "state":"Activated"
+            |      }
+            |  ]
             |}
           """.stripMargin)))
 
@@ -525,11 +539,24 @@ trait BaseFunctionalSpec extends TestApplication {
           """
             |{
             |  "internalId": "some-id",
+            |  "affinityGroup": "Agent",
             |  "agentCode": "some-agent-code",
             |  "loginTimes": {
             |     "currentLogin": "2016-11-27T09:00:00.000Z",
             |     "previousLogin": "2016-11-01T12:00:00.000Z"
-            |  }
+            |  },
+            |  "authorisedEnrolments": [
+            |   {
+            |         "key":"HMRC-AS-AGENT",
+            |         "identifiers":[
+            |            {
+            |               "key":"AgentReferenceNumber",
+            |               "value":"1000051409"
+            |            }
+            |         ],
+            |         "state":"Activated"
+            |      }
+            |  ]
             |}
           """.stripMargin)))
 
@@ -571,16 +598,96 @@ trait BaseFunctionalSpec extends TestApplication {
       this
     }
 
+    def userIsPartiallyAuthorisedForTheResourceNoAgentCode: Givens = {
+
+      // First call to auth to check if fully authorised should fail.
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .withRequestBody(containing("HMRC-MTD-IT"))
+        .willReturn(aResponse()
+          .withStatus(401)
+          .withHeader("Content-Length", "0")
+          .withHeader("WWW-Authenticate", "MDTP detail=\"InsufficientEnrolments\"")))
+
+      // Second call to auth to check affinity is equal to 'Agent' should succeed.
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .withRequestBody(containing("Agent"))
+        .willReturn(aResponse().withStatus(200).withBody(
+          """
+            |{
+            |  "internalId": "some-id",
+            |  "affinityGroup": "Agent",
+            |  "loginTimes": {
+            |     "currentLogin": "2016-11-27T09:00:00.000Z",
+            |     "previousLogin": "2016-11-01T12:00:00.000Z"
+            |  },
+            |  "authorisedEnrolments": [
+            |   {
+            |         "key":"HMRC-AS-AGENT",
+            |         "identifiers":[
+            |            {
+            |               "key":"AgentReferenceNumber",
+            |               "value":"1000051409"
+            |            }
+            |         ],
+            |         "state":"Activated"
+            |      }
+            |  ]
+            |}
+          """.stripMargin)))
+
+      // Third call to auth to check FOA subscription status should succeed.
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .withRequestBody(containing("HMRC-AS-AGENT"))
+        .willReturn(aResponse().withStatus(200).withBody(
+          """
+            |{
+            |  "internalId": "some-id",
+            |  "affinityGroup": "Agent",
+            |  "loginTimes": {
+            |     "currentLogin": "2016-11-27T09:00:00.000Z",
+            |     "previousLogin": "2016-11-01T12:00:00.000Z"
+            |  },
+            |  "authorisedEnrolments": [
+            |   {
+            |         "key":"HMRC-AS-AGENT",
+            |         "identifiers":[
+            |            {
+            |               "key":"AgentReferenceNumber",
+            |               "value":"1000051409"
+            |            }
+            |         ],
+            |         "state":"Activated"
+            |      }
+            |  ]
+            |}
+          """.stripMargin)))
+
+      this
+    }
+
     def clientIsFullyAuthorisedForTheResource: Givens = {
       stubFor(post(urlPathEqualTo(s"/auth/authorise"))
         .willReturn(aResponse().withStatus(200).withBody(
           """
             |{
             |  "internalId": "some-id",
+            |  "affinityGroup": "Individual",
             |  "loginTimes": {
             |     "currentLogin": "2016-11-27T09:00:00.000Z",
             |     "previousLogin": "2016-11-01T12:00:00.000Z"
-            |  }
+            |  },
+            |  "authorisedEnrolments": [
+            |   {
+            |         "key":"HMRC-AS-AGENT",
+            |         "identifiers":[
+            |            {
+            |               "key":"AgentReferenceNumber",
+            |               "value":"1000051409"
+            |            }
+            |         ],
+            |         "state":"Activated"
+            |      }
+            |  ]
             |}
           """.stripMargin)))
 
@@ -598,7 +705,48 @@ trait BaseFunctionalSpec extends TestApplication {
             |  "loginTimes": {
             |     "currentLogin": "2016-11-27T09:00:00.000Z",
             |     "previousLogin": "2016-11-01T12:00:00.000Z"
-            |  }
+            |  },
+            |  "authorisedEnrolments": [
+            |   {
+            |         "key":"HMRC-AS-AGENT",
+            |         "identifiers":[
+            |            {
+            |               "key":"AgentReferenceNumber",
+            |               "value":"1000051409"
+            |            }
+            |         ],
+            |         "state":"Activated"
+            |      }
+            |  ]
+            |}
+          """.stripMargin)))
+
+      this
+    }
+
+    def agentIsFullyAuthorisedForTheResourceNoAgentCode: Givens = {
+      stubFor(post(urlPathEqualTo(s"/auth/authorise"))
+        .willReturn(aResponse().withStatus(200).withBody(
+          """
+            |{
+            |  "internalId": "some-id",
+            |  "affinityGroup": "Agent",
+            |  "loginTimes": {
+            |     "currentLogin": "2016-11-27T09:00:00.000Z",
+            |     "previousLogin": "2016-11-01T12:00:00.000Z"
+            |  },
+            |  "authorisedEnrolments": [
+            |   {
+            |         "key":"HMRC-AS-AGENT",
+            |         "identifiers":[
+            |            {
+            |               "key":"AgentReferenceNumber",
+            |               "value":"1000051409"
+            |            }
+            |         ],
+            |         "state":"Activated"
+            |      }
+            |  ]
             |}
           """.stripMargin)))
 
@@ -858,7 +1006,6 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-
         def noPeriodFor(nino: Nino, id: String = "abc", from: String, to: String): Givens = {
           stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summary-detail?from=$from&to=$to"))
             .willReturn(
@@ -869,7 +1016,6 @@ trait BaseFunctionalSpec extends TestApplication {
 
           givens
         }
-
 
         def invalidDateFrom(nino: Nino, id: String = "abc", from: String, to: String): Givens = {
           stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/periodic-summary-detail?from=$from&to=$to"))
@@ -992,10 +1138,10 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def willBeUpdatedFor(nino: Nino, id: String = "abc"): Givens = {
-          stubFor(put(urlEqualTo(s"/income-tax-self-assessment/nino/$nino/business/$id"))
+          stubFor(put(urlEqualTo(s"/income-tax-self-assessment/nino/$nino/incomeSourceId/$id/regime/ITSA"))
             .willReturn(
               aResponse()
-                .withStatus(204)))
+                .withStatus(200)))
 
           givens
         }
@@ -1064,11 +1210,55 @@ trait BaseFunctionalSpec extends TestApplication {
 
           givens
         }
+
+        def endOfYearStatementReadyToBeFinalised(nino: Nino, start: LocalDate, end: LocalDate, id: String = "abc"): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/accounting-periods/${start}_${end}/statement"))
+            .willReturn(
+              aResponse()
+                .withStatus(204)
+                .withBody("")))
+
+          givens
+        }
+
+        def endOfYearStatementMissingPeriod(nino: Nino, start: LocalDate, end: LocalDate, id: String = "abc"): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/accounting-periods/${start}_${end}/statement"))
+            .willReturn(
+              aResponse()
+                .withStatus(403)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.periodicUpdateMissing)))
+
+          givens
+        }
+
+        def endOfYearStatementIsLate(nino: Nino, start: LocalDate, end: LocalDate, id: String = "abc"): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/accounting-periods/${start}_${end}/statement"))
+            .willReturn(
+              aResponse()
+                .withStatus(403)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.lateSubmission)))
+
+          givens
+        }
+
+        def endOfYearStatementDoesNotMatchPeriod(nino: Nino, start: LocalDate, end: LocalDate, id: String = "abc"): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/accounting-periods/${start}_${end}/statement"))
+            .willReturn(
+              aResponse()
+                .withStatus(403)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.nonMatchingPeriod)))
+
+          givens
+        }
+
       }
 
       object taxCalculation {
         def isReadyFor(nino: Nino, calcId: String = "abc"): Givens = {
-          stubFor(get(urlMatching(s"/calculation-store/calculation-data/$nino/calcId/$calcId"))
+          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -1090,7 +1280,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def isNotReadyFor(nino: Nino, calcId: String = "abc"): Givens = {
-          stubFor(get(urlMatching(s"/calculation-store/calculation-data/$nino/calcId/$calcId"))
+          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
             .willReturn(
               aResponse()
                 .withStatus(204)))
@@ -1099,7 +1289,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def doesNotExistFor(nino: Nino, calcId: String = "abc"): Givens = {
-          stubFor(get(urlMatching(s"/calculation-store/calculation-data/$nino/calcId/$calcId"))
+          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
             .willReturn(
               aResponse()
                 .withStatus(404)
@@ -1110,7 +1300,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def invalidCalculationIdFor(nino: Nino, calcId: String = "abc"): Givens = {
-          stubFor(get(urlMatching(s"/calculation-store/calculation-data/$nino/calcId/$calcId"))
+          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
             .willReturn(
               aResponse()
                 .withStatus(400)
@@ -1159,7 +1349,6 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
       }
-
 
       object properties {
 
@@ -1503,7 +1692,6 @@ trait BaseFunctionalSpec extends TestApplication {
 
           givens
         }
-
 
         def invalidPeriodUpdateFor(nino: Nino, propertyType: PropertyType, from: String = "2017-04-06", to: String = "2018-04-05"): Givens = {
           stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))

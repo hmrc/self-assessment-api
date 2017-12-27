@@ -24,19 +24,18 @@ import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Failure
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuditConnector
 import uk.gov.hmrc.selfassessmentapi.models.audit.AuditDetail
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
+import uk.gov.hmrc.http.HeaderCarrier
 
 trait AuditService {
   val logger: Logger = Logger(this.getClass)
 
   def audit[T <: AuditDetail](
-      auditData: AuditData[T])(implicit hc: HeaderCarrier, fmt: Format[T], request: Request[_]): Future[AuditResult] =
+      auditData: AuditData[T])(implicit hc: HeaderCarrier, fmt: Format[T], request: Request[_], ec: ExecutionContext): Future[AuditResult] =
     sendEvent(makeEvent(auditData.detail, auditData.transactionName), MicroserviceAuditConnector)
 
   def makeEvent[T <: AuditDetail](detail: T, transactionName: String)(implicit hc: HeaderCarrier,
@@ -50,9 +49,9 @@ trait AuditService {
       generatedAt = DateTime.now(DateTimeZone.UTC)
     )
 
-  def sendEvent(event: ExtendedDataEvent, connector: AuditConnector): Future[AuditResult] =
+  def sendEvent(event: ExtendedDataEvent, connector: AuditConnector)(implicit ec: ExecutionContext): Future[AuditResult] =
     try {
-      connector.sendEvent(event)
+      connector.sendExtendedEvent(event)
     } catch {
       case NonFatal(ex) =>
         val msg = s"An exception [$ex] occurred in the Audit service while sending event [$event]"

@@ -16,8 +16,14 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
+import uk.gov.hmrc.selfassessmentapi.models.Errors.BusinessError
+
 sealed trait ErrorResult
 
 case class GenericErrorResult(message: String) extends ErrorResult
 
 case class ValidationErrorResult(validationErrors: ValidationErrors) extends ErrorResult
+
+case class AuthorisationErrorResult(error: BusinessError) extends ErrorResult
+
+case class PathValidationErrorResult(error: Errors.Error) extends ErrorResult

@@ -17,10 +17,10 @@
 package uk.gov.hmrc.kenshoo.monitoring
 
 import play.api.Logger
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.http.HeaderCarrier
 
 trait AverageResponseTimer extends KenshooMetric {
   def timer[T](serviceName: String)(function: => Future[T])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[T] = {

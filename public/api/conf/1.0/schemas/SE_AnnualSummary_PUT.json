@@ -4,10 +4,13 @@
   "type": "object",
   "properties": {
     "adjustments": {
-      "$ref": "self-employment/Adjustments.json"
+      "$ref": "self-employment/Adjustments_PUT.json"
     },
     "allowances": {
       "$ref": "self-employment/Allowances.json"
+    },
+    "nonFinancials": {
+      "$ref": "self-employment/NonFinancials.json"
     }
   },
   "additionalProperties": false

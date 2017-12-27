@@ -27,5 +27,6 @@ object FHLExpenseType extends Enumeration {
   val ProfessionalFees = Value("professionalFees")
   val Other = Value("other")
 
-  implicit val types = EnumJson.enumFormat(FHLExpenseType, Some("UK Property Expense type is invalid"))
+  implicit val types = EnumJson.enumFormat(FHLExpenseType,
+    Some(s"UK Property Expense must be one of: ${FHLExpenseType.values.mkString(", ")}"))
 }

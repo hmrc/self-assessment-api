@@ -115,7 +115,8 @@ class SelfEmploymentsResourceSpec extends BaseFunctionalSpec {
     }
   }
 
-  "update" should {
+  // Disabled for Bravo release
+  "update" ignore {
     "return code 204 when successfully updating a self-employment resource" in {
       given()
         .userIsSubscribedToMtdFor(nino)

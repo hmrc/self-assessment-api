@@ -23,15 +23,15 @@ import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
 import uk.gov.hmrc.selfassessmentapi.contexts.{AuthContext, Individual}
 import uk.gov.hmrc.selfassessmentapi.models.SourceType.SourceType
-import uk.gov.hmrc.selfassessmentapi.services.AuthenticationService
+import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
 
 trait BaseResource extends BaseController {
   val logger: Logger = Logger(this.getClass)
 
-  private val authService = AuthenticationService
+  private val authService = AuthorisationService
   private lazy val authIsEnabled = AppContext.authEnabled
   private lazy val featureSwitch = FeatureSwitch(AppContext.featureSwitch)
 

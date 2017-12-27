@@ -24,7 +24,7 @@ import uk.gov.hmrc.selfassessmentapi.models.dividends.Dividends
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.DividendsAnnualSummaryService
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 
 object DividendsAnnualSummaryResource extends BaseResource {
 
@@ -35,7 +35,7 @@ object DividendsAnnualSummaryResource extends BaseResource {
       validate[Dividends, Boolean](request.body) { dividends =>
         service.updateAnnualSummary(nino, taxYear, dividends)
       } map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right(true) => NoContent
         case _ => InternalServerError
       }

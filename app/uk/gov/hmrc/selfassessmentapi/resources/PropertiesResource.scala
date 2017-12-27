@@ -23,7 +23,7 @@ import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesConnector
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 
 object PropertiesResource extends BaseResource {
   private val connector = PropertiesConnector
@@ -34,7 +34,7 @@ object PropertiesResource extends BaseResource {
         connector.create(nino, props)
       } map {
         case Left(errorResult) =>
-          handleValidationErrors(errorResult)
+          handleErrors(errorResult)
         case Right(response) =>
           response.filter {
             case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino))

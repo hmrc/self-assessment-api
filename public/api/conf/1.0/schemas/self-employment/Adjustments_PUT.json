@@ -1,0 +1,153 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Adjustments",
+  "description": "Adjustments",
+  "type": "object",
+  "properties": {
+    "includedNonTaxableProfits": {
+      "title": "Included not-taxable profits",
+      "description": "Income, receipts and other profits included in business income or expenses but not taxable as business profits",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "basisAdjustment": {
+      "title": "Basis adjustment",
+      "description": "If your basis period is not the same as your accounting period, enter the adjustment needed to arrive at the profit or loss for the basis period – if the adjustment needs to be taken off the profit figure, this should be negative",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": -99999999999999.98,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "overlapReliefUsed": {
+      "title": "Overlap relief used",
+      "description": "Overlap relief used this year",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "accountingAdjustment": {
+      "title": "Accounting adjustment",
+      "description": "Adjustment for change of accounting practice",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "averagingAdjustment": {
+      "title": "Averaging adjustment",
+      "description": "Averaging adjustment (only for farmers, market gardeners and creators of literary or artistic works)\n– if the adjustment needs to be taken off the profit figure, this should be negative",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": -99999999999999.98,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "lossBroughtForward": {
+      "title": "Loss brought forward",
+      "description": "Loss brought forward from earlier years set off against this year’s profits",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "outstandingBusinessIncome": {
+      "title": "Outstanding business income",
+      "description": "Any other business income not included in other fields",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "balancingChargeBPRA": {
+      "title": "Balancing charge BPRA",
+      "description": "Balancing charge on sale or cessation of business use (only where Business Premises Renovation Allowance has been claimed)",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "balancingChargeOther": {
+      "title": "Balancing charge Other",
+      "description": "Balancing charge on sale or cessation of business use (where you have disposed of assets for more than their tax value)",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "goodsAndServicesOwnUse": {
+      "title": "Goods and services own use",
+      "description": "Value of the normal sale price of goods or stock have been taken out of the business.",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "overlapProfitCarriedForward": {
+      "title": "Overlap profit carried forward ",
+      "description": "Any overlap profit carried forward from previous years plus any new overlap profits from this year\n or minus any overlap relief used this year that is available to carry forward.",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "overlapProfitBroughtForward": {
+      "title": "Overlap profit brought forward ",
+      "description": "Overlap profit that has been brought forward from previous years to use in the current year.",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "lossCarriedForwardTotal": {
+      "title": "Total loss to carry forward after all other set-offs",
+      "description": "Total loss to carry forward after all other set-offs - you can carry forward your loss, or the amount\n of loss not used against income or capital gains, to set against any future profits from the same business.",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "cisDeductionsTotal": {
+      "title": "Total Construction Industry Scheme (CIS) deductions taken from your payments by contractors",
+      "description": "Total Construction Industry Scheme (CIS) deductions taken from your payments by contractors \n- if you're a subcontractor, add up all your deductions made by contractors in tax year.",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "taxDeductionsFromTradingIncome": {
+      "title": "Other tax taken off trading income",
+      "description": "If you have any other tax taken off (not CIS deductions) Other tax taken off trading income",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    },
+    "class4NicProfitAdjustment": {
+      "title": "Adjustment to profits chargeable to Class 4 National Insurance Contributions",
+      "description": "Adjustment to profits chargeable to Class 4 National Insurance Contributions",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "500.25"
+    }
+  },
+  "additionalProperties": false
+}

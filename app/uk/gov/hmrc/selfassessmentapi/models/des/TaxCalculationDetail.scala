@@ -286,6 +286,45 @@ object DetailsI {
   implicit val writes: OWrites[DetailsI] = Json.writes[DetailsI]
 }
 
+case class IncomeSource(
+  id: Option[String],
+  `type`: String,
+  taxableIncome: BigDecimal,
+  supplied: Boolean,
+  finalised: Option[Boolean]
+)
+
+object IncomeSource {
+
+  implicit val reads: Reads[IncomeSource] = Json.reads[IncomeSource]
+  implicit val writes: Writes[IncomeSource] = Json.writes[IncomeSource]
+
+}
+
+case class EndOfYearEstimate(
+  incomeSource: Seq[IncomeSource],
+  totalTaxableIncome: Option[BigDecimal],
+  incomeTaxAmount: Option[BigDecimal],
+  nic2: Option[BigDecimal],
+  nic4: Option[BigDecimal],
+  totalNicAmount: Option[BigDecimal],
+  incomeTaxNicAmount: Option[BigDecimal]
+)
+
+object EndOfYearEstimate {
+
+  implicit val reads: Reads[EndOfYearEstimate] = Json.reads[EndOfYearEstimate]
+  implicit val writes: Writes[EndOfYearEstimate] = Json.writes[EndOfYearEstimate]
+
+}
+
+case class DetailsJ(eoyEstimate: Option[EndOfYearEstimate])
+
+object DetailsJ {
+  implicit val reads: Reads[DetailsJ] = Json.reads[DetailsJ]
+  implicit val writes: OWrites[DetailsJ] = Json.writes[DetailsJ]
+}
+
 case class TaxCalculationDetail(a: DetailsA,
                                 b: DetailsB,
                                 c: DetailsC,
@@ -294,7 +333,8 @@ case class TaxCalculationDetail(a: DetailsA,
                                 f: DetailsF,
                                 g: DetailsG,
                                 h: DetailsH,
-                                i: DetailsI)
+                                i: DetailsI,
+                                j: DetailsJ)
 
 object TaxCalculationDetail {
   implicit val reads: Reads[TaxCalculationDetail] =
@@ -306,10 +346,11 @@ object TaxCalculationDetail {
       Reads.of[DetailsF] and
       Reads.of[DetailsG] and
       Reads.of[DetailsH] and
-      Reads.of[DetailsI])(TaxCalculationDetail.apply _)
+      Reads.of[DetailsI] and
+      Reads.of[DetailsJ])(TaxCalculationDetail.apply _)
 
   implicit val writes: Writes[TaxCalculationDetail] =
     (JsPath.write[DetailsA] and JsPath.write[DetailsB] and JsPath.write[DetailsC] and JsPath.write[DetailsD] and
       JsPath.write[DetailsE] and JsPath.write[DetailsF] and JsPath.write[DetailsG] and JsPath
-      .write[DetailsH] and JsPath.write[DetailsI])(unlift(TaxCalculationDetail.unapply))
+      .write[DetailsH] and JsPath.write[DetailsI] and JsPath.write[DetailsJ])(unlift(TaxCalculationDetail.unapply))
 }

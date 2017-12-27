@@ -21,13 +21,12 @@ import uk.gov.hmrc.selfassessmentapi.repositories.BanksRepository
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.models.banks.BankAnnualSummary
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 trait BanksAnnualSummaryService {
   val repository: BanksRepository
 
-  def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear, newBankSummary: BankAnnualSummary): Future[Boolean] = {
+  def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear, newBankSummary: BankAnnualSummary)(implicit ec: ExecutionContext): Future[Boolean] = {
     repository.retrieve(id, nino).flatMap {
       case Some(bank) =>
         repository.update(id, nino, bank.copy(annualSummaries = bank.annualSummaries.updated(taxYear, newBankSummary)))
@@ -35,7 +34,7 @@ trait BanksAnnualSummaryService {
     }
   }
 
-  def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Future[Option[BankAnnualSummary]] = {
+  def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear)(implicit ec: ExecutionContext): Future[Option[BankAnnualSummary]] = {
     repository.retrieve(id, nino).map {
       case Some(resource) => Some(resource.annualSummary(taxYear))
       case None => None

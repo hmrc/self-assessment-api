@@ -19,7 +19,8 @@ package uk.gov.hmrc.selfassessmentapi.config.simulation
 import play.api.mvc.{RequestHeader, Result}
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 
 trait Simulation {
-  def apply(f: RequestHeader => Future[Result], rh: RequestHeader, method: String): Future[Result]
+  def apply(f: RequestHeader => Future[Result], rh: RequestHeader, method: String)(implicit ec: ExecutionContext): Future[Result]
 }

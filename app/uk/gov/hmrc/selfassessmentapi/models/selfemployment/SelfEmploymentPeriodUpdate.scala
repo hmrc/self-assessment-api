@@ -19,21 +19,28 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 import play.api.data.validation.ValidationError
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, Validation}
+import uk.gov.hmrc.selfassessmentapi.models.{Amount, ErrorCode, Validation}
 import uk.gov.hmrc.selfassessmentapi.models.Validation._
+import uk.gov.hmrc.selfassessmentapi.models.ErrorCode._
+import uk.gov.hmrc.selfassessmentapi.models._
 
-case class SelfEmploymentPeriodUpdate(incomes: Option[Incomes], expenses: Option[Expenses])
+case class SelfEmploymentPeriodUpdate(incomes: Option[Incomes],
+                                      expenses: Option[Expenses],
+                                      consolidatedExpenses: Option[Amount]) extends ExpensesDef[Expenses]
 
 object SelfEmploymentPeriodUpdate {
   implicit val writes: Writes[SelfEmploymentPeriodUpdate] = Json.writes[SelfEmploymentPeriodUpdate]
 
   private def financialsValidator(sePeriodUpdate: SelfEmploymentPeriodUpdate): Boolean =
-    sePeriodUpdate.incomes.exists(_.hasIncomes) || sePeriodUpdate.expenses.exists(_.hasExpenses)
+    sePeriodUpdate.incomes.exists(_.hasIncomes) || sePeriodUpdate.expenses.exists(_.hasExpenses) || sePeriodUpdate.consolidatedExpenses.isDefined
 
   implicit val reads: Reads[SelfEmploymentPeriodUpdate] = (
     (__ \ "incomes").readNullable[Incomes] and
-      (__ \ "expenses").readNullable[Expenses]
+    (__ \ "expenses").readNullable[Expenses] and
+    (__ \ "consolidatedExpenses").readNullable[Amount](nonNegativeAmountValidator)
   )(SelfEmploymentPeriodUpdate.apply _)
+    .filter(ValidationError(s"Both expenses and consolidatedExpenses elements cannot be present at the same time",
+      BOTH_EXPENSES_SUPPLIED))(_.singleExpensesTypeSpecified)
     .validate(
       Seq(
         Validation(JsPath(),

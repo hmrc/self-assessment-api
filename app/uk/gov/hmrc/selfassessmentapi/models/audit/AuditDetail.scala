@@ -19,13 +19,13 @@ package uk.gov.hmrc.selfassessmentapi.models.audit
 import play.api.libs.json.{Format, JsValue, Json}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, TaxYear}
+import uk.gov.hmrc.selfassessmentapi.models.Period
 
 sealed trait AuditDetail {
   val auditType: String
   val httpStatus: Int
   val responsePayload: Option[JsValue]
 }
-
 
 case class PeriodicUpdate(override val auditType: String,
                           override val httpStatus: Int,
@@ -99,3 +99,16 @@ object RetrieveObligations {
   implicit val format: Format[RetrieveObligations] = Json.format[RetrieveObligations]
 }
 
+case class EndOfPeriodStatementDeclaration(override val auditType: String = "declareEndOfYearStatement",
+                               override val httpStatus: Int,
+                               nino: Nino,
+                               sourceId: SourceId,
+                               accountingPeriodId: String,
+                               affinityGroup: String,
+                               agentCode: Option[String],
+                               override val responsePayload: Option[JsValue] = None)
+    extends AuditDetail
+
+object EndOfPeriodStatementDeclaration {
+  implicit val format: Format[EndOfPeriodStatementDeclaration] = Json.format[EndOfPeriodStatementDeclaration]
+}

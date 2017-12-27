@@ -84,12 +84,12 @@ class SelfEmploymentSpec extends JsonSpec {
 
       assertValidationErrorsWithMessage[SelfEmployment](Json.parse(json),
         Map("/accountingPeriod" -> Seq("error.path.missing"),
-            "/accountingType" -> Seq("error.path.missing"),
-            "/commencementDate" -> Seq("error.path.missing"),
-            "/tradingName" -> Seq("error.path.missing"),
-            "/businessDescription" -> Seq("error.path.missing"),
-            "/businessAddressLineOne" -> Seq("error.path.missing"),
-            "/businessPostcode" -> Seq("error.path.missing")))
+          "/accountingType" -> Seq("error.path.missing"),
+          "/commencementDate" -> Seq("error.path.missing"),
+          "/tradingName" -> Seq("error.path.missing"),
+          "/businessDescription" -> Seq("error.path.missing"),
+          "/businessAddressLineOne" -> Seq("error.path.missing"),
+          "/businessPostcode" -> Seq("error.path.missing")))
     }
 
     "return a error when providing an empty accountingPeriod body" in {
@@ -112,7 +112,7 @@ class SelfEmploymentSpec extends JsonSpec {
 
       assertValidationErrorsWithMessage[SelfEmployment](Json.parse(json),
         Map("/accountingPeriod/start" -> Seq("error.path.missing"),
-            "/accountingPeriod/end" -> Seq("error.path.missing")))
+          "/accountingPeriod/end" -> Seq("error.path.missing")))
     }
 
     "return a error when providing a trading name that is not between 1 and 105 characters in length" in {

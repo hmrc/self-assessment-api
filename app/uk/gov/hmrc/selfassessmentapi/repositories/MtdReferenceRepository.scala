@@ -28,8 +28,7 @@ import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.selfassessmentapi.domain.MtdRefEntry
 import uk.gov.hmrc.selfassessmentapi.models.MtdId
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class MtdReferenceRepository(implicit mongo: () => DB) extends ReactiveRepository[MtdRefEntry, BSONObjectID](
   "mtdRef",
@@ -41,9 +40,9 @@ class MtdReferenceRepository(implicit mongo: () => DB) extends ReactiveRepositor
     Index(Seq(("nino", Ascending)), name = Some("user_nino"), unique = true)
   )
 
-  def store(nino: Nino, mtdId: MtdId): Future[Boolean] =
+  def store(nino: Nino, mtdId: MtdId)(implicit ec: ExecutionContext): Future[Boolean] =
     insert(MtdRefEntry(nino.nino, mtdId.mtdId)).map { res =>
-      if (res.hasErrors) logger.error(s"Database error occurred. Error: [${res.errmsg}] Code: [${res.code}]")
+      if (!res.writeErrors.isEmpty) logger.error(s"Database error occurred. Errors: [${res.writeErrors}] Code: [${res.code}]")
       res.ok && res.n > 0
     } recoverWith {
       case e: DatabaseException =>
@@ -51,7 +50,7 @@ class MtdReferenceRepository(implicit mongo: () => DB) extends ReactiveRepositor
         Future.successful(false)
     }
 
-  def retrieve(nino: Nino): Future[Option[MtdId]] =
+  def retrieve(nino: Nino)(implicit ec: ExecutionContext): Future[Option[MtdId]] =
     find("nino" -> nino.nino)
       .map(_.headOption.map(entry => MtdId(entry.mtdRef)))
 }

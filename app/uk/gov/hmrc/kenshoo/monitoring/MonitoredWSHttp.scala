@@ -18,11 +18,11 @@ package uk.gov.hmrc.kenshoo.monitoring
 
 import play.api.Logger
 import play.api.libs.json.Writes
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.http.ws._
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpResponse }
 
 trait MonitoredWSHttp extends WSHttp with HttpAPIMonitor {
 

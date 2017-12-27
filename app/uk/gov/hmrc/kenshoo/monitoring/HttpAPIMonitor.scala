@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.kenshoo.monitoring
 
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.http.HeaderCarrier
 
 trait HttpAPIMonitor extends AverageResponseTimer with HttpErrorRateMeter {
   def monitor[T](serviceName: String)(function: => Future[T])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[T] = {

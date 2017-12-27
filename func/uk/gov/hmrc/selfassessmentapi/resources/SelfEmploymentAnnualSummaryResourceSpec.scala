@@ -111,7 +111,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().isATeapotFor(nino)
         .when()
-        .put(Jsons.SelfEmployment.update()).at(s"/ni/$nino/self-employments/$taxYear")
+        .put(Jsons.SelfEmployment.update()).at(s"/ni/$nino/self-employments/abc/$taxYear")
         .thenAssertThat()
         .statusIs(500)
     }
@@ -123,7 +123,6 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         annualInvestmentAllowance = 200,
         capitalAllowanceMainPool = 200,
         capitalAllowanceSpecialRatePool = 200,
-        businessPremisesRenovationAllowance = 200,
         enhancedCapitalAllowance = 200,
         allowanceOnSales = 200,
         zeroEmissionGoodsVehicleAllowance = 200,

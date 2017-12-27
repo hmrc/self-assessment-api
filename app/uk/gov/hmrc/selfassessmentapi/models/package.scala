@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi
 
+import org.joda.time.LocalDate
 import play.api.Logger
 import play.api.data.validation.ValidationError
 import play.api.libs.json.{JsPath, Reads}
@@ -49,7 +50,7 @@ package object models {
   val nonNegativeAmountValidator: Reads[Amount] = Reads
     .of[Amount]
     .filter(ValidationError("amounts should be a non-negative number less than 99999999999999.98 with up to 2 decimal places",
-                            ErrorCode.INVALID_MONETARY_AMOUNT))(
+      ErrorCode.INVALID_MONETARY_AMOUNT))(
       amount => amount >= 0 && amount.scale < 3 && amount <= MAX_AMOUNT)
 
   val sicClassifications: Try[Seq[String]] =
@@ -63,5 +64,35 @@ package object models {
           }
       }
     } yield lines.getLines().toIndexedSeq
+
+
+  val postcodeValidator: Reads[String] = Reads
+    .of[String]
+    .filter(ValidationError("postalCode must match \"^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$\"",
+      ErrorCode.INVALID_POSTCODE))(postcode =>
+      postcode.matches("^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$"))
+
+  val commencementDateValidator: Reads[LocalDate] = Reads
+    .of[LocalDate]
+    .filter(
+      ValidationError("commencement date should be today or in the past", ErrorCode.DATE_NOT_IN_THE_PAST)
+    )(date => date.isBefore(LocalDate.now()) || date.isEqual(LocalDate.now()))
+
+  def lengthIsBetween(minLength: Int, maxLength: Int): Reads[String] =
+    Reads
+      .of[String]
+      .map(_.trim)
+      .filter(
+        ValidationError(s"field length must be between $minLength and $maxLength characters",
+          ErrorCode.INVALID_FIELD_LENGTH))(name => name.length <= maxLength && name.length >= minLength)
+
+
+  implicit class Trimmer(reads: Reads[String]) {
+    def trim: Reads[String] = reads.map(_.trim)
+  }
+
+  implicit class NullableTrimmer(reads: Reads[Option[String]]) {
+    def trimNullable: Reads[Option[String]] = reads.map(_.map(_.trim))
+  }
 
 }

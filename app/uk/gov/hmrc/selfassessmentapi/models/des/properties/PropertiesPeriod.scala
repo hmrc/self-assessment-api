@@ -29,9 +29,6 @@ object Common {
 
     def fromIncome(o: models.Income): Income =
       Income(amount = o.amount, taxDeducted = o.taxDeducted)
-
-    def fromSimpleIncome(o: models.SimpleIncome): Income =
-      Income(amount = o.amount)
   }
 
 }
@@ -44,14 +41,15 @@ object FHL {
     implicit val format: OFormat[Incomes] = Json.format[Incomes]
 
     def from(o: properties.FHL.Incomes): Incomes =
-      Incomes(rentIncome = o.rentIncome.map(Income.fromSimpleIncome))
+      Incomes(rentIncome = o.rentIncome.map(Income.fromIncome))
   }
 
   case class Deductions(premisesRunningCosts: Option[BigDecimal] = None,
                         repairsAndMaintenance: Option[BigDecimal] = None,
                         financialCosts: Option[BigDecimal] = None,
                         professionalFees: Option[BigDecimal] = None,
-                        other: Option[BigDecimal] = None)
+                        other: Option[BigDecimal] = None,
+                        simplifiedExpenses: Option[BigDecimal] = None)
 
   object Deductions {
     implicit val format: OFormat[Deductions] = Json.format[Deductions]
@@ -69,11 +67,13 @@ object FHL {
   object Financials {
     implicit val format: OFormat[Financials] = Json.format[Financials]
 
-    def from(o: Option[properties.FHL.Financials]): Option[Financials] =
-      o.flatMap { f =>
-        (f.incomes, f.expenses) match {
-          case (None, None) => None
-          case (incomes, expenses) => Some(Financials(incomes = incomes.map(Incomes.from), deductions = expenses.map(Deductions.from)))
+    def from(financials: Option[properties.FHL.Financials]): Option[Financials] =
+      financials.flatMap { f =>
+        (f.incomes, f.expenses, f.consolidatedExpenses) match {
+          case (None, None, None) => None
+          case (incomes, expenses, consolidatedExpenses) => Some(Financials(incomes = incomes.map(Incomes.from),
+            deductions = expenses.map(Deductions.from).fold(financials.map(f => Deductions(simplifiedExpenses = consolidatedExpenses))) (Option(_))
+          ))
         }
       }
   }
@@ -109,7 +109,8 @@ object Other {
                         financialCosts: Option[BigDecimal] = None,
                         professionalFees: Option[BigDecimal] = None,
                         costOfServices: Option[BigDecimal] = None,
-                        other: Option[BigDecimal] = None)
+                        other: Option[BigDecimal] = None,
+                        simplifiedExpenses: Option[BigDecimal] = None)
 
   object Deductions {
     implicit val format: OFormat[Deductions] = Json.format[Deductions]
@@ -128,11 +129,13 @@ object Other {
   object Financials {
     implicit val format: OFormat[Financials] = Json.format[Financials]
 
-    def from(o: Option[properties.Other.Financials]): Option[Financials] =
-    o.flatMap { f =>
-      (f.incomes, f.expenses) match {
-        case (None, None) => None
-        case (incomes, expenses) => Some(Financials(incomes = incomes.map(Incomes.from), deductions = expenses.map(Deductions.from)))
+    def from(financials: Option[properties.Other.Financials]): Option[Financials] =
+    financials.flatMap { f =>
+      (f.incomes, f.expenses, f.consolidatedExpenses) match {
+        case (None, None, None) => None
+        case (incomes, expenses, consolidatedExpenses) => Some(Financials(incomes = incomes.map(Incomes.from),
+          deductions = expenses.map(Deductions.from).fold(financials.map(f => Deductions(simplifiedExpenses = consolidatedExpenses))) (Option(_))
+        ))
       }
     }
   }

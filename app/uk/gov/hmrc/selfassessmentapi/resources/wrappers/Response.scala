@@ -16,17 +16,18 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
+import akka.actor.FSM.->
 import play.api.Logger
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json.toJson
 import play.api.mvc.Result
 import play.api.mvc.Results._
-import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
-import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, MultiDesError}
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode.{DesErrorCode, _}
+import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, MultiDesError}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, PeriodSummary, des}
 import uk.gov.hmrc.selfassessmentapi.resources.AuthRequest
+import uk.gov.hmrc.http.HttpResponse
 
 trait Response {
   val logger: Logger = Logger(this.getClass)
@@ -42,7 +43,7 @@ trait Response {
 
   def filter[A](pf: PartialFunction[Int, Result])(implicit request: AuthRequest[A]): Result =
     (status / 100, request.authContext) match {
-      case (4, FilingOnlyAgent(_)) =>
+      case (4, FilingOnlyAgent(_, _)) =>
         logResponse()
         BadRequest(toJson(Errors.InvalidRequest))
       case (4, _) | (5, _) =>
@@ -85,8 +86,10 @@ trait Response {
     case 400 if errorCodeIsOneOf(INVALID_NINO)    => BadRequest(toJson(Errors.NinoInvalid))
     case 400 if errorCodeIsOneOf(INVALID_PAYLOAD) => BadRequest(toJson(Errors.InvalidRequest))
     case 400
-        if errorCodeIsOneOf(INVALID_BUSINESSID,
+        if errorCodeIsOneOf(NOT_FOUND_NINO,
+                            INVALID_BUSINESSID,
                             INVALID_INCOME_SOURCE,
+                            INVALID_INCOMESOURCEID,
                             INVALID_TYPE,
                             INVALID_IDENTIFIER,
                             INVALID_CALCID) =>
@@ -98,15 +101,21 @@ trait Response {
                             INVALID_STATUS,
                             INVALID_TAX_YEAR) =>
       InternalServerError(toJson(Errors.InternalServerError))
+    case 403 if errorCodeIsOneOf(NOT_UNDER_16) => Forbidden(toJson(Errors.businessError(Errors.NotUnder16)))
+    case 403 if errorCodeIsOneOf(NOT_OVER_STATE_PENSION) => Forbidden(toJson(Errors.businessError(Errors.NotOverStatePension)))
+    case 403 if errorCodeIsOneOf(MISSING_EXEMPTION_INDICATOR) => BadRequest(toJson(Errors.badRequest(Errors.MissingExemptionIndicator)))
+    case 403 if errorCodeIsOneOf(MISSING_EXEMPTION_REASON) => BadRequest(toJson(Errors.badRequest(Errors.MandatoryFieldMissing)))
     case 403 if errorCodeIsOneOf(INVALID_DATE_RANGE) => InternalServerError(toJson(Errors.InternalServerError))
     case 403                                         => NotFound
     case 404                                         => NotFound
-    case 409 if errorCodeIsOneOf(INVALID_PERIOD)     => BadRequest(toJson(Errors.businessError(Errors.InvalidPeriod)))
+    case 409 if errorCodeIsOneOf(INVALID_PERIOD)     => BadRequest(toJson(Errors.badRequest(Errors.InvalidPeriod)))
     case 409 if errorCodeIsOneOf(NOT_CONTIGUOUS_PERIOD) =>
       Forbidden(toJson(Errors.businessError(Errors.NotContiguousPeriod)))
     case 409 if errorCodeIsOneOf(OVERLAPS_IN_PERIOD) =>
       Forbidden(toJson(Errors.businessError(Errors.OverlappingPeriod)))
     case 409 if errorCodeIsOneOf(NOT_ALIGN_PERIOD) => Forbidden(toJson(Errors.businessError(Errors.MisalignedPeriod)))
+    case 409 if errorCodeIsOneOf(BOTH_EXPENSES_SUPPLIED) => BadRequest(toJson(Errors.badRequest(Errors.BothExpensesSupplied)))
+    case 409 if errorCodeIsOneOf(NOT_ALLOWED_SIMPLIFIED_EXPENSES) => Forbidden(toJson(Errors.businessError(Errors.NotAllowedConsolidatedExpenses)))
     case 409
         if isMultiDesError && errorCodesContainOneOf(NOT_CONTIGUOUS_PERIOD, OVERLAPS_IN_PERIOD, NOT_ALIGN_PERIOD) =>
       val apiErrors = desErrorsToApiErrors(json.asOpt[MultiDesError].get.failures)
@@ -115,6 +124,9 @@ trait Response {
     case 503 if errorCodeIsOneOf(SERVICE_UNAVAILABLE) => InternalServerError(toJson(Errors.InternalServerError))
     case _                                            => InternalServerError(toJson(Errors.InternalServerError))
   }
+
+  def errorCodeIs(errorCode: DesErrorCode): Boolean =
+    json.asOpt[DesError].exists(_.code == errorCode)
 
   def errorCodeIsOneOf(errorCodes: DesErrorCode*): Boolean =
     json.asOpt[DesError].exists(errorCode => errorCodes.contains(errorCode.code))

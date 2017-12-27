@@ -58,7 +58,8 @@ class SelfEmploymentPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChec
                                         from = LocalDate.parse("2017-04-01"),
                                         to = LocalDate.parse("2017-04-01"),
                                         incomes = Some(Incomes(turnover = Some(SimpleIncome(0)))),
-                                        expenses = None)
+                                        expenses = None,
+                                        consolidatedExpenses = None)
       assertValidationPasses(period)
     }
   }
@@ -71,10 +72,10 @@ class SelfEmploymentPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChec
     } yield {
       val from = LocalDate.now()
       val to = from.plusDays(1)
-      SelfEmploymentPeriod(None, if (invalidPeriod) to else from, if (invalidPeriod) from else to, incomes, expenses)
+      SelfEmploymentPeriod(None, if (invalidPeriod) to else from, if (invalidPeriod) from else to, incomes, expenses, None)
     }) retryUntil { period =>
       if (nullFinancials) period.incomes.isEmpty && period.expenses.isEmpty
-      else period.incomes.exists(_.hasIncomes) || period.expenses.exists(_.hasExpenses)
+      else period.incomes.exists(_.hasIncomes) || period.expenses.exists(_.hasExpenses) || period.consolidatedExpenses.isDefined
     }
 
 }

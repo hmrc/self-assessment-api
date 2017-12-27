@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
-import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.Validation._
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
+import play.api.data.validation.ValidationError
 
 class ValidationSpec extends JsonSpec {
   case class Foo(a: Int, b: Int)
@@ -35,7 +35,7 @@ class ValidationSpec extends JsonSpec {
     )(Foo.apply _)
       .validate(
         Seq(Validation(JsPath \ "a", (foo: Foo) => foo.a > foo.b, ValidationError("a should be greater than b")),
-            Validation(JsPath \ "b", (foo: Foo) => foo.a + foo.b == 50, ValidationError("a + b should be 5"))))
+            Validation(JsPath \ "b", (foo: Foo) => foo.a + foo.b == 5, ValidationError("a + b should be 5"))))
   }
 
   "validate" should {

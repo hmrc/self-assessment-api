@@ -21,7 +21,8 @@ import uk.gov.hmrc.selfassessmentapi.models
 
 
 case class SelfEmploymentAnnualSummary(annualAdjustments: Option[AnnualAdjustments],
-                                       annualAllowances: Option[AnnualAllowances])
+                                       annualAllowances: Option[AnnualAllowances],
+                                       annualNonFinancials: Option[AnnualNonFinancials])
 
 object SelfEmploymentAnnualSummary {
   implicit val reads: Reads[SelfEmploymentAnnualSummary] = Json.reads[SelfEmploymentAnnualSummary]
@@ -39,7 +40,13 @@ object SelfEmploymentAnnualSummary {
         outstandingBusinessIncome = adj.outstandingBusinessIncome,
         balancingChargeBpra = adj.balancingChargeBPRA,
         balancingChargeOther = adj.balancingChargeOther,
-        goodsAndServicesOwnUse = adj.goodsAndServicesOwnUse
+        goodsAndServicesOwnUse = adj.goodsAndServicesOwnUse,
+        overlapProfitCarriedForward = adj.overlapProfitCarriedForward,
+        overlapProfitBroughtForward = adj.overlapProfitBroughtForward,
+        lossCarriedForwardTotal = adj.lossCarriedForwardTotal,
+        cisDeductionsTotal = adj.cisDeductionsTotal,
+        taxDeductionsFromTradingIncome = adj.taxDeductionsFromTradingIncome,
+        class4NicProfitAdjustment = adj.class4NicProfitAdjustment
       )
     }
 
@@ -49,15 +56,28 @@ object SelfEmploymentAnnualSummary {
         capitalAllowanceMainPool = allow.capitalAllowanceMainPool,
         capitalAllowanceSpecialRatePool = allow.capitalAllowanceSpecialRatePool,
         zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionGoodsVehicleAllowance,
-        businessPremisesRenovationAllowance = allow.businessPremisesRenovationAllowance,
         enhanceCapitalAllowance = allow.enhancedCapitalAllowance,
-        allowanceOnSales = allow.allowanceOnSales
+        allowanceOnSales = allow.allowanceOnSales,
+        capitalAllowanceSingleAssetPool = allow.capitalAllowanceSingleAssetPool
+      )
+    }
+
+    val nonFinancials = apiSummary.nonFinancials.map { info =>
+      AnnualNonFinancials(
+        businessDetailsChangedRecently = None,
+        payClass2Nics = info.payVoluntaryClass2Nic,
+        exemptFromPayingClass4Nics = info.class4NicInfo.flatMap(_.isExempt),
+        class4NicsExemptionReason = for {
+          class4Nics <- info.class4NicInfo
+          exemptionCode <- class4Nics.exemptionCode
+        } yield exemptionCode.toString
       )
     }
 
     SelfEmploymentAnnualSummary(
       annualAdjustments = adjustments,
-      annualAllowances = allowances)
+      annualAllowances = allowances,
+      annualNonFinancials = nonFinancials)
   }
 
 }
@@ -71,7 +91,13 @@ case class AnnualAdjustments(includedNonTaxableProfits: Option[BigDecimal],
                              outstandingBusinessIncome: Option[BigDecimal],
                              balancingChargeBpra: Option[BigDecimal],
                              balancingChargeOther: Option[BigDecimal],
-                             goodsAndServicesOwnUse: Option[BigDecimal])
+                             goodsAndServicesOwnUse: Option[BigDecimal],
+                             overlapProfitCarriedForward: Option[BigDecimal],
+                             overlapProfitBroughtForward: Option[BigDecimal],
+                             lossCarriedForwardTotal: Option[BigDecimal],
+                             cisDeductionsTotal: Option[BigDecimal],
+                             taxDeductionsFromTradingIncome: Option[BigDecimal],
+                             class4NicProfitAdjustment: Option[BigDecimal])
 
 object AnnualAdjustments {
   implicit val reads: Reads[AnnualAdjustments] = Json.reads[AnnualAdjustments]
@@ -82,12 +108,22 @@ case class AnnualAllowances(annualInvestmentAllowance: Option[BigDecimal],
                             capitalAllowanceMainPool: Option[BigDecimal],
                             capitalAllowanceSpecialRatePool: Option[BigDecimal],
                             zeroEmissionGoodsVehicleAllowance: Option[BigDecimal],
-                            businessPremisesRenovationAllowance: Option[BigDecimal],
                             enhanceCapitalAllowance: Option[BigDecimal],
-                            allowanceOnSales: Option[BigDecimal])
+                            allowanceOnSales: Option[BigDecimal],
+                            capitalAllowanceSingleAssetPool: Option[BigDecimal])
 
 object AnnualAllowances {
   implicit val reads: Reads[AnnualAllowances] = Json.reads[AnnualAllowances]
   implicit val writes: Writes[AnnualAllowances] = Json.writes[AnnualAllowances]
 }
 
+case class AnnualNonFinancials(businessDetailsChangedRecently: Option[Boolean],
+                               payClass2Nics: Option[Boolean],
+                               exemptFromPayingClass4Nics: Option[Boolean],
+                               class4NicsExemptionReason: Option[String])
+
+object AnnualNonFinancials{
+  implicit val reads: Reads[AnnualNonFinancials] = Json.reads[AnnualNonFinancials]
+  implicit val writes: Writes[AnnualNonFinancials] = Json.writes[AnnualNonFinancials]
+
+}

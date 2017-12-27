@@ -39,10 +39,10 @@ class SelfEmploymentPeriodUpdateSpec extends JsonSpec with GeneratorDrivenProper
         incomes <- Gen.option(genIncomes)
         expenses <- Gen.option(genExpenses)
       } yield {
-        SelfEmploymentPeriodUpdate(incomes, expenses)
+        SelfEmploymentPeriodUpdate(incomes, expenses, None)
       }) retryUntil { period =>
         if (nullFinancials) period.incomes.isEmpty && period.expenses.isEmpty
-        else period.incomes.exists(_.hasIncomes) || period.expenses.exists(_.hasExpenses)
+        else period.incomes.exists(_.hasIncomes) || period.expenses.exists(_.hasExpenses) || period.consolidatedExpenses.isDefined
       }
 
   }

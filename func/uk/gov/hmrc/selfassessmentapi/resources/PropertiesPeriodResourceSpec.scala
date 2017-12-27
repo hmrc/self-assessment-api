@@ -1,7 +1,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId}
+import uk.gov.hmrc.selfassessmentapi.models.{Amount, Period, PeriodId}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.support.BaseFunctionalSpec
@@ -131,6 +131,28 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .thenAssertThat()
           .statusIs(403)
           .bodyIsLike(Jsons.Errors.misalignedPeriod)
+      }
+
+
+      s"return code 400 when attempting to create a period where the paylod contains both the 'expenses' and 'consolidatedExpenses' for $propertyType" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .clientIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .willBeCreatedFor(nino)
+          .when()
+          .post(Jsons.Properties())
+          .to(s"/ni/$nino/uk-properties")
+          .thenAssertThat()
+          .statusIs(201)
+          .when()
+          .post(bothExpenses(propertyType))
+          .to(s"%sourceLocation%/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(400)
+          .contentTypeIsJson()
+          .bodyIsLike(Jsons.Errors.invalidRequest("BOTH_EXPENSES_SUPPLIED" -> ""))
       }
 
       s"return code 404 when attempting to create a period for a property that does not exist for $propertyType" in {
@@ -409,6 +431,35 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .bodyIsLike(expectedJson.toString)
       }
 
+      s"return code 400 when updating an $propertyType period with where the paylod contains both the 'expenses' and 'consolidatedExpenses'" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .willBeCreatedFor(nino)
+          .des()
+          .properties
+          .periodWillBeCreatedFor(nino, propertyType)
+          .when()
+          .post(Jsons.Properties())
+          .to(s"/ni/$nino/uk-properties")
+          .thenAssertThat()
+          .statusIs(201)
+          .when()
+          .post(period(propertyType))
+          .to(s"%sourceLocation%/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(201)
+          .when()
+          .put(bothExpenses(propertyType))
+          .at("%periodLocation%")
+          .thenAssertThat()
+          .statusIs(400)
+          .contentTypeIsJson()
+          .bodyIsLike(Jsons.Errors.invalidRequest("BOTH_EXPENSES_SUPPLIED" -> ""))
+      }
+
       s"return code 404 when updating an $propertyType period that does not exist" in {
         val period = Jsons.Properties.fhlPeriod(fromDate = Some("2017-04-06"), toDate = Some("2018-04-05"))
 
@@ -431,7 +482,9 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
 
   def misalignedPeriod(propertyType: PropertyType) = period(propertyType, from = Some("2017-08-04"), to = Some("2017-09-04"))
 
-  def period(propertyType: PropertyType, from: Option[String] = Some("2017-04-06"), to: Option[String] = Some("2018-04-05")): JsValue = propertyType match {
+  def bothExpenses(propertyType: PropertyType) = period(propertyType, consolidatedExpenses = Some(100.50))
+
+  def period(propertyType: PropertyType, from: Option[String] = Some("2017-04-06"), to: Option[String] = Some("2018-04-05"), consolidatedExpenses : Option[Amount] = None): JsValue = propertyType match {
     case PropertyType.FHL =>
       Jsons.Properties.fhlPeriod(fromDate = from,
                                  toDate = to,
@@ -440,7 +493,8 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
                                  repairsAndMaintenance = 11.25,
                                  financialCosts = 100,
                                  professionalFees = 1232.55,
-                                 otherCost = 50.22)
+                                 otherCost = 50.22,
+                                 consolidatedExpenses = consolidatedExpenses)
     case PropertyType.OTHER =>
       Jsons.Properties.otherPeriod(fromDate = from,
                                    toDate = to,
@@ -453,7 +507,8 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
                                    financialCosts = 100,
                                    professionalFees = 1232.55,
                                    costOfServices = 500.25,
-                                   otherCost = 50.22)
+                                   otherCost = 50.22,
+                                   consolidatedExpenses = consolidatedExpenses)
   }
 
   def invalidPeriod(propertyType: PropertyType): JsValue = propertyType match {

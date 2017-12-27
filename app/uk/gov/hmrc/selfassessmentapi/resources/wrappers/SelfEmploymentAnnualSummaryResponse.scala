@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import uk.gov.hmrc.play.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentAnnualSummary
+import uk.gov.hmrc.http.HttpResponse
 
 case class SelfEmploymentAnnualSummaryResponse(underlying: HttpResponse) extends Response {
 

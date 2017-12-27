@@ -24,20 +24,12 @@ import uk.gov.hmrc.selfassessmentapi.models.nonNegativeAmountValidator
 case class Allowances(annualInvestmentAllowance: Option[BigDecimal] = None,
                       capitalAllowanceMainPool: Option[BigDecimal] = None,
                       capitalAllowanceSpecialRatePool: Option[BigDecimal] = None,
-                      businessPremisesRenovationAllowance: Option[BigDecimal] = None,
                       enhancedCapitalAllowance: Option[BigDecimal] = None,
                       allowanceOnSales: Option[BigDecimal] = None,
-                      zeroEmissionGoodsVehicleAllowance: Option[BigDecimal] = None)
+                      zeroEmissionGoodsVehicleAllowance: Option[BigDecimal] = None,
+                      capitalAllowanceSingleAssetPool: Option[BigDecimal] = None)
 
 object Allowances {
-
-  lazy val example = Allowances(annualInvestmentAllowance = Some(1000.00),
-                                capitalAllowanceMainPool = Some(150.00),
-                                capitalAllowanceSpecialRatePool = Some(5000.50),
-                                businessPremisesRenovationAllowance = Some(600.00),
-                                enhancedCapitalAllowance = Some(50.00),
-                                allowanceOnSales = Some(3399.99),
-                                zeroEmissionGoodsVehicleAllowance = Some(2020))
 
   implicit val writes = Json.writes[Allowances]
 
@@ -45,9 +37,9 @@ object Allowances {
     (__ \ "annualInvestmentAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "capitalAllowanceMainPool").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "capitalAllowanceSpecialRatePool").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "businessPremisesRenovationAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "enhancedCapitalAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "allowanceOnSales").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "zeroEmissionGoodsVehicleAllowance").readNullable[BigDecimal](nonNegativeAmountValidator)
+      (__ \ "zeroEmissionGoodsVehicleAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "capitalAllowanceSingleAssetPool").readNullable[BigDecimal](nonNegativeAmountValidator)
   )(Allowances.apply _)
 }

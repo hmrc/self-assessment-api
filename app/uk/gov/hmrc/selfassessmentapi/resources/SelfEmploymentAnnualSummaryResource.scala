@@ -19,7 +19,6 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentAnnualSummaryConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models._
@@ -29,7 +28,8 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentAnnualSumm
 import uk.gov.hmrc.selfassessmentapi.services.AuditData
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import uk.gov.hmrc.http.HeaderCarrier
+import play.api.libs.concurrent.Execution.Implicits._
 
 object SelfEmploymentAnnualSummaryResource extends BaseResource {
   private val connector = SelfEmploymentAnnualSummaryConnector
@@ -39,7 +39,7 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
       validate[SelfEmploymentAnnualSummary, SelfEmploymentAnnualSummaryResponse](request.body) { summary =>
         connector.update(nino, id, taxYear, des.selfemployment.SelfEmploymentAnnualSummary.from(summary))
       } map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right(response) =>
           audit(makeAnnualSummaryUpdateAudit(nino, id, taxYear, request.authContext, response))
           response.filter {

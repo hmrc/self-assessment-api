@@ -23,7 +23,8 @@ import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.{StringReader, ValueReader}
 import play.api.http.HttpEntity
-import play.api.libs.json.Json
+import play.api.libs.concurrent.Execution.Implicits._
+import play.api.libs.json.Json.toJson
 import play.api.mvc.Results._
 import play.api.mvc._
 import play.api.{Application, Configuration, Play}
@@ -31,28 +32,21 @@ import play.routing.Router.Tags
 import uk.gov.hmrc.api.config.{ServiceLocatorConfig, ServiceLocatorRegistration}
 import uk.gov.hmrc.api.connector.ServiceLocatorConnector
 import uk.gov.hmrc.api.controllers.{ErrorAcceptHeaderInvalid, ErrorNotFound, HeaderValidator}
-import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.auth.filter.{AuthorisationFilter, FilterConfig}
+import uk.gov.hmrc.http.{HeaderCarrier, NotImplementedException}
 import uk.gov.hmrc.kenshoo.monitoring.MonitoringFilter
-import uk.gov.hmrc.play.audit.filters.AuditFilter
-import uk.gov.hmrc.play.config.{AppName, RunMode}
-import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
-import uk.gov.hmrc.play.http.logging.filters.LoggingFilter
-import uk.gov.hmrc.play.http.{HeaderCarrier, NotImplementedException}
+import uk.gov.hmrc.play.auth.controllers.AuthParamsControllerConfig
+import uk.gov.hmrc.play.auth.microservice.filters.AuthorisationFilter
+import uk.gov.hmrc.play.config.{AppName, ControllerConfig, RunMode}
 import uk.gov.hmrc.play.microservice.bootstrap.DefaultMicroserviceGlobal
+import uk.gov.hmrc.play.microservice.filters.{AuditFilter, LoggingFilter, MicroserviceFilterSupport}
 import uk.gov.hmrc.play.scheduling._
-import uk.gov.hmrc.selfassessmentapi.config.simulation.{
-  AgentAuthorizationSimulation,
-  AgentSubscriptionSimulation,
-  ClientSubscriptionSimulation
-}
+import uk.gov.hmrc.selfassessmentapi.config.simulation.{AgentAuthorizationSimulation, AgentSubscriptionSimulation, ClientSubscriptionSimulation}
 import uk.gov.hmrc.selfassessmentapi.models.SourceType.sourceTypeToDocumentationName
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear.taxYearFormat
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.GovTestScenarioHeader
 
 import scala.collection.immutable.ListMap
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.matching.Regex
 
@@ -61,8 +55,10 @@ case class ControllerConfigParams(needsHeaderValidation: Boolean = true,
                                   needsAuditing: Boolean = true,
                                   needsTaxYear: Boolean = true)
 
-object ControllerConfiguration {
+object ControllerConfiguration extends ControllerConfig {
+
   private implicit val regexValueReader: ValueReader[Regex] = StringReader.stringValueReader.map(_.r)
+
   private implicit val controllerParamsReader = ValueReader.relative[ControllerConfigParams] { config =>
     ControllerConfigParams(
       needsHeaderValidation = config.getAs[Boolean]("needsHeaderValidation").getOrElse(true),
@@ -134,6 +130,13 @@ object SetContentTypeFilter extends Filter with MicroserviceFilterSupport {
     f(rh).map(_.as("application/json"))
 }
 
+object SetXContentTypeOptionsFilter extends Filter with MicroserviceFilterSupport {
+  val xContentTypeOptionsHeader = "X-Content-Type-Options"
+  override def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
+    f(rh).map(_.withHeaders((xContentTypeOptionsHeader, "nosniff")))
+  }
+}
+
 object AgentSimulationFilter extends Filter with MicroserviceFilterSupport {
   override def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
     val method = rh.method
@@ -147,9 +150,18 @@ object AgentSimulationFilter extends Filter with MicroserviceFilterSupport {
   }
 }
 
+object AuthParamsControllerConfiguration extends AuthParamsControllerConfig {
+  lazy val controllerConfigs = ControllerConfiguration.controllerConfigs
+}
+
 object MicroserviceAuthFilter extends AuthorisationFilter with MicroserviceFilterSupport {
-  override def config: FilterConfig = FilterConfig(ControllerConfiguration.controllerConfigs)
-  override def connector: AuthConnector = MicroserviceAuthConnector
+
+  override def authConnector = MicroserviceAuthConnector
+
+  override def authParamsConfig = AuthParamsControllerConfiguration
+
+  override def controllerNeedsAuth(controllerName: String): Boolean = ControllerConfiguration.paramsForController(controllerName).needsAuth
+
 }
 
 object HeaderValidatorFilter extends Filter with HeaderValidator with MicroserviceFilterSupport {
@@ -159,7 +171,7 @@ object HeaderValidatorFilter extends Filter with HeaderValidator with Microservi
       controller.forall(name => ControllerConfiguration.controllerParamsConfig(name).needsHeaderValidation)
 
     if (!needsHeaderValidation || acceptHeaderValidationRules(rh.headers.get("Accept"))) next(rh)
-    else Future.successful(Status(ErrorAcceptHeaderInvalid.httpStatusCode)(Json.toJson(ErrorAcceptHeaderInvalid)))
+    else Future.successful(Status(ErrorAcceptHeaderInvalid.httpStatusCode)(toJson(ErrorAcceptHeaderInvalid)))
   }
 }
 
@@ -195,7 +207,7 @@ object MicroserviceGlobal
   }
 
   override def microserviceFilters: Seq[EssentialFilter] =
-    Seq(HeaderValidatorFilter, EmptyResponseFilter, SetContentTypeFilter) ++ enabledFilters ++
+    Seq(SetXContentTypeOptionsFilter, HeaderValidatorFilter, EmptyResponseFilter, SetContentTypeFilter) ++ enabledFilters ++
       Seq(application.injector.instanceOf[MicroserviceMonitoringFilter]) ++ defaultMicroserviceFilters
 
   override lazy val scheduledJobs: Seq[ScheduledJob] = createScheduledJobs()
@@ -212,7 +224,7 @@ object MicroserviceGlobal
       ex match {
         case _ =>
           ex.getCause match {
-            case ex: NotImplementedException => NotImplemented(Json.toJson(ErrorNotImplemented))
+            case ex: NotImplementedException => NotImplemented(toJson(ErrorNotImplemented))
             case _                           => result
           }
       }
@@ -220,16 +232,18 @@ object MicroserviceGlobal
   }
 
   override def onBadRequest(request: RequestHeader, error: String) = {
+    import ErrorCode._
+
     super.onBadRequest(request, error).map { result =>
       error match {
-        case "ERROR_INVALID_SOURCE_TYPE" => NotFound(Json.toJson(ErrorNotFound))
-        case "ERROR_TAX_YEAR_INVALID" =>
-          BadRequest(Json.toJson(ErrorBadRequest(ErrorCode.TAX_YEAR_INVALID, "Tax year invalid")))
-        case "ERROR_NINO_INVALID" =>
-          BadRequest(Json.toJson(ErrorBadRequest(ErrorCode.NINO_INVALID, "The provided Nino is invalid")))
-        case "ERROR_INVALID_PROPERTY_TYPE" => NotFound(Json.toJson(ErrorNotFound))
+        case "ERROR_INVALID_SOURCE_TYPE"   => NotFound(toJson(ErrorNotFound))
+        case "ERROR_TAX_YEAR_INVALID"      => BadRequest(toJson(ErrorBadRequest(TAX_YEAR_INVALID, "Tax year invalid")))
+        case "ERROR_NINO_INVALID"          => BadRequest(toJson(ErrorBadRequest(NINO_INVALID, "The provided Nino is invalid")))
+        case "ERROR_INVALID_DATE"          => BadRequest(toJson(ErrorBadRequest(INVALID_DATE, "The provided dates are invalid")))
+        case "ERROR_INVALID_PROPERTY_TYPE" => NotFound(toJson(ErrorNotFound))
         case _                             => result
       }
     }
   }
+
 }

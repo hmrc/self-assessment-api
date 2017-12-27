@@ -19,7 +19,6 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, Request}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesAnnualSummaryConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.audit.AnnualSummaryUpdate
@@ -35,8 +34,9 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryR
 import uk.gov.hmrc.selfassessmentapi.services.AuditData
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 object PropertiesAnnualSummaryResource extends BaseResource {
   private val connector = PropertiesAnnualSummaryConnector
@@ -44,7 +44,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
   def updateAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.Properties, Some("annual")).async(parse.json) { implicit request =>
       validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) map {
-        case Left(errorResult) => handleValidationErrors(errorResult)
+        case Left(errorResult) => handleErrors(errorResult)
         case Right(response) =>
           audit(makeAnnualSummaryUpdateAudit(nino, propertyId, taxYear, request.authContext, response))
           response.filter {

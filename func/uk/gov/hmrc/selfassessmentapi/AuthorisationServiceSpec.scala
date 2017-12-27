@@ -1,10 +1,11 @@
 package uk.gov.hmrc.selfassessmentapi
 
 import play.api.test.FakeApplication
+import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.resources.Jsons
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
-class AuthorisationSpec extends BaseFunctionalSpec {
+class AuthorisationServiceSpec extends BaseFunctionalSpec {
 
   private val conf = Map("Test.microservice.services.auth.enabled" -> true)
 
@@ -119,7 +120,7 @@ class AuthorisationSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Errors.internalServerError)
     }
 
-    "receive 200 if the user is are authorised for the resource as a client" in {
+    "receive 200 if the user is authorised for the resource as a client" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
@@ -138,6 +139,17 @@ class AuthorisationSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(200)
     }
+
+    "receive 200 if the user is authorised for the resource as a fully-authorised agent but could not retrieve agent code" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .agentIsFullyAuthorisedForTheResourceNoAgentCode
+        .when()
+        .get(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(200)
+    }
+
   }
 
   "if the user is authorised as a filing-only agent they" should {
@@ -145,21 +157,42 @@ class AuthorisationSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsPartiallyAuthorisedForTheResource
-        .des().selfEmployment.willBeCreatedFor(nino)
+        .des()
+        .selfEmployment
+        .willBeCreatedFor(nino)
         .when()
-        .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
+        .post(Jsons.SelfEmployment())
+        .to(s"/ni/$nino/self-employments")
         .thenAssertThat()
         .statusIs(201)
         .contentTypeIsJson()
     }
 
     "be able to make PUT requests" in {
+      val property = Jsons.Properties.otherPeriod(
+        fromDate = Some("2017-04-06"),
+        toDate = Some("2018-04-05"),
+        rentIncome = 500,
+        rentIncomeTaxDeducted = 250.55,
+        premiumsOfLeaseGrant = Some(200.22),
+        reversePremiums = 22.35,
+        premisesRunningCosts = 20.20,
+        repairsAndMaintenance = 11.25,
+        financialCosts = 100,
+        professionalFees = 1232.55,
+        costOfServices = 500.25,
+        otherCost = 50.22
+      )
+
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsPartiallyAuthorisedForTheResource
-        .des().selfEmployment.willBeUpdatedFor(nino)
+        .des()
+        .properties
+        .periodWillBeUpdatedFor(nino, PropertyType.OTHER)
         .when()
-        .put(Jsons.SelfEmployment.update()).at(s"/ni/$nino/self-employments/abc")
+        .put(property)
+        .at(s"/ni/$nino/uk-properties/${PropertyType.OTHER}/periods/2017-04-06_2018-04-05")
         .thenAssertThat()
         .statusIs(204)
     }
@@ -174,5 +207,21 @@ class AuthorisationSpec extends BaseFunctionalSpec {
         .statusIs(403)
         .bodyIsLike(Jsons.Errors.agentNotAuthorised)
     }
+
+    "be able to make POST requests but don't have an agentCode" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsPartiallyAuthorisedForTheResourceNoAgentCode
+        .des()
+        .selfEmployment
+        .willBeCreatedFor(nino)
+        .when()
+        .post(Jsons.SelfEmployment())
+        .to(s"/ni/$nino/self-employments")
+        .thenAssertThat()
+        .statusIs(201)
+        .contentTypeIsJson()
+    }
   }
+
 }

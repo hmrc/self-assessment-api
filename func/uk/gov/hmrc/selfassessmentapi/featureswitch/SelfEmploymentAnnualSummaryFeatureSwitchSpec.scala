@@ -23,7 +23,7 @@ class SelfEmploymentAnnualSummaryFeatureSwitchSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.willBeReturnedFor(nino)
         .when()
-        .put(Json.toJson(SelfEmploymentAnnualSummary(None, None))).at(s"/ni/$nino/self-employments/abc/$taxYear")
+        .put(Json.toJson(SelfEmploymentAnnualSummary(None, None, None))).at(s"/ni/$nino/self-employments/abc/$taxYear")
         .thenAssertThat()
         .statusIs(404)
     }

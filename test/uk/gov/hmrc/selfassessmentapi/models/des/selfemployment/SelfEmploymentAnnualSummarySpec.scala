@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 
+import uk.gov.hmrc.selfassessmentapi.models.Class4NicInfo
+import uk.gov.hmrc.selfassessmentapi.models.Class4NicsExemptionCode.DIVER
 import uk.gov.hmrc.selfassessmentapi.{UnitSpec, models}
 
 class SelfEmploymentAnnualSummarySpec extends UnitSpec {
@@ -26,7 +28,6 @@ class SelfEmploymentAnnualSummarySpec extends UnitSpec {
           annualInvestmentAllowance = Some(200.50),
           capitalAllowanceMainPool = Some(200.50),
           capitalAllowanceSpecialRatePool = Some(200.50),
-          businessPremisesRenovationAllowance = Some(200.50),
           enhancedCapitalAllowance = Some(200.50),
           allowanceOnSales = Some(200.50),
           zeroEmissionGoodsVehicleAllowance = Some(200.50))),
@@ -40,20 +41,22 @@ class SelfEmploymentAnnualSummarySpec extends UnitSpec {
           outstandingBusinessIncome = Some(200.50),
           balancingChargeBPRA = Some(200.50),
           balancingChargeOther = Some(200.50),
-          goodsAndServicesOwnUse = Some(200.50))))
+          goodsAndServicesOwnUse = Some(200.50))),
+        nonFinancials = Some(models.selfemployment.NonFinancials(
+          class4NicInfo = Some(Class4NicInfo(Some(true), Some(DIVER))), Some(false))))
 
       val desSummary: SelfEmploymentAnnualSummary = SelfEmploymentAnnualSummary.from(apiSummary)
+
       val allowances = desSummary.annualAllowances.get
-      val adjustments = desSummary.annualAdjustments.get
 
       allowances.annualInvestmentAllowance shouldBe Some(200.50)
       allowances.capitalAllowanceMainPool shouldBe Some(200.50)
       allowances.capitalAllowanceSpecialRatePool shouldBe Some(200.50)
-      allowances.businessPremisesRenovationAllowance shouldBe Some(200.50)
       allowances.enhanceCapitalAllowance shouldBe Some(200.50)
       allowances.allowanceOnSales shouldBe Some(200.50)
       allowances.zeroEmissionGoodsVehicleAllowance shouldBe Some(200.50)
 
+      val adjustments = desSummary.annualAdjustments.get
       adjustments.includedNonTaxableProfits shouldBe Some(200.50)
       adjustments.basisAdjustment shouldBe Some(200.50)
       adjustments.overlapReliefUsed shouldBe Some(200.50)
@@ -64,6 +67,11 @@ class SelfEmploymentAnnualSummarySpec extends UnitSpec {
       adjustments.balancingChargeBpra shouldBe Some(200.50)
       adjustments.balancingChargeOther shouldBe Some(200.50)
       adjustments.goodsAndServicesOwnUse shouldBe Some(200.50)
+
+      val nonFinancials = desSummary.annualNonFinancials.get
+      nonFinancials.exemptFromPayingClass4Nics shouldBe Some(true)
+      nonFinancials.class4NicsExemptionReason shouldBe Some("003")
+      nonFinancials.payClass2Nics shouldBe Some(false)
     }
   }
 }
