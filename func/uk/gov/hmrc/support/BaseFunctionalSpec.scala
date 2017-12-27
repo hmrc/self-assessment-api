@@ -1335,8 +1335,8 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def returnEndOfPeriodStatementsFor(nino: Nino, id: String = "abc"): Givens = {
-          stubFor(get(urlEqualTo(s"/income-tax-self-assessment/obligation-data/$nino"))
+        def returnEndOfPeriodObligationsFor(nino: Nino, id: String = "abc"): Givens = {
+          stubFor(get(urlMatching(s"/income-tax-self-assessment/obligation-data/$nino.*"))
             .willReturn(
               aResponse()
                 .withStatus(200)

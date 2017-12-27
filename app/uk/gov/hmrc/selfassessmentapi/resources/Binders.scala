@@ -133,15 +133,15 @@ object Binders {
           if to.isRight
         } yield
           (from.right.get, to.right.get) match {
-            case (from, to) if to.isBefore(from) => Left("INVALID_DATE_RANGE")
+            case (from, to) if to.isBefore(from) => Left("ERROR_INVALID_DATE_RANGE")
             case _ => Right(()) // object wrapped in Right irrelevant
           }
 
 
       override def bind(key: String, params: Map[String, Seq[String]]) : OptEither[ObligationQueryParams] = {
 
-        val from = dateQueryFrom(stringBinder, params, "from", "INVALID_DATE_FROM")
-        val to = dateQueryFrom(stringBinder, params, "to", "INVALID_DATE_TO")
+        val from = dateQueryFrom(stringBinder, params, "from", "ERROR_INVALID_DATE_FROM")
+        val to = dateQueryFrom(stringBinder, params, "to", "ERROR_INVALID_DATE_TO")
 
         val errors = for {
           paramOpt <- Seq(from,

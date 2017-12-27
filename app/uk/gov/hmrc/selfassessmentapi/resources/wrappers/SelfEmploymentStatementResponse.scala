@@ -16,15 +16,13 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import org.joda.time.LocalDate
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des.ObligationDetail
 import uk.gov.hmrc.selfassessmentapi.models.{DesTransformError, DesTransformValidator, EopsObligation, EopsObligations, SourceId, des}
-import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
 
 case class SelfEmploymentStatementResponse(underlying: HttpResponse) extends Response {
 
-  def retrieveEOPSObligations(incomeSourceType: String, id: SourceId, params: ObligationQueryParams): Either[DesTransformError, Option[EopsObligations]] = {
+  def retrieveEOPSObligation(incomeSourceType: String, id: SourceId): Either[DesTransformError, Option[EopsObligations]] = {
 
     val desObligations = json.asOpt[des.Obligations]
 
@@ -43,8 +41,6 @@ case class SelfEmploymentStatementResponse(underlying: HttpResponse) extends Res
         desObligation =>
           val obligationsOrError: Seq[Either[DesTransformError, EopsObligation]] = for {
             details <- desObligation.details
-            if params.from.fold(true)(new LocalDate(details.inboundCorrespondenceFromDate).isAfter) &&
-              params.to.fold(true)(new LocalDate(details.inboundCorrespondenceToDate).isBefore)
           } yield DesTransformValidator[ObligationDetail, EopsObligation].from(details)
 
           obligationsOrError.find(_.isLeft) match {

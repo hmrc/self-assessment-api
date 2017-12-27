@@ -20,6 +20,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.{Period, SourceId}
+import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{EmptyResponse, SelfEmploymentStatementResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,8 +32,14 @@ object SelfEmploymentStatementConnector {
   def create(nino: Nino, id: SourceId, accountingPeriod: Period)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] =
     httpEmptyPost[EmptyResponse](s"$baseUrl/income-store/nino/$nino/self-employments/$id/accounting-periods/${accountingPeriod.periodId}/statement", EmptyResponse)
 
-  def get(nino: Nino)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentStatementResponse] = {
-    httpGet[SelfEmploymentStatementResponse](baseUrl + s"/income-tax-self-assessment/obligation-data/$nino", SelfEmploymentStatementResponse)
+  def get(nino: Nino, params: ObligationQueryParams)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentStatementResponse] = {
+    val queryString = (params.from, params.to) match {
+      case (None, None) => ""
+      case (Some(f), Some(t)) => s"?from=$f&to=$t"
+      case (Some(f), None) => s"?from=$f"
+      case (None, Some(t)) => s"?to=$t"
+    }
+    httpGet[SelfEmploymentStatementResponse](baseUrl + s"/income-tax-self-assessment/obligation-data/$nino$queryString", SelfEmploymentStatementResponse)
   }
 
 }

@@ -98,20 +98,20 @@ class BindersSpec extends UnitSpec {
     "error if \"from\" date is invalid" in {
       val result = Binders.obligationQueryParamsBinder.bind("", Map("from" -> Seq("201R-02-13")))
       val oqp = result.get.left.get
-      oqp shouldEqual "INVALID_DATE_FROM"
+      oqp shouldEqual "ERROR_INVALID_DATE_FROM"
     }
 
     "error if \"to\" date is invalid" in {
       val result = Binders.obligationQueryParamsBinder.bind("", Map("to" -> Seq("201Z-12-13")))
       val oqp = result.get.left.get
-      oqp shouldEqual "INVALID_DATE_TO"
+      oqp shouldEqual "ERROR_INVALID_DATE_TO"
     }
 
 
     "error if \"from\" is greater than \"to\" date" in {
       val result = Binders.obligationQueryParamsBinder.bind("", Map("from" -> Seq("2017-02-13"), "to" -> Seq("2017-01-13")))
       val oqp = result.get.left.get
-      oqp shouldEqual "INVALID_DATE_RANGE"
+      oqp shouldEqual "ERROR_INVALID_DATE_RANGE"
     }
 
     "bind \"from\", \"to\" dates" in {
@@ -135,13 +135,13 @@ class BindersSpec extends UnitSpec {
     "error if \"from\" date is invalid" in {
       val result = Binders.obligationQueryParamsBinder.bind("", Map("from" -> Seq("201R-02-13"), "to" -> Seq("2019-12-13")))
       val oqp = result.get.left.get
-      oqp shouldEqual "INVALID_DATE_FROM"
+      oqp shouldEqual "ERROR_INVALID_DATE_FROM"
     }
 
     "error if \"to\" date is invalid" in {
       val result = Binders.obligationQueryParamsBinder.bind("", Map("from" -> Seq("2017-02-13"), "to" -> Seq("201Z-12-13")))
       val oqp = result.get.left.get
-      oqp shouldEqual "INVALID_DATE_TO"
+      oqp shouldEqual "ERROR_INVALID_DATE_TO"
     }
 
   }

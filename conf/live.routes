@@ -21,12 +21,8 @@ GET /ni/:nino/self-employments/:id/periods/:periodId    uk.gov.hmrc.selfassessme
 PUT /ni/:nino/self-employments/:id/:taxYear    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentAnnualSummaryResource.updateAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 GET /ni/:nino/self-employments/:id/:taxYear    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentAnnualSummaryResource.retrieveAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 
-####################
-# This static route needs to be defined before /ni/:nino/self-employments since both of them match the same request url
-####################
-GET /ni/:nino/self-employments/:id/end-of-period-statements/obligations   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentStatementResource.retrieveObligationsById(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, queryParams: uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams)
-
 # Self-Employment End-of-Period Statements
+GET /ni/:nino/self-employments/:id/end-of-period-statements/obligations   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentStatementResource.retrieveObligationsById(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, queryParams: uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams)
 PUT /ni/:nino/self-employments/:id/end-of-period-statements/from/:start/to/:end    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentStatementResource.finaliseEndOfPeriodStatement(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, start: org.joda.time.LocalDate, end: org.joda.time.LocalDate)
 
 ####################
