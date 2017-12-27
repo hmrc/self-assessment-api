@@ -73,6 +73,8 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
         adminCosts = deductions.adminCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         advertisingCosts =
           deductions.advertisingCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
+        businessEntertainmentCosts =
+          deductions.businessEntertainmentCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         financialCharges =
           deductions.financialCharges.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         interest = deductions.interest.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
