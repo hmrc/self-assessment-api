@@ -721,8 +721,6 @@ traits:
                           description: Invalid date in query parameters
                           value:
                             code: INVALID_DATE
-
-
     /uk-properties:
       (annotations.group):
         name: UK property business
@@ -1703,3 +1701,103 @@ traits:
                       description: Invalid NINO
                       value:
                         code: NINO_INVALID
+    /{taxYear}:
+      uriParameters:
+        taxYear:
+          description: The tax year the data applies to
+          type: string
+          example: 2017-18
+      (annotations.group):
+        name: Crystallisation
+        description: !include docs/crystallisation.md
+      /intent-to-crystallise:
+        post:
+          displayName: Intent to crystallise
+          description: Intent to crystallise
+          (annotations.sandboxData): !include scenarios/intent-to-crystallise-scenarios.md
+          is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+          (annotations.scope): "write:self-assessment"
+          securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
+          body:
+            application/json:
+              type: !include schemas/UkProperties.json
+              example: !include examples/uk-properties/UkProperties.json
+          responses:
+            303:
+              headers:
+                X-CorrelationId:
+                  example: 5968c22d620000620096db10
+                  description: Unique id for operation tracking
+                Location:
+                  example: /self-assessment/ni/{nino}/calculations/{taxCalculationId}
+                  description: Location of the calculation
+            400:
+              body:
+                application/json:
+                  type: types.errorResponse
+                  examples:
+                    invalidNino:
+                      description: Invalid NINO
+                      value:
+                        code: NINO_INVALID
+                    invalidTaxYear:
+                      description: Invalid taxYear
+                      value:
+                        code: TAX_YEAR_INVALID
+            403:
+              body:
+                application/json:
+                  type: types.errorResponse
+                  examples:
+                    eopsNotCompleted:
+                      description: End of Period Statement is Not Completed
+                      value:
+                        code: REQUIRED_END_OF_PERIOD_STATEMENT
+      /crystallisation:
+        post:
+          displayName: Crystallisation
+          description: Crystallisation
+          (annotations.sandboxData): !include scenarios/crystallisation-scenarios.md
+          is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+          (annotations.scope): "write:self-assessment"
+          securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
+          body:
+            application/json:
+              type: !include schemas/Crystallisation.json
+              example: !include examples/crystallisation/crystallisation.json
+          responses:
+            201:
+              headers:
+                X-CorrelationId:
+                  example: 5968c22d620000620096db10
+                  description: Unique id for operation tracking
+            400:
+              body:
+                application/json:
+                  type: types.errorResponse
+                  examples:
+                    invalidNino:
+                      description: Invalid NINO
+                      value:
+                        code: NINO_INVALID
+                    invalidTaxYear:
+                      description: Invalid taxYear
+                      value:
+                        code: TAX_YEAR_INVALID
+                    mandatoryField:
+                      description: Calculation Id is not provided
+                      value:
+                        code: MANDATORY_FIELD_MISSING
+            403:
+              body:
+                application/json:
+                  type: types.errorResponse
+                  examples:
+                    wrongCalcId:
+                      description: Client submits a tax calculation id but not from the latest intent to crystallisation submission
+                      value:
+                        code: INVALID_TAX_CALCULATION_ID
+                    noIntent:
+                      description: Client submits crystallisation without previously submitted intent to crystallise
+                      value:
+                        code: REQUIRED_INTENT_TO_CRYSTALLISE
