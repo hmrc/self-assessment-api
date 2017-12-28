@@ -53,6 +53,7 @@ object ErrorCode extends Enumeration {
   MISALIGNED_PERIOD,
   MANDATORY_FIELD_MISSING,
   NO_INCOMES_AND_EXPENSES,
+  INVALID_DATE_RANGE,
   INVALID_DATE= Value
 
   implicit val format: Format[ErrorCode] = EnumJson.enumFormat(ErrorCode,

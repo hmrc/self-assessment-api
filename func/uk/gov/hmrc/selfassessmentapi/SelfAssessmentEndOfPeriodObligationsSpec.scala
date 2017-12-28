@@ -58,7 +58,7 @@ class SelfAssessmentEndOfPeriodObligationsSpec extends BaseFunctionalSpec {
         .get(s"/ni/$nino/self-employments/abc/end-of-period-statements/obligations?from=$from&to=2016-12-31")
         .thenAssertThat()
         .statusIs(400)
-        .bodyIsError("INVALID_DATE")
+        .bodyIsError("INVALID_DATE_RANGE")
     }
 
   }
