@@ -39,6 +39,7 @@ class SelfEmploymentPeriodSpec extends JsonSpec {
             badDebt = Some(Expense(10.10, Some(10.10))),
             adminCosts = Some(Expense(10.10, Some(10.10))),
             advertisingCosts = Some(Expense(10.10, Some(10.10))),
+            businessEntertainmentCosts = Some(Expense(10.10, Some(10.10))),
             financialCharges = Some(Expense(10.10, Some(10.10))),
             interest = Some(Expense(10.10, Some(10.10))),
             maintenanceCosts = Some(Expense(10.10, Some(10.10))),
