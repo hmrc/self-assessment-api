@@ -8,12 +8,12 @@
     </thead>
     <tbody>
         <tr>
-            <td><p>OPEN</p></td>
-            <td><p>Returns a EOPs obligation with Open status for a self-employment business</p></td>
+            <td><p>Default (No header value)</p></td>
+            <td><p>Returns a EOPs obligation for standard tax year dates with Open status</p></td>
         </tr>
         <tr>
-            <td><p>FUFLFILLED</p></td>
-            <td><p>Returns a EOPs obligation with Fulfilled status for a self-employment business</p></td>
+            <td><p>EOPS_FUFLFILLED</p></td>
+            <td><p>Returns a EOPs obligation for standard tax year dates with Fulfilled status</p></td>
         </tr>
         <tr>
         <tr>
