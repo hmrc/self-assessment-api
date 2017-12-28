@@ -14,23 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models
+package uk.gov.hmrc.selfassessmentapi.resources.utils
 
-trait DesTransformValidator[S, D] {
-  def from(from: S): Either[DesTransformError, D]
+import org.joda.time.LocalDate
+import uk.gov.hmrc.selfassessmentapi.models.SourceId
+
+case class ObligationQueryParams(from: Option[LocalDate], to: Option[LocalDate]) {
+  val map = Map("from" -> from, "to" -> to)
 }
-
-object DesTransformValidator {
-  def apply[S, D](implicit v: DesTransformValidator[S, D]) : DesTransformValidator[S, D] = implicitly
-}
-
-trait DesTransformError {
-  val msg : String
-}
-
-
-object DesTransformError {
-  def unapply(err: DesTransformError): Option[String] = Some(err.msg)
-}
-
-case class InvalidDateError(msg: String) extends DesTransformError

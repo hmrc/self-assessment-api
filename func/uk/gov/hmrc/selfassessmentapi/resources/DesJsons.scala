@@ -515,6 +515,39 @@ object DesJsons {
          |  "obligations": [
          |    {
          |      "id": "$id",
+         |      "type": "ITSBEOPS",
+         |      "details": [
+         |        {
+         |          "status": "O",
+         |          "inboundCorrespondenceFromDate": "2017-04-06",
+         |          "inboundCorrespondenceToDate": "2017-07-05",
+         |          "inboundCorrespondenceDueDate": "2017-08-05"
+         |        },
+         |        {
+         |          "status": "F",
+         |          "inboundCorrespondenceFromDate": "2017-10-06",
+         |          "inboundCorrespondenceToDate": "2018-01-05",
+         |          "inboundCorrespondenceDueDate": "2018-02-05",
+         |          "inboundCorrespondenceDateReceived": "2018-02-01"
+         |        },
+         |        {
+         |          "status": "F",
+         |          "inboundCorrespondenceFromDate": "2017-07-06",
+         |          "inboundCorrespondenceToDate": "2017-10-05",
+         |          "inboundCorrespondenceDueDate": "2017-11-05",
+         |          "inboundCorrespondenceDateReceived": "2017-11-01"
+         |        },
+         |        {
+         |          "status": "F",
+         |          "inboundCorrespondenceFromDate": "2018-01-06",
+         |          "inboundCorrespondenceToDate": "2018-04-05",
+         |          "inboundCorrespondenceDueDate": "2018-05-06",
+         |          "inboundCorrespondenceDateReceived": "2018-05-01"
+         |        }
+         |      ]
+         |    },
+         |    {
+         |      "id": "$id",
          |      "type": "ITSB",
          |      "details": [
          |        {

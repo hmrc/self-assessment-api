@@ -27,7 +27,5 @@ object ObligationsConnector {
   private lazy val baseUrl: String = AppContext.desUrl
 
   def get(nino: Nino)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ObligationsResponse] =
-    httpGet[ObligationsResponse](baseUrl + s"/income-tax-self-assessment/obligation-data/$nino",
-                                 ObligationsResponse)
-
+    httpGet[ObligationsResponse](baseUrl + s"/income-tax-self-assessment/obligation-data/$nino", ObligationsResponse)
 }

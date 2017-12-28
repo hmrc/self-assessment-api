@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Crystallisation",
+  "type": "object",
+  "properties": {
+    "calculationId": {
+      "title": "Calculation id",
+      "description": "CalculationId",
+      "type": "string"
+    }
+  },
+  "required": [
+    "calculationId"
+  ],
+  "additionalProperties": false
+}

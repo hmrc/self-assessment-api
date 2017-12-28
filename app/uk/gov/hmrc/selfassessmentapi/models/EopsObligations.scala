@@ -18,27 +18,29 @@ package uk.gov.hmrc.selfassessmentapi.models
 
 import com.github.nscala_time.time.OrderingImplicits
 import org.joda.time.LocalDate
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{Format, Json, Writes}
+import uk.gov.hmrc.selfassessmentapi.models.EopsStatus.EopsStatus
 
 import scala.util.{Failure, Success, Try}
 
-case class Obligations(obligations: Seq[Obligation])
+case class EopsObligations(id: Option[SourceId] = None, obligations: Seq[EopsObligation])
 
-object Obligations {
-  implicit val writes: Writes[Obligations] = Json.writes[Obligations]
+object EopsObligations {
+  implicit val writes: Writes[EopsObligations] = Json.writes[EopsObligations]
 }
 
-case class Obligation(start: LocalDate, end: LocalDate, due: LocalDate, met: Boolean)
+case class EopsObligation(start: LocalDate, end: LocalDate, due: LocalDate, processed: Option[LocalDate] = None, status: EopsStatus)
 
-object Obligation {
+object EopsObligation {
 
-  implicit val from =  new DesTransformValidator[des.ObligationDetail, Obligation] {
+  implicit val from =  new DesTransformValidator[des.ObligationDetail, EopsObligation] {
     def from(desObligation: des.ObligationDetail) = {
-      Try(Obligation(
+      Try(EopsObligation(
         start = LocalDate.parse(desObligation.inboundCorrespondenceFromDate),
         end = LocalDate.parse(desObligation.inboundCorrespondenceToDate),
         due = LocalDate.parse(desObligation.inboundCorrespondenceDueDate),
-        met = desObligation.isFinalised)
+        processed = desObligation.inboundCorrespondenceDateReceived.map(LocalDate.parse),
+        status = if (desObligation.isFinalised) EopsStatus.FULFILLED else EopsStatus.OPEN)
       ) match {
         case Success(obj) => Right(obj)
         case Failure(ex) => Left(InvalidDateError(s"Unable to parse the date from des response $ex"))
@@ -47,8 +49,18 @@ object Obligation {
   }
 
   implicit val localDateOrder: Ordering[LocalDate] = OrderingImplicits.LocalDateOrdering
-  implicit val ordering: Ordering[Obligation] = Ordering.by(_.start)
+  implicit val ordering: Ordering[EopsObligation] = Ordering.by(_.start)
 
-  implicit val writes: Writes[Obligation] = Json.writes[Obligation]
+  implicit val writes: Writes[EopsObligation] = Json.writes[EopsObligation]
 }
 
+
+object EopsStatus extends Enumeration {
+  type EopsStatus = Value
+
+  val OPEN = Value("Open")
+  val FULFILLED = Value("Fulfilled")
+
+  implicit val format: Format[EopsStatus] =
+    EnumJson.enumFormat(EopsStatus, Some(s"EopsStatus should one of: ${EopsStatus.values.mkString(", ")}"))
+}

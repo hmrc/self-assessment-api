@@ -240,6 +240,9 @@ object MicroserviceGlobal
         case "ERROR_TAX_YEAR_INVALID"      => BadRequest(toJson(ErrorBadRequest(TAX_YEAR_INVALID, "Tax year invalid")))
         case "ERROR_NINO_INVALID"          => BadRequest(toJson(ErrorBadRequest(NINO_INVALID, "The provided Nino is invalid")))
         case "ERROR_INVALID_DATE"          => BadRequest(toJson(ErrorBadRequest(INVALID_DATE, "The provided dates are invalid")))
+        case "ERROR_INVALID_DATE_FROM"     => BadRequest(toJson(ErrorBadRequest(INVALID_DATE, "The from date in the query string is invalid")))
+        case "ERROR_INVALID_DATE_TO"       => BadRequest(toJson(ErrorBadRequest(INVALID_DATE, "The to date in the query string is invalid")))
+        case "ERROR_INVALID_DATE_RANGE"    => BadRequest(toJson(ErrorBadRequest(INVALID_DATE_RANGE, "The date range in the query string is invalid")))
         case "ERROR_INVALID_PROPERTY_TYPE" => NotFound(toJson(ErrorNotFound))
         case _                             => result
       }
