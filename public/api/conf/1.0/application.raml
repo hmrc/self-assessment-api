@@ -1718,10 +1718,12 @@ traits:
           is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
           (annotations.scope): "write:self-assessment"
           securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
-          body:
-            application/json:
-              type: !include schemas/UkProperties.json
-              example: !include examples/uk-properties/UkProperties.json
+          headers:
+            Content-Length:
+              description: Specifies the lenght of the request body, which must be 0.
+              type: number
+              required: false
+              example: 0
           responses:
             303:
               headers:
