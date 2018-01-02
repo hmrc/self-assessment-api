@@ -41,7 +41,12 @@
     },
     "advertisingCosts": {
       "title": "Advertising costs",
-      "description": "Advertising and business entertainment costs",
+      "description": "Advertising costs",
+      "$ref": "../Expense.json"
+    },
+    "businessEntertainmentCosts": {
+      "title": "Business entertainment costs",
+      "description": "Business entertainment costs",
       "$ref": "../Expense.json"
     },
     "interest": {
