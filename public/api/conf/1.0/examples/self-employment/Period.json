@@ -38,6 +38,10 @@
       "amount": 100.25,
       "disallowableAmount": 50.25
     },
+    "businessEntertainmentCosts": {
+      "amount": 100.25,
+      "disallowableAmount": 50.25
+    },
     "interest": {
       "amount": 100.25,
       "disallowableAmount": 50.25
