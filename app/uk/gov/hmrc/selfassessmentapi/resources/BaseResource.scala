@@ -16,7 +16,9 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import org.joda.time.DateTime
 import play.api.Logger
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.{ActionBuilder, _}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.microservice.controller.BaseController
@@ -25,7 +27,6 @@ import uk.gov.hmrc.selfassessmentapi.contexts.{AuthContext, Individual}
 import uk.gov.hmrc.selfassessmentapi.models.SourceType.SourceType
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
-import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
 
 trait BaseResource extends BaseController {
@@ -57,6 +58,18 @@ trait BaseResource extends BaseController {
 
   def APIAction(nino: Nino, source: SourceType, summary: Option[String] = None): ActionBuilder[AuthRequest] =
     FeatureSwitchAction(source, summary) andThen AuthAction(nino)
+
+
+  def getRequestTimestamp(implicit request: AuthRequest[_]) = {
+    val requestTimestampHeader = "X-Request-Timestamp"
+    val requestTimestamp = request.headers.get(requestTimestampHeader) match {
+      case Some(timestamp) => timestamp
+      case None =>
+        logger.warn(s"$requestTimestampHeader header is not passed or is empty in the request.")
+        DateTime.now().toString()
+    }
+    requestTimestamp
+  }
 }
 
 class AuthRequest[A](val authContext: AuthContext, request: Request[A]) extends WrappedRequest[A](request)

@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi
+package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.HttpResponse
 
-import scala.util.Random
-
-class NinoGenerator(random: Random) {
-  def nextNino(): Nino = {
-    val prefix = random.shuffle(Nino.validPrefixes).head
-    val suffix = random.shuffle(Nino.validSuffixes).head
-    val digits = (0 to 5).map(_ => random.nextInt(10)).foldLeft("")((acc, curr) => acc + curr.toString)
-
-    Nino(s"$prefix$digits$suffix")
+case class CrystallisationResponse(underlying: HttpResponse) extends Response {
+  def calculationId: Option[String] = {
+    (json \ "calculationId").asOpt[String] match {
+      case x@Some(_) => x
+      case None => {
+        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
+        None
+      }
+    }
   }
-}
-
-object NinoGenerator {
-  def apply(): NinoGenerator = new NinoGenerator(new Random)
-  def apply(seed: Long): NinoGenerator = new NinoGenerator(new Random(seed))
 }
