@@ -543,10 +543,6 @@ traits:
                         description: valid amount not provided where expected (for averagingAdjustment and basisAdjustment)
                         value:
                           code: INVALID_MONETARY_AMOUNT
-                      invalidBalancingChargeBPRA:
-                        description: Balancing charge on sale or cessation of business use (Box 58) can only have a value > 0 in if BPRA (Box 54) is also > 0
-                        value:
-                          code: INVALID_BALANCING_CHARGE_BPRA
                       invalidValue:
                         description: Empty class4NicInfo element provided
                         value:
@@ -1713,7 +1709,7 @@ traits:
       /intent-to-crystallise:
         post:
           displayName: Intent to crystallise
-          description: Intent to crystallise
+          description: !include docs/intent-to-crystallise.md
           (annotations.sandboxData): !include scenarios/intent-to-crystallise-scenarios.md
           is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
           (annotations.scope): "write:self-assessment"
@@ -1758,7 +1754,7 @@ traits:
       /crystallisation:
         post:
           displayName: Crystallisation
-          description: Crystallisation
+          description: !include docs/crystallisation-endpoint.md
           (annotations.sandboxData): !include scenarios/crystallisation-scenarios.md
           is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
           (annotations.scope): "write:self-assessment"
@@ -1787,7 +1783,7 @@ traits:
                       value:
                         code: TAX_YEAR_INVALID
                     mandatoryField:
-                      description: Calculation Id is not provided
+                      description: Tax calculation id is not provided
                       value:
                         code: MANDATORY_FIELD_MISSING
             403:
