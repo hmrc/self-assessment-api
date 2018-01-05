@@ -5,7 +5,7 @@
   "properties": {
     "calculationId": {
       "title": "Calculation id",
-      "description": "CalculationId",
+      "description": "Tax calculation id that was returned by intent to crystallise end-point ",
       "type": "string"
     }
   },

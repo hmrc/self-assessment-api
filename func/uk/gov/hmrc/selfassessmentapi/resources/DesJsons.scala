@@ -47,14 +47,14 @@ object DesJsons {
       error("INVALID_PERIOD", "The remote endpoint has indicated that a overlapping period was submitted.")
     val overlappingPeriod: String =
       error("OVERLAPS_IN_PERIOD",
-            "The remote endpoint has indicated that the submission period overlaps another period submitted.")
+        "The remote endpoint has indicated that the submission period overlaps another period submitted.")
     val nonContiguousPeriod: String =
       error(
         "NOT_CONTIGUOUS_PERIOD",
         "The remote endpoint has indicated that the submission period is not contiguous with another period submission.")
     val misalignedPeriod: String =
       error("NOT_ALIGN_PERIOD",
-            "The remote endpoint has indicated that the submission period is outside the Accounting Period.")
+        "The remote endpoint has indicated that the submission period is outside the Accounting Period.")
     val invalidObligation: String = error("INVALID_REQUEST", "Accounting period should be greater than 6 months.")
     val invalidBusinessId: String = error("INVALID_BUSINESSID", "Submission has not passed validation. Invalid parameter businessId.")
     val invalidOriginatorId: String =
@@ -71,6 +71,7 @@ object DesJsons {
     val periodicUpdateMissing: String = error("PERIODIC_UPDATE_MISSING", "Cannot finalise statement with missing periodic update")
     val lateSubmission = error("LATE_SUBMISSION", "End-of-period statement cannot be submitted for this period later than 31 January 20XX.")
     val nonMatchingPeriod = error("NON_MATCHING_PERIOD", "Statement period does not match you accounting period.")
+    val requiredEndOfPeriodStatement = error("REQUIRED_END_OF_PERIOD_STATEMENT", "End of Period Statement is Not Completed.")
   }
 
   object SelfEmployment {
@@ -479,8 +480,8 @@ object DesJsons {
               to = to,
               financials = Some(Other.Financials(
                 incomes = Some(Other.Incomes(rentIncome = Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
-                                             premiumsOfLeaseGrant = premiumsOfLeaseGrant,
-                                             reversePremiums = reversePremiums)),
+                  premiumsOfLeaseGrant = premiumsOfLeaseGrant,
+                  reversePremiums = reversePremiums)),
                 deductions = Some(Other.Deductions(
                   premisesRunningCosts = premisesRunningCosts,
                   repairsAndMaintenance = repairsAndMaintenance,
@@ -497,12 +498,12 @@ object DesJsons {
           case PropertyType.FHL =>
             Json
               .arr(fhl(transactionReference = "abc", from = "2017-04-06", to = "2017-07-04"),
-                   fhl(transactionReference = "def", from = "2017-07-05", to = "2017-08-04"))
+                fhl(transactionReference = "def", from = "2017-07-05", to = "2017-08-04"))
               .toString()
           case PropertyType.OTHER =>
             Json
               .arr(other(transactionReference = "abc", from = "2017-04-06", to = "2017-07-04"),
-                   other(transactionReference = "def", from = "2017-07-05", to = "2017-08-04"))
+                other(transactionReference = "def", from = "2017-07-05", to = "2017-08-04"))
               .toString()
         }
     }
@@ -617,6 +618,16 @@ object DesJsons {
          |  ]
          |}
          """.stripMargin
+    }
+  }
+
+  object Crystallisation {
+    def intentToCrystallise(): String = {
+      s"""
+         |{
+         |  "calculationId": "77427777"
+         |}
+       """.stripMargin
     }
   }
 

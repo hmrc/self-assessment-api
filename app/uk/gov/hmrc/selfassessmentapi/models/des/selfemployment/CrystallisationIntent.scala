@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi
+package uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 
-import uk.gov.hmrc.domain.Nino
+import play.api.libs.json.{Json, Writes}
 
-import scala.util.Random
+case class CrystallisationIntent(submittedAt: String)
 
-class NinoGenerator(random: Random) {
-  def nextNino(): Nino = {
-    val prefix = random.shuffle(Nino.validPrefixes).head
-    val suffix = random.shuffle(Nino.validSuffixes).head
-    val digits = (0 to 5).map(_ => random.nextInt(10)).foldLeft("")((acc, curr) => acc + curr.toString)
-
-    Nino(s"$prefix$digits$suffix")
-  }
-}
-
-object NinoGenerator {
-  def apply(): NinoGenerator = new NinoGenerator(new Random)
-  def apply(seed: Long): NinoGenerator = new NinoGenerator(new Random(seed))
+object CrystallisationIntent {
+  implicit val writes: Writes[CrystallisationIntent] = Json.writes[CrystallisationIntent]
 }

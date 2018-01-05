@@ -1256,6 +1256,29 @@ trait BaseFunctionalSpec extends TestApplication {
 
       }
 
+      object crystallisation {
+        def intentToCrystallise(nino: Nino, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(post(urlMatching(s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/intent-to-crystallise"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Crystallisation.intentToCrystallise())))
+
+          givens
+        }
+
+        def requiredEndOfPeriodStatement(nino: Nino, taxYear: TaxYear) = {
+          stubFor(post(urlMatching(s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/intent-to-crystallise"))
+            .willReturn(
+              aResponse()
+                .withStatus(403)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.requiredEndOfPeriodStatement)))
+          givens
+        }
+      }
+
       object taxCalculation {
         def isReadyFor(nino: Nino, calcId: String = "abc"): Givens = {
           stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))

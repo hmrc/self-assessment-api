@@ -63,6 +63,12 @@ PUT /ni/:nino/savings-accounts/:id/:taxYear  uk.gov.hmrc.selfassessmentapi.resou
 PUT /ni/:nino/dividends/:taxYear   uk.gov.hmrc.selfassessmentapi.resources.DividendsAnnualSummaryResource.updateAnnualSummary(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 GET /ni/:nino/dividends/:taxYear   uk.gov.hmrc.selfassessmentapi.resources.DividendsAnnualSummaryResource.retrieveAnnualSummary(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 
+
+#######################
+#     Crystallisation #
+#######################
+POST   /ni/:nino/:taxYear/intent-to-crystallise   uk.gov.hmrc.selfassessmentapi.resources.CrystallisationResource.intentToCrystallise(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+
 ##########################
 #    Tax Calculations    #
 ##########################

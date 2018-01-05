@@ -70,6 +70,7 @@ object DesErrorCode extends Enumeration {
   MISSING_EXEMPTION_REASON,
   INVALID_DATE_RANGE,
   PERIODIC_UPDATE_MISSING,
+  REQUIRED_END_OF_PERIOD_STATEMENT,
   NON_MATCHING_PERIOD= Value
 
   implicit val format: Format[DesErrorCode] = EnumJson.enumFormat(DesErrorCode,
