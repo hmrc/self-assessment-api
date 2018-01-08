@@ -32,8 +32,7 @@ object CrystallisationResource extends BaseResource {
 
   def intentToCrystallise(nino: Nino, taxYear: TaxYear): Action[AnyContent] =
     APIAction(nino, SourceType.Crystallisation).async { implicit request =>
-      val requestTimestamp: String = getRequestTimestamp
-      connector.intentToCrystallise(nino, taxYear, requestTimestamp) map { response =>
+      connector.intentToCrystallise(nino, taxYear, getRequestDateTimestamp) map { response =>
         response.filter {
           case 200 =>
             val contextPrefix = if (AppContext.registrationEnabled) "/self-assessment" else ""

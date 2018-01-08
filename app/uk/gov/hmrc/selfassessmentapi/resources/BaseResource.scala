@@ -60,7 +60,7 @@ trait BaseResource extends BaseController {
     FeatureSwitchAction(source, summary) andThen AuthAction(nino)
 
 
-  def getRequestTimestamp(implicit request: AuthRequest[_]) = {
+  def getRequestDateTimestamp(implicit request: AuthRequest[_]) = {
     val requestTimestampHeader = "X-Request-Timestamp"
     val requestTimestamp = request.headers.get(requestTimestampHeader) match {
       case Some(timestamp) => timestamp

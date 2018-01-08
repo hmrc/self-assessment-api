@@ -70,7 +70,7 @@ object SelfEmploymentStatementResource extends BaseResource {
 
           _ <- authorise(declaration) { case _ if (!declaration.finalised) => Errors.NotFinalisedDeclaration }
 
-          desResponse <- execute[EmptyResponse] { _ => statementConnector.create(nino, id, accountingPeriod) }
+          desResponse <- execute[EmptyResponse] { _ => statementConnector.create(nino, id, accountingPeriod, getRequestDateTimestamp) }
         } yield desResponse
       }
 

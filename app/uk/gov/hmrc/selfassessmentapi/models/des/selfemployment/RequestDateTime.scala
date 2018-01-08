@@ -18,8 +18,8 @@ package uk.gov.hmrc.selfassessmentapi.models.des.selfemployment
 
 import play.api.libs.json.{Json, Writes}
 
-case class CrystallisationIntent(submittedAt: String)
+case class RequestDateTime(submittedAt: String)
 
-object CrystallisationIntent {
-  implicit val writes: Writes[CrystallisationIntent] = Json.writes[CrystallisationIntent]
+object RequestDateTime {
+  implicit val writes: Writes[RequestDateTime] = Json.writes[RequestDateTime]
 }

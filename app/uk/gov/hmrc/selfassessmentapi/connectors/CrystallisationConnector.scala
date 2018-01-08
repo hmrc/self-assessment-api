@@ -20,7 +20,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear
-import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.CrystallisationIntent
+import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.RequestDateTime
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.CrystallisationResponse
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,8 +30,8 @@ object CrystallisationConnector {
   private lazy val baseUrl: String = AppContext.desUrl
 
   def intentToCrystallise(nino: Nino, taxYear: TaxYear, requestTimestamp: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CrystallisationResponse] =
-    httpPost[CrystallisationIntent, CrystallisationResponse](
-      baseUrl + s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/intent-to-crystallise", CrystallisationIntent(requestTimestamp),
+    httpPost[RequestDateTime, CrystallisationResponse](
+      baseUrl + s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/intent-to-crystallise", RequestDateTime(requestTimestamp),
       CrystallisationResponse)
 
 }

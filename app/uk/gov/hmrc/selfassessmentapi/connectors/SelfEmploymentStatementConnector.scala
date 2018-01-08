@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
+import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.RequestDateTime
 import uk.gov.hmrc.selfassessmentapi.models.{Period, SourceId}
 import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{EmptyResponse, SelfEmploymentStatementResponse}
@@ -29,8 +30,9 @@ object SelfEmploymentStatementConnector {
 
   private lazy val baseUrl = AppContext.desUrl
 
-  def create(nino: Nino, id: SourceId, accountingPeriod: Period)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] =
-    httpEmptyPost[EmptyResponse](s"$baseUrl/income-store/nino/$nino/self-employments/$id/accounting-periods/${accountingPeriod.periodId}/statement", EmptyResponse)
+  def create(nino: Nino, id: SourceId, accountingPeriod: Period, requestTimestamp: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] =
+    httpPost[RequestDateTime, EmptyResponse](s"$baseUrl/income-store/nino/$nino/self-employments/$id/accounting-periods/${accountingPeriod.periodId}/statement",
+      RequestDateTime(requestTimestamp), EmptyResponse)
 
   def get(nino: Nino, params: ObligationQueryParams)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentStatementResponse] = {
     val queryString = (params.from, params.to) match {
