@@ -12,7 +12,7 @@
             <td><p>Returns a EOPs obligation for standard tax year dates with Open status</p></td>
         </tr>
         <tr>
-            <td><p>EOPS_FUFLFILLED</p></td>
+            <td><p>EOPS_FULFILLED</p></td>
             <td><p>Returns a EOPs obligation for standard tax year dates with Fulfilled status</p></td>
         </tr>
         <tr>
