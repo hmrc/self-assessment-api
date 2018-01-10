@@ -9,8 +9,8 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
 
   "Submitting your self-assessment end-of-period statement" should {
 
-    val start = new LocalDate(2015, 1, 1)
-    val end = new LocalDate(2016, 12, 31)
+    val start = new LocalDate(2017, 4, 5)
+    val end = new LocalDate(2017, 12, 31)
 
     "succeed when all pre-requisites have been met" in {
       given()
@@ -121,6 +121,20 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(400)
         .bodyHasPath("\\code", "EARLY_SUBMISSION")
+    }
+
+    "fail when start date is before April 5th 2017" in {
+      val earlyStart = new LocalDate(2017, 4, 4)
+
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().selfEmployment.endOfYearStatementReadyToBeFinalised(nino, earlyStart, end)
+        .when()
+        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$earlyStart/to/$end", Some(Json.parse("""{ "finalised": true }""")))
+        .thenAssertThat()
+        .statusIs(400)
+        .bodyHasPath("\\code", "INVALID_START_DATE")
     }
 
     "fail when statement period does not match accounting period" in {
