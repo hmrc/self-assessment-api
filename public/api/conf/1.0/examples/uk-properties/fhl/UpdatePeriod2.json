@@ -5,5 +5,7 @@
       "taxDeducted": 100.25
     }
   },
-  "consolidatedExpenses": 100.25
+  "expenses": {
+    "consolidatedExpenses": 100.25
+  }
 }

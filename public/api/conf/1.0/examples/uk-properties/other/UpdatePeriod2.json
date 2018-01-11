@@ -7,5 +7,7 @@
     "premiumsOfLeaseGrant": { "amount": 100.25 },
     "reversePremiums": { "amount": 100.25 }
   },
-  "consolidatedExpenses": 100.25
+  "expenses": {
+    "consolidatedExpenses": 100.25
+  }
 }
