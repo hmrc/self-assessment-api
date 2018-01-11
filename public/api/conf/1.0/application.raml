@@ -430,7 +430,6 @@ traits:
               description: Amend a self-employment periodic update.
                            Submissions  which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
-                           Valid payload may contain either expenses or consolidatedExpenses elements.
                            <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -827,7 +826,6 @@ traits:
             description: Create a non-FHL UK property update period for submission of periodic data i.e incomes and expenses.
                          Submissions  which do not include any incomes or expenses are invalid.
                          You should submit zero values if you do not have incomes or expenses.
-                         <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, periodBVRs]
             (annotations.scope): "write:self-assessment"
@@ -839,9 +837,6 @@ traits:
                  example-1:
                   description: Full expense details example
                   value: !include examples/uk-properties/other/Period.json
-                 example-2:
-                  description: Consolidated expenses example
-                  value: !include examples/uk-properties/other/Period2.json
             responses:
               201:
                 headers:
@@ -884,19 +879,6 @@ traits:
                         description: No incomes and expenses are supplied
                         value:
                           code: NO_INCOMES_AND_EXPENSES
-                      bothExpensesSupplied:
-                        description: Both expenses and consolidatedExpenses can not be present at the same time
-                        value:
-                          code: BOTH_EXPENSES_SUPPLIED
-              403:
-                body:
-                  application/json:
-                    type: types.errorResponse
-                    examples:
-                      notAllowedConsolidatedExpenses:
-                        description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
-                        value:
-                          code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
               409:
                 body:
                   application/json:
@@ -955,9 +937,6 @@ traits:
                         example-1:
                           description: Periodic update with full expense details example
                           value: !include examples/uk-properties/other/Period.json
-                        example-2:
-                          description: Periodic update with consolidated expenses example
-                          value: !include examples/uk-properties/other/Period2.json
                 400:
                   body:
                     application/json:
@@ -973,7 +952,6 @@ traits:
               description: Amend a non-FHL UK property periodic update.
                            Submissions  which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
-                           <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -985,9 +963,6 @@ traits:
                     example-1:
                       description: Periodic update with full expense details example
                       value: !include examples/uk-properties/other/UpdatePeriod.json
-                    example-2:
-                      description: Periodic update with consolidated expenses example
-                      value: !include examples/uk-properties/other/UpdatePeriod2.json
               responses:
                 204:
                   headers:
@@ -1015,19 +990,6 @@ traits:
                           description: No incomes and expenses are supplied
                           value:
                             code: NO_INCOMES_AND_EXPENSES
-                        bothExpensesSupplied:
-                          description: Both expenses and consolidatedExpenses can not be present at the same time
-                          value:
-                            code: BOTH_EXPENSES_SUPPLIED
-                403:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notAllowedConsolidatedExpenses:
-                          description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
-                          value:
-                            code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
                 404:
         /{taxYear}:
             displayName: Annual Summary
@@ -1109,7 +1071,6 @@ traits:
             description: Create a FHL UK property update period for submission of periodic data i.e incomes and expenses.
                          Submissions which do not include any incomes or expenses are invalid.
                          You should submit zero values if you do not have incomes or expenses.
-                         <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
             (annotations.sandboxData): !include scenarios/agent-scenarios.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, periodBVRs]
             (annotations.scope): "write:self-assessment"
@@ -1121,9 +1082,6 @@ traits:
                  example-1:
                   description: Full expense details example
                   value: !include examples/uk-properties/fhl/Period.json
-                 example-2:
-                  description: Consolidated expenses example
-                  value: !include examples/uk-properties/fhl/Period2.json
             responses:
               201:
                 headers:
@@ -1162,23 +1120,10 @@ traits:
                         description: No incomes and expenses are supplied
                         value:
                           code: NO_INCOMES_AND_EXPENSES
-                      bothExpensesSupplied:
-                        description: Both expenses and consolidatedExpenses can not be present at the same time
-                        value:
-                          code: BOTH_EXPENSES_SUPPLIED
                       invalidTaxDeducted:
                         description: taxDeducted > amount
                         value:
                           code: INVALID_TAX_DEDUCTION_AMOUNT
-              403:
-                body:
-                  application/json:
-                    type: types.errorResponse
-                    examples:
-                      notAllowedConsolidatedExpenses:
-                        description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
-                        value:
-                          code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
               409:
                 body:
                   application/json:
@@ -1237,9 +1182,6 @@ traits:
                         example-1:
                           description: Periodic update with full expense details example
                           value: !include examples/uk-properties/fhl/Period.json
-                        example-2:
-                          description: Periodic update with consolidated expenses example
-                          value: !include examples/uk-properties/fhl/Period2.json
                 400:
                   body:
                     application/json:
@@ -1255,7 +1197,6 @@ traits:
               description: Amend a FHL UK property periodic update.
                            Submissions which do not include any incomes or expenses are invalid.
                            You should submit zero values if you do not have incomes or expenses.
-                           <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
@@ -1267,9 +1208,6 @@ traits:
                     example-1:
                       description: Periodic update with full expense details example
                       value: !include examples/uk-properties/fhl/UpdatePeriod.json
-                    example-2:
-                      description: Periodic update with consolidated expenses example
-                      value: !include examples/uk-properties/fhl/UpdatePeriod2.json
               responses:
                 204:
                   headers:
@@ -1297,23 +1235,10 @@ traits:
                           description: No incomes and expenses are supplied
                           value:
                             code: NO_INCOMES_AND_EXPENSES
-                        bothExpensesSupplied:
-                          description: Both expenses and consolidatedExpenses can not be present at the same time
-                          value:
-                            code: BOTH_EXPENSES_SUPPLIED
                         invalidTaxDeducted:
                           description: taxDeducted > amount
                           value:
                             code: INVALID_TAX_DEDUCTION_AMOUNT
-                403:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notAllowedConsolidatedExpenses:
-                          description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
-                          value:
-                            code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
                 404:
         /{taxYear}:
             displayName: Annual Summary
