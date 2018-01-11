@@ -17,13 +17,16 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.concurrent.Execution.Implicits._
+import play.api.libs.json.JsValue
 import play.api.libs.json.Json.toJson
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.CrystallisationConnector
+import uk.gov.hmrc.selfassessmentapi.models.crystallisation.CrystallisationRequest
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode._
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.EmptyResponse
 
 
 object CrystallisationResource extends BaseResource {
@@ -40,6 +43,18 @@ object CrystallisationResource extends BaseResource {
             SeeOther(url).withHeaders(LOCATION -> url)
           case 403 if response.errorCodeIs(REQUIRED_END_OF_PERIOD_STATEMENT) => Forbidden(toJson(Errors.businessError(Errors.RequiredEndOfPeriodStatement)))
 
+        }
+      }
+    }
+
+  def crystallisation(nino: Nino, taxYear: TaxYear): Action[JsValue] =
+    APIAction(nino, SourceType.Crystallisation).async(parse.json) { implicit request =>
+      validate[CrystallisationRequest, EmptyResponse](request.body) {
+         connector.crystallise(nino, taxYear, _, getRequestDateTimestamp)
+      } map {
+        case Left(error) => handleErrors(error)
+        case Right(response) => response.filter {
+          case 200 => Created
         }
       }
     }

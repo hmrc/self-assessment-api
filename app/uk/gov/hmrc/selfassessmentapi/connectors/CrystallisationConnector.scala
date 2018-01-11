@@ -20,18 +20,26 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear
-import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.RequestDateTime
-import uk.gov.hmrc.selfassessmentapi.resources.wrappers.CrystallisationResponse
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CrystallisationIntentResponse, EmptyResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.selfassessmentapi.models.crystallisation.CrystallisationRequest
+import uk.gov.hmrc.selfassessmentapi.models.des.crystallisation.Crystallisation
+import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.RequestDateTime
 
 object CrystallisationConnector {
 
   private lazy val baseUrl: String = AppContext.desUrl
 
-  def intentToCrystallise(nino: Nino, taxYear: TaxYear, requestTimestamp: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CrystallisationResponse] =
-    httpPost[RequestDateTime, CrystallisationResponse](
+  def intentToCrystallise(nino: Nino, taxYear: TaxYear, requestTimestamp: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CrystallisationIntentResponse] =
+    httpPost[RequestDateTime, CrystallisationIntentResponse](
       baseUrl + s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/intent-to-crystallise", RequestDateTime(requestTimestamp),
-      CrystallisationResponse)
+      CrystallisationIntentResponse)
+
+  def crystallise(nino: Nino, taxYear: TaxYear, request: CrystallisationRequest, requestTimestamp: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] =
+    httpPost[Crystallisation, EmptyResponse](
+      baseUrl + s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/crystallise",
+      Crystallisation(request.calculationId, requestTimestamp),
+      EmptyResponse)
 
 }

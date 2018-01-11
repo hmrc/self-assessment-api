@@ -78,6 +78,8 @@ object Errors {
   object EarlySubmission extends Error("EARLY_SUBMISSION", "You cannot submit a statement before the end of your accounting period.", None)
   object NonMatchingPeriod extends Error("NON_MATCHING_PERIOD", "You cannot submit your end-of-period statement for a period that does not match your accounting period.", None)
   object RequiredEndOfPeriodStatement extends Error("REQUIRED_END_OF_PERIOD_STATEMENT", "Cannot submit intent to crystallisation without submitting End of Period Statement.", Some(""))
+  object RequiredIntentToCrystallise extends Error("REQUIRED_INTENT_TO_CRYSTALLISE", "Crystallisation could occur only after an intent to crystallise is sent.", None)
+  object InvalidTaxCalculationId extends Error("INVALID_TAX_CALCULATION_ID", "The calculation id should match the calculation id returned by the latest intent to crystallise.", Some("/calculationId"))
 
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")
   def badRequest(error: Error) = BadRequest(Seq(error), "Invalid request")

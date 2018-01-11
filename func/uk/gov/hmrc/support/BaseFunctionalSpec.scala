@@ -1268,7 +1268,7 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def requiredEndOfPeriodStatement(nino: Nino, taxYear: TaxYear) = {
+        def intentToCrystalliseRequiredEndOfPeriodStatement(nino: Nino, taxYear: TaxYear) = {
           stubFor(post(urlMatching(s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/intent-to-crystallise"))
             .willReturn(
               aResponse()
@@ -1277,7 +1277,45 @@ trait BaseFunctionalSpec extends TestApplication {
                 .withBody(DesJsons.Errors.requiredEndOfPeriodStatement)))
           givens
         }
+
+        def crystallise(nino: Nino, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(post(urlMatching(s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/crystallise"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(s"""
+                            |{
+                            |}
+                          """.stripMargin
+                )))
+
+          givens
+        }
+
+        def crystalliseInvalidCalculationId(nino: Nino, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(post(urlMatching(s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/crystallise"))
+            .willReturn(
+              aResponse()
+                .withStatus(403)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.invalidTaxCalculationId)))
+
+          givens
+        }
+
+        def crystalliseRequiredIntentToCrystallise(nino: Nino, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(post(urlMatching(s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/crystallise"))
+            .willReturn(
+              aResponse()
+                .withStatus(403)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.requiredIntentToCrystallise)))
+
+          givens
+        }
       }
+
 
       object taxCalculation {
         def isReadyFor(nino: Nino, calcId: String = "abc"): Givens = {

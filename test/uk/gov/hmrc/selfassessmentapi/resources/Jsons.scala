@@ -612,6 +612,14 @@ object Jsons {
                     |{ }
          """.stripMargin)
     }
+
+    def  crystallisation(): JsValue = {
+      Json.parse(s"""
+                    |{
+                    |  "calculationId": "77427777"
+                    |}
+         """.stripMargin)
+    }
   }
 
   object TaxCalculation {
