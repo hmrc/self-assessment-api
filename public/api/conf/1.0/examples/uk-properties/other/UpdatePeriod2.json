@@ -8,6 +8,6 @@
     "reversePremiums": { "amount": 100.25 }
   },
   "expenses": {
-    "consolidatedExpenses": 100.25
+    "consolidatedExpenses": { "amount": 100.25 }
   }
 }
