@@ -56,14 +56,15 @@ object SelfEmploymentStatementResource extends BaseResource {
 
       }
 
+      val fromDateCutOff = new LocalDate(2017, 4, 5)
       val now = new LocalDate()
 
       BusinessResult.desToResult(handleSuccess) {
         for {
-
           _ <- validate(accountingPeriod) {
-            case _ if(!accountingPeriod.valid)          => Errors.InvalidDateRange
-            case _ if(accountingPeriod.to.isAfter(now)) => Errors.EarlySubmission
+            case _ if !accountingPeriod.from.isBefore(fromDateCutOff)          => Errors.InvalidStartDate
+            case _ if !accountingPeriod.valid                                  => Errors.InvalidDateRange
+            case _ if accountingPeriod.to.isAfter(now)                         => Errors.EarlySubmission
           }
 
           declaration <- validateJson[Declaration](request.body)
