@@ -218,7 +218,7 @@ trait BaseFunctionalSpec extends TestApplication {
     }
 
     def bodyDoesNotHaveString(content: String) = {
-      response.body.contains(content) shouldBe false
+      response.body should not (include (content))
       this
     }
 
@@ -230,7 +230,7 @@ trait BaseFunctionalSpec extends TestApplication {
     }
 
     def statusIs(statusCode: Int) = {
-      withClue(s"expected $request to return $statusCode; but got ${response.body}\n") {
+      withClue(s"expected $request to return $statusCode; but got status code ${response.status} with body ${response.body}\n") {
         response.status shouldBe statusCode
       }
       this
@@ -299,7 +299,13 @@ trait BaseFunctionalSpec extends TestApplication {
 
   }
 
-  class HttpRequest(method: String, path: String, body: Option[JsValue], hc: HeaderCarrier = HeaderCarrier())(
+  sealed trait Body
+
+  case class JsonBody(body: JsValue) extends Body
+
+  case class AnyBody(body: String, contentType: String) extends Body
+
+  class HttpRequest(method: String, path: String, body: Option[Body] = None, hc: HeaderCarrier = HeaderCarrier())(
     implicit urlPathVariables: mutable.Map[String, String])
     extends UrlInterpolation {
 
@@ -319,12 +325,16 @@ trait BaseFunctionalSpec extends TestApplication {
           case "DELETE" => new Assertions(s"DELETE@$url", Http.delete(url))
           case "POST" =>
             body match {
-              case Some(jsonBody) => new Assertions(s"POST@$url", Http.postJson(url, jsonBody))
-              case None => new Assertions(s"POST@$url", Http.postEmpty(url))
+              case Some(JsonBody(jsonBody))         => new Assertions(s"POST@$url", Http.postJson(url, jsonBody))
+              case Some(AnyBody(body, contentType)) => new Assertions(s"POST@$url", Http.postAsString(url, body, Seq(("Content-Type" -> contentType))))
+              case None                             => new Assertions(s"POST@$url", Http.postEmpty(url))
             }
           case "PUT" =>
-            val jsonBody = body.getOrElse(throw new RuntimeException("Body for PUT must be provided"))
-            new Assertions(s"PUT@$url", Http.putJson(url, jsonBody))
+            body match {
+              case Some(JsonBody(jsonBody))         => new Assertions(s"PUT@$url", Http.putJson(url, jsonBody))
+              case Some(AnyBody(body, contentType)) => throw new UnsupportedOperationException("non-JSON HTTP PUT not supported by test fixture code")
+              case None                             => throw new RuntimeException("Body for PUT must be provided")
+            }
         }
       }
     }
@@ -344,20 +354,20 @@ trait BaseFunctionalSpec extends TestApplication {
     }
   }
 
-  class HttpPostBodyWrapper(method: String, body: Option[JsValue])(
+  class HttpPostBodyWrapper(method: String, body: Option[Body])(
     implicit urlPathVariables: mutable.Map[String, String]) {
     def to(url: String) = new HttpRequest(method, url, body)
   }
 
   class HttpPutBodyWrapper(method: String, body: Option[JsValue])(
     implicit urlPathVariables: mutable.Map[String, String]) {
-    def at(url: String) = new HttpRequest(method, url, body)
+    def at(url: String) = new HttpRequest(method, url, body.map(JsonBody))
   }
 
   class HttpVerbs()(implicit urlPathVariables: mutable.Map[String, String] = mutable.Map()) {
 
     def post(body: JsValue) = {
-      new HttpPostBodyWrapper("POST", Some(body))
+      new HttpPostBodyWrapper("POST", Some(JsonBody(body)))
     }
 
     def put(body: JsValue) = {
@@ -373,11 +383,19 @@ trait BaseFunctionalSpec extends TestApplication {
     }
 
     def post(path: String, body: Option[JsValue] = None) = {
-      new HttpRequest("POST", path, body)
+      new HttpRequest("POST", path, body.map(JsonBody))
+    }
+
+    def post(path: String, body: String, contentType: String) = {
+      new HttpRequest("POST", path, Some(AnyBody(body, contentType)))
     }
 
     def put(path: String, body: Option[JsValue]) = {
-      new HttpRequest("PUT", path, body)
+      new HttpRequest("PUT", path, body.map(JsonBody))
+    }
+
+    def putAs(path: String, body: String, contentType: String) = {
+      new HttpRequest("PUT", path, Some(AnyBody(body, contentType)))
     }
 
   }

@@ -45,10 +45,10 @@ import uk.gov.hmrc.selfassessmentapi.models.SourceType.sourceTypeToDocumentation
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear.taxYearFormat
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.GovTestScenarioHeader
-
 import scala.collection.immutable.ListMap
 import scala.concurrent.Future
 import scala.util.matching.Regex
+import play.api.Logger
 
 case class ControllerConfigParams(needsHeaderValidation: Boolean = true,
                                   needsLogging: Boolean = true,
@@ -234,6 +234,11 @@ object MicroserviceGlobal
   override def onBadRequest(request: RequestHeader, error: String) = {
     import ErrorCode._
 
+    def obscureInternalError(result: Result, error:String): Result = {
+      Logger.error(s"Bad request: $error")
+      BadRequest(toJson(ErrorBadRequest(BAD_REQUEST, "Bad request")))
+    }
+
     super.onBadRequest(request, error).map { result =>
       error match {
         case "ERROR_INVALID_SOURCE_TYPE"   => NotFound(toJson(ErrorNotFound))
@@ -244,9 +249,11 @@ object MicroserviceGlobal
         case "ERROR_INVALID_DATE_TO"       => BadRequest(toJson(ErrorBadRequest(INVALID_DATE, "The to date in the query string is invalid")))
         case "ERROR_INVALID_DATE_RANGE"    => BadRequest(toJson(ErrorBadRequest(INVALID_DATE_RANGE, "The date range in the query string is invalid")))
         case "ERROR_INVALID_PROPERTY_TYPE" => NotFound(toJson(ErrorNotFound))
-        case _                             => result
+        case _                             => obscureInternalError(result, error)
       }
+
     }
+
   }
 
 }
