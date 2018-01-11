@@ -62,7 +62,7 @@ object SelfEmploymentStatementResource extends BaseResource {
       BusinessResult.desToResult(handleSuccess) {
         for {
           _ <- validate(accountingPeriod) {
-            case _ if !accountingPeriod.from.isBefore(fromDateCutOff)          => Errors.InvalidStartDate
+            case _ if accountingPeriod.from.isBefore(fromDateCutOff)           => Errors.InvalidStartDate
             case _ if !accountingPeriod.valid                                  => Errors.InvalidDateRange
             case _ if accountingPeriod.to.isAfter(now)                         => Errors.EarlySubmission
           }
