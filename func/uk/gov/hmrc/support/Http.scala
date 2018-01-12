@@ -17,22 +17,28 @@ object Http {
     request.get()
   }
 
+  def postAsString[A](url: String, body: String, headers: Seq[(String, String)] = Seq.empty)(
+      implicit hc: HeaderCarrier,
+      timeout: FiniteDuration): HttpResponse = perform(url, headers) { request =>
+    request.post(body)
+  }
+
   def post[A](url: String, body: A, headers: Seq[(String, String)] = Seq.empty)(
       implicit writes: Writes[A],
       hc: HeaderCarrier,
-      timeout: FiniteDuration): HttpResponse = perform(url) { request =>
+      timeout: FiniteDuration): HttpResponse = perform(url, headers) { request =>
     request.post(Json.toJson(body))
   }
 
   def postJson(url: String, body: JsValue, headers: Seq[(String, String)] = Seq.empty)(
       implicit hc: HeaderCarrier,
-      timeout: FiniteDuration): HttpResponse = perform(url) { request =>
+      timeout: FiniteDuration): HttpResponse = perform(url, headers) { request =>
     request.post(body)
   }
 
   def putJson(url: String, body: JsValue, headers: Seq[(String, String)] = Seq.empty)(
       implicit hc: HeaderCarrier,
-      timeout: FiniteDuration): HttpResponse = perform(url) { request =>
+      timeout: FiniteDuration): HttpResponse = perform(url, headers) { request =>
     request.put(body)
   }
 
@@ -46,9 +52,11 @@ object Http {
       request.delete()
   }
 
-  private def perform(url: String)(fun: WSRequest => Future[WSResponse])(implicit hc: HeaderCarrier,
-                                                                         timeout: FiniteDuration): WSHttpResponse =
-    await(fun(WS.url(url).withHeaders(hc.headers: _*).withRequestTimeout(timeout)).map(new WSHttpResponse(_)))
+  private def perform(url: String, headers: Seq[(String, String)] = Seq.empty)(fun: WSRequest => Future[WSResponse])(implicit hc: HeaderCarrier,
+                                                                         timeout: FiniteDuration): WSHttpResponse = {
+    val allHeaders = hc.headers ++ headers
+    await(fun(WS.url(url).withHeaders(allHeaders: _*).withRequestTimeout(timeout)).map(new WSHttpResponse(_)))
+  }
 
   private def await[A](future: Future[A])(implicit timeout: FiniteDuration) = Await.result(future, timeout)
 
