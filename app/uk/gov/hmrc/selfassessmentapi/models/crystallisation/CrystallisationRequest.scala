@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.resources.wrappers
+package uk.gov.hmrc.selfassessmentapi.models.crystallisation
 
-import uk.gov.hmrc.http.HttpResponse
+import play.api.libs.json.{Json, Reads, Writes}
 
-case class CrystallisationResponse(underlying: HttpResponse) extends Response {
-  def calculationId: Option[String] = {
-    (json \ "calculationId").asOpt[String] match {
-      case x@Some(_) => x
-      case None => {
-        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
-        None
-      }
-    }
-  }
+case class CrystallisationRequest(calculationId: String)
+
+object CrystallisationRequest {
+  implicit val writes: Writes[CrystallisationRequest] = Json.writes[CrystallisationRequest]
+  implicit val reads: Reads[CrystallisationRequest] = Json.reads[CrystallisationRequest]
 }

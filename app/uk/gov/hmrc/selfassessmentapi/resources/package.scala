@@ -94,7 +94,7 @@ package object resources {
     BusinessResult {
       for {
         result <- f(())
-      } yield (Right(result))
+      } yield Right(result)
     }
 
   def validate[T, R](jsValue: JsValue)(f: T => Future[R])(implicit reads: Reads[T]): Future[Either[ErrorResult, R]] =
