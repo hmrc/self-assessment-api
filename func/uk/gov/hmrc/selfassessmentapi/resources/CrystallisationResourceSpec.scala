@@ -78,8 +78,9 @@ class CrystallisationResourceSpec extends BaseFunctionalSpec {
         .post(Jsons.Crystallisation.crystallisation()).to(s"/ni/$nino/$taxYear/crystallisation")
         .thenAssertThat()
         .statusIs(403)
-        .bodyHasPath("\\code", "INVALID_TAX_CALCULATION_ID")
-        .bodyHasPath("\\path", "/calculationId")
+        .bodyHasPath("\\code", "BUSINESS_ERROR")
+        .bodyHasPath("\\errors(0)\\code", "INVALID_TAX_CALCULATION_ID")
+        .bodyHasPath("\\errors(0)\\path", "/calculationId")
 
     }
 
@@ -92,7 +93,8 @@ class CrystallisationResourceSpec extends BaseFunctionalSpec {
         .post(Jsons.Crystallisation.crystallisation()).to(s"/ni/$nino/$taxYear/crystallisation")
         .thenAssertThat()
         .statusIs(403)
-        .bodyHasPath("\\code", "REQUIRED_INTENT_TO_CRYSTALLISE")
+        .bodyHasPath("\\code", "BUSINESS_ERROR")
+        .bodyHasPath("\\errors(0)\\code", "REQUIRED_INTENT_TO_CRYSTALLISE")
     }
   }
 
