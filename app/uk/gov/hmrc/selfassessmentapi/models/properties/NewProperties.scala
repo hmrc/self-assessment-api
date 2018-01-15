@@ -16,22 +16,20 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.properties
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.models.des.properties.{Properties => DesProperties}
-import uk.gov.hmrc.selfassessmentapi.models.AccountingPeriod
+import play.api.libs.json._
 
-case class Properties(accountingPeriod: AccountingPeriod)
+case class NewProperties()
 
-object Properties {
+object NewProperties {
+    // these odd choices are a workaround to the fact that you cannot use Json.reads[Properties] on an case class with no properties
+  implicit val reads: Reads[NewProperties] = new Reads[NewProperties] {
+    override def reads(json: JsValue) = json match {
+      case JsObject(_) => JsSuccess(NewProperties())
+      case _ => JsError()
+    }
+  }
 
-  implicit val format = Json.format[Properties]
-
-  def from(desProperties: DesProperties): Properties =
-    Properties(
-      AccountingPeriod(
-        start = desProperties.accountingPeriodStartDate,
-        end = desProperties.accountingPeriodEndDate
-      )
-    )
-
+  implicit val writes: Writes[NewProperties] = new Writes[NewProperties] {
+    override def writes(o: NewProperties) = Json.obj()
+  }
 }

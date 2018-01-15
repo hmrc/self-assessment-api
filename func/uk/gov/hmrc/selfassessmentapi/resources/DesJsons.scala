@@ -388,7 +388,7 @@ object DesJsons {
          |   "propertyData": {
          |      "incomeSourceId": "123456789012345",
          |      "accountingPeriodStartDate": "2001-01-01",
-         |      "accountingPeriodEndDate": "2001-01-01"
+         |      "accountingPeriodEndDate": "2010-01-01"
          |    }
          |}
       """.stripMargin

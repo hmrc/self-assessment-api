@@ -21,38 +21,48 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesConnector
 import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.models.properties.NewProperties
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
 
 import play.api.libs.concurrent.Execution.Implicits._
+import cats.implicits._
 
 object PropertiesResource extends BaseResource {
   private val connector = PropertiesConnector
 
   def create(nino: Nino): Action[JsValue] =
     APIAction(nino, SourceType.Properties).async(parse.json) { implicit request =>
-      validate[properties.Properties, PropertiesResponse](request.body) { props =>
-        connector.create(nino, props)
-      } map {
-        case Left(errorResult) =>
-          handleErrors(errorResult)
-        case Right(response) =>
-          response.filter {
-            case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino))
-            case 403 => Conflict.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/uk-properties")
-          }
+
+      def handleSuccess(desResponse: PropertiesResponse) = desResponse.filter {
+        case 200 => Created.withHeaders(LOCATION -> desResponse.createLocationHeader(nino))
+        case 403 => Conflict.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/uk-properties")
       }
+
+      BusinessResult.desToResult(handleSuccess) {
+        for {
+          props <- validateJson[NewProperties](request.body)
+          response <- execute { _ => connector.create(nino, props) }
+        } yield response
+      }
+
     }
 
   def retrieve(nino: Nino): Action[AnyContent] =
     APIAction(nino, SourceType.Properties).async { implicit request =>
-      connector.retrieve(nino).map { response =>
-        response.filter {
+
+      def handleSuccess(desResponse: PropertiesResponse) = desResponse.filter {
           case 200 =>
-            response.property match {
+            desResponse.property match {
               case Some(property) => Ok(Json.toJson(property))
               case None => NotFound
             }
         }
+
+      BusinessResult.desToResult(handleSuccess) {
+        for {
+          response <- execute { _ => connector.retrieve(nino) }
+        } yield response
       }
     }
+
 }

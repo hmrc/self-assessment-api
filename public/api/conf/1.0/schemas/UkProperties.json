@@ -3,6 +3,9 @@
   "title": "UK property business",
   "type": "object",
   "properties": {
+    "accountingPeriod": {
+      "$ref": "AccountingPeriod.json"
+    }
   },
   "additionalProperties": false
 }

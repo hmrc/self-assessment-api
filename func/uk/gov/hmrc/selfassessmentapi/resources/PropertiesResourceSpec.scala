@@ -169,6 +169,28 @@ class PropertiesResourceSpec extends BaseFunctionalSpec {
         .statusIs(500)
         .bodyIsLike(Jsons.Errors.internalServerError)
     }
+
+    "return accounting period start date" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().properties.willBeReturnedFor(nino)
+        .when()
+        .get(s"/ni/$nino/uk-properties")
+        .thenAssertThat()
+        .body(_ \ "accountingPeriod" \ "start").is("2001-01-01")
+    }
+
+    "return accounting period end date" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().properties.willBeReturnedFor(nino)
+        .when()
+        .get(s"/ni/$nino/uk-properties")
+        .thenAssertThat()
+        .body(_ \ "accountingPeriod" \ "end").is("2010-01-01")
+    }
   }
 
 }

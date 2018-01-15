@@ -257,7 +257,7 @@ trait BaseFunctionalSpec extends TestApplication {
               case Some(actualValue) => actualValue shouldBe value
               case _ => "" shouldBe value
             }
-          case None => ()
+          case None => fail(s"no value found matching $value")
         }
         assertions
       }
