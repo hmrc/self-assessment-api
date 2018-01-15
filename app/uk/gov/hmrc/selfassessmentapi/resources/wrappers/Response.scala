@@ -106,8 +106,8 @@ trait Response {
     case 403 if errorCodeIsOneOf(MISSING_EXEMPTION_INDICATOR) => BadRequest(toJson(Errors.badRequest(Errors.MissingExemptionIndicator)))
     case 403 if errorCodeIsOneOf(MISSING_EXEMPTION_REASON) => BadRequest(toJson(Errors.badRequest(Errors.MandatoryFieldMissing)))
     case 403 if errorCodeIsOneOf(INVALID_DATE_RANGE) => InternalServerError(toJson(Errors.InternalServerError))
-    case 403 if errorCodeIsOneOf(INVALID_TAX_CALCULATION_ID) => Forbidden(toJson(Errors.InvalidTaxCalculationId))
-    case 403 if errorCodeIsOneOf(REQUIRED_INTENT_TO_CRYSTALLISE) => Forbidden(toJson(Errors.RequiredIntentToCrystallise))
+    case 403 if errorCodeIsOneOf(INVALID_TAX_CALCULATION_ID) => Forbidden(toJson(Errors.businessError(Errors.InvalidTaxCalculationId)))
+    case 403 if errorCodeIsOneOf(REQUIRED_INTENT_TO_CRYSTALLISE) => Forbidden(toJson(Errors.businessError(Errors.RequiredIntentToCrystallise)))
     case 403                                         => NotFound
     case 404                                         => NotFound
     case 409 if errorCodeIsOneOf(INVALID_PERIOD)     => BadRequest(toJson(Errors.badRequest(Errors.InvalidPeriod)))
