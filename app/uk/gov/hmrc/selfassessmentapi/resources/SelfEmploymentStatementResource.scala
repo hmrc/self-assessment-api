@@ -22,6 +22,7 @@ import play.api.libs.json._
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentStatementConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.audit.EndOfPeriodStatementDeclaration
@@ -62,9 +63,9 @@ object SelfEmploymentStatementResource extends BaseResource {
       BusinessResult.desToResult(handleSuccess) {
         for {
           _ <- validate(accountingPeriod) {
-            case _ if accountingPeriod.from.isBefore(fromDateCutOff)           => Errors.InvalidStartDate
-            case _ if !accountingPeriod.valid                                  => Errors.InvalidDateRange
-            case _ if accountingPeriod.to.isAfter(now)                         => Errors.EarlySubmission
+            case _ if accountingPeriod.from.isBefore(fromDateCutOff)              => Errors.InvalidStartDate
+            case _ if !accountingPeriod.valid                                     => Errors.InvalidDateRange
+            case _ if !AppContext.sandboxMode & accountingPeriod.to.isAfter(now)  => Errors.EarlySubmission
           }
 
           declaration <- validateJson[Declaration](request.body)
