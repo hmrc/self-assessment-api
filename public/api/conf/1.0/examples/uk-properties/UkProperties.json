@@ -1,2 +1,6 @@
 {
+  "accountingPeriod" : {
+    "start": "2017-04-06",
+    "end": "2018-04-05"
+  }
 }

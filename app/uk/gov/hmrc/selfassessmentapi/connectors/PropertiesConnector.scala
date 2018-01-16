@@ -18,8 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.models.des
-import uk.gov.hmrc.selfassessmentapi.models.properties.Properties
+import uk.gov.hmrc.selfassessmentapi.models.properties.NewProperties
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
 
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,10 +28,10 @@ object PropertiesConnector {
 
   private lazy val baseUrl: String = AppContext.desUrl
 
-  def create(nino: Nino, properties: Properties)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesResponse] = {
-    httpPost[des.properties.Properties, PropertiesResponse](
+  def create(nino: Nino, properties: NewProperties)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesResponse] = {
+    httpPost[NewProperties, PropertiesResponse](
       baseUrl + s"/income-tax-self-assessment/nino/$nino/properties",
-      des.properties.Properties.from(properties),
+      properties,
       PropertiesResponse)
   }
 
