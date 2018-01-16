@@ -33,16 +33,16 @@ object PropertiesResource extends BaseResource {
   def create(nino: Nino): Action[JsValue] =
     APIAction(nino, SourceType.Properties).async(parse.json) { implicit request =>
 
-      def handleSuccess(desResponse: PropertiesResponse) = desResponse.filter {
-        case 200 => Created.withHeaders(LOCATION -> desResponse.createLocationHeader(nino))
-        case 403 => Conflict.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/uk-properties")
-      }
-
-      BusinessResult.desToResult(handleSuccess) {
+      {
         for {
           props <- validateJson[NewProperties](request.body)
           response <- execute { _ => connector.create(nino, props) }
         } yield response
+      } onDesSuccess { response =>
+        response.filter {
+          case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino))
+          case 403 => Conflict.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/uk-properties")
+        }
       }
 
     }
@@ -50,19 +50,20 @@ object PropertiesResource extends BaseResource {
   def retrieve(nino: Nino): Action[AnyContent] =
     APIAction(nino, SourceType.Properties).async { implicit request =>
 
-      def handleSuccess(desResponse: PropertiesResponse) = desResponse.filter {
+      {
+        for {
+          response <- execute { _ => connector.retrieve(nino) }
+        } yield response
+      } onDesSuccess { response =>
+        response.filter {
           case 200 =>
-            desResponse.property match {
+            response.property match {
               case Some(property) => Ok(Json.toJson(property))
               case None => NotFound
             }
         }
-
-      BusinessResult.desToResult(handleSuccess) {
-        for {
-          response <- execute { _ => connector.retrieve(nino) }
-        } yield response
       }
+
     }
 
 }

@@ -64,9 +64,13 @@ package object resources {
 
     def failure[T](error: ErrorResult): BusinessResult[T] = EitherT.fromEither(Left(error))
 
-    def desToResult[R <: Response](handleSuccess: R => Result)(businessResult: BusinessResult[R]): Future[Result] = {
+  }
+
+  implicit class DesBusinessResult[R <: Response](result: BusinessResult[R]) {
+
+    def onDesSuccess(handleSuccess: R => Result): Future[Result] = {
       for {
-        desResponseOrError <- businessResult.value
+        desResponseOrError <- result.value
       } yield desResponseOrError match {
         case Left(errors)       => handleErrors(errors)
         case Right(desResponse) => handleSuccess(desResponse)

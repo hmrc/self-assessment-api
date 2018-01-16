@@ -42,24 +42,10 @@ object SelfEmploymentStatementResource extends BaseResource {
     APIAction(nino, SourceType.SelfEmployments).async(parse.json) { implicit request =>
 
       val accountingPeriod = Period(start, end)
-
-      def handleSuccess(desResponse: EmptyResponse) = {
-
-        def businessJsonError(error: Errors.Error) = Json.toJson(Errors.businessError(error))
-
-        audit(buildAuditEvent(nino, id, accountingPeriod, request.authContext, desResponse))
-        desResponse.filter {
-          case 204                                                     => NoContent
-          case 403 if desResponse.errorCodeIs(PERIODIC_UPDATE_MISSING) => Forbidden(businessJsonError(Errors.PeriodicUpdateMissing))
-          case 403 if desResponse.errorCodeIs(NON_MATCHING_PERIOD)     => Forbidden(businessJsonError(Errors.NonMatchingPeriod))
-        }
-
-      }
-
       val fromDateCutOff = new LocalDate(2017, 4, 5)
       val now = new LocalDate()
 
-      BusinessResult.desToResult(handleSuccess) {
+      {
         for {
           _ <- validate(accountingPeriod) {
             case _ if accountingPeriod.from.isBefore(fromDateCutOff)           => Errors.InvalidStartDate
@@ -73,6 +59,17 @@ object SelfEmploymentStatementResource extends BaseResource {
 
           desResponse <- execute[EmptyResponse] { _ => statementConnector.create(nino, id, accountingPeriod, getRequestDateTimestamp) }
         } yield desResponse
+      } onDesSuccess { desResponse =>
+
+        def businessJsonError(error: Errors.Error) = Json.toJson(Errors.businessError(error))
+
+        audit(buildAuditEvent(nino, id, accountingPeriod, request.authContext, desResponse))
+        desResponse.filter {
+          case 204                                                     => NoContent
+          case 403 if desResponse.errorCodeIs(PERIODIC_UPDATE_MISSING) => Forbidden(businessJsonError(Errors.PeriodicUpdateMissing))
+          case 403 if desResponse.errorCodeIs(NON_MATCHING_PERIOD)     => Forbidden(businessJsonError(Errors.NonMatchingPeriod))
+        }
+
       }
 
     }
