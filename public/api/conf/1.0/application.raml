@@ -1648,11 +1648,10 @@ traits:
           (annotations.scope): "write:self-assessment"
           securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
           headers:
-            Content-Length:
-              description: Specifies the lenght of the request body, which must be 0.
-              type: number
-              required: false
-              example: 0
+          body:
+            application/json:
+              type: !include schemas/IntentToCrystallise.json
+              example: !include examples/crystallisation/intentToCrystallise.json
           responses:
             303:
               headers:
