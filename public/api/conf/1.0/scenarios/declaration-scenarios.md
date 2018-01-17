@@ -27,5 +27,9 @@
             <td><p>NON_MATCHING_PERIOD</p></td>
             <td><p>Simulate a non-matching period check failure</p></td>
         </tr>
+        <tr>
+            <td><p>EARLY_SUBMISSION</p></td>
+            <td><p>Simulate an early submission check failure</p></td>
+        </tr>
     </tbody>
 </table>
