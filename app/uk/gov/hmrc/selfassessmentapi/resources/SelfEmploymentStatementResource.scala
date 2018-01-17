@@ -67,6 +67,7 @@ object SelfEmploymentStatementResource extends BaseResource {
         audit(buildAuditEvent(nino, id, accountingPeriod, request.authContext, desResponse))
         desResponse.filter {
           case 204                                                     => NoContent
+          case 400 if desResponse.errorCodeIs(EARLY_SUBMISSION)        => Forbidden(Json.toJson(Errors.EarlySubmission))
           case 403 if desResponse.errorCodeIs(PERIODIC_UPDATE_MISSING) => Forbidden(businessJsonError(Errors.PeriodicUpdateMissing))
           case 403 if desResponse.errorCodeIs(NON_MATCHING_PERIOD)     => Forbidden(businessJsonError(Errors.NonMatchingPeriod))
         }

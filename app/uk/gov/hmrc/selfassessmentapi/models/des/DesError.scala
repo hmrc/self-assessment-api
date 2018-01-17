@@ -73,6 +73,7 @@ object DesErrorCode extends Enumeration {
   REQUIRED_END_OF_PERIOD_STATEMENT,
   INVALID_TAX_CALCULATION_ID,
   REQUIRED_INTENT_TO_CRYSTALLISE,
+  EARLY_SUBMISSION,
   NON_MATCHING_PERIOD= Value
 
   implicit val format: Format[DesErrorCode] = EnumJson.enumFormat(DesErrorCode,

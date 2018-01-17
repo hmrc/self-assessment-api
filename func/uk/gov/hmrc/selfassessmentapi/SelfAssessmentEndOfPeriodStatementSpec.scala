@@ -49,6 +49,18 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .bodyHasPath("\\errors(0)\\code", "PERIODIC_UPDATE_MISSING")
     }
 
+    "fail when des returns early submission error" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().selfEmployment.endOfYearStatementIsEarly(nino, start, end)
+        .when()
+        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": true }""")))
+        .thenAssertThat()
+        .statusIs(403)
+        .bodyHasPath("\\code", "EARLY_SUBMISSION")
+    }
+
     "fail when invalid boolean value sent" in {
       given()
         .userIsSubscribedToMtdFor(nino)
