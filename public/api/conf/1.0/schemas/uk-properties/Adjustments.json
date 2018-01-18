@@ -30,6 +30,12 @@
       "minimum": 0,
       "maximum": 99999999999999.98,
       "example": "100.25"
+    },
+    "periodOfGraceAdjustment": {
+      "title": "Period of grace adjustment",
+      "description": "Identifies a property which didn't qualify for FHL this year but qualified the year previous.",
+      "type": "boolean",
+      "example": "true or false"
     }
   },
   "additionalProperties": false
