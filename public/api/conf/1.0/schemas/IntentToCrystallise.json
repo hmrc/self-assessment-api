@@ -1,11 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "UK property business",
+  "title": "Intent to crystallise",
   "type": "object",
   "properties": {
-    "accountingPeriod": {
-      "$ref": "AccountingPeriod.json"
-    }
   },
   "additionalProperties": false
 }

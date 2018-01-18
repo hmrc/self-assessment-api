@@ -22,6 +22,7 @@ import play.api.libs.json._
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentStatementConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.audit.EndOfPeriodStatementDeclaration
@@ -42,28 +43,15 @@ object SelfEmploymentStatementResource extends BaseResource {
     APIAction(nino, SourceType.SelfEmployments).async(parse.json) { implicit request =>
 
       val accountingPeriod = Period(start, end)
-
-      def handleSuccess(desResponse: EmptyResponse) = {
-
-        def businessJsonError(error: Errors.Error) = Json.toJson(Errors.businessError(error))
-
-        audit(buildAuditEvent(nino, id, accountingPeriod, request.authContext, desResponse))
-        desResponse.filter {
-          case 204                                                     => NoContent
-          case 403 if desResponse.errorCodeIs(PERIODIC_UPDATE_MISSING) => Forbidden(businessJsonError(Errors.PeriodicUpdateMissing))
-          case 403 if desResponse.errorCodeIs(NON_MATCHING_PERIOD)     => Forbidden(businessJsonError(Errors.NonMatchingPeriod))
-        }
-
-      }
-
+      val fromDateCutOff = new LocalDate(2017, 4, 5)
       val now = new LocalDate()
 
-      BusinessResult.desToResult(handleSuccess) {
+      {
         for {
-
           _ <- validate(accountingPeriod) {
-            case _ if(!accountingPeriod.valid)          => Errors.InvalidDateRange
-            case _ if(accountingPeriod.to.isAfter(now)) => Errors.EarlySubmission
+            case _ if accountingPeriod.from.isBefore(fromDateCutOff)              => Errors.InvalidStartDate
+            case _ if !accountingPeriod.valid                                     => Errors.InvalidDateRange
+            case _ if !AppContext.sandboxMode & accountingPeriod.to.isAfter(now)  => Errors.EarlySubmission
           }
 
           declaration <- validateJson[Declaration](request.body)
@@ -72,6 +60,18 @@ object SelfEmploymentStatementResource extends BaseResource {
 
           desResponse <- execute[EmptyResponse] { _ => statementConnector.create(nino, id, accountingPeriod, getRequestDateTimestamp) }
         } yield desResponse
+      } onDesSuccess { desResponse =>
+
+        def businessJsonError(error: Errors.Error) = Json.toJson(Errors.businessError(error))
+
+        audit(buildAuditEvent(nino, id, accountingPeriod, request.authContext, desResponse))
+        desResponse.filter {
+          case 204                                                     => NoContent
+          case 400 if desResponse.errorCodeIs(EARLY_SUBMISSION)        => Forbidden(Json.toJson(Errors.EarlySubmission))
+          case 403 if desResponse.errorCodeIs(PERIODIC_UPDATE_MISSING) => Forbidden(businessJsonError(Errors.PeriodicUpdateMissing))
+          case 403 if desResponse.errorCodeIs(NON_MATCHING_PERIOD)     => Forbidden(businessJsonError(Errors.NonMatchingPeriod))
+        }
+
       }
 
     }

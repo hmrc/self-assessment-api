@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models.properties
+package uk.gov.hmrc.selfassessmentapi.models.crystallisation
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.models.des.properties.{Properties => DesProperties}
-import uk.gov.hmrc.selfassessmentapi.models.AccountingPeriod
+import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
-case class Properties(accountingPeriod: AccountingPeriod)
-
-object Properties {
-
-  implicit val format = Json.format[Properties]
-
-  def from(desProperties: DesProperties): Properties =
-    Properties(
-      AccountingPeriod(
-        start = desProperties.accountingPeriodStartDate,
-        end = desProperties.accountingPeriodEndDate
-      )
-    )
-
+class CrystallisationRequestSpec extends JsonSpec {
+  "format" should {
+    "round trip" in {
+      roundTripJson(CrystallisationRequest("calculationId"))
+    }
+  }
 }

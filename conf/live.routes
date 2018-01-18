@@ -68,6 +68,7 @@ GET /ni/:nino/dividends/:taxYear   uk.gov.hmrc.selfassessmentapi.resources.Divid
 #     Crystallisation #
 #######################
 POST   /ni/:nino/:taxYear/intent-to-crystallise   uk.gov.hmrc.selfassessmentapi.resources.CrystallisationResource.intentToCrystallise(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+POST   /ni/:nino/:taxYear/crystallisation   uk.gov.hmrc.selfassessmentapi.resources.CrystallisationResource.crystallisation(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 
 ##########################
 #    Tax Calculations    #

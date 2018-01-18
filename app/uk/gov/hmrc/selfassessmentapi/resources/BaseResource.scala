@@ -63,8 +63,8 @@ trait BaseResource extends BaseController {
   def getRequestDateTimestamp(implicit request: AuthRequest[_]) = {
     val requestTimestampHeader = "X-Request-Timestamp"
     val requestTimestamp = request.headers.get(requestTimestampHeader) match {
-      case Some(timestamp) => timestamp
-      case None =>
+      case Some(timestamp) if timestamp.trim.length > 0 => timestamp.trim
+      case _ =>
         logger.warn(s"$requestTimestampHeader header is not passed or is empty in the request.")
         DateTime.now().toString()
     }

@@ -74,9 +74,12 @@ object Errors {
   object NotFinalisedDeclaration extends Error("NOT_FINALISED", "The statement cannot be accepted without a declaration it is finalised.", Some("/finalised"))
   object PeriodicUpdateMissing extends Error("PERIODIC_UPDATE_MISSING", "End-of-period statement cannot be accepted until all periodic updates have been submitted.", None)
   object InvalidDateRange extends Error("INVALID_DATE_RANGE", "The start date must be the same day or before the from date.", None)
+  object InvalidStartDate extends Error("INVALID_START_DATE", "The start date must be prior to the 5th April 2017", None)
   object EarlySubmission extends Error("EARLY_SUBMISSION", "You cannot submit a statement before the end of your accounting period.", None)
   object NonMatchingPeriod extends Error("NON_MATCHING_PERIOD", "You cannot submit your end-of-period statement for a period that does not match your accounting period.", None)
   object RequiredEndOfPeriodStatement extends Error("REQUIRED_END_OF_PERIOD_STATEMENT", "Cannot submit intent to crystallisation without submitting End of Period Statement.", Some(""))
+  object RequiredIntentToCrystallise extends Error("REQUIRED_INTENT_TO_CRYSTALLISE", "Crystallisation could occur only after an intent to crystallise is sent.", None)
+  object InvalidTaxCalculationId extends Error("INVALID_TAX_CALCULATION_ID", "The calculation id should match the calculation id returned by the latest intent to crystallise.", Some("/calculationId"))
 
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")
   def badRequest(error: Error) = BadRequest(Seq(error), "Invalid request")

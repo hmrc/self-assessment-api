@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models.properties
+package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.models.des.properties.{Properties => DesProperties}
-import uk.gov.hmrc.selfassessmentapi.models.AccountingPeriod
+import uk.gov.hmrc.http.HttpResponse
 
-case class Properties(accountingPeriod: AccountingPeriod)
-
-object Properties {
-
-  implicit val format = Json.format[Properties]
-
-  def from(desProperties: DesProperties): Properties =
-    Properties(
-      AccountingPeriod(
-        start = desProperties.accountingPeriodStartDate,
-        end = desProperties.accountingPeriodEndDate
-      )
-    )
-
+case class CrystallisationIntentResponse(underlying: HttpResponse) extends Response {
+  def calculationId: Option[String] = {
+    (json \ "calculationId").asOpt[String] match {
+      case x@Some(_) => x
+      case None => {
+        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
+        None
+      }
+    }
+  }
 }

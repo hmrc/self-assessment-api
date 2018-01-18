@@ -69,9 +69,12 @@ object DesJsons {
       error("INVALID_DATE_FROM", "Submission has not passed validation. Invalid parameter from.")
     val invalidDateTo: String = error("INVALID_DATE_TO", "Submission has not passed validation. Invalid parameter to.")
     val periodicUpdateMissing: String = error("PERIODIC_UPDATE_MISSING", "Cannot finalise statement with missing periodic update")
+    val earlySubmission = error("EARLY_SUBMISSION", "End-of-period statement cannot be submitted early.")
     val lateSubmission = error("LATE_SUBMISSION", "End-of-period statement cannot be submitted for this period later than 31 January 20XX.")
     val nonMatchingPeriod = error("NON_MATCHING_PERIOD", "Statement period does not match you accounting period.")
     val requiredEndOfPeriodStatement = error("REQUIRED_END_OF_PERIOD_STATEMENT", "End of Period Statement is Not Completed.")
+    val invalidTaxCalculationId = error("INVALID_TAX_CALCULATION_ID", "The remote endpoint has indicated that the calculation id does not match the calculation id returned by the latest intent to crystallise")
+    val requiredIntentToCrystallise = error("REQUIRED_INTENT_TO_CRYSTALLISE", "The remote endpoint has indicated that the Crystallisation could occur only after an intent to crystallise is sent")
   }
 
   object SelfEmployment {
@@ -386,7 +389,7 @@ object DesJsons {
          |   "propertyData": {
          |      "incomeSourceId": "123456789012345",
          |      "accountingPeriodStartDate": "2001-01-01",
-         |      "accountingPeriodEndDate": "2001-01-01"
+         |      "accountingPeriodEndDate": "2010-01-01"
          |    }
          |}
       """.stripMargin

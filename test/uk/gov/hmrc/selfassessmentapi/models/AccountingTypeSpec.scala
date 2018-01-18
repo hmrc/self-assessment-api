@@ -19,11 +19,12 @@ package uk.gov.hmrc.selfassessmentapi.models
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 import uk.gov.hmrc.selfassessmentapi.models.properties.Properties
+import org.joda.time.LocalDate
 
 class AccountingTypeSpec extends JsonSpec {
   "Properties" should {
     "round trip" in {
-      roundTripJson(Properties())
+      roundTripJson(Properties(AccountingPeriod(new LocalDate, new LocalDate())))
     }
   }
 

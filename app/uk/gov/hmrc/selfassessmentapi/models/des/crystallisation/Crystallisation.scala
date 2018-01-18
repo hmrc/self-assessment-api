@@ -14,24 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models.properties
+package uk.gov.hmrc.selfassessmentapi.models.des.crystallisation
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.models.des.properties.{Properties => DesProperties}
-import uk.gov.hmrc.selfassessmentapi.models.AccountingPeriod
+import play.api.libs.json.{Json, Writes}
 
-case class Properties(accountingPeriod: AccountingPeriod)
+case class Crystallisation(calculationId: String, submittedAt: String)
 
-object Properties {
-
-  implicit val format = Json.format[Properties]
-
-  def from(desProperties: DesProperties): Properties =
-    Properties(
-      AccountingPeriod(
-        start = desProperties.accountingPeriodStartDate,
-        end = desProperties.accountingPeriodEndDate
-      )
-    )
-
+object Crystallisation {
+  implicit val writes : Writes[Crystallisation] = Json.writes[Crystallisation]
 }

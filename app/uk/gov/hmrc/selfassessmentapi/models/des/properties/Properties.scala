@@ -17,21 +17,15 @@
 package uk.gov.hmrc.selfassessmentapi.models.des.properties
 
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.models.properties
+import org.joda.time.LocalDate
 
-case class Properties()
+case class Properties(
+  accountingPeriodStartDate: LocalDate,
+  accountingPeriodEndDate: LocalDate
+)
 
 object Properties {
-  implicit val reads: Reads[Properties] = new Reads[Properties] {
-    override def reads(json: JsValue) = json match {
-      case JsObject(_) => JsSuccess(Properties())
-      case _ => JsError()
-    }
-  }
-  implicit val writes: Writes[Properties] = new Writes[Properties] {
-    override def writes(o: Properties) = Json.obj()
-  }
 
-  def from(apiProperties: properties.Properties): Properties = Properties()
+  implicit val format = Json.format[Properties]
 
 }

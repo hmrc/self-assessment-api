@@ -33,7 +33,7 @@ class CrystallisationResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().crystallisation.requiredEndOfPeriodStatement(nino, taxYear)
+        .des().crystallisation.intentToCrystalliseRequiredEndOfPeriodStatement(nino, taxYear)
         .when()
         .post(Jsons.Crystallisation.intentToCrystallise()).to(s"/ni/$nino/$taxYear/intent-to-crystallise")
         .thenAssertThat()
@@ -54,6 +54,48 @@ class CrystallisationResourceSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Errors.internalServerError)
     }
 
+  }
+
+  "crystallise" should {
+
+    "return 201 in happy scenario" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().crystallisation.crystallise(nino, taxYear)
+        .when()
+        .post(Jsons.Crystallisation.crystallisation()).to(s"/ni/$nino/$taxYear/crystallisation")
+        .thenAssertThat()
+        .statusIs(201)
+    }
+
+    "return 403 when the tax calculation id is invalid" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().crystallisation.crystalliseInvalidCalculationId(nino, taxYear)
+        .when()
+        .post(Jsons.Crystallisation.crystallisation()).to(s"/ni/$nino/$taxYear/crystallisation")
+        .thenAssertThat()
+        .statusIs(403)
+        .bodyHasPath("\\code", "BUSINESS_ERROR")
+        .bodyHasPath("\\errors(0)\\code", "INVALID_TAX_CALCULATION_ID")
+        .bodyHasPath("\\errors(0)\\path", "/calculationId")
+
+    }
+
+    "return 403 when not preceded with the intent to crystallise call" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().crystallisation.crystalliseRequiredIntentToCrystallise(nino, taxYear)
+        .when()
+        .post(Jsons.Crystallisation.crystallisation()).to(s"/ni/$nino/$taxYear/crystallisation")
+        .thenAssertThat()
+        .statusIs(403)
+        .bodyHasPath("\\code", "BUSINESS_ERROR")
+        .bodyHasPath("\\errors(0)\\code", "REQUIRED_INTENT_TO_CRYSTALLISE")
+    }
   }
 
 }
