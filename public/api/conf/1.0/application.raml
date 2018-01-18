@@ -740,8 +740,8 @@ traits:
         securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
         body:
           application/json:
-            type: !include schemas/UkProperties.json
-            example: !include examples/uk-properties/UkProperties.json
+            type: !include schemas/CreateProperties.json
+            example: !include examples/Empty.json
         responses:
           201:
             headers:
