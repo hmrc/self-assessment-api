@@ -22,7 +22,7 @@ import uk.gov.hmrc.selfassessmentapi.models.ErrorCode
 class FHLPropertiesAdjustmentsSpec extends JsonSpec {
   "FHLPropertiesAdjustments" should {
     "round trip" in {
-      roundTripJson(FHLPropertiesAdjustments(Some(50.55), Some(12.22), Some(123.45)))
+      roundTripJson(FHLPropertiesAdjustments(Some(50.55), Some(12.22), Some(123.45), Some(true)))
     }
 
     "round trip with empty json" in {
@@ -75,5 +75,6 @@ class FHLPropertiesAdjustmentsSpec extends JsonSpec {
       assertValidationErrorWithCode(FHLPropertiesAdjustments(balancingCharge = Some(50.123)),
         "/balancingCharge", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
+
   }
 }

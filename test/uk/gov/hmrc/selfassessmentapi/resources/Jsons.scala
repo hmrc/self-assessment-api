@@ -301,7 +301,8 @@ object Jsons {
                          otherCapitalAllowance: BigDecimal = 0.0,
                          lossBroughtForward: BigDecimal = 0.0,
                          privateUseAdjustment: BigDecimal = 0.0,
-                         balancingCharge: BigDecimal = 0.0): JsValue = {
+                         balancingCharge: BigDecimal = 0.0,
+                         periodOfGraceAdjustment: Boolean = false): JsValue = {
       Json.parse(s"""
            |{
            |  "allowances": {
@@ -311,10 +312,23 @@ object Jsons {
            |  "adjustments": {
            |   "lossBroughtForward": $lossBroughtForward,
            |   "privateUseAdjustment": $privateUseAdjustment,
-           |   "balancingCharge": $balancingCharge
+           |   "balancingCharge": $balancingCharge,
+           |   "periodOfGraceAdjustment": $periodOfGraceAdjustment
            |  }
            |}
     """.stripMargin)
+    }
+
+    val invalidFhlAnnualSummary: JsValue = {
+      Json.parse(
+        """
+          |{
+          | "adjustments" : {
+          |   "periodOfGraceAdjustment" : "not a boolean"
+          | }
+          |}
+        """.stripMargin
+      )
     }
 
     def otherAnnualSummary(annualInvestmentAllowance: BigDecimal = 0.0,

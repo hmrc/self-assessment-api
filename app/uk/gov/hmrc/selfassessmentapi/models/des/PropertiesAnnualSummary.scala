@@ -98,7 +98,8 @@ object FHLPropertiesAnnualSummary {
       FHLPropertiesAdjustments(
         adj.lossBroughtForward,
         adj.privateUseAdjustment,
-        adj.balancingCharge
+        adj.balancingCharge,
+        adj.periodOfGraceAdjustment
       )
     }
     FHLPropertiesAnnualSummary(allowances, adjustments)
@@ -116,7 +117,8 @@ object FHLPropertiesAllowances {
 
 case class FHLPropertiesAdjustments(lossBroughtForward: Option[BigDecimal] = None,
                                     privateUseAdjustment: Option[BigDecimal] = None,
-                                    balancingCharge: Option[BigDecimal] = None)
+                                    balancingCharge: Option[BigDecimal] = None,
+                                    periodOfGraceAdjustment: Option[Boolean] = None)
 
 object FHLPropertiesAdjustments {
   implicit val reads: Reads[FHLPropertiesAdjustments] = Json.reads[FHLPropertiesAdjustments]

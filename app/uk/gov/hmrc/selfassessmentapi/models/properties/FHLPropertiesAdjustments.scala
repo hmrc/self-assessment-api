@@ -22,7 +22,8 @@ import uk.gov.hmrc.selfassessmentapi.models._
 
 case class FHLPropertiesAdjustments(lossBroughtForward: Option[Amount] = None,
                                     privateUseAdjustment: Option[Amount] = None,
-                                    balancingCharge: Option[Amount] = None)
+                                    balancingCharge: Option[Amount] = None,
+                                    periodOfGraceAdjustment: Option[Boolean] = None)
 
 object FHLPropertiesAdjustments {
   implicit val writes: Writes[FHLPropertiesAdjustments] = Json.writes[FHLPropertiesAdjustments]
@@ -30,6 +31,7 @@ object FHLPropertiesAdjustments {
   implicit val reads: Reads[FHLPropertiesAdjustments] = (
     (__ \ "lossBroughtForward").readNullable[Amount](nonNegativeAmountValidator) and
       (__ \ "privateUseAdjustment").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "balancingCharge").readNullable[Amount](nonNegativeAmountValidator)
+      (__ \ "balancingCharge").readNullable[Amount](nonNegativeAmountValidator) and
+      (__ \ "periodOfGraceAdjustment").readNullable[Boolean]
     ) (FHLPropertiesAdjustments.apply _)
 }
