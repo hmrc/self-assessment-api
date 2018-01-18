@@ -18,7 +18,7 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.endOfYearStatementReadyToBeFinalised(nino, start, end)
         .when()
-        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": true }""")))
+        .post(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": true }""")))
         .thenAssertThat()
         .statusIs(204)
     }
@@ -29,7 +29,7 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.endOfYearStatementReadyToBeFinalised(nino, start, end)
         .when()
-        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": false }""")))
+        .post(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": false }""")))
         .thenAssertThat()
         .statusIs(403)
         .bodyHasPath("\\errors(0)\\code", "NOT_FINALISED")
@@ -42,7 +42,7 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.endOfYearStatementMissingPeriod(nino, start, end)
         .when()
-        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": true }""")))
+        .post(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": true }""")))
         .thenAssertThat()
         .statusIs(403)
         .bodyHasPath("\\code", "BUSINESS_ERROR")
@@ -55,7 +55,7 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.endOfYearStatementIsEarly(nino, start, end)
         .when()
-        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": true }""")))
+        .post(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": true }""")))
         .thenAssertThat()
         .statusIs(403)
         .bodyHasPath("\\code", "EARLY_SUBMISSION")
@@ -67,7 +67,7 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.endOfYearStatementReadyToBeFinalised(nino, start, end)
         .when()
-        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": null }""")))
+        .post(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": null }""")))
         .thenAssertThat()
         .statusIs(400)
         .bodyHasPath("\\errors(0)\\code", "INVALID_BOOLEAN_VALUE")
@@ -80,7 +80,7 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.endOfYearStatementReadyToBeFinalised(nino, start, end)
         .when()
-        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/not-a-date/to/$end", Some(Json.parse("""{ "finalised": true }""")))
+        .post(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/not-a-date/to/$end", Some(Json.parse("""{ "finalised": true }""")))
         .thenAssertThat()
         .statusIs(400)
         .bodyHasPath("\\code", "INVALID_DATE")
@@ -92,7 +92,7 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.endOfYearStatementReadyToBeFinalised(nino, start, end)
         .when()
-        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/not-a-date", Some(Json.parse("""{ "finalised": true }""")))
+        .post(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/not-a-date", Some(Json.parse("""{ "finalised": true }""")))
         .thenAssertThat()
         .statusIs(400)
         .bodyHasPath("\\code", "INVALID_DATE")
@@ -104,7 +104,7 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.endOfYearStatementReadyToBeFinalised(nino, end, start)
         .when()
-        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$end/to/$start", Some(Json.parse("""{ "finalised": true }""")))
+        .post(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$end/to/$start", Some(Json.parse("""{ "finalised": true }""")))
         .thenAssertThat()
         .statusIs(400)
         .bodyHasPath("\\code", "INVALID_DATE_RANGE")
@@ -116,7 +116,7 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.endOfYearStatementReadyToBeFinalised(nino, start, start)
         .when()
-        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$start", Some(Json.parse("""{ "finalised": true }""")))
+        .post(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$start", Some(Json.parse("""{ "finalised": true }""")))
         .thenAssertThat()
         .statusIs(204)
     }
@@ -129,7 +129,7 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.endOfYearStatementReadyToBeFinalised(nino, start, lateEnd)
         .when()
-        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$lateEnd", Some(Json.parse("""{ "finalised": true }""")))
+        .post(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$lateEnd", Some(Json.parse("""{ "finalised": true }""")))
         .thenAssertThat()
         .statusIs(400)
         .bodyHasPath("\\code", "EARLY_SUBMISSION")
@@ -143,7 +143,7 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.endOfYearStatementReadyToBeFinalised(nino, earlyStart, end)
         .when()
-        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$earlyStart/to/$end", Some(Json.parse("""{ "finalised": true }""")))
+        .post(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$earlyStart/to/$end", Some(Json.parse("""{ "finalised": true }""")))
         .thenAssertThat()
         .statusIs(400)
         .bodyHasPath("\\code", "INVALID_START_DATE")
@@ -155,11 +155,24 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().selfEmployment.endOfYearStatementDoesNotMatchPeriod(nino, start, end)
         .when()
-        .put(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": true }""")))
+        .post(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": true }""")))
         .thenAssertThat()
         .statusIs(403)
         .bodyHasPath("\\code", "BUSINESS_ERROR")
         .bodyHasPath("\\errors(0)\\code", "NON_MATCHING_PERIOD")
+    }
+
+    "fail when statement has already been submitted" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().selfEmployment.endOfYearStatementAlreadySubmitted(nino, start, end)
+        .when()
+        .post(s"/ni/$nino/self-employments/abc/end-of-period-statements/from/$start/to/$end", Some(Json.parse("""{ "finalised": true }""")))
+        .thenAssertThat()
+        .statusIs(403)
+        .bodyHasPath("\\code", "BUSINESS_ERROR")
+        .bodyHasPath("\\errors(0)\\code", "ALREADY_SUBMITTED")
     }
 
   }

@@ -1265,6 +1265,17 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def endOfYearStatementAlreadySubmitted(nino: Nino, start: LocalDate, end: LocalDate, id: String = "abc"): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/accounting-periods/${start}_${end}/statement"))
+            .willReturn(
+              aResponse()
+                .withStatus(403)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.alreadySubmitted)))
+
+          givens
+        }
+
       }
 
       object crystallisation {

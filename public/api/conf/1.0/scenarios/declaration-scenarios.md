@@ -31,5 +31,9 @@
             <td><p>EARLY_SUBMISSION</p></td>
             <td><p>Simulate an early submission check failure</p></td>
         </tr>
+        <tr>
+            <td><p>ALREADY_SUBMITTED</p></td>
+            <td><p>Simulate an already submitted check failure</p></td>
+        </tr>
     </tbody>
 </table>

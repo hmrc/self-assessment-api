@@ -74,7 +74,8 @@ object DesErrorCode extends Enumeration {
   INVALID_TAX_CALCULATION_ID,
   REQUIRED_INTENT_TO_CRYSTALLISE,
   EARLY_SUBMISSION,
-  NON_MATCHING_PERIOD= Value
+  NON_MATCHING_PERIOD,
+  ALREADY_SUBMITTED = Value
 
   implicit val format: Format[DesErrorCode] = EnumJson.enumFormat(DesErrorCode,
     Some(s"Recognized DesErrorCode values: ${DesErrorCode.values.mkString(", ")}"))
