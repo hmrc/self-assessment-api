@@ -33,7 +33,13 @@ class PropertiesAnnualSummarySpec extends JsonSpec {
       roundTripJson(
         FHLPropertiesAnnualSummary(
           allowances = Some(FHLPropertiesAllowances(Some(50), Some(20.20))),
-          adjustments = Some(FHLPropertiesAdjustments(Some(20.23), Some(50.55), Some(12.34)))))
+          adjustments =
+            Some(
+              FHLPropertiesAdjustments(
+                lossBroughtForward = Some(20.23),
+                privateUseAdjustment = Some(50.55),
+                balancingCharge = Some(12.34),
+                periodOfGraceAdjustment = Some(false)))))
     }
   }
 }

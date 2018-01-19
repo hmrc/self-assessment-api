@@ -2,7 +2,8 @@
   "adjustments": {
     "lossBroughtForward": 100.25,
     "privateUseAdjustment": 100.25,
-    "balancingCharge": 100.25
+    "balancingCharge": 100.25,
+    "periodOfGraceAdjustment": true
   },
   "allowances": {
     "annualInvestmentAllowance": 100.25,

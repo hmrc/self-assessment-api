@@ -132,6 +132,21 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     }
   }
 
+  "amending annual summaries for FHL Property business" should {
+    "return code 400 when submitted with invalid data for 'Period of grace adjustment'" in {
+
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .when()
+        .put(s"/ni/$nino/uk-properties/${PropertyType.FHL}/$taxYear", Some(Jsons.Properties.invalidFhlAnnualSummary))
+        .thenAssertThat()
+        .statusIs(400)
+        .contentTypeIsJson()
+        .bodyIsLike(Jsons.Errors.invalidRequest("INVALID_BOOLEAN_VALUE" -> "/adjustments/periodOfGraceAdjustment"))
+    }
+  }
+
   "retrieving annual summaries" should {
     for (propertyType <- Seq(PropertyType.OTHER, PropertyType.FHL)) {
       s"return code 200 containing annual summary information for $propertyType" in {
@@ -252,7 +267,8 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       otherCapitalAllowance = 1000.20,
       lossBroughtForward = 20.22,
       privateUseAdjustment = -22.23,
-      balancingCharge = 350.34)
+      balancingCharge = 350.34,
+      periodOfGraceAdjustment = true)
   }
 
   private def desAnnualSummary(propertyType: PropertyType.Value) = propertyType match {

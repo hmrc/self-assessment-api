@@ -75,7 +75,8 @@ object FHLPropertiesAnnualSummary {
     } yield FHLPropertiesAdjustments(
       adj.lossBroughtForward,
       adj.privateUseAdjustment,
-      adj.balancingCharge)
+      adj.balancingCharge,
+      adj.periodOfGraceAdjustment)
     FHLPropertiesAnnualSummary(allowances, adjustments)
   }
 }
