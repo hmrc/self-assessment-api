@@ -16,9 +16,11 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
-trait ExpensesDef[T] {
+trait SelfEmploymentExpensesDef[T] {
 
   val expenses: Option[T]
+  val consolidatedExpenses: Option[Amount]
 
-  def singleExpensesTypeSpecified: Boolean = expenses.isEmpty || expenses.isDefined
+  def singleExpensesTypeSpecified = (expenses.isEmpty && consolidatedExpenses.isEmpty) ||
+    (expenses.isDefined ^ consolidatedExpenses.isDefined)
 }

@@ -136,7 +136,9 @@ object PropertiesPeriodResource extends BaseResource {
       p: PropertiesPeriodConnector[P, F],
       r: Reads[P],
       w: Format[F]): Future[Either[ErrorResult, PropertiesPeriodResponse]] =
+
     validate[F, PropertiesPeriodResponse](request.body)(PropertiesPeriodConnector[P, F].update(nino, id, period, _))
+
 
   private def validateUpdateRequest(id: PropertyType, nino: Nino, period: Period, request: Request[JsValue])(
       implicit hc: HeaderCarrier): Future[Either[ErrorResult, PropertiesPeriodResponse]] =

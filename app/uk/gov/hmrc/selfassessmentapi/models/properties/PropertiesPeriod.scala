@@ -39,20 +39,19 @@ object FHL {
         (__ \ "from").write[LocalDate] and
         (__ \ "to").write[LocalDate] and
         (__ \ "incomes").writeNullable[Incomes] and
-        (__ \ "expenses").writeNullable[Expenses] and
-        (__ \ "consolidatedExpenses").writeNullable[Amount]
-      ) (p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses), p.financials.flatMap(_.consolidatedExpenses)))
+        (__ \ "expenses").writeNullable[Expenses]
+      ) (p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses)))
 
     private def financialsValidator(period: Properties): Boolean = {
       val incomePassed = period.financials.exists(_.incomes.exists(_.hasIncomes))
       val expensesPassed = period.financials.exists(_.expenses.exists(_.hasExpenses))
-      val consolidatedExpensesPassed = period.financials.exists(_.consolidatedExpenses.isDefined)
+      val consolidatedExpensesPassed = period.financials.exists(_.expenses.exists(_.consolidatedExpenses.isDefined))
       incomePassed || expensesPassed || consolidatedExpensesPassed
     }
 
     private def bothExpensesValidator(period: Properties): Boolean = {
       val expensesPassed = period.financials.exists(_.expenses.isDefined)
-      val consolidatedExpensesPassed = period.financials.exists(_.consolidatedExpenses.isDefined)
+      val consolidatedExpensesPassed = period.financials.exists(_.expenses.exists(_.consolidatedExpenses.isDefined))
       !expensesPassed && !consolidatedExpensesPassed || expensesPassed ^ consolidatedExpensesPassed
     }
 
@@ -61,12 +60,11 @@ object FHL {
         (__ \ "from").read[LocalDate] and
         (__ \ "to").read[LocalDate] and
         (__ \ "incomes").readNullable[Incomes] and
-        (__ \ "expenses").readNullable[Expenses] and
-        (__ \ "consolidatedExpenses").readNullable[Amount](nonNegativeAmountValidator)
-      ) ((id, from, to, incomes, expenses, consolidatedExpenses) => {
-      val financials = (incomes, expenses, consolidatedExpenses) match {
-        case (None, None, None) => None
-        case (inc, exp, consolidatedExpenses) => Some(Financials(inc, exp, consolidatedExpenses))
+        (__ \ "expenses").readNullable[Expenses]
+      ) ((id, from, to, incomes, expenses) => {
+      val financials = (incomes, expenses) match {
+        case (None, None) => None
+        case (inc, exp) => Some(Financials(inc, exp))
       }
       Properties(id, from, to, financials)
     }).validate(
@@ -111,6 +109,7 @@ object FHL {
                       repairsAndMaintenance: Option[Expense] = None,
                       financialCosts: Option[Expense] = None,
                       professionalFees: Option[Expense] = None,
+                      consolidatedExpenses: Option[Expense] = None,
                       other: Option[Expense] = None) {
     def hasExpenses: Boolean =
       premisesRunningCosts.isDefined ||
@@ -128,30 +127,37 @@ object FHL {
         repairsAndMaintenance = o.repairsAndMaintenance.map(Expense(_)),
         financialCosts = o.financialCosts.map(Expense(_)),
         professionalFees = o.professionalFees.map(Expense(_)),
+        consolidatedExpenses = o.simplifiedExpenses.map(Expense(_)),
         other = o.other.map(Expense(_)))
   }
 
-  case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None, consolidatedExpenses: Option[Amount] = None)
+  case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None)
     extends models.Financials with ExpensesDef[Expenses]
 
   object Financials {
     implicit val writes: Writes[Financials] = Json.writes[Financials]
 
     private def financialsValidator(financials: Financials): Boolean =
-      financials.incomes.exists(_.hasIncomes) || financials.expenses.exists(_.hasExpenses) || financials.consolidatedExpenses.isDefined
+      financials.incomes.exists(_.hasIncomes) || financials.expenses.exists(_.hasExpenses) || financials.expenses.exists(_.consolidatedExpenses.isDefined)
+
+    private def bothExpensesValidator(financials: Financials): Boolean = {
+      val expensesPassed = financials.expenses.isDefined
+      val consolidatedExpensesPassed = financials.expenses.exists(_.consolidatedExpenses.isDefined)
+      !expensesPassed && !consolidatedExpensesPassed || expensesPassed ^ consolidatedExpensesPassed
+    }
 
     implicit val reads: Reads[Financials] = (
       (__ \ "incomes").readNullable[Incomes] and
-        (__ \ "expenses").readNullable[Expenses] and
-        (__ \ "consolidatedExpenses").readNullable[Amount](nonNegativeAmountValidator)
+        (__ \ "expenses").readNullable[Expenses]
       ) (Financials.apply _)
-      .filter(ValidationError(s"Both expenses and consolidatedExpenses elements cannot be present at the same time",
-        BOTH_EXPENSES_SUPPLIED))(_.singleExpensesTypeSpecified)
       .validate(
         Seq(
           Validation(JsPath(),
             financialsValidator,
-            ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))))
+            ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES)),
+          Validation(JsPath(),
+            bothExpensesValidator,
+            ValidationError(s"Both expenses and consolidatedExpenses elements cannot be present at the same time", ErrorCode.BOTH_EXPENSES_SUPPLIED))))
 
     def from(o: Option[des.properties.FHL.Financials]): Option[Financials] =
       o.flatMap { f =>
@@ -159,8 +165,7 @@ object FHL {
           case (None, None) => None
           case (incomes, deductions) =>
             Some(Financials(incomes = incomes.map(Incomes.from),
-              expenses = deductions.map(Expenses.from).fold[Option[Expenses]](None)(ex => if (ex.hasExpenses) Some(ex) else None),
-              consolidatedExpenses = deductions.flatMap(_.simplifiedExpenses)))
+              expenses = deductions.map(Expenses.from).fold[Option[Expenses]](None)(ex => if (ex.hasExpenses) Some(ex) else None)))
         }
       }
   }
@@ -181,20 +186,19 @@ object Other {
         (__ \ "from").write[LocalDate] and
         (__ \ "to").write[LocalDate] and
         (__ \ "incomes").writeNullable[Incomes] and
-        (__ \ "expenses").writeNullable[Expenses] and
-        (__ \ "consolidatedExpenses").writeNullable[Amount]
-      ) (p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses), p.financials.flatMap(_.consolidatedExpenses)))
+        (__ \ "expenses").writeNullable[Expenses]
+      ) (p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses)))
 
     private def financialsValidator(period: Properties): Boolean = {
       val incomePassed = period.financials.exists(_.incomes.exists(_.hasIncomes))
       val expensesPassed = period.financials.exists(_.expenses.exists(_.hasExpenses))
-      val consolidatedExpensesPassed = period.financials.exists(_.consolidatedExpenses.isDefined)
+      val consolidatedExpensesPassed = period.financials.exists(_.expenses.exists(_.consolidatedExpenses.isDefined))
       incomePassed || expensesPassed || consolidatedExpensesPassed
     }
 
     private def bothExpensesValidator(period: Properties): Boolean = {
-      val expensesPassed = period.financials.exists(_.expenses.isDefined)
-      val consolidatedExpensesPassed = period.financials.exists(_.consolidatedExpenses.isDefined)
+      val expensesPassed = period.financials.exists(_.expenses.exists(_.hasExpenses))
+      val consolidatedExpensesPassed = period.financials.exists(_.expenses.exists(_.consolidatedExpenses.isDefined))
       val result = !expensesPassed && !consolidatedExpensesPassed || expensesPassed ^ consolidatedExpensesPassed
       result
     }
@@ -204,12 +208,11 @@ object Other {
         (__ \ "from").read[LocalDate] and
         (__ \ "to").read[LocalDate] and
         (__ \ "incomes").readNullable[Incomes] and
-        (__ \ "expenses").readNullable[Expenses] and
-        (__ \ "consolidatedExpenses").readNullable[Amount](nonNegativeAmountValidator)
-      ) ((id, from, to, incomes, expenses, consolidatedExpenses) => {
-      val financials = (incomes, expenses, consolidatedExpenses) match {
-        case (None, None, None) => None
-        case (inc, exp, consolidatedExpenses) => Some(Financials(inc, exp, consolidatedExpenses))
+        (__ \ "expenses").readNullable[Expenses]
+      ) ((id, from, to, incomes, expenses) => {
+      val financials = (incomes, expenses) match {
+        case (None, None) => None
+        case (inc, exp) => Some(Financials(inc, exp))
       }
       Properties(id, from, to, financials)
     }).validate(
@@ -265,6 +268,7 @@ object Other {
                       financialCosts: Option[Expense] = None,
                       professionalFees: Option[Expense] = None,
                       costOfServices: Option[Expense] = None,
+                      consolidatedExpenses: Option[Expense] = None,
                       other: Option[Expense] = None) {
     def hasExpenses: Boolean =
       premisesRunningCosts.isDefined ||
@@ -284,22 +288,28 @@ object Other {
         financialCosts = o.financialCosts.map(Expense(_)),
         professionalFees = o.professionalFees.map(Expense(_)),
         costOfServices = o.costOfServices.map(Expense(_)),
+        consolidatedExpenses = o.simplifiedExpenses.map(Expense(_)),
         other = o.other.map(Expense(_)))
   }
 
-  case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None, consolidatedExpenses: Option[Amount] = None)
+  case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None)
     extends models.Financials with ExpensesDef[Expenses]
 
   object Financials {
     implicit val writes: Writes[Financials] = Json.writes[Financials]
 
     private def financialsValidator(financials: Financials): Boolean =
-      financials.incomes.exists(_.hasIncomes) || financials.expenses.exists(_.hasExpenses) || financials.consolidatedExpenses.isDefined
+      financials.incomes.exists(_.hasIncomes) || financials.expenses.exists(_.hasExpenses)
+
+    private def bothExpensesValidator(financials: Financials): Boolean = {
+      val expensesPassed = financials.expenses.exists(_.hasExpenses)
+      val consolidatedExpensesPassed = financials.expenses.exists(_.consolidatedExpenses.isDefined)
+      !expensesPassed && !consolidatedExpensesPassed || expensesPassed ^ consolidatedExpensesPassed
+    }
 
     implicit val reads: Reads[Financials] = (
       (__ \ "incomes").readNullable[Incomes] and
-        (__ \ "expenses").readNullable[Expenses] and
-        (__ \ "consolidatedExpenses").readNullable[Amount](nonNegativeAmountValidator)
+        (__ \ "expenses").readNullable[Expenses]
       ) (Financials.apply _)
       .filter(ValidationError(s"Both expenses and consolidatedExpenses elements cannot be present at the same time",
         BOTH_EXPENSES_SUPPLIED))(_.singleExpensesTypeSpecified)
@@ -307,7 +317,11 @@ object Other {
         Seq(
           Validation(JsPath(),
             financialsValidator,
-            ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))))
+            ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES)),
+          Validation(JsPath(),
+            bothExpensesValidator,
+            ValidationError(s"Both expenses and consolidatedExpenses elements cannot be present at the same time", ErrorCode.BOTH_EXPENSES_SUPPLIED))))
+
 
     def from(o: Option[des.properties.Other.Financials]): Option[Financials] =
       o.flatMap { f =>
@@ -315,8 +329,7 @@ object Other {
           case (None, None) => None
           case (incomes, deductions) =>
             Some(Financials(incomes = incomes.map(Incomes.from),
-              expenses = deductions.map(Expenses.from).fold[Option[Expenses]](None)(ex => if (ex.hasExpenses) Some(ex) else None),
-              consolidatedExpenses = deductions.flatMap(_.simplifiedExpenses)))
+              expenses = deductions.map(Expenses.from).fold[Option[Expenses]](None)(ex => if (ex.hasExpenses) Some(ex) else None)))
         }
       }
   }

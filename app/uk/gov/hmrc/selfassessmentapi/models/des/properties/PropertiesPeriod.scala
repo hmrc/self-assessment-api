@@ -59,6 +59,7 @@ object FHL {
                  repairsAndMaintenance = o.repairsAndMaintenance.map(_.amount),
                  financialCosts = o.financialCosts.map(_.amount),
                  professionalFees = o.professionalFees.map(_.amount),
+                 simplifiedExpenses = o.consolidatedExpenses.map(_.amount),
                  other = o.other.map(_.amount))
   }
 
@@ -69,10 +70,10 @@ object FHL {
 
     def from(financials: Option[properties.FHL.Financials]): Option[Financials] =
       financials.flatMap { f =>
-        (f.incomes, f.expenses, f.consolidatedExpenses) match {
-          case (None, None, None) => None
-          case (incomes, expenses, consolidatedExpenses) => Some(Financials(incomes = incomes.map(Incomes.from),
-            deductions = expenses.map(Deductions.from).fold(financials.map(f => Deductions(simplifiedExpenses = consolidatedExpenses))) (Option(_))
+        (f.incomes, f.expenses) match {
+          case (None, None) => None
+          case (incomes, expenses) => Some(Financials(incomes = incomes.map(Incomes.from),
+            deductions = expenses.map(Deductions.from)
           ))
         }
       }
@@ -121,6 +122,7 @@ object Other {
                  financialCosts = o.financialCosts.map(_.amount),
                  professionalFees = o.professionalFees.map(_.amount),
                  costOfServices = o.costOfServices.map(_.amount),
+                 simplifiedExpenses = o.consolidatedExpenses.map(_.amount),
                  other = o.other.map(_.amount))
   }
 
@@ -131,10 +133,10 @@ object Other {
 
     def from(financials: Option[properties.Other.Financials]): Option[Financials] =
     financials.flatMap { f =>
-      (f.incomes, f.expenses, f.consolidatedExpenses) match {
-        case (None, None, None) => None
-        case (incomes, expenses, consolidatedExpenses) => Some(Financials(incomes = incomes.map(Incomes.from),
-          deductions = expenses.map(Deductions.from).fold(financials.map(f => Deductions(simplifiedExpenses = consolidatedExpenses))) (Option(_))
+      (f.incomes, f.expenses) match {
+        case (None, None) => None
+        case (incomes, expenses) => Some(Financials(incomes = incomes.map(Incomes.from),
+          deductions = expenses.map(Deductions.from)
         ))
       }
     }

@@ -31,7 +31,7 @@ case class SelfEmploymentPeriod(id: Option[String],
                                 incomes: Option[Incomes],
                                 expenses: Option[Expenses],
                                 consolidatedExpenses: Option[Amount])
-    extends Period with ExpensesDef[Expenses]
+    extends Period with SelfEmploymentExpensesDef[Expenses]
 
 object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
 

@@ -44,9 +44,9 @@ package object resources {
   }
 
   def handleErrors(errorResult: ErrorResult): Result = errorResult match {
-    case GenericErrorResult(message)      => BadRequest(Json.toJson(Errors.badRequest(message)))
-    case ValidationErrorResult(errors)    => BadRequest(Json.toJson(Errors.badRequest(errors)))
-    case AuthorisationErrorResult(error)  => Forbidden(Json.toJson(error))
+    case GenericErrorResult(message) => BadRequest(Json.toJson(Errors.badRequest(message)))
+    case ValidationErrorResult(errors) => BadRequest(Json.toJson(Errors.badRequest(errors)))
+    case AuthorisationErrorResult(error) => Forbidden(Json.toJson(error))
     case PathValidationErrorResult(error) => BadRequest(Json.toJson(error))
   }
 
@@ -72,7 +72,7 @@ package object resources {
       for {
         desResponseOrError <- result.value
       } yield desResponseOrError match {
-        case Left(errors)       => handleErrors(errors)
+        case Left(errors) => handleErrors(errors)
         case Right(desResponse) => handleSuccess(desResponse)
       }
     }
@@ -87,12 +87,12 @@ package object resources {
     }
 
   def validate[T](value: T)(validate: PartialFunction[T, Errors.Error]): BusinessResult[T] =
-    if(validate.isDefinedAt(value)) BusinessResult.failure(PathValidationErrorResult(validate(value)))
-    else                            BusinessResult.success(value)
+    if (validate.isDefinedAt(value)) BusinessResult.failure(PathValidationErrorResult(validate(value)))
+    else BusinessResult.success(value)
 
   def authorise[T](value: T)(auth: PartialFunction[T, Errors.Error]): BusinessResult[T] =
-    if(auth.isDefinedAt(value)) BusinessResult.failure(AuthorisationErrorResult(Errors.businessError(auth(value))))
-    else                        BusinessResult.success(value)
+    if (auth.isDefinedAt(value)) BusinessResult.failure(AuthorisationErrorResult(Errors.businessError(auth(value))))
+    else BusinessResult.success(value)
 
   def execute[T](f: Unit => Future[T]): BusinessResult[T] =
     BusinessResult {
@@ -104,7 +104,6 @@ package object resources {
   def validate[T, R](jsValue: JsValue)(f: T => Future[R])(implicit reads: Reads[T]): Future[Either[ErrorResult, R]] =
     jsValue.validate[T] match {
       case JsSuccess(payload, _) => f(payload).map(Right(_))
-      case JsError(errors)       => Future.successful(Left(ValidationErrorResult(errors)))
+      case JsError(errors) => Future.successful(Left(ValidationErrorResult(errors)))
     }
-
 }

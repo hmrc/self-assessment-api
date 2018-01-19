@@ -107,42 +107,83 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         financialCosts <- Gen.option(genExpense)
         professionalFees <- Gen.option(genExpense)
         other <- Gen.option(genExpense)
-      } yield FHL.Expenses(premisesRunningCosts, repairsAndMaintenance, financialCosts, professionalFees, other)
+      } yield
+        FHL.Expenses(
+          premisesRunningCosts = premisesRunningCosts,
+          repairsAndMaintenance = repairsAndMaintenance,
+          financialCosts = financialCosts,
+          professionalFees = professionalFees,
+          other = other
+        )
 
-    val genFinancials: Gen[FHL.Financials] =
+    val genExpensesBoth: Gen[FHL.Expenses] =
+      for {
+        premisesRunningCosts <- Gen.option(genExpense)
+        repairsAndMaintenance <- Gen.option(genExpense)
+        financialCosts <- Gen.option(genExpense)
+        professionalFees <- Gen.option(genExpense)
+        consolidatedExpenses <- Gen.option(genExpense)
+        other <- Gen.option(genExpense)
+      } yield
+        FHL.Expenses(
+          premisesRunningCosts = premisesRunningCosts,
+          repairsAndMaintenance = repairsAndMaintenance,
+          financialCosts = financialCosts,
+          professionalFees = professionalFees,
+          consolidatedExpenses = consolidatedExpenses,
+          other = other
+        )
+
+    val genConsolidatedExpenses: Gen[FHL.Expenses] =
+      for {
+        consolidatedExpenses <- Gen.option(genExpense)
+      } yield FHL.Expenses(consolidatedExpenses = consolidatedExpenses)
+
+    val genFinancialsExpenses: Gen[FHL.Financials] =
       (for {
         incomes <- Gen.option(genIncomes)
         expenses <- Gen.option(genExpenses)
-        consolidatedExpense <- Gen.option(amount)
-      } yield FHL.Financials(incomes, expenses, consolidatedExpense)) retryUntil { f =>
-        (f.incomes.exists(_.hasIncomes) || f.expenses.exists(_.hasExpenses) || f.consolidatedExpenses.isDefined) &&
-          !(f.expenses.isDefined &&  f.consolidatedExpenses.isDefined)
+      } yield FHL.Financials(incomes, expenses)) retryUntil { f =>
+        f.incomes.exists(_.hasIncomes) || f.expenses.exists(_.hasExpenses)
       }
 
+    val genFinancialsConsolidatedExpenses: Gen[FHL.Financials] =
+      (for {
+        incomes <- Gen.option(genIncomes)
+        expenses <- Gen.option(genConsolidatedExpenses)
+      } yield FHL.Financials(incomes, expenses)) retryUntil { f =>
+        f.incomes.exists(_.hasIncomes) || f.expenses.exists(_.consolidatedExpenses.isDefined)
+      }
 
     val genBothExpensesFinancials: Gen[FHL.Financials] =
       (for {
         incomes <- Gen.option(genIncomes)
-        expenses <- Gen.option(genExpenses)
-        consolidatedExpense <- Gen.option(amount)
-      } yield FHL.Financials(incomes, expenses, consolidatedExpense)) retryUntil { f =>
-        f.expenses.isDefined && f.consolidatedExpenses.isDefined
+        expenses <- Gen.option(genExpensesBoth)
+      } yield FHL.Financials(incomes, expenses)) retryUntil { f =>
+        f.expenses.exists(_.hasExpenses) && f.expenses.exists(_.consolidatedExpenses.isDefined)
       }
 
-    def genPropertiesPeriod(invalidPeriod: Boolean = false, nullFinancials: Boolean = false, bothExpenses: Boolean = false): Gen[FHL.Properties] =
+    def genPropertiesPeriod(invalidPeriod: Boolean = false,
+                            nullFinancials: Boolean = false,
+                            consolidatedExpenses: Boolean = false,
+                            bothExpenses: Boolean = false): Gen[FHL.Properties] =
       for {
-        emptyFinancials <- Gen.option(FHL.Financials(None, None, None))
-        financials <- genFinancials
+        emptyFinancials <- Gen.option(FHL.Financials(None, None))
+        financials <- genFinancialsExpenses
+        consolidatedFinancials <- genFinancialsConsolidatedExpenses
         bothExpensesFinancials <- genBothExpensesFinancials
       } yield {
         val from = LocalDate.now()
         val to = from.plusDays(1)
-        FHL.Properties(None,
-                       if (invalidPeriod) to else from,
-                       if (invalidPeriod) from else to,
-                       if (nullFinancials) emptyFinancials
-                       else if (bothExpenses) Some(bothExpensesFinancials)
-                       else Some(financials))
+        FHL.Properties(
+          None,
+          if (invalidPeriod) to else from,
+          if (invalidPeriod) from else to,
+          if (nullFinancials) emptyFinancials
+          else if (bothExpenses) Some(bothExpensesFinancials)
+          else if (consolidatedExpenses) Some(consolidatedFinancials)
+          else Some(financials)
+        )
       }
   }
 
@@ -172,47 +213,82 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         other <- Gen.option(genExpense)
       } yield
         Other
+          .Expenses(premisesRunningCosts = premisesRunningCosts,
+            repairsAndMaintenance = repairsAndMaintenance,
+            financialCosts = financialCosts,
+            professionalFees = professionalFees,
+            costOfServices = costOfServices,
+            other = other)
+
+    val genExpensesBoth: Gen[Other.Expenses] =
+      for {
+        premisesRunningCosts <- Gen.option(genExpense)
+        repairsAndMaintenance <- Gen.option(genExpense)
+        financialCosts <- Gen.option(genExpense)
+        professionalFees <- Gen.option(genExpense)
+        costOfServices <- Gen.option(genExpense)
+        consolidatedExpenses <- Gen.option(genExpense)
+        other <- Gen.option(genExpense)
+      } yield
+        Other
           .Expenses(premisesRunningCosts,
                     repairsAndMaintenance,
                     financialCosts,
                     professionalFees,
                     costOfServices,
+                    consolidatedExpenses,
                     other)
 
-    val genFinancials: Gen[Other.Financials] =
+    val genConsolidatedExpenses: Gen[Other.Expenses] =
+      for {
+        consolidatedExpenses <- Gen.option(genExpense)
+      } yield Other.Expenses(consolidatedExpenses = consolidatedExpenses)
+
+    val genFinancialsExpenses: Gen[Other.Financials] =
       (for {
         incomes <- Gen.option(genIncomes)
         expenses <- Gen.option(genExpenses)
-        consolidatedExpense <- Gen.option(amount)
-      } yield Other.Financials(incomes, expenses, consolidatedExpense)) retryUntil { f =>
-        (f.incomes.exists(_.hasIncomes) || f.expenses.exists(_.hasExpenses) || f.consolidatedExpenses.isDefined) &&
-          !(f.expenses.isDefined &&  f.consolidatedExpenses.isDefined)
+      } yield Other.Financials(incomes, expenses)) retryUntil { f =>
+        f.incomes.exists(_.hasIncomes) || f.expenses.exists(_.hasExpenses)
       }
 
+    val genFinancialsConsolidatedExpenses: Gen[Other.Financials] =
+      (for {
+        incomes <- Gen.option(genIncomes)
+        expenses <- Gen.option(genConsolidatedExpenses)
+      } yield Other.Financials(incomes, expenses)) retryUntil { f =>
+        f.incomes.exists(_.hasIncomes) || f.expenses.exists(_.consolidatedExpenses.isDefined)
+      }
 
     val genBothExpensesFinancials: Gen[Other.Financials] =
       (for {
         incomes <- Gen.option(genIncomes)
-        expenses <- Gen.option(genExpenses)
-        consolidatedExpense <- Gen.option(amount)
-      } yield Other.Financials(incomes, expenses, consolidatedExpense)) retryUntil { f =>
-          f.expenses.isDefined && f.consolidatedExpenses.isDefined
+        expenses <- Gen.option(genExpensesBoth)
+      } yield Other.Financials(incomes, expenses)) retryUntil { f =>
+        f.expenses.exists(_.hasExpenses) && f.expenses.exists(_.consolidatedExpenses.isDefined)
       }
 
-    def genPropertiesPeriod(invalidPeriod: Boolean = false, nullFinancials: Boolean = false, bothExpenses: Boolean = false): Gen[Other.Properties] =
+    def genPropertiesPeriod(invalidPeriod: Boolean = false,
+                            nullFinancials: Boolean = false,
+                            consolidatedExpenses: Boolean = false,
+                            bothExpenses: Boolean = false): Gen[Other.Properties] =
       for {
-        emptyFinancials <- Gen.option(Other.Financials(None, None, None))
-        financials <- genFinancials
+        emptyFinancials <- Gen.option(Other.Financials(None, None))
+        financials <- genFinancialsExpenses
+        consolidatedFinancials <- genFinancialsConsolidatedExpenses
         bothExpensesFinancials <- genBothExpensesFinancials
       } yield {
         val from = LocalDate.now()
         val to = from.plusDays(1)
-        Other.Properties(None,
-                         if (invalidPeriod) to else from,
-                         if (invalidPeriod) from else to,
-                         if (nullFinancials) emptyFinancials
-                         else if (bothExpenses) Some(bothExpensesFinancials)
-                         else Some(financials))
+        Other.Properties(
+          None,
+          if (invalidPeriod) to else from,
+          if (invalidPeriod) from else to,
+          if (nullFinancials) emptyFinancials
+          else if (bothExpenses) Some(bothExpensesFinancials)
+          else if (consolidatedExpenses) Some(consolidatedFinancials)
+          else Some(financials)
+        )
       }
   }
 }

@@ -185,7 +185,7 @@ object Jsons {
         consolidatedExpenses
           .map { ce =>
             s"""
-               | , "consolidatedExpenses": "$ce"
+               | "consolidatedExpenses": { "amount": $ce },
          """.stripMargin
           }
           .getOrElse("")
@@ -202,9 +202,9 @@ object Jsons {
            |    "repairsAndMaintenance": { "amount": $repairsAndMaintenance },
            |    "financialCosts": { "amount": $financialCosts },
            |    "professionalFees": { "amount": $professionalFees },
+                $ce
            |    "other": { "amount": $otherCost }
            |  }
-           |  $ce
            |}
        """.stripMargin)
     }
@@ -245,7 +245,7 @@ object Jsons {
         consolidatedExpenses
           .map { ce =>
             s"""
-               | , "consolidatedExpenses": "$ce"
+           | "consolidatedExpenses": { "amount": $ce },
          """.stripMargin
           }
           .getOrElse("")
@@ -268,9 +268,9 @@ object Jsons {
            |    "financialCosts": { "amount": $financialCosts },
            |    "professionalFees": { "amount": $professionalFees },
            |    "costOfServices": { "amount": $costOfServices },
+                $ce
            |    "other": { "amount": $otherCost }
            |  }
-           |  $ce
            |}
        """.stripMargin)
     }
