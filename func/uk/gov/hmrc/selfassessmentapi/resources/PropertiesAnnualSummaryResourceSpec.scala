@@ -258,6 +258,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       businessPremisesRenovationAllowance = 500.50,
       otherCapitalAllowance = 1000.20,
       zeroEmissionsGoodsVehicleAllowance = 50.50,
+      rentARoomExempt = 75.50,
       costOfReplacingDomesticItems = 150.55,
       lossBroughtForward = 20.22,
       privateUseAdjustment = -22.23,

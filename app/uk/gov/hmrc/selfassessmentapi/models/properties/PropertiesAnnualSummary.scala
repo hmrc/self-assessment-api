@@ -41,7 +41,8 @@ object OtherPropertiesAnnualSummary {
       allow.businessPremisesRenovationAllowance,
       allow.otherCapitalAllowance,
       allow.costOfReplacingDomGoods,
-      allow.zeroEmissionGoodsVehicleAllowance)
+      allow.zeroEmissionGoodsVehicleAllowance,
+      allow.rentARoomExempt)
     val adjustments = for {
       adj <- summary.annualAdjustments
     } yield OtherPropertiesAdjustments(

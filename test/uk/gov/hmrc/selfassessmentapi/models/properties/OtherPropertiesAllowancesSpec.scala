@@ -22,7 +22,7 @@ import uk.gov.hmrc.selfassessmentapi.models.ErrorCode
 class OtherPropertiesAllowancesSpec extends JsonSpec {
   "json" should {
     "round trip" in {
-      roundTripJson(OtherPropertiesAllowances(Some(50), Some(12.23), Some(123.45), Some(20), Some(50.52)))
+      roundTripJson(OtherPropertiesAllowances(Some(50), Some(12.23), Some(123.45), Some(20), Some(50.52), Some(75.25)))
     }
 
     "round trip with empty object" in {
@@ -104,6 +104,21 @@ class OtherPropertiesAllowancesSpec extends JsonSpec {
     "reject zeroEmissionsGoodsVehicleAllowance with more than two decimal places" in {
       assertValidationErrorWithCode(OtherPropertiesAllowances(zeroEmissionsGoodsVehicleAllowance = Some(-50)),
         "/zeroEmissionsGoodsVehicleAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject rentARoomExempt with a negative value" in {
+      assertValidationErrorWithCode(OtherPropertiesAllowances(rentARoomExempt = Some(-50)),
+        "/rentARoomExempt", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject rentARoomExempt more than 99999999999999.98" in {
+      assertValidationErrorWithCode(OtherPropertiesAllowances(rentARoomExempt = Some(BigDecimal("99999999999999.99"))),
+        "/rentARoomExempt", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject rentARoomExempt with more than two decimal places" in {
+      assertValidationErrorWithCode(OtherPropertiesAllowances(rentARoomExempt = Some(BigDecimal(50.256))),
+        "/rentARoomExempt", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
   }
 }
