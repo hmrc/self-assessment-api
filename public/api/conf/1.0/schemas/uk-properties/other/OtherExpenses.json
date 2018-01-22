@@ -33,6 +33,11 @@
       "title": "Other",
       "description": "Other allowable property expenses",
       "$ref": "../../SimpleExpense.json"
+    },
+    "consolidatedExpenses": {
+      "title": "Consolidated expenses",
+      "description": "Sum of all expenses for the specified period",
+      "$ref": "../../SimpleExpense.json"
     }
   },
   "additionalProperties": false

@@ -431,7 +431,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .bodyIsLike(expectedJson.toString)
       }
 
-      s"return code 400 when updating an $propertyType period with where the paylod contains both the 'expenses' and 'consolidatedExpenses'" in {
+      s"return code 400 when updating an $propertyType period where the paylod contains both the 'expenses' and 'consolidatedExpenses'" in {
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource
@@ -452,7 +452,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .thenAssertThat()
           .statusIs(201)
           .when()
-          .put(bothExpenses(propertyType))
+          .put(bothExpensesUpdate(propertyType))
           .at("%periodLocation%")
           .thenAssertThat()
           .statusIs(400)
@@ -483,6 +483,8 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
   def misalignedPeriod(propertyType: PropertyType) = period(propertyType, from = Some("2017-08-04"), to = Some("2017-09-04"))
 
   def bothExpenses(propertyType: PropertyType) = period(propertyType, consolidatedExpenses = Some(100.50))
+
+  def bothExpensesUpdate(propertyType: PropertyType) = period(propertyType, from = None, to = None, consolidatedExpenses = Some(100.50))
 
   def period(propertyType: PropertyType, from: Option[String] = Some("2017-04-06"), to: Option[String] = Some("2018-04-05"), consolidatedExpenses : Option[Amount] = None): JsValue = propertyType match {
     case PropertyType.FHL =>
