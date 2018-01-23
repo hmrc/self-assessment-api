@@ -133,7 +133,6 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .bodyIsLike(Jsons.Errors.misalignedPeriod)
       }
 
-
       s"return code 400 when attempting to create a period where the paylod contains both the 'expenses' and 'consolidatedExpenses' for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
@@ -167,6 +166,18 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .to(s"/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(404)
+      }
+
+      s"return code 400 when attempting to create a period for a property with an invalid 'costOfServices' field for $propertyType" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+//          .when()
+          .when()
+          .post(period(propertyType, costOfServices = "true"))
+          .to(s"%sourceLocation%/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(400)
       }
 
       s"""return code 404 when attempting to create a period for a property that does not exist for $propertyType
@@ -486,7 +497,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
 
   def bothExpensesUpdate(propertyType: PropertyType) = period(propertyType, from = None, to = None, consolidatedExpenses = Some(100.50))
 
-  def period(propertyType: PropertyType, from: Option[String] = Some("2017-04-06"), to: Option[String] = Some("2018-04-05"), consolidatedExpenses : Option[Amount] = None): JsValue = propertyType match {
+  def period(propertyType: PropertyType, from: Option[String] = Some("2017-04-06"), to: Option[String] = Some("2018-04-05"), consolidatedExpenses : Option[Amount] = None, costOfServices: String = "500.25"): JsValue = propertyType match {
     case PropertyType.FHL =>
       Jsons.Properties.fhlPeriod(fromDate = from,
                                  toDate = to,
@@ -495,6 +506,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
                                  repairsAndMaintenance = 11.25,
                                  financialCosts = 100,
                                  professionalFees = 1232.55,
+                                 costOfServices = costOfServices,
                                  otherCost = 50.22,
                                  consolidatedExpenses = consolidatedExpenses)
     case PropertyType.OTHER =>
@@ -508,10 +520,11 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
                                    repairsAndMaintenance = 11.25,
                                    financialCosts = 100,
                                    professionalFees = 1232.55,
-                                   costOfServices = 500.25,
+                                   costOfServices = costOfServices,
                                    otherCost = 50.22,
                                    consolidatedExpenses = consolidatedExpenses)
   }
+
 
   def invalidPeriod(propertyType: PropertyType): JsValue = propertyType match {
     case PropertyType.FHL =>
@@ -563,7 +576,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
                      repairsAndMaintenance = 200.00,
                      financialCosts = 200.00,
                      professionalFees = 200.00,
-                     costOfServices = 200.00,
+                     costOfServices = "200.00",
                      otherCost = 200.00)
         .toString()
   }

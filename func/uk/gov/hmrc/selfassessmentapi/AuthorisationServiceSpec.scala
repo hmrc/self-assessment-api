@@ -180,7 +180,7 @@ class AuthorisationServiceSpec extends BaseFunctionalSpec {
         repairsAndMaintenance = 11.25,
         financialCosts = 100,
         professionalFees = 1232.55,
-        costOfServices = 500.25,
+        costOfServices = "500.25",
         otherCost = 50.22
       )
 

@@ -159,6 +159,7 @@ object Jsons {
                   repairsAndMaintenance: BigDecimal = 0,
                   financialCosts: BigDecimal = 0,
                   professionalFees: BigDecimal = 0,
+                  costOfServices: String = "0",
                   otherCost: BigDecimal = 0,
                   consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
 
@@ -201,6 +202,7 @@ object Jsons {
            |    "premisesRunningCosts": { "amount": $premisesRunningCosts },
            |    "repairsAndMaintenance": { "amount": $repairsAndMaintenance },
            |    "financialCosts": { "amount": $financialCosts },
+           |    "costOfServices": { "amount": $costOfServices},
            |    "professionalFees": { "amount": $professionalFees },
                 $ce
            |    "other": { "amount": $otherCost }
@@ -219,7 +221,7 @@ object Jsons {
                     repairsAndMaintenance: BigDecimal = 0,
                     financialCosts: BigDecimal = 0,
                     professionalFees: BigDecimal = 0,
-                    costOfServices: BigDecimal = 0,
+                    costOfServices: String = "0",
                     otherCost: BigDecimal = 0,
                     consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
 

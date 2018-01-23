@@ -109,6 +109,7 @@ object FHL {
                       repairsAndMaintenance: Option[Expense] = None,
                       financialCosts: Option[Expense] = None,
                       professionalFees: Option[Expense] = None,
+                      costOfServices: Option[Expense] = None,
                       consolidatedExpenses: Option[Expense] = None,
                       other: Option[Expense] = None) {
     def hasExpenses: Boolean =
@@ -116,6 +117,7 @@ object FHL {
         repairsAndMaintenance.isDefined ||
         financialCosts.isDefined ||
         professionalFees.isDefined ||
+        costOfServices.isDefined ||
         other.isDefined
   }
 
@@ -127,6 +129,7 @@ object FHL {
         repairsAndMaintenance = o.repairsAndMaintenance.map(Expense(_)),
         financialCosts = o.financialCosts.map(Expense(_)),
         professionalFees = o.professionalFees.map(Expense(_)),
+        costOfServices = o.costOfServices.map(Expense(_)),
         consolidatedExpenses = o.simplifiedExpenses.map(Expense(_)),
         other = o.other.map(Expense(_)))
   }
