@@ -446,6 +446,7 @@ object DesJsons {
               financialCosts: BigDecimal = 0,
               professionalFees: BigDecimal = 0,
               costOfServices: BigDecimal = 0,
+              simplifiedExpenses: BigDecimal = 0,
               other: BigDecimal = 0): JsValue =
         Json.toJson(
           FHL.Properties(
@@ -462,6 +463,7 @@ object DesJsons {
                     financialCosts = Some(financialCosts),
                     professionalFees = Some(professionalFees),
                     costOfServices = Some(costOfServices),
+                    simplifiedExpenses = Some(simplifiedExpenses),
                     other = Some(other)
                   ))
                 ))
@@ -479,6 +481,8 @@ object DesJsons {
                 financialCosts: Option[BigDecimal] = Some(0),
                 professionalFees: Option[BigDecimal] = Some(0),
                 costOfServices: Option[BigDecimal] = Some(0),
+                residentialFinancialCost: Option[BigDecimal] = Some(0),
+                simplifiedExpenses: Option[BigDecimal] = Some(0),
                 other: Option[BigDecimal] = Some(0)): JsValue =
         Json.toJson(
           Other
@@ -496,6 +500,8 @@ object DesJsons {
                   financialCosts = financialCosts,
                   professionalFees = professionalFees,
                   costOfServices = costOfServices,
+                  residentialFinancialCost = residentialFinancialCost,
+                  simplifiedExpenses = simplifiedExpenses,
                   other = other
                 ))
               ))

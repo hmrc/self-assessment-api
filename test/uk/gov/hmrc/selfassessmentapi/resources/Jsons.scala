@@ -19,6 +19,8 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.selfassessmentapi.models.CessationReason
 import uk.gov.hmrc.selfassessmentapi.models.CessationReason._
+import uk.gov.hmrc.selfassessmentapi.models.properties.Other
+import uk.gov.hmrc.selfassessmentapi.models.properties.FHL
 
 object Jsons {
 
@@ -155,12 +157,12 @@ object Jsons {
     def fhlPeriod(fromDate: Option[String] = None,
                   toDate: Option[String] = None,
                   rentIncome: BigDecimal = 0,
-                  premisesRunningCosts: BigDecimal = 0,
-                  repairsAndMaintenance: BigDecimal = 0,
-                  financialCosts: BigDecimal = 0,
-                  professionalFees: BigDecimal = 0,
-                  costOfServices: BigDecimal = 0,
-                  otherCost: BigDecimal = 0,
+                  premisesRunningCosts: Option[BigDecimal] = None,
+                  repairsAndMaintenance: Option[BigDecimal] = None,
+                  financialCosts: Option[BigDecimal] = None,
+                  professionalFees: Option[BigDecimal] = None,
+                  costOfServices: Option[BigDecimal] = None,
+                  otherCost: Option[BigDecimal] = None,
                   consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
 
       val from =
@@ -181,12 +183,29 @@ object Jsons {
           }
           .getOrElse("")
 
-
       val ce =
         consolidatedExpenses
           .map { ce =>
             s"""
                | "consolidatedExpenses": { "amount": $ce },
+         """.stripMargin
+          }
+          .getOrElse("")
+
+      val fc =
+        financialCosts
+          .map { fc =>
+            s"""
+               | "financialCosts": { "amount": $fc }
+         """.stripMargin
+          }
+          .getOrElse("")
+
+      val cs =
+        costOfServices
+          .map { cs =>
+            s"""
+               | "costOfServices": { "amount": $cs }
          """.stripMargin
           }
           .getOrElse("")
@@ -198,17 +217,37 @@ object Jsons {
            |  "incomes": {
            |    "rentIncome": { "amount": $rentIncome }
            |  },
-           |  "expenses": {
-           |    "premisesRunningCosts": { "amount": $premisesRunningCosts },
-           |    "repairsAndMaintenance": { "amount": $repairsAndMaintenance },
-           |    "financialCosts": { "amount": $financialCosts },
-           |    "costOfServices": { "amount": $costOfServices},
-           |    "professionalFees": { "amount": $professionalFees },
-                $ce
-           |    "other": { "amount": $otherCost }
-           |  }
+           |  "expenses":
+           |    ${fhlExpensesJson(premisesRunningCosts,
+                                  repairsAndMaintenance,
+                                  financialCosts,
+                                  professionalFees,
+                                  costOfServices,
+                                  otherCost,
+                                  consolidatedExpenses)}
            |}
        """.stripMargin)
+    }
+
+    def fhlExpensesJson(premisesRunningCosts: Option[BigDecimal] = None,
+                        repairsAndMaintenance: Option[BigDecimal] = None,
+                        financialCosts: Option[BigDecimal] = None,
+                        professionalFees: Option[BigDecimal] = None,
+                        costOfServices: Option[BigDecimal] = None,
+                        otherCost: Option[BigDecimal] = None,
+                        consolidatedExpenses: Option[BigDecimal] = None): String = {
+      Json
+        .toJson(
+          FHL.Expenses(
+            premisesRunningCosts.map(FHL.Expense(_)),
+            repairsAndMaintenance.map(FHL.Expense(_)),
+            financialCosts.map(FHL.Expense(_)),
+            professionalFees.map(FHL.Expense(_)),
+            costOfServices.map(FHL.Expense(_)),
+            consolidatedExpenses.map(FHL.Expense(_)),
+            otherCost.map(FHL.Expense(_))
+          ))
+        .toString
     }
 
     def otherPeriod(fromDate: Option[String] = None,
@@ -217,12 +256,13 @@ object Jsons {
                     rentIncomeTaxDeducted: BigDecimal = 0,
                     premiumsOfLeaseGrant: Option[BigDecimal] = None,
                     reversePremiums: BigDecimal = 0,
-                    premisesRunningCosts: BigDecimal = 0,
-                    repairsAndMaintenance: BigDecimal = 0,
-                    financialCosts: BigDecimal = 0,
-                    professionalFees: BigDecimal = 0,
-                    costOfServices: BigDecimal = 0,
-                    otherCost: BigDecimal = 0,
+                    premisesRunningCosts: Option[BigDecimal] = None,
+                    repairsAndMaintenance: Option[BigDecimal] = None,
+                    financialCosts: Option[BigDecimal] = None,
+                    professionalFees: Option[BigDecimal] = None,
+                    costOfServices: Option[BigDecimal] = None,
+                    otherCost: Option[BigDecimal] = None,
+                    residentialFinancialCost: Option[BigDecimal] = None,
                     consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
 
       val from =
@@ -252,6 +292,23 @@ object Jsons {
           }
           .getOrElse("")
 
+      val rfc =
+        residentialFinancialCost
+          .map { rfc =>
+            s"""
+               | "residentialFinancialCost": { "amount": $rfc },
+         """.stripMargin
+          }
+          .getOrElse("")
+
+      val fc =
+        financialCosts
+          .map { fc =>
+            s"""
+               | "financialCosts": { "amount": $fc }
+         """.stripMargin
+          }
+          .getOrElse("")
 
       Json.parse(s"""
            |{
@@ -264,16 +321,159 @@ object Jsons {
                       .getOrElse("")}
            |    "reversePremiums": { "amount": $reversePremiums }
            |  },
-           |  "expenses": {
-           |    "premisesRunningCosts": { "amount": $premisesRunningCosts },
-           |    "repairsAndMaintenance": { "amount": $repairsAndMaintenance },
-           |    "financialCosts": { "amount": $financialCosts },
-           |    "professionalFees": { "amount": $professionalFees },
-           |    "costOfServices": { "amount": $costOfServices },
-                $ce
-           |    "other": { "amount": $otherCost }
-           |  }
+           |  "expenses":
+           |    ${otherExpensesJson(premisesRunningCosts,
+                                    repairsAndMaintenance,
+                                    financialCosts,
+                                    professionalFees,
+                                    costOfServices,
+                                    otherCost,
+                                    residentialFinancialCost,
+                                    consolidatedExpenses)}
            |}
+       """.stripMargin)
+    }
+
+    def otherExpensesJson(premisesRunningCosts: Option[BigDecimal] = None,
+                          repairsAndMaintenance: Option[BigDecimal] = None,
+                          financialCosts: Option[BigDecimal] = None,
+                          professionalFees: Option[BigDecimal] = None,
+                          costOfServices: Option[BigDecimal] = None,
+                          otherCost: Option[BigDecimal] = None,
+                          residentialFinancialCost: Option[BigDecimal] = None,
+                          consolidatedExpenses: Option[BigDecimal] = None): String = {
+      Json
+        .toJson(
+          Other.Expenses(
+            premisesRunningCosts.map(Other.Expense(_)),
+            repairsAndMaintenance.map(Other.Expense(_)),
+            financialCosts.map(Other.Expense(_)),
+            professionalFees.map(Other.Expense(_)),
+            costOfServices.map(Other.Expense(_)),
+            consolidatedExpenses.map(Other.Expense(_)),
+            residentialFinancialCost.map(Other.Expense(_)),
+            otherCost.map(Other.Expense(_))
+          ))
+        .toString
+    }
+
+    def consolidationPeriod(fromDate: Option[String] = None,
+                            toDate: Option[String] = None,
+                            rentIncome: BigDecimal = 0,
+                            rentIncomeTaxDeducted: BigDecimal = 0,
+                            premiumsOfLeaseGrant: Option[BigDecimal] = None,
+                            reversePremiums: BigDecimal = 0,
+                            premisesRunningCosts: Option[BigDecimal] = None,
+                            repairsAndMaintenance: Option[BigDecimal] = None,
+                            financialCosts: Option[BigDecimal] = None,
+                            professionalFees: Option[BigDecimal] = None,
+                            costOfServices: Option[BigDecimal] = None,
+                            otherCost: Option[BigDecimal] = None,
+                            residentialFinancialCost: Option[BigDecimal] = None,
+                            consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
+
+      val from =
+        fromDate
+          .map { date =>
+            s"""
+               | "from": "$date",
+         """.stripMargin
+          }
+          .getOrElse("")
+
+      val to =
+        toDate
+          .map { date =>
+            s"""
+               | "to": "$date",
+         """.stripMargin
+          }
+          .getOrElse("")
+
+      val ce =
+        consolidatedExpenses
+          .map { ce =>
+            s"""
+               | "consolidatedExpenses": { "amount": $ce }
+         """.stripMargin
+          }
+          .getOrElse("")
+
+      Json.parse(s"""
+                    |{
+                    |  $from
+                    |  $to
+                    |  "incomes": {
+                    |    "rentIncome": { "amount": $rentIncome, "taxDeducted": $rentIncomeTaxDeducted },
+                    |    ${premiumsOfLeaseGrant
+                      .map(income => s""" "premiumsOfLeaseGrant": { "amount": $income },""")
+                      .getOrElse("")}
+                    |    "reversePremiums": { "amount": $reversePremiums }
+                    |  },
+                    |  "expenses": {
+                    |    $ce
+                    |  }
+                    |}
+       """.stripMargin)
+    }
+
+    def residentialPeriod(fromDate: Option[String] = None,
+                          toDate: Option[String] = None,
+                          rentIncome: BigDecimal = 0,
+                          rentIncomeTaxDeducted: BigDecimal = 0,
+                          premiumsOfLeaseGrant: Option[BigDecimal] = None,
+                          reversePremiums: BigDecimal = 0,
+                          premisesRunningCosts: Option[BigDecimal] = None,
+                          repairsAndMaintenance: Option[BigDecimal] = None,
+                          financialCosts: Option[BigDecimal] = None,
+                          professionalFees: Option[BigDecimal] = None,
+                          costOfServices: Option[BigDecimal] = None,
+                          otherCost: Option[BigDecimal] = None,
+                          residentialFinancialCost: Option[BigDecimal] = None,
+                          consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
+
+      val from =
+        fromDate
+          .map { date =>
+            s"""
+               | "from": "$date",
+         """.stripMargin
+          }
+          .getOrElse("")
+
+      val to =
+        toDate
+          .map { date =>
+            s"""
+               | "to": "$date",
+         """.stripMargin
+          }
+          .getOrElse("")
+
+      val rfc =
+        residentialFinancialCost
+          .map { rfc =>
+            s"""
+               | "residentialFinancialCost": { "amount": $rfc }
+         """.stripMargin
+          }
+          .getOrElse("")
+
+      Json.parse(s"""
+                    |{
+                    |  $from
+                    |  $to
+                    |  "incomes": {
+                    |    "rentIncome": { "amount": $rentIncome, "taxDeducted": $rentIncomeTaxDeducted },
+                    |    ${premiumsOfLeaseGrant
+                      .map(income => s""" "premiumsOfLeaseGrant": { "amount": $income },""")
+                      .getOrElse("")}
+                    |    "reversePremiums": { "amount": $reversePremiums }
+                    |  },
+                    |  "expenses": {
+                    |    $rfc
+                    |  }
+                    |}
        """.stripMargin)
     }
 
@@ -523,7 +723,7 @@ object Jsons {
                                      otherIncome: BigDecimal = 0,
                                      consolidatedExpenses: Option[BigDecimal]) = {
 
-      val (from,to) = fromToDates(fromDate, toDate)
+      val (from, to) = fromToDates(fromDate, toDate)
 
       Json.parse(s"""
                     |{
@@ -540,23 +740,21 @@ object Jsons {
                   """.stripMargin)
     }
 
-    private def fromToDates(fromDate: Option[String] = None,
-                            toDate: Option[String] = None) = {
+    private def fromToDates(fromDate: Option[String] = None, toDate: Option[String] = None) = {
       (fromDate
-          .map { date =>
-            s"""
+         .map { date =>
+           s"""
                | "from": "$date",
          """.stripMargin
-          }
-          .getOrElse(""),
-        toDate
-          .map { date =>
-            s"""
+         }
+         .getOrElse(""),
+       toDate
+         .map { date =>
+           s"""
                | "to": "$date",
          """.stripMargin
-          }
-          .getOrElse("")
-      )
+         }
+         .getOrElse(""))
     }
 
     def period(fromDate: Option[String] = None,
@@ -579,7 +777,7 @@ object Jsons {
                otherExpenses: (BigDecimal, BigDecimal) = (0, 0),
                consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
 
-      val (from,to) = fromToDates(fromDate, toDate)
+      val (from, to) = fromToDates(fromDate, toDate)
 
       Json.parse(s"""
            |{
@@ -625,13 +823,13 @@ object Jsons {
   }
 
   object Crystallisation {
-    def  intentToCrystallise(): JsValue = {
+    def intentToCrystallise(): JsValue = {
       Json.parse(s"""
                     |{ }
          """.stripMargin)
     }
 
-    def  crystallisation(): JsValue = {
+    def crystallisation(): JsValue = {
       Json.parse(s"""
                     |{
                     |  "calculationId": "77427777"
@@ -931,7 +1129,6 @@ object Jsons {
          """.stripMargin)
     }
 
-
     def eops(firstMet: Boolean = false,
              secondMet: Boolean = false,
              thirdMet: Boolean = false,
@@ -968,9 +1165,7 @@ object Jsons {
            |    }
            |  ]
            |}
-         """.
-        stripMargin
-      )
+         """.stripMargin)
     }
   }
 }

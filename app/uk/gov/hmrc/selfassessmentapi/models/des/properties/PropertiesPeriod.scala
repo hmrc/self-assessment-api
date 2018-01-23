@@ -113,7 +113,8 @@ object Other {
                         professionalFees: Option[BigDecimal] = None,
                         costOfServices: Option[BigDecimal] = None,
                         other: Option[BigDecimal] = None,
-                        simplifiedExpenses: Option[BigDecimal] = None)
+                        simplifiedExpenses: Option[BigDecimal] = None,
+                        residentialFinancialCost: Option[BigDecimal] = None)
 
   object Deductions {
     implicit val format: OFormat[Deductions] = Json.format[Deductions]
@@ -125,6 +126,7 @@ object Other {
                  professionalFees = o.professionalFees.map(_.amount),
                  costOfServices = o.costOfServices.map(_.amount),
                  simplifiedExpenses = o.consolidatedExpenses.map(_.amount),
+                 residentialFinancialCost = o.residentialFinancialCost.map(_.amount),
                  other = o.other.map(_.amount))
   }
 

@@ -38,6 +38,11 @@
       "title": "Consolidated expenses",
       "description": "Sum of all expenses for the specified period",
       "$ref": "../../SimpleExpense.json"
+    },
+    "residentialFinancialCost": {
+      "title": "Residential Financial cost",
+      "description": "Captures residential financial cost that can be deductible from rental income (tax relief)",
+      "$ref": "../../SimpleExpense.json"
     }
   },
   "additionalProperties": false
