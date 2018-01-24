@@ -9,6 +9,7 @@
     "businessPremisesRenovationAllowance": 100.25,
     "otherCapitalAllowance": 100.25,
     "costOfReplacingDomesticItems": 100.25,
-    "zeroEmissionsGoodsVehicleAllowance": 100.25
+    "zeroEmissionsGoodsVehicleAllowance": 100.25,
+    "rentARoomExempt": 100.25
   }
 }

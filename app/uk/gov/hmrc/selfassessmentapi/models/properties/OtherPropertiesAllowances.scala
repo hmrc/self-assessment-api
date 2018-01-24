@@ -25,7 +25,8 @@ case class OtherPropertiesAllowances(annualInvestmentAllowance: Option[Amount] =
                                      businessPremisesRenovationAllowance: Option[Amount] = None,
                                      otherCapitalAllowance: Option[Amount] = None,
                                      costOfReplacingDomesticItems: Option[Amount] = None,
-                                     zeroEmissionsGoodsVehicleAllowance: Option[Amount] = None)
+                                     zeroEmissionsGoodsVehicleAllowance: Option[Amount] = None,
+                                     rentARoomExempt: Option[Amount] = None)
 
 object OtherPropertiesAllowances {
   implicit val writes: Writes[OtherPropertiesAllowances] = Json.writes[OtherPropertiesAllowances]
@@ -35,6 +36,7 @@ object OtherPropertiesAllowances {
       (__ \ "businessPremisesRenovationAllowance").readNullable[Amount](nonNegativeAmountValidator) and
       (__ \ "otherCapitalAllowance").readNullable[Amount](nonNegativeAmountValidator) and
       (__ \ "costOfReplacingDomesticItems").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "zeroEmissionsGoodsVehicleAllowance").readNullable[Amount](nonNegativeAmountValidator)
+      (__ \ "zeroEmissionsGoodsVehicleAllowance").readNullable[Amount](nonNegativeAmountValidator)  and
+      (__ \ "rentARoomExempt").readNullable[Amount](nonNegativeAmountValidator)
   )(OtherPropertiesAllowances.apply _)
 }

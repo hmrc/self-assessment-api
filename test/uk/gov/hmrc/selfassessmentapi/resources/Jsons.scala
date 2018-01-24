@@ -335,6 +335,7 @@ object Jsons {
                            businessPremisesRenovationAllowance: BigDecimal = 0.0,
                            otherCapitalAllowance: BigDecimal = 0.0,
                            zeroEmissionsGoodsVehicleAllowance: BigDecimal = 0.0,
+                           rentARoomExempt: BigDecimal = 0.0,
                            costOfReplacingDomesticItems: BigDecimal = 0.0,
                            lossBroughtForward: BigDecimal = 0.0,
                            privateUseAdjustment: BigDecimal = 0.0,
@@ -346,7 +347,8 @@ object Jsons {
            |    "businessPremisesRenovationAllowance": $businessPremisesRenovationAllowance,
            |    "otherCapitalAllowance": $otherCapitalAllowance,
            |    "costOfReplacingDomesticItems": $costOfReplacingDomesticItems,
-           |    "zeroEmissionsGoodsVehicleAllowance": $zeroEmissionsGoodsVehicleAllowance
+           |    "zeroEmissionsGoodsVehicleAllowance": $zeroEmissionsGoodsVehicleAllowance,
+           |    "rentARoomExempt": $rentARoomExempt
            |  },
            |  "adjustments": {
            |   "lossBroughtForward": $lossBroughtForward,
