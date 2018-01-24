@@ -159,7 +159,7 @@ object Jsons {
                   repairsAndMaintenance: BigDecimal = 0,
                   financialCosts: BigDecimal = 0,
                   professionalFees: BigDecimal = 0,
-                  costOfServices: String = "0",
+                  costOfServices: BigDecimal = 0,
                   otherCost: BigDecimal = 0,
                   consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
 
@@ -221,7 +221,7 @@ object Jsons {
                     repairsAndMaintenance: BigDecimal = 0,
                     financialCosts: BigDecimal = 0,
                     professionalFees: BigDecimal = 0,
-                    costOfServices: String = "0",
+                    costOfServices: BigDecimal = 0,
                     otherCost: BigDecimal = 0,
                     consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
 

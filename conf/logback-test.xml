@@ -42,6 +42,9 @@
       <appender-ref ref="STDOUT"/>
     </appender>
 
+
+    <logger name="uk.gov.hmrc.audit.handler.DatastreamHandler" level="ERROR"/>
+
     <root level="ERROR">
         <appender-ref ref="ASYNC_FILE"/>
         <appender-ref ref="ASYNC_STDOUT"/>
