@@ -1364,6 +1364,10 @@ traits:
                           description: adjustments or allowances is not a non-negative amount or up to 2 decimal places
                           value:
                             code: INVALID_MONETARY_AMOUNT
+                        invalidPeriodOfGraceAdjustment:
+                          description: Invalid period of grace adjustment
+                          value:
+                            code: INVALID_BOOLEAN_VALUE
                 404:
             get:
               displayName: Get a FHL UK property business annual summary
@@ -1395,6 +1399,10 @@ traits:
                           description: Invalid taxYear
                           value:
                             code: TAX_YEAR_INVALID
+                        invalidPeriodOfGraceAdjustment:
+                          description: Invalid period of grace adjustment
+                          value:
+                            code: INVALID_BOOLEAN_VALUE
                 404:
     /dividends:
       (annotations.group):
