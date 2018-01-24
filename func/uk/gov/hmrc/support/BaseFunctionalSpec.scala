@@ -1632,6 +1632,7 @@ trait BaseFunctionalSpec extends TestApplication {
                   repairsAndMaintenance = 200.00,
                   financialCosts = 200.00,
                   professionalFees = 200.00,
+                  costOfServices = 200.00,
                   other = 200.00)
                 .toString()
             case PropertyType.OTHER =>

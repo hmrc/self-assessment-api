@@ -24,6 +24,11 @@
       "description": "Legal, management and other professional fees",
       "$ref": "../../SimpleExpense.json"
     },
+    "costOfServices": {
+      "title": "Cost of services",
+      "description": "Cost of services provided, including wages",
+      "$ref": "../../SimpleExpense.json"
+    },
     "other": {
       "title": "Other",
       "description": "Other allowable property expenses",
