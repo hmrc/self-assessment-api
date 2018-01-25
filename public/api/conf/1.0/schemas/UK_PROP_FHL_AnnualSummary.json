@@ -4,7 +4,7 @@
   "type": "object",
   "properties": {
     "adjustments": {
-      "$ref": "uk-properties/Adjustments.json"
+      "$ref": "uk-properties/fhl/Adjustments.json"
     },
     "allowances": {
       "$ref": "uk-properties/fhl/Allowances.json"
