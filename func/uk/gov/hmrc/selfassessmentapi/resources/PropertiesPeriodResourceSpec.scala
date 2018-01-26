@@ -37,6 +37,56 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
             s"/self-assessment/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05".r)
       }
 
+      s"return code 201 when creating an $propertyType period where the paylod contains only 'consolidatedExpenses'"  in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .willBeCreatedFor(nino)
+          .des()
+          .properties
+          .periodWillBeCreatedFor(nino, propertyType)
+          .when()
+          .post(Jsons.Properties())
+          .to(s"/ni/$nino/uk-properties")
+          .thenAssertThat()
+          .statusIs(201)
+          .when()
+          .post(period(propertyType, onlyConsolidated = true))
+          .to(s"%sourceLocation%/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(201)
+          .responseContainsHeader(
+            "Location",
+            s"/self-assessment/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05".r)
+      }
+
+      s"return code 201 when creating an $propertyType period where the paylod contains only 'residentialFinancialCost'"  in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .willBeCreatedFor(nino)
+          .des()
+          .properties
+          .periodWillBeCreatedFor(nino, propertyType)
+          .when()
+          .post(Jsons.Properties())
+          .to(s"/ni/$nino/uk-properties")
+          .thenAssertThat()
+          .statusIs(201)
+          .when()
+          .post(period(propertyType, onlyResidential = true))
+          .to(s"%sourceLocation%/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(201)
+          .responseContainsHeader(
+            "Location",
+            s"/self-assessment/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05".r)
+      }
+
       s"return code 400 when provided with an invalid period for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)

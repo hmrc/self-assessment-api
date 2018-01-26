@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Adjustments",
+  "description": "Adjustments",
+  "type": "object",
+  "properties": {
+    "lossBroughtForward": {
+      "title": "Loss brought forward",
+      "description": "Loss brought forward from earlier years",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "100.25"
+    },
+    "privateUseAdjustment": {
+      "title": "Private use adjustment",
+      "description": "Any expenses incurred not solely for the property business",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "100.25"
+    },
+    "balancingCharge": {
+      "title": "Balancing charge",
+      "description": "If an item for which capital allowance was claimed has been sold, given away or is no longer in use",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "100.25"
+    },
+    "periodOfGraceAdjustment": {
+      "title": "Period of grace adjustment",
+      "description": "Identifies a property which didn't qualify for FHL this year but qualified the year previous",
+      "type": "boolean",
+      "example": "true or false"
+    }
+  },
+  "additionalProperties": false
+}

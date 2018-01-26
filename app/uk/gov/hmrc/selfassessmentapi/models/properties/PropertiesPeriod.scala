@@ -50,7 +50,7 @@ object FHL {
     }
 
     private def bothExpensesValidator(period: Properties): Boolean = {
-      val expensesPassed = period.financials.exists(_.expenses.isDefined)
+      val expensesPassed = period.financials.exists(_.expenses.exists(_.hasExpenses))
       val consolidatedExpensesPassed = period.financials.exists(_.expenses.exists(_.consolidatedExpenses.isDefined))
       !expensesPassed && !consolidatedExpensesPassed || expensesPassed ^ consolidatedExpensesPassed
     }
@@ -151,7 +151,7 @@ object FHL {
         .exists(_.consolidatedExpenses.isDefined)
 
     private def bothExpensesValidator(financials: Financials): Boolean = {
-      val expensesPassed = financials.expenses.isDefined
+      val expensesPassed = financials.expenses.exists(_.hasExpenses)
       val consolidatedExpensesPassed = financials.expenses.exists(_.consolidatedExpenses.isDefined)
       !expensesPassed && !consolidatedExpensesPassed || expensesPassed ^ consolidatedExpensesPassed
     }
@@ -177,11 +177,8 @@ object FHL {
         (f.incomes, f.deductions) match {
           case (None, None) => None
           case (incomes, deductions) =>
-            Some(
-              Financials(incomes = incomes.map(Incomes.from),
-                         expenses = deductions
-                           .map(Expenses.from)
-                           .fold[Option[Expenses]](None)(ex => if (ex.hasExpenses) Some(ex) else None)))
+            Some(Financials(incomes = incomes.map(Incomes.from),
+              expenses = deductions.map(Expenses.from).fold[Option[Expenses]](None)(ex => if (ex.hasExpenses || ex.consolidatedExpenses.isDefined) Some(ex) else None)))
         }
       }
   }
@@ -328,7 +325,7 @@ object Other {
         .exists(_.residentialFinancialCost.isDefined)
 
     private def bothExpensesValidator(financials: Financials): Boolean = {
-      val expensesPassed = financials.expenses.isDefined && financials.expenses.get.hasExpenses
+      val expensesPassed = financials.expenses.exists(_.hasExpenses)
       val consolidatedExpensesPassed = financials.expenses.exists(_.consolidatedExpenses.isDefined)
       !expensesPassed && !consolidatedExpensesPassed || expensesPassed ^ consolidatedExpensesPassed
     }
@@ -356,11 +353,9 @@ object Other {
         (f.incomes, f.deductions) match {
           case (None, None) => None
           case (incomes, deductions) =>
-            Some(
-              Financials(incomes = incomes.map(Incomes.from),
-                         expenses = deductions
-                           .map(Expenses.from)
-                           .fold[Option[Expenses]](None)(ex => if (ex.hasExpenses) Some(ex) else None)))
+            Some(Financials(incomes = incomes.map(Incomes.from),
+              expenses = deductions.map(Expenses.from).fold[Option[Expenses]](None)(ex =>
+                if (ex.hasExpenses || ex.consolidatedExpenses.isDefined || ex.residentialFinancialCost.isDefined) Some(ex) else None)))
         }
       }
   }
