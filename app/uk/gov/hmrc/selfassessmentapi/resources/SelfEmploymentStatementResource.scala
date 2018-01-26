@@ -43,7 +43,7 @@ object SelfEmploymentStatementResource extends BaseResource {
     APIAction(nino, SourceType.SelfEmployments).async(parse.json) { implicit request =>
 
       val accountingPeriod = Period(start, end)
-      val fromDateCutOff = new LocalDate(2017, 4, 5)
+      val fromDateCutOff = new LocalDate(2017, 4, 6)
       val now = new LocalDate()
 
       {
