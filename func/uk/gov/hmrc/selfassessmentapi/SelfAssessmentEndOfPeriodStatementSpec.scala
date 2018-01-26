@@ -9,7 +9,7 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
 
   "Submitting your self-assessment end-of-period statement" should {
 
-    val start = new LocalDate(2017, 4, 5)
+    val start = new LocalDate(2017, 4, 6)
     val end = new LocalDate(2017, 12, 31)
 
     "succeed when all pre-requisites have been met" in {
@@ -135,7 +135,7 @@ class SelfAssessmentEndOfPeriodStatementSpec extends BaseFunctionalSpec {
         .bodyHasPath("\\code", "EARLY_SUBMISSION")
     }
 
-    "fail when start date is before April 5th 2017" in {
+    "fail when start date is before April 6th 2017" in {
       val earlyStart = new LocalDate(2017, 4, 4)
 
       given()
