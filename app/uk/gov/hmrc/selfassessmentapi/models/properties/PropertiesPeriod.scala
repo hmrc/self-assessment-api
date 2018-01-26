@@ -50,7 +50,7 @@ object FHL {
     }
 
     private def bothExpensesValidator(period: Properties): Boolean = {
-      val expensesPassed = period.financials.exists(_.expenses.isDefined)
+      val expensesPassed = period.financials.exists(_.expenses.exists(_.hasExpenses))
       val consolidatedExpensesPassed = period.financials.exists(_.expenses.exists(_.consolidatedExpenses.isDefined))
       !expensesPassed && !consolidatedExpensesPassed || expensesPassed ^ consolidatedExpensesPassed
     }
@@ -168,7 +168,7 @@ object FHL {
           case (None, None) => None
           case (incomes, deductions) =>
             Some(Financials(incomes = incomes.map(Incomes.from),
-              expenses = deductions.map(Expenses.from).fold[Option[Expenses]](None)(ex => if (ex.hasExpenses) Some(ex) else None)))
+              expenses = deductions.map(Expenses.from).fold[Option[Expenses]](None)(ex => if (ex.hasExpenses || ex.consolidatedExpenses.isDefined) Some(ex) else None)))
         }
       }
   }
@@ -332,7 +332,7 @@ object Other {
           case (None, None) => None
           case (incomes, deductions) =>
             Some(Financials(incomes = incomes.map(Incomes.from),
-              expenses = deductions.map(Expenses.from).fold[Option[Expenses]](None)(ex => if (ex.hasExpenses) Some(ex) else None)))
+              expenses = deductions.map(Expenses.from).fold[Option[Expenses]](None)(ex => if (ex.hasExpenses || ex.consolidatedExpenses.isDefined) Some(ex) else None)))
         }
       }
   }
