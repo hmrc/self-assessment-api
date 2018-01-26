@@ -82,6 +82,24 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
           Json.toJson(otherProps),
           Map("" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES, ErrorCode.INVALID_PERIOD)))
       }
+
+    "accept Other Properties where only consolidated expenses are passed" in
+      forAll(OtherGen.genPropertiesPeriod(consolidatedExpenses = true)) { otherProps =>
+        assertJsonValidationPasses[Other.Properties](
+          Json.toJson(otherProps))
+      }
+
+    "accept Other Properties where only residential expenses are passed" in
+      forAll(OtherGen.genPropertiesPeriod(onlyResidentialExpenses = true)) { otherProps =>
+        assertJsonValidationPasses[Other.Properties](
+          Json.toJson(otherProps))
+      }
+
+    "accept Other Properties where only expenses are passed" in
+      forAll(OtherGen.genPropertiesPeriod()) { otherProps =>
+        assertJsonValidationPasses[Other.Properties](
+          Json.toJson(otherProps))
+      }
   }
 
   val amount: Gen[BigDecimal] = amountGen(0, 5000)
@@ -210,6 +228,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         financialCosts <- Gen.option(genExpense)
         professionalFees <- Gen.option(genExpense)
         costOfServices <- Gen.option(genExpense)
+        residentialFinancialCost <- Gen.option(genExpense)
         other <- Gen.option(genExpense)
       } yield
         Other
@@ -218,6 +237,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
             financialCosts = financialCosts,
             professionalFees = professionalFees,
             costOfServices = costOfServices,
+            residentialFinancialCost = residentialFinancialCost,
             other = other)
 
     val genExpensesBoth: Gen[Other.Expenses] =
@@ -228,6 +248,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         professionalFees <- Gen.option(genExpense)
         costOfServices <- Gen.option(genExpense)
         consolidatedExpenses <- Gen.option(genExpense)
+        residentialFinancialCost <- Gen.option(genExpense)
         other <- Gen.option(genExpense)
       } yield
         Other
@@ -237,12 +258,20 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
                     professionalFees,
                     costOfServices,
                     consolidatedExpenses,
+                    residentialFinancialCost,
                     other)
 
     val genConsolidatedExpenses: Gen[Other.Expenses] =
       for {
         consolidatedExpenses <- Gen.option(genExpense)
-      } yield Other.Expenses(consolidatedExpenses = consolidatedExpenses)
+        residentialFinancialCost <- Gen.option(genExpense)
+      } yield Other.Expenses(consolidatedExpenses = consolidatedExpenses, residentialFinancialCost = residentialFinancialCost)
+
+    val genResidentialExpenses: Gen[Other.Expenses] =
+      for {
+        residentialFinancialCost <- Gen.option(genExpense)
+      } yield Other.Expenses(residentialFinancialCost = residentialFinancialCost)
+
 
     val genFinancialsExpenses: Gen[Other.Financials] =
       (for {
@@ -257,7 +286,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         incomes <- Gen.option(genIncomes)
         expenses <- Gen.option(genConsolidatedExpenses)
       } yield Other.Financials(incomes, expenses)) retryUntil { f =>
-        f.incomes.exists(_.hasIncomes) || f.expenses.exists(_.consolidatedExpenses.isDefined)
+        f.incomes.exists(_.hasIncomes) || f.expenses.exists(_.consolidatedExpenses.isDefined) && f.expenses.exists(_.residentialFinancialCost.isDefined)
       }
 
     val genBothExpensesFinancials: Gen[Other.Financials] =
@@ -268,15 +297,25 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         f.expenses.exists(_.hasExpenses) && f.expenses.exists(_.consolidatedExpenses.isDefined)
       }
 
+    val genResidentialFinancials: Gen[Other.Financials] =
+      (for {
+        incomes <- Gen.option(genIncomes)
+        expenses <- Gen.option(genConsolidatedExpenses)
+      } yield Other.Financials(incomes, expenses)) retryUntil { f =>
+        f.expenses.exists(_.residentialFinancialCost.isDefined)
+      }
+
     def genPropertiesPeriod(invalidPeriod: Boolean = false,
                             nullFinancials: Boolean = false,
                             consolidatedExpenses: Boolean = false,
-                            bothExpenses: Boolean = false): Gen[Other.Properties] =
+                            bothExpenses: Boolean = false,
+                            onlyResidentialExpenses: Boolean = false): Gen[Other.Properties] =
       for {
         emptyFinancials <- Gen.option(Other.Financials(None, None))
         financials <- genFinancialsExpenses
         consolidatedFinancials <- genFinancialsConsolidatedExpenses
         bothExpensesFinancials <- genBothExpensesFinancials
+        residentialFinancials <- genResidentialFinancials
       } yield {
         val from = LocalDate.now()
         val to = from.plusDays(1)
@@ -287,6 +326,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
           if (nullFinancials) emptyFinancials
           else if (bothExpenses) Some(bothExpensesFinancials)
           else if (consolidatedExpenses) Some(consolidatedFinancials)
+          else if (onlyResidentialExpenses) Some(residentialFinancials)
           else Some(financials)
         )
       }

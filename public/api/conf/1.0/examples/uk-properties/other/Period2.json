@@ -10,6 +10,7 @@
     "reversePremiums": { "amount": 100.25 }
   },
   "expenses": {
-    "consolidatedExpenses": { "amount": 100.25 }
+    "consolidatedExpenses": { "amount": 200.25 },
+    "residentialFinancialCost": { "amount": 200.25 }
   }
 }

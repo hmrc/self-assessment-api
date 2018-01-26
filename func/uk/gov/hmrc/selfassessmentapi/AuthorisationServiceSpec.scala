@@ -176,12 +176,13 @@ class AuthorisationServiceSpec extends BaseFunctionalSpec {
         rentIncomeTaxDeducted = 250.55,
         premiumsOfLeaseGrant = Some(200.22),
         reversePremiums = 22.35,
-        premisesRunningCosts = 20.20,
-        repairsAndMaintenance = 11.25,
-        financialCosts = 100,
-        professionalFees = 1232.55,
-        costOfServices = 500.25,
-        otherCost = 50.22
+        premisesRunningCosts = Some(100.50),
+        repairsAndMaintenance = Some(100.50),
+        financialCosts = Some(100),
+        professionalFees = Some(100.50),
+        costOfServices = Some(100.50),
+        otherCost = Some(100.50),
+        residentialFinancialCost = Some(100.55)
       )
 
       given()

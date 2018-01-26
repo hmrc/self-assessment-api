@@ -1648,6 +1648,7 @@ trait BaseFunctionalSpec extends TestApplication {
                   financialCosts = Some(200.00),
                   professionalFees = Some(200.00),
                   costOfServices = Some(200.00),
+                  residentialFinancialCost = Some(200.00),
                   other = Some(200.00))
                 .toString()
           }

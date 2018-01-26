@@ -13,6 +13,7 @@
     "financialCosts": { "amount": 100.25 },
     "professionalFees": { "amount": 100.25 },
     "costOfServices": { "amount": 100.25 },
+    "residentialFinancialCost": { "amount": 200.25 },
     "other": { "amount": 100.25 }
   }
 }
