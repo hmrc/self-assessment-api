@@ -144,7 +144,7 @@ object FHL {
       financials.incomes.exists(_.hasIncomes) || financials.expenses.exists(_.hasExpenses) || financials.expenses.exists(_.consolidatedExpenses.isDefined)
 
     private def bothExpensesValidator(financials: Financials): Boolean = {
-      val expensesPassed = financials.expenses.isDefined
+      val expensesPassed = financials.expenses.exists(_.hasExpenses)
       val consolidatedExpensesPassed = financials.expenses.exists(_.consolidatedExpenses.isDefined)
       !expensesPassed && !consolidatedExpensesPassed || expensesPassed ^ consolidatedExpensesPassed
     }
