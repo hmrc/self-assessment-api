@@ -49,6 +49,13 @@ case class FeatureSwitch(value: Option[Configuration]) {
     case None => false
   }
 
+  def sicValidationEnabled: Boolean = {
+    value match {
+      case Some(config) => config.getBoolean("sic-validation.enabled").getOrElse(false)
+      case None => false
+    }
+  }
+
   def whiteListedApplicationIds: Seq[String] = {
     value match {
       case Some(config) =>
