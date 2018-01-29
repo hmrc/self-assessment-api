@@ -51,7 +51,7 @@
     },
     "lossBroughtForward": {
       "title": "Loss brought forward",
-      "description": "Loss brought forward from earlier years set off against this year’s profits",
+      "description": "Loss brought forward from earlier years",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
