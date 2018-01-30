@@ -1,6 +1,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json._
+import play.api.mvc.Results.Conflict
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.models.CessationReason
 import uk.gov.hmrc.selfassessmentapi.models.des.properties.{Common, FHL, Other}
@@ -76,6 +77,7 @@ object DesJsons {
     val invalidTaxCalculationId = error("INVALID_TAX_CALCULATION_ID", "The remote endpoint has indicated that the calculation id does not match the calculation id returned by the latest intent to crystallise")
     val requiredIntentToCrystallise = error("REQUIRED_INTENT_TO_CRYSTALLISE", "The remote endpoint has indicated that the Crystallisation could occur only after an intent to crystallise is sent")
     val alreadySubmitted = error("ALREADY_SUBMITTED", "You cannot submit a statement for the same accounting period twice.")
+    val notAllowedConsolidatedExpenses = error("NOT_ALLOWED_SIMPLIFIED_EXPENSES", "The remote endpoint has indicated that the submission contains simplified expenses but the accumulative turnover amount exceeds the threshold.")
   }
 
   object SelfEmployment {
