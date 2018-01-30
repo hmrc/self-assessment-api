@@ -1801,6 +1801,30 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def createWithNotAllowedConsolidatedExpenses(nino: Nino, propertyType: PropertyType): Givens = {
+          stubFor(
+            post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+              .willReturn(
+                aResponse()
+                  .withStatus(409)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.notAllowedConsolidatedExpenses)))
+
+          givens
+        }
+
+        def updateWithNotAllowedConsolidatedExpenses(nino: Nino, propertyType: PropertyType, from: String = "2017-04-06", to: String = "2018-04-05"): Givens = {
+          stubFor(
+            put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
+              .willReturn(
+                aResponse()
+                  .withStatus(409)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.notAllowedConsolidatedExpenses)))
+
+          givens
+        }
+
       }
 
     }
