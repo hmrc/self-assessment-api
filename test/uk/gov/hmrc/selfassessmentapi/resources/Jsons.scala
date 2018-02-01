@@ -478,7 +478,6 @@ object Jsons {
     }
 
     def otherAnnualSummary(annualInvestmentAllowance: BigDecimal = 0.0,
-                           businessPremisesRenovationAllowance: BigDecimal = 0.0,
                            otherCapitalAllowance: BigDecimal = 0.0,
                            zeroEmissionsGoodsVehicleAllowance: BigDecimal = 0.0,
                            rentARoomExempt: BigDecimal = 0.0,
@@ -490,7 +489,6 @@ object Jsons {
            |{
            |  "allowances": {
            |    "annualInvestmentAllowance": $annualInvestmentAllowance,
-           |    "businessPremisesRenovationAllowance": $businessPremisesRenovationAllowance,
            |    "otherCapitalAllowance": $otherCapitalAllowance,
            |    "costOfReplacingDomesticItems": $costOfReplacingDomesticItems,
            |    "zeroEmissionsGoodsVehicleAllowance": $zeroEmissionsGoodsVehicleAllowance,

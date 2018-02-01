@@ -40,7 +40,6 @@ object OtherPropertiesAnnualSummary {
     val allowances = other.allowances.map { allow =>
       OtherPropertiesAllowances(
         allow.annualInvestmentAllowance,
-        allow.businessPremisesRenovationAllowance,
         allow.otherCapitalAllowance,
         allow.costOfReplacingDomesticItems,
         allow.zeroEmissionsGoodsVehicleAllowance ,
