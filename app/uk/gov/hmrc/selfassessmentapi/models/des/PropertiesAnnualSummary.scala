@@ -59,7 +59,7 @@ object OtherPropertiesAnnualSummary {
 
 
 case class OtherPropertiesAllowances(annualInvestmentAllowance: Option[BigDecimal] = None,
-                                     businessPremisesRenovationAllowance: Option[BigDecimal] = None,
+                                     businessPremisesRenovationAllowance: Option[BigDecimal] = None, // Removed from API
                                      otherCapitalAllowance: Option[BigDecimal] = None,
                                      costOfReplacingDomGoods: Option[BigDecimal] = None,
                                      zeroEmissionGoodsVehicleAllowance: Option[BigDecimal] = None,
