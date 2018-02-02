@@ -39,12 +39,11 @@ object OtherPropertiesAnnualSummary {
   def from(other: models.properties.OtherPropertiesAnnualSummary): OtherPropertiesAnnualSummary = {
     val allowances = other.allowances.map { allow =>
       OtherPropertiesAllowances(
-        allow.annualInvestmentAllowance,
-        allow.businessPremisesRenovationAllowance,
-        allow.otherCapitalAllowance,
-        allow.costOfReplacingDomesticItems,
-        allow.zeroEmissionsGoodsVehicleAllowance ,
-        allow.rentARoomExempt
+        annualInvestmentAllowance = allow.annualInvestmentAllowance,
+        otherCapitalAllowance = allow.otherCapitalAllowance,
+        costOfReplacingDomGoods = allow.costOfReplacingDomesticItems,
+        zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionsGoodsVehicleAllowance,
+        rentARoomExempt = allow.rentARoomExempt
       )
     }
     val adjustments = other.adjustments.map { adj =>
@@ -60,7 +59,6 @@ object OtherPropertiesAnnualSummary {
 
 
 case class OtherPropertiesAllowances(annualInvestmentAllowance: Option[BigDecimal] = None,
-                                     businessPremisesRenovationAllowance: Option[BigDecimal] = None,
                                      otherCapitalAllowance: Option[BigDecimal] = None,
                                      costOfReplacingDomGoods: Option[BigDecimal] = None,
                                      zeroEmissionGoodsVehicleAllowance: Option[BigDecimal] = None,

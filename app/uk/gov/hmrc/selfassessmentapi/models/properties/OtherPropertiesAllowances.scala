@@ -22,7 +22,6 @@ import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models._
 
 case class OtherPropertiesAllowances(annualInvestmentAllowance: Option[Amount] = None,
-                                     businessPremisesRenovationAllowance: Option[Amount] = None,
                                      otherCapitalAllowance: Option[Amount] = None,
                                      costOfReplacingDomesticItems: Option[Amount] = None,
                                      zeroEmissionsGoodsVehicleAllowance: Option[Amount] = None,
@@ -33,7 +32,6 @@ object OtherPropertiesAllowances {
 
   implicit val reads: Reads[OtherPropertiesAllowances] = (
     (__ \ "annualInvestmentAllowance").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "businessPremisesRenovationAllowance").readNullable[Amount](nonNegativeAmountValidator) and
       (__ \ "otherCapitalAllowance").readNullable[Amount](nonNegativeAmountValidator) and
       (__ \ "costOfReplacingDomesticItems").readNullable[Amount](nonNegativeAmountValidator) and
       (__ \ "zeroEmissionsGoodsVehicleAllowance").readNullable[Amount](nonNegativeAmountValidator)  and
