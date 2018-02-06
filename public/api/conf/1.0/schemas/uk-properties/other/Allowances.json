@@ -13,15 +13,6 @@
       "maximum": 99999999999999.98,
       "example": "100.25"
     },
-    "businessPremisesRenovationAllowance": {
-      "title": "Business premises renovation allowance",
-      "description": "(Assisted Areas only)",
-      "type": "number",
-      "multipleOf": 0.01,
-      "minimum": 0,
-      "maximum": 99999999999999.98,
-      "example": "100.25"
-    },
     "costOfReplacingDomesticItems": {
       "title": "Cost of Replacing Domestic Items",
       "description": "Cost of Replacing Domestic Items - formerly Wear and Tear allowance",

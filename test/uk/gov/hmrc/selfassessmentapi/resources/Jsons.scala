@@ -17,10 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.selfassessmentapi.models.CessationReason
-import uk.gov.hmrc.selfassessmentapi.models.CessationReason._
-import uk.gov.hmrc.selfassessmentapi.models.properties.Other
-import uk.gov.hmrc.selfassessmentapi.models.properties.FHL
+import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
 
 object Jsons {
 
@@ -75,6 +72,7 @@ object Jsons {
     val agentNotAuthorised: String = errorWithMessage("AGENT_NOT_AUTHORIZED", "The agent is not authorized")
     val agentNotSubscribed: String =
       errorWithMessage("AGENT_NOT_SUBSCRIBED", "The agent is not subscribed to agent services")
+    val notAllowedConsolidatedExpenses = businessErrorWithMessage("NOT_ALLOWED_CONSOLIDATED_EXPENSES" -> "The submission contains consolidated expenses but the accumulative turnover amount exceeds the threshold")
 
     def invalidRequest(errors: (String, String)*): String = {
       s"""
@@ -183,33 +181,6 @@ object Jsons {
           }
           .getOrElse("")
 
-      val ce =
-        consolidatedExpenses
-          .map { ce =>
-            s"""
-               | "consolidatedExpenses": { "amount": $ce },
-         """.stripMargin
-          }
-          .getOrElse("")
-
-      val fc =
-        financialCosts
-          .map { fc =>
-            s"""
-               | "financialCosts": { "amount": $fc }
-         """.stripMargin
-          }
-          .getOrElse("")
-
-      val cs =
-        costOfServices
-          .map { cs =>
-            s"""
-               | "costOfServices": { "amount": $cs }
-         """.stripMargin
-          }
-          .getOrElse("")
-
       Json.parse(s"""
            |{
            |  $from
@@ -279,33 +250,6 @@ object Jsons {
           .map { date =>
             s"""
                | "to": "$date",
-         """.stripMargin
-          }
-          .getOrElse("")
-
-      val ce =
-        consolidatedExpenses
-          .map { ce =>
-            s"""
-           | "consolidatedExpenses": { "amount": $ce },
-         """.stripMargin
-          }
-          .getOrElse("")
-
-      val rfc =
-        residentialFinancialCost
-          .map { rfc =>
-            s"""
-               | "residentialFinancialCost": { "amount": $rfc },
-         """.stripMargin
-          }
-          .getOrElse("")
-
-      val fc =
-        financialCosts
-          .map { fc =>
-            s"""
-               | "financialCosts": { "amount": $fc }
          """.stripMargin
           }
           .getOrElse("")
@@ -534,7 +478,6 @@ object Jsons {
     }
 
     def otherAnnualSummary(annualInvestmentAllowance: BigDecimal = 0.0,
-                           businessPremisesRenovationAllowance: BigDecimal = 0.0,
                            otherCapitalAllowance: BigDecimal = 0.0,
                            zeroEmissionsGoodsVehicleAllowance: BigDecimal = 0.0,
                            rentARoomExempt: BigDecimal = 0.0,
@@ -546,7 +489,6 @@ object Jsons {
            |{
            |  "allowances": {
            |    "annualInvestmentAllowance": $annualInvestmentAllowance,
-           |    "businessPremisesRenovationAllowance": $businessPremisesRenovationAllowance,
            |    "otherCapitalAllowance": $otherCapitalAllowance,
            |    "costOfReplacingDomesticItems": $costOfReplacingDomesticItems,
            |    "zeroEmissionsGoodsVehicleAllowance": $zeroEmissionsGoodsVehicleAllowance,

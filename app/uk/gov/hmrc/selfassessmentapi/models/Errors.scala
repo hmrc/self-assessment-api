@@ -117,4 +117,5 @@ object Errors {
     }
   }
 
+  def businessJsonError(error: Errors.Error) = Json.toJson(Errors.businessError(error))
 }
