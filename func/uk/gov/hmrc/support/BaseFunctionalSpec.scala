@@ -1825,6 +1825,71 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def endOfYearStatementReadyToBeFinalised(nino: Nino, start: LocalDate, end: LocalDate): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/accounting-periods/${start}_${end}/statement"))
+            .willReturn(
+              aResponse()
+                .withStatus(204)
+                .withBody("")))
+
+          givens
+        }
+
+        def endOfYearStatementMissingPeriod(nino: Nino, start: LocalDate, end: LocalDate): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/accounting-periods/${start}_${end}/statement"))
+            .willReturn(
+              aResponse()
+                .withStatus(403)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.periodicUpdateMissing)))
+
+          givens
+        }
+
+        def endOfYearStatementIsEarly(nino: Nino, start: LocalDate, end: LocalDate): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/accounting-periods/${start}_${end}/statement"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.earlySubmission)))
+
+          givens
+        }
+
+        def endOfYearStatementIsLate(nino: Nino, start: LocalDate, end: LocalDate): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/accounting-periods/${start}_${end}/statement"))
+            .willReturn(
+              aResponse()
+                .withStatus(403)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.lateSubmission)))
+
+          givens
+        }
+
+        def endOfYearStatementDoesNotMatchPeriod(nino: Nino, start: LocalDate, end: LocalDate): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/accounting-periods/${start}_${end}/statement"))
+            .willReturn(
+              aResponse()
+                .withStatus(403)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.nonMatchingPeriod)))
+
+          givens
+        }
+
+        def endOfYearStatementAlreadySubmitted(nino: Nino, start: LocalDate, end: LocalDate): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/accounting-periods/${start}_${end}/statement"))
+            .willReturn(
+              aResponse()
+                .withStatus(403)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.alreadySubmitted)))
+
+          givens
+        }
+
       }
 
     }

@@ -24,6 +24,8 @@ private object AppDependencies {
   import play.sbt.PlayImport._
   import play.core.PlayVersion
 
+  private val hmrcTestVersion = "2.3.0"
+
   val compile = Seq(
     "uk.gov.hmrc" %% "play-reactivemongo" % "5.2.0",
     ws exclude("org.apache.httpcomponents", "httpclient") exclude("org.apache.httpcomponents", "httpcore"),
@@ -55,7 +57,8 @@ private object AppDependencies {
         "org.scalacheck" %% "scalacheck" % "1.13.4" % scope,
         "org.skyscreamer" % "jsonassert" % "1.4.0" % scope,
         "com.jayway.restassured" % "rest-assured" % "2.6.0" % scope,
-        "org.mockito" % "mockito-core" % "1.9.5" % scope
+        "org.mockito" % "mockito-core" % "1.9.5" % scope,
+        "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope
       )
     }.test
   }
@@ -75,7 +78,8 @@ private object AppDependencies {
         "org.mongodb" %% "casbah" % "3.1.1" % scope,
         // this line is only needed for coverage
         "org.scoverage" %% "scalac-scoverage-runtime" % "1.2.0" % scope,
-        "org.mockito" % "mockito-core" % "1.9.5" % scope
+        "org.mockito" % "mockito-core" % "1.9.5" % scope,
+        "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope
       )
     }.test
   }

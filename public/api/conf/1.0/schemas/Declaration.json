@@ -6,7 +6,7 @@
   "properties": {
     "finalised": {
       "title": "Finalised",
-      "description": "Declaration this is a finalised statement.",
+      "description": "Declaration for the finalised statement.",
       "type": "boolean"
     }
   },
