@@ -49,7 +49,6 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
       }
     }
 
-  // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[Unit] =
     APIAction(nino, SourceType.SelfEmployments, Some("annual")).async(parse.empty) { implicit request =>
       connector.get(nino, id, taxYear).map { response =>

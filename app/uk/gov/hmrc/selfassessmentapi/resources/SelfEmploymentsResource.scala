@@ -50,7 +50,6 @@ object SelfEmploymentsResource extends BaseResource {
       }
     }
 
-  // TODO: DES spec for this method is currently unavailable. This method should be updated once it is available.
   def update(nino: Nino, id: SourceId): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments).async(parse.json) { implicit request =>
       validate[SelfEmploymentUpdate, SelfEmploymentResponse](request.body) { selfEmployment =>

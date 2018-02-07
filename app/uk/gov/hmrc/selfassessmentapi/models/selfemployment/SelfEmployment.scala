@@ -52,7 +52,7 @@ object SelfEmployment {
         commencementDate = LocalDate.parse(commencementDate),
         cessationDate = None,
         tradingName = desSelfEmployment.tradingName,
-        businessDescription = desSelfEmployment.typeOfBusiness.getOrElse(""), // FIXME: Not returned in DES response, it should be there...
+        businessDescription = desSelfEmployment.typeOfBusiness.getOrElse(""), // API#5 doesn't return typeOfBusiness...
         businessAddressLineOne = address.addressLine1,
         businessAddressLineTwo = address.addressLine2,
         businessAddressLineThree = address.addressLine3,
