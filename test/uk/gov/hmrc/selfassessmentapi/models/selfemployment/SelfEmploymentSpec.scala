@@ -17,11 +17,17 @@
 package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
 import org.joda.time.LocalDate
+import org.scalatestplus.play.OneAppPerSuite
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, ErrorCode}
 import uk.gov.hmrc.selfassessmentapi.resources.{JsonSpec, Jsons}
 
-class SelfEmploymentSpec extends JsonSpec {
+class SelfEmploymentSpec extends JsonSpec with OneAppPerSuite {
+
+   override lazy val app = new GuiceApplicationBuilder()
+      .configure(Map("Test.feature-switch.sic-validation.enabled" -> "true"))
+      .build()
 
   "SelfEmployment JSON" should {
     "round ignore the id if it is provided by the user" in {
@@ -183,6 +189,5 @@ class SelfEmploymentSpec extends JsonSpec {
       assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/businessPostcode" -> Seq(ErrorCode.INVALID_POSTCODE)))
     }
   }
-
 
 }
