@@ -16,11 +16,14 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import uk.gov.hmrc.selfassessmentapi.models.des.{ObligationDetail, DesError, DesErrorCode}
-import uk.gov.hmrc.selfassessmentapi.models._
+import org.joda.time.LocalDate
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode, ObligationDetail}
 
 case class ObligationsResponse(underlying: HttpResponse) extends Response {
+
   def obligations(incomeSourceType: String, id: Option[SourceId] = None): Either[DesTransformError, Option[Obligations]] = {
 
     val desObligations = json.asOpt[des.Obligations]
@@ -45,6 +48,33 @@ case class ObligationsResponse(underlying: HttpResponse) extends Response {
             case None => Right(Some(Obligations(obligationsOrError map (_.right.get))))
 
           }
+      }
+    }
+
+    desObligations.fold(noneFound)(oneFound)
+  }
+
+  // used for the new format of the obligation (returned by the API 1330)
+  def obligations(incomeSourceType: String, nino: Nino, taxYearFromDate: LocalDate): Either[DesTransformError, Option[Obligation]] = {
+
+    val desObligations = json.asOpt[des.ObligationsNew]
+
+    def noneFound: Either[DesTransformError, Option[Obligation]] = {
+      logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
+      Right(None)
+    }
+
+    def oneFound(obligation: des.ObligationsNew): Either[DesTransformError, Option[Obligation]] = {
+      (for {
+        obl <- obligation.obligations
+        id = obl.identification
+        if id.incomeSourceType == incomeSourceType && id.referenceNumber == nino.nino
+        details <- obl.obligationDetails
+        if taxYearFromDate == new LocalDate(details.inboundCorrespondenceFromDate)
+      } yield details).map(toObligation(_))
+        .headOption.fold[Either[DesTransformError, Option[Obligation]]](Right(None)) {
+        case Right(obl) => Right(Some(obl))
+        case Left(error) => Left(error)
       }
     }
 

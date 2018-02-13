@@ -98,4 +98,20 @@ class CrystallisationResourceSpec extends BaseFunctionalSpec {
     }
   }
 
+  "crystallisation obligation information" should {
+    "return 200 and the response - the happy scenario" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().crystallisation.crystallisationObligation(nino, taxYear)
+        .when()
+        .get(s"/ni/$nino/$taxYear/crystallisation/obligation")
+        .thenAssertThat()
+        .statusIs(200)
+        .bodyHasPath("\\start", taxYear.taxYearFromDate.toString)
+        .bodyHasPath("\\end", taxYear.taxYearToDate.toString)
+        .bodyHasPath("\\due", "2019-01-31")
+        .bodyHasPath("\\met", false)
+    }
+  }
 }
