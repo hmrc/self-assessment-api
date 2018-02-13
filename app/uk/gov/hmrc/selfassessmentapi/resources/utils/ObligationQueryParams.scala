@@ -17,8 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources.utils
 
 import org.joda.time.LocalDate
-import uk.gov.hmrc.selfassessmentapi.models.SourceId
 
-case class ObligationQueryParams(from: Option[LocalDate], to: Option[LocalDate]) {
-  val map = Map("from" -> from, "to" -> to)
+case class ObligationQueryParams(from: Option[LocalDate], to: Option[LocalDate], status: Option[String]) {
+  val map = Map("from" -> from, "to" -> to, "status" -> status)
 }

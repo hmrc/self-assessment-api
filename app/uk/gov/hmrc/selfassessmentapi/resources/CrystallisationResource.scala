@@ -17,8 +17,8 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.libs.json.JsValue
 import play.api.libs.json.Json.toJson
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
@@ -26,6 +26,7 @@ import uk.gov.hmrc.selfassessmentapi.connectors.CrystallisationConnector
 import uk.gov.hmrc.selfassessmentapi.models.crystallisation.CrystallisationRequest
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode._
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
+import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.EmptyResponse
 
 
@@ -59,4 +60,18 @@ object CrystallisationResource extends BaseResource {
       }
     }
 
+  def retrieveObligation(nino: Nino, taxYear: TaxYear, queryParams: ObligationQueryParams)  =
+    APIAction(nino, SourceType.Crystallisation).async { implicit request =>
+      connector.get(nino, queryParams.copy(from = Some(taxYear.taxYearFromDate), to = Some(taxYear.taxYearToDate))) map { response =>
+        response.filter {
+          case 200 =>
+            response.obligations("ITSA", nino, taxYear.taxYearFromDate) match {
+              case Right(obj) => obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+              case Left(ex) =>
+                logger.error(ex.msg)
+                InternalServerError(Json.toJson(Errors.InternalServerError))
+            }
+        }
+      }
+    }
 }

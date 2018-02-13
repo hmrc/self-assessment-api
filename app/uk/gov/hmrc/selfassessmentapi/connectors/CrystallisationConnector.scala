@@ -20,12 +20,14 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear
-import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CrystallisationIntentResponse, EmptyResponse}
-
-import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.selfassessmentapi.models.crystallisation.CrystallisationRequest
 import uk.gov.hmrc.selfassessmentapi.models.des.crystallisation.Crystallisation
 import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.RequestDateTime
+import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CrystallisationIntentResponse, EmptyResponse, ObligationsResponse}
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 object CrystallisationConnector {
 
@@ -42,4 +44,10 @@ object CrystallisationConnector {
       Crystallisation(request.calculationId, requestTimestamp),
       EmptyResponse)
 
+  def get(nino: Nino, queryParams: ObligationQueryParams)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ObligationsResponse] = {
+    val queryString = (queryParams.from.fold("")(date => s"from=$date&") +
+                       queryParams.to.fold("")(date => s"to=$date&") +
+                       queryParams.status.fold("")(status => s"status=$status")).stripSuffix("&")
+    httpGet[ObligationsResponse](baseUrl + s"/enterprise/obligation-data/nino/$nino/ITSA?$queryString", ObligationsResponse)
+  }
 }

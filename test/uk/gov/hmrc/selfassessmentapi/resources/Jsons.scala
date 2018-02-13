@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import org.joda.time.LocalDate
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType}
+import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
 
 object Jsons {
@@ -1090,6 +1091,115 @@ object Jsons {
   }
 
   object Obligations {
+
+    def crystallisationObligations(id: String, taxYear: TaxYear): String =
+      s"""
+         |{
+         |    "obligations": [
+         |        {
+         |            "identification": {
+         |                "incomeSourceType": "ITSA",
+         |                "referenceNumber": "$id",
+         |                "referenceType": "NINO"
+         |            },
+         |            "obligationDetails": [
+         |                {
+         |                    "status": "F",
+         |                    "inboundCorrespondenceFromDate": "2016-04-06",
+         |                    "inboundCorrespondenceToDate": "2017-04-05",
+         |                    "inboundCorrespondenceDueDate": "2018-01-31",
+         |                    "periodKey": "16P0",
+         |                    "inboundCorrespondenceDateReceived": "2018-01-01"
+         |                },
+         |                {
+         |                    "status": "O",
+         |                    "inboundCorrespondenceFromDate": "${taxYear.taxYearFromDate}",
+         |                    "inboundCorrespondenceToDate": "${taxYear.taxYearToDate}",
+         |                    "inboundCorrespondenceDueDate": "2019-01-31",
+         |                    "periodKey": "17P0"
+         |                }
+         |            ]
+         |        },
+         |        {
+         |            "identification": {
+         |                "incomeSourceType": "ITSB",
+         |                "referenceNumber": "XDIS00000000166",
+         |                "referenceType": "MTDBIS"
+         |            },
+         |            "obligationDetails": [
+         |                {
+         |                    "status": "F",
+         |                    "inboundCorrespondenceFromDate": "2017-04-06",
+         |                    "inboundCorrespondenceToDate": "2017-07-05",
+         |                    "inboundCorrespondenceDueDate": "2017-08-05",
+         |                    "periodKey": "#001",
+         |                    "inboundCorrespondenceDateReceived": "2017-06-30"
+         |                },
+         |                {
+         |                    "status": "O",
+         |                    "inboundCorrespondenceFromDate": "2017-07-06",
+         |                    "inboundCorrespondenceToDate": "2017-10-05",
+         |                    "inboundCorrespondenceDueDate": "2017-11-05",
+         |                    "periodKey": "#002"
+         |                },
+         |                {
+         |                    "status": "O",
+         |                    "inboundCorrespondenceFromDate": "2017-10-06",
+         |                    "inboundCorrespondenceToDate": "2018-01-05",
+         |                    "inboundCorrespondenceDueDate": "2018-02-05",
+         |                    "periodKey": "#003"
+         |                },
+         |                {
+         |                    "status": "O",
+         |                    "inboundCorrespondenceFromDate": "2018-01-06",
+         |                    "inboundCorrespondenceToDate": "2018-04-05",
+         |                    "inboundCorrespondenceDueDate": "2018-05-05",
+         |                    "periodKey": "#004"
+         |                }
+         |            ]
+         |        },
+         |        {
+         |            "identification": {
+         |                "incomeSourceType": "ITSP",
+         |                "referenceNumber": "XGIS00000000169",
+         |                "referenceType": "MTDBIS"
+         |            },
+         |            "obligationDetails": [
+         |                {
+         |                    "status": "F",
+         |                    "inboundCorrespondenceFromDate": "2017-04-06",
+         |                    "inboundCorrespondenceToDate": "2017-07-05",
+         |                    "inboundCorrespondenceDueDate": "2017-08-05",
+         |                    "periodKey": "#001",
+         |                    "inboundCorrespondenceDateReceived": "2017-06-30"
+         |                },
+         |                {
+         |                    "status": "O",
+         |                    "inboundCorrespondenceFromDate": "2017-07-06",
+         |                    "inboundCorrespondenceToDate": "2017-10-05",
+         |                    "inboundCorrespondenceDueDate": "2017-11-05",
+         |                    "periodKey": "#002"
+         |                },
+         |                {
+         |                    "status": "O",
+         |                    "inboundCorrespondenceFromDate": "2017-10-06",
+         |                    "inboundCorrespondenceToDate": "2018-01-05",
+         |                    "inboundCorrespondenceDueDate": "2018-02-05",
+         |                    "periodKey": "#003"
+         |                },
+         |                {
+         |                    "status": "O",
+         |                    "inboundCorrespondenceFromDate": "2018-01-06",
+         |                    "inboundCorrespondenceToDate": "2018-04-05",
+         |                    "inboundCorrespondenceDueDate": "2018-05-05",
+         |                    "periodKey": "#004"
+         |                }
+         |            ]
+         |        }
+         |    ]
+         |}
+       """.stripMargin
+
     def apply(firstMet: Boolean = false,
               secondMet: Boolean = false,
               thirdMet: Boolean = false,

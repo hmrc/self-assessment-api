@@ -1336,8 +1336,17 @@ trait BaseFunctionalSpec extends TestApplication {
 
           givens
         }
-      }
 
+        def crystallisationObligation(nino: Nino, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/${nino.nino}/ITSA?from=${taxYear.taxYearFromDate}&to=${taxYear.taxYearToDate}"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Obligations.crystallisationObligations(nino.nino, taxYear))))
+          givens
+        }
+      }
 
       object taxCalculation {
         def isReadyFor(nino: Nino, calcId: String = "abc"): Givens = {
