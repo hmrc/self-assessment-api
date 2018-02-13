@@ -38,7 +38,6 @@ object OtherPropertiesAnnualSummary {
       allow <- summary.annualAllowances
     } yield OtherPropertiesAllowances(
       allow.annualInvestmentAllowance,
-      allow.businessPremisesRenovationAllowance,
       allow.otherCapitalAllowance,
       allow.costOfReplacingDomGoods,
       allow.zeroEmissionGoodsVehicleAllowance,

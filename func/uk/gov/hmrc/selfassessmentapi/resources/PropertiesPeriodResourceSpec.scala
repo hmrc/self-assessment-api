@@ -62,6 +62,31 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
             s"/self-assessment/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05".r)
       }
 
+      s"return code 201 when creating an $propertyType period where the paylod contains no expenses"  in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .willBeCreatedFor(nino)
+          .des()
+          .properties
+          .periodWillBeCreatedFor(nino, propertyType)
+          .when()
+          .post(Jsons.Properties())
+          .to(s"/ni/$nino/uk-properties")
+          .thenAssertThat()
+          .statusIs(201)
+          .when()
+          .post(period(propertyType, noExpenses = true))
+          .to(s"%sourceLocation%/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(201)
+          .responseContainsHeader(
+            "Location",
+            s"/self-assessment/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05".r)
+      }
+
       s"return code 201 when creating an $propertyType period where the paylod contains only 'residentialFinancialCost'"  in {
         given()
           .userIsSubscribedToMtdFor(nino)
@@ -159,6 +184,30 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(403)
           .bodyIsLike(Jsons.Errors.overlappingPeriod)
       }
+
+      s"return code 403 when creating a period for $propertyType with the payload contains over 'consolidatedExpenses'" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .willBeCreatedFor(nino)
+          .des()
+          .properties
+          .createWithNotAllowedConsolidatedExpenses(nino, propertyType)
+          .when()
+          .post(Jsons.Properties())
+          .to(s"/ni/$nino/uk-properties")
+          .thenAssertThat()
+          .statusIs(201)
+          .when()
+          .post(period(propertyType, overConsolidatedExpenses = true))
+          .to(s"%sourceLocation%/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(403)
+          .bodyIsLike(Jsons.Errors.notAllowedConsolidatedExpenses)
+      }
+
 
       s"return code 403 when attempting to create a period that is misaligned with the accounting period for $propertyType" in {
         given()
@@ -473,6 +522,21 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(204)
       }
 
+      s"return code 204 when updating an $propertyType period where the paylod contains no expenses" in {
+        val updatedPeriod = period(propertyType, noExpenses = true)
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .periodWillBeUpdatedFor(nino, propertyType)
+          .when()
+          .put(updatedPeriod)
+          .at(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .thenAssertThat()
+          .statusIs(204)
+      }
+
       s"return code 204 when updating an $propertyType period where the paylod contains only 'residentialFinancialCost' expenses" in {
         val updatedPeriod = period(propertyType, onlyResidential = true)
         given()
@@ -571,6 +635,38 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .bodyIsLike(Jsons.Errors.invalidRequest("BOTH_EXPENSES_SUPPLIED" -> ""))
       }
 
+      s"return code 403 when updating an $propertyType period where the paylod contains over 'consolidatedExpenses'" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .willBeCreatedFor(nino)
+          .des()
+          .properties
+          .periodWillBeCreatedFor(nino, propertyType)
+          .des()
+          .properties
+          .updateWithNotAllowedConsolidatedExpenses(nino, propertyType)
+          .when()
+          .post(Jsons.Properties())
+          .to(s"/ni/$nino/uk-properties")
+          .thenAssertThat()
+          .statusIs(201)
+          .when()
+          .post(period(propertyType))
+          .to(s"%sourceLocation%/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(201)
+          .when()
+          .put(period(propertyType, overConsolidatedExpenses = true))
+          .at("%periodLocation%")
+          .thenAssertThat()
+          .statusIs(403)
+          .contentTypeIsJson()
+          .bodyIsLike(Jsons.Errors.notAllowedConsolidatedExpenses)
+      }
+
       s"return code 404 when updating an $propertyType period that does not exist" in {
         val period = Jsons.Properties.fhlPeriod(fromDate = Some("2017-04-06"), toDate = Some("2018-04-05"))
 
@@ -606,7 +702,22 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
              consolidatedExpenses: Option[Amount] = None,
              costOfServices: Option[BigDecimal] = None,
              onlyConsolidated: Boolean = false,
-             onlyResidential: Boolean = false): JsValue = propertyType match {
+             onlyResidential: Boolean = false,
+             noExpenses: Boolean = false,
+             overConsolidatedExpenses: Boolean = false): JsValue = propertyType match {
+    case PropertyType.FHL if noExpenses =>
+      Jsons.Properties.fhlPeriod(
+        fromDate = from,
+        toDate = to,
+        rentIncome = 500
+      )
+    case PropertyType.FHL if overConsolidatedExpenses =>
+      Jsons.Properties.fhlPeriod(
+        fromDate = from,
+        toDate = to,
+        rentIncome = 500,
+        consolidatedExpenses = Some(99999999999999.50)
+      )
     case PropertyType.FHL =>
       Jsons.Properties.fhlPeriod(
         fromDate = from,
@@ -620,7 +731,15 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         costOfServices = costOfServices,
         consolidatedExpenses = consolidatedExpenses
       )
-
+    case PropertyType.OTHER if noExpenses =>
+      Jsons.Properties.consolidationPeriod(
+        fromDate = from,
+        toDate = to,
+        rentIncome = 500,
+        rentIncomeTaxDeducted = 250.55,
+        premiumsOfLeaseGrant = Some(200.22),
+        reversePremiums = 22.35
+      )
     case PropertyType.OTHER if onlyConsolidated =>
       Jsons.Properties.consolidationPeriod(
         fromDate = from,
@@ -640,6 +759,16 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         premiumsOfLeaseGrant = Some(200.22),
         reversePremiums = 22.35,
         residentialFinancialCost = Some(100.55)
+      )
+    case PropertyType.OTHER if overConsolidatedExpenses =>
+      Jsons.Properties.otherPeriod(
+        fromDate = from,
+        toDate = to,
+        rentIncome = 500,
+        rentIncomeTaxDeducted = 250.55,
+        premiumsOfLeaseGrant = Some(200.22),
+        reversePremiums = 22.35,
+        consolidatedExpenses = Some(99999999999999.50)
       )
     case PropertyType.OTHER =>
       Jsons.Properties.otherPeriod(

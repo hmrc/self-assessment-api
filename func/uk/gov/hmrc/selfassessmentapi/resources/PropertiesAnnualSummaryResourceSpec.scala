@@ -255,7 +255,6 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
   private def invalidAnnualSummary(propertyType: PropertyType.Value) = propertyType match {
     case PropertyType.OTHER => Jsons.Properties.otherAnnualSummary(
       annualInvestmentAllowance = -10000.50,
-      businessPremisesRenovationAllowance = 500.50,
       otherCapitalAllowance = 1000.20,
       zeroEmissionsGoodsVehicleAllowance = 50.50,
       rentARoomExempt = 75.50,

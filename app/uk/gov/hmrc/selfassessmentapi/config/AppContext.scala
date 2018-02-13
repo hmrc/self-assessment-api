@@ -39,4 +39,5 @@ object AppContext extends ServicesConfig {
   lazy val authEnabled: Boolean = config.getBoolean(s"$env.microservice.services.auth.enabled").getOrElse(true)
   lazy val getMaxPeriodTimeSpan : Int = config.getInt(s"$env.microservice.max-period-timespan").getOrElse(86)
   lazy val sandboxMode: Boolean = config.getBoolean(s"sandbox-mode").getOrElse(false)
+  lazy val mtdDate: String = config.getString(s"$env.mtd-date").getOrElse(throw new RuntimeException("mtd-date is not configured"))
 }
