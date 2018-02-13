@@ -17,9 +17,11 @@
 package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
 import org.joda.time.LocalDate
+import play.api.Logger
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
 import uk.gov.hmrc.selfassessmentapi.models.AccountingType._
 import uk.gov.hmrc.selfassessmentapi.models._
 
@@ -37,6 +39,9 @@ case class SelfEmployment(id: Option[SourceId] = None,
                           businessPostcode: String)
 
 object SelfEmployment {
+
+  lazy val validateSICEnabled: Boolean = FeatureSwitch(AppContext.featureSwitch).sicValidationEnabled
+
   def from(desSelfEmployment: des.selfemployment.SelfEmployment): Option[SelfEmployment] = {
     for {
       accountingType <- AccountingType.fromDes(desSelfEmployment.cashOrAccruals)
@@ -75,7 +80,9 @@ object SelfEmployment {
       (__ \ "commencementDate").read[LocalDate](commencementDateValidator) and
       Reads.pure[Option[LocalDate]](None) and
       (__ \ "tradingName").read[String](lengthIsBetween(1, 105)) and
-      (__ \ "businessDescription").read[String](validateSIC) and
+      (__ \ "businessDescription").read[String]
+         { if (validateSICEnabled) validateSIC else Reads.of[String] }
+        and
       (__ \ "businessAddressLineOne").read[String](lengthIsBetween(1, 35)) and
       (__ \ "businessAddressLineTwo").readNullable[String](lengthIsBetween(1, 35)) and
       (__ \ "businessAddressLineThree").readNullable[String](lengthIsBetween(1, 35)) and
