@@ -18,14 +18,15 @@ package uk.gov.hmrc.selfassessmentapi.models.des
 
 import play.api.libs.json.{Json, Reads}
 
-case class Obligations(obligations: Seq[Obligation])
-
-object Obligations {
-  implicit val reads: Reads[Obligations] = Json.reads[Obligations]
+case class ObligationDetail(status: String,
+                            inboundCorrespondenceFromDate: String,
+                            inboundCorrespondenceToDate: String,
+                            inboundCorrespondenceDateReceived: Option[String],
+                            inboundCorrespondenceDueDate: String,
+                            periodKey: Option[String]) {
+  def isFinalised: Boolean = status == "F"
 }
 
-case class Obligation(id: Option[String], `type`: String, details: Seq[ObligationDetail])
-
-object Obligation {
-  implicit val reads: Reads[Obligation] = Json.reads[Obligation]
+object ObligationDetail {
+  implicit val reads: Reads[ObligationDetail] = Json.reads[ObligationDetail]
 }

@@ -28,30 +28,7 @@ object Obligations {
   implicit val writes: Writes[Obligations] = Json.writes[Obligations]
 }
 
-case class Obligation(start: LocalDate, end: LocalDate, due: Option[LocalDate] = None, processed: Option[LocalDate] = None, met: Boolean)
-
-object toObligation {
-
-  def apply(desObligation: des.ObligationDetail): Either[DesTransformError, Obligation] =
-    Try {
-      val start = LocalDate.parse(desObligation.inboundCorrespondenceFromDate)
-      val end = LocalDate.parse(desObligation.inboundCorrespondenceToDate)
-      val met = desObligation.isFinalised
-      if (met) {
-        Obligation(start = start, end = end,
-          processed = Some(LocalDate.parse(desObligation.inboundCorrespondenceDateReceived.get)),
-          met = met)
-      } else {
-        Obligation(start = start, end = end,
-          due = Some(LocalDate.parse(desObligation.inboundCorrespondenceDueDate)),
-          met = met)
-      }
-
-    } match {
-      case Success(obj) => Right(obj)
-      case Failure(ex) => Left(InvalidDateError(s"Unable to parse the date from des response $ex"))
-    }
-}
+case class Obligation(start: LocalDate, end: LocalDate, due: LocalDate, met: Boolean)
 
 object Obligation {
 
@@ -60,7 +37,7 @@ object Obligation {
       Try(Obligation(
         start = LocalDate.parse(desObligation.inboundCorrespondenceFromDate),
         end = LocalDate.parse(desObligation.inboundCorrespondenceToDate),
-        due = Some(LocalDate.parse(desObligation.inboundCorrespondenceDueDate)),
+        due = LocalDate.parse(desObligation.inboundCorrespondenceDueDate),
         met = desObligation.isFinalised)
       ) match {
         case Success(obj) => Right(obj)
