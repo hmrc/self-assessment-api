@@ -18,14 +18,20 @@ package uk.gov.hmrc.selfassessmentapi.models.des
 
 import play.api.libs.json.{Json, Reads}
 
-case class Obligations(obligations: Seq[Obligation])
+case class CrystObligations(obligations: Seq[CrystObligation])
 
-object Obligations {
-  implicit val reads: Reads[Obligations] = Json.reads[Obligations]
+object CrystObligations {
+  implicit val reads: Reads[CrystObligations] = Json.reads[CrystObligations]
 }
 
-case class Obligation(id: Option[String], `type`: String, details: Seq[ObligationDetail])
+case class CrystObligation(identification: ObligationIdentification, obligationDetails: Seq[ObligationDetail])
 
-object Obligation {
-  implicit val reads: Reads[Obligation] = Json.reads[Obligation]
+object CrystObligation {
+  implicit val reads: Reads[CrystObligation] = Json.reads[CrystObligation]
+}
+
+case class ObligationIdentification(incomeSourceType: String, referenceNumber: String, referenceType: String)
+
+object ObligationIdentification {
+  implicit val reads: Reads[ObligationIdentification] = Json.reads[ObligationIdentification]
 }
