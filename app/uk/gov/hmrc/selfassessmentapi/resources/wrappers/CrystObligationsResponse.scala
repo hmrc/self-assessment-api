@@ -27,8 +27,6 @@ case class CrystObligationsResponse(underlying: HttpResponse) extends Response {
   // used for the new format of the obligation (returned by the API 1330)
   def obligations(incomeSourceType: String, nino: Nino, taxYearFromDate: LocalDate): Either[DesTransformError, Option[CrystObligation]] = {
 
-    val desObligations = json.asOpt[des.CrystObligations]
-
     def noneFound: Either[DesTransformError, Option[CrystObligation]] = {
       logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
       Right(None)
@@ -48,6 +46,6 @@ case class CrystObligationsResponse(underlying: HttpResponse) extends Response {
       }
     }
 
-    desObligations.fold(noneFound)(oneFound)
+    json.asOpt[des.CrystObligations].fold(noneFound)(oneFound)
   }
 }
