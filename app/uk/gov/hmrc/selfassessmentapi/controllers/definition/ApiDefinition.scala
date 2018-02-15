@@ -86,7 +86,7 @@ case class PublishingException(message: String) extends Exception(message)
 
 object APIStatus extends Enumeration {
   type APIStatus = Value
-  val PROTOTYPED, PUBLISHED, DEPRECATED, RETIRED = Value
+  val ALPHA, BETA, STABLE, DEPRECATED, RETIRED = Value
 }
 
 object AuthType extends Enumeration {
