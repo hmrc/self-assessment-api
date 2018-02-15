@@ -35,23 +35,17 @@ case class SelfEmploymentStatementResponse(underlying: HttpResponse) extends Res
 
     def oneFound(obligation: des.Obligations): Either[DesTransformError, Option[EopsObligations]] = {
       errorMessage = "Obligation for source id and/or business type was not found."
+      val result = for {
+        obl <- obligation.obligations
+        if obl.id.contains(id) && obl.`type` == incomeSourceType
+        details <- obl.details
+      } yield DesTransformValidator[ObligationDetail, EopsObligation].from(details)
 
-      obligation.obligations.find(o => o.id.fold(false)(_ == id) &&
-                                  o.`type` == incomeSourceType).fold(noneFound) {
-        desObligation =>
-          val obligationsOrError: Seq[Either[DesTransformError, EopsObligation]] = for {
-            details <- desObligation.details
-          } yield DesTransformValidator[ObligationDetail, EopsObligation].from(details)
-
-          obligationsOrError.find(_.isLeft) match {
-            case Some(ex) => Left(ex.left.get)
-            case None => Right(Some(EopsObligations(obligations = obligationsOrError map (_.right.get))))
-          }
+      result.find(_.isLeft) match {
+        case Some(ex) => Left(ex.left.get)
+        case None => Right(Some(EopsObligations(obligations = result map (_.right.get))))
       }
-
     }
-
     desObligations.fold(noneFound)(oneFound)
   }
-
 }
