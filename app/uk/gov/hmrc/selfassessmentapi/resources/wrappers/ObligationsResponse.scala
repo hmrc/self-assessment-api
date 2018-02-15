@@ -24,8 +24,6 @@ case class ObligationsResponse(underlying: HttpResponse) extends Response {
 
   def obligations(incomeSourceType: String, id: Option[SourceId] = None): Either[DesTransformError, Option[Obligations]] = {
 
-    val desObligations = json.asOpt[des.Obligations]
-
     var errorMessage = s"The response from DES does not match the expected format. JSON: [$json]"
 
     def noneFound: Either[DesTransformError, Option[Obligations]] = {
@@ -47,6 +45,6 @@ case class ObligationsResponse(underlying: HttpResponse) extends Response {
       }
     }
 
-    desObligations.fold(noneFound)(oneFound)
+    json.asOpt[des.Obligations].fold(noneFound)(oneFound)
   }
 }
