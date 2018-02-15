@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers.definition
 
+import play.api.Logger
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
 import uk.gov.hmrc.selfassessmentapi.controllers.definition.APIStatus.APIStatus
 import uk.gov.hmrc.selfassessmentapi.controllers.definition.AuthType._
@@ -408,8 +409,14 @@ class SelfAssessmentApiDefinition {
 
   private def buildAPIStatus(): APIStatus = {
     AppContext.apiStatus match {
-      case "PUBLISHED" => APIStatus.PUBLISHED
-      case _ => APIStatus.PROTOTYPED
+      case "ALPHA" => APIStatus.ALPHA
+      case "BETA" => APIStatus.BETA
+      case "STABLE" => APIStatus.STABLE
+      case "DEPRECATED" => APIStatus.DEPRECATED
+      case "RETIRED" => APIStatus.RETIRED
+      case _ =>
+        Logger.error(s"[ApiDefinition][buildApiStatus] no API Status found in config.  Reverting to Alpha")
+        APIStatus.ALPHA
     }
   }
 
