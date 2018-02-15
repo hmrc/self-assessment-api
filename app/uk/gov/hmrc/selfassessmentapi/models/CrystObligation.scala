@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.models
 
 import org.joda.time.LocalDate
+import org.joda.time.LocalDate.parse
 import play.api.libs.json.{Json, Writes}
 
 import scala.util.{Failure, Success, Try}
@@ -27,19 +28,12 @@ object toObligation {
 
   def apply(desObligation: des.ObligationDetail): Either[DesTransformError, CrystObligation] =
     Try {
-      val start = LocalDate.parse(desObligation.inboundCorrespondenceFromDate)
-      val end = LocalDate.parse(desObligation.inboundCorrespondenceToDate)
       val met = desObligation.isFinalised
-      if (met) {
-        CrystObligation(start = start, end = end,
-          processed = Some(LocalDate.parse(desObligation.inboundCorrespondenceDateReceived.get)),
-          met = met)
-      } else {
-        CrystObligation(start = start, end = end,
-          due = Some(LocalDate.parse(desObligation.inboundCorrespondenceDueDate)),
-          met = met)
-      }
-
+      CrystObligation(start = parse(desObligation.inboundCorrespondenceFromDate),
+        end = parse(desObligation.inboundCorrespondenceToDate),
+        processed = if (met) Some(parse(desObligation.inboundCorrespondenceDateReceived.get)) else None,
+        due = if (met) None else Some(parse(desObligation.inboundCorrespondenceDueDate)),
+        met = met)
     } match {
       case Success(obj) => Right(obj)
       case Failure(ex) => Left(InvalidDateError(s"Unable to parse the date from des response $ex"))
