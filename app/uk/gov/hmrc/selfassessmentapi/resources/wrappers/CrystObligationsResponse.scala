@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
 import org.joda.time.LocalDate
+import org.joda.time.LocalDate.parse
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models._
@@ -40,7 +41,7 @@ case class CrystObligationsResponse(underlying: HttpResponse) extends Response {
         id = obl.identification
         if id.incomeSourceType == incomeSourceType && id.referenceNumber == nino.nino
         details <- obl.obligationDetails
-        if taxYearFromDate == new LocalDate(details.inboundCorrespondenceFromDate)
+        if taxYearFromDate == parse(details.inboundCorrespondenceFromDate)
       } yield details).map(toObligation(_))
         .headOption.fold[Either[DesTransformError, Option[CrystObligation]]](Right(None)) {
         case Right(obl) => Right(Some(obl))
