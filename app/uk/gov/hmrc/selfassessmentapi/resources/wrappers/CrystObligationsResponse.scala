@@ -21,7 +21,6 @@ import org.joda.time.LocalDate.parse
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models._
-import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
 
 case class CrystObligationsResponse(underlying: HttpResponse) extends Response {
 
@@ -51,8 +50,4 @@ case class CrystObligationsResponse(underlying: HttpResponse) extends Response {
 
     desObligations.fold(noneFound)(oneFound)
   }
-
-  def isInvalidNino: Boolean =
-    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_NINO)
-
 }

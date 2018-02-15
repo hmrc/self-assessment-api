@@ -46,6 +46,7 @@ case class ObligationsResponse(underlying: HttpResponse) extends Response {
         case None => Right(Some(Obligations(result map (_.right.get))))
       }
     }
+
     desObligations.fold(noneFound)(oneFound)
   }
 }
