@@ -43,14 +43,6 @@ class SelfEmploymentUpdateSpec extends JsonSpec {
       assert(Errors.InvalidBusinessDescription === input.validate)
     }
 
-    /*
-    // TODO -- For the SIC validation feature switch solution is not working as expected. So we need to find the different solution
-    "return a error when providing a business description that does not conform to the UK SIC 2007 classifications" in {
-      val json = Jsons.SelfEmployment.update(businessDescription = "silly-business")
-
-      assertValidationErrorsWithCode[SelfEmploymentUpdate](json, Map("/businessDescription" -> Seq(ErrorCode.INVALID_BUSINESS_DESCRIPTION)))
-    }*/
-
     "return a error when providing a first address line that is not between 1 and 35 characters in length" in {
       val jsonOne = Jsons.SelfEmployment.update(businessAddressLineOne = "")
       val jsonTwo = Jsons.SelfEmployment.update(businessAddressLineOne = "a" * 36)
