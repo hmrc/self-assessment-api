@@ -66,6 +66,7 @@ case class APIVersion(
                        version: String,
                        access: Option[Access] = None,
                        status: APIStatus,
+                       endpointsEnabled: Boolean,
                        endpoints: Seq[Endpoint])
 
 

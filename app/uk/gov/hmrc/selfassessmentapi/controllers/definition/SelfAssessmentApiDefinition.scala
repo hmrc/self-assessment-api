@@ -400,6 +400,7 @@ class SelfAssessmentApiDefinition {
             version = "1.0",
             access = buildWhiteListingAccess(),
             status = buildAPIStatus(),
+            endpointsEnabled = true,
             endpoints = allEndpoints
           )
         ),
