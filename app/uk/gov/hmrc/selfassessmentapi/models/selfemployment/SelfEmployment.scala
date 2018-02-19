@@ -17,9 +17,11 @@
 package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
 import org.joda.time.LocalDate
-import play.api.data.validation.ValidationError
+import play.api.data.Mapping
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
 import uk.gov.hmrc.selfassessmentapi.models.AccountingType._
 import uk.gov.hmrc.selfassessmentapi.models._
 
@@ -60,12 +62,6 @@ object SelfEmployment {
         businessPostcode = addressPostcode)
   }
 
-  private val validateSIC: Reads[String] =
-    Reads
-      .of[String]
-      .filter(ValidationError("business description must be a string that conforms to the UK SIC 2007 classifications",
-        ErrorCode.INVALID_BUSINESS_DESCRIPTION))(name => sicClassifications.get.contains(name))
-
   implicit val writes: Writes[SelfEmployment] = Json.writes[SelfEmployment]
 
   implicit val reads: Reads[SelfEmployment] = (
@@ -75,11 +71,12 @@ object SelfEmployment {
       (__ \ "commencementDate").read[LocalDate](commencementDateValidator) and
       Reads.pure[Option[LocalDate]](None) and
       (__ \ "tradingName").read[String](lengthIsBetween(1, 105)) and
-      (__ \ "businessDescription").read[String](validateSIC) and
+      (__ \ "businessDescription").read[String] and
       (__ \ "businessAddressLineOne").read[String](lengthIsBetween(1, 35)) and
       (__ \ "businessAddressLineTwo").readNullable[String](lengthIsBetween(1, 35)) and
       (__ \ "businessAddressLineThree").readNullable[String](lengthIsBetween(1, 35)) and
       (__ \ "businessAddressLineFour").readNullable[String](lengthIsBetween(1, 35)) and
       (__ \ "businessPostcode").read[String](lengthIsBetween(1, 10) keepAnd postcodeValidator)
     )(SelfEmployment.apply _)
+
 }
