@@ -122,11 +122,6 @@ class SelfEmploymentSpec extends JsonSpec {
       assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/tradingName" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
     }
 
-    "return a error when providing an empty business description" in {
-      val input = Jsons.SelfEmployment.selfEmploymentJson(businessDescription = Some(""))
-      assert(Errors.InvalidBusinessDescription === input.validate)
-    }
-
     "return a error when providing a first address line that is not between 1 and 35 characters in length" in {
       val jsonOne = Jsons.SelfEmployment(businessAddressLineOne = Some(""))
       val jsonTwo = Jsons.SelfEmployment(businessAddressLineOne = Some("a" * 36))

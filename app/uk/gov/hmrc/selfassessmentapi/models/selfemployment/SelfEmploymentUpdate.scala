@@ -26,12 +26,7 @@ case class SelfEmploymentUpdate(tradingName: String,
                                 businessAddressLineTwo: Option[String],
                                 businessAddressLineThree: Option[String],
                                 businessAddressLineFour: Option[String],
-                                businessPostcode: String){
-  val validate =
-    if (businessDescription.isEmpty){
-      Errors.InvalidBusinessDescription
-    }
-}
+                                businessPostcode: String)
 
 object SelfEmploymentUpdate {
 

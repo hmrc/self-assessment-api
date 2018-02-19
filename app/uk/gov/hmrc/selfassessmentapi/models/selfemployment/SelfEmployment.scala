@@ -36,13 +36,7 @@ case class SelfEmployment(id: Option[SourceId] = None,
                           businessAddressLineTwo: Option[String],
                           businessAddressLineThree: Option[String],
                           businessAddressLineFour: Option[String],
-                          businessPostcode: String){
-
-  val validate =
-    if (businessDescription.isEmpty){
-      Errors.InvalidBusinessDescription
-    }
-}
+                          businessPostcode: String)
 
 object SelfEmployment {
   def from(desSelfEmployment: des.selfemployment.SelfEmployment): Option[SelfEmployment] = {
