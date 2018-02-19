@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, ErrorCode}
+import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType, ErrorCode, Errors}
 import uk.gov.hmrc.selfassessmentapi.resources.{JsonSpec, Jsons}
 
 class SelfEmploymentSpec extends JsonSpec {
@@ -28,7 +28,6 @@ class SelfEmploymentSpec extends JsonSpec {
       val input = SelfEmployment(Some("myid"), AccountingPeriod(LocalDate.parse("2017-04-01"), LocalDate.parse("2017-04-02")),
         AccountingType.CASH, LocalDate.now.minusDays(1), None, "Acme Ltd.", "Accountancy services", "Acme Rd.", None, None, None, "A9 9AA")
       val expectedOutput = input.copy(id = None)
-
       assertJsonIs(input, expectedOutput)
     }
 
@@ -121,18 +120,6 @@ class SelfEmploymentSpec extends JsonSpec {
 
       assertValidationErrorsWithCode[SelfEmployment](jsonOne, Map("/tradingName" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
       assertValidationErrorsWithCode[SelfEmployment](jsonTwo, Map("/tradingName" -> Seq(ErrorCode.INVALID_FIELD_LENGTH)))
-    }
-
-    "return a error when providing an empty business description" in {
-      val json = Jsons.SelfEmployment(businessDescription = Some(""))
-
-      assertValidationErrorsWithCode[SelfEmployment](json, Map("/businessDescription" -> Seq(ErrorCode.INVALID_BUSINESS_DESCRIPTION)))
-    }
-
-    "return a error when providing a business description that does not conform to the UK SIC 2007 classifications" in {
-      val json = Jsons.SelfEmployment(businessDescription = Some("silly-business"))
-
-      assertValidationErrorsWithCode[SelfEmployment](json, Map("/businessDescription" -> Seq(ErrorCode.INVALID_BUSINESS_DESCRIPTION)))
     }
 
     "return a error when providing a first address line that is not between 1 and 35 characters in length" in {

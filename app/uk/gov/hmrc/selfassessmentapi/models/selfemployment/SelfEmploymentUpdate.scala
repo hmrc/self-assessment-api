@@ -16,11 +16,9 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
-import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models._
-import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, sicClassifications}
 
 case class SelfEmploymentUpdate(tradingName: String,
                                 businessDescription: String,
@@ -32,15 +30,11 @@ case class SelfEmploymentUpdate(tradingName: String,
 
 object SelfEmploymentUpdate {
 
-  private val validateSIC: Reads[String] =
-    Reads.of[String].filter(ValidationError("business description must be a string that conforms to the UK SIC 2007 classifications", ErrorCode.INVALID_BUSINESS_DESCRIPTION)
-    )(name => sicClassifications.get.contains(name))
-
   implicit val writes: Writes[SelfEmploymentUpdate] = Json.writes[SelfEmploymentUpdate]
 
   implicit val reads: Reads[SelfEmploymentUpdate] = (
     (__ \ "tradingName").read[String](lengthIsBetween(1, 105)) and
-      (__ \ "businessDescription").read[String](validateSIC) and
+      (__ \ "businessDescription").read[String] and
       (__ \ "businessAddressLineOne").read[String](lengthIsBetween(1, 35)) and
       (__ \ "businessAddressLineTwo").readNullable[String](lengthIsBetween(1, 35)) and
       (__ \ "businessAddressLineThree").readNullable[String](lengthIsBetween(1, 35)) and

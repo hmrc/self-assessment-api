@@ -16,7 +16,9 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import org.joda.time.LocalDate
 import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType}
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
 
 object Jsons {
@@ -569,6 +571,59 @@ object Jsons {
                     |  "tradingName": "$tradingName"
                     |}
          """.stripMargin)
+
+    }
+
+    def selfEmploymentJson(accPeriodStart: String = "2017-04-06",
+                           accPeriodEnd: String = "2018-04-05",
+                           accountingType: String = "CASH",
+                           commencementDate: Option[String] = Some("2017-01-01"),
+                           cessationDate: Option[String] = Some("2017-01-02"),
+                           tradingName: String = "Acme Ltd",
+                           businessDescription: Option[String] = None,
+                           businessAddressLineOne: Option[String] = Some("1 Acme Rd."),
+                           businessAddressLineTwo: Option[String] = Some("London"),
+                           businessAddressLineThree: Option[String] = Some("Greater London"),
+                           businessAddressLineFour: Option[String] = Some("United Kingdom"),
+                           businessPostcode: Option[String] = Some("A9 9AA")) = {
+
+      val selfEmployment = uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmployment(
+        None,
+        AccountingPeriod(LocalDate.parse(accPeriodStart), LocalDate.parse(accPeriodEnd)),
+        AccountingType.fromDes(accountingType).getOrElse(AccountingType.CASH),
+        LocalDate.parse(commencementDate.get),
+        Some(LocalDate.parse(cessationDate.get)),
+        tradingName,
+        businessDescription.get,
+        businessAddressLineOne.get,
+        businessAddressLineTwo,
+        businessAddressLineThree,
+        businessAddressLineFour,
+        businessPostcode.get
+      )
+
+      selfEmployment
+    }
+
+    def selfEmploymentUpdateJson(tradingName: String = "Acme Ltd",
+                           businessDescription: String = "Accountancy services",
+                           businessAddressLineOne: String = "1 Acme Rd.",
+                           businessAddressLineTwo: String = "London",
+                           businessAddressLineThree: String = "Greater London",
+                           businessAddressLineFour: String = "United Kingdom",
+                           businessPostcode: String = "A9 9AA") = {
+
+      val selfEmploymentUpdate = uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentUpdate(
+        tradingName,
+        businessDescription,
+        businessAddressLineOne,
+        Some(businessAddressLineTwo),
+        Some(businessAddressLineThree),
+        Some(businessAddressLineFour),
+        businessPostcode
+      )
+
+      selfEmploymentUpdate
     }
 
     def update(tradingName: String = "Acme Ltd",
