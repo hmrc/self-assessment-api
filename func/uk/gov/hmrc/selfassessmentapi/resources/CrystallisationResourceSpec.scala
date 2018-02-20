@@ -99,6 +99,7 @@ class CrystallisationResourceSpec extends BaseFunctionalSpec {
   }
 
   "crystallisation obligation information" should {
+
     "return 200 and the response - the happy scenario" in {
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -112,6 +113,30 @@ class CrystallisationResourceSpec extends BaseFunctionalSpec {
         .bodyHasPath("\\end", taxYear.taxYearToDate.toString)
         .bodyHasPath("\\due", "2019-01-31")
         .bodyHasPath("\\met", false)
+    }
+
+    "return code 400 when nino is invalid" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().crystallisation.crystallisationObligation(nino, taxYear)
+        .when()
+        .get(s"/ni/invalidNino/$taxYear/crystallisation/obligation")
+        .thenAssertThat()
+        .statusIs(400)
+        .bodyIsError("NINO_INVALID")
+    }
+
+    "return 400 when tax year is invalid" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().crystallisation.crystallisationObligation(nino, taxYear)
+        .when()
+        .get(s"/ni/$nino/2012-11/crystallisation/obligation")
+        .thenAssertThat()
+        .statusIs(400)
+        .bodyIsError("TAX_YEAR_INVALID")
     }
   }
 }
