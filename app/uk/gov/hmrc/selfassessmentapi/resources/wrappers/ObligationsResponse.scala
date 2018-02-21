@@ -16,14 +16,13 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import uk.gov.hmrc.selfassessmentapi.models.des.{ObligationDetail, DesError, DesErrorCode}
-import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.models.des.ObligationDetail
 
 case class ObligationsResponse(underlying: HttpResponse) extends Response {
-  def obligations(incomeSourceType: String, id: Option[SourceId] = None): Either[DesTransformError, Option[Obligations]] = {
 
-    val desObligations = json.asOpt[des.Obligations]
+  def obligations(incomeSourceType: String, id: Option[SourceId] = None): Either[DesTransformError, Option[Obligations]] = {
 
     var errorMessage = s"The response from DES does not match the expected format. JSON: [$json]"
 
@@ -34,24 +33,18 @@ case class ObligationsResponse(underlying: HttpResponse) extends Response {
 
     def oneFound(obligation: des.Obligations): Either[DesTransformError, Option[Obligations]] = {
       errorMessage = "Obligation for source id and/or business type was not found."
-      obligation.obligations.find(o => o.id.forall(oId => id.forall(_ == oId)) && o.`type` == incomeSourceType).fold(noneFound) {
-        desObligation =>
-          val obligationsOrError: Seq[Either[DesTransformError, Obligation]] = for {
-            details <- desObligation.details
-          } yield DesTransformValidator[ObligationDetail, Obligation].from(details)
+      val result = for {
+        obl <- obligation.obligations
+        if (id.isEmpty || obl.id == id) && obl.`type` == incomeSourceType
+        detail <- obl.details
+      } yield DesTransformValidator[ObligationDetail, Obligation].from(detail)
 
-          obligationsOrError.find(_.isLeft) match {
-            case Some(ex) => Left(ex.left.get)
-            case None => Right(Some(Obligations(obligationsOrError map (_.right.get))))
-
-          }
+      result.find(_.isLeft) match {
+        case Some(ex) => Left(ex.left.get)
+        case None => Right(Some(Obligations(result map (_.right.get))))
       }
     }
 
-    desObligations.fold(noneFound)(oneFound)
+    json.asOpt[des.Obligations].fold(noneFound)(oneFound)
   }
-
-  def isInvalidNino: Boolean =
-    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_NINO)
-
 }

@@ -16,18 +16,22 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
+import org.joda.time.LocalDate
 import play.api.libs.json.{Reads, Writes}
 import uk.gov.hmrc.domain.{SimpleName, SimpleObjectReads, SimpleObjectWrites}
 
 case class TaxYear(taxYear: String) extends SimpleName {
 
+  private lazy val year = taxYear.split("-")(0).toInt
   override def toString = taxYear
   def value = taxYear
   def toDesTaxYear = taxYear.take(2) + taxYear.drop(5)
   val name = "taxYear"
+  val taxYearFromDate = new LocalDate(s"$year-04-06")
+  val taxYearToDate = new LocalDate(s"${year+1}-04-05")
 }
 
-object TaxYear extends (String => TaxYear) {
+object TaxYear {
   implicit val taxYearWrite: Writes[TaxYear] = new SimpleObjectWrites[TaxYear](_.value)
   implicit val taxYearRead: Reads[TaxYear] = new SimpleObjectReads[TaxYear]("taxYear", TaxYear.apply)
 

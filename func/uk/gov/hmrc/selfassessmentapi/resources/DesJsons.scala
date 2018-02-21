@@ -3,7 +3,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json._
 import play.api.mvc.Results.Conflict
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.models.CessationReason
+import uk.gov.hmrc.selfassessmentapi.models.{CessationReason, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.models.des.properties.{Common, FHL, Other}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
@@ -635,6 +635,114 @@ object DesJsons {
          |}
          """.stripMargin
     }
+
+    def crystallisationObligations(id: String, taxYear: TaxYear): String =
+      s"""
+         |{
+         |    "obligations": [
+         |        {
+         |            "identification": {
+         |                "incomeSourceType": "ITSA",
+         |                "referenceNumber": "$id",
+         |                "referenceType": "NINO"
+         |            },
+         |            "obligationDetails": [
+         |                {
+         |                    "status": "F",
+         |                    "inboundCorrespondenceFromDate": "2016-04-06",
+         |                    "inboundCorrespondenceToDate": "2017-04-05",
+         |                    "inboundCorrespondenceDueDate": "2018-01-31",
+         |                    "periodKey": "16P0",
+         |                    "inboundCorrespondenceDateReceived": "2018-01-01"
+         |                },
+         |                {
+         |                    "status": "O",
+         |                    "inboundCorrespondenceFromDate": "${taxYear.taxYearFromDate}",
+         |                    "inboundCorrespondenceToDate": "${taxYear.taxYearToDate}",
+         |                    "inboundCorrespondenceDueDate": "2019-01-31",
+         |                    "periodKey": "17P0"
+         |                }
+         |            ]
+         |        },
+         |        {
+         |            "identification": {
+         |                "incomeSourceType": "ITSB",
+         |                "referenceNumber": "XDIS00000000166",
+         |                "referenceType": "MTDBIS"
+         |            },
+         |            "obligationDetails": [
+         |                {
+         |                    "status": "F",
+         |                    "inboundCorrespondenceFromDate": "2017-04-06",
+         |                    "inboundCorrespondenceToDate": "2017-07-05",
+         |                    "inboundCorrespondenceDueDate": "2017-08-05",
+         |                    "periodKey": "#001",
+         |                    "inboundCorrespondenceDateReceived": "2017-06-30"
+         |                },
+         |                {
+         |                    "status": "O",
+         |                    "inboundCorrespondenceFromDate": "2017-07-06",
+         |                    "inboundCorrespondenceToDate": "2017-10-05",
+         |                    "inboundCorrespondenceDueDate": "2017-11-05",
+         |                    "periodKey": "#002"
+         |                },
+         |                {
+         |                    "status": "O",
+         |                    "inboundCorrespondenceFromDate": "2017-10-06",
+         |                    "inboundCorrespondenceToDate": "2018-01-05",
+         |                    "inboundCorrespondenceDueDate": "2018-02-05",
+         |                    "periodKey": "#003"
+         |                },
+         |                {
+         |                    "status": "O",
+         |                    "inboundCorrespondenceFromDate": "2018-01-06",
+         |                    "inboundCorrespondenceToDate": "2018-04-05",
+         |                    "inboundCorrespondenceDueDate": "2018-05-05",
+         |                    "periodKey": "#004"
+         |                }
+         |            ]
+         |        },
+         |        {
+         |            "identification": {
+         |                "incomeSourceType": "ITSP",
+         |                "referenceNumber": "XGIS00000000169",
+         |                "referenceType": "MTDBIS"
+         |            },
+         |            "obligationDetails": [
+         |                {
+         |                    "status": "F",
+         |                    "inboundCorrespondenceFromDate": "2017-04-06",
+         |                    "inboundCorrespondenceToDate": "2017-07-05",
+         |                    "inboundCorrespondenceDueDate": "2017-08-05",
+         |                    "periodKey": "#001",
+         |                    "inboundCorrespondenceDateReceived": "2017-06-30"
+         |                },
+         |                {
+         |                    "status": "O",
+         |                    "inboundCorrespondenceFromDate": "2017-07-06",
+         |                    "inboundCorrespondenceToDate": "2017-10-05",
+         |                    "inboundCorrespondenceDueDate": "2017-11-05",
+         |                    "periodKey": "#002"
+         |                },
+         |                {
+         |                    "status": "O",
+         |                    "inboundCorrespondenceFromDate": "2017-10-06",
+         |                    "inboundCorrespondenceToDate": "2018-01-05",
+         |                    "inboundCorrespondenceDueDate": "2018-02-05",
+         |                    "periodKey": "#003"
+         |                },
+         |                {
+         |                    "status": "O",
+         |                    "inboundCorrespondenceFromDate": "2018-01-06",
+         |                    "inboundCorrespondenceToDate": "2018-04-05",
+         |                    "inboundCorrespondenceDueDate": "2018-05-05",
+         |                    "periodKey": "#004"
+         |                }
+         |            ]
+         |        }
+         |    ]
+         |}
+       """.stripMargin
   }
 
   object Crystallisation {
