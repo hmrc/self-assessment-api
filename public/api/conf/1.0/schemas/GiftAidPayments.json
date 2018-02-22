@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "UpdateGiftAidPayments",
+  "definitions": {
+    "amount": {
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "10000.89",
+      "description": "Defines an amount value (to 2 decimal places), between 0 and 99999999999999.98"
+    }
+  },
+  "properties": {
+    "totalPayments": {
+      "title": "Total gift aid payments",
+      "description": "One off, before and after tax year payments, shares or securities and charity etc",
+      "$ref": "#/definitions/amount"
+    },
+    "totalOneOffPayments": {
+      "title": "Total one off gift payments",
+      "description": "One off gift payments",
+      "$ref": "#/definitions/amount"
+    },
+    "totalPaymentsBeforeTaxYearStart": {
+      "title": "Total gift payments before tax year start",
+      "description": "Total gift payments made before the tax year started",
+      "$ref": "#/definitions/amount"
+    },
+    "totalPaymentsAfterTaxYearEnd": {
+      "title": "Total gift payments after tax year end",
+      "description": "Total gift payments made after the tax year ended",
+      "$ref": "#/definitions/amount"
+    },
+    "sharesOrSecurities": {
+      "title": "Shares or Security payments",
+      "description": "Gift Payments made in shares and securities",
+      "$ref": "#/definitions/amount"
+    },
+    "ukCharityGift": {
+      "type": "object",
+      "description": "Total Gift payments for the UK charities",
+      "properties": {
+        "landAndBuildings": {
+          "title": "UK charity land and buildings",
+          "description": "Gift payments for the UK charity land and buildings",
+          "$ref": "#/definitions/amount"
+        }
+      }
+    },
+    "nonUKCharityGift": {
+      "type": "object",
+      "properties": {
+        "investments": {
+          "title": "Non UK charity investments",
+          "description": "Investments for the Non UK charities",
+          "$ref": "#/definitions/amount"
+        },
+        "payments": {
+          "title": "Non UK charity payments",
+          "description": "Gift payments for the Non UK charities",
+          "$ref": "#/definitions/amount"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

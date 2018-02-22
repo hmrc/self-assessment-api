@@ -1921,3 +1921,49 @@ traits:
                         description: Invalid taxYear
                         value:
                           code: TAX_YEAR_INVALID
+    /gift-aid:
+      (annotations.group):
+        name: Gift Aid Payments
+        description: !include docs/gift-aid-payments.md
+      /{taxYear}:
+        displayName: Gift Aid Payments for the tax year
+        uriParameters:
+          taxYear:
+            description: The tax year the data applies to
+            type: string
+            example: 2017-18
+        put:
+          displayName: Amend annual Gift Aid Tax Relief [test only]
+          description: Amend annual gift aid tax relief for a tax year. This API is not available in production.
+          (annotations.sandboxData): !include scenarios/agent-scenarios.md
+          is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+          (annotations.scope): "write:self-assessment"
+          securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
+          body:
+            application/json:
+              type: !include schemas/GiftAidPayments.json
+              example: !include examples/gift-aid/GiftAidPayments.json
+          responses:
+            204:
+            400:
+              body:
+                application/json:
+                  type: types.errorResponse
+                  examples:
+                    invalidNino:
+                      description: Invalid NINO
+                      value:
+                        code: NINO_INVALID
+                    invalidTaxYear:
+                      description: Invalid taxYear
+                      value:
+                        code: TAX_YEAR_INVALID
+                    invalidMonetaryAmount:
+                      description: Amounts should be a non-negative number less than 99999999999999.98 with up to 2 decimal places
+                      value:
+                        code: INVALID_MONETARY_AMOUNT
+                    invalidTotalPayment:
+                      description: totalPayments cannot be less than the sum of totalOneOffPayments and payments of the nonUKCharityGift
+                      value:
+                        code: TOTAL_PAYMENTS_LESS
+            404:
