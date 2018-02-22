@@ -1307,8 +1307,8 @@ trait BaseFunctionalSpec extends TestApplication {
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody(s"""
-                            |{
-                            |}
+                             |{
+                             |}
                           """.stripMargin
                 )))
 
@@ -1481,13 +1481,13 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def notFoundIncomeSourceFor(nino: Nino): Givens = {
           stubFor(
-          post(urlEqualTo(s"/income-tax-self-assessment/nino/$nino/properties"))
-            .willReturn(
-              aResponse()
-                .withStatus(404)
-                .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.Errors.notFoundIncomeSource)
-            ))
+            post(urlEqualTo(s"/income-tax-self-assessment/nino/$nino/properties"))
+              .willReturn(
+                aResponse()
+                  .withStatus(404)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.notFoundIncomeSource)
+              ))
           givens
         }
 
@@ -1634,31 +1634,31 @@ trait BaseFunctionalSpec extends TestApplication {
             case PropertyType.FHL =>
               DesJsons.Properties.Period.fhl(
                 transactionReference = periodId,
-                  from = "2017-04-05",
-                  to = "2018-04-04",
-                  rentIncome = 200.00,
-                  premisesRunningCosts = 200.00,
-                  repairsAndMaintenance = 200.00,
-                  financialCosts = 200.00,
-                  professionalFees = 200.00,
-                  costOfServices = 200.00,
-                  other = 200.00)
+                from = "2017-04-05",
+                to = "2018-04-04",
+                rentIncome = 200.00,
+                premisesRunningCosts = 200.00,
+                repairsAndMaintenance = 200.00,
+                financialCosts = 200.00,
+                professionalFees = 200.00,
+                costOfServices = 200.00,
+                other = 200.00)
                 .toString()
             case PropertyType.OTHER =>
               DesJsons.Properties.Period.other(
-                  transactionReference = periodId,
-                  from = "2017-04-05",
-                  to = "2018-04-04",
-                  rentIncome = 200.00,
-                  premiumsOfLeaseGrant = Some(200.00),
-                  reversePremiums = Some(200.00),
-                  premisesRunningCosts = Some(200.00),
-                  repairsAndMaintenance = Some(200.00),
-                  financialCosts = Some(200.00),
-                  professionalFees = Some(200.00),
-                  costOfServices = Some(200.00),
-                  residentialFinancialCost = Some(200.00),
-                  other = Some(200.00))
+                transactionReference = periodId,
+                from = "2017-04-05",
+                to = "2018-04-04",
+                rentIncome = 200.00,
+                premiumsOfLeaseGrant = Some(200.00),
+                reversePremiums = Some(200.00),
+                premisesRunningCosts = Some(200.00),
+                repairsAndMaintenance = Some(200.00),
+                financialCosts = Some(200.00),
+                professionalFees = Some(200.00),
+                costOfServices = Some(200.00),
+                residentialFinancialCost = Some(200.00),
+                other = Some(200.00))
                 .toString()
           }
 
@@ -1901,6 +1901,50 @@ trait BaseFunctionalSpec extends TestApplication {
 
       }
 
+      object GiftAid {
+
+        def updatePayments(nino: Nino, taxYear: TaxYear): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/gift-aid/${taxYear.toDesTaxYear}"))
+              .willReturn(
+                aResponse()
+                  .withStatus(204)
+                .withBody("")))
+          givens
+        }
+
+        def updatePaymentsWithNinoNotAvailable(nino: Nino, taxYear: TaxYear): Givens = {
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/gift-aid/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.ninoNotFound)))
+
+          givens
+        }
+
+        def retrievePayments(nino: Nino, taxYear: TaxYear): Givens = {
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/gift-aid/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.GiftAidPayments(100.00))))
+
+          givens
+        }
+
+        def retrievePaymentsWithInvalidNino(nino: Nino, taxYear: TaxYear): Givens = {
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/gift-aid/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.ninoNotFound)))
+
+          givens
+        }
+      }
     }
 
     def des() = new Des(this)

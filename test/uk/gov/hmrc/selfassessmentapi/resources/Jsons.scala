@@ -75,7 +75,10 @@ object Jsons {
     val agentNotAuthorised: String = errorWithMessage("AGENT_NOT_AUTHORIZED", "The agent is not authorized")
     val agentNotSubscribed: String =
       errorWithMessage("AGENT_NOT_SUBSCRIBED", "The agent is not subscribed to agent services")
-    val notAllowedConsolidatedExpenses = businessErrorWithMessage("NOT_ALLOWED_CONSOLIDATED_EXPENSES" -> "The submission contains consolidated expenses but the accumulative turnover amount exceeds the threshold")
+    val notAllowedConsolidatedExpenses = businessErrorWithMessage(
+      "NOT_ALLOWED_CONSOLIDATED_EXPENSES" -> "The submission contains consolidated expenses but the accumulative turnover amount exceeds the threshold")
+    val invalidTaxYear: String = businessErrorWithMessage(
+      "TAX_YEAR_INVALID" -> "The provided tax year is not valid.")
 
     def invalidRequest(errors: (String, String)*): String = {
       s"""
@@ -1272,6 +1275,27 @@ object Jsons {
            |    }
            |  ]
            |}
+         """.stripMargin)
+    }
+  }
+
+  object GiftAidPayments {
+    def apply(amount: BigDecimal): JsValue = {
+      Json.parse(s"""
+                    |  {
+                    | "totalPayments": 500,
+                    |  "totalOneOffPayments": $amount,
+                    |  "totalPaymentsBeforeTaxYearStart": 100.00,
+                    |  "totalPaymentsAfterTaxYearEnd": 50.00,
+                    |  "sharesOrSecurities": 100.20,
+                    |  "ukCharityGift": {
+                    |    "landAndBuildings": 100.00
+                    |  },
+                    |  "nonUKCharityGift": {
+                    |    "investments": 50.50,
+                    |    "payments": 150.50
+                    |  }
+                    |}
          """.stripMargin)
     }
   }

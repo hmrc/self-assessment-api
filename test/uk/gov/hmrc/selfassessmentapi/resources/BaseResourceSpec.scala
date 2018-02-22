@@ -20,7 +20,7 @@ import org.scalatest.BeforeAndAfter
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, Result}
+import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.test.UnitSpec
@@ -33,6 +33,11 @@ trait BaseResourceSpec extends UnitSpec with MockitoSugar with BeforeAndAfter wi
 
   def submitWithSessionAndAuth(action: Action[JsValue], requestJson: String)(test: Future[Result] => Any) {
     val result = action.apply(FakeRequest().withBody(Json.parse(requestJson)))
+    test(result)
+  }
+
+  def showWithSessionAndAuth(action: Action[AnyContent])(test: Future[Result] => Any) {
+    val result = action.apply(FakeRequest())
     test(result)
   }
 }

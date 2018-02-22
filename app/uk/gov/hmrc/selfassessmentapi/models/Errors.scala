@@ -41,6 +41,12 @@ object Errors {
 
   case class Error(code: String, message: String, path: Option[String])
 
+  case class DesError(code: String, reason: String)
+
+  object DesError {
+    implicit val reads: Reads[DesError] = Json.reads[DesError]
+  }
+
   case class BadRequest(errors: Seq[Error], message: String) {
     val code = "INVALID_REQUEST"
   }
@@ -81,6 +87,8 @@ object Errors {
   object RequiredIntentToCrystallise extends Error("REQUIRED_INTENT_TO_CRYSTALLISE", "Crystallisation could occur only after an intent to crystallise is sent.", None)
   object InvalidTaxCalculationId extends Error("INVALID_TAX_CALCULATION_ID", "The calculation id should match the calculation id returned by the latest intent to crystallise.", Some("/calculationId"))
   object AlreadySubmitted extends Error("ALREADY_SUBMITTED", "You cannot submit a statement for the same accounting period twice", None)
+  object InvalidGiftAidTotalPayments extends Error("INVALID_TOTAL_PAYMENTS", "Gift aid totalPayments cannot be less than the sum of totalOneOffPayments and nonUKCharityGift payments", None)
+  object InvalidGiftAidPayments extends Error("INVALID_GIFT_AID_PAYMENTS", "Gift aid payments provided are invalid and cannot not be processed", None)
 
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")
   def badRequest(error: Error) = BadRequest(Seq(error), "Invalid request")
@@ -118,4 +126,12 @@ object Errors {
   }
 
   def businessJsonError(error: Errors.Error) = Json.toJson(Errors.businessError(error))
+
+  def desErrorsToApiErrors(desErrors: Seq[JsValue]): Seq[JsValue] = desErrors.map(e => desErrorToApiError(e))
+
+  def desErrorToApiError(jsValue: JsValue): JsValue =
+    jsValue.validate[DesError] match {
+      case JsSuccess(payload, _) => Json.toJson(Error(payload.code, payload.reason, None))
+      case JsError(errors) => jsValue
+    }
 }
