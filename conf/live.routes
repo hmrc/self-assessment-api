@@ -79,4 +79,7 @@ GET    /ni/:nino/:taxYear/crystallisation/obligation   uk.gov.hmrc.selfassessmen
 POST    /ni/:nino/calculations       uk.gov.hmrc.selfassessmentapi.resources.TaxCalculationResource.requestCalculation(nino: uk.gov.hmrc.domain.Nino)
 GET     /ni/:nino/calculations/:id   uk.gov.hmrc.selfassessmentapi.resources.TaxCalculationResource.retrieveCalculation(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
 
-
+##########################
+#   Gift Aid Payments    #
+##########################
+PUT /ni/:nino/gift-aid/:taxYear   uk.gov.hmrc.selfassessmentapi.resources.GiftAidPaymentsResource.updatePayments(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)

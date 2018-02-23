@@ -54,7 +54,9 @@ object ErrorCode extends Enumeration {
   MANDATORY_FIELD_MISSING,
   NO_INCOMES_AND_EXPENSES,
   INVALID_DATE_RANGE,
-  INVALID_DATE= Value
+  INVALID_DATE,
+  INVALID_TOTAL_PAYMENTS,
+  INVALID_GIFT_AID_PAYMENTS= Value
 
   implicit val format: Format[ErrorCode] = EnumJson.enumFormat(ErrorCode,
     Some(s"Recognized ErrorCode values: ${ErrorCode.values.mkString(", ")}"))
