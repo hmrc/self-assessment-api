@@ -20,6 +20,7 @@ import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Writes, __, _}
 import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, Validation, des}
+import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.Validation._
 
 case class GiftAidPayments(totalPayments: Option[BigDecimal] = None,
@@ -40,23 +41,23 @@ object GiftAidPayments{
   implicit val writes: Writes[GiftAidPayments] = Json.writes[GiftAidPayments]
 
   implicit val reads: Reads[GiftAidPayments] = (
-    (__ \ "totalPayments").readNullable[BigDecimal] and
-      (__ \ "totalOneOffPayments").readNullable[BigDecimal] and
-      (__ \ "totalPaymentsBeforeTaxYearStart").readNullable[BigDecimal] and
-      (__ \ "totalPaymentsAfterTaxYearEnd").readNullable[BigDecimal] and
-      (__ \ "sharesOrSecurities").readNullable[BigDecimal] and
+    (__ \ "totalPayments").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "totalOneOffPayments").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "totalPaymentsBeforeTaxYearStart").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "totalPaymentsAfterTaxYearEnd").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "sharesOrSecurities").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "ukCharityGift").readNullable[GiftAidUKCharityPayments] and
       (__ \ "nonUKCharityGift").readNullable[GiftAidNonUKCharityPayments]
     )(GiftAidPayments.apply _)
-    .filter(ValidationError(s"Gift aid payments provided are invalid and cannot not be processed",
+    .filter(ValidationError(s"Gift aid payments provided are invalid and cannot be processed",
       ErrorCode.INVALID_REQUEST))(_.hasPayments)
     .validate(Seq(
       Validation(JsPath(),
         giftAidPaymentsValidator,
-        ValidationError("Gift aid payments provided are invalid and cannot not be processed", ErrorCode.INVALID_GIFT_AID_PAYMENTS)),
+        ValidationError("Gift aid payments provided are invalid and cannot be processed", ErrorCode.INVALID_GIFT_AID_PAYMENTS)),
       Validation(JsPath(),
         totalPaymentsValidator,
-        ValidationError("Gift aid totalPayments cannot be less than the sum of totalOneOffPayments and nonUKCharityGift payments", ErrorCode.INVALID_TOTAL_PAYMENTS))))
+        ValidationError("Gift aid totalPayments cannot be less than the sum of totalOneOffPayments and nonUKCharityGift payments", ErrorCode.TOTAL_PAYMENTS_LESS))))
 
 
   private def giftAidPaymentsValidator(giftAidPayments: GiftAidPayments): Boolean =
@@ -86,7 +87,10 @@ case class GiftAidUKCharityPayments(landAndBuildings: BigDecimal)
 
 object GiftAidUKCharityPayments {
 
-  implicit val format: Format[GiftAidUKCharityPayments] = Json.format[GiftAidUKCharityPayments]
+  implicit val writes: Writes[GiftAidUKCharityPayments] = Json.writes[GiftAidUKCharityPayments]
+
+  implicit val reads: Reads[GiftAidUKCharityPayments] =
+    (__ \ "landAndBuildings").read[BigDecimal](nonNegativeAmountValidator).map(GiftAidUKCharityPayments(_))
 
   def from(desGAP: Option[des.giftaid.GiftAidUKCharityPayments]): Option[GiftAidUKCharityPayments] = {
     if(desGAP.isDefined)
@@ -105,11 +109,11 @@ object GiftAidNonUKCharityPayments {
   implicit val writes: Writes[GiftAidNonUKCharityPayments] = Json.writes[GiftAidNonUKCharityPayments]
 
   implicit val reads: Reads[GiftAidNonUKCharityPayments] = (
-    (__ \ "investments").readNullable[BigDecimal] and
-      (__ \ "payments").readNullable[BigDecimal]
+    (__ \ "investments").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "payments").readNullable[BigDecimal](nonNegativeAmountValidator)
     )(GiftAidNonUKCharityPayments.apply _)
-    .filter(ValidationError(s"Gift aid payments provided are invalid and cannot not be processed",
-      ErrorCode.INVALID_REQUEST))(_.hasCharities)
+    .filter(ValidationError(s"Gift aid non UK charity payments provided are invalid and cannot be processed",
+      ErrorCode.INVALID_GIFT_AID_PAYMENTS))(_.hasCharities)
 
   def from(desGAP: Option[des.giftaid.GiftAidNonUKCharityPayments]): Option[GiftAidNonUKCharityPayments] = {
     if(desGAP.exists(_.hasCharities))

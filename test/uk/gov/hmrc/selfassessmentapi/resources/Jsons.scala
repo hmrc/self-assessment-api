@@ -1275,4 +1275,25 @@ object Jsons {
          """.stripMargin)
     }
   }
+
+  object GiftAidPayments {
+    def apply(amount: BigDecimal): JsValue = {
+      Json.parse(s"""
+                      {
+                    | "totalPayments": 500,
+                    |  "totalOneOffPayments": $amount,
+                    |  "totalPaymentsBeforeTaxYearStart": $amount,
+                    |  "totalPaymentsAfterTaxYearEnd": $amount,
+                    |  "sharesOrSecurities": $amount,
+                    |  "ukCharityGift": {
+                    |    "landAndBuildings": $amount
+                    |  },
+                    |  "nonUKCharityGift": {
+                    |    "investments": $amount,
+                    |    "payments": $amount
+                    |  }
+                    |}
+         """.stripMargin)
+    }
+  }
 }

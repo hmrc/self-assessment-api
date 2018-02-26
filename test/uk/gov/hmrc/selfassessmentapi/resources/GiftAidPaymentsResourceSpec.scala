@@ -24,11 +24,10 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.connectors.GiftAidPaymentsConnector
+import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 import uk.gov.hmrc.selfassessmentapi.models.des.giftaid.GiftAidPayments
-import uk.gov.hmrc.selfassessmentapi.models.{Errors, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.EmptyResponse
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class GiftAidPaymentsResourceSpec extends BaseResourceSpec {

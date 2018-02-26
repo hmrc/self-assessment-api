@@ -55,7 +55,7 @@ object ErrorCode extends Enumeration {
   NO_INCOMES_AND_EXPENSES,
   INVALID_DATE_RANGE,
   INVALID_DATE,
-  INVALID_TOTAL_PAYMENTS,
+  TOTAL_PAYMENTS_LESS,
   INVALID_GIFT_AID_PAYMENTS= Value
 
   implicit val format: Format[ErrorCode] = EnumJson.enumFormat(ErrorCode,
