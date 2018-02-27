@@ -34,6 +34,36 @@ class GiftAidPaymentsResourceFunctionalSpec  extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(204)
     }
+
+    s"return code 400 when attempting to update the gift aid payments with invalid totalOneOffPayments" in {
+
+      val expectedJson = Jsons.Errors.invalidRequest("INVALID_MONETARY_AMOUNT" -> "/totalOneOffPayments")
+
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .when()
+        .put(Jsons.GiftAidPayments(-100.00))
+        .at(s"/ni/$nino/gift-aid/$taxYear")
+        .thenAssertThat()
+        .statusIs(400)
+        .bodyIsLike(expectedJson)
+    }
+
+    s"return code 400 when attempting to update the gift aid payments with invalid totalPayments" in {
+
+      val expectedJson = Jsons.Errors.invalidRequest("TOTAL_PAYMENTS_LESS" -> "")
+
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .userIsFullyAuthorisedForTheResource
+        .when()
+        .put(Jsons.GiftAidPayments(500.00))
+        .at(s"/ni/$nino/gift-aid/$taxYear")
+        .thenAssertThat()
+        .statusIs(400)
+        .bodyIsLike(expectedJson)
+    }
   }
 
 }
