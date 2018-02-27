@@ -26,6 +26,7 @@ import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, Period, SourceId}
 import uk.gov.hmrc.selfassessmentapi.models.audit.EndOfPeriodStatementDeclaration
+import uk.gov.hmrc.selfassessmentapi.models.giftaid.GiftAidPayments
 import uk.gov.hmrc.selfassessmentapi.resources.validate
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.Response
 import uk.gov.hmrc.selfassessmentapi.services.AuditData
