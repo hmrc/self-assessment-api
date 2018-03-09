@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.models
 
 import org.scalacheck.Gen
+import uk.gov.hmrc.selfassessmentapi.models.des.giftaid.GiftAidUKCharityPayments
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{Expenses, Incomes}
 
 object Generators {
