@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ case class Adjustments(includedNonTaxableProfits: Option[BigDecimal] = None,
                        goodsAndServicesOwnUse: Option[Amount] = None)
 
 object Adjustments {
-  import uk.gov.hmrc.selfassessmentapi.domain.JsonFormatters.SelfEmploymentFormatters.balancingChargeTypeFormat
 
   implicit val writes: Writes[Adjustments] = Json.writes[Adjustments]
 

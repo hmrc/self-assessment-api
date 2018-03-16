@@ -1,5 +1,6 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import play.api.libs.json.Json
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
@@ -9,7 +10,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().selfEmployment.annualSummaryWillBeUpdatedFor(nino)
+        .des().selfEmployment.annualSummaryWillBeUpdatedFor(nino = nino)
         .when()
         .put(Jsons.SelfEmployment.annualSummary()).at(s"/ni/$nino/self-employments/abc/$taxYear")
         .thenAssertThat()
@@ -18,6 +19,35 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         .get("/admin/metrics")
         .thenAssertThat()
         .body(_ \ "timers" \ "Timer-API-SelfEmployments-annuals-PUT" \ "count").is(1)
+    }
+    "return code 204 when BPRA is supplied as '0'" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().selfEmployment.annualSummaryWillBeUpdatedFor(nino = nino, id = "def")
+        .when()
+        .put(Jsons.SelfEmployment.annualSummary(businessPremisesRenovationAllowance = 0)).at(s"/ni/$nino/self-employments/def/$taxYear")
+        .thenAssertThat()
+        .statusIs(204)
+        .when()
+        .get("/admin/metrics")
+        .thenAssertThat()
+        .body(_ \ "timers" \ "Timer-API-SelfEmployments-annuals-PUT" \ "count").is(2)
+    }
+
+    "return code 204 when minimum data is submitted" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().selfEmployment.annualSummaryWillBeUpdatedFor(nino = nino, id = "ghi")
+        .when()
+        .put(Json.toJson("{}")).at(s"/ni/$nino/self-employments/ghi/$taxYear")
+        .thenAssertThat()
+        .statusIs(204)
+        .when()
+        .get("/admin/metrics")
+        .thenAssertThat()
+        .body(_ \ "timers" \ "Timer-API-SelfEmployments-annuals-PUT" \ "count").is(3)
     }
 
     "return code 404 when updating an annual summary for an invalid self-employment source" in {

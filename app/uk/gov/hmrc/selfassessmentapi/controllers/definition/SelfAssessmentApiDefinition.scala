@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.controllers.definition
 
+import play.api.Logger
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
 import uk.gov.hmrc.selfassessmentapi.controllers.definition.APIStatus.APIStatus
 import uk.gov.hmrc.selfassessmentapi.controllers.definition.AuthType._
@@ -399,6 +400,7 @@ class SelfAssessmentApiDefinition {
             version = "1.0",
             access = buildWhiteListingAccess(),
             status = buildAPIStatus(),
+            endpointsEnabled = true,
             endpoints = allEndpoints
           )
         ),
@@ -408,8 +410,14 @@ class SelfAssessmentApiDefinition {
 
   private def buildAPIStatus(): APIStatus = {
     AppContext.apiStatus match {
-      case "PUBLISHED" => APIStatus.PUBLISHED
-      case _ => APIStatus.PROTOTYPED
+      case "ALPHA" => APIStatus.ALPHA
+      case "BETA" => APIStatus.BETA
+      case "STABLE" => APIStatus.STABLE
+      case "DEPRECATED" => APIStatus.DEPRECATED
+      case "RETIRED" => APIStatus.RETIRED
+      case _ =>
+        Logger.error(s"[ApiDefinition][buildApiStatus] no API Status found in config.  Reverting to Alpha")
+        APIStatus.ALPHA
     }
   }
 

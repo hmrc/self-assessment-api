@@ -42,6 +42,11 @@
       <appender-ref ref="STDOUT"/>
     </appender>
 
+    <logger name="uk.gov" level="WARN"/>
+
+    <logger name="application" level="ERROR"/>
+    <logger name="WireMock" level="OFF"/>
+
     <root level="ERROR">
         <appender-ref ref="ASYNC_FILE"/>
         <appender-ref ref="ASYNC_STDOUT"/>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,7 @@ case class APIVersion(
                        version: String,
                        access: Option[Access] = None,
                        status: APIStatus,
+                       endpointsEnabled: Boolean,
                        endpoints: Seq[Endpoint])
 
 
@@ -86,7 +87,7 @@ case class PublishingException(message: String) extends Exception(message)
 
 object APIStatus extends Enumeration {
   type APIStatus = Value
-  val PROTOTYPED, PUBLISHED, DEPRECATED, RETIRED = Value
+  val ALPHA, BETA, STABLE, DEPRECATED, RETIRED = Value
 }
 
 object AuthType extends Enumeration {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,18 +32,7 @@ object SelfEmploymentAnnualSummary {
     (__ \ "allowances").readNullable[Allowances] and
       (__ \ "adjustments").readNullable[Adjustments] and
       (__ \ "nonFinancials").readNullable[NonFinancials]
-    ) (SelfEmploymentAnnualSummary.apply _).filter(
-    ValidationError(
-      "Balancing charge on BPRA (Business Premises Renovation Allowance) can only be claimed when there is a value for BPRA.",
-      ErrorCode.INVALID_BALANCING_CHARGE_BPRA)) { annualSummary => validateBalancingChargeBPRA(annualSummary) }
-
-  private def validateBalancingChargeBPRA(annualSummary: SelfEmploymentAnnualSummary): Boolean = {
-    annualSummary.adjustments.forall { adjustments =>
-      adjustments.balancingChargeBPRA.forall { _ =>
-        annualSummary.allowances.exists(_.businessPremisesRenovationAllowance.exists(_ > 0))
-      }
-    }
-  }
+    ) (SelfEmploymentAnnualSummary.apply _)
 
   def from(desSummary: des.selfemployment.SelfEmploymentAnnualSummary): SelfEmploymentAnnualSummary = {
     val adjustments = desSummary.annualAdjustments.map { adj =>
