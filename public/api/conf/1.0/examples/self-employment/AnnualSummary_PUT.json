@@ -19,6 +19,7 @@
   },
   "allowances": {
     "annualInvestmentAllowance": 500.25,
+    "businessPremisesRenovationAllowance": 500.25,
     "capitalAllowanceMainPool": 500.25,
     "capitalAllowanceSpecialRatePool": 500.25,
     "zeroEmissionGoodsVehicleAllowance": 500.25,
