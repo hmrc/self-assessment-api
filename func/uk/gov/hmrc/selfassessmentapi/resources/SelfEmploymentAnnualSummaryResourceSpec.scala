@@ -121,6 +121,7 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
     "return code 200 when retrieving an annual summary that exists" in {
       val expectedJson = Jsons.SelfEmployment.annualSummary(
         annualInvestmentAllowance = 200,
+        businessPremisesRenovationAllowance = 200,
         capitalAllowanceMainPool = 200,
         capitalAllowanceSpecialRatePool = 200,
         enhancedCapitalAllowance = 200,

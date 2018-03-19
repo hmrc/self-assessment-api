@@ -294,6 +294,7 @@ object DesJsons {
            |   },
            |   "annualAllowances": {
            |      "annualInvestmentAllowance": 200.00,
+           |      "businessPremisesRenovationAllowance": 200.00,
            |      "capitalAllowanceMainPool": 200.00,
            |      "capitalAllowanceSpecialRatePool": 200.00,
            |      "zeroEmissionGoodsVehicleAllowance": 200.00,

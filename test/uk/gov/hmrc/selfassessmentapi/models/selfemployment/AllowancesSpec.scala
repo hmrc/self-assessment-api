@@ -25,6 +25,7 @@ class AllowancesSpec extends JsonSpec {
     "round trip valid Allowances json" in {
       roundTripJson(Allowances(
         annualInvestmentAllowance = Some(10.00),
+        businessPremisesRenovationAllowance = Some(200.50),
         capitalAllowanceMainPool = Some(10.00),
         capitalAllowanceSpecialRatePool = Some(10.00),
         enhancedCapitalAllowance = Some(10.00),
@@ -57,6 +58,22 @@ class AllowancesSpec extends JsonSpec {
       val se = Allowances(annualInvestmentAllowance = Some(10.123))
       validateAmount(se, "/annualInvestmentAllowance")
     }
+
+    "reject negative businessPremisesRenovationAllowance" in {
+      val se = Allowances(businessPremisesRenovationAllowance = Some(-10.00))
+      validateAmount(se, "/businessPremisesRenovationAllowance")
+    }
+
+    "reject businessPremisesRenovationAllowance more than 99999999999999.98" in {
+      val se = Allowances(businessPremisesRenovationAllowance = Some(BigDecimal("99999999999999.99")))
+      validateAmount(se, "/businessPremisesRenovationAllowance")
+    }
+
+    "reject businessPremisesRenovationAllowance with more than 2 decimal places" in {
+      val se = Allowances(businessPremisesRenovationAllowance = Some(10.123))
+      validateAmount(se, "/businessPremisesRenovationAllowance")
+    }
+
 
     "reject negative capitalAllowanceMainPool" in {
       val se = Allowances(capitalAllowanceMainPool = Some(-10.00))
@@ -127,7 +144,7 @@ class AllowancesSpec extends JsonSpec {
       val se = Allowances(zeroEmissionGoodsVehicleAllowance = Some(BigDecimal("99999999999999.99")))
       validateAmount(se, "/zeroEmissionGoodsVehicleAllowance")
     }
-    
+
     "reject zeroEmissionGoodsVehicleAllowance with more than 2 decimal places" in {
       val se = Allowances(zeroEmissionGoodsVehicleAllowance = Some(10.123))
       validateAmount(se, "/zeroEmissionGoodsVehicleAllowance")

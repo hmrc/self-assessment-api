@@ -59,6 +59,7 @@ object SelfEmploymentAnnualSummary {
     val allowances = desSummary.annualAllowances.map { allow =>
       Allowances(
         annualInvestmentAllowance = allow.annualInvestmentAllowance,
+        businessPremisesRenovationAllowance = allow.businessPremisesRenovationAllowance,
         capitalAllowanceMainPool = allow.capitalAllowanceMainPool,
         capitalAllowanceSpecialRatePool = allow.capitalAllowanceSpecialRatePool,
         enhancedCapitalAllowance = allow.enhanceCapitalAllowance,
