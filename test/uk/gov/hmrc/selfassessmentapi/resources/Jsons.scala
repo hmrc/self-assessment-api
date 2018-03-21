@@ -652,6 +652,7 @@ object Jsons {
     }
 
     def annualSummary(annualInvestmentAllowance: BigDecimal = 500.25,
+                      businessPremisesRenovationAllowance: BigDecimal = 500.25,
                       capitalAllowanceMainPool: BigDecimal = 500.25,
                       capitalAllowanceSpecialRatePool: BigDecimal = 500.25,
                       enhancedCapitalAllowance: BigDecimal = 500.25,
@@ -682,6 +683,7 @@ object Jsons {
            |{
            |  "allowances": {
            |    "annualInvestmentAllowance": $annualInvestmentAllowance,
+           |    "businessPremisesRenovationAllowance": $businessPremisesRenovationAllowance,
            |    "capitalAllowanceMainPool": $capitalAllowanceMainPool,
            |    "capitalAllowanceSpecialRatePool": $capitalAllowanceSpecialRatePool,
            |    "enhancedCapitalAllowance": $enhancedCapitalAllowance,

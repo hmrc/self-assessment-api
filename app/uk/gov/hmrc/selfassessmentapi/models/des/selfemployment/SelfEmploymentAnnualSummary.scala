@@ -53,6 +53,7 @@ object SelfEmploymentAnnualSummary {
     val allowances = apiSummary.allowances.map { allow =>
       AnnualAllowances(
         annualInvestmentAllowance = allow.annualInvestmentAllowance,
+        businessPremisesRenovationAllowance = allow.businessPremisesRenovationAllowance,
         capitalAllowanceMainPool = allow.capitalAllowanceMainPool,
         capitalAllowanceSpecialRatePool = allow.capitalAllowanceSpecialRatePool,
         zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionGoodsVehicleAllowance,
@@ -105,6 +106,7 @@ object AnnualAdjustments {
 }
 
 case class AnnualAllowances(annualInvestmentAllowance: Option[BigDecimal],
+                            businessPremisesRenovationAllowance: Option[BigDecimal],
                             capitalAllowanceMainPool: Option[BigDecimal],
                             capitalAllowanceSpecialRatePool: Option[BigDecimal],
                             zeroEmissionGoodsVehicleAllowance: Option[BigDecimal],

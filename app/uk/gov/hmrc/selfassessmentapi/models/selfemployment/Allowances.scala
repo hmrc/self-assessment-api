@@ -22,6 +22,7 @@ import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.nonNegativeAmountValidator
 
 case class Allowances(annualInvestmentAllowance: Option[BigDecimal] = None,
+                      businessPremisesRenovationAllowance: Option[BigDecimal] = None,
                       capitalAllowanceMainPool: Option[BigDecimal] = None,
                       capitalAllowanceSpecialRatePool: Option[BigDecimal] = None,
                       enhancedCapitalAllowance: Option[BigDecimal] = None,
@@ -35,6 +36,7 @@ object Allowances {
 
   implicit val reads: Reads[Allowances] = (
     (__ \ "annualInvestmentAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "businessPremisesRenovationAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "capitalAllowanceMainPool").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "capitalAllowanceSpecialRatePool").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "enhancedCapitalAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and

@@ -26,6 +26,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
       val summary = SelfEmploymentAnnualSummary(
         Some(Allowances(
           annualInvestmentAllowance = Some(50.50),
+          businessPremisesRenovationAllowance = Some(20.20),
           capitalAllowanceMainPool = Some(12.34),
           capitalAllowanceSpecialRatePool = Some(55.65),
           enhancedCapitalAllowance = Some(12.23),
@@ -53,6 +54,25 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
       roundTripJson(SelfEmploymentAnnualSummary(None, None, None))
     }
   }
+  "validate" should {
+    "accept annual summaries where allowances.businessPremisesRenovationAllowance is defined as 0" in {
+      val summary = SelfEmploymentAnnualSummary(
+        Some(Allowances(businessPremisesRenovationAllowance = Some(0))),
+        Some(Adjustments(balancingChargeBPRA = Some(200.90))),
+        None)
+
+      assertValidationPasses(summary)
+    }
+
+    "accept annual summaries with only businessPremisesRenovationAllowance defined" in {
+      val summary = SelfEmploymentAnnualSummary(
+        Some(Allowances(businessPremisesRenovationAllowance = Some(0))),
+        None, None)
+
+      assertValidationPasses(summary)
+    }
+  }
+
 
   "from" should {
     "correctly map a DES self-employment to an API self-employment" in {
@@ -77,6 +97,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
         )),
         annualAllowances = Some(des.selfemployment.AnnualAllowances(
           annualInvestmentAllowance = Some(200.25),
+          businessPremisesRenovationAllowance = Some(200.50),
           capitalAllowanceMainPool = Some(200.25),
           capitalAllowanceSpecialRatePool = Some(200.25),
           enhanceCapitalAllowance = Some(200.25),
@@ -114,6 +135,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
       val allowances = apiSummary.allowances.get
 
       allowances.annualInvestmentAllowance shouldBe Some(200.25)
+      allowances.businessPremisesRenovationAllowance shouldBe Some(200.50)
       allowances.capitalAllowanceMainPool shouldBe Some(200.25)
       allowances.capitalAllowanceSpecialRatePool shouldBe Some(200.25)
       allowances.enhancedCapitalAllowance shouldBe Some(200.25)
