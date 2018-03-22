@@ -87,7 +87,7 @@ object Errors {
   object RequiredIntentToCrystallise extends Error("REQUIRED_INTENT_TO_CRYSTALLISE", "Crystallisation could occur only after an intent to crystallise is sent.", None)
   object InvalidTaxCalculationId extends Error("INVALID_TAX_CALCULATION_ID", "The calculation id should match the calculation id returned by the latest intent to crystallise.", Some("/calculationId"))
   object AlreadySubmitted extends Error("ALREADY_SUBMITTED", "You cannot submit a statement for the same accounting period twice", None)
-  object InvalidGiftAidTotalPayments extends Error("INVALID_TOTAL_PAYMENTS", "Gift aid totalPayments cannot be less than the sum of totalOneOffPayments and nonUKCharityGift payments", None)
+  object InvalidGiftAidTotalPayments extends Error("INVALID_TOTAL_PAYMENTS", "Gift aid totalPayments cannot be less than the sum of totalOneOffPayments and nonUKCharities payments", None)
   object InvalidGiftAidPayments extends Error("INVALID_GIFT_AID_PAYMENTS", "Gift aid payments provided are invalid and cannot not be processed", None)
 
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")

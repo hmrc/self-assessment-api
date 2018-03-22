@@ -21,24 +21,24 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.{TaxYear, des}
-import uk.gov.hmrc.selfassessmentapi.models.des.giftaid.GiftAidPayments
-import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{EmptyResponse, GiftAidPaymentsResponse}
+import uk.gov.hmrc.selfassessmentapi.models.des.charitablegiving.CharitableGivings
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CharitableGivingsResponse, EmptyResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object GiftAidPaymentsConnector extends GiftAidPaymentsConnector with ServicesConfig {
+object CharitableGivingsConnector extends CharitableGivingsConnector with ServicesConfig {
   override val baseUrl: String = AppContext.desUrl
 }
 
-trait GiftAidPaymentsConnector {
+trait CharitableGivingsConnector {
 
   val baseUrl: String
 
-  def update(nino: Nino, taxYear: TaxYear, giftAidPayments: GiftAidPayments)(implicit hc:HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] = {
-    httpPost[des.giftaid.GiftAidPayments, EmptyResponse](s"$baseUrl/income-store/nino/$nino/gift-aid/${taxYear.toDesTaxYear}", giftAidPayments, EmptyResponse)
+  def update(nino: Nino, taxYear: TaxYear, charitableGivings: CharitableGivings)(implicit hc:HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] = {
+    httpPost[des.charitablegiving.CharitableGivings, EmptyResponse](s"$baseUrl/income-store/nino/$nino/charitable-giving/${taxYear.toDesTaxYear}", charitableGivings, EmptyResponse)
   }
 
-  def get(nino: Nino, taxYear: TaxYear)(implicit hc:HeaderCarrier, ec: ExecutionContext): Future[GiftAidPaymentsResponse] = {
-    httpGet[GiftAidPaymentsResponse](s"$baseUrl/income-store/nino/$nino/gift-aid/${taxYear.toDesTaxYear}", GiftAidPaymentsResponse)
+  def get(nino: Nino, taxYear: TaxYear)(implicit hc:HeaderCarrier, ec: ExecutionContext): Future[CharitableGivingsResponse] = {
+    httpGet[CharitableGivingsResponse](s"$baseUrl/income-store/nino/$nino/charitable-giving/${taxYear.toDesTaxYear}", CharitableGivingsResponse)
   }
 }

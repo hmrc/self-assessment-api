@@ -17,15 +17,15 @@
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
 import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.selfassessmentapi.models.charitablegiving.CharitableGivings
 import uk.gov.hmrc.selfassessmentapi.models.des
-import uk.gov.hmrc.selfassessmentapi.models.giftaid.GiftAidPayments
 
-case class GiftAidPaymentsResponse(underlying: HttpResponse) extends Response { self =>
+case class CharitableGivingsResponse(underlying: HttpResponse) extends Response { self =>
 
-  def payments: Option[GiftAidPayments] = {
-    json.asOpt[des.giftaid.GiftAidPayments] match {
-      case Some(giftAidPayments) =>
-        Some(GiftAidPayments.from(giftAidPayments))
+  def payments: Option[CharitableGivings] = {
+    json.asOpt[des.charitablegiving.CharitableGivings] match {
+      case Some(charitableGivings) =>
+        Some(CharitableGivings.from(charitableGivings))
       case None =>
         logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
         None

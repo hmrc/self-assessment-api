@@ -80,7 +80,7 @@ POST    /ni/:nino/calculations       uk.gov.hmrc.selfassessmentapi.resources.Tax
 GET     /ni/:nino/calculations/:id   uk.gov.hmrc.selfassessmentapi.resources.TaxCalculationResource.retrieveCalculation(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
 
 ##########################
-#   Gift Aid Payments    #
+#   Charitable giving    #
 ##########################
-PUT /ni/:nino/gift-aid/:taxYear   uk.gov.hmrc.selfassessmentapi.resources.GiftAidPaymentsResource.updatePayments(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
-GET /ni/:nino/gift-aid/:taxYear   uk.gov.hmrc.selfassessmentapi.resources.GiftAidPaymentsResource.retrievePayments(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+PUT /ni/:nino/charitable-giving/:taxYear   uk.gov.hmrc.selfassessmentapi.resources.CharitableGivingsResource.updatePayments(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+GET /ni/:nino/charitable-giving/:taxYear   uk.gov.hmrc.selfassessmentapi.resources.CharitableGivingsResource.retrievePayments(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)

@@ -1904,7 +1904,7 @@ trait BaseFunctionalSpec extends TestApplication {
       object GiftAid {
 
         def updatePayments(nino: Nino, taxYear: TaxYear): Givens = {
-          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/gift-aid/${taxYear.toDesTaxYear}"))
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/charitable-giving/${taxYear.toDesTaxYear}"))
               .willReturn(
                 aResponse()
                   .withStatus(204)
@@ -1913,7 +1913,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def updatePaymentsWithNinoNotAvailable(nino: Nino, taxYear: TaxYear): Givens = {
-          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/gift-aid/${taxYear.toDesTaxYear}"))
+          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/charitable-giving/${taxYear.toDesTaxYear}"))
             .willReturn(
               aResponse()
                 .withStatus(404)
@@ -1924,18 +1924,18 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def retrievePayments(nino: Nino, taxYear: TaxYear): Givens = {
-          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/gift-aid/${taxYear.toDesTaxYear}"))
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/charitable-giving/${taxYear.toDesTaxYear}"))
             .willReturn(
               aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.GiftAidPayments(100.00))))
+                .withBody(DesJsons.CharitableGivings(100.23, 100.27))))
 
           givens
         }
 
         def retrievePaymentsWithInvalidNino(nino: Nino, taxYear: TaxYear): Givens = {
-          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/gift-aid/${taxYear.toDesTaxYear}"))
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/charitable-giving/${taxYear.toDesTaxYear}"))
             .willReturn(
               aResponse()
                 .withStatus(404)
