@@ -31,6 +31,16 @@ object AgentAuthorizationSimulation extends Simulation {
           Status(ErrorAgentNotAuthorized.httpStatusCode)(
             Json.toJson(ErrorAgentNotAuthorized))
         )
+      case "PUT" =>
+        Future.successful(
+          Status(ErrorAgentNotAuthorized.httpStatusCode)(
+            Json.toJson(ErrorAgentNotAuthorized))
+        )
+      case "POST" =>
+        Future.successful(
+          Status(ErrorAgentNotAuthorized.httpStatusCode)(
+            Json.toJson(ErrorAgentNotAuthorized))
+        )
       case _ => f(rh).map { res =>
         if (res.header.status / 100 == 2 || res.header.status == 400) res
         else Status(ErrorAgentBadRequest.httpStatusCode)(Json.toJson(ErrorAgentBadRequest))
