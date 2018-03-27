@@ -1913,28 +1913,28 @@ traits:
                         description: Invalid taxYear
                         value:
                           code: TAX_YEAR_INVALID
-    /gift-aid:
+    /charitable-giving:
       (annotations.group):
-        name: Gift aid
-        description: !include docs/gift-aid-payments.md
+        name: Charitable giving
+        description: !include docs/charitable-giving-payments.md
       /{taxYear}:
-        displayName: Gift aid payments for the tax year
+        displayName: Charitable giving payments for the tax year
         uriParameters:
           taxYear:
             description: The tax year the data applies to
             type: string
             example: 2017-18
         put:
-          displayName: Amend annual gift aid tax relief [test only]
-          description: Amend annual gift aid tax relief for a tax year. This API is not available in production.
-          (annotations.sandboxData): !include scenarios/gift-aid-amend-scenarios.md
+          displayName: Amend charitable giving tax relief [test only]
+          description: Amend charitable giving tax relief for a tax year. This API is not available in production.
+          (annotations.sandboxData): !include scenarios/charitable-giving-amend-scenarios.md
           is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
           (annotations.scope): "write:self-assessment"
           securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
           body:
             application/json:
-              type: !include schemas/GiftAidPayments.json
-              example: !include examples/gift-aid/GiftAidPayments.json
+              type: !include schemas/CharitableGivings.json
+              example: !include examples/charitable-giving/CharitableGivings.json
           responses:
             204:
             400:
@@ -1951,13 +1951,9 @@ traits:
                       value:
                         code: TAX_YEAR_INVALID
                     invalidMonetaryAmount:
-                      description: Amounts should be a non-negative number less than 99999999999999.98 with up to 2 decimal places
+                      description: Amounts should be a non-negative number less than 10000000000.00 with up to 2 decimal places
                       value:
                         code: INVALID_MONETARY_AMOUNT
-                    invalidTotalPayment:
-                      description: totalPayments cannot be less than the sum of totalOneOffPayments and payments of the nonUKCharityGift
-                      value:
-                        code: TOTAL_PAYMENTS_LESS
             404:
               body:
                 application/json:
@@ -1972,9 +1968,9 @@ traits:
                       value:
                         code: TAX_YEAR_NOT_FOUND
         get:
-          displayName: Get annual gift aid tax relief [test only]
-          description: Get annual gift aid tax relief for a tax year. This API is not available in production.
-          (annotations.sandboxData): !include scenarios/gift-aid-view-scenarios.md
+          displayName: Get charitable giving tax relief [test only]
+          description: Get charitable giving tax relief for a tax year. This API is not available in production.
+          (annotations.sandboxData): !include scenarios/charitable-giving-view-scenarios.md
           is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
           securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
@@ -1982,8 +1978,8 @@ traits:
             200:
               body:
                 application/json:
-                  type: !include schemas/GiftAidPayments.json
-                  example: !include examples/gift-aid/GiftAidPayments.json
+                  type: !include schemas/CharitableGivings.json
+                  example: !include examples/charitable-giving/CharitableGivings.json
             400:
               body:
                 application/json:

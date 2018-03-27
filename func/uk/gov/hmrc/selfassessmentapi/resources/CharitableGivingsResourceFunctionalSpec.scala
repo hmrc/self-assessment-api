@@ -18,9 +18,9 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
-class GiftAidPaymentsResourceFunctionalSpec  extends BaseFunctionalSpec {
+class CharitableGivingsResourceFunctionalSpec  extends BaseFunctionalSpec {
 
-  "update gift aids payments" should {
+  "update charitable givings" should {
     "return code 204 when updating payments" in {
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -29,13 +29,13 @@ class GiftAidPaymentsResourceFunctionalSpec  extends BaseFunctionalSpec {
         .GiftAid
         .updatePayments(nino, taxYear)
         .when()
-        .put(Jsons.GiftAidPayments(100.00))
-        .at(s"/ni/$nino/gift-aid/$taxYear")
+        .put(Jsons.CharitableGivings(100.23, 100.27))
+        .at(s"/ni/$nino/charitable-giving/$taxYear")
         .thenAssertThat()
         .statusIs(204)
     }
 
-    "return code 404 when updating payments with invalid nino" in {
+    "return code 404 when updating charitable givings with invalid nino" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource
@@ -43,47 +43,33 @@ class GiftAidPaymentsResourceFunctionalSpec  extends BaseFunctionalSpec {
         .GiftAid
         .updatePaymentsWithNinoNotAvailable(nino, taxYear)
         .when()
-        .put(Jsons.GiftAidPayments(100.00))
-        .at(s"/ni/$nino/gift-aid/$taxYear")
+        .put(Jsons.CharitableGivings(100.23, 100.27))
+        .at(s"/ni/$nino/charitable-giving/$taxYear")
         .thenAssertThat()
         .statusIs(404)
     }
 
-    s"return code 400 when attempting to update the gift aid payments with invalid totalOneOffPayments" in {
+    s"return code 400 when attempting to update the charitable givings with invalid oneOffCurrentYear" in {
 
-      val expectedJson = Jsons.Errors.invalidRequest("INVALID_MONETARY_AMOUNT" -> "/totalOneOffPayments")
-
-      given()
-        .userIsSubscribedToMtdFor(nino)
-        .userIsFullyAuthorisedForTheResource
-        .when()
-        .put(Jsons.GiftAidPayments(-100.00))
-        .at(s"/ni/$nino/gift-aid/$taxYear")
-        .thenAssertThat()
-        .statusIs(400)
-        .bodyIsLike(expectedJson)
-    }
-
-    s"return code 400 when attempting to update the gift aid payments with invalid totalPayments" in {
-
-      val expectedJson = Jsons.Errors.invalidRequest("TOTAL_PAYMENTS_LESS" -> "")
+      val expectedJson = Jsons.Errors.invalidRequest("INVALID_MONETARY_AMOUNT" -> "/giftAidPayments/oneOffCurrentYear")
 
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource
         .when()
-        .put(Jsons.GiftAidPayments(500.00))
-        .at(s"/ni/$nino/gift-aid/$taxYear")
+        .put(Jsons.CharitableGivings(-100.00, 100.00))
+        .at(s"/ni/$nino/charitable-giving/$taxYear")
         .thenAssertThat()
         .statusIs(400)
         .bodyIsLike(expectedJson)
     }
+
   }
 
-  "retrieving the gift aid payments" should {
+  "retrieving the charitable givings" should {
 
-    s"return code 200 with a JSON array of gift-aid payments belonging to the given nino and tax year" in {
-      val expectedJson = Jsons.GiftAidPayments(100.00)
+    s"return code 200 with a JSON array of payments belonging to the given nino and tax year" in {
+      val expectedJson = Jsons.CharitableGivings(100.23, 100.27)
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource
@@ -91,7 +77,7 @@ class GiftAidPaymentsResourceFunctionalSpec  extends BaseFunctionalSpec {
         .GiftAid
         .retrievePayments(nino, taxYear)
         .when()
-        .get(s"/ni/$nino/gift-aid/$taxYear")
+        .get(s"/ni/$nino/charitable-giving/$taxYear")
         .thenAssertThat()
         .statusIs(200)
         .contentTypeIsJson()
@@ -106,7 +92,7 @@ class GiftAidPaymentsResourceFunctionalSpec  extends BaseFunctionalSpec {
         .GiftAid
         .retrievePaymentsWithInvalidNino(nino, taxYear)
         .when()
-        .get(s"/ni/$nino/gift-aid/$taxYear")
+        .get(s"/ni/$nino/charitable-giving/$taxYear")
         .thenAssertThat()
         .statusIs(404)
         .bodyHasPath("\\code", "NOT_FOUND_NINO")

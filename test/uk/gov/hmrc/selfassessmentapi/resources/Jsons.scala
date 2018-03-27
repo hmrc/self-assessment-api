@@ -1281,22 +1281,22 @@ object Jsons {
     }
   }
 
-  object GiftAidPayments {
-    def apply(amount: BigDecimal): JsValue = {
+  object CharitableGivings {
+    def apply(oneOffCurrentYear: BigDecimal, landAndBuildings: BigDecimal): JsValue = {
       Json.parse(s"""
                     |  {
-                    | "totalPayments": 500,
-                    |  "totalOneOffPayments": $amount,
-                    |  "totalPaymentsBeforeTaxYearStart": 100.00,
-                    |  "totalPaymentsAfterTaxYearEnd": 50.00,
-                    |  "sharesOrSecurities": 100.20,
-                    |  "ukCharityGift": {
-                    |    "landAndBuildings": 100.00
-                    |  },
-                    |  "nonUKCharityGift": {
-                    |    "investments": 50.50,
-                    |    "payments": 150.50
-                    |  }
+                    |    "giftAidPayments": {
+                    |        "currentYear": 10000.13,
+                    |        "oneOffCurrentYear": $oneOffCurrentYear,
+                    |        "currentYearTreatedAsPreviousYear": 300.11,
+                    |        "nextYearTreatedAsCurrentYear": 400.19,
+                    |        "nonUKCharities": 2000.31
+                    |    },
+                    |    "gifts": {
+                    |        "landAndBuildings": $landAndBuildings,
+                    |        "sharesOrSecurities": 600.22,
+                    |        "investmentsNonUKCharities": 300.23
+                    |    }
                     |}
          """.stripMargin)
     }

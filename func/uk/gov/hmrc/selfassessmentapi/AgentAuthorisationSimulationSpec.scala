@@ -83,7 +83,7 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
 
     // END GET
 
-    "receive an unmodified HTTP 400 Bad Request when they attempt to create a self-employment using an invalid json" in {
+    "receive a HTTP 403 Unauthorized when they attempt to create a self-employment using an invalid json" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
@@ -91,11 +91,11 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .post(Jsons.SelfEmployment(accountingType = "NONSENSE")).to(s"/ni/$nino/self-employments")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
-        .isBadRequest
-        .bodyHasString("INVALID_VALUE")
+        .statusIs(403)
+        .bodyIsError(ErrorCode.AGENT_NOT_AUTHORIZED.toString)
     }
 
-    "receive a modified HTTP 400 Bad Request when they attempt to create a periodic summary using an invalid identifier" in {
+    "receive a HTTP 403 Unauthorized when they attempt to create a periodic summary using an invalid identifier" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
@@ -103,10 +103,11 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .post(Jsons.SelfEmployment.period()).to(s"/ni/$nino/self-employments/invalid-id/periods")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
-        .isBadRequest
+        .statusIs(403)
+        .bodyIsError(ErrorCode.AGENT_NOT_AUTHORIZED.toString)
     }
 
-    "receive a modified HTTP 400 Bad Request when they attempt to update a periodic summary with an invalid identifier" in {
+    "receive a HTTP 403 Unauthorized when they attempt to update a periodic summary with an invalid identifier" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
@@ -115,10 +116,11 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .put(Jsons.SelfEmployment.period()).at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
-        .isBadRequest
+        .statusIs(403)
+        .bodyIsError(ErrorCode.AGENT_NOT_AUTHORIZED.toString)
     }
 
-    "receive an unmodified HTTP 400 Bad Request when they attempt to create a periodic summary with an invalid json" in {
+    "receive a HTTP 403 Unauthorized when they attempt to create a periodic summary with an invalid json" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
@@ -129,14 +131,14 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(201)
         .when()
-        .post(Jsons.SelfEmployment.period(turnover = -100.1234)).to(s"%sourceLocation%/periods")
+        .post(Jsons.SelfEmployment.period(turnover = 100.1234)).to(s"%sourceLocation%/periods")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
-        .isBadRequest
-        .bodyHasString("INVALID_MONETARY_AMOUNT")
+        .statusIs(403)
+        .bodyIsError(ErrorCode.AGENT_NOT_AUTHORIZED.toString)
     }
 
-    "receive an unmodified HTTP 400 Bad Request when they attempt to update a periodic summary with an invalid json" in {
+    "receive a HTTP 403 Unauthorized when they attempt to update a periodic summary with an invalid json" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
@@ -153,14 +155,14 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(201)
         .when()
-        .put(Jsons.SelfEmployment.period(turnover = -100.1234)).at(s"/ni/$nino/self-employments/abc/periods/2017-04-06_2018-04-05")
+        .put(Jsons.SelfEmployment.period(turnover = 100.1234)).at(s"/ni/$nino/self-employments/abc/periods/2017-04-06_2018-04-05")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
-        .isBadRequest
-        .bodyHasString("INVALID_MONETARY_AMOUNT")
+        .statusIs(403)
+        .bodyIsError(ErrorCode.AGENT_NOT_AUTHORIZED.toString)
     }
 
-    "receive a modified HTTP 400 Bad Request when they attempt to update an annual summary with an invalid identifier" in {
+    "receive a HTTP 403 Unauthorized when they attempt to update an annual summary with an invalid identifier" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
@@ -169,10 +171,11 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .put(Jsons.SelfEmployment.annualSummary()).at(s"/ni/$nino/self-employments/abc/$taxYear")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
-        .isBadRequest
+        .statusIs(403)
+        .bodyIsError(ErrorCode.AGENT_NOT_AUTHORIZED.toString)
     }
 
-    "receive a modified HTTP 400 Bad Request when they attempt to create more than one self-employment source" in {
+    "receive a HTTP 403 Unauthorized when they attempt to create more than one self-employment source" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
@@ -181,8 +184,8 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .post(Jsons.SelfEmployment()).to(s"/ni/$nino/self-employments")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
-        .isBadRequest
-        .bodyDoesNotHaveString("TOO_MANY_SOURCES")
+        .statusIs(403)
+        .bodyIsError(ErrorCode.AGENT_NOT_AUTHORIZED.toString)
     }
   }
 
@@ -271,7 +274,7 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .bodyIsError(ErrorCode.AGENT_NOT_AUTHORIZED.toString)
     }
 
-    "receive a HTTP 400 when they attempt to create a property with an invalid json" in {
+    "receive a HTTP 403 Unauthorized when they attempt to create a property with an invalid json" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
@@ -281,33 +284,33 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .isBadRequest
     }
 
-    "receive an unmodified HTTP 400 when they attempt to update an annual summary with an invalid json" in {
+    "receive a HTTP 403 Unauthorized when they attempt to update an annual summary with an invalid json" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
         .when()
-        .put(Jsons.Properties.otherAnnualSummary(annualInvestmentAllowance = -100.1234))
+        .put(Jsons.Properties.otherAnnualSummary(annualInvestmentAllowance = 100.1234))
         .at(s"/ni/$nino/uk-properties/other/$taxYear")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
-        .isBadRequest
-        .bodyHasString("INVALID_MONETARY_AMOUNT")
+        .statusIs(403)
+        .bodyIsError(ErrorCode.AGENT_NOT_AUTHORIZED.toString)
     }
 
-    "receive an unmodified HTTP 400 when they attempt to create a periodic summary with an invalid json" in {
+    "receive a HTTP 403 Unauthorized when they attempt to create a periodic summary with an invalid json" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
         .when()
-        .post(Jsons.Properties.otherPeriod(rentIncome = -1000.123))
+        .post(Jsons.Properties.otherPeriod(rentIncome = 1000.123))
         .to(s"/ni/$nino/uk-properties/other/periods")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
-        .isBadRequest
-        .bodyHasString("INVALID_MONETARY_AMOUNT")
+        .statusIs(403)
+        .bodyIsError(ErrorCode.AGENT_NOT_AUTHORIZED.toString)
     }
 
-    "receive a modified HTTP 400 when they attempt to update a periodic summary with an invalid identifier" in {
+    "receive a HTTP 403 Unauthorized when they attempt to update a periodic summary with an invalid identifier" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
@@ -316,10 +319,11 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .at(s"/ni/$nino/uk-properties/other/periods/invalid-id")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
-        .isBadRequest
+        .statusIs(403)
+        .bodyIsError(ErrorCode.AGENT_NOT_AUTHORIZED.toString)
     }
 
-    "receive an HTTP 400 when attempting to create a UK property business for an unauthorised agent" in {
+    "receive a HTTP 403 Unauthorized when attempting to create a UK property business for an unauthorised agent" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
@@ -329,7 +333,8 @@ class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
         .to(s"/ni/$nino/uk-properties")
         .withHeaders(GovTestScenarioHeader, "AGENT_NOT_AUTHORIZED")
         .thenAssertThat()
-        .isBadRequest
+        .statusIs(403)
+        .bodyIsError(ErrorCode.AGENT_NOT_AUTHORIZED.toString)
     }
   }
 }
