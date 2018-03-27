@@ -49,11 +49,11 @@ object GiftAidPayments{
   implicit val writes: Writes[GiftAidPayments] = Json.writes[GiftAidPayments]
 
   implicit val reads: Reads[GiftAidPayments] = (
-    (__ \ "currentYear").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "oneOffCurrentYear").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "currentYearTreatedAsPreviousYear").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "nextYearTreatedAsCurrentYear").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "nonUKCharities").readNullable[Amount](nonNegativeAmountValidator)
+    (__ \ "currentYear").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings) and
+      (__ \ "oneOffCurrentYear").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings) and
+      (__ \ "currentYearTreatedAsPreviousYear").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings) and
+      (__ \ "nextYearTreatedAsCurrentYear").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings) and
+      (__ \ "nonUKCharities").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings)
     )(GiftAidPayments.apply _)
     .filter(ValidationError(s"Gift aid payments provided are invalid and cannot not be processed",
       ErrorCode.INVALID_REQUEST))(_.hasPayments)
@@ -80,9 +80,9 @@ object Gifts {
   implicit val writes: Writes[Gifts] = Json.writes[Gifts]
 
   implicit val reads: Reads[Gifts] = (
-    (__ \ "landAndBuildings").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "sharesOrSecurities").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "investmentsNonUKCharities").readNullable[Amount](nonNegativeAmountValidator)
+    (__ \ "landAndBuildings").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings) and
+      (__ \ "sharesOrSecurities").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings) and
+      (__ \ "investmentsNonUKCharities").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings)
     )(Gifts.apply _)
 
   def from(desGifts: Option[des.charitablegiving.Gifts]): Option[Gifts] = {

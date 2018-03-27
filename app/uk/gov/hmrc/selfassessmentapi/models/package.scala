@@ -95,4 +95,13 @@ package object models {
     def trimNullable: Reads[Option[String]] = reads.map(_.map(_.trim))
   }
 
+  /**
+    * Asserts that amounts must be non-negative and have a maximum of two decimal places
+    */
+  val nonNegativeAmountValidatorForCharitableGivings: Reads[Amount] = Reads
+    .of[Amount]
+    .filter(ValidationError("amounts should be a non-negative number less than 99999999999999.98 with up to 2 decimal places",
+      ErrorCode.INVALID_MONETARY_AMOUNT))(
+      amount => amount >= 0 && amount.scale < 3 && amount <= 10000000000.00)
+
 }

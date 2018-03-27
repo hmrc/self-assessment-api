@@ -31,7 +31,7 @@ class CharitableGivingsSpec extends JsonSpec with GeneratorDrivenPropertyChecks 
         "/giftAidPayments/oneOffCurrentYear", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
-    "reject CharitableGivings more than 99999999999999.98" in {
+    "reject CharitableGivings more than 10000000000.00" in {
       assertValidationErrorWithCode(CharitableGivings(
         Some(GiftAidPayments(currentYear = Some(BigDecimal("999999999999999999.99")))), None),
         "/giftAidPayments/currentYear", ErrorCode.INVALID_MONETARY_AMOUNT)
