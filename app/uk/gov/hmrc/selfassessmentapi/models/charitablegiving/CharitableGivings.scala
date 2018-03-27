@@ -16,10 +16,9 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.charitablegiving
 
-import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Writes, __, _}
-import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, des, _}
+import uk.gov.hmrc.selfassessmentapi.models.{des, _}
 
 case class CharitableGivings(giftAidPayments: Option[GiftAidPayments],
                              gifts: Option[Gifts])
@@ -37,12 +36,7 @@ case class GiftAidPayments(currentYear: Option[Amount] = None,
                            oneOffCurrentYear: Option[Amount] = None,
                            currentYearTreatedAsPreviousYear: Option[Amount] = None,
                            nextYearTreatedAsCurrentYear: Option[Amount] = None,
-                           nonUKCharities: Option[Amount] = None
-                          ) {
-  def hasPayments = currentYear.isDefined || oneOffCurrentYear.isDefined ||
-    currentYearTreatedAsPreviousYear.isDefined || nextYearTreatedAsCurrentYear.isDefined ||
-    nonUKCharities.isDefined
-}
+                           nonUKCharities: Option[Amount] = None)
 
 object GiftAidPayments{
 
@@ -55,8 +49,6 @@ object GiftAidPayments{
       (__ \ "nextYearTreatedAsCurrentYear").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings) and
       (__ \ "nonUKCharities").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings)
     )(GiftAidPayments.apply _)
-    .filter(ValidationError(s"Gift aid payments provided are invalid and cannot not be processed",
-      ErrorCode.INVALID_REQUEST))(_.hasPayments)
 
   def from(desGAP: Option[des.charitablegiving.GiftAidPayments]): Option[GiftAidPayments] = {
     desGAP match {
