@@ -98,7 +98,7 @@ class CrystallisationResourceSpec extends BaseFunctionalSpec {
     }
   }
 
-  "crystallisation obligation information" should {
+  "crystallisation obligation information" ignore {
 
     "return 200 and the response - the happy scenario" in {
       given()

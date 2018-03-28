@@ -71,7 +71,7 @@ GET /ni/:nino/dividends/:taxYear   uk.gov.hmrc.selfassessmentapi.resources.Divid
 #######################
 POST   /ni/:nino/:taxYear/intent-to-crystallise        uk.gov.hmrc.selfassessmentapi.resources.CrystallisationResource.intentToCrystallise(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 POST   /ni/:nino/:taxYear/crystallisation              uk.gov.hmrc.selfassessmentapi.resources.CrystallisationResource.crystallisation(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
-GET    /ni/:nino/:taxYear/crystallisation/obligation   uk.gov.hmrc.selfassessmentapi.resources.CrystallisationResource.retrieveObligation(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear, queryParams: uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams)
+#GET    /ni/:nino/:taxYear/crystallisation/obligation   uk.gov.hmrc.selfassessmentapi.resources.CrystallisationResource.retrieveObligation(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear, queryParams: uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams)
 
 ##########################
 #    Tax Calculations    #
