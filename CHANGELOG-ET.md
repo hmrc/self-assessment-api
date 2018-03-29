@@ -1,3 +1,22 @@
+## [0.153.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.153.0) 28-Mar-2018
+### New Endpoints
+#### Charitable giving
+* Get charitable giving tax relief
+* Amend charitable giving tax relief
+#### UK property business
+* Submit UK Property End-of-Period Statement
+### Other Differences include
+* UK property endpoints have consolidated Expenses
+* Add periodOfGraceAdjustment field to FHL Property Adjustments
+* Amend accounting period start date cut off date from 05/04/2017 to 06/04/2017 for Self Employment EOPS
+* Update documentation description for lossBroughtForward for Self-Employment, Properties (FHL, Other) both
+* Add rentARoomExempt attribute to the Other FHL Annual Summary Allowances
+* Add costOfServices field to Create/Amend a FHL UK property update period
+* Remove BPRA from 'Get/Submit a non-FHL UK Property Business Annual Summary' API
+* Separate adjustments schemas for FHL/other property annual summaries
+* Add residential financial cost to Non-FHL UK properties
+* Remove SIC Code validation
+
 ## [0.147.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.147.0) 25-Jan-2018
 * New API to retrieve End of Period Statement Obligations for their Self-Employment Business
 * New API to submit the Intent to Crystallise for a tax year
