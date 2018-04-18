@@ -3,6 +3,8 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class SelfEmploymentObligationsResourceSpec extends BaseFunctionalSpec {
+
+  val regime = "ITSB"
   "retrieveObligations" should {
 
     "return code 200 with a set of obligations" in {

@@ -17,7 +17,7 @@ class SelfAssessmentEndOfPeriodObligationsSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().obligations.returnEndOfPeriodObligationsFor(nino)
         .when()
-        .get(s"/ni/$nino/self-employments/abc/end-of-period-statements/obligations?from=$from&to=$to")
+        .get(s"/ni/$nino/self-employments/ITSBEOPS/end-of-period-statements/obligations?from=$from&to=$to")
         .thenAssertThat()
         .statusIs(200)
         .bodyIsLike(Jsons.Obligations.eops(secondMet = true, thirdMet = true, fourthMet = true).toString)
@@ -29,7 +29,7 @@ class SelfAssessmentEndOfPeriodObligationsSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().obligations.returnEndOfPeriodObligationsFor(nino)
         .when()
-        .get(s"/ni/$nino/self-employments/abc/end-of-period-statements/obligations?from=ABC&to=$to")
+        .get(s"/ni/$nino/self-employments/ITSBEOPS/end-of-period-statements/obligations?from=ABC&to=$to")
         .thenAssertThat()
         .statusIs(400)
         .bodyIsError("INVALID_DATE")
@@ -42,7 +42,7 @@ class SelfAssessmentEndOfPeriodObligationsSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().obligations.returnEndOfPeriodObligationsFor(nino)
         .when()
-        .get(s"/ni/$nino/self-employments/abc/end-of-period-statements/obligations?from=$from&to=ABC")
+        .get(s"/ni/$nino/self-employments/ITSBEOPS/end-of-period-statements/obligations?from=$from&to=ABC")
         .thenAssertThat()
         .statusIs(400)
         .bodyIsError("INVALID_DATE")
@@ -55,7 +55,7 @@ class SelfAssessmentEndOfPeriodObligationsSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().obligations.returnEndOfPeriodObligationsFor(nino)
         .when()
-        .get(s"/ni/$nino/self-employments/abc/end-of-period-statements/obligations?from=$from&to=2016-12-31")
+        .get(s"/ni/$nino/self-employments/ITSBEOPS/end-of-period-statements/obligations?from=$from&to=2016-12-31")
         .thenAssertThat()
         .statusIs(400)
         .bodyIsError("INVALID_DATE_RANGE")

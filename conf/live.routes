@@ -8,7 +8,7 @@ GET /ni/:nino/self-employments/:id   uk.gov.hmrc.selfassessmentapi.resources.Sel
 #Disabled for Bravo release
 #PUT /ni/:nino/self-employments/:id   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentsResource.update(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
 
-# Obligations]
+# Obligations
 GET /ni/:nino/self-employments/:id/obligations   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentObligationsResource.retrieveObligations(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
 
 # Self-Employments Periodic Summaries

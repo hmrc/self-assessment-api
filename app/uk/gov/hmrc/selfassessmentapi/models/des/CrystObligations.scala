@@ -29,9 +29,3 @@ case class CrystObligation(identification: ObligationIdentification, obligationD
 object CrystObligation {
   implicit val reads: Reads[CrystObligation] = Json.reads[CrystObligation]
 }
-
-case class ObligationIdentification(incomeSourceType: String, referenceNumber: String, referenceType: String)
-
-object ObligationIdentification {
-  implicit val reads: Reads[ObligationIdentification] = Json.reads[ObligationIdentification]
-}

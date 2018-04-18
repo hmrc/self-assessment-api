@@ -22,7 +22,7 @@ import uk.gov.hmrc.selfassessmentapi.models.{DesTransformError, DesTransformVali
 
 case class SelfEmploymentStatementResponse(underlying: HttpResponse) extends Response {
 
-  def retrieveEOPSObligation(incomeSourceType: String, id: SourceId): Either[DesTransformError, Option[EopsObligations]] = {
+  def retrieveEOPSObligation(incomeSourceType: String, refNumber: SourceId): Either[DesTransformError, Option[EopsObligations]] = {
 
     val desObligations = json.asOpt[des.Obligations]
 
@@ -37,8 +37,10 @@ case class SelfEmploymentStatementResponse(underlying: HttpResponse) extends Res
       errorMessage = "Obligation for source id and/or business type was not found."
       val result = for {
         obl <- obligation.obligations
-        if obl.id.contains(id) && obl.`type` == incomeSourceType
-        details <- obl.details
+        if obl.identification.exists(
+          identification => identification.referenceNumber == refNumber && identification.incomeSourceType.contains(incomeSourceType)
+        )
+        details <- obl.obligationDetails
       } yield DesTransformValidator[ObligationDetail, EopsObligation].from(details)
 
       result.find(_.isLeft) match {

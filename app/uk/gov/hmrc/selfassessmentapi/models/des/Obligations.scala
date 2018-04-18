@@ -24,8 +24,14 @@ object Obligations {
   implicit val reads: Reads[Obligations] = Json.reads[Obligations]
 }
 
-case class Obligation(id: Option[String], `type`: String, details: Seq[ObligationDetail])
+case class Obligation(identification: Option[ObligationIdentification], obligationDetails: Seq[ObligationDetail])
 
 object Obligation {
   implicit val reads: Reads[Obligation] = Json.reads[Obligation]
+}
+
+case class ObligationIdentification(incomeSourceType: Option[String], referenceNumber: String, referenceType: String)
+
+object ObligationIdentification {
+  implicit val reads: Reads[ObligationIdentification] = Json.reads[ObligationIdentification]
 }

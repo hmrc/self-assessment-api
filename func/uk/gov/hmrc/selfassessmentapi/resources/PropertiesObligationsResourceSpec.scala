@@ -55,6 +55,23 @@ class PropertiesObligationsResourceSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Obligations(firstMet = true, secondMet = true, thirdMet = true, fourthMet = true).toString)
     }
 
+//    "do something when a set of obligations is returned without an identification section" in {
+//      given()
+//        .userIsSubscribedToMtdFor(nino)
+//        .clientIsFullyAuthorisedForTheResource
+//        .des().properties.willBeCreatedFor(nino)
+//        .des().properties.returnObligationsFor(nino)
+//        .when()
+//        .post(Jsons.Properties()).to(s"/ni/$nino/uk-properties")
+//        .thenAssertThat()
+//        .statusIs(201)
+//        .when()
+//        .get(s"/ni/$nino/uk-properties/obligations").withHeaders(GovTestScenarioHeader, "ALL_MET")
+//        .thenAssertThat()
+//        .statusIs(200)
+//        .bodyIsLike(Jsons.Obligations(firstMet = true, secondMet = true, thirdMet = true, fourthMet = true).toString)
+//    }
+
     "return code 404 when attempting to retrieve obligations for a properties business that does not exist" in {
       given()
         .userIsSubscribedToMtdFor(nino)
