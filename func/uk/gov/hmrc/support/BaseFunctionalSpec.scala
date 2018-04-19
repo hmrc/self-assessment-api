@@ -1427,14 +1427,14 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def returnEndOfPeriodObligationsFor(nino: Nino): Givens = {
-          stubFor(get(urlMatching(s"/enterprise/obligation-data/nino/$nino/ITSA.*"))
+        def returnEndOfPeriodObligationsFor(nino: Nino, refNo: String): Givens = {
+          stubFor(get(urlMatching(s"/enterprise/obligation-data/nino/$nino/ITSA/.*"))
             .willReturn(
               aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withHeader("CorrelationId", "abc")
-                .withBody(DesJsons.Obligations.eopsObligations(nino.nino))))
+                .withBody(DesJsons.Obligations.eopsObligations(refNo))))
           givens
         }
 
