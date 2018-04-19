@@ -754,15 +754,15 @@ object DesJsons {
          |}
        """.stripMargin
 
-    val eopsObligations: String => String = nino => {
+    val eopsObligations: String => String = id => {
       s"""
          |{
          |  "obligations": [
          |    {
          |      "identification": {
          |        "incomeSourceType":"ITSBEOPS",
-         |        "referenceNumber": "$nino",
-         |        "referenceType":"NINO"
+         |        "referenceNumber": "$id",
+         |        "referenceType":"MTDBIS"
          |    },
          |     "obligationDetails": [
          |        {
