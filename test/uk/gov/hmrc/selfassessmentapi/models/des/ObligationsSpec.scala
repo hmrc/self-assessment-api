@@ -31,15 +31,18 @@ class ObligationsSpec extends JsonSpec {
              |{
              |  "obligations": [
              |    {
-             |      "id": "XAIS54321543215",
-             |      "type": "ITSB",
-             |      "details": [
+             |      "identification": {
+             |        "referenceNumber": "XAIS54321543215",
+             |        "incomeSourceType": "ITSB",
+             |        "referenceType": "MTDBIS"
+             |     },
+             |     "obligationDetails": [
              |        {
              |          "status": "O",
              |          "inboundCorrespondenceFromDate": "2016-10-07",
              |          "inboundCorrespondenceToDate": "2016-10-10",
              |          "inboundCorrespondenceDueDate": "2016-10-31",
-             |          "periodKey": "004"
+             |          "periodKey": "#004"
              |        },
              |        {
              |          "status": "F",
@@ -47,7 +50,7 @@ class ObligationsSpec extends JsonSpec {
              |          "inboundCorrespondenceToDate": "2016-10-07",
              |          "inboundCorrespondenceDateReceived": "2016-10-15",
              |          "inboundCorrespondenceDueDate": "2016-10-20",
-             |          "periodKey": "004"
+             |          "periodKey": "#005"
              |        }
              |      ]
              |    }
@@ -59,23 +62,23 @@ class ObligationsSpec extends JsonSpec {
       val obligations = json.as[Obligations]
 
       obligations.obligations.size shouldBe 1
-      obligations.obligations.head.id shouldBe Some("XAIS54321543215")
-      obligations.obligations.head.`type` shouldBe "ITSB"
-      obligations.obligations.head.details should contain theSameElementsAs Seq(
+      obligations.obligations.head.identification.head.referenceNumber shouldBe "XAIS54321543215"
+      obligations.obligations.head.identification.head.incomeSourceType shouldBe Some("ITSB")
+      obligations.obligations.head.obligationDetails should contain theSameElementsAs Seq(
         ObligationDetail(
           status = "O",
           inboundCorrespondenceFromDate = "2016-10-07",
           inboundCorrespondenceToDate = "2016-10-10",
           inboundCorrespondenceDateReceived = None,
           inboundCorrespondenceDueDate = "2016-10-31",
-          periodKey = Some("004")),
+          periodKey = Some("#004")),
         ObligationDetail(
           status = "F",
           inboundCorrespondenceFromDate = "2016-10-01",
           inboundCorrespondenceToDate = "2016-10-07",
           inboundCorrespondenceDateReceived = Some("2016-10-15"),
           inboundCorrespondenceDueDate = "2016-10-20",
-          periodKey = Some("004")))
+          periodKey = Some("#005")))
 
     }
   }

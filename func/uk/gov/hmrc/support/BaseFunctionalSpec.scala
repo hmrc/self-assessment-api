@@ -12,7 +12,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.{ErrorNotImplemented, Period, TaxYear}
-import uk.gov.hmrc.selfassessmentapi.resources.DesJsons
+import uk.gov.hmrc.selfassessmentapi.resources.{DesJsons, Jsons}
 import uk.gov.hmrc.selfassessmentapi.{NinoGenerator, TestApplication}
 
 import scala.collection.mutable
@@ -1405,7 +1405,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
       object obligations {
         def obligationNotFoundFor(nino: Nino): Givens = {
-          stubFor(get(urlEqualTo(s"/income-tax-self-assessment/obligation-data/$nino"))
+          stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA"))
             .willReturn(
               aResponse()
                 .withStatus(404)
@@ -1415,8 +1415,8 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def returnObligationsFor(nino: Nino, id: String = "abc"): Givens = {
-          stubFor(get(urlEqualTo(s"/income-tax-self-assessment/obligation-data/$nino"))
+        def returnObligationsFor(nino: Nino): Givens = {
+          stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -1427,21 +1427,20 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def returnEndOfPeriodObligationsFor(nino: Nino, id: String = "abc"): Givens = {
-          stubFor(get(urlMatching(s"/income-tax-self-assessment/obligation-data/$nino.*"))
+        def returnEndOfPeriodObligationsFor(nino: Nino): Givens = {
+          stubFor(get(urlMatching(s"/enterprise/obligation-data/nino/$nino/ITSA.*"))
             .willReturn(
               aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withHeader("CorrelationId", "abc")
-                .withBody(DesJsons.Obligations())))
-
+                .withBody(DesJsons.Obligations.eopsObligations(nino.nino))))
           givens
         }
 
-        def receivesObligationsTestHeader(nino: Nino, headerValue: String, id: String = "abc"): Givens = {
+        def receivesObligationsTestHeader(nino: Nino, headerValue: String): Givens = {
           stubFor(
-            get(urlEqualTo(s"/income-tax-self-assessment/obligation-data/$nino"))
+            get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA"))
               .withHeader("Gov-Test-Scenario", matching(headerValue))
               .willReturn(
                 aResponse()

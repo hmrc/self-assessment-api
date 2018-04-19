@@ -23,20 +23,22 @@ import uk.gov.hmrc.selfassessmentapi.connectors.ObligationsConnector
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType}
 import uk.gov.hmrc.selfassessmentapi.resources.Audit.makeObligationsRetrievalAudit
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
-
 import play.api.libs.concurrent.Execution.Implicits._
+import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
 
 object PropertiesObligationsResource extends BaseResource {
   private val connector = ObligationsConnector
 
+  private val incomeSourceType = "ITSP"
+
   def retrieveObligations(nino: Nino): Action[Unit] =
     APIAction(nino, SourceType.Properties, Some("obligations")).async(parse.empty) { implicit request =>
-      connector.get(nino).map { response =>
+      connector.get(nino, incomeSourceType).map { response =>
         audit(makeObligationsRetrievalAudit(nino, None, request.authContext, response, UkPropertiesRetrieveObligations))
         response.filter {
           case 200 =>
             logger.debug("Properties obligations from DES = " + Json.stringify(response.json))
-            response.obligations("ITSP") match {
+            response.obligations(incomeSourceType) match {
               case Right(obj) => obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
               case Left(ex) =>
                 logger.error(ex.msg)

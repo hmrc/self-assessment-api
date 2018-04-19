@@ -17,15 +17,16 @@
 package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.ObligationsResponse
 
-import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 object ObligationsConnector {
   private lazy val baseUrl: String = AppContext.desUrl
 
-  def get(nino: Nino)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ObligationsResponse] =
-    httpGet[ObligationsResponse](baseUrl + s"/income-tax-self-assessment/obligation-data/$nino", ObligationsResponse)
+  def get(nino: Nino, regime: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ObligationsResponse] ={
+    httpGet[ObligationsResponse](baseUrl + s"/enterprise/obligation-data/nino/$nino/ITSA", ObligationsResponse)
+  }
 }

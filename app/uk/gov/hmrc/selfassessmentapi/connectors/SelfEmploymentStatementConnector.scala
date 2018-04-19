@@ -41,7 +41,6 @@ object SelfEmploymentStatementConnector {
       case (Some(f), None) => s"?from=$f"
       case (None, Some(t)) => s"?to=$t"
     }
-    httpGet[SelfEmploymentStatementResponse](baseUrl + s"/income-tax-self-assessment/obligation-data/$nino$queryString", SelfEmploymentStatementResponse)
+    httpGet[SelfEmploymentStatementResponse](baseUrl + s"/enterprise/obligation-data/nino/$nino/ITSA/$queryString", SelfEmploymentStatementResponse)
   }
-
 }

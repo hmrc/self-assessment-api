@@ -29,9 +29,12 @@ class ObligationsResponseSpec extends UnitSpec {
        |{
        |  "obligations": [
        |  {
-       |    "id": "XAIS54321543215",
-       |    "type": "ITSB",
-       |    "details": [
+     |      "identification": {
+     |        "referenceNumber": "XAIS54321543215",
+     |        "incomeSourceType": "ITSB",
+     |        "referenceType": "MTDBIS"
+     |     },
+       |    "obligationDetails": [
        |    {
        |      "status": "F",
        |      "inboundCorrespondenceFromDate": "2017-01-01",
@@ -62,10 +65,13 @@ class ObligationsResponseSpec extends UnitSpec {
        |    }
        |    ]
        |  },
-       |  {
-       |    "id": "XAIS54321543215",
-       |    "type": "ITSP",
-       |    "details": [
+     |    {
+     |      "identification": {
+     |        "referenceNumber": "XAIS54321543215",
+     |        "incomeSourceType": "ITSP",
+     |        "referenceType": "MTDBIS"
+     |     },
+       |    "obligationDetails": [
        |    {
        |      "status": "F",
        |      "inboundCorrespondenceFromDate": "2017-01-02",

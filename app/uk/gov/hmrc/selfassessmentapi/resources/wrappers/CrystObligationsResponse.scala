@@ -36,7 +36,7 @@ case class CrystObligationsResponse(underlying: HttpResponse) extends Response {
       (for {
         obl <- obligation.obligations
         id = obl.identification
-        if id.incomeSourceType == incomeSourceType && id.referenceNumber == nino.nino
+        if id.incomeSourceType.contains(incomeSourceType) && id.referenceNumber == nino.nino
         details <- obl.obligationDetails
         if taxYearFromDate == parse(details.inboundCorrespondenceFromDate)
       } yield details).map(toObligation(_))
