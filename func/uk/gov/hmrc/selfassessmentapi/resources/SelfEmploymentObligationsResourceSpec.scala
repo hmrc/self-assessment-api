@@ -3,7 +3,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class SelfEmploymentObligationsResourceSpec extends BaseFunctionalSpec {
-  "retrieveObligations" should {
+  "retrieveObligations" ignore {
 
     "return code 200 with a set of obligations" in {
       given()
