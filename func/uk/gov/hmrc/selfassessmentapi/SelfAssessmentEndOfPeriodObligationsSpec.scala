@@ -25,6 +25,17 @@ class SelfAssessmentEndOfPeriodObligationsSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Obligations.eops(secondMet = true, thirdMet = true, fourthMet = true).toString)
     }
 
+    "return code 404 when obligations with no 'identification' data is returned" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().obligations.returnEopsObligationsWithNoIdentificationFor(nino)
+        .when()
+        .get(s"/ni/$nino/self-employments/$testRefNo/end-of-period-statements/obligations?from=$from&to=$to")
+        .thenAssertThat()
+        .statusIs(404)
+    }
+
     "return code 400 when from date is invalid" in {
       given()
         .userIsSubscribedToMtdFor(nino)

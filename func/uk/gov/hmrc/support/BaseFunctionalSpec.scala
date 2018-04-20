@@ -1427,6 +1427,29 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def returnObligationsWithNoIdentificationFor(nino: Nino):Givens = {
+          stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withHeader("CorrelationId", "abc")
+                .withBody(DesJsons.Obligations.obligationsNoIdentification)))
+          givens
+        }
+
+        def returnEopsObligationsWithNoIdentificationFor(nino: Nino):Givens = {
+          stubFor(get(urlMatching(s"/enterprise/obligation-data/nino/$nino/ITSA/.*"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withHeader("CorrelationId", "abc")
+                .withBody(DesJsons.Obligations.obligationsNoIdentification)))
+          givens
+        }
+
+
         def returnEndOfPeriodObligationsFor(nino: Nino, refNo: String): Givens = {
           stubFor(get(urlMatching(s"/enterprise/obligation-data/nino/$nino/ITSA/.*"))
             .willReturn(

@@ -46,6 +46,17 @@ class SelfEmploymentObligationsResourceSpec extends BaseFunctionalSpec {
         .statusIs(404)
     }
 
+    "return code 404 when obligations with no 'identification' data is returned" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().obligations.returnObligationsWithNoIdentificationFor(nino)
+        .when()
+        .get(s"/ni/$nino/self-employments/abc/obligations")
+        .thenAssertThat()
+        .statusIs(404)
+    }
+
     "return code 400 when nino is invalid" in {
       given()
         .userIsSubscribedToMtdFor(nino)
