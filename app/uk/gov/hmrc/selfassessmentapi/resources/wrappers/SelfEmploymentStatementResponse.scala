@@ -45,7 +45,9 @@ case class SelfEmploymentStatementResponse(underlying: HttpResponse) extends Res
 
       result.find(_.isLeft) match {
         case Some(ex) => Left(ex.left.get)
-        case None => Right(Some(EopsObligations(obligations = result map (_.right.get))))
+        case None =>
+          val obligations: Seq[EopsObligation] = result map (_.right.get)
+          if (obligations.isEmpty) Right(None) else Right(Some(EopsObligations(obligations = result map (_.right.get))))
       }
     }
     desObligations.fold(noneFound)(oneFound)
