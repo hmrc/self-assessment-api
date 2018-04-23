@@ -29,15 +29,18 @@ import scala.concurrent.ExecutionContext.Implicits.global
 object SelfEmploymentObligationsResource extends BaseResource {
   private val connector = ObligationsConnector
 
-  def retrieveObligations(nino: Nino, id: SourceId): Action[Unit] =
+  private val incomeSourceType = "ITSB"
+
+  def retrieveObligations(nino: Nino, id: SourceId): Action[Unit] ={
     APIAction(nino, SourceType.SelfEmployments, Some("obligations")).async(parse.empty) { implicit request =>
-      connector.get(nino).map { response =>
+      println(s"\n${request.headers}\n")
+      connector.get(nino, incomeSourceType).map { response =>
         audit(
           makeObligationsRetrievalAudit(nino, Some(id), request.authContext, response, SelfEmploymentRetrieveObligations))
         response.filter {
           case 200 =>
             logger.debug("Self-employment obligations from DES = " + Json.stringify(response.json))
-            response.obligations("ITSB", Some(id)) match {
+            response.obligations(incomeSourceType, Some(id)) match {
               case Right(obj) => obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
               case Left(ex) =>
                 logger.error(ex.msg)
@@ -46,4 +49,6 @@ object SelfEmploymentObligationsResource extends BaseResource {
         }
       }
     }
+  }
+
 }

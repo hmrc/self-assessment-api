@@ -1271,7 +1271,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
       object obligations {
         def obligationNotFoundFor(nino: Nino): Givens = {
-          stubFor(get(urlEqualTo(s"/income-tax-self-assessment/obligation-data/$nino"))
+          stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA"))
             .willReturn(
               aResponse()
                 .withStatus(404)
@@ -1282,7 +1282,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def returnObligationsFor(nino: Nino, id: String = "abc"): Givens = {
-          stubFor(get(urlEqualTo(s"/income-tax-self-assessment/obligation-data/$nino"))
+          stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -1293,9 +1293,21 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def returnObligationsWithNoIdentificationFor(nino: Nino):Givens = {
+          stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withHeader("CorrelationId", "abc")
+                .withBody(DesJsons.Obligations.obligationsNoIdentification)))
+          givens
+        }
+
+
         def receivesObligationsTestHeader(nino: Nino, headerValue: String, id: String = "abc"): Givens = {
           stubFor(
-            get(urlEqualTo(s"/income-tax-self-assessment/obligation-data/$nino"))
+            get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA"))
               .withHeader("Gov-Test-Scenario", matching(headerValue))
               .willReturn(
                 aResponse()
@@ -1336,13 +1348,13 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def notFoundIncomeSourceFor(nino: Nino): Givens = {
           stubFor(
-          post(urlEqualTo(s"/income-tax-self-assessment/nino/$nino/properties"))
-            .willReturn(
-              aResponse()
-                .withStatus(404)
-                .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.Errors.notFoundIncomeSource)
-            ))
+            post(urlEqualTo(s"/income-tax-self-assessment/nino/$nino/properties"))
+              .willReturn(
+                aResponse()
+                  .withStatus(404)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.notFoundIncomeSource)
+              ))
           givens
         }
 
@@ -1369,8 +1381,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def returnObligationsFor(nino: Nino, id: String = "abc"): Givens = {
-          stubFor(
-            get(urlEqualTo(s"/ni/$nino/self-employments/$id/obligations"))
+            stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA"))
               .willReturn(
                 aResponse()
                   .withStatus(200)
@@ -1489,29 +1500,29 @@ trait BaseFunctionalSpec extends TestApplication {
             case PropertyType.FHL =>
               DesJsons.Properties.Period.fhl(
                 transactionReference = periodId,
-                  from = "2017-04-05",
-                  to = "2018-04-04",
-                  rentIncome = 200.00,
-                  premisesRunningCosts = 200.00,
-                  repairsAndMaintenance = 200.00,
-                  financialCosts = 200.00,
-                  professionalFees = 200.00,
-                  other = 200.00)
+                from = "2017-04-05",
+                to = "2018-04-04",
+                rentIncome = 200.00,
+                premisesRunningCosts = 200.00,
+                repairsAndMaintenance = 200.00,
+                financialCosts = 200.00,
+                professionalFees = 200.00,
+                other = 200.00)
                 .toString()
             case PropertyType.OTHER =>
               DesJsons.Properties.Period.other(
-                  transactionReference = periodId,
-                  from = "2017-04-05",
-                  to = "2018-04-04",
-                  rentIncome = 200.00,
-                  premiumsOfLeaseGrant = Some(200.00),
-                  reversePremiums = Some(200.00),
-                  premisesRunningCosts = Some(200.00),
-                  repairsAndMaintenance = Some(200.00),
-                  financialCosts = Some(200.00),
-                  professionalFees = Some(200.00),
-                  costOfServices = Some(200.00),
-                  other = Some(200.00))
+                transactionReference = periodId,
+                from = "2017-04-05",
+                to = "2018-04-04",
+                rentIncome = 200.00,
+                premiumsOfLeaseGrant = Some(200.00),
+                reversePremiums = Some(200.00),
+                premisesRunningCosts = Some(200.00),
+                repairsAndMaintenance = Some(200.00),
+                financialCosts = Some(200.00),
+                professionalFees = Some(200.00),
+                costOfServices = Some(200.00),
+                other = Some(200.00))
                 .toString()
           }
 

@@ -504,9 +504,12 @@ object DesJsons {
          |{
          |  "obligations": [
          |    {
-         |      "id": "$id",
-         |      "type": "ITSB",
-         |      "details": [
+         |      "identification": {
+         |        "incomeSourceType":"ITSB",
+         |        "referenceNumber": "$id",
+         |        "referenceType":"MTDBIS"
+         |    },
+         |     "obligationDetails": [
          |        {
          |          "status": "O",
          |          "inboundCorrespondenceFromDate": "2017-04-06",
@@ -538,9 +541,12 @@ object DesJsons {
          |      ]
          |    },
          |    {
-         |      "id": "$id",
-         |      "type": "ITSP",
-         |      "details": [
+         |      "identification": {
+         |        "incomeSourceType":"ITSP",
+         |        "referenceNumber": "$id",
+         |        "referenceType":"MTDBIS"
+         |    },
+         |     "obligationDetails": [
          |        {
          |          "status": "O",
          |          "inboundCorrespondenceFromDate": "2017-04-06",
@@ -575,6 +581,20 @@ object DesJsons {
          |}
          """.stripMargin
     }
+
+    val obligationsNoIdentification: String =
+      s"""{
+         |  "obligations" : [ {
+         |    "obligationDetails" : [ {
+         |      "status" : "O",
+         |      "inboundCorrespondenceFromDate" : "2017-04-06",
+         |      "inboundCorrespondenceToDate" : "2017-07-05",
+         |      "inboundCorrespondenceDueDate" : "2017-08-12",
+         |      "periodKey" : "#001"
+         |    } ]
+         |  } ]
+         |}""".stripMargin
+
   }
 
   object TaxCalculation {

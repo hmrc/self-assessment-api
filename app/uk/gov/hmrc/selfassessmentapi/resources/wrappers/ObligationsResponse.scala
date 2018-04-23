@@ -21,30 +21,37 @@ import uk.gov.hmrc.selfassessmentapi.models.des.{ObligationDetail, DesError, Des
 import uk.gov.hmrc.selfassessmentapi.models._
 
 case class ObligationsResponse(underlying: HttpResponse) extends Response {
-  def obligations(incomeSourceType: String, id: Option[SourceId] = None): Either[DesTransformError, Option[Obligations]] = {
+  def obligations(incomeSourceType: String, refNo: Option[SourceId] = None): Either[DesTransformError, Option[Obligations]] = {
 
     val desObligations = json.asOpt[des.Obligations]
 
     var errorMessage = s"The response from DES does not match the expected format. JSON: [$json]"
 
     def noneFound: Either[DesTransformError, Option[Obligations]] = {
-      logger.error(errorMessage)
+      logger.error(s"[ObligationsResponse] [obligations#noneFound] Error Message: $errorMessage")
       Right(None)
     }
 
     def oneFound(obligation: des.Obligations): Either[DesTransformError, Option[Obligations]] = {
       errorMessage = "Obligation for source id and/or business type was not found."
-      obligation.obligations.find(o => o.id.forall(oId => id.forall(_ == oId)) && o.`type` == incomeSourceType).fold(noneFound) {
-        desObligation =>
-          val obligationsOrError: Seq[Either[DesTransformError, Obligation]] = for {
-            details <- desObligation.details
-          } yield DesTransformValidator[ObligationDetail, Obligation].from(details)
 
-          obligationsOrError.find(_.isLeft) match {
-            case Some(ex) => Left(ex.left.get)
-            case None => Right(Some(Obligations(obligationsOrError map (_.right.get))))
+      val result = for {
+        obl <- obligation.obligations
+        val check =
+        if (refNo.isDefined)
+          obl.identification.exists(identification => identification.referenceNumber == refNo.get) && obl.identification.get.incomeSourceType.contains(incomeSourceType)
+        else
+          obl.identification.exists(identification => identification.incomeSourceType.contains(incomeSourceType))
+        if check
+          detail <- obl.obligationDetails
+      } yield DesTransformValidator[ObligationDetail, Obligation].from(detail)
 
-          }
+      result.find(_.isLeft) match {
+        case Some(ex) => Left(ex.left.get)
+        case None => {
+          val obligations: Seq[Obligation] = result map (_.right.get)
+          if (obligations.isEmpty) Right(None) else Right(Some(Obligations(result map (_.right.get))))
+        }
       }
     }
 

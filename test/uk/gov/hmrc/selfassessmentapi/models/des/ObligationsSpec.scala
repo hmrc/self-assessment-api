@@ -31,9 +31,12 @@ class ObligationsSpec extends JsonSpec {
              |{
              |  "obligations": [
              |    {
-             |      "id": "XAIS54321543215",
-             |      "type": "ITSB",
-             |      "details": [
+             |      "identification": {
+             |        "referenceNumber": "XAIS54321543215",
+             |        "incomeSourceType": "ITSB",
+             |        "referenceType": "MTDBIS"
+             |     },
+             |      "obligationDetails": [
              |        {
              |          "status": "O",
              |          "inboundCorrespondenceFromDate": "2016-10-07",
@@ -59,9 +62,9 @@ class ObligationsSpec extends JsonSpec {
       val obligations = json.as[Obligations]
 
       obligations.obligations.size shouldBe 1
-      obligations.obligations.head.id shouldBe Some("XAIS54321543215")
-      obligations.obligations.head.`type` shouldBe "ITSB"
-      obligations.obligations.head.details should contain theSameElementsAs Seq(
+      obligations.obligations.head.identification.head.referenceNumber shouldBe "XAIS54321543215"
+      obligations.obligations.head.identification.head.incomeSourceType shouldBe Some("ITSB")
+      obligations.obligations.head.obligationDetails should contain theSameElementsAs Seq(
         ObligationDetail(
           status = "O",
           inboundCorrespondenceFromDate = "2016-10-07",

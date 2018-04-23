@@ -3,7 +3,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class SelfEmploymentObligationsResourceSpec extends BaseFunctionalSpec {
-  "retrieveObligations" ignore {
+  "retrieveObligations" should {
 
     "return code 200 with a set of obligations" in {
       given()
@@ -32,6 +32,17 @@ class SelfEmploymentObligationsResourceSpec extends BaseFunctionalSpec {
         .statusIs(200)
         .bodyIsLike(Jsons.Obligations().toString)
     }
+
+    "return code 404 when obligations with no 'identification' data is returned" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .clientIsFullyAuthorisedForTheResource
+          .des().obligations.returnObligationsWithNoIdentificationFor(nino)
+          .when()
+          .get(s"/ni/$nino/self-employments/abc/obligations")
+          .thenAssertThat()
+          .statusIs(404)
+      }
 
     "return code 404 when self employment id does not exist" in {
       given()
