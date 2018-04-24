@@ -33,7 +33,6 @@ object SelfEmploymentObligationsResource extends BaseResource {
 
   def retrieveObligations(nino: Nino, id: SourceId): Action[Unit] ={
     APIAction(nino, SourceType.SelfEmployments, Some("obligations")).async(parse.empty) { implicit request =>
-      println(s"\n${request.headers}\n")
       connector.get(nino, incomeSourceType).map { response =>
         audit(
           makeObligationsRetrievalAudit(nino, Some(id), request.authContext, response, SelfEmploymentRetrieveObligations))
@@ -45,6 +44,7 @@ object SelfEmploymentObligationsResource extends BaseResource {
               case Left(ex) =>
                 logger.error(ex.msg)
                 InternalServerError(Json.toJson(Errors.InternalServerError))
+                
             }
         }
       }
