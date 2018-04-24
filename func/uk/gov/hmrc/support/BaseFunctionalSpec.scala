@@ -9,11 +9,13 @@ import play.api.libs.json._
 import uk.gov.hmrc.api.controllers.ErrorNotFound
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.selfassessmentapi.models.obligations.ObligationsQueryParams
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.{ErrorNotImplemented, Period, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.{DesJsons, Jsons}
 import uk.gov.hmrc.selfassessmentapi.{NinoGenerator, TestApplication}
+
 
 import scala.collection.mutable
 import scala.util.matching.Regex
@@ -1405,7 +1407,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
       object obligations {
         def obligationNotFoundFor(nino: Nino): Givens = {
-          stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA"))
+          stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA?${ObligationsQueryParams().from}&to=${ObligationsQueryParams().to}"))
             .willReturn(
               aResponse()
                 .withStatus(404)
@@ -1416,7 +1418,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def returnObligationsFor(nino: Nino): Givens = {
-          stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA"))
+          stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA?from=${ObligationsQueryParams().from}&to=${ObligationsQueryParams().to}"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -1428,7 +1430,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def returnObligationsWithNoIdentificationFor(nino: Nino):Givens = {
-          stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA"))
+          stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA?from=${ObligationsQueryParams().from}&to=${ObligationsQueryParams().to}"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -1463,7 +1465,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def receivesObligationsTestHeader(nino: Nino, headerValue: String): Givens = {
           stubFor(
-            get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA"))
+            get(urlEqualTo(s"/enterprise/obligation-data/nino/$nino/ITSA?from=${ObligationsQueryParams().from}&to=${ObligationsQueryParams().to}"))
               .withHeader("Gov-Test-Scenario", matching(headerValue))
               .willReturn(
                 aResponse()

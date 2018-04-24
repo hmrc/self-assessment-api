@@ -20,6 +20,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.RequestDateTime
+import uk.gov.hmrc.selfassessmentapi.models.obligations.ObligationsQueryParams
 import uk.gov.hmrc.selfassessmentapi.models.{Period, SourceId}
 import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{EmptyResponse, SelfEmploymentStatementResponse}
@@ -36,7 +37,7 @@ object SelfEmploymentStatementConnector {
 
   def get(nino: Nino, params: ObligationQueryParams)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentStatementResponse] = {
     val queryString = (params.from, params.to) match {
-      case (None, None) => ""
+      case (None, None) => s"?from=${ObligationsQueryParams().from}&to=${ObligationsQueryParams().to}"
       case (Some(f), Some(t)) => s"?from=$f&to=$t"
       case (Some(f), None) => s"?from=$f"
       case (None, Some(t)) => s"?to=$t"
