@@ -28,9 +28,12 @@ import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode._
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.EmptyResponse
+import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
 
 object CrystallisationResource extends BaseResource {
+  val appContext = AppContext
+  val authService = AuthorisationService
 
   private val connector = CrystallisationConnector
 

@@ -21,16 +21,19 @@ import org.joda.time.LocalDate
 import play.api.libs.json._
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodStatementConnector
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode._
 import uk.gov.hmrc.selfassessmentapi.models.{Declaration, Errors, Period, SourceType}
 import uk.gov.hmrc.selfassessmentapi.resources.utils.ResourceHelper
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.EmptyResponse
-import uk.gov.hmrc.selfassessmentapi.services.AuditService
+import uk.gov.hmrc.selfassessmentapi.services.{AuditService, AuthorisationService}
 
 import scala.concurrent.ExecutionContext.Implicits._
 
 object PropertiesPeriodStatementResource extends PropertiesPeriodStatementResource{
+  val appContext = AppContext
+  val authService = AuthorisationService
   override lazy val statementConnector = PropertiesPeriodStatementConnector
   override lazy val auditService = AuditService
 }

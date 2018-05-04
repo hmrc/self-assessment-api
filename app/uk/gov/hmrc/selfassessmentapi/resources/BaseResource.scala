@@ -30,11 +30,12 @@ import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 import scala.concurrent.Future
 
 trait BaseResource extends BaseController {
-  val logger: Logger = Logger(this.getClass)
+  val appContext: AppContext
+  val authService: AuthorisationService
 
-  private val authService = AuthorisationService
-  private lazy val authIsEnabled = AppContext.authEnabled
-  private lazy val featureSwitch = FeatureSwitch(AppContext.featureSwitch)
+  val logger: Logger = Logger(this.getClass)
+  private lazy val authIsEnabled = appContext.authEnabled
+  private lazy val featureSwitch = FeatureSwitch(appContext.featureSwitch)
 
   def AuthAction(nino: Nino) = new ActionRefiner[Request, AuthRequest] {
     override protected def refine[A](request: Request[A]): Future[Either[Result, AuthRequest[A]]] =

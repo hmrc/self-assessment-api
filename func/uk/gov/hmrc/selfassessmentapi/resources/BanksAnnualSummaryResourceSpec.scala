@@ -2,7 +2,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
-class BanksAnnualSummaryResourceSpec extends BaseFunctionalSpec {
+class BanksAnnualSummaryResourceFuncSpec extends BaseFunctionalSpec {
   "updateAnnualSummary" should {
     "return code 204 when successfully updating a bank annual summary" in {
       given()

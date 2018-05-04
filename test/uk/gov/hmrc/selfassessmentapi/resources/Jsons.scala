@@ -17,7 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import org.joda.time.LocalDate
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.selfassessmentapi.models.{AccountingPeriod, AccountingType}
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
@@ -131,27 +131,10 @@ object Jsons {
     }
 
     def annualSummary(taxedUkInterest: Option[BigDecimal], untaxedUkInterest: Option[BigDecimal]): JsValue = {
-
-      val taxed = taxedUkInterest.map { taxed =>
-        val separator = if (untaxedUkInterest.isDefined) "," else ""
-
-        s"""
-           |  "taxedUkInterest": $taxed$separator
-         """.stripMargin
-      }
-
-      val untaxed = untaxedUkInterest.map { untaxed =>
-        s"""
-           |  "untaxedUkInterest": $untaxed
-         """.stripMargin
-      }
-
-      Json.parse(s"""
-           |{
-           |  ${taxed.getOrElse("")}
-           |  ${untaxed.getOrElse("")}
-           |}
-       """.stripMargin)
+      taxedUkInterest
+        .fold[JsObject](Json.obj())(v => Json.obj("taxedUkInterest" -> v)) ++
+      untaxedUkInterest
+        .fold(Json.obj())(v => Json.obj("untaxedUkInterest" -> v))
     }
   }
 

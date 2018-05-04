@@ -24,9 +24,13 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.Audit.makeObligationsRetrievalAudit
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 import play.api.libs.concurrent.Execution.Implicits._
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
+import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
 object SelfEmploymentObligationsResource extends BaseResource {
+  val appContext = AppContext
+  val authService = AuthorisationService
   private val connector = ObligationsConnector
 
   private val incomeSourceType = "ITSB"

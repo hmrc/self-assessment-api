@@ -22,12 +22,19 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
 import uk.gov.hmrc.selfassessmentapi.models.banks.BankAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType, TaxYear}
-import uk.gov.hmrc.selfassessmentapi.services.BanksAnnualSummaryService
-
+import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, BanksAnnualSummaryService}
 import play.api.libs.concurrent.Execution.Implicits._
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 
-object BanksAnnualSummaryResource extends BaseResource {
-  private val annualSummaryService = BanksAnnualSummaryService
+
+object BanksAnnualSummaryResource extends BanksAnnualSummaryResource {
+  val annualSummaryService = BanksAnnualSummaryService
+  val appContext = AppContext
+  val authService = AuthorisationService
+}
+
+trait BanksAnnualSummaryResource extends BaseResource {
+  val annualSummaryService: BanksAnnualSummaryService
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.Banks, Some("annual")).async(parse.json) { implicit request =>

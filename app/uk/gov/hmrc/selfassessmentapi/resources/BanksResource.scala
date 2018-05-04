@@ -19,15 +19,18 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
 import uk.gov.hmrc.selfassessmentapi.models.banks.Bank
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType}
-import uk.gov.hmrc.selfassessmentapi.services.BanksService
+import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, BanksService}
 
 import scala.concurrent.ExecutionContext.Implicits._
 
 object BanksResource extends BaseResource {
+  val appContext = AppContext
   private val service = BanksService
+  val authService = AuthorisationService
 
   def create(nino: Nino): Action[JsValue] =
     APIAction(nino, SourceType.Banks).async(parse.json) { implicit request =>

@@ -22,11 +22,13 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
 import uk.gov.hmrc.selfassessmentapi.models.dividends.Dividends
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
-import uk.gov.hmrc.selfassessmentapi.services.DividendsAnnualSummaryService
-
+import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, DividendsAnnualSummaryService}
 import play.api.libs.concurrent.Execution.Implicits._
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 
 object DividendsAnnualSummaryResource extends BaseResource {
+  val appContext = AppContext
+  val authService = AuthorisationService
 
   private val service = DividendsAnnualSummaryService
 

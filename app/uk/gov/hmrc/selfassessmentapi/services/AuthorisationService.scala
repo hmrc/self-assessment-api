@@ -34,7 +34,10 @@ import scala.util.control.NonFatal
 import scala.util.matching.Regex
 import uk.gov.hmrc.http.{ HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse }
 
-object AuthorisationService extends AuthorisedFunctions {
+
+object AuthorisationService extends AuthorisationService
+
+trait AuthorisationService extends AuthorisedFunctions {
   type AuthResult = Either[Result, AuthContext]
 
   private val lookupService = MtdRefLookupService

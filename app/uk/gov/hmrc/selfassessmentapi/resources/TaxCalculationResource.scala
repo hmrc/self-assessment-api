@@ -25,13 +25,15 @@ import uk.gov.hmrc.selfassessmentapi.models.audit.{TaxCalculationRequest, TaxCal
 import uk.gov.hmrc.selfassessmentapi.models.calculation.CalculationRequest
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.TaxCalculationResponse
-import uk.gov.hmrc.selfassessmentapi.services.AuditData
+import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
-
 import uk.gov.hmrc.http.HeaderCarrier
 import play.api.libs.concurrent.Execution.Implicits._
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 
 object TaxCalculationResource extends BaseResource {
+  val appContext = AppContext
+  val authService = AuthorisationService
   private val connector = TaxCalculationConnector
 
   private val cannedEtaResponse =
