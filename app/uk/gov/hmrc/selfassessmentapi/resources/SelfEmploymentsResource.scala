@@ -19,16 +19,20 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.{JsArray, JsValue, Json, Writes}
 import play.api.mvc.{Action, Result}
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.Error
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.Business
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmployment, SelfEmploymentUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers._
+import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
 import scala.concurrent.ExecutionContext.Implicits._
 
 object SelfEmploymentsResource extends BaseResource {
+  val appContext = AppContext
+  val authService = AuthorisationService
   private val connector = SelfEmploymentConnector
 
   def create(nino: Nino): Action[JsValue] =

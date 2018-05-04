@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.Future
 
-trait BaseResourceSpec extends UnitSpec with MockitoSugar with BeforeAndAfter with OneAppPerSuite{
+trait BaseResourceSpec extends ResourceSpec with BeforeAndAfter with OneAppPerSuite{
 
   val validNino = Nino("AA123456A")
 

@@ -19,14 +19,12 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, Materializer}
 import org.mockito.Matchers
-import org.mockito.Mockito._
 import play.api.libs.json.Json
-import play.api.test.Helpers._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.connectors.CharitableGivingsConnector
-import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 import uk.gov.hmrc.selfassessmentapi.models.des.charitablegiving.CharitableGivings
+import uk.gov.hmrc.selfassessmentapi.models.{SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CharitableGivingsResponse, EmptyResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -34,8 +32,20 @@ import scala.concurrent.Future
 
 class CharitableGivingsResourceSpec extends BaseResourceSpec {
 
-  object TestResource extends CharitableGivingsResource {
-    override lazy val charitableGivingsConnector: CharitableGivingsConnector = mock[CharitableGivingsConnector]
+  class Setup {
+    val resource = new CharitableGivingsResource {
+      override val charitableGivingsConnector = mock[CharitableGivingsConnector]
+      override val appContext = mockAppContext
+      override val authService = mockAuthorisationService
+    }
+    mockAPIAction(SourceType.CharitableGivings)
+
+    def setUp() = {
+      when(resource.charitableGivingsConnector.update(Matchers.anyObject[Nino](), Matchers.anyObject[TaxYear](), Matchers.anyObject[CharitableGivings]())
+      (Matchers.any(), Matchers.any())).thenReturn(Future.successful(EmptyResponse(HttpResponse(NO_CONTENT))))
+      when(resource.charitableGivingsConnector.get(Matchers.anyObject[Nino](), Matchers.anyObject[TaxYear]())
+      (Matchers.any(), Matchers.any())).thenReturn(Future.successful(CharitableGivingsResponse(HttpResponse(OK, Some(Json.parse(validRequestJson))))))
+    }
   }
 
   val validRequestWithNoContentJson =
@@ -68,19 +78,12 @@ class CharitableGivingsResourceSpec extends BaseResourceSpec {
   implicit val system: ActorSystem = ActorSystem("PropertiesPeriodStatementResourceSpec")
   implicit val materializer: Materializer = ActorMaterializer()
 
-  def setUp() = {
-    when(TestResource.charitableGivingsConnector.update(Matchers.anyObject[Nino](), Matchers.anyObject[TaxYear](), Matchers.anyObject[CharitableGivings]())
-    (Matchers.any(), Matchers.any())).thenReturn(Future.successful(EmptyResponse(HttpResponse(NO_CONTENT))))
-    when(TestResource.charitableGivingsConnector.get(Matchers.anyObject[Nino](), Matchers.anyObject[TaxYear]())
-    (Matchers.any(), Matchers.any())).thenReturn(Future.successful(CharitableGivingsResponse(HttpResponse(OK, Some(Json.parse(validRequestJson))))))
-  }
-
   "Update charitable givings for a given tax year with invalid nino " when {
     "CharitableGivingsResource.updatePayments is called " should {
-      "return IllegalArgumentException for invalid nino" in {
-        assertThrows[IllegalArgumentException](TestResource.updatePayments(Nino("111111111"),
+      "return IllegalArgumentException for invalid nino" in new Setup {
+        assertThrows[IllegalArgumentException](resource.updatePayments(Nino("111111111"),
           TaxYear("")))
-        assert(intercept[IllegalArgumentException](TestResource.updatePayments(Nino("111111111"),
+        assert(intercept[IllegalArgumentException](resource.updatePayments(Nino("111111111"),
           TaxYear(""))).getMessage === "requirement failed: 111111111 is not a valid nino.")
       }
     }
@@ -88,8 +91,8 @@ class CharitableGivingsResourceSpec extends BaseResourceSpec {
 
   "Update charitable givings with invalid tax year and a valid nino " when {
     "CharitableGivingsResource.updatePayments is called " should {
-      "return IllegalArgumentException for invalid tax year" in {
-        assertThrows[IllegalArgumentException](TestResource.updatePayments(validNino,
+      "return IllegalArgumentException for invalid tax year" in new Setup {
+        assertThrows[IllegalArgumentException](resource.updatePayments(validNino,
           TaxYear("qwwww")))
       }
     }
@@ -97,9 +100,9 @@ class CharitableGivingsResourceSpec extends BaseResourceSpec {
 
   "Update charitable givings for a given tax year with valid nino and no json" when {
     "CharitableGivingsResource.updatePayments is called " should {
-      "successfully update the gift payments " in {
+      "successfully update the gift payments " in new Setup {
         setUp()
-        submitWithSessionAndAuth(TestResource.updatePayments(validNino, TaxYear("2017-18")), validRequestWithNoContentJson){
+        submitWithSessionAndAuth(resource.updatePayments(validNino, TaxYear("2017-18")), validRequestWithNoContentJson){
           result => status(result) shouldBe NO_CONTENT
         }
       }
@@ -108,9 +111,9 @@ class CharitableGivingsResourceSpec extends BaseResourceSpec {
 
   "Update charitable givings for a given tax year with valid nino and valid json" when {
     "CharitableGivingsResource.updatePayments is called " should {
-      "successfully update the gift payments " in {
+      "successfully update the gift payments " in new Setup {
         setUp()
-        submitWithSessionAndAuth(TestResource.updatePayments(validNino, TaxYear("2017-18")), validRequestJson){
+        submitWithSessionAndAuth(resource.updatePayments(validNino, TaxYear("2017-18")), validRequestJson){
           result => status(result) shouldBe NO_CONTENT
         }
       }
@@ -119,11 +122,11 @@ class CharitableGivingsResourceSpec extends BaseResourceSpec {
 
   "Retrieve charitable givings for a given tax year with valid nino" when {
     "CharitableGivingsResource.retrievePayments is called " should {
-      "successfully return the gift payments " in {
+      "successfully return the gift payments " in new Setup {
         setUp()
-        showWithSessionAndAuth(TestResource.retrievePayments(validNino, TaxYear("2017-18"))){
+        showWithSessionAndAuth(resource.retrievePayments(validNino, TaxYear("2017-18"))){
           result => status(result) shouldBe OK
-            result.onComplete(x => assert((jsonBodyOf(x.get) \ "giftAidPayments" \ "currentYear") ===
+            result.onComplete(x => assert((contentAsJson(result) \ "giftAidPayments" \ "currentYear") ===
               Json.toJson(Json.parse(validRequestJson)) \ "giftAidPayments" \ "currentYear"))
         }
       }
@@ -132,10 +135,10 @@ class CharitableGivingsResourceSpec extends BaseResourceSpec {
 
   "Retrieve charitable givings for an invalid tax year with valid nino" when {
     "CharitableGivingsResource.retrievePayments is called " should {
-      "return the invalid tax year error " in {
-        when(TestResource.charitableGivingsConnector.get(Matchers.anyObject[Nino](), Matchers.anyObject[TaxYear]())
+      "return the invalid tax year error " in new Setup {
+        when(resource.charitableGivingsConnector.get(Matchers.anyObject[Nino](), Matchers.anyObject[TaxYear]())
         (Matchers.any(), Matchers.any())).thenReturn(Future.successful(CharitableGivingsResponse(HttpResponse(BAD_REQUEST, Some(Json.toJson(Jsons.Errors.invalidTaxYear))))))
-        showWithSessionAndAuth(TestResource.retrievePayments(validNino, TaxYear("17-18"))){
+        showWithSessionAndAuth(resource.retrievePayments(validNino, TaxYear("17-18"))){
           result => status(result) shouldBe BAD_REQUEST
         }
       }

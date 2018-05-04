@@ -20,15 +20,19 @@ import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.CharitableGivingsConnector
 import uk.gov.hmrc.selfassessmentapi.models.charitablegiving.CharitableGivings
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear, des}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.EmptyResponse
+import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
 import scala.concurrent.ExecutionContext.Implicits._
 
 object CharitableGivingsResource extends CharitableGivingsResource {
   val charitableGivingsConnector = CharitableGivingsConnector
+  val appContext = AppContext
+  val authService = AuthorisationService
 }
 
 trait CharitableGivingsResource extends BaseResource {

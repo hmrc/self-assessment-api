@@ -27,7 +27,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodStatementConnector
-import uk.gov.hmrc.selfassessmentapi.models.{Errors, Period}
+import uk.gov.hmrc.selfassessmentapi.models.{Errors, Period, SourceType}
 import uk.gov.hmrc.selfassessmentapi.models.audit.EndOfPeriodStatementDeclaration
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.EmptyResponse
 import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuditService}
@@ -40,6 +40,9 @@ class PropertiesPeriodStatementResourceSpec extends BaseResourceSpec {
   object TestResource extends PropertiesPeriodStatementResource {
     override lazy val statementConnector = mock[PropertiesPeriodStatementConnector]
     override lazy val auditService = mock[AuditService]
+    override val appContext = mockAppContext
+    override val authService = mockAuthorisationService
+    mockAPIAction(SourceType.Properties)
   }
 
   val requestJson =
@@ -109,7 +112,7 @@ class PropertiesPeriodStatementResourceSpec extends BaseResourceSpec {
         submitWithSessionAndAuth(TestResource.finaliseEndOfPeriodStatement(validNino,
           DateTime.now().minusYears(2).toLocalDate, DateTime.now().toLocalDate), requestJson) {
           result => status(result) shouldBe BAD_REQUEST
-            result.onComplete(x => assert(Errors.InvalidStartDate.code === ((jsonBodyOf(x.get) \ "code" ).as[String])))
+            result.onComplete(x => assert(Errors.InvalidStartDate.code === (contentAsJson(result) \ "code").as[String]))
         }
       }
     }
@@ -123,7 +126,7 @@ class PropertiesPeriodStatementResourceSpec extends BaseResourceSpec {
         submitWithSessionAndAuth(TestResource.finaliseEndOfPeriodStatement(validNino,
           DateTime.now().toLocalDate, DateTime.now().minusDays(2).toLocalDate), requestJson) {
           result => status(result) shouldBe BAD_REQUEST
-            result.onComplete(x => assert(Errors.InvalidDateRange.code === ((jsonBodyOf(x.get) \ "code" ).as[String])))
+            result.onComplete(x => assert(Errors.InvalidDateRange.code === (contentAsJson(result) \ "code").as[String]))
         }
       }
     }
@@ -137,7 +140,7 @@ class PropertiesPeriodStatementResourceSpec extends BaseResourceSpec {
         submitWithSessionAndAuth(TestResource.finaliseEndOfPeriodStatement(validNino,
           DateTime.now().minusDays(1).toLocalDate, DateTime.now().toLocalDate), invalidRequestJson) {
           result => status(result) shouldBe FORBIDDEN
-            result.onComplete(x => assert(Errors.NotFinalisedDeclaration.code === ((jsonBodyOf(x.get) \ "errors").as[Seq[JsObject]].head \ "code").as[String]))
+            result.onComplete(x => assert(Errors.NotFinalisedDeclaration.code === ((contentAsJson(result) \ "errors").as[Seq[JsObject]].head \ "code").as[String]))
         }
       }
     }
@@ -165,7 +168,7 @@ class PropertiesPeriodStatementResourceSpec extends BaseResourceSpec {
         submitWithSessionAndAuth(TestResource.finaliseEndOfPeriodStatement(validNino,
           DateTime.now().minusDays(1).toLocalDate, DateTime.now().toLocalDate), invalidNullRequestJson) {
           result => status(result) shouldBe BAD_REQUEST
-            result.onComplete(x => assert("INVALID_BOOLEAN_VALUE" === ((jsonBodyOf(x.get) \ "errors").as[Seq[JsObject]].head \ "code").as[String]))
+            result.onComplete(x => assert("INVALID_BOOLEAN_VALUE" === ((contentAsJson(result) \ "errors").as[Seq[JsObject]].head \ "code").as[String]))
         }
       }
     }

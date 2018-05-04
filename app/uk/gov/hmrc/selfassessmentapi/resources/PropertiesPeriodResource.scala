@@ -28,13 +28,16 @@ import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{PeriodMapper, PropertiesPeriodResponse, ResponseMapper}
-import uk.gov.hmrc.selfassessmentapi.services.AuditData
+import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
-
 import play.api.libs.concurrent.Execution.Implicits._
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
+
 import scala.concurrent.Future
 
 object PropertiesPeriodResource extends BaseResource {
+  val appContext = AppContext
+  val authService = AuthorisationService
   private val connector = PropertiesPeriodConnector
 
   def createPeriod(nino: Nino, id: PropertyType): Action[JsValue] =

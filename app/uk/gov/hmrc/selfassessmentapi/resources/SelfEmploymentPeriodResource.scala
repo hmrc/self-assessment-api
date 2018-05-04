@@ -26,14 +26,17 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentPeriodResponse
-import uk.gov.hmrc.selfassessmentapi.services.AuditData
+import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
-
 import play.api.libs.concurrent.Execution.Implicits._
+
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 
 object SelfEmploymentPeriodResource extends BaseResource {
+  val appContext = AppContext
+  val authService = AuthorisationService
   private val connector = SelfEmploymentPeriodConnector
 
   def createPeriod(nino: Nino, sourceId: SourceId): Action[JsValue] =

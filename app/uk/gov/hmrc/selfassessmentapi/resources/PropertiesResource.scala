@@ -23,11 +23,14 @@ import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesConnector
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.properties.NewProperties
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
-
 import play.api.libs.concurrent.Execution.Implicits._
 import cats.implicits._
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
+import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
 object PropertiesResource extends BaseResource {
+  val appContext = AppContext
+  val authService = AuthorisationService
   private val connector = PropertiesConnector
 
   def create(nino: Nino): Action[JsValue] =
