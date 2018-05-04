@@ -27,6 +27,9 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import play.api.Logger
 import uk.gov.hmrc.mongo.MongoConnector
 
+import scala.util.Try
+
+
 trait MongoEmbeddedDatabase extends UnitSpec with BeforeAndAfterAll with BeforeAndAfterEach {
   import MongoEmbeddedDatabase._
 
@@ -40,7 +43,11 @@ trait MongoEmbeddedDatabase extends UnitSpec with BeforeAndAfterAll with BeforeA
       mongoClient.getCollection(coll).remove(new BasicDBObject())
   }
 
-  startEmbeddedMongo()
+  override def beforeAll(): Unit = {
+    super.beforeAll()
+    startEmbeddedMongo()
+  }
+
   System.setProperty("RELEASED_ROUTES", "prod.Routes")
 }
 
@@ -55,19 +62,28 @@ object MongoEmbeddedDatabase {
     .processOutput(ProcessOutput.getDefaultInstanceSilent)
     .build()
 
-  private var mongodExe: MongodExecutable = _
   @volatile private var mongod: MongodProcess = _
 
-  private def startEmbeddedMongo() = this.synchronized {
+  private def startEmbeddedMongo() = this.synchronized{
     if (mongod == null && useEmbeddedMongo) {
       Logger.info("Starting embedded mongo")
-      mongodExe = MongodStarter
-        .getInstance(runtimeConfig)
-        .prepare(new MongodConfigBuilder()
+      startMongo()
+    }
+  }
+
+  private lazy val buildExecutable: MongodExecutable = {
+    MongodStarter.getInstance(runtimeConfig).prepare(
+      new MongodConfigBuilder()
         .version(Version.Main.PRODUCTION)
         .net(new Net(localhost, embeddedPort, Network.localhostIsIPv6()))
-        .build())
-      mongod = mongodExe.start()
+        .build()
+    )
+  }
+
+  private def startMongo(): Try[_] = {
+    Try(mongod = buildExecutable.start()).recover{
+      case _ => Logger.info("Embedded mongo instance not started yet, retrying connection")
+        startMongo()
     }
   }
 }
