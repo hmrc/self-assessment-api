@@ -73,9 +73,7 @@ object SelfEmploymentStatementResource extends BaseResource {
           case 403 if desResponse.errorCodeIs(NON_MATCHING_PERIOD)     => Forbidden(businessJsonError(Errors.NonMatchingPeriod))
           case 403 if desResponse.errorCodeIs(ALREADY_SUBMITTED)       => Forbidden(businessJsonError(Errors.AlreadySubmitted))
         }
-
-      }
-
+      } recoverWith exceptionHandling
     }
 
   private def buildAuditEvent(
@@ -115,7 +113,7 @@ object SelfEmploymentStatementResource extends BaseResource {
               InternalServerError(Json.toJson(Errors.InternalServerError))
           }
       }
-    }
+    } recoverWith exceptionHandling
   }
 
 }

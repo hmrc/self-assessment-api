@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import org.scalatestplus.play.OneAppPerSuite
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.mvc.Http.MimeTypes
@@ -26,7 +25,7 @@ import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType}
 
 import scala.concurrent.Future
 
-class BanksAnnualSummaryResourceSpec extends ResourceSpec with OneAppPerSuite
+class BanksAnnualSummaryResourceSpec extends ResourceSpec
   with MockBanksAnnualSummaryService {
 
   class Setup {
@@ -38,11 +37,6 @@ class BanksAnnualSummaryResourceSpec extends ResourceSpec with OneAppPerSuite
     mockAPIAction(SourceType.Banks)
   }
 
-  class SetupWithAuthEnabled extends Setup {
-    mockAPIAction(SourceType.Banks, authEnabled = true)
-  }
-
-  val nino = generateNino
   val sourceId = "test-sourceId"
   val taxedUkInterest = Some(BigDecimal(50.30))
   val untaxedUkInterest = Some(BigDecimal(70.15))
@@ -95,22 +89,6 @@ class BanksAnnualSummaryResourceSpec extends ResourceSpec with OneAppPerSuite
         val error = Errors.numberFormatExceptionError("/taxedUkInterest")
         contentAsJson(result) shouldBe Json.toJson(Errors.badRequest(error))
       }
-
-//      todo: Uncomment as part of MTSDA-1673 after fix
-//      "the request is authorised as a filing only agent" in new SetupWithAuthEnabled {
-//        val request: FakeRequest[JsValue] = FakeRequest().withBody[JsValue](Json.obj())
-//        val filingOnlyAgent = FilingOnlyAgent(Some("test-agent-code"), None)
-//
-//        MockAuthorisationService.authCheck(nino)
-//          .returns(Future.successful(Right(filingOnlyAgent)))
-//
-//        MockBanksAnnualSummaryService
-//          .updateAnnualSummary(nino, sourceId, taxYear, newBankSummary)
-//          .returns(Future.successful(false))
-//
-//        val result = resource.updateAnnualSummary(nino, sourceId, taxYear)(request)
-//        status(result) shouldBe BAD_REQUEST
-//      }
     }
 
     "return a 404" when {
@@ -123,6 +101,34 @@ class BanksAnnualSummaryResourceSpec extends ResourceSpec with OneAppPerSuite
 
         val result = resource.updateAnnualSummary(nino, sourceId, taxYear)(request)
         status(result) shouldBe NOT_FOUND
+        contentType(result) shouldBe None
+      }
+    }
+
+    "return a 500" when {
+      "the service returns a failed future" in new Setup {
+        val request: FakeRequest[JsValue] = FakeRequest().withBody[JsValue](bankAnnualSummaryJson)
+
+        MockBanksAnnualSummaryService
+          .updateAnnualSummary(nino, sourceId, taxYear, bankAnnualSummary)
+          .returns(Future.failed(new RuntimeException("something went wrong")))
+
+        val result = resource.updateAnnualSummary(nino, sourceId, taxYear)(request)
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        contentType(result) shouldBe None
+      }
+    }
+  }
+
+  "retrieveAnnualSummary" should {
+    "return a 500" when {
+      "the service returns a failed future" in new Setup {
+        MockBanksAnnualSummaryService
+          .retrieveAnnualSummary(nino, sourceId, taxYear)
+          .returns(Future.failed(new RuntimeException("something went wrong")))
+
+        val result = resource.retrieveAnnualSummary(nino, sourceId, taxYear)(FakeRequest())
+        status(result) shouldBe INTERNAL_SERVER_ERROR
         contentType(result) shouldBe None
       }
     }

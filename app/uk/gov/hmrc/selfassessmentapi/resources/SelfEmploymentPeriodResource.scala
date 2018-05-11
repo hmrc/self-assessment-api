@@ -34,10 +34,14 @@ import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 
-object SelfEmploymentPeriodResource extends BaseResource {
+object SelfEmploymentPeriodResource extends SelfEmploymentPeriodResource {
   val appContext = AppContext
   val authService = AuthorisationService
-  private val connector = SelfEmploymentPeriodConnector
+  val connector = SelfEmploymentPeriodConnector
+}
+
+trait SelfEmploymentPeriodResource extends BaseResource {
+  val connector: SelfEmploymentPeriodConnector
 
   def createPeriod(nino: Nino, sourceId: SourceId): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments, Some("periods")).async(parse.json) { implicit request =>
@@ -53,7 +57,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
             case 200 =>
               Created.withHeaders(LOCATION -> response.createLocationHeader(nino, sourceId, periodId))
           }
-      }
+      } recoverWith exceptionHandling
     }
 
   def updatePeriod(nino: Nino, id: SourceId, periodId: PeriodId): Action[JsValue] =
@@ -69,7 +73,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
               response.filter {
                 case 200 => NoContent
               }
-          }
+          } recoverWith exceptionHandling
         case _ => Future.successful(NotFound)
       }
     }
@@ -82,7 +86,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
             response.filter {
               case 200 => response.period.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
             }
-          }
+          } recoverWith exceptionHandling
         case _ => Future.successful(NotFound)
       }
     }
@@ -94,7 +98,7 @@ object SelfEmploymentPeriodResource extends BaseResource {
           case 200 =>
             response.allPeriods(getMaxPeriodTimeSpan).map(seq => Ok(Json.toJson(seq))).getOrElse(InternalServerError)
         }
-      }
+      } recoverWith exceptionHandling
     }
 
   private def makePeriodCreateAudit(

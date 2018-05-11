@@ -27,9 +27,13 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryR
 import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
-object PropertiesAnnualSummaryConnector {
+object PropertiesAnnualSummaryConnector extends PropertiesAnnualSummaryConnector {
+  lazy val appContext = AppContext
+  lazy val baseUrl: String = appContext.desUrl
+}
 
-  private lazy val baseUrl: String = AppContext.desUrl
+trait PropertiesAnnualSummaryConnector {
+  val baseUrl: String
 
   def update(nino: Nino, propertyType: PropertyType, taxYear: TaxYear, update: PropertiesAnnualSummary)(
       implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesAnnualSummaryResponse] = {

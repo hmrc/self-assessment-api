@@ -65,6 +65,6 @@ trait PropertiesPeriodStatementResource extends BaseResource {
           case 403 if desResponse.errorCodeIs(NON_MATCHING_PERIOD)     => Forbidden(Errors.businessJsonError(Errors.NonMatchingPeriod))
           case 403 if desResponse.errorCodeIs(ALREADY_SUBMITTED)       => Forbidden(Errors.businessJsonError(Errors.AlreadySubmitted))
         }
-      }
+      } recoverWith exceptionHandling
     }
 }

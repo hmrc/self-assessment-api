@@ -33,6 +33,12 @@ trait MockBanksAnnualSummaryService extends Mock { _: Suite =>
         eqTo(nino), eqTo(id), eqTo(taxYear), eqTo(newBankSummary))(any())
       )
     }
+
+    def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear) = {
+      when(mockBanksAnnualSummaryService.retrieveAnnualSummary(
+        eqTo(nino), eqTo(id), eqTo(taxYear))(any())
+      )
+    }
   }
 
   override protected def beforeEach(): Unit = {

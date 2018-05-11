@@ -226,6 +226,10 @@ object DesJsons {
            |            "amount": 200.00,
            |            "disallowableAmount": 200.00
            |         },
+           |         "businessEntertainmentCosts": {
+           |           "amount": 200.00,
+           |           "disallowableAmount": 200.00
+           |         },
            |         "other": {
            |            "amount": 200.00,
            |            "disallowableAmount": 200.00
@@ -1101,20 +1105,27 @@ object DesJsons {
   }
 
   object CharitableGivings {
-    def apply(oneOffCurrentYear: BigDecimal, landAndBuildings: BigDecimal): String = {
+    def apply(currentYear: BigDecimal = 10000.32,
+              oneOffCurrentYear: BigDecimal = 1000.23,
+              currentYearTreatedAsPreviousYear: BigDecimal = 300.27,
+              nextYearTreatedAsCurrentYear: BigDecimal = 400.13,
+              nonUKCharities: BigDecimal = 2000.19,
+              landAndBuildings: BigDecimal = 700.11,
+              sharesOrSecurities: BigDecimal = 600.31,
+              investmentsNonUKCharities: BigDecimal =  300.22): String = {
       s"""
                     |  {
                     |    "giftAidPayments": {
-                    |        "currentYear": 10000.13,
+                    |        "currentYear": $currentYear,
                     |        "oneOffCurrentYear": $oneOffCurrentYear,
-                    |        "currentYearTreatedAsPreviousYear": 300.11,
-                    |        "nextYearTreatedAsCurrentYear": 400.19,
-                    |        "nonUKCharities": 2000.31
+                    |        "currentYearTreatedAsPreviousYear": $currentYearTreatedAsPreviousYear,
+                    |        "nextYearTreatedAsCurrentYear": $nextYearTreatedAsCurrentYear,
+                    |        "nonUKCharities": $nonUKCharities
                     |    },
                     |    "gifts": {
                     |        "landAndBuildings": $landAndBuildings,
-                    |        "sharesOrSecurities": 600.22,
-                    |        "investmentsNonUKCharities": 300.23
+                    |        "sharesOrSecurities": $sharesOrSecurities,
+                    |        "investmentsNonUKCharities": $investmentsNonUKCharities
                     |    }
                     |}
          """.stripMargin

@@ -24,6 +24,7 @@ import org.scalatest.{BeforeAndAfterEach, Suite}
 
 trait Mock extends MockitoSugar with BeforeAndAfterEach { _: Suite =>
 
+  // predefined mocking functions to avoid importing
   def any[T]() = Matchers.any[T]()
   def eqTo[T](t: T) = Matchers.eq[T](t)
   def when[T](t: T) = Mockito.when(t)

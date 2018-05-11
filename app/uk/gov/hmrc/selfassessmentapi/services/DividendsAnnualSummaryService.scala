@@ -25,6 +25,10 @@ import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 
 import scala.concurrent.{ExecutionContext, Future}
 
+object DividendsAnnualSummaryService extends DividendsAnnualSummaryService {
+  override val repository: DividendsRepository = DividendsRepository()
+}
+
 trait DividendsAnnualSummaryService {
   val repository: DividendsRepository
 
@@ -41,8 +45,4 @@ trait DividendsAnnualSummaryService {
       case None => Some(models.dividends.Dividends(None))
     }
   }
-}
-
-object DividendsAnnualSummaryService extends DividendsAnnualSummaryService {
-  override val repository: DividendsRepository = DividendsRepository()
 }

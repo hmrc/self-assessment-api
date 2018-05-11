@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, OptionValues, WordSpec}
+import org.scalatestplus.play.OneAppPerSuite
 import play.api.Configuration
-import play.api.http.{HeaderNames, Status}
-import play.api.test.{DefaultAwaitTimeout, ResultExtractors}
+import play.api.http.{HeaderNames, MimeTypes, Status}
+import play.api.test.{DefaultAwaitTimeout, FakeRequest, ResultExtractors}
 import uk.gov.hmrc.selfassessmentapi.TestUtils
 import uk.gov.hmrc.selfassessmentapi.mocks.auth.MockAuthorisationService
 import uk.gov.hmrc.selfassessmentapi.mocks.config.MockAppContext
@@ -35,14 +35,23 @@ trait ResourceSpec extends WordSpec
   with HeaderNames
   with Status
   with DefaultAwaitTimeout
+  with MimeTypes
   with TestUtils
   with MockAppContext
-  with MockAuthorisationService {
+  with MockAuthorisationService
+  with OneAppPerSuite {
+
+  val nino = generateNino
 
   def mockAPIAction(source: SourceType,
                     featureEnabled: Boolean = true,
                     authEnabled: Boolean = false) = {
     MockAppContext.featureSwitch returns Some(Configuration(s"$source.enabled" -> featureEnabled))
     MockAppContext.authEnabled returns authEnabled
+  }
+
+  implicit class FakeRequestOps(req: FakeRequest[_]){
+    // helper function to create a request when parse.empty is used in the resource
+    def ignoreBody: FakeRequest[Unit] = req.withBody[Unit](())
   }
 }

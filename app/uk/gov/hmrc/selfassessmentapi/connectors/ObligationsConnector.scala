@@ -24,8 +24,13 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.ObligationsResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object ObligationsConnector {
-  private lazy val baseUrl: String = AppContext.desUrl
+object ObligationsConnector extends ObligationsConnector {
+  lazy val appContext = AppContext
+  lazy val baseUrl: String = appContext.desUrl
+}
+
+trait ObligationsConnector {
+  val baseUrl: String
 
   def get(nino: Nino, regime: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ObligationsResponse] ={
     httpGet[ObligationsResponse](baseUrl + s"/enterprise/obligation-data/nino/$nino/ITSA?from=${ObligationsQueryParams().from}&to=${ObligationsQueryParams().to}", ObligationsResponse)

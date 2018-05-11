@@ -40,13 +40,13 @@ class CharitableGivingsResourceFunctionalSpec  extends BaseFunctionalSpec {
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource
         .des()
-        .GiftAid
-        .updatePaymentsWithNinoNotAvailable(nino, taxYear)
+          .GiftAid
+            .updatePaymentsWithNinoNotAvailable(nino, taxYear)
         .when()
-        .put(Jsons.CharitableGivings(100.23, 100.27))
-        .at(s"/ni/$nino/charitable-giving/$taxYear")
+          .put(Jsons.CharitableGivings(100.23, 100.27))
+          .at(s"/ni/$nino/charitable-giving/$taxYear")
         .thenAssertThat()
-        .statusIs(404)
+          .statusIs(404)
     }
 
     s"return code 400 when attempting to update the charitable givings with invalid oneOffCurrentYear" in {
@@ -57,7 +57,7 @@ class CharitableGivingsResourceFunctionalSpec  extends BaseFunctionalSpec {
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource
         .when()
-        .put(Jsons.CharitableGivings(-100.00, 100.00))
+        .put(Jsons.CharitableGivings(oneOffCurrentYear = -100.00))
         .at(s"/ni/$nino/charitable-giving/$taxYear")
         .thenAssertThat()
         .statusIs(400)
@@ -69,7 +69,7 @@ class CharitableGivingsResourceFunctionalSpec  extends BaseFunctionalSpec {
   "retrieving the charitable givings" should {
 
     s"return code 200 with a JSON array of payments belonging to the given nino and tax year" in {
-      val expectedJson = Jsons.CharitableGivings(100.23, 100.27)
+      val expectedJson = Jsons.CharitableGivings()
       given()
         .userIsSubscribedToMtdFor(nino)
         .userIsFullyAuthorisedForTheResource

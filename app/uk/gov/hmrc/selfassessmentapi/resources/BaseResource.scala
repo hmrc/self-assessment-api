@@ -21,6 +21,7 @@ import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.{ActionBuilder, _}
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
 import uk.gov.hmrc.selfassessmentapi.contexts.{AuthContext, Individual}
@@ -33,7 +34,7 @@ trait BaseResource extends BaseController {
   val appContext: AppContext
   val authService: AuthorisationService
 
-  val logger: Logger = Logger(this.getClass)
+  val logger: Logger = Logger(this.getClass.getSimpleName)
   private lazy val authIsEnabled = appContext.authEnabled
   private lazy val featureSwitch = FeatureSwitch(appContext.featureSwitch)
 
@@ -70,6 +71,12 @@ trait BaseResource extends BaseController {
         DateTime.now().toString()
     }
     requestTimestamp
+  }
+
+  def exceptionHandling(implicit req: Request[_]): PartialFunction[Throwable, Future[Result]] = {
+    case ex =>
+      logger.warn(s"when requesting ${req.uri} an uncaught error occurred : ${ex.getMessage}")
+      Future.successful(InternalServerError)
   }
 }
 

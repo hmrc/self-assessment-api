@@ -29,9 +29,14 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CrystObligationsRespons
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-object CrystallisationConnector {
+object CrystallisationConnector extends CrystallisationConnector {
+  lazy val appContext = AppContext
+  val baseUrl: String = appContext.desUrl
+}
 
-  private lazy val baseUrl: String = AppContext.desUrl
+trait CrystallisationConnector {
+  protected val appContext: AppContext
+  protected val baseUrl: String
 
   def intentToCrystallise(nino: Nino, taxYear: TaxYear, requestTimestamp: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CrystallisationIntentResponse] =
     httpPost[RequestDateTime, CrystallisationIntentResponse](

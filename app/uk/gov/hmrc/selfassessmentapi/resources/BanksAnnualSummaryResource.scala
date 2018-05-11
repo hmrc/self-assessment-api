@@ -45,7 +45,7 @@ trait BanksAnnualSummaryResource extends BaseResource {
         case Right(true) => NoContent
         case Right(false) if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
         case _ => NotFound
-      }
+      } recoverWith exceptionHandling
     }
 
   def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[AnyContent] =
@@ -54,6 +54,6 @@ trait BanksAnnualSummaryResource extends BaseResource {
         case Some(summary) => Ok(Json.toJson(summary))
         case None if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
         case None => NotFound
-      }
+      } recoverWith exceptionHandling
     }
 }

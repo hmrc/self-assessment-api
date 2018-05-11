@@ -18,17 +18,22 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 
 import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodUpdate}
-import uk.gov.hmrc.selfassessmentapi.models.{PeriodId, SourceId, des}
+import uk.gov.hmrc.selfassessmentapi.models.{SourceId, des}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentPeriodResponse
 
-import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
-object SelfEmploymentPeriodConnector {
+object SelfEmploymentPeriodConnector extends SelfEmploymentPeriodConnector {
+  lazy val appContext = AppContext
+  lazy val baseUrl: String = appContext.desUrl
+}
 
-  private lazy val baseUrl: String = AppContext.desUrl
+trait SelfEmploymentPeriodConnector {
+
+  val baseUrl: String
 
   def create(nino: Nino, id: SourceId, selfEmploymentPeriod: SelfEmploymentPeriod)(
       implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentPeriodResponse] =
