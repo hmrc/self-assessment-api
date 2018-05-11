@@ -16,131 +16,122 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import akka.actor.ActorSystem
-import akka.stream.{ActorMaterializer, Materializer}
-import org.mockito.Matchers
-import play.api.libs.json.Json
-import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.selfassessmentapi.connectors.CharitableGivingsConnector
-import uk.gov.hmrc.selfassessmentapi.models.des.charitablegiving.CharitableGivings
-import uk.gov.hmrc.selfassessmentapi.models.{SourceType, TaxYear}
+import play.api.libs.json.{JsValue, Json}
+import play.api.test.FakeRequest
+import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.selfassessmentapi.mocks.connectors.MockCharitableGivingsConnector
+import uk.gov.hmrc.selfassessmentapi.models.SourceType
+import uk.gov.hmrc.selfassessmentapi.models.des.charitablegiving.{CharitableGivings, GiftAidPayments, Gifts}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CharitableGivingsResponse, EmptyResponse}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class CharitableGivingsResourceSpec extends BaseResourceSpec {
+class CharitableGivingsResourceSpec extends BaseResourceSpec
+  with MockCharitableGivingsConnector {
 
   class Setup {
     val resource = new CharitableGivingsResource {
-      override val charitableGivingsConnector = mock[CharitableGivingsConnector]
+      override val charitableGivingsConnector = mockCharitableGivingsConnector
       override val appContext = mockAppContext
       override val authService = mockAuthorisationService
     }
     mockAPIAction(SourceType.CharitableGivings)
-
-    def setUp() = {
-      when(resource.charitableGivingsConnector.update(Matchers.anyObject[Nino](), Matchers.anyObject[TaxYear](), Matchers.anyObject[CharitableGivings]())
-      (Matchers.any(), Matchers.any())).thenReturn(Future.successful(EmptyResponse(HttpResponse(NO_CONTENT))))
-      when(resource.charitableGivingsConnector.get(Matchers.anyObject[Nino](), Matchers.anyObject[TaxYear]())
-      (Matchers.any(), Matchers.any())).thenReturn(Future.successful(CharitableGivingsResponse(HttpResponse(OK, Some(Json.parse(validRequestJson))))))
-    }
   }
 
-  val validRequestWithNoContentJson =
-    """
-      |{
-      |
-      |}
-    """.stripMargin
+  val giftAidPayments = GiftAidPayments(
+    currentYear = Some(10000.32),
+    oneOffCurrentYear = Some(1000.23),
+    currentYearTreatedAsPreviousYear = Some(300.27),
+    nextYearTreatedAsCurrentYear = Some(400.13),
+    nonUKCharities = Some(2000.19)
+  )
+  val gifts = Gifts(
+    landAndBuildings = Some(700.11),
+    sharesOrSecurities = Some(600.31),
+    investmentsNonUKCharities = Some(300.22)
+  )
+  val charitableGivings = CharitableGivings(Some(giftAidPayments), Some(gifts))
+  val emptyCharitableGivings = CharitableGivings(None, None)
+  val charitableGivingsJson = Jsons.CharitableGivings.apply()
 
-  val validRequestJson =
-    """
-      |{
-      | "giftAidPayments": {
-      |   "currentYear": 10000.32,
-      |   "oneOffCurrentYear": 1000.23,
-      |   "currentYearTreatedAsPreviousYear": 300.27,
-      |   "nextYearTreatedAsCurrentYear": 400.13,
-      |   "nonUKCharities": 2000.19
-      |  },
-      |  "gifts": {
-      |     "landAndBuildings": 700.11,
-      |     "sharesOrSecurities": 600.31,
-      |     "investmentsNonUKCharities": 300.22
-      |  }
-      |}
-    """.stripMargin
+  "updatePayments" should {
+    "return a 204" when {
+      "the request body is correct and DES return a 204" in new Setup {
+        val request = FakeRequest().withBody[JsValue](charitableGivingsJson)
 
+        MockCharitableGivingsConnector.update(nino, taxYear, charitableGivings)
+          .returns(Future.successful(EmptyResponse(HttpResponse(NO_CONTENT))))
 
-  implicit val hc = HeaderCarrier()
-  implicit val system: ActorSystem = ActorSystem("PropertiesPeriodStatementResourceSpec")
-  implicit val materializer: Materializer = ActorMaterializer()
+        val result = resource.updatePayments(nino, taxYear)(request)
+        status(result) shouldBe NO_CONTENT
+        contentType(result) shouldBe None
+      }
 
-  "Update charitable givings for a given tax year with invalid nino " when {
-    "CharitableGivingsResource.updatePayments is called " should {
-      "return IllegalArgumentException for invalid nino" in new Setup {
-        assertThrows[IllegalArgumentException](resource.updatePayments(Nino("111111111"),
-          TaxYear("")))
-        assert(intercept[IllegalArgumentException](resource.updatePayments(Nino("111111111"),
-          TaxYear(""))).getMessage === "requirement failed: 111111111 is not a valid nino.")
+      "the request body is empty and DES return a 204" in new Setup {
+        val request = FakeRequest().withBody[JsValue](Json.obj())
+
+        MockCharitableGivingsConnector.update(nino, taxYear, emptyCharitableGivings)
+          .returns(Future.successful(EmptyResponse(HttpResponse(NO_CONTENT))))
+
+        val result = resource.updatePayments(nino, taxYear)(request)
+        status(result) shouldBe NO_CONTENT
+        contentType(result) shouldBe None
+      }
+    }
+
+    "return a 500" when {
+      "the connector returns a failed future" in new Setup {
+        val request = FakeRequest().withBody[JsValue](charitableGivingsJson)
+
+        MockCharitableGivingsConnector.update(nino, taxYear, charitableGivings)
+          .returns(Future.failed(new RuntimeException("something went wrong")))
+
+        val result = resource.updatePayments(nino, taxYear)(request)
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        contentType(result) shouldBe None
       }
     }
   }
 
-  "Update charitable givings with invalid tax year and a valid nino " when {
-    "CharitableGivingsResource.updatePayments is called " should {
-      "return IllegalArgumentException for invalid tax year" in new Setup {
-        assertThrows[IllegalArgumentException](resource.updatePayments(validNino,
-          TaxYear("qwwww")))
+  "retrievePayments" should {
+    "return a 200 with a json response body" when {
+
+      val desResponse = CharitableGivingsResponse(HttpResponse(OK, Some(charitableGivingsJson)))
+
+      "DES returns a 200 with a charitable payments json response body" in new Setup {
+        MockCharitableGivingsConnector.get(nino, taxYear)
+          .returns(Future.successful(desResponse))
+
+        val result = resource.retrievePayments(nino, taxYear)(FakeRequest())
+        status(result) shouldBe OK
+        contentType(result) shouldBe Some(JSON)
+        contentAsJson(result) shouldBe charitableGivingsJson
       }
     }
-  }
 
-  "Update charitable givings for a given tax year with valid nino and no json" when {
-    "CharitableGivingsResource.updatePayments is called " should {
-      "successfully update the gift payments " in new Setup {
-        setUp()
-        submitWithSessionAndAuth(resource.updatePayments(validNino, TaxYear("2017-18")), validRequestWithNoContentJson){
-          result => status(result) shouldBe NO_CONTENT
-        }
+    "return a 400" when {
+
+      val desInvalidTaxYearResponse = CharitableGivingsResponse(HttpResponse(BAD_REQUEST, Some(Json.toJson(Jsons.Errors.invalidTaxYear))))
+
+      "DES returns a 400 because of an invalid tax year" in new Setup {
+        MockCharitableGivingsConnector.get(nino, taxYear)
+          .returns(Future.successful(desInvalidTaxYearResponse))
+
+        val result = resource.retrievePayments(nino, taxYear)(FakeRequest())
+        status(result) shouldBe BAD_REQUEST
+        contentType(result) shouldBe Some(JSON)
+        contentAsJson(result) shouldBe Json.toJson(Jsons.Errors.invalidTaxYear)
       }
     }
-  }
 
-  "Update charitable givings for a given tax year with valid nino and valid json" when {
-    "CharitableGivingsResource.updatePayments is called " should {
-      "successfully update the gift payments " in new Setup {
-        setUp()
-        submitWithSessionAndAuth(resource.updatePayments(validNino, TaxYear("2017-18")), validRequestJson){
-          result => status(result) shouldBe NO_CONTENT
-        }
-      }
-    }
-  }
+    "return a 500" when {
+      "the connector returns a failed future" in new Setup {
+        MockCharitableGivingsConnector.get(nino, taxYear)
+          .returns(Future.failed(new RuntimeException("something went wrong")))
 
-  "Retrieve charitable givings for a given tax year with valid nino" when {
-    "CharitableGivingsResource.retrievePayments is called " should {
-      "successfully return the gift payments " in new Setup {
-        setUp()
-        showWithSessionAndAuth(resource.retrievePayments(validNino, TaxYear("2017-18"))){
-          result => status(result) shouldBe OK
-            result.onComplete(x => assert((contentAsJson(result) \ "giftAidPayments" \ "currentYear") ===
-              Json.toJson(Json.parse(validRequestJson)) \ "giftAidPayments" \ "currentYear"))
-        }
-      }
-    }
-  }
-
-  "Retrieve charitable givings for an invalid tax year with valid nino" when {
-    "CharitableGivingsResource.retrievePayments is called " should {
-      "return the invalid tax year error " in new Setup {
-        when(resource.charitableGivingsConnector.get(Matchers.anyObject[Nino](), Matchers.anyObject[TaxYear]())
-        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(CharitableGivingsResponse(HttpResponse(BAD_REQUEST, Some(Json.toJson(Jsons.Errors.invalidTaxYear))))))
-        showWithSessionAndAuth(resource.retrievePayments(validNino, TaxYear("17-18"))){
-          result => status(result) shouldBe BAD_REQUEST
-        }
+        val result = resource.retrievePayments(nino, taxYear)(FakeRequest())
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        contentType(result) shouldBe None
       }
     }
   }

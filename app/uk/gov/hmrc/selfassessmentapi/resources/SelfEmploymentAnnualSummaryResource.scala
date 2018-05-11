@@ -31,10 +31,14 @@ import uk.gov.hmrc.http.HeaderCarrier
 import play.api.libs.concurrent.Execution.Implicits._
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 
-object SelfEmploymentAnnualSummaryResource extends BaseResource {
-  val appContext = AppContext
-  val authService = AuthorisationService
-  private val connector = SelfEmploymentAnnualSummaryConnector
+object SelfEmploymentAnnualSummaryResource extends SelfEmploymentAnnualSummaryResource {
+  override val appContext = AppContext
+  override val authService = AuthorisationService
+  override val connector = SelfEmploymentAnnualSummaryConnector
+}
+
+trait SelfEmploymentAnnualSummaryResource extends BaseResource {
+  val connector: SelfEmploymentAnnualSummaryConnector
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments, Some("annual")).async(parse.json) { implicit request =>
@@ -48,16 +52,16 @@ object SelfEmploymentAnnualSummaryResource extends BaseResource {
             case 200 =>
               NoContent
           }
-      }
+      } recoverWith exceptionHandling
     }
 
-  def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[Unit] =
-    APIAction(nino, SourceType.SelfEmployments, Some("annual")).async(parse.empty) { implicit request =>
+  def retrieveAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[AnyContent] =
+    APIAction(nino, SourceType.SelfEmployments, Some("annual")).async { implicit request =>
       connector.get(nino, id, taxYear).map { response =>
         response.filter {
           case 200 => response.annualSummary.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
         }
-      }
+      } recoverWith exceptionHandling
     }
 
   private def makeAnnualSummaryUpdateAudit(nino: Nino,

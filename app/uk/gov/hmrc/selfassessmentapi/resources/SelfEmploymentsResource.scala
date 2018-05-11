@@ -51,7 +51,7 @@ object SelfEmploymentsResource extends BaseResource {
                     s"The maximum number of Self-Employment incomes sources is 1",
                     Some("")))))
           }
-      }
+      } recoverWith exceptionHandling
     }
 
   def update(nino: Nino, id: SourceId): Action[JsValue] =
@@ -64,7 +64,7 @@ object SelfEmploymentsResource extends BaseResource {
           response.filter {
             case 204 => NoContent
           }
-      }
+      } recoverWith exceptionHandling
     }
 
   def retrieve(nino: Nino, id: SourceId): Action[Unit] =
@@ -73,7 +73,7 @@ object SelfEmploymentsResource extends BaseResource {
         response.filter {
           case 200 => handleRetrieve(response.selfEmployment(id), NotFound)
         }
-      }
+      } recoverWith exceptionHandling
     }
 
   def retrieveAll(nino: Nino): Action[Unit] =
@@ -82,7 +82,7 @@ object SelfEmploymentsResource extends BaseResource {
         response.filter {
           case 200 => handleRetrieve(response.listSelfEmployment, Ok(JsArray()))
         }
-      }
+      } recoverWith exceptionHandling
     }
 
   private def handleRetrieve[T](selfEmployments: Either[DesTransformError, T], resultOnEmptyData: Result)(

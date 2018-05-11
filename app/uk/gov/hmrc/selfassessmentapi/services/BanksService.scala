@@ -26,7 +26,11 @@ import uk.gov.hmrc.selfassessmentapi.models.banks.Bank
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait BanksMongoService {
+object BanksService extends BanksService {
+  override val mongoRepository = BanksRepository()
+}
+
+trait BanksService {
 
   val mongoRepository: BanksRepository
 
@@ -55,8 +59,4 @@ trait BanksMongoService {
   def retrieveAll(nino: Nino)(implicit ec: ExecutionContext): Future[Seq[Bank]] =
     mongoRepository.retrieveAll(nino).map(_.map(_.toModel()))
 
-}
-
-object BanksService extends BanksMongoService {
-  override val mongoRepository = BanksRepository()
 }

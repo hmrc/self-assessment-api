@@ -2,7 +2,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
-class CrystallisationResourceSpec extends BaseFunctionalSpec {
+class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
   "intentToCrystallise" should {
 
     "return 303 containing a Location header" in {
@@ -64,7 +64,7 @@ class CrystallisationResourceSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().crystallisation.crystallise(nino, taxYear)
         .when()
-        .post(Jsons.Crystallisation.crystallisation()).to(s"/ni/$nino/$taxYear/crystallisation")
+        .post(Jsons.Crystallisation.crystallisationRequest()).to(s"/ni/$nino/$taxYear/crystallisation")
         .thenAssertThat()
         .statusIs(201)
     }
@@ -75,7 +75,7 @@ class CrystallisationResourceSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().crystallisation.crystalliseInvalidCalculationId(nino, taxYear)
         .when()
-        .post(Jsons.Crystallisation.crystallisation()).to(s"/ni/$nino/$taxYear/crystallisation")
+        .post(Jsons.Crystallisation.crystallisationRequest()).to(s"/ni/$nino/$taxYear/crystallisation")
         .thenAssertThat()
         .statusIs(403)
         .bodyHasPath("\\code", "BUSINESS_ERROR")
@@ -90,7 +90,7 @@ class CrystallisationResourceSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().crystallisation.crystalliseRequiredIntentToCrystallise(nino, taxYear)
         .when()
-        .post(Jsons.Crystallisation.crystallisation()).to(s"/ni/$nino/$taxYear/crystallisation")
+        .post(Jsons.Crystallisation.crystallisationRequest()).to(s"/ni/$nino/$taxYear/crystallisation")
         .thenAssertThat()
         .statusIs(403)
         .bodyHasPath("\\code", "BUSINESS_ERROR")

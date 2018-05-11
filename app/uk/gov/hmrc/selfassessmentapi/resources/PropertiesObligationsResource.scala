@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
-import play.api.mvc.Action
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.ObligationsConnector
@@ -27,15 +27,21 @@ import uk.gov.hmrc.selfassessmentapi.resources.Audit.makeObligationsRetrievalAud
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
-object PropertiesObligationsResource extends BaseResource {
-  val appContext = AppContext
-  val authService = AuthorisationService
-  private val connector = ObligationsConnector
+object PropertiesObligationsResource extends PropertiesObligationsResource {
+  override val appContext = AppContext
+  override val authService = AuthorisationService
+  override val connector = ObligationsConnector
+}
+
+trait PropertiesObligationsResource extends BaseResource {
+  val appContext: AppContext
+  val authService: AuthorisationService
+  val connector: ObligationsConnector
 
   private val incomeSourceType = "ITSP"
 
-  def retrieveObligations(nino: Nino): Action[Unit] =
-    APIAction(nino, SourceType.Properties, Some("obligations")).async(parse.empty) { implicit request =>
+  def retrieveObligations(nino: Nino): Action[AnyContent] =
+    APIAction(nino, SourceType.Properties, Some("obligations")).async { implicit request =>
       connector.get(nino, incomeSourceType).map { response =>
         audit(makeObligationsRetrievalAudit(nino, None, request.authContext, response, UkPropertiesRetrieveObligations))
         response.filter {
@@ -48,6 +54,6 @@ object PropertiesObligationsResource extends BaseResource {
                 InternalServerError(Json.toJson(Errors.InternalServerError))
             }
         }
-      }
+      } recoverWith exceptionHandling
     }
 }

@@ -28,26 +28,28 @@ import cats.implicits._
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
-object PropertiesResource extends BaseResource {
-  val appContext = AppContext
-  val authService = AuthorisationService
-  private val connector = PropertiesConnector
+object PropertiesResource extends PropertiesResource {
+  override val appContext = AppContext
+  override val authService = AuthorisationService
+  override val propertiesConnector = PropertiesConnector
+}
+
+trait PropertiesResource extends BaseResource {
+  val propertiesConnector: PropertiesConnector
 
   def create(nino: Nino): Action[JsValue] =
     APIAction(nino, SourceType.Properties).async(parse.json) { implicit request =>
-
       {
         for {
           props <- validateJson[NewProperties](request.body)
-          response <- execute { _ => connector.create(nino, props) }
+          response <- execute { _ => propertiesConnector.create(nino, props) }
         } yield response
       } onDesSuccess { response =>
         response.filter {
           case 200 => Created.withHeaders(LOCATION -> response.createLocationHeader(nino))
           case 403 => Conflict.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/uk-properties")
         }
-      }
-
+      } recoverWith exceptionHandling
     }
 
   def retrieve(nino: Nino): Action[AnyContent] =
@@ -55,7 +57,7 @@ object PropertiesResource extends BaseResource {
 
       {
         for {
-          response <- execute { _ => connector.retrieve(nino) }
+          response <- execute { _ => propertiesConnector.retrieve(nino) }
         } yield response
       } onDesSuccess { response =>
         response.filter {
@@ -65,7 +67,7 @@ object PropertiesResource extends BaseResource {
               case None => NotFound
             }
         }
-      }
+      } recoverWith exceptionHandling
 
     }
 

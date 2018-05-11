@@ -16,28 +16,31 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc.Action
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.ObligationsConnector
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.Audit.makeObligationsRetrievalAudit
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
-import play.api.libs.concurrent.Execution.Implicits._
-import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
-object SelfEmploymentObligationsResource extends BaseResource {
-  val appContext = AppContext
-  val authService = AuthorisationService
-  private val connector = ObligationsConnector
+object SelfEmploymentObligationsResource extends SelfEmploymentObligationsResource {
+  override val appContext = AppContext
+  override val authService = AuthorisationService
+  override val obligationsConnector = ObligationsConnector
+}
+
+trait SelfEmploymentObligationsResource extends BaseResource {
+  val obligationsConnector: ObligationsConnector
 
   private val incomeSourceType = "ITSB"
 
   def retrieveObligations(nino: Nino, id: SourceId): Action[Unit] =
     APIAction(nino, SourceType.SelfEmployments, Some("obligations")).async(parse.empty) { implicit request =>
-      connector.get(nino, incomeSourceType).map { response =>
+      obligationsConnector.get(nino, incomeSourceType).map { response =>
         audit(
           makeObligationsRetrievalAudit(nino, Some(id), request.authContext, response, SelfEmploymentRetrieveObligations))
         response.filter {
@@ -50,6 +53,6 @@ object SelfEmploymentObligationsResource extends BaseResource {
                 InternalServerError(Json.toJson(Errors.InternalServerError))
             }
         }
-      }
+      } recoverWith exceptionHandling
     }
 }

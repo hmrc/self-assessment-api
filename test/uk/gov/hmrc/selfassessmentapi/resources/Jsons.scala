@@ -123,11 +123,7 @@ object Jsons {
 
   object Banks {
     def apply(accountName: String = "Savings Account"): JsValue = {
-      Json.parse(s"""
-           |{
-           |  "accountName": "$accountName"
-           |}
-         """.stripMargin)
+      Json.obj("accountName" -> accountName)
     }
 
     def annualSummary(taxedUkInterest: Option[BigDecimal], untaxedUkInterest: Option[BigDecimal]): JsValue = {
@@ -642,10 +638,10 @@ object Jsons {
                       allowanceOnSales: BigDecimal = 500.25,
                       zeroEmissionGoodsVehicleAllowance: BigDecimal = 500.25,
                       includedNonTaxableProfits: BigDecimal = 500.25,
-                      basisAdjustment: BigDecimal = -500.25,
+                      basisAdjustment: BigDecimal = 500.25,
                       overlapReliefUsed: BigDecimal = 500.25,
                       accountingAdjustment: BigDecimal = 500.25,
-                      averagingAdjustment: BigDecimal = -500.25,
+                      averagingAdjustment: BigDecimal = 500.25,
                       lossBroughtForward: BigDecimal = 500.25,
                       outstandingBusinessIncome: BigDecimal = 500.25,
                       balancingChargeBPRA: BigDecimal = 500.25,
@@ -745,22 +741,23 @@ object Jsons {
 
     def period(fromDate: Option[String] = None,
                toDate: Option[String] = None,
-               turnover: BigDecimal = 0,
-               otherIncome: BigDecimal = 0,
-               costOfGoodsBought: (BigDecimal, BigDecimal) = (0, 0),
-               cisPaymentsToSubcontractors: (BigDecimal, BigDecimal) = (0, 0),
-               staffCosts: (BigDecimal, BigDecimal) = (0, 0),
-               travelCosts: (BigDecimal, BigDecimal) = (0, 0),
-               premisesRunningCosts: (BigDecimal, BigDecimal) = (0, 0),
-               maintenanceCosts: (BigDecimal, BigDecimal) = (0, 0),
-               adminCosts: (BigDecimal, BigDecimal) = (0, 0),
-               advertisingCosts: (BigDecimal, BigDecimal) = (0, 0),
-               interest: (BigDecimal, BigDecimal) = (0, 0),
-               financialCharges: (BigDecimal, BigDecimal) = (0, 0),
-               badDebt: (BigDecimal, BigDecimal) = (0, 0),
-               professionalFees: (BigDecimal, BigDecimal) = (0, 0),
-               depreciation: (BigDecimal, BigDecimal) = (0, 0),
-               otherExpenses: (BigDecimal, BigDecimal) = (0, 0),
+               turnover: BigDecimal = 10.10,
+               otherIncome: BigDecimal = 10.10,
+               costOfGoodsBought: (BigDecimal, BigDecimal) = (10.10, 10.10),
+               cisPaymentsToSubcontractors: (BigDecimal, BigDecimal) = (10.10, 10.10),
+               staffCosts: (BigDecimal, BigDecimal) = (10.10, 10.10),
+               travelCosts: (BigDecimal, BigDecimal) = (10.10, 10.10),
+               premisesRunningCosts: (BigDecimal, BigDecimal) = (10.10, 10.10),
+               maintenanceCosts: (BigDecimal, BigDecimal) = (10.10, 10.10),
+               adminCosts: (BigDecimal, BigDecimal) = (10.10, 10.10),
+               advertisingCosts: (BigDecimal, BigDecimal) = (10.10, 10.10),
+               interest: (BigDecimal, BigDecimal) = (10.10, 10.10),
+               financialCharges: (BigDecimal, BigDecimal) = (10.10, 10.10),
+               badDebt: (BigDecimal, BigDecimal) = (10.10, 10.10),
+               professionalFees: (BigDecimal, BigDecimal) = (10.10, 10.10),
+               businessEntertainmentCosts: (BigDecimal, BigDecimal) = (10.10, 10.10),
+               depreciation: (BigDecimal, BigDecimal) = (10.10, 10.10),
+               otherExpenses: (BigDecimal, BigDecimal) = (10.10, 10.10),
                consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
 
       val (from, to) = fromToDates(fromDate, toDate)
@@ -774,8 +771,26 @@ object Jsons {
            |    "other": { "amount": $otherIncome }
            |  },
            |  "expenses": {
-           |    "costOfGoodsBought": { "amount": ${costOfGoodsBought._1}, "disallowableAmount": ${costOfGoodsBought._2} },
-           |    "cisPaymentsToSubcontractors": { "amount": ${cisPaymentsToSubcontractors._1}, "disallowableAmount": ${cisPaymentsToSubcontractors._2} },
+           |    "cisPaymentsToSubcontractors": {
+           |      "amount": ${cisPaymentsToSubcontractors._1},
+           |      "disallowableAmount": ${cisPaymentsToSubcontractors._2}
+           |    },
+           |    "depreciation": {
+           |      "amount": ${depreciation._1},
+           |      "disallowableAmount": ${depreciation._2}
+           |    },
+           |    "costOfGoodsBought": {
+           |      "amount": ${costOfGoodsBought._1},
+           |      "disallowableAmount": ${costOfGoodsBought._2}
+           |    },
+           |    "professionalFees": {
+           |      "amount": ${professionalFees._1},
+           |      "disallowableAmount": ${professionalFees._2}
+           |    },
+           |    "businessEntertainmentCosts": {
+           |      "amount": ${businessEntertainmentCosts._1},
+           |      "disallowableAmount": ${businessEntertainmentCosts._2}
+           |    },
            |    "staffCosts": { "amount": ${staffCosts._1}, "disallowableAmount": ${staffCosts._2} },
            |    "travelCosts": { "amount": ${travelCosts._1}, "disallowableAmount": ${travelCosts._2} },
            |    "premisesRunningCosts": { "amount": ${premisesRunningCosts._1}, "disallowableAmount": ${premisesRunningCosts._2} },
@@ -785,8 +800,6 @@ object Jsons {
            |    "interest": { "amount": ${interest._1}, "disallowableAmount": ${interest._2} },
            |    "financialCharges": { "amount": ${financialCharges._1}, "disallowableAmount": ${financialCharges._2} },
            |    "badDebt": { "amount": ${badDebt._1}, "disallowableAmount": ${badDebt._2} },
-           |    "professionalFees": { "amount": ${professionalFees._1}, "disallowableAmount": ${professionalFees._2} },
-           |    "depreciation": { "amount": ${depreciation._1}, "disallowableAmount": ${depreciation._2} },
            |    "other": { "amount": ${otherExpenses._1}, "disallowableAmount": ${otherExpenses._2} }
            |  }
            |
@@ -799,28 +812,16 @@ object Jsons {
   }
 
   object Dividends {
-    def apply(amount: BigDecimal): JsValue = {
-      Json.parse(s"""
-           |{
-           |  "ukDividends": $amount
-           |}
-         """.stripMargin)
+    def apply(amount: BigDecimal = 500.45): JsValue = {
+      Json.obj("ukDividends" -> amount)
     }
   }
 
   object Crystallisation {
-    def intentToCrystallise(): JsValue = {
-      Json.parse(s"""
-                    |{ }
-         """.stripMargin)
-    }
+    def intentToCrystallise(): JsValue = Json.obj()
 
-    def crystallisation(): JsValue = {
-      Json.parse(s"""
-                    |{
-                    |  "calculationId": "77427777"
-                    |}
-         """.stripMargin)
+    def crystallisationRequest(calcId: String = "77427777"): JsValue = {
+      Json.obj("calculationId" -> calcId)
     }
   }
 
@@ -1265,20 +1266,27 @@ object Jsons {
   }
 
   object CharitableGivings {
-    def apply(oneOffCurrentYear: BigDecimal, landAndBuildings: BigDecimal): JsValue = {
+    def apply(currentYear: BigDecimal = 10000.32,
+              oneOffCurrentYear: BigDecimal = 1000.23,
+              currentYearTreatedAsPreviousYear: BigDecimal = 300.27,
+              nextYearTreatedAsCurrentYear: BigDecimal = 400.13,
+              nonUKCharities: BigDecimal = 2000.19,
+              landAndBuildings: BigDecimal = 700.11,
+              sharesOrSecurities: BigDecimal = 600.31,
+              investmentsNonUKCharities: BigDecimal =  300.22): JsValue = {
       Json.parse(s"""
                     |  {
                     |    "giftAidPayments": {
-                    |        "currentYear": 10000.13,
+                    |        "currentYear": $currentYear,
                     |        "oneOffCurrentYear": $oneOffCurrentYear,
-                    |        "currentYearTreatedAsPreviousYear": 300.11,
-                    |        "nextYearTreatedAsCurrentYear": 400.19,
-                    |        "nonUKCharities": 2000.31
+                    |        "currentYearTreatedAsPreviousYear": $currentYearTreatedAsPreviousYear,
+                    |        "nextYearTreatedAsCurrentYear": $nextYearTreatedAsCurrentYear,
+                    |        "nonUKCharities": $nonUKCharities
                     |    },
                     |    "gifts": {
                     |        "landAndBuildings": $landAndBuildings,
-                    |        "sharesOrSecurities": 600.22,
-                    |        "investmentsNonUKCharities": 300.23
+                    |        "sharesOrSecurities": $sharesOrSecurities,
+                    |        "investmentsNonUKCharities": $investmentsNonUKCharities
                     |    }
                     |}
          """.stripMargin)

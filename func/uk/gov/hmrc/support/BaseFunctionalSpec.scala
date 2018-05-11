@@ -1953,7 +1953,7 @@ trait BaseFunctionalSpec extends TestApplication {
               aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.CharitableGivings(100.23, 100.27))))
+                .withBody(DesJsons.CharitableGivings())))
 
           givens
         }

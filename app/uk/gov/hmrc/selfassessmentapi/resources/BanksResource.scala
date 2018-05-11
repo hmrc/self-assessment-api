@@ -27,47 +27,53 @@ import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, BanksServic
 
 import scala.concurrent.ExecutionContext.Implicits._
 
-object BanksResource extends BaseResource {
-  val appContext = AppContext
-  private val service = BanksService
-  val authService = AuthorisationService
+object BanksResource extends BanksResource {
+  override val appContext = AppContext
+  override val banksService = BanksService
+  override val authService = AuthorisationService
+}
+
+trait BanksResource extends BaseResource {
+  val appContext: AppContext
+  val banksService: BanksService
+  val authService: AuthorisationService
 
   def create(nino: Nino): Action[JsValue] =
     APIAction(nino, SourceType.Banks).async(parse.json) { implicit request =>
       validate[Bank, Option[SourceId]](request.body) { bank =>
-        service.create(nino, bank)
+        banksService.create(nino, bank)
       } map {
         case Left(errorResult) => handleErrors(errorResult)
         case Right(Some(id)) => Created.withHeaders(LOCATION -> s"/self-assessment/ni/$nino/savings-accounts/$id")
         case Right(None) => InternalServerError
-      }
+      } recoverWith exceptionHandling
     }
 
   def update(nino: Nino, id: SourceId): Action[JsValue] =
     APIAction(nino, SourceType.Banks).async(parse.json) { implicit request =>
       validate[Bank, Boolean](request.body) { bank =>
-        service.update(nino, bank, id)
+        banksService.update(nino, bank, id)
       } map {
         case Left(errorResult) => handleErrors(errorResult)
         case Right(true) => NoContent
         case Right(false) if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
         case _ => NotFound
-      }
+      } recoverWith exceptionHandling
     }
 
   def retrieve(nino: Nino, id: SourceId): Action[AnyContent] =
     APIAction(nino, SourceType.Banks).async { implicit request =>
-      service.retrieve(nino, id) map {
+      banksService.retrieve(nino, id) map {
         case Some(bank) => Ok(Json.toJson(bank))
         case None if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
         case None => NotFound
-      }
+      } recoverWith exceptionHandling
     }
 
   def retrieveAll(nino: Nino): Action[AnyContent] =
     APIAction(nino, SourceType.Banks).async { implicit request =>
-      service.retrieveAll(nino) map { seq =>
+      banksService.retrieveAll(nino) map { seq =>
         Ok(Json.toJson(seq))
-      }
+      } recoverWith exceptionHandling
     }
 }

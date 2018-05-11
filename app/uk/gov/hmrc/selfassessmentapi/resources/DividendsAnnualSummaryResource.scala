@@ -26,29 +26,34 @@ import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, DividendsAn
 import play.api.libs.concurrent.Execution.Implicits._
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 
-object DividendsAnnualSummaryResource extends BaseResource {
+object DividendsAnnualSummaryResource extends DividendsAnnualSummaryResource {
   val appContext = AppContext
   val authService = AuthorisationService
+  val dividendsService = DividendsAnnualSummaryService
+}
 
-  private val service = DividendsAnnualSummaryService
+trait DividendsAnnualSummaryResource extends BaseResource {
+  val appContext: AppContext
+  val authService: AuthorisationService
+  val dividendsService: DividendsAnnualSummaryService
 
   def updateAnnualSummary(nino: Nino, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.Dividends, Some("annual")).async(parse.json) { implicit request =>
       validate[Dividends, Boolean](request.body) { dividends =>
-        service.updateAnnualSummary(nino, taxYear, dividends)
+        dividendsService.updateAnnualSummary(nino, taxYear, dividends)
       } map {
         case Left(errorResult) => handleErrors(errorResult)
         case Right(true) => NoContent
         case _ => InternalServerError
-      }
+      } recoverWith exceptionHandling
     }
 
   def retrieveAnnualSummary(nino: Nino, taxYear: TaxYear): Action[AnyContent] =
     APIAction(nino, SourceType.Dividends, Some("annual")).async { implicit request =>
-      service.retrieveAnnualSummary(nino, taxYear).map {
+      dividendsService.retrieveAnnualSummary(nino, taxYear).map {
         case Some(summary) => Ok(Json.toJson(summary))
         case None if request.authContext == FilingOnlyAgent => BadRequest(Json.toJson(Errors.InvalidRequest))
         case _ => NotFound
-      }
+      } recoverWith exceptionHandling
     }
 }

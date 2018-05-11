@@ -61,7 +61,7 @@ trait CharitableGivingsResource extends BaseResource {
               s" is unsuccessful for nino: $nino and tax year: $taxYear due to ${Errors.desErrorToApiError(response.json)}")
               InternalServerError(Errors.desErrorToApiError(response.json))
           }
-      }
+      } recoverWith exceptionHandling
     }
 
   def retrievePayments(nino: Nino, taxYear: TaxYear): Action[AnyContent] =
@@ -87,6 +87,6 @@ trait CharitableGivingsResource extends BaseResource {
             s" is unsuccessful for nino: $nino and tax year: $taxYear due to ${Errors.desErrorToApiError(response.json)}")
             InternalServerError(Errors.desErrorToApiError(response.json))
         }
-      }
+      } recoverWith exceptionHandling
     }
 }

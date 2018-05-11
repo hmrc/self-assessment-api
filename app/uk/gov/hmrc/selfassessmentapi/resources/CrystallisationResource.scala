@@ -30,42 +30,46 @@ import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.EmptyResponse
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
+object CrystallisationResource extends CrystallisationResource {
+  override val appContext = AppContext
+  override val authService = AuthorisationService
+  override val crystallisationConnector = CrystallisationConnector
+}
 
-object CrystallisationResource extends BaseResource {
-  val appContext = AppContext
-  val authService = AuthorisationService
-
-  private val connector = CrystallisationConnector
+trait CrystallisationResource extends BaseResource {
+  val appContext: AppContext
+  val authService: AuthorisationService
+  val crystallisationConnector: CrystallisationConnector
 
   def intentToCrystallise(nino: Nino, taxYear: TaxYear): Action[AnyContent] =
     APIAction(nino, SourceType.Crystallisation).async { implicit request =>
-      connector.intentToCrystallise(nino, taxYear, getRequestDateTimestamp) map { response =>
+      crystallisationConnector.intentToCrystallise(nino, taxYear, getRequestDateTimestamp) map { response =>
         response.filter {
           case 200 =>
             val contextPrefix = if (AppContext.registrationEnabled) "/self-assessment" else ""
             val url = response.calculationId.map(id => s"$contextPrefix/ni/$nino/calculations/$id").getOrElse("")
             SeeOther(url).withHeaders(LOCATION -> url)
-          case 403 if response.errorCodeIs(REQUIRED_END_OF_PERIOD_STATEMENT) => Forbidden(toJson(Errors.businessError(Errors.RequiredEndOfPeriodStatement)))
-
+          case 403 if response.errorCodeIs(REQUIRED_END_OF_PERIOD_STATEMENT) =>
+            Forbidden(toJson(Errors.businessError(Errors.RequiredEndOfPeriodStatement)))
         }
-      }
+      } recoverWith exceptionHandling
     }
 
   def crystallisation(nino: Nino, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.Crystallisation).async(parse.json) { implicit request =>
       validate[CrystallisationRequest, EmptyResponse](request.body) {
-         connector.crystallise(nino, taxYear, _, getRequestDateTimestamp)
+         crystallisationConnector.crystallise(nino, taxYear, _, getRequestDateTimestamp)
       } map {
         case Left(error) => handleErrors(error)
         case Right(response) => response.filter {
           case 200 => Created
         }
-      }
+      } recoverWith exceptionHandling
     }
 
   def retrieveObligation(nino: Nino, taxYear: TaxYear, queryParams: ObligationQueryParams)  =
     APIAction(nino, SourceType.Crystallisation).async { implicit request =>
-      connector.get(nino, queryParams.copy(from = Some(taxYear.taxYearFromDate), to = Some(taxYear.taxYearToDate))) map { response =>
+      crystallisationConnector.get(nino, queryParams.copy(from = Some(taxYear.taxYearFromDate), to = Some(taxYear.taxYearToDate))) map { response =>
         response.filter {
           case 200 =>
             response.obligations("ITSA", nino, taxYear.taxYearFromDate) match {
@@ -75,6 +79,6 @@ object CrystallisationResource extends BaseResource {
                 InternalServerError(Json.toJson(Errors.InternalServerError))
             }
         }
-      }
+      } recoverWith exceptionHandling
     }
 }

@@ -432,7 +432,8 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         badDebt = (200, 200),
         professionalFees = (200, 200),
         depreciation = (200, 200),
-        otherExpenses = (200, 200)
+        otherExpenses = (200, 200),
+        businessEntertainmentCosts = (200, 200)
       )
 
       given()

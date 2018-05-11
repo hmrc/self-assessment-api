@@ -34,10 +34,16 @@ import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 
-object PropertiesAnnualSummaryResource extends BaseResource {
-  val appContext = AppContext
-  private val connector = PropertiesAnnualSummaryConnector
-  val authService = AuthorisationService
+object PropertiesAnnualSummaryResource extends PropertiesAnnualSummaryResource {
+  override val appContext = AppContext
+  override val authService = AuthorisationService
+  override val connector = PropertiesAnnualSummaryConnector
+}
+
+trait PropertiesAnnualSummaryResource extends BaseResource {
+  val appContext: AppContext
+  val authService: AuthorisationService
+  val connector: PropertiesAnnualSummaryConnector
 
   def updateAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.Properties, Some("annual")).async(parse.json) { implicit request =>
@@ -48,7 +54,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
           response.filter {
             case 200 => NoContent
           }
-      }
+      } recoverWith exceptionHandling
     }
 
   def retrieveAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[AnyContent] =
@@ -65,7 +71,7 @@ object PropertiesAnnualSummaryResource extends BaseResource {
               case None => NotFound
             }
         }
-      }
+      } recoverWith exceptionHandling
     }
 
   private def validateProperty(propertyId: PropertyType,

@@ -61,7 +61,7 @@ object TaxCalculationResource extends BaseResource {
             case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
             case _                             => unhandledResponse(response.status, logger)
           }
-      }
+      } recoverWith exceptionHandling
     }
 
   def retrieveCalculation(nino: Nino, calcId: SourceId): Action[Unit] =
@@ -76,7 +76,7 @@ object TaxCalculationResource extends BaseResource {
           case 404                                 => NotFound
           case _                                   => unhandledResponse(response.status, logger)
         }
-      }
+      } recoverWith exceptionHandling
     }
 
   private def makeTaxCalcTriggerAudit(nino: Nino, authCtx: AuthContext, response: TaxCalculationResponse)(

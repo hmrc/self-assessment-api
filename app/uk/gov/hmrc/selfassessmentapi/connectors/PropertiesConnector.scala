@@ -24,9 +24,14 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
 import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
-object PropertiesConnector {
+object PropertiesConnector extends PropertiesConnector {
+  lazy val appContext = AppContext
+  lazy val baseUrl: String = appContext.desUrl
+}
 
-  private lazy val baseUrl: String = AppContext.desUrl
+trait PropertiesConnector {
+
+  val baseUrl: String
 
   def create(nino: Nino, properties: NewProperties)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesResponse] = {
     httpPost[NewProperties, PropertiesResponse](

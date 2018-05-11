@@ -25,9 +25,14 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentAnnualSumm
 import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
-object SelfEmploymentAnnualSummaryConnector {
+object SelfEmploymentAnnualSummaryConnector extends SelfEmploymentAnnualSummaryConnector {
+  lazy val appContext = AppContext
+  lazy val baseUrl: String = appContext.desUrl
+}
 
-  private lazy val baseUrl: String = AppContext.desUrl
+trait SelfEmploymentAnnualSummaryConnector {
+
+  val baseUrl: String
 
   def update(nino: Nino, id: SourceId, taxYear: TaxYear, update: SelfEmploymentAnnualSummary)(
       implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentAnnualSummaryResponse] =

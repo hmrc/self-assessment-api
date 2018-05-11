@@ -50,7 +50,7 @@ object PropertiesPeriodResource extends BaseResource {
             case 200 =>
               Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
           }
-      }
+      } recoverWith exceptionHandling
     }
 
   def updatePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[JsValue] =
@@ -64,7 +64,7 @@ object PropertiesPeriodResource extends BaseResource {
               response.filter {
                 case 204 => NoContent
               }
-          }
+          } recoverWith exceptionHandling
         case _ => Future.successful(NotFound)
       }
     }
@@ -88,7 +88,7 @@ object PropertiesPeriodResource extends BaseResource {
                   case PropertyType.OTHER => toResult[Other.Properties, des.properties.Other.Properties](response)
                 }
             }
-          }
+          } recoverWith exceptionHandling
         case _ => Future.successful(NotFound)
       }
     }
@@ -111,7 +111,7 @@ object PropertiesPeriodResource extends BaseResource {
                   .getOrElse(InternalServerError)
             }
         }
-      }
+      } recoverWith exceptionHandling
     }
 
   private def validateAndCreate[P <: Period, F <: Financials](nino: Nino, request: Request[JsValue])(
