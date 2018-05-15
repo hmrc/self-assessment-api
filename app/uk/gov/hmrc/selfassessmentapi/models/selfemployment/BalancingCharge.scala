@@ -21,11 +21,11 @@ import uk.gov.hmrc.selfassessmentapi.models._
 
 
 
-case class BalancingCharge(amount: Amount)
+case class BalancingCharge(amount: BigDecimal)
 
 object BalancingCharge {
   implicit val reads: Reads[BalancingCharge] =
-    (__ \ "amount").read[Amount](nonNegativeAmountValidator).map(BalancingCharge.apply)
+    (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator).map(BalancingCharge.apply)
 
   implicit val writes: Writes[BalancingCharge] = Json.writes[BalancingCharge]
 }

@@ -18,9 +18,9 @@ package uk.gov.hmrc.selfassessmentapi.models
 
 import play.api.libs.json._
 
-case class SimpleExpense(amount: Amount)
+case class SimpleExpense(amount: BigDecimal)
 
 object SimpleExpense {
-  implicit val reads: Reads[SimpleExpense] = (__ \ "amount").read[Amount](nonNegativeAmountValidator).map(amount => SimpleExpense(amount))
+  implicit val reads: Reads[SimpleExpense] = (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator).map(amount => SimpleExpense(amount))
   implicit val writes: Writes[SimpleExpense] = Json.writes[SimpleExpense]
 }

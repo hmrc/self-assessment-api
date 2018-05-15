@@ -5,8 +5,8 @@
   "description": "Income",
   "properties": {
     "amount": {
-      "title": "Amount",
-      "description": "Amount",
+      "title": "BigDecimal",
+      "description": "BigDecimal",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,

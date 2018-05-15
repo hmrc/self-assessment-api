@@ -4,7 +4,7 @@
   "title": "Income",
   "properties": {
     "amount": {
-      "title": "Amount",
+      "title": "BigDecimal",
       "description": "Income associated with the running of the business",
       "type": "number",
       "multipleOf": 0.01,

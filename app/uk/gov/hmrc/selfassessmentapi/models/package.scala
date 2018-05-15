@@ -26,7 +26,7 @@ import scala.util.Try
 
 package object models {
 
-  type Amount = BigDecimal
+  //type BigDecimal = BigDecimal
   type SourceId = String
   type PropertyId = String
   type PeriodId = String
@@ -38,8 +38,8 @@ package object models {
   /**
     * Asserts that amounts must have a maximum of two decimal places
     */
-  val amountValidator: Reads[Amount] = Reads
-    .of[Amount]
+  val amountValidator: Reads[BigDecimal] = Reads
+    .of[BigDecimal]
     .filter(
       ValidationError("amount should be a number less than 99999999999999.98 with up to 2 decimal places", ErrorCode.INVALID_MONETARY_AMOUNT))(
       amount => amount.scale < 3 && amount <= MAX_AMOUNT)
@@ -47,8 +47,8 @@ package object models {
   /**
     * Asserts that amounts must be non-negative and have a maximum of two decimal places
     */
-  val nonNegativeAmountValidator: Reads[Amount] = Reads
-    .of[Amount]
+  val nonNegativeAmountValidator: Reads[BigDecimal] = Reads
+    .of[BigDecimal]
     .filter(ValidationError("amounts should be a non-negative number less than 99999999999999.98 with up to 2 decimal places",
       ErrorCode.INVALID_MONETARY_AMOUNT))(
       amount => amount >= 0 && amount.scale < 3 && amount <= MAX_AMOUNT)
@@ -98,8 +98,8 @@ package object models {
   /**
     * Asserts that amounts must be non-negative and have a maximum of two decimal places
     */
-  val nonNegativeAmountValidatorForCharitableGivings: Reads[Amount] = Reads
-    .of[Amount]
+  val nonNegativeAmountValidatorForCharitableGivings: Reads[BigDecimal] = Reads
+    .of[BigDecimal]
     .filter(ValidationError("amounts should be a non-negative number less than 10000000000.00 with up to 2 decimal places",
       ErrorCode.INVALID_MONETARY_AMOUNT))(
       amount => amount >= 0 && amount.scale < 3 && amount <= 10000000000.00)

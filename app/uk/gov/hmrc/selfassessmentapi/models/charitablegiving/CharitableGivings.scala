@@ -32,22 +32,22 @@ object CharitableGivings{
   }
 }
 
-case class GiftAidPayments(currentYear: Option[Amount] = None,
-                           oneOffCurrentYear: Option[Amount] = None,
-                           currentYearTreatedAsPreviousYear: Option[Amount] = None,
-                           nextYearTreatedAsCurrentYear: Option[Amount] = None,
-                           nonUKCharities: Option[Amount] = None)
+case class GiftAidPayments(currentYear: Option[BigDecimal] = None,
+                           oneOffCurrentYear: Option[BigDecimal] = None,
+                           currentYearTreatedAsPreviousYear: Option[BigDecimal] = None,
+                           nextYearTreatedAsCurrentYear: Option[BigDecimal] = None,
+                           nonUKCharities: Option[BigDecimal] = None)
 
 object GiftAidPayments{
 
   implicit val writes: Writes[GiftAidPayments] = Json.writes[GiftAidPayments]
 
   implicit val reads: Reads[GiftAidPayments] = (
-    (__ \ "currentYear").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings) and
-      (__ \ "oneOffCurrentYear").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings) and
-      (__ \ "currentYearTreatedAsPreviousYear").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings) and
-      (__ \ "nextYearTreatedAsCurrentYear").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings) and
-      (__ \ "nonUKCharities").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings)
+    (__ \ "currentYear").readNullable[BigDecimal](nonNegativeAmountValidatorForCharitableGivings) and
+      (__ \ "oneOffCurrentYear").readNullable[BigDecimal](nonNegativeAmountValidatorForCharitableGivings) and
+      (__ \ "currentYearTreatedAsPreviousYear").readNullable[BigDecimal](nonNegativeAmountValidatorForCharitableGivings) and
+      (__ \ "nextYearTreatedAsCurrentYear").readNullable[BigDecimal](nonNegativeAmountValidatorForCharitableGivings) and
+      (__ \ "nonUKCharities").readNullable[BigDecimal](nonNegativeAmountValidatorForCharitableGivings)
     )(GiftAidPayments.apply _)
 
   def from(desGAP: Option[des.charitablegiving.GiftAidPayments]): Option[GiftAidPayments] = {
@@ -63,18 +63,18 @@ object GiftAidPayments{
   }
 }
 
-case class Gifts(landAndBuildings: Option[Amount] = None,
-                 sharesOrSecurities: Option[Amount] = None,
-                 investmentsNonUKCharities: Option[Amount] = None)
+case class Gifts(landAndBuildings: Option[BigDecimal] = None,
+                 sharesOrSecurities: Option[BigDecimal] = None,
+                 investmentsNonUKCharities: Option[BigDecimal] = None)
 
 object Gifts {
 
   implicit val writes: Writes[Gifts] = Json.writes[Gifts]
 
   implicit val reads: Reads[Gifts] = (
-    (__ \ "landAndBuildings").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings) and
-      (__ \ "sharesOrSecurities").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings) and
-      (__ \ "investmentsNonUKCharities").readNullable[Amount](nonNegativeAmountValidatorForCharitableGivings)
+    (__ \ "landAndBuildings").readNullable[BigDecimal](nonNegativeAmountValidatorForCharitableGivings) and
+      (__ \ "sharesOrSecurities").readNullable[BigDecimal](nonNegativeAmountValidatorForCharitableGivings) and
+      (__ \ "investmentsNonUKCharities").readNullable[BigDecimal](nonNegativeAmountValidatorForCharitableGivings)
     )(Gifts.apply _)
 
   def from(desGifts: Option[des.charitablegiving.Gifts]): Option[Gifts] = {

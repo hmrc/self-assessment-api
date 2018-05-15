@@ -20,16 +20,16 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models._
 
-case class OtherPropertiesAdjustments(lossBroughtForward: Option[Amount] = None,
-                                      privateUseAdjustment: Option[Amount] = None,
-                                      balancingCharge: Option[Amount] = None)
+case class OtherPropertiesAdjustments(lossBroughtForward: Option[BigDecimal] = None,
+                                      privateUseAdjustment: Option[BigDecimal] = None,
+                                      balancingCharge: Option[BigDecimal] = None)
 
 object OtherPropertiesAdjustments {
   implicit val writes: Writes[OtherPropertiesAdjustments] = Json.writes[OtherPropertiesAdjustments]
 
   implicit val reads: Reads[OtherPropertiesAdjustments] = (
-    (__ \ "lossBroughtForward").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "privateUseAdjustment").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "balancingCharge").readNullable[Amount](nonNegativeAmountValidator)
+    (__ \ "lossBroughtForward").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "privateUseAdjustment").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "balancingCharge").readNullable[BigDecimal](nonNegativeAmountValidator)
   ) (OtherPropertiesAdjustments.apply _)
 }

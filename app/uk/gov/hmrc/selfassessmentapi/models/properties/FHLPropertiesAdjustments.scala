@@ -20,18 +20,18 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models._
 
-case class FHLPropertiesAdjustments(lossBroughtForward: Option[Amount] = None,
-                                    privateUseAdjustment: Option[Amount] = None,
-                                    balancingCharge: Option[Amount] = None,
+case class FHLPropertiesAdjustments(lossBroughtForward: Option[BigDecimal] = None,
+                                    privateUseAdjustment: Option[BigDecimal] = None,
+                                    balancingCharge: Option[BigDecimal] = None,
                                     periodOfGraceAdjustment: Option[Boolean] = None)
 
 object FHLPropertiesAdjustments {
   implicit val writes: Writes[FHLPropertiesAdjustments] = Json.writes[FHLPropertiesAdjustments]
 
   implicit val reads: Reads[FHLPropertiesAdjustments] = (
-    (__ \ "lossBroughtForward").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "privateUseAdjustment").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "balancingCharge").readNullable[Amount](nonNegativeAmountValidator) and
+    (__ \ "lossBroughtForward").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "privateUseAdjustment").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "balancingCharge").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "periodOfGraceAdjustment").readNullable[Boolean]
     ) (FHLPropertiesAdjustments.apply _)
 }

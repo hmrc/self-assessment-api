@@ -20,14 +20,14 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models._
 
-case class FHLPropertiesAllowances(annualInvestmentAllowance: Option[Amount] = None,
-                                   otherCapitalAllowance: Option[Amount] = None)
+case class FHLPropertiesAllowances(annualInvestmentAllowance: Option[BigDecimal] = None,
+                                   otherCapitalAllowance: Option[BigDecimal] = None)
 
 object FHLPropertiesAllowances {
   implicit val writes: Writes[FHLPropertiesAllowances] = Json.writes[FHLPropertiesAllowances]
 
   implicit val reads: Reads[FHLPropertiesAllowances] = (
-    (__ \ "annualInvestmentAllowance").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "otherCapitalAllowance").readNullable[Amount](nonNegativeAmountValidator)
+    (__ \ "annualInvestmentAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "otherCapitalAllowance").readNullable[BigDecimal](nonNegativeAmountValidator)
     ) (FHLPropertiesAllowances.apply _)
 }

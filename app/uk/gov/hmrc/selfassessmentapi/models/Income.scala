@@ -20,12 +20,12 @@ import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-case class Income(amount: Amount, taxDeducted: Option[Amount])
+case class Income(amount: BigDecimal, taxDeducted: Option[BigDecimal])
 
 object Income {
   implicit val reads: Reads[Income] = (
-    (__ \ "amount").read[Amount](nonNegativeAmountValidator) and
-      (__ \ "taxDeducted").readNullable[Amount](nonNegativeAmountValidator)
+    (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "taxDeducted").readNullable[BigDecimal](nonNegativeAmountValidator)
     ) (Income.apply _)
     .filter(ValidationError("Tax deducted must be equal to or less than amount", ErrorCode.INVALID_TAX_DEDUCTION_AMOUNT)) {
       income => income.taxDeducted.forall(income.amount >= _)
