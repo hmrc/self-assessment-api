@@ -16,13 +16,11 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
-import play.api.Logger
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, WSHttp}
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesBISS
-import play.api.http.Status._
+import uk.gov.hmrc.selfassessmentapi.httpparsers.PropertiesBISSHttpParser
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -40,34 +38,7 @@ trait PropertiesBISSConnector extends PropertiesBISSHttpParser {
 
   def getSummary(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier, ex: ExecutionContext): Future[PropertiesBISSOutcome] = {
     http.GET[PropertiesBISSOutcome](s"$baseUrl/self-assessment/ni/$nino/uk-properties/$taxYear/income-summary")(
-      PropertiesBISSHttpParser, hc, ex
+      propertiesBISSHttpParser, hc, ex
     )
   }
 }
-
-trait PropertiesBISSHttpParser {
-
-  type PropertiesBISSOutcome = Either[PropertiesBISSError, PropertiesBISS]
-
-  object error extends PropertiesBISSError
-
-  implicit val PropertiesBISSHttpParser = new HttpReads[PropertiesBISSOutcome] {
-    override def read(method: String, url: String, response: HttpResponse): PropertiesBISSOutcome = {
-      response.status match {
-        case OK => response.json.validate[PropertiesBISS].fold(
-          invalid => {
-            Logger.warn(s"[PropertiesBISSHttpParser] - Error reading NRS Response: $invalid")
-            Left(error)
-          },
-          valid => Right(valid)
-        )
-        case BAD_REQUEST => Left(error)
-        case s =>
-          Logger.warn(s"[PropertiesBISSHttpParser] - Non-OK NRS Response: STATUS $s")
-          Left(error)
-      }
-    }
-  }
-}
-
-sealed trait PropertiesBISSError
