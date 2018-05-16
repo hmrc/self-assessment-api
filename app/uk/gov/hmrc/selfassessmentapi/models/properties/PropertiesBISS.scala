@@ -19,37 +19,50 @@ package uk.gov.hmrc.selfassessmentapi.models.properties
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
-case class PropertiesBISS(totalIncome: BigDecimal,
-                                                 totalExpenses: BigDecimal,
-                                                 netProfit: BigDecimal,
-                                                 netLoss: BigDecimal,
-                                                 totalAdditions: Option[BigDecimal],
-                                                 totalDeductions: Option[BigDecimal],
-                                                 taxableProfit: BigDecimal,
-                                                 taxableLoss: BigDecimal)
+case class PropertiesBISS(total: Total,
+                          profit: Profit,
+                          loss: Loss)
 
-object PropertiesBISS{
-  implicit val format: OFormat[PropertiesBISS] = Json.format[PropertiesBISS]
+object PropertiesBISS {
+  implicit val format: OWrites[PropertiesBISS] = Json.writes[PropertiesBISS]
 
-  val desWrites: OWrites[PropertiesBISS] = (
-    (__ \ "totalIncome").write[BigDecimal] and
-      (__ \ "totalExpenses").write[BigDecimal] and
-      (__ \ "netProfit").write[BigDecimal] and
-      (__ \ "netLoss").write[BigDecimal] and
-      (__ \ "totalAdditions").writeNullable[BigDecimal] and
-      (__ \ "totalDeductions").writeNullable[BigDecimal] and
-      (__ \ "taxableProfit").write[BigDecimal] and
-      (__ \ "taxableLoss").write[BigDecimal]
-    )(PropertiesBISS.apply _)
-
-  val desReads: Reads[PropertiesBISS] = (
+  implicit val desReads: Reads[PropertiesBISS] = (
     (__ \ "totalIncome").read[BigDecimal] and
       (__ \ "totalExpenses").read[BigDecimal] and
-      (__ \ "netProfit").read[BigDecimal] and
-      (__ \ "netLoss").read[BigDecimal] and
       (__ \ "totalAdditions").readNullable[BigDecimal] and
       (__ \ "totalDeductions").readNullable[BigDecimal] and
+      (__ \ "netProfit").read[BigDecimal] and
+      (__ \ "netLoss").read[BigDecimal] and
       (__ \ "taxableProfit").read[BigDecimal] and
       (__ \ "taxableLoss").read[BigDecimal]
-    )(PropertiesBISS.apply _)
+    ){
+    (income, expenses, additions, deductions, profitNet, profitTaxable, lossNet, lossTaxable) =>
+      PropertiesBISS(
+        Total(income, expenses, additions, deductions),
+        Profit(profitNet, profitTaxable),
+        Loss(lossNet, lossTaxable))
+  }
+}
+
+case class Total(income: BigDecimal,
+                 expenses: BigDecimal,
+                 additions: Option[BigDecimal],
+                 deductions: Option[BigDecimal])
+
+object Total {
+  implicit val write: OWrites[Total] = Json.writes[Total]
+}
+
+case class Profit(net: BigDecimal,
+                  taxable: BigDecimal)
+
+object Profit {
+  implicit val write: OWrites[Profit] = Json.writes[Profit]
+}
+
+case class Loss(net: BigDecimal,
+                  taxable: BigDecimal)
+
+object Loss {
+  implicit val write: OWrites[Loss] = Json.writes[Loss]
 }
