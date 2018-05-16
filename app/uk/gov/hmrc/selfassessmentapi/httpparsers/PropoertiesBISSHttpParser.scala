@@ -17,35 +17,16 @@
 package uk.gov.hmrc.selfassessmentapi.httpparsers
 
 import play.api.Logger
-import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
+import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesBISS
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
-
-object Error {
-  val INVALID_NINO = "NINO_INVALID"
-  val INVALID_TAX_YEAR = "TAX_YEAR_INVALID"
-
-  val reads: Reads[(String, String)] = (
-    (__ \ "code").read[String] and
-      (__ \ "message").read[String]
-  )((c, m) => c -> m)
-
-  def unapply(arg: JsValue): Option[(String, String)] = {
-    reads.reads(arg).fold(_ => None, valid => Some(valid))
-  }
-}
-
-sealed trait DesError
-
-case object InvalidNino extends DesError
-case object InvalidTaxYear extends DesError
+import uk.gov.hmrc.selfassessmentapi.models.Errors._
 
 trait PropertiesBISSHttpParser {
-  import Error._
 
-  type PropertiesBISSOutcome = Either[DesError, PropertiesBISS]
+  type PropertiesBISSOutcome = Either[Error, PropertiesBISS]
+
+  val NO_DATA_EXISTS = "NO_DATA_EXISTS"
 
   implicit val propertiesBISSHttpParser = new HttpReads[PropertiesBISSOutcome] {
     override def read(method: String, url: String, response: HttpResponse): PropertiesBISSOutcome = {
@@ -53,29 +34,44 @@ trait PropertiesBISSHttpParser {
         case (OK, _) => response.json.validate[PropertiesBISS].fold(
           invalid => {
             Logger.warn(s"[PropertiesBISSHttpParser] - Error reading NRS Response: $invalid")
-            Left(error)
+            Left(ServerError)
           },
           valid => Right(valid)
         )
-        case (BAD_REQUEST, Error(INVALID_NINO, msg)) => {
-          Logger.warn(s"[PropertiesBISSHttpParser] - $msg")
-          Left(InvalidNino)
+        case (BAD_REQUEST, ErrorCode(NINO_INVALID)) => {
+          Logger.warn(s"[PropertiesBISSHttpParser] - Invalid Nino")
+          Left(NinoInvalid)
         }
-        case (BAD_REQUEST, Error(INVALID_TAX_YEAR, msg)) => {
-          Logger.warn(s"[PropertiesBISSHttpParser] - $msg")
-          Left(InvalidTaxYear)
+        case (BAD_REQUEST, ErrorCode(TAX_YEAR_INVALID)) => {
+          Logger.warn(s"[PropertiesBISSHttpParser] - Invalid tax year")
+          Left(TaxYearInvalid)
         }
-        case (NOT_FOUND, _) => Left(error)
-        case (status, _) =>
-          Logger.warn(s"[PropertiesBISSHttpParser] - Non-OK NRS Response: STATUS $status")
-          Left(error)
+        case (NOT_FOUND, ErrorCode(NINO_NOT_FOUND)) => {
+          Logger.warn(s"[PropertiesBISSHttpParser] - Nino not found")
+          Left(NinoNotFound)
+        }
+        case (NOT_FOUND, ErrorCode(TAX_YEAR_NOT_FOUND)) => {
+          Logger.warn(s"[PropertiesBISSHttpParser] - Tax year not found")
+          Left(TaxYearNotFound)
+        }
+        case (NOT_FOUND, ErrorCode(NO_DATA_EXISTS)) => {
+          Logger.warn(s"[PropertiesBISSHttpParser] - No submissions data exists for provided tax year")
+          Left(NoSubmissionDataExists)
+        }
+        case (INTERNAL_SERVER_ERROR, ErrorCode(SERVER_ERROR)) => {
+          Logger.warn(s"[PropertiesBISSHttpParser] - An error has occurred with DES")
+          Left(ServerError)
+        }
+        case (SERVICE_UNAVAILABLE, ErrorCode("SERVICE_UNAVAILABLE")) => {
+          Logger.warn(s"[PropertiesBISSHttpParser] - DES is currently down")
+          Left(ServiceUnavailable)
+        }
+        case (status, ErrorCode(code)) =>
+          Logger.warn(s"[PropertiesBISSHttpParser] - Non-OK NRS Response: STATUS $status - CODE $code")
+          Left(ServerError)
       }
     }
   }
 }
 
-sealed trait PropertiesBISSError extends DesError
-
-case object error extends PropertiesBISSError
-
-case object NoSubmissionDataExists extends PropertiesBISSError
+object NoSubmissionDataExists extends Error("NO_DATA_EXISTS", "No submissions data exists for provided tax year", None)

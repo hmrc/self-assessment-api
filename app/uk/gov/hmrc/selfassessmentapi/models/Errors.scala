@@ -19,8 +19,15 @@ package uk.gov.hmrc.selfassessmentapi.models
 import play.api.data.validation.ValidationError
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.ErrorCode.ErrorCode
+import play.api.libs.functional.syntax._
 
 object Errors {
+
+  val NINO_INVALID = "NINO_INVALID"
+  val TAX_YEAR_INVALID = "TAX_YEAR_INVALID"
+  val NINO_NOT_FOUND = "NINO_NOT_FOUND"
+  val TAX_YEAR_NOT_FOUND = "TAX_YEAR_NOT_FOUND"
+  val SERVER_ERROR = "SERVER_ERROR"
 
   implicit val errorDescWrites: Writes[Error] = Json.writes[Error]
   implicit val badRequestWrites: Writes[BadRequest] = new Writes[BadRequest] {
@@ -41,6 +48,15 @@ object Errors {
 
   case class Error(code: String, message: String, path: Option[String])
 
+  object ErrorCode {
+    val reads: Reads[String] = (__ \ "code").read[String]
+
+    def unapply(arg: JsValue): Option[String] = {
+      reads.reads(arg).fold(_ => None, valid => Some(valid))
+    }
+  }
+
+
   case class DesError(code: String, reason: String)
 
   object DesError {
@@ -59,7 +75,10 @@ object Errors {
     val code = "INTERNAL_SERVER_ERROR"
   }
 
-  object NinoInvalid extends Error("NINO_INVALID", "The provided Nino is invalid", None)
+  object NinoInvalid extends Error(NINO_INVALID, "The provided Nino is invalid", None)
+  object NinoNotFound extends Error(NINO_NOT_FOUND, "The provided Nino was not found", None)
+  object TaxYearInvalid extends Error(TAX_YEAR_INVALID, "Invalid tax year", None)
+  object TaxYearNotFound extends Error(TAX_YEAR_NOT_FOUND, "The provided tax year was not found", None)
   object InvalidRequest extends Error("INVALID_REQUEST", "Invalid request", None)
   object BothExpensesSupplied extends Error("BOTH_EXPENSES_SUPPLIED", "Elements: expenses and consolidatedElements cannot be both specified at the same time", None)
   object NotAllowedConsolidatedExpenses extends Error("NOT_ALLOWED_CONSOLIDATED_EXPENSES", "The submission contains consolidated expenses but the accumulative turnover amount exceeds the threshold", Some(""))
@@ -87,6 +106,9 @@ object Errors {
   object RequiredIntentToCrystallise extends Error("REQUIRED_INTENT_TO_CRYSTALLISE", "Crystallisation could occur only after an intent to crystallise is sent.", None)
   object InvalidTaxCalculationId extends Error("INVALID_TAX_CALCULATION_ID", "The calculation id should match the calculation id returned by the latest intent to crystallise.", Some("/calculationId"))
   object AlreadySubmitted extends Error("ALREADY_SUBMITTED", "You cannot submit a statement for the same accounting period twice", None)
+  object ServerError extends Error(SERVER_ERROR, "An error has occurred", None)
+  object ServiceUnavailable extends Error("SERVICE_UNAVAILABLE", "The server is currently unavailable", None)
+
 
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")
   def badRequest(error: Error) = BadRequest(Seq(error), "Invalid request")

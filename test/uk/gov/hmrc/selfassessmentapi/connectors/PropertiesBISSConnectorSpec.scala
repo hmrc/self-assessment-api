@@ -18,7 +18,6 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
 import uk.gov.hmrc.selfassessmentapi.fixtures.properties.PropertiesBISSFixture
-import uk.gov.hmrc.selfassessmentapi.httpparsers.DesError
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesBISS
 
 import scala.concurrent.Future
@@ -44,7 +43,7 @@ class PropertiesBISSConnectorSpec extends ConnectorSpec {
 
     "return a PropertiesBISS model" when {
       "des returns a 200 with a correct PropertiesBISS response body" in new Setup {
-        MockHttp.GET[Either[DesError, PropertiesBISS]](getSummaryUrl)
+        MockHttp.GET[Either[Error, PropertiesBISS]](getSummaryUrl)
           .returns(Future.successful(Right(propertiesBISS)))
 
         val result = await(connector.getSummary(nino, taxYear))

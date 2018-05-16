@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.fixtures.properties
 
+import play.api.libs.json.Json
 import uk.gov.hmrc.selfassessmentapi.models.properties.{Loss, Profit, PropertiesBISS, Total}
 
 object PropertiesBISSFixture {
@@ -36,6 +37,19 @@ object PropertiesBISSFixture {
         net = 10.50,
         taxable = 10.50
       )
+    )
+  }
+
+  def propertiesBISSDESJson() = {
+    Json.obj(
+      "totalIncome" -> 10.50,
+      "totalExpenses" -> 10.50,
+      "totalAdditions" -> 10.50,
+      "totalDeductions" -> 10.50,
+      "netProfit" -> 10.50,
+      "netLoss" -> 10.50,
+      "taxableProfit" -> 10.50,
+      "taxableLoss" -> 10.50
     )
   }
 }
