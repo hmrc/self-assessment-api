@@ -437,6 +437,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
       )
 
       given()
+
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
         .des()
