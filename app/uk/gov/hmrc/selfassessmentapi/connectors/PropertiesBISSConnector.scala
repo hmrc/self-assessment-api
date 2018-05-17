@@ -21,6 +21,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, WSHttp}
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 import uk.gov.hmrc.selfassessmentapi.httpparsers.PropertiesBISSHttpParser
+import uk.gov.hmrc.selfassessmentapi.httpparsers.PropertiesBISSHttpParser.PropertiesBISSOutcome
 
 import scala.concurrent.{ExecutionContext, Future}
 

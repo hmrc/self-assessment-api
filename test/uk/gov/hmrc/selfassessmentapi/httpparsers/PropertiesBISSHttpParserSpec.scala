@@ -69,6 +69,13 @@ class PropertiesBISSHttpParserSpec extends UnitSpec {
 
         result shouldBe Left(Errors.ServerError)
       }
+
+      "DES returns an empty response body" in {
+        val response = HttpResponse(500, None)
+        val result = httpParser.propertiesBISSHttpParser.read(method, url, response)
+
+        result shouldBe Left(Errors.ServerError)
+      }
     }
 
     "return a NinoInvalid" when {

@@ -22,15 +22,18 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesBISS
 import uk.gov.hmrc.selfassessmentapi.models.Errors._
 
-trait PropertiesBISSHttpParser {
-
+object PropertiesBISSHttpParser {
   type PropertiesBISSOutcome = Either[Error, PropertiesBISS]
 
   val NO_DATA_EXISTS = "NO_DATA_EXISTS"
+}
+
+trait PropertiesBISSHttpParser extends HttpParser {
+  import PropertiesBISSHttpParser._
 
   implicit val propertiesBISSHttpParser = new HttpReads[PropertiesBISSOutcome] {
     override def read(method: String, url: String, response: HttpResponse): PropertiesBISSOutcome = {
-      (response.status, response.json) match {
+      (response.status, response.jsonOpt) match {
         case (OK, _) => response.json.validate[PropertiesBISS].fold(
           invalid => {
             Logger.warn(s"[PropertiesBISSHttpParser] - Error reading NRS Response: $invalid")
@@ -66,8 +69,8 @@ trait PropertiesBISSHttpParser {
           Logger.warn(s"[PropertiesBISSHttpParser] - DES is currently down")
           Left(ServiceUnavailable)
         }
-        case (status, ErrorCode(code)) =>
-          Logger.warn(s"[PropertiesBISSHttpParser] - Non-OK NRS Response: STATUS $status - CODE $code")
+        case (status, _) =>
+          Logger.warn(s"[PropertiesBISSHttpParser] - Non-OK NRS Response: STATUS $status")
           Left(ServerError)
       }
     }

@@ -49,10 +49,13 @@ object Errors {
   case class Error(code: String, message: String, path: Option[String])
 
   object ErrorCode {
-    val reads: Reads[String] = (__ \ "code").read[String]
+    val reads: Reads[Option[String]] = (__ \ "code").readNullable[String]
 
-    def unapply(arg: JsValue): Option[String] = {
-      reads.reads(arg).fold(_ => None, valid => Some(valid))
+    def unapply(arg: Option[JsValue]): Option[String] = {
+      arg match {
+        case Some(json) => reads.reads(json).fold(_ => None, valid => valid)
+        case _ => None
+      }
     }
   }
 
