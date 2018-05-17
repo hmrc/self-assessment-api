@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.httpparsers
 
-import play.api.libs.json.JsValue
+import play.api.libs.json._
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.util.{Failure, Success, Try}
@@ -29,6 +29,18 @@ trait HttpParser {
         case Success(json) => Some(json)
         case Failure(_) => None
       }
+    }
+  }
+
+  implicit class optionalJsonOps(optJson: Option[JsValue]){
+    def validate[T : Reads]: JsResult[T] = optJson match {
+      case Some(json) =>
+        JsDefined(json).validateOpt[T] match {
+          case JsSuccess(Some(j2), _) => JsSuccess(j2)
+          case JsSuccess(None, _) => JsError()
+          case err @ JsError(_) => err
+        }
+      case None => JsError()
     }
   }
 }

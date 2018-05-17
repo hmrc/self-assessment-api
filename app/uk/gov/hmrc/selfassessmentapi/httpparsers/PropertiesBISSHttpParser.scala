@@ -34,9 +34,9 @@ trait PropertiesBISSHttpParser extends HttpParser {
   implicit val propertiesBISSHttpParser = new HttpReads[PropertiesBISSOutcome] {
     override def read(method: String, url: String, response: HttpResponse): PropertiesBISSOutcome = {
       (response.status, response.jsonOpt) match {
-        case (OK, _) => response.json.validate[PropertiesBISS].fold(
+        case (OK, _) => response.jsonOpt.validate[PropertiesBISS].fold(
           invalid => {
-            Logger.warn(s"[PropertiesBISSHttpParser] - Error reading NRS Response: $invalid")
+            Logger.warn(s"[PropertiesBISSHttpParser] - Error reading DES Response: $invalid")
             Left(ServerError)
           },
           valid => Right(valid)
@@ -70,7 +70,7 @@ trait PropertiesBISSHttpParser extends HttpParser {
           Left(ServiceUnavailable)
         }
         case (status, _) =>
-          Logger.warn(s"[PropertiesBISSHttpParser] - Non-OK NRS Response: STATUS $status")
+          Logger.warn(s"[PropertiesBISSHttpParser] - Non-OK DES Response: STATUS $status")
           Left(ServerError)
       }
     }
