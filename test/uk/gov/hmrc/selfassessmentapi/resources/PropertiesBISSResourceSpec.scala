@@ -21,14 +21,15 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.fixtures.properties.PropertiesBISSFixture
 import uk.gov.hmrc.selfassessmentapi.httpparsers.NoSubmissionDataExists
-import uk.gov.hmrc.selfassessmentapi.mocks.services.MockPropertiesBISSService
-import uk.gov.hmrc.selfassessmentapi.models.Errors.{InternalServerError, NinoInvalid, NinoNotFound, ServerError, ServiceUnavailable, TaxYearInvalid, TaxYearNotFound}
+import uk.gov.hmrc.selfassessmentapi.mocks.connectors.MockPropertiesBISSConnector
+import uk.gov.hmrc.selfassessmentapi.models.Errors.{NinoInvalid, NinoNotFound, ServerError, ServiceUnavailable, TaxYearInvalid, TaxYearNotFound}
 import uk.gov.hmrc.selfassessmentapi.models.SourceType
-import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, PropertiesBISSService}
+import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
 import scala.concurrent.Future
 
-class PropertiesBISSResourceSpec extends BaseResourceSpec with MockPropertiesBISSService {
+class PropertiesBISSResourceSpec extends BaseResourceSpec
+  with MockPropertiesBISSConnector {
 
   val readJson = """{
                     |    "totalIncome": 100.00,
@@ -44,7 +45,7 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec with MockPropertiesBIS
   class SetUp {
     val resource = new PropertiesBISSResource {
       override val authService: AuthorisationService = mockAuthorisationService
-      override val propertiesBISSService: PropertiesBISSService = mockPropertiesBISSService
+      override val propertiesBISSConnector = mockPropertiesBISSConnector
       override val appContext: AppContext = mockAppContext
     }
     mockAPIAction(SourceType.Properties)
@@ -55,7 +56,7 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec with MockPropertiesBIS
   "PropertiesBISSResource getSummary" should {
     "return valid response" when {
       "valid nino and tax year is supplied" in new SetUp {
-        MockPropertiesBISSService.get(nino, taxYear).
+        MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Right(PropertiesBISSFixture.propertiesBISS())))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
@@ -67,7 +68,7 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec with MockPropertiesBIS
 
     "return invalid nino error response" when {
       "invalid nino and valid tax year is supplied" in new SetUp {
-        MockPropertiesBISSService.get(nino, taxYear).
+        MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Left(NinoInvalid)))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
@@ -79,7 +80,7 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec with MockPropertiesBIS
 
     "return invalid tax year error response" when {
       "valid nino and invalid tax year is supplied" in new SetUp {
-        MockPropertiesBISSService.get(nino, taxYear).
+        MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Left(TaxYearInvalid)))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
@@ -91,7 +92,7 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec with MockPropertiesBIS
 
     "return nino not found error response" when {
       "nino supplied not found in the backend" in new SetUp {
-        MockPropertiesBISSService.get(nino, taxYear).
+        MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Left(NinoNotFound)))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
@@ -103,7 +104,7 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec with MockPropertiesBIS
 
     "return tax year not found error response" when {
       "tax year supplied not found in the backend" in new SetUp {
-        MockPropertiesBISSService.get(nino, taxYear).
+        MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Left(TaxYearNotFound)))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
@@ -115,7 +116,7 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec with MockPropertiesBIS
 
     "return data not found error response" when {
       "no data found with the supplied details in the backend" in new SetUp {
-        MockPropertiesBISSService.get(nino, taxYear).
+        MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Left(NoSubmissionDataExists)))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
@@ -127,7 +128,7 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec with MockPropertiesBIS
 
     "return server error response" when {
       "unknown error in the backend" in new SetUp {
-        MockPropertiesBISSService.get(nino, taxYear).
+        MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Left(ServerError)))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
@@ -139,7 +140,7 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec with MockPropertiesBIS
 
     "return service unavailable error response" when {
       "backend is not available" in new SetUp {
-        MockPropertiesBISSService.get(nino, taxYear).
+        MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Left(ServiceUnavailable)))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){

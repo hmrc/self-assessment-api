@@ -16,32 +16,33 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
+import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesBISSConnector
 import uk.gov.hmrc.selfassessmentapi.httpparsers.NoSubmissionDataExists
 import uk.gov.hmrc.selfassessmentapi.models.Errors.{NinoInvalid, NinoNotFound, ServerError, TaxYearInvalid, TaxYearNotFound}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
-import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, PropertiesBISSService}
-import play.api.libs.json.Json.toJson
+import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object PropertiesBISSResource extends PropertiesBISSResource {
   override val appContext: AppContext = AppContext
   override val authService: AuthorisationService = AuthorisationService
-  override val propertiesBISSService: PropertiesBISSService = PropertiesBISSService
+  override val propertiesBISSConnector = PropertiesBISSConnector
 }
 
 trait PropertiesBISSResource extends BaseResource {
   val appContext: AppContext
   val authService: AuthorisationService
-  val propertiesBISSService: PropertiesBISSService
+  val propertiesBISSConnector: PropertiesBISSConnector
 
   def getSummary(nino: Nino, taxYear: TaxYear): Action[AnyContent] =
     APIAction(nino, SourceType.Properties, Some("BISS")).async {
       implicit request =>
-        propertiesBISSService.getSummary(nino, taxYear).map {
+        propertiesBISSConnector.getSummary(nino, taxYear).map {
           case Left(error) => error match {
             case NinoInvalid | TaxYearInvalid => BadRequest(toJson(error))
             case NinoNotFound | TaxYearNotFound | NoSubmissionDataExists => NotFound(toJson(error))

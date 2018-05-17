@@ -24,7 +24,7 @@ case class PropertiesBISS(total: Total,
                           loss: Loss)
 
 object PropertiesBISS {
-  implicit val format: OWrites[PropertiesBISS] = Json.writes[PropertiesBISS]
+  implicit val writes: OWrites[PropertiesBISS] = Json.writes[PropertiesBISS]
 
   implicit val desReads: Reads[PropertiesBISS] = (
     (__ \ "totalIncome").read[BigDecimal] and
@@ -36,12 +36,13 @@ object PropertiesBISS {
       (__ \ "taxableProfit").read[BigDecimal] and
       (__ \ "taxableLoss").read[BigDecimal]
     ){
-    (income, expenses, additions, deductions, profitNet, profitTaxable, lossNet, lossTaxable) =>
-      PropertiesBISS(
-        Total(income, expenses, additions, deductions),
-        Profit(profitNet, profitTaxable),
-        Loss(lossNet, lossTaxable))
-  }
+      (income, expenses, additions, deductions, profitNet, profitTaxable, lossNet, lossTaxable) =>
+        PropertiesBISS(
+          Total(income, expenses, additions, deductions),
+          Profit(profitNet, profitTaxable),
+          Loss(lossNet, lossTaxable)
+        )
+    }
 }
 
 case class Total(income: BigDecimal,
