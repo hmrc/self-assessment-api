@@ -37,7 +37,7 @@ object DesJsons {
     val notFoundProperty: String = error(
       "NOT_FOUND_PROPERTY",
       "The remote endpoint has indicated that no data can be found for the given property type.")
-    val notFound: String = error("NOT_FOUND", "The remote endpoint has indicated that no data can be found.")
+    val notFound: String = error("NOT_FOUND", "DES     The remote endpoint has indicated that no data can be found.")
     val tradingNameConflict: String = error("CONFLICT", "Duplicated trading name.")
     val serverError: String =
       error("SERVER_ERROR", "DES is currently experiencing problems that require live service intervention.")
@@ -1136,14 +1136,14 @@ object DesJsons {
     val summary: String = {
       s"""
          |{
-         |  "totalIncome" -> 10.50,
-         |  "totalExpenses" -> 10.50,
-         |  "totalAdditions" -> 10.50,
-         |  "totalDeductions" -> 10.50,
-         |  "netProfit" -> 10.50,
-         |  "netLoss" -> 10.50,
-         |  "taxableProfit" -> 10.50,
-         |  "taxableLoss" -> 10.50
+         |  "totalIncome" : 10.50,
+         |  "totalExpenses" : 10.50,
+         |  "totalAdditions" : 10.50,
+         |  "totalDeductions" : 10.50,
+         |  "netProfit" : 10.50,
+         |  "netLoss" : 10.50,
+         |  "taxableProfit" : 10.50,
+         |  "taxableLoss" : 10.50
          |}
        """.stripMargin
     }

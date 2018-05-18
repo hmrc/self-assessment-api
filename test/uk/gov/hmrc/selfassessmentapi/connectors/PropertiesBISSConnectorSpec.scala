@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
 import uk.gov.hmrc.selfassessmentapi.fixtures.properties.PropertiesBISSFixture
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesBISS
+import uk.gov.hmrc.selfassessmentapi.models.properties.{PropertiesBISS, PropertyType}
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
