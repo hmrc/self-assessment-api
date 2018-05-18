@@ -21,6 +21,7 @@ import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesBISS
 import uk.gov.hmrc.selfassessmentapi.models.Errors._
+import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode
 
 object PropertiesBISSHttpParser {
   type PropertiesBISSOutcome = Either[Error, PropertiesBISS]
@@ -41,31 +42,31 @@ trait PropertiesBISSHttpParser extends HttpParser {
           },
           valid => Right(valid)
         )
-        case (BAD_REQUEST, ErrorCode(NINO_INVALID)) => {
+        case (BAD_REQUEST, ErrorCode(DesErrorCode.INVALID_NINO)) => {
           Logger.warn(s"[PropertiesBISSHttpParser] - Invalid Nino")
           Left(NinoInvalid)
         }
-        case (BAD_REQUEST, ErrorCode(TAX_YEAR_INVALID)) => {
+        case (BAD_REQUEST, ErrorCode(DesErrorCode.INVALID_TAX_YEAR)) => {
           Logger.warn(s"[PropertiesBISSHttpParser] - Invalid tax year")
           Left(TaxYearInvalid)
         }
-        case (NOT_FOUND, ErrorCode(NINO_NOT_FOUND)) => {
+        case (NOT_FOUND, ErrorCode(DesErrorCode.NOT_FOUND_NINO)) => {
           Logger.warn(s"[PropertiesBISSHttpParser] - Nino not found")
           Left(NinoNotFound)
         }
-        case (NOT_FOUND, ErrorCode(TAX_YEAR_NOT_FOUND)) => {
+        case (NOT_FOUND, ErrorCode(DesErrorCode.NOT_FOUND_TAX_YEAR)) => {
           Logger.warn(s"[PropertiesBISSHttpParser] - Tax year not found")
           Left(TaxYearNotFound)
         }
-        case (NOT_FOUND, ErrorCode(NO_DATA_EXISTS)) => {
+        case (NOT_FOUND, ErrorCode(DesErrorCode.NO_DATA_EXISTS)) => {
           Logger.warn(s"[PropertiesBISSHttpParser] - No submissions data exists for provided tax year")
           Left(NoSubmissionDataExists)
         }
-        case (INTERNAL_SERVER_ERROR, ErrorCode(SERVER_ERROR)) => {
+        case (INTERNAL_SERVER_ERROR, ErrorCode(DesErrorCode.SERVER_ERROR)) => {
           Logger.warn(s"[PropertiesBISSHttpParser] - An error has occurred with DES")
           Left(ServerError)
         }
-        case (SERVICE_UNAVAILABLE, ErrorCode("SERVICE_UNAVAILABLE")) => {
+        case (SERVICE_UNAVAILABLE, ErrorCode(DesErrorCode.SERVICE_UNAVAILABLE)) => {
           Logger.warn(s"[PropertiesBISSHttpParser] - DES is currently down")
           Left(ServiceUnavailable)
         }

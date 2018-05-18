@@ -88,4 +88,4 @@ GET /ni/:nino/charitable-giving/:taxYear   uk.gov.hmrc.selfassessmentapi.resourc
 ####################
 #  Properties BISS   #
 ####################
-GET /self-assessment/ni/:nino/uk-properties/:taxYear/income-summary   uk.gov.hmrc.selfassessmentapi.resources.PropertiesBISSResource.getSummary(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+GET /ni/:nino/uk-properties/:taxYear/income-summary   uk.gov.hmrc.selfassessmentapi.resources.PropertiesBISSResource.getSummary(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)

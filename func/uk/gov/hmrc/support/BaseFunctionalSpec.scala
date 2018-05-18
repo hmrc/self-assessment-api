@@ -2,6 +2,7 @@ package uk.gov.hmrc.support
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
+import org.joda.time.LocalDate
 import org.json.{JSONArray, JSONObject}
 import org.skyscreamer.jsonassert.JSONAssert.assertEquals
 import org.skyscreamer.jsonassert.JSONCompareMode.LENIENT
@@ -13,13 +14,11 @@ import uk.gov.hmrc.selfassessmentapi.models.obligations.ObligationsQueryParams
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.{ErrorNotImplemented, Period, TaxYear}
-import uk.gov.hmrc.selfassessmentapi.resources.{DesJsons, Jsons}
+import uk.gov.hmrc.selfassessmentapi.resources.DesJsons
 import uk.gov.hmrc.selfassessmentapi.{NinoGenerator, TestApplication}
-
 
 import scala.collection.mutable
 import scala.util.matching.Regex
-import org.joda.time.LocalDate
 
 trait BaseFunctionalSpec extends TestApplication {
 
@@ -1965,6 +1964,30 @@ trait BaseFunctionalSpec extends TestApplication {
                 .withStatus(404)
                 .withHeader("Content-Type", "application/json")
                 .withBody(DesJsons.Errors.ninoNotFound)))
+
+          givens
+        }
+      }
+
+      object PropertiesBISS {
+        def getSummary(nino: Nino, taxYear: TaxYear): Givens = {
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/income-source-summary/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.PropertiesBISS.summary)))
+
+          givens
+        }
+
+        def getSummaryErrorResponse(nino: Nino, taxYear: TaxYear, status: Int, errorCode: String): Givens = {
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/income-source-summary/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(status)
+                .withHeader("Content-Type", "application/json")
+                .withBody(errorCode)))
 
           givens
         }

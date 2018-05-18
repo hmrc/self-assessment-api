@@ -23,6 +23,7 @@ import uk.gov.hmrc.selfassessmentapi.fixtures.properties.PropertiesBISSFixture
 import uk.gov.hmrc.selfassessmentapi.models.Errors
 import uk.gov.hmrc.selfassessmentapi.models.Errors._
 import play.api.http.Status._
+import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode
 
 class PropertiesBISSHttpParserSpec extends UnitSpec {
 
@@ -87,7 +88,7 @@ class PropertiesBISSHttpParserSpec extends UnitSpec {
 
     "return a NinoInvalid" when {
       "DES returns a 400 with a NinoInvalid error code" in {
-        val responseBody = Json.obj("code" -> NINO_INVALID)
+        val responseBody = Json.obj("code" -> DesErrorCode.INVALID_NINO)
 
         val response = HttpResponse(BAD_REQUEST, Some(responseBody))
         val result = httpParser.propertiesBISSHttpParser.read(method, url, response)
@@ -98,7 +99,7 @@ class PropertiesBISSHttpParserSpec extends UnitSpec {
 
     "return a TaxYearInvalid" when {
       "DES returns a 400 with a TaxYearInvalid error code" in {
-        val responseBody = Json.obj("code" -> TAX_YEAR_INVALID)
+        val responseBody = Json.obj("code" -> DesErrorCode.INVALID_TAX_YEAR)
 
         val response = HttpResponse(BAD_REQUEST, Some(responseBody))
         val result = httpParser.propertiesBISSHttpParser.read(method, url, response)
@@ -109,7 +110,7 @@ class PropertiesBISSHttpParserSpec extends UnitSpec {
 
     "return a NinoNotFound" when {
       "DES returns a 404 with a NinoNotFound error code" in {
-        val responseBody = Json.obj("code" -> NINO_NOT_FOUND)
+        val responseBody = Json.obj("code" -> DesErrorCode.NOT_FOUND_NINO)
 
         val response = HttpResponse(NOT_FOUND, Some(responseBody))
         val result = httpParser.propertiesBISSHttpParser.read(method, url, response)
@@ -120,7 +121,7 @@ class PropertiesBISSHttpParserSpec extends UnitSpec {
 
     "return a TaxYearNotFound" when {
       "DES returns a 404 with a TaxYearNotFound error code" in {
-        val responseBody = Json.obj("code" -> TAX_YEAR_NOT_FOUND)
+        val responseBody = Json.obj("code" -> DesErrorCode.NOT_FOUND_TAX_YEAR)
 
         val response = HttpResponse(NOT_FOUND, Some(responseBody))
         val result = httpParser.propertiesBISSHttpParser.read(method, url, response)

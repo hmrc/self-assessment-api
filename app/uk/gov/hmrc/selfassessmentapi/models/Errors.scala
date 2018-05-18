@@ -20,6 +20,7 @@ import play.api.data.validation.ValidationError
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models.ErrorCode.ErrorCode
 import play.api.libs.functional.syntax._
+import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode.DesErrorCode
 
 object Errors {
 
@@ -49,9 +50,9 @@ object Errors {
   case class Error(code: String, message: String, path: Option[String])
 
   object ErrorCode {
-    val reads: Reads[Option[String]] = (__ \ "code").readNullable[String]
+    val reads: Reads[Option[DesErrorCode]] = (__ \ "code").readNullable[DesErrorCode]
 
-    def unapply(arg: Option[JsValue]): Option[String] = {
+    def unapply(arg: Option[JsValue]): Option[DesErrorCode] = {
       arg match {
         case Some(json) => reads.reads(json).fold(_ => None, valid => valid)
         case _ => None
