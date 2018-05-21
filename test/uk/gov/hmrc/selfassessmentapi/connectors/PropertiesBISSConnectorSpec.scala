@@ -18,10 +18,10 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
 import uk.gov.hmrc.selfassessmentapi.fixtures.properties.PropertiesBISSFixture
-import uk.gov.hmrc.selfassessmentapi.models.properties.{PropertiesBISS, PropertyType}
+import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesBISS
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class PropertiesBISSConnectorSpec extends ConnectorSpec {
 
@@ -29,7 +29,10 @@ class PropertiesBISSConnectorSpec extends ConnectorSpec {
     val connector = new PropertiesBISSConnector {
       override val baseUrl: String = desBaseUrl
       override val http: HttpGet = mockHttp
+      override val appContext = mockAppContext
     }
+    MockAppContext.desToken returns desToken
+    MockAppContext.desEnv returns desEnv
   }
 
   lazy val desBaseUrl = "test-des-url"

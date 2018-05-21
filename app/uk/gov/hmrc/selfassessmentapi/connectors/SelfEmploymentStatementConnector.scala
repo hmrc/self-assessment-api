@@ -28,7 +28,7 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{EmptyResponse, SelfEmpl
 import scala.concurrent.{ExecutionContext, Future}
 
 object SelfEmploymentStatementConnector extends BaseConnector{
-
+  override val appContext = AppContext
   private lazy val baseUrl = AppContext.desUrl
 
   def create(nino: Nino, id: SourceId, accountingPeriod: Period, requestTimestamp: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] =

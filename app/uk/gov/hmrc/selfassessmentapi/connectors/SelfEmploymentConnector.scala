@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 object SelfEmploymentConnector extends BaseConnector{
-
+  override val appContext = AppContext
   private lazy val baseUrl: String = AppContext.desUrl
 
   def create(nino: Nino, business: Business)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentResponse] =

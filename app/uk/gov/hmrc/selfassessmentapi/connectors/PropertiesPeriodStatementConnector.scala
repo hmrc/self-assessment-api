@@ -28,6 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object PropertiesPeriodStatementConnector extends PropertiesPeriodStatementConnector with ServicesConfig{
   val baseUrl = AppContext.desUrl
+  override val appContext = AppContext
 }
 
 trait PropertiesPeriodStatementConnector extends BaseConnector{

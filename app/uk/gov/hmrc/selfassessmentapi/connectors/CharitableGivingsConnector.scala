@@ -28,6 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object CharitableGivingsConnector extends CharitableGivingsConnector with ServicesConfig {
   override val baseUrl: String = AppContext.desUrl
+  override val appContext = AppContext
 }
 
 trait CharitableGivingsConnector extends BaseConnector{

@@ -27,13 +27,14 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.Response
 import scala.concurrent.{ExecutionContext, Future}
 
 trait BaseConnector {
+  val appContext: AppContext
   private val logger = Logger("connectors")
 
   def withDesHeaders(hc: HeaderCarrier): HeaderCarrier = {
     val newHc = hc
-      .copy(authorization = Some(Authorization(s"Bearer ${AppContext.desToken}")))
+      .copy(authorization = Some(Authorization(s"Bearer ${appContext.desToken}")))
       .withExtraHeaders(
-        "Environment" -> AppContext.desEnv,
+        "Environment" -> appContext.desEnv,
         "Accept" -> "application/json",
         "Originator-Id" -> "DA_SDI"
       )
