@@ -209,7 +209,7 @@
     },
     "incomeTaxRelief": {
       "type": "number",
-      "description": "BigDecimal of total reliefs for deduction"
+      "description": "Amount of total reliefs for deduction"
     },
     "incomeTaxReliefReducedToMaximumAllowable": {
       "type": "number",
