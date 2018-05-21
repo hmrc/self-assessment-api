@@ -27,6 +27,8 @@ trait MockAppContext extends Mock { _: Suite =>
   object MockAppContext {
     def featureSwitch = when(mockAppContext.featureSwitch)
     def authEnabled = when(mockAppContext.authEnabled)
+    def desToken = when(mockAppContext.desToken)
+    def desEnv = when(mockAppContext.desEnv)
   }
 
   override protected def beforeEach(): Unit = {

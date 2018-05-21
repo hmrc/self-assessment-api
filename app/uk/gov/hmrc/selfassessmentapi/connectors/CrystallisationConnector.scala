@@ -34,8 +34,7 @@ object CrystallisationConnector extends CrystallisationConnector {
   val baseUrl: String = appContext.desUrl
 }
 
-trait CrystallisationConnector extends BaseConnector{
-  protected val appContext: AppContext
+trait CrystallisationConnector extends BaseConnector {
   protected val baseUrl: String
 
   def intentToCrystallise(nino: Nino, taxYear: TaxYear, requestTimestamp: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CrystallisationIntentResponse] =

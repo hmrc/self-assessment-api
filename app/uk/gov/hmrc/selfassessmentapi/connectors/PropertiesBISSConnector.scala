@@ -32,7 +32,7 @@ object PropertiesBISSConnector extends PropertiesBISSConnector {
   val http: WSHttp = WSHttp
 }
 
-trait PropertiesBISSConnector extends PropertiesBISSHttpParser with BaseConnector{
+trait PropertiesBISSConnector extends PropertiesBISSHttpParser with BaseConnector {
 
   val baseUrl: String
   val http: HttpGet

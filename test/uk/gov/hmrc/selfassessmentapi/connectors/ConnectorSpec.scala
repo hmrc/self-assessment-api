@@ -18,8 +18,14 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.mocks.MockHttp
+import uk.gov.hmrc.selfassessmentapi.mocks.config.MockAppContext
 
-trait ConnectorSpec extends UnitSpec with MockHttp {
+trait ConnectorSpec extends UnitSpec
+  with MockHttp
+  with MockAppContext {
 
   val nino = generateNino
+
+  val desToken = "test-token"
+  val desEnv = "test-env"
 }

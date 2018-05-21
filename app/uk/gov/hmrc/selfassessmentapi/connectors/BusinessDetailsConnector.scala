@@ -31,4 +31,6 @@ trait BusinessDetailsConnector extends BaseConnector{
                                      BusinessDetailsResponse)
 }
 
-object BusinessDetailsConnector extends BusinessDetailsConnector
+object BusinessDetailsConnector extends BusinessDetailsConnector {
+  override val appContext = AppContext
+}
