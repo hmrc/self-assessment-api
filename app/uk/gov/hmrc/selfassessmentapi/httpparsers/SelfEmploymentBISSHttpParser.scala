@@ -18,62 +18,63 @@ package uk.gov.hmrc.selfassessmentapi.httpparsers
 
 import play.api.Logger
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesBISS
 import uk.gov.hmrc.selfassessmentapi.models.Errors._
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode
+import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentBISS
 
-object PropertiesBISSHttpParser {
-  type PropertiesBISSOutcome = Either[Error, PropertiesBISS]
-
-  val NO_DATA_EXISTS = "NO_DATA_EXISTS"
+object SelfEmploymentBISSHttpParser {
+  type SelfEmploymentBISSOutcome = Either[Error, SelfEmploymentBISS]
 }
 
-trait PropertiesBISSHttpParser extends HttpParser {
-  import PropertiesBISSHttpParser._
+trait SelfEmploymentBISSHttpParser extends HttpParser {
+  import SelfEmploymentBISSHttpParser._
 
-  implicit val propertiesBISSHttpParser = new HttpReads[PropertiesBISSOutcome] {
-    override def read(method: String, url: String, response: HttpResponse): PropertiesBISSOutcome = {
+  implicit val selfEmploymentBISSHttpParser = new HttpReads[SelfEmploymentBISSOutcome] {
+    override def read(method: String, url: String, response: HttpResponse): SelfEmploymentBISSOutcome = {
       (response.status, response.jsonOpt) match {
-        case (OK, _) => response.jsonOpt.validate[PropertiesBISS].fold(
+        case (OK, _) => response.jsonOpt.validate[SelfEmploymentBISS].fold(
           invalid => {
-            Logger.warn(s"[PropertiesBISSHttpParser] - Error reading DES Response: $invalid")
+            Logger.warn(s"[selfEmploymentBISSHttpParser] - Error reading DES Response: $invalid")
             Left(ServerError)
           },
           valid => Right(valid)
         )
         case (BAD_REQUEST, ErrorCode(DesErrorCode.INVALID_NINO)) => {
-          Logger.warn(s"[PropertiesBISSHttpParser] - Invalid Nino")
+          Logger.warn(s"[selfEmploymentBISSHttpParser] - Invalid Nino")
           Left(NinoInvalid)
         }
         case (BAD_REQUEST, ErrorCode(DesErrorCode.INVALID_TAX_YEAR)) => {
-          Logger.warn(s"[PropertiesBISSHttpParser] - Invalid tax year")
+          Logger.warn(s"[selfEmploymentBISSHttpParser] - Invalid tax year")
           Left(TaxYearInvalid)
         }
         case (NOT_FOUND, ErrorCode(DesErrorCode.NOT_FOUND_NINO)) => {
-          Logger.warn(s"[PropertiesBISSHttpParser] - Nino not found")
+          Logger.warn(s"[selfEmploymentBISSHttpParser] - Nino not found")
           Left(NinoNotFound)
         }
         case (NOT_FOUND, ErrorCode(DesErrorCode.NOT_FOUND_TAX_YEAR)) => {
-          Logger.warn(s"[PropertiesBISSHttpParser] - Tax year not found")
+          Logger.warn(s"[selfEmploymentBISSHttpParser] - Tax year not found")
           Left(TaxYearNotFound)
         }
         case (NOT_FOUND, ErrorCode(DesErrorCode.NOT_FOUND)) => {
-          Logger.warn(s"[PropertiesBISSHttpParser] - No submissions data exists for provided tax year")
+          Logger.warn(s"[selfEmploymentBISSHttpParser] - No submissions data exists for provided tax year")
           Left(NoSubmissionDataExists)
         }
+        case (NOT_FOUND, ErrorCode(DesErrorCode.SELF_EMPLOYMENT_ID_NOT_FOUND)) => {
+          Logger.warn(s"[selfEmploymentBISSHttpParser] - No submissions data can be found for the self-employment ID")
+          Left(SelfEmploymentIDNotFound)
+        }
         case (INTERNAL_SERVER_ERROR, ErrorCode(DesErrorCode.SERVER_ERROR)) => {
-          Logger.warn(s"[PropertiesBISSHttpParser] - An error has occurred with DES")
+          Logger.warn(s"[selfEmploymentBISSHttpParser] - An error has occurred with DES")
           Left(ServerError)
         }
         case (SERVICE_UNAVAILABLE, ErrorCode(DesErrorCode.SERVICE_UNAVAILABLE)) => {
-          Logger.warn(s"[PropertiesBISSHttpParser] - DES is currently down")
+          Logger.warn(s"[selfEmploymentBISSHttpParser] - DES is currently down")
           Left(ServiceUnavailable)
         }
         case (status, _) =>
-          Logger.warn(s"[PropertiesBISSHttpParser] - Non-OK DES Response: STATUS $status")
+          Logger.warn(s"[selfEmploymentBISSHttpParser] - Non-OK DES Response: STATUS $status")
           Left(ServerError)
       }
     }
   }
 }
-

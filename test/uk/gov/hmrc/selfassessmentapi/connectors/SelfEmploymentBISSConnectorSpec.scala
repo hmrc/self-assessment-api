@@ -16,17 +16,16 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
-import uk.gov.hmrc.selfassessmentapi.fixtures.properties.PropertiesBISSFixture
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesBISS
+import uk.gov.hmrc.http.HttpGet
+import uk.gov.hmrc.selfassessmentapi.fixtures.selfemployment.SelfEmploymentBISSFixture
+import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentBISS
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class PropertiesBISSConnectorSpec extends ConnectorSpec {
+class SelfEmploymentBISSConnectorSpec extends ConnectorSpec {
 
   class Setup {
-    val connector = new PropertiesBISSConnector {
+    val connector = new SelfEmploymentBISSConnector {
       override val baseUrl: String = desBaseUrl
       override val http: HttpGet = mockHttp
       override val appContext = mockAppContext
@@ -36,19 +35,20 @@ class PropertiesBISSConnectorSpec extends ConnectorSpec {
   }
 
   lazy val desBaseUrl = "test-des-url"
-  val propertiesBISS: PropertiesBISS = PropertiesBISSFixture.propertiesBISS()
 
-  "getSummary" should {
+  val selfEmploymentBISS = SelfEmploymentBISSFixture.selfEmploymentBISS
 
-    val getSummaryUrl = s"$desBaseUrl/income-store/nino/$nino/uk-properties/income-source-summary/${taxYear.toDesTaxYear}"
+  "get" should {
 
-    "return a PropertiesBISS model" when {
-      "des returns a 200 with a correct PropertiesBISS response body" in new Setup {
-        MockHttp.GET[Either[Error, PropertiesBISS]](getSummaryUrl)
-          .returns(Future.successful(Right(propertiesBISS)))
+    val url = s"$desBaseUrl/income-store/nino/$nino/self-employments/income-source-summary/${taxYear.toDesTaxYear}"
+
+    "return a SelfEmploymentBISS model" when {
+      "des returns a 200 with a correct SelfEmploymentBISS response body" in new Setup {
+        MockHttp.GET[Either[Error, SelfEmploymentBISS]](url)
+          .returns(Future.successful(Right(selfEmploymentBISS)))
 
         val result = await(connector.getSummary(nino, taxYear))
-        result shouldBe Right(propertiesBISS)
+        result shouldBe Right(selfEmploymentBISS)
       }
     }
   }

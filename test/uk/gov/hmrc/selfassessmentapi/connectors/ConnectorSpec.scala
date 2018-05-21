@@ -16,15 +16,22 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
+import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.mocks.MockHttp
 import uk.gov.hmrc.selfassessmentapi.mocks.config.MockAppContext
+
+import scala.concurrent.ExecutionContext
 
 trait ConnectorSpec extends UnitSpec
   with MockHttp
   with MockAppContext {
 
-  val nino = generateNino
+  val nino: Nino = generateNino
+
+  implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val ec: ExecutionContext =  scala.concurrent.ExecutionContext.global
 
   val desToken = "test-token"
   val desEnv = "test-env"
