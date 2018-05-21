@@ -80,9 +80,9 @@ object Errors {
   }
 
   object NinoInvalid extends Error(NINO_INVALID, "The provided Nino is invalid", None)
-  object NinoNotFound extends Error(NINO_NOT_FOUND, "The remote endpoint has indicated that no data can be found for the nino", None)
+  object NinoNotFound extends Error(NINO_NOT_FOUND, "The remote endpoint has indicated that no data can be found for the nino.", None)
   object TaxYearInvalid extends Error(TAX_YEAR_INVALID, "Invalid tax year", None)
-  object TaxYearNotFound extends Error(TAX_YEAR_NOT_FOUND, "The remote endpoint has indicated that no data can be found for the tax year", None)
+  object TaxYearNotFound extends Error(TAX_YEAR_NOT_FOUND, "The remote endpoint has indicated that no data can be found for the tax year.", None)
   object InvalidRequest extends Error("INVALID_REQUEST", "Invalid request", None)
   object BothExpensesSupplied extends Error("BOTH_EXPENSES_SUPPLIED", "Elements: expenses and consolidatedElements cannot be both specified at the same time", None)
   object NotAllowedConsolidatedExpenses extends Error("NOT_ALLOWED_CONSOLIDATED_EXPENSES", "The submission contains consolidated expenses but the accumulative turnover amount exceeds the threshold", Some(""))
@@ -112,7 +112,7 @@ object Errors {
   object AlreadySubmitted extends Error("ALREADY_SUBMITTED", "You cannot submit a statement for the same accounting period twice", None)
   object ServerError extends Error(SERVER_ERROR, "An error has occurred", None)
   object ServiceUnavailable extends Error("SERVICE_UNAVAILABLE", "The server is currently unavailable", None)
-  object NoSubmissionDataExists extends Error("NOT_FOUND", "The remote endpoint has indicated that no data can be found", None)
+  object NoSubmissionDataExists extends Error("NOT_FOUND", "The remote endpoint has indicated that no data can be found.", None)
 
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")
   def badRequest(error: Error) = BadRequest(Seq(error), "Invalid request")
