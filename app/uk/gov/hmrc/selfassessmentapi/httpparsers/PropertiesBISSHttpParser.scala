@@ -58,7 +58,7 @@ trait PropertiesBISSHttpParser extends HttpParser {
           Logger.warn(s"[PropertiesBISSHttpParser] - Tax year not found")
           Left(TaxYearNotFound)
         }
-        case (NOT_FOUND, ErrorCode(DesErrorCode.NO_DATA_EXISTS)) => {
+        case (NOT_FOUND, ErrorCode(DesErrorCode.NOT_FOUND)) => {
           Logger.warn(s"[PropertiesBISSHttpParser] - No submissions data exists for provided tax year")
           Left(NoSubmissionDataExists)
         }
@@ -78,4 +78,3 @@ trait PropertiesBISSHttpParser extends HttpParser {
   }
 }
 
-object NoSubmissionDataExists extends Error("NO_DATA_EXISTS", "No submissions data exists for provided tax year", None)

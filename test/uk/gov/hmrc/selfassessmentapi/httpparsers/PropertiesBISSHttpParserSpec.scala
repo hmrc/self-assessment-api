@@ -130,9 +130,9 @@ class PropertiesBISSHttpParserSpec extends UnitSpec {
       }
     }
 
-    "return a NoSubmissionDataExists" when {
-      "DES returns a 404 with a NoSubmissionDataExists error code" in {
-        val responseBody = Json.obj("code" -> "NO_DATA_EXISTS")
+    "return a not found" when {
+      "DES returns a 404 with a not found error code" in {
+        val responseBody = Json.obj("code" -> "NOT_FOUND")
 
         val response = HttpResponse(NOT_FOUND, Some(responseBody))
         val result = httpParser.propertiesBISSHttpParser.read(method, url, response)

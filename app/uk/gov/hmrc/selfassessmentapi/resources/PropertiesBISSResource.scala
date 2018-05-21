@@ -21,8 +21,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesBISSConnector
-import uk.gov.hmrc.selfassessmentapi.httpparsers.NoSubmissionDataExists
-import uk.gov.hmrc.selfassessmentapi.models.Errors.{NinoInvalid, NinoNotFound, ServerError, TaxYearInvalid, TaxYearNotFound}
+import uk.gov.hmrc.selfassessmentapi.models.Errors.{NinoInvalid, NinoNotFound, NoSubmissionDataExists, ServerError, TaxYearInvalid, TaxYearNotFound}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 

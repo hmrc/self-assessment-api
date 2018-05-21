@@ -20,9 +20,8 @@ import play.api.libs.json.Json.toJson
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.fixtures.properties.PropertiesBISSFixture
-import uk.gov.hmrc.selfassessmentapi.httpparsers.NoSubmissionDataExists
 import uk.gov.hmrc.selfassessmentapi.mocks.connectors.MockPropertiesBISSConnector
-import uk.gov.hmrc.selfassessmentapi.models.Errors.{NinoInvalid, NinoNotFound, ServerError, ServiceUnavailable, TaxYearInvalid, TaxYearNotFound}
+import uk.gov.hmrc.selfassessmentapi.models.Errors.{NinoInvalid, NinoNotFound, NoSubmissionDataExists, ServerError, ServiceUnavailable, TaxYearInvalid, TaxYearNotFound}
 import uk.gov.hmrc.selfassessmentapi.models.SourceType
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
