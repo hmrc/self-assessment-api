@@ -32,7 +32,7 @@ object PropertiesAnnualSummaryConnector extends PropertiesAnnualSummaryConnector
   lazy val baseUrl: String = appContext.desUrl
 }
 
-trait PropertiesAnnualSummaryConnector {
+trait PropertiesAnnualSummaryConnector extends BaseConnector{
   val baseUrl: String
 
   def update(nino: Nino, propertyType: PropertyType, taxYear: TaxYear, update: PropertiesAnnualSummary)(

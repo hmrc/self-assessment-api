@@ -32,14 +32,14 @@ object PropertiesBISSConnector extends PropertiesBISSConnector {
   val http: WSHttp = WSHttp
 }
 
-trait PropertiesBISSConnector extends PropertiesBISSHttpParser {
+trait PropertiesBISSConnector extends PropertiesBISSHttpParser with BaseConnector{
 
   val baseUrl: String
   val http: HttpGet
 
   def getSummary(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier, ex: ExecutionContext): Future[PropertiesBISSOutcome] = {
     http.GET[PropertiesBISSOutcome](s"$baseUrl/income-store/nino/$nino/uk-properties/income-source-summary/${taxYear.toDesTaxYear}")(
-      propertiesBISSHttpParser, hc, ex
+      propertiesBISSHttpParser, withDesHeaders(hc), ex
     )
   }
 }

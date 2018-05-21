@@ -27,7 +27,7 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{EmptyResponse, SelfEmpl
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object SelfEmploymentStatementConnector {
+object SelfEmploymentStatementConnector extends BaseConnector{
 
   private lazy val baseUrl = AppContext.desUrl
 

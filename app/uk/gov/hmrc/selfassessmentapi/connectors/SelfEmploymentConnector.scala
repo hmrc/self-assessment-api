@@ -25,7 +25,7 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentResponse
 import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
-object SelfEmploymentConnector {
+object SelfEmploymentConnector extends BaseConnector{
 
   private lazy val baseUrl: String = AppContext.desUrl
 

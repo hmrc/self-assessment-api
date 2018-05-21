@@ -33,7 +33,7 @@ trait PropertiesPeriodConnector[P <: Period, F <: Financials] {
       implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesPeriodResponse]
 }
 
-object PropertiesPeriodConnector {
+object PropertiesPeriodConnector extends BaseConnector{
   def apply[P <: Period, F <: Financials](
       implicit p: PropertiesPeriodConnector[P, F]): PropertiesPeriodConnector[P, F] = implicitly
 

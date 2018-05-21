@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi
+package uk.gov.hmrc.selfassessmentapi.connectors
 
 import play.api.Logger
 import play.api.libs.json.Writes
+import uk.gov.hmrc.http.logging.Authorization
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, WSHttp}
 import uk.gov.hmrc.selfassessmentapi.resources.GovTestScenarioHeader
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.Response
 
-import uk.gov.hmrc.http.{ HeaderCarrier, HttpReads, HttpResponse }
-import uk.gov.hmrc.http.logging.Authorization
 import scala.concurrent.{ExecutionContext, Future}
 
-package object connectors {
+trait BaseConnector {
   private val logger = Logger("connectors")
 
-  private def withDesHeaders(hc: HeaderCarrier): HeaderCarrier = {
+  def withDesHeaders(hc: HeaderCarrier): HeaderCarrier = {
     val newHc = hc
       .copy(authorization = Some(Authorization(s"Bearer ${AppContext.desToken}")))
       .withExtraHeaders(

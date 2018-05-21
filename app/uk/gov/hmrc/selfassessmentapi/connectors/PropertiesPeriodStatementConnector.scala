@@ -30,7 +30,7 @@ object PropertiesPeriodStatementConnector extends PropertiesPeriodStatementConne
   val baseUrl = AppContext.desUrl
 }
 
-trait PropertiesPeriodStatementConnector {
+trait PropertiesPeriodStatementConnector extends BaseConnector{
 
   val baseUrl: String
 

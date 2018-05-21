@@ -34,7 +34,7 @@ object CrystallisationConnector extends CrystallisationConnector {
   val baseUrl: String = appContext.desUrl
 }
 
-trait CrystallisationConnector {
+trait CrystallisationConnector extends BaseConnector{
   protected val appContext: AppContext
   protected val baseUrl: String
 

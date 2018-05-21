@@ -31,7 +31,7 @@ object SelfEmploymentPeriodConnector extends SelfEmploymentPeriodConnector {
   lazy val baseUrl: String = appContext.desUrl
 }
 
-trait SelfEmploymentPeriodConnector {
+trait SelfEmploymentPeriodConnector extends BaseConnector{
 
   val baseUrl: String
 

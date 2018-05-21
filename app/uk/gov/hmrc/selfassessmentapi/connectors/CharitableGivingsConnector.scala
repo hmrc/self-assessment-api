@@ -30,7 +30,7 @@ object CharitableGivingsConnector extends CharitableGivingsConnector with Servic
   override val baseUrl: String = AppContext.desUrl
 }
 
-trait CharitableGivingsConnector {
+trait CharitableGivingsConnector extends BaseConnector{
 
   val baseUrl: String
 
