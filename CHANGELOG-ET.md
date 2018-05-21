@@ -1,3 +1,10 @@
+## [0.158.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.158.0) 21-May-2018
+### New Endpoints
+#### UK Property BISS
+* Get UK Property Business Income Sources summary
+### Other changes
+* Updated error handling
+
 ## [0.153.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.153.0) 28-Mar-2018
 ### New Endpoints
 #### Charitable giving
