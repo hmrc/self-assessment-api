@@ -25,8 +25,8 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.TaxCalculationResponse
 import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
-object TaxCalculationConnector {
-
+object TaxCalculationConnector extends BaseConnector{
+  override val appContext = AppContext
   private lazy val baseUrl: String = AppContext.desUrl
 
   def requestCalculation(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaxCalculationResponse] =

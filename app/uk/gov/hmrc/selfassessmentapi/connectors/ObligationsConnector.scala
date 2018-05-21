@@ -29,7 +29,7 @@ object ObligationsConnector extends ObligationsConnector {
   lazy val baseUrl: String = appContext.desUrl
 }
 
-trait ObligationsConnector {
+trait ObligationsConnector extends BaseConnector{
   val baseUrl: String
 
   def get(nino: Nino, regime: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ObligationsResponse] ={

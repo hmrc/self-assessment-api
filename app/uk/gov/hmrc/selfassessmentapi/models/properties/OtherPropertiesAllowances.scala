@@ -21,20 +21,20 @@ import play.api.libs.json.Reads._
 import play.api.libs.json._
 import uk.gov.hmrc.selfassessmentapi.models._
 
-case class OtherPropertiesAllowances(annualInvestmentAllowance: Option[Amount] = None,
-                                     otherCapitalAllowance: Option[Amount] = None,
-                                     costOfReplacingDomesticItems: Option[Amount] = None,
-                                     zeroEmissionsGoodsVehicleAllowance: Option[Amount] = None,
-                                     rentARoomExempt: Option[Amount] = None)
+case class OtherPropertiesAllowances(annualInvestmentAllowance: Option[BigDecimal] = None,
+                                     otherCapitalAllowance: Option[BigDecimal] = None,
+                                     costOfReplacingDomesticItems: Option[BigDecimal] = None,
+                                     zeroEmissionsGoodsVehicleAllowance: Option[BigDecimal] = None,
+                                     rentARoomExempt: Option[BigDecimal] = None)
 
 object OtherPropertiesAllowances {
   implicit val writes: Writes[OtherPropertiesAllowances] = Json.writes[OtherPropertiesAllowances]
 
   implicit val reads: Reads[OtherPropertiesAllowances] = (
-    (__ \ "annualInvestmentAllowance").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "otherCapitalAllowance").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "costOfReplacingDomesticItems").readNullable[Amount](nonNegativeAmountValidator) and
-      (__ \ "zeroEmissionsGoodsVehicleAllowance").readNullable[Amount](nonNegativeAmountValidator)  and
-      (__ \ "rentARoomExempt").readNullable[Amount](nonNegativeAmountValidator)
+    (__ \ "annualInvestmentAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "otherCapitalAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "costOfReplacingDomesticItems").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "zeroEmissionsGoodsVehicleAllowance").readNullable[BigDecimal](nonNegativeAmountValidator)  and
+      (__ \ "rentARoomExempt").readNullable[BigDecimal](nonNegativeAmountValidator)
   )(OtherPropertiesAllowances.apply _)
 }

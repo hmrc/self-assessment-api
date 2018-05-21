@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.models
 trait SelfEmploymentExpensesDef[T] {
 
   val expenses: Option[T]
-  val consolidatedExpenses: Option[Amount]
+  val consolidatedExpenses: Option[BigDecimal]
 
   def singleExpensesTypeSpecified = (expenses.isEmpty && consolidatedExpenses.isEmpty) ||
     (expenses.isDefined ^ consolidatedExpenses.isDefined)

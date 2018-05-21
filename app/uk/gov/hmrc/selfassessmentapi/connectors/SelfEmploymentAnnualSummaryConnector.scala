@@ -30,7 +30,7 @@ object SelfEmploymentAnnualSummaryConnector extends SelfEmploymentAnnualSummaryC
   lazy val baseUrl: String = appContext.desUrl
 }
 
-trait SelfEmploymentAnnualSummaryConnector {
+trait SelfEmploymentAnnualSummaryConnector extends BaseConnector{
 
   val baseUrl: String
 

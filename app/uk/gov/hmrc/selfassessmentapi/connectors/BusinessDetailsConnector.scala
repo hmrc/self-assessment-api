@@ -23,7 +23,7 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.BusinessDetailsResponse
 import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
-trait BusinessDetailsConnector {
+trait BusinessDetailsConnector extends BaseConnector{
   private lazy val baseUrl: String = AppContext.desUrl
 
   def get(nino: Nino)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[BusinessDetailsResponse] =
@@ -31,4 +31,6 @@ trait BusinessDetailsConnector {
                                      BusinessDetailsResponse)
 }
 
-object BusinessDetailsConnector extends BusinessDetailsConnector
+object BusinessDetailsConnector extends BusinessDetailsConnector {
+  override val appContext = AppContext
+}

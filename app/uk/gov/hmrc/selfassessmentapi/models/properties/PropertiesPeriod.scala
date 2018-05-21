@@ -100,10 +100,10 @@ object FHL {
       Incomes(rentIncome = o.rentIncome.map(income => Income(amount = income.amount, taxDeducted = income.taxDeducted)))
   }
 
-  case class Expense(amount: Amount)
+  case class Expense(amount: BigDecimal)
 
   object Expense {
-    implicit val reads: Reads[Expense] = (__ \ "amount").read[Amount](nonNegativeAmountValidator).map(Expense(_))
+    implicit val reads: Reads[Expense] = (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator).map(Expense(_))
 
     implicit val writes: Writes[Expense] = Json.writes[Expense]
   }
@@ -271,10 +271,10 @@ object Other {
       )
   }
 
-  case class Expense(amount: Amount)
+  case class Expense(amount: BigDecimal)
 
   object Expense {
-    implicit val reads: Reads[Expense] = (__ \ "amount").read[Amount](nonNegativeAmountValidator).map(Expense(_))
+    implicit val reads: Reads[Expense] = (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator).map(Expense(_))
 
     implicit val writes: Writes[Expense] = Json.writes[Expense]
   }

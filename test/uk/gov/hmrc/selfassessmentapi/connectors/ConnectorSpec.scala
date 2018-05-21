@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models.selfemployment
+package uk.gov.hmrc.selfassessmentapi.connectors
 
-import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.models._
+import uk.gov.hmrc.selfassessmentapi.UnitSpec
+import uk.gov.hmrc.selfassessmentapi.mocks.MockHttp
+import uk.gov.hmrc.selfassessmentapi.mocks.config.MockAppContext
 
+trait ConnectorSpec extends UnitSpec
+  with MockHttp
+  with MockAppContext {
 
+  val nino = generateNino
 
-case class BalancingCharge(amount: BigDecimal)
-
-object BalancingCharge {
-  implicit val reads: Reads[BalancingCharge] =
-    (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator).map(BalancingCharge.apply)
-
-  implicit val writes: Writes[BalancingCharge] = Json.writes[BalancingCharge]
+  val desToken = "test-token"
+  val desEnv = "test-env"
 }

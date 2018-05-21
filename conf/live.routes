@@ -26,8 +26,14 @@ GET /ni/:nino/self-employments/:id/end-of-period-statements/obligations   uk.gov
 POST /ni/:nino/self-employments/:id/end-of-period-statements/from/:start/to/:end    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentStatementResource.finaliseEndOfPeriodStatement(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, start: org.joda.time.LocalDate, end: org.joda.time.LocalDate)
 
 ####################
-#    Properties    #
+#    Properties BISS   #
 ####################
+GET /ni/:nino/uk-properties/:taxYear/income-summary  uk.gov.hmrc.selfassessmentapi.resources.PropertiesBISSResource.getSummary(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+
+####################
+#  Properties   #
+####################
+
 POST /ni/:nino/uk-properties   uk.gov.hmrc.selfassessmentapi.resources.PropertiesResource.create(nino: uk.gov.hmrc.domain.Nino)
 GET  /ni/:nino/uk-properties   uk.gov.hmrc.selfassessmentapi.resources.PropertiesResource.retrieve(nino: uk.gov.hmrc.domain.Nino)
 

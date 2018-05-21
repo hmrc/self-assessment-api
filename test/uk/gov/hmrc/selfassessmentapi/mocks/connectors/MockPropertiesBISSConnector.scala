@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.mocks.config
+package uk.gov.hmrc.selfassessmentapi.mocks.connectors
 
 import org.scalatest.Suite
-import uk.gov.hmrc.selfassessmentapi.config.AppContext
+import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesBISSConnector
 import uk.gov.hmrc.selfassessmentapi.mocks.Mock
+import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 
-trait MockAppContext extends Mock { _: Suite =>
+trait MockPropertiesBISSConnector extends Mock {_: Suite =>
 
-  val mockAppContext = mock[AppContext]
+  val mockPropertiesBISSConnector = mock[PropertiesBISSConnector]
 
-  object MockAppContext {
-    def featureSwitch = when(mockAppContext.featureSwitch)
-    def authEnabled = when(mockAppContext.authEnabled)
-    def desToken = when(mockAppContext.desToken)
-    def desEnv = when(mockAppContext.desEnv)
+  object MockPropertiesBISSConnector {
+    def get(nino: Nino, taxYear: TaxYear) = {
+      when(mockPropertiesBISSConnector.getSummary(eqTo(nino), eqTo(taxYear))(any(), any()))
+    }
   }
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockAppContext)
+    reset(mockPropertiesBISSConnector)
   }
 }

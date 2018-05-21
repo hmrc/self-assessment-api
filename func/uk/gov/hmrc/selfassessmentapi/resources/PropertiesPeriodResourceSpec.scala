@@ -1,7 +1,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.selfassessmentapi.models.{Amount, Period, PeriodId}
+import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.support.BaseFunctionalSpec
@@ -699,7 +699,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
   def period(propertyType: PropertyType,
              from: Option[String] = Some("2017-04-06"),
              to: Option[String] = Some("2018-04-05"),
-             consolidatedExpenses: Option[Amount] = None,
+             consolidatedExpenses: Option[BigDecimal] = None,
              costOfServices: Option[BigDecimal] = None,
              onlyConsolidated: Boolean = false,
              onlyResidential: Boolean = false,

@@ -30,7 +30,7 @@ case class SelfEmploymentPeriod(id: Option[String],
                                 to: LocalDate,
                                 incomes: Option[Incomes],
                                 expenses: Option[Expenses],
-                                consolidatedExpenses: Option[Amount])
+                                consolidatedExpenses: Option[BigDecimal])
     extends Period with SelfEmploymentExpensesDef[Expenses]
 
 object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
@@ -45,7 +45,7 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
       consolidatedExpenses = fromDesConsolidatedExpenses(desPeriod)
     )
 
-  private def fromDesConsolidatedExpenses(desPeriod: des.selfemployment.SelfEmploymentPeriod): Option[Amount] =
+  private def fromDesConsolidatedExpenses(desPeriod: des.selfemployment.SelfEmploymentPeriod): Option[BigDecimal] =
    (for {
       financials <- desPeriod.financials
       deductions <- financials.deductions
@@ -102,7 +102,7 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
       (__ \ "to").read[LocalDate] and
       (__ \ "incomes").readNullable[Incomes] and
       (__ \ "expenses").readNullable[Expenses] and
-      (__ \ "consolidatedExpenses").readNullable[Amount](nonNegativeAmountValidator)
+      (__ \ "consolidatedExpenses").readNullable[BigDecimal](nonNegativeAmountValidator)
   )(SelfEmploymentPeriod.apply _)
     .filter(ValidationError(s"Both expenses and consolidatedExpenses elements cannot be present at the same time",
       BOTH_EXPENSES_SUPPLIED))(_.singleExpensesTypeSpecified)

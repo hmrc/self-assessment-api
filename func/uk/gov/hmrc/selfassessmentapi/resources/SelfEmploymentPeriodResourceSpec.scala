@@ -436,6 +436,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         businessEntertainmentCosts = (200, 200)
       )
 
+
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource

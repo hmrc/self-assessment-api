@@ -19,12 +19,12 @@ package uk.gov.hmrc.selfassessmentapi.models
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-case class Expense(amount: Amount, disallowableAmount: Option[Amount])
+case class Expense(amount: BigDecimal, disallowableAmount: Option[BigDecimal])
 
 object Expense {
   implicit val writes = Json.writes[Expense]
   implicit val reads: Reads[Expense] = (
-    (__ \ "amount").read[Amount](nonNegativeAmountValidator) and
-    (__ \ "disallowableAmount").readNullable[Amount](nonNegativeAmountValidator)
+    (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator) and
+    (__ \ "disallowableAmount").readNullable[BigDecimal](nonNegativeAmountValidator)
     ) (Expense.apply _)
 }

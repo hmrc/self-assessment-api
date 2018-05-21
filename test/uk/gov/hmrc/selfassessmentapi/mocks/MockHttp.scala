@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models.selfemployment
+package uk.gov.hmrc.selfassessmentapi.mocks
 
-import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.models._
+import org.scalatest.Suite
+import uk.gov.hmrc.selfassessmentapi.config.WSHttp
 
+trait MockHttp extends Mock { _: Suite =>
 
+  val mockHttp = mock[WSHttp]
 
-case class BalancingCharge(amount: BigDecimal)
+  object MockHttp {
+    def GET[T](url: String) = {
+      when(mockHttp.GET[T](eqTo(url))(any(), any(), any()))
+    }
+  }
 
-object BalancingCharge {
-  implicit val reads: Reads[BalancingCharge] =
-    (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator).map(BalancingCharge.apply)
-
-  implicit val writes: Writes[BalancingCharge] = Json.writes[BalancingCharge]
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockHttp)
+  }
 }

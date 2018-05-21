@@ -29,7 +29,7 @@ object PropertiesConnector extends PropertiesConnector {
   lazy val baseUrl: String = appContext.desUrl
 }
 
-trait PropertiesConnector {
+trait PropertiesConnector extends BaseConnector{
 
   val baseUrl: String
 

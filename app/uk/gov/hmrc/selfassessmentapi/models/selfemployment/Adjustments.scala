@@ -19,8 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.models.selfemployment.BalancingChargeType.BalancingChargeType
-import uk.gov.hmrc.selfassessmentapi.models.{Amount, amountValidator, nonNegativeAmountValidator}
+import uk.gov.hmrc.selfassessmentapi.models.{amountValidator, nonNegativeAmountValidator}
 
 case class Adjustments(includedNonTaxableProfits: Option[BigDecimal] = None,
                        basisAdjustment: Option[BigDecimal] = None,
@@ -31,7 +30,7 @@ case class Adjustments(includedNonTaxableProfits: Option[BigDecimal] = None,
                        outstandingBusinessIncome: Option[BigDecimal] = None,
                        balancingChargeBPRA: Option[BigDecimal] = None,
                        balancingChargeOther: Option[BigDecimal] = None,
-                       goodsAndServicesOwnUse: Option[Amount] = None,
+                       goodsAndServicesOwnUse: Option[BigDecimal] = None,
                        overlapProfitCarriedForward: Option[BigDecimal] = None,
                        overlapProfitBroughtForward: Option[BigDecimal] = None,
                        lossCarriedForwardTotal: Option[BigDecimal] = None,
@@ -40,7 +39,6 @@ case class Adjustments(includedNonTaxableProfits: Option[BigDecimal] = None,
                        class4NicProfitAdjustment: Option[BigDecimal] = None)
 
 object Adjustments {
-  import uk.gov.hmrc.selfassessmentapi.domain.JsonFormatters.SelfEmploymentFormatters.balancingChargeTypeFormat
 
   implicit val writes: Writes[Adjustments] = Json.writes[Adjustments]
 
