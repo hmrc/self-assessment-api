@@ -114,13 +114,30 @@ class SelfEmploymentPeriodResponseSpec extends UnitSpec with MockitoSugar with B
           |}
         """.stripMargin))
 
-      unitUnderTest.allPeriods(86).size shouldBe 1
+      unitUnderTest.allPeriods.size shouldBe 1
+    }
+
+    "return Some(Seq(apiPeriod)) if the DES response is correct and the period is over 86 days" in {
+      when(mockResponse.json).thenReturn(Json.parse(
+        """
+          |{
+          |  "periods": [
+          |    {
+          |      "transactionReference": "abc",
+          |      "from": "2017-01-05",
+          |      "to": "2017-08-04"
+          |    }
+          |  ]
+          |}
+        """.stripMargin))
+
+      unitUnderTest.allPeriods.size shouldBe 1
     }
 
     "return None if the response from DES does not match the expected format" in {
       when(mockResponse.json).thenReturn(Json.obj())
 
-      unitUnderTest.allPeriods(86) shouldBe empty
+      unitUnderTest.allPeriods shouldBe empty
     }
   }
 

@@ -137,8 +137,3 @@ trait Response {
   def desErrorsToApiErrors(desErrors: Seq[DesError]): Seq[Errors.Error] =
     desErrors.flatMap(e => errorMap(e.code))
 }
-
-object Response {
-  def periodsExceeding(maxPeriodTimeSpan: Int)(summary: PeriodSummary): Boolean =
-    summary.from.plusDays(maxPeriodTimeSpan).isAfter(summary.to)
-}
