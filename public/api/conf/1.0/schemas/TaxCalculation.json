@@ -213,11 +213,11 @@
     },
     "incomeTaxReliefReducedToMaximumAllowable": {
       "type": "number",
-      "description": "BigDecimal of total reliefs for deduction restricted to permitted maximum"
+      "description": "Amount of total reliefs for deduction restricted to permitted maximum"
     },
     "annuities": {
       "type": "number",
-      "description": "BigDecimal of annuities for deduction"
+      "description": "Amount of annuities for deduction"
     },
     "giftOfInvestmentsAndPropertyToCharity": {
       "type": "number",
@@ -241,7 +241,7 @@
     },
     "incomeExcluded": {
       "type": "number",
-      "description": "BigDecimal of income excluded from this calculation"
+      "description": "Amount of income excluded from this calculation"
     },
     "totalIncomeAllowancesUsed": {
       "type": "number",
@@ -261,11 +261,11 @@
     },
     "extendedBR": {
       "type": "number",
-      "description": "BigDecimal for extending basic rate band"
+      "description": "Amount for extending basic rate band"
     },
     "payPensionsProfitAtBRT": {
       "$ref": "#/definitions/monetary",
-      "description": "BigDecimal of pay, pensions and profit at the basic rate of tax (BRT)"
+      "description": "Amount of pay, pensions and profit at the basic rate of tax (BRT)"
     },
     "incomeTaxOnPayPensionsProfitAtBRT": {
       "$ref": "#/definitions/monetary",
@@ -273,7 +273,7 @@
     },
     "payPensionsProfitAtHRT": {
       "$ref": "#/definitions/monetary",
-      "description": "BigDecimal of pay, pensions and profit at the higher rate of tax (HRT)"
+      "description": "Amount of pay, pensions and profit at the higher rate of tax (HRT)"
     },
     "incomeTaxOnPayPensionsProfitAtHRT": {
       "$ref": "#/definitions/monetary",
@@ -281,7 +281,7 @@
     },
     "payPensionsProfitAtART": {
       "$ref": "#/definitions/monetary",
-      "description": "BigDecimal of pay, pensions and profit at the additional higher rate of tax (AHRT)"
+      "description": "Amount of pay, pensions and profit at the additional higher rate of tax (AHRT)"
     },
     "incomeTaxOnPayPensionsProfitAtART": {
       "$ref": "#/definitions/monetary",
@@ -293,7 +293,7 @@
     },
     "interestReceivedAtStartingRate": {
       "$ref": "#/definitions/monetary",
-      "description": "BigDecimal of interest received from a bank or building society etc. at starting rate (SR)"
+      "description": "Amount of interest received from a bank or building society etc. at starting rate (SR)"
     },
     "incomeTaxOnInterestReceivedAtStartingRate": {
       "$ref": "#/definitions/monetary",
@@ -301,7 +301,7 @@
     },
     "interestReceivedAtZeroRate": {
       "$ref": "#/definitions/monetary",
-      "description": "BigDecimal of interest received from a bank or building society etc. at zero Rate"
+      "description": "Amount of interest received from a bank or building society etc. at zero Rate"
     },
     "incomeTaxOnInterestReceivedAtZeroRate": {
       "$ref": "#/definitions/monetary",
@@ -309,7 +309,7 @@
     },
     "interestReceivedAtBRT": {
       "$ref": "#/definitions/monetary",
-      "description": "BigDecimal of interest received from a bank or building society etc. at basic rate (BRT)"
+      "description": "Amount of interest received from a bank or building society etc. at basic rate (BRT)"
     },
     "incomeTaxOnInterestReceivedAtBRT": {
       "$ref": "#/definitions/monetary",
@@ -317,7 +317,7 @@
     },
     "interestReceivedAtHRT": {
       "$ref": "#/definitions/monetary",
-      "description": "BigDecimal of interest received from a bank or building society etc. at higher rate (HRT)"
+      "description": "Amount of interest received from a bank or building society etc. at higher rate (HRT)"
     },
     "incomeTaxOnInterestReceivedAtHRT": {
       "$ref": "#/definitions/monetary",
@@ -325,7 +325,7 @@
     },
     "interestReceivedAtART": {
       "$ref": "#/definitions/monetary",
-      "description": "BigDecimal of interest received from a bank or building society etc. at additional higher rate (AHRT)"
+      "description": "Amount of interest received from a bank or building society etc. at additional higher rate (AHRT)"
     },
     "incomeTaxOnInterestReceivedAtART": {
       "$ref": "#/definitions/monetary",
@@ -333,7 +333,7 @@
     },
     "dividendsAtZeroRate": {
       "$ref": "#/definitions/monetary",
-      "description": "BigDecimal of dividends from companies etc. at zero rate"
+      "description": "Amount of dividends from companies etc. at zero rate"
     },
     "incomeTaxOnDividendsAtZeroRate": {
       "$ref": "#/definitions/monetary",
@@ -341,7 +341,7 @@
     },
     "dividendsAtBRT": {
       "$ref": "#/definitions/monetary",
-      "description": "BigDecimal of dividends from companies etc at basic rate"
+      "description": "Amount of dividends from companies etc at basic rate"
     },
     "incomeTaxOnDividendsAtBRT": {
       "$ref": "#/definitions/monetary",
@@ -349,7 +349,7 @@
     },
     "dividendsAtHRT": {
       "$ref": "#/definitions/monetary",
-      "description": "BigDecimal of Dividends from companies etc at higher rate"
+      "description": "Amount of Dividends from companies etc at higher rate"
     },
     "incomeTaxOnDividendsAtHRT": {
       "$ref": "#/definitions/monetary",
@@ -357,7 +357,7 @@
     },
     "dividendsAtART": {
       "$ref": "#/definitions/monetary",
-      "description": "BigDecimal of dividends from companies etc at additional higher rate"
+      "description": "Amount of dividends from companies etc at additional higher rate"
     },
     "incomeTaxOnDividendsAtART": {
       "$ref": "#/definitions/monetary",
@@ -445,7 +445,7 @@
     },
     "giftAidPaymentsAmount": {
       "type": "number",
-      "description": "BigDecimal of gift aid payments"
+      "description": "Amount of gift aid payments"
     },
     "giftAidTaxDue": {
       "type": "number",
@@ -473,7 +473,7 @@
     },
     "annuityAmount": {
       "type": "number",
-      "description": "BigDecimal of annuity and royalty payments"
+      "description": "Amount of annuity and royalty payments"
     },
     "taxDueOnAnnuity": {
       "type": "number",

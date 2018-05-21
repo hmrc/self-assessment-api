@@ -5,7 +5,7 @@
   "type": "object",
   "properties": {
     "amount": {
-      "title": "BigDecimal",
+      "title": "Amount",
       "description": "Expenses associated with the running of the business",
       "type": "number",
       "multipleOf": 0.01,
