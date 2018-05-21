@@ -32,15 +32,15 @@ object PropertiesBISS {
       (__ \ "totalAdditions").readNullable[BigDecimal] and
       (__ \ "totalDeductions").readNullable[BigDecimal] and
       (__ \ "netProfit").read[BigDecimal] and
-      (__ \ "netLoss").read[BigDecimal] and
       (__ \ "taxableProfit").read[BigDecimal] and
+      (__ \ "netLoss").read[BigDecimal] and
       (__ \ "taxableLoss").read[BigDecimal]
     ){
-      (income, expenses, additions, deductions, profitNet, profitTaxable, lossNet, lossTaxable) =>
+      (income, expenses, additions, deductions, netProfit, taxableProfit, netLoss, taxableLoss) =>
         PropertiesBISS(
           Total(income, expenses, additions, deductions),
-          Profit(profitNet, profitTaxable),
-          Loss(lossNet, lossTaxable)
+          Profit(netProfit, taxableProfit),
+          Loss(netLoss, taxableLoss)
         )
     }
 }
