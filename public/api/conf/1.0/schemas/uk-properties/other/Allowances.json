@@ -39,15 +39,6 @@
       "minimum": 0,
       "maximum": 99999999999999.98,
       "example": "100.25"
-    },
-    "rentARoomExempt": {
-      "title": "Rent a room exempt",
-      "description": "Identifies the amount of rental income which exempted",
-      "type": "number",
-      "multipleOf": 0.01,
-      "minimum": 0,
-      "maximum": 99999999999999.98,
-      "example": "100.25"
     }
   },
   "additionalProperties": false

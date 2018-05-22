@@ -24,8 +24,7 @@ import uk.gov.hmrc.selfassessmentapi.models._
 case class OtherPropertiesAllowances(annualInvestmentAllowance: Option[BigDecimal] = None,
                                      otherCapitalAllowance: Option[BigDecimal] = None,
                                      costOfReplacingDomesticItems: Option[BigDecimal] = None,
-                                     zeroEmissionsGoodsVehicleAllowance: Option[BigDecimal] = None,
-                                     rentARoomExempt: Option[BigDecimal] = None)
+                                     zeroEmissionsGoodsVehicleAllowance: Option[BigDecimal] = None)
 
 object OtherPropertiesAllowances {
   implicit val writes: Writes[OtherPropertiesAllowances] = Json.writes[OtherPropertiesAllowances]
@@ -34,7 +33,6 @@ object OtherPropertiesAllowances {
     (__ \ "annualInvestmentAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "otherCapitalAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "costOfReplacingDomesticItems").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "zeroEmissionsGoodsVehicleAllowance").readNullable[BigDecimal](nonNegativeAmountValidator)  and
-      (__ \ "rentARoomExempt").readNullable[BigDecimal](nonNegativeAmountValidator)
+      (__ \ "zeroEmissionsGoodsVehicleAllowance").readNullable[BigDecimal](nonNegativeAmountValidator)
   )(OtherPropertiesAllowances.apply _)
 }

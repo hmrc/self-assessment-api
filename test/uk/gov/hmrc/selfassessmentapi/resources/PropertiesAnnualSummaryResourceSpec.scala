@@ -41,8 +41,7 @@ class PropertiesAnnualSummaryResourceSpec extends ResourceSpec
     annualInvestmentAllowance = Some(0.0),
     otherCapitalAllowance = Some(0.0),
     costOfReplacingDomesticItems = Some(0.0),
-    zeroEmissionsGoodsVehicleAllowance = Some(0.0),
-    rentARoomExempt = Some(0.0)
+    zeroEmissionsGoodsVehicleAllowance = Some(0.0)
   )
   val otherPropertiesAdjustments = OtherPropertiesAdjustments(
     lossBroughtForward = Some(0.0),

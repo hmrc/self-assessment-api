@@ -23,7 +23,7 @@ class PropertiesAnnualSummarySpec extends JsonSpec {
     "round trip" in {
       roundTripJson(
         OtherPropertiesAnnualSummary(
-          allowances = Some(OtherPropertiesAllowances(Some(50), Some(20.20), Some(15.15), Some(12.34), Some(75.25))),
+          allowances = Some(OtherPropertiesAllowances(Some(50), Some(20.20), Some(15.15), Some(12.34))),
           adjustments = Some(OtherPropertiesAdjustments(Some(20.23), Some(50.55), Some(12.34)))))
     }
   }
