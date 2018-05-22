@@ -1,3 +1,6 @@
+## [0.160.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.160.0) 22-May-2018
+* Removed 'rentARoomExempt' field from Non-FHL UK Property Annual Summary requests and responses.
+
 ## [0.158.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.158.0) 21-May-2018
 ### New Endpoints
 #### UK Property BISS
