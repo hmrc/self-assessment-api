@@ -344,7 +344,10 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
     for (propertyType <- Seq(PropertyType.OTHER, PropertyType.FHL)) {
 
       s"return code 200 with a JSON array of all $propertyType periods belonging to the property business" in {
-        val expectedJson = Jsons.Properties.periodSummary(("2017-07-05", "2017-08-04"))
+        val expectedJson = Jsons.Properties.periodSummary(
+          ("2017-07-05", "2017-08-04"),
+          ("2017-04-06", "2017-07-04")
+        )
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource
@@ -358,7 +361,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .contentTypeIsJson()
           .bodyIsLike(expectedJson.toString)
           .selectFields(_ \\ "id")
-          .isLength(1)
+          .isLength(2)
           .matches(Period.periodPattern)
       }
 

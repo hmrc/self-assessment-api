@@ -96,7 +96,7 @@ trait SelfEmploymentPeriodResource extends BaseResource {
       connector.getAll(nino, id).map { response =>
         response.filter {
           case 200 =>
-            response.allPeriods(getMaxPeriodTimeSpan).map(seq => Ok(Json.toJson(seq))).getOrElse(InternalServerError)
+            response.allPeriods.map(seq => Ok(Json.toJson(seq))).getOrElse(InternalServerError)
         }
       } recoverWith exceptionHandling
     }
