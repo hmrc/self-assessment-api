@@ -20,7 +20,6 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode, PeriodSummary => DesPeriodSummary}
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentPeriod
-import uk.gov.hmrc.selfassessmentapi.resources.wrappers.Response.periodsExceeding
 import uk.gov.hmrc.http.HttpResponse
 
 case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Response {
@@ -38,13 +37,13 @@ case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Respon
     }
   }
 
-  def allPeriods(maxPeriodTimeSpan: Int): Option[Seq[PeriodSummary]] = {
+  def allPeriods: Option[Seq[PeriodSummary]] = {
     (json \ "periods").asOpt[Seq[DesPeriodSummary]] match {
       case Some(desPeriods) =>
         val periods = desPeriods.map { period =>
           PeriodSummary(Period.id(period.from, period.to), period.from, period.to)
         }
-        Some(periods.filter(periodsExceeding(maxPeriodTimeSpan)).sorted)
+        Some(periods.sorted)
       case None =>
         logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
         None

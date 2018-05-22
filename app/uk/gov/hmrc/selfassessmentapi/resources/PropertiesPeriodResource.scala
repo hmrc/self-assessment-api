@@ -20,7 +20,6 @@ import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.selfassessmentapi.config.AppContext.getMaxPeriodTimeSpan
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models._
@@ -101,12 +100,12 @@ object PropertiesPeriodResource extends BaseResource {
             id match {
               case PropertyType.FHL =>
                 ResponseMapper[FHL.Properties, des.properties.FHL.Properties]
-                  .allPeriods(response, getMaxPeriodTimeSpan)
+                  .allPeriods(response)
                   .map(seq => Ok(Json.toJson(seq)))
                   .getOrElse(InternalServerError)
               case PropertyType.OTHER =>
                 ResponseMapper[Other.Properties, des.properties.Other.Properties]
-                  .allPeriods(response, getMaxPeriodTimeSpan)
+                  .allPeriods(response)
                   .map(seq => Ok(Json.toJson(seq)))
                   .getOrElse(InternalServerError)
             }
