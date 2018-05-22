@@ -1000,7 +1000,7 @@ traits:
                       type: types.errorResponse
                       examples:
                         invalidNino:
-                          description: Invalid NINO
+                          description: The format of the given National Insurance number is invalid.
                           value:
                             code: NINO_INVALID
                         invalidMonetaryAmount:
@@ -1033,14 +1033,14 @@ traits:
             displayName: Annual Summary
             uriParameters:
               taxYear:
-                description: The tax year the data applies to
+                description: The tax year to which the data applies.
                 type: string
                 example: 2017-18
             put:
               displayName: Amend a non-FHL UK property business annual summary
               description: Amend a non-FHL UK property business annual summary for a tax year.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
-              is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+              is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, contentType, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
               securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
               body:
@@ -1059,15 +1059,15 @@ traits:
                       type: types.errorResponse
                       examples:
                         invalidNino:
-                          description: Invalid NINO
+                          description: The format of the given National Insurance number is invalid.
                           value:
                             code: NINO_INVALID
                         invalidTaxYear:
-                          description: Invalid taxYear
+                          description: The format of the given tax year is invalid.
                           value:
                             code: TAX_YEAR_INVALID
                         invalidMonetaryAmount:
-                          description: adjustments or allowances is not a non-negative amount or up to 2 decimal places
+                          description: Adjustments or allowances are non-negative amounts up to 2 decimal places
                           value:
                             code: INVALID_MONETARY_AMOUNT
                 404:
@@ -1075,7 +1075,7 @@ traits:
               displayName: Get a non-FHL UK property business annual summary
               description: Get a non-FHL UK property business annual summary for a tax year.
               (annotations.sandboxData): !include scenarios/agent-scenarios.md
-              is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+              is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, contentType, testScenarioHeader]
               (annotations.scope): "read:self-assessment"
               securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
               responses:
@@ -1094,11 +1094,11 @@ traits:
                       type: types.errorResponse
                       examples:
                         invalidNino:
-                          description: Invalid NINO
+                          description: The format of the given National Insurance number is invalid.
                           value:
                             code: NINO_INVALID
                         invalidTaxYear:
-                          description: Invalid taxYear
+                          description: The format of the given tax year is invalid.
                           value:
                             code: TAX_YEAR_INVALID
                 404:
