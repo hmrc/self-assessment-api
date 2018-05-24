@@ -1,10 +1,9 @@
-
 # self-assessment-api-router
 
- [ ![Download](https://api.bintray.com/packages/hmrc/releases/self-assessment-api-router/images/download.svg) ](https://bintray.com/hmrc/releases/self-assessment-api-router/_latestVersion)
+[![Build Status](https://travis-ci.org/hmrc/self-assessment-api-router.svg)](https://travis-ci.org/hmrc/self-assessment-api-router) [ ![Download](https://api.bintray.com/packages/hmrc/releases/self-assessment-api-router/images/download.svg) ](https://bintray.com/hmrc/releases/self-assessment-api-router/_latestVersion)
 
 This is a placeholder README.md for a new repository
 
 ### License
 
-This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
+This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
