@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Allowances",
+  "description": "Allowances",
+  "type": "object",
+  "properties": {
+    "annualInvestmentAllowance": {
+      "title": "Annual investment allowance",
+      "description": "Annual investment allowance",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "100.25"
+    },
+    "otherCapitalAllowance": {
+      "title": "Other Capital allowance",
+      "description": "All other capital allowances",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "100.25"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,16 @@
+{
+  "code": "INVALID_REQUEST",
+  "message": "Invalid request",
+  "errors": [
+    {
+      "code": "INVALID_VALUE",
+      "message": "field should only consist of alphanumeric characters",
+      "path": "/accountName"
+    },
+    {
+      "code": "INVALID_FIELD_LENGTH",
+      "message": "field length must be between 1 and 32 characters",
+      "path": "/accountName"
+    }
+  ]
+}

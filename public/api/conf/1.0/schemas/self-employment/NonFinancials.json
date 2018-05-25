@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "NonFinancials",
+  "description": "Non financial data",
+  "type": "object",
+  "properties": {
+    "class4NicInfo": {
+      "title": "Included not-taxable profits",
+      "description": "Income, receipts and other profits included in business income or expenses but not taxable as business profits",
+      "type": "object",
+      "properties": {
+        "isExempt": {
+          "title": "isExempt",
+          "description": "True if the taxpayer is exempt from paying class 4 nics on this source of income; false otherwise",
+          "type": "boolean",
+          "example": "true or false"
+        },
+        "exemptionCode": {
+          "$ref": "Class4ExemptionCode.json"
+        }
+      },
+      "additionalProperties": false
+    },
+    "payVoluntaryClass2Nic": {
+      "title": "Pay voluntary Class 2 NIC",
+      "description": "True if the taxpayer wants to make voluntary payments for class 2 nics on this source of income; false otherwise",
+      "type": "boolean",
+      "example": "true or false"
+    }
+  },
+  "additionalProperties": false
+}

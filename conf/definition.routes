@@ -1,0 +1,2 @@
+GET        /api/definition                                     router.controllers.DocumentationController.definition()
+GET        /api/conf/:version/*file                            router.controllers.DocumentationController.conf(version: String, file: String)

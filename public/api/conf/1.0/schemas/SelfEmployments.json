@@ -1,0 +1,9 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Self-employment sources of income",
+  "type": "array",
+  "items": {
+    "$ref": "SelfEmployment.json"
+  },
+  "additionalProperties": false
+}

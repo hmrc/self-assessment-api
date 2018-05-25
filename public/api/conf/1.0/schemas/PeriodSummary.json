@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "Period",
+  "properties": {
+    "id": {
+      "title": "ID",
+      "description": "Unique period identifier for the income source",
+      "type": "string"
+    },
+    "from": {
+      "description" : "The start date of this update period",
+      "title": "From date",
+      "$ref": "FullDate.json"
+    },
+    "to": {
+      "description" : "The end date of this update period",
+      "title": "To date",
+      "$ref": "FullDate.json"
+    }
+  },
+  "required": [
+    "id",
+    "from",
+    "to"
+  ],
+  "additionalProperties": false
+}

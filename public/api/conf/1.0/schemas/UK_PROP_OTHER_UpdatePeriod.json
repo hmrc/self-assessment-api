@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Period",
+    "properties": {
+        "incomes": {
+            "$ref": "uk-properties/other/Incomes.json"
+        },
+        "expenses": {
+            "$ref": "uk-properties/other/OtherExpenses.json"
+        }
+    },
+    "additionalProperties": false
+}

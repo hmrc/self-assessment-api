@@ -1,0 +1,15 @@
+{
+  "accountingPeriod": {
+    "start": "2017-04-06",
+    "end": "2018-04-05"
+  },
+  "accountingType": "CASH",
+  "commencementDate": "2016-01-01",
+  "tradingName": "Acme Ltd.",
+  "businessDescription": "Accountancy services",
+  "businessAddressLineOne": "1 Acme Rd.",
+  "businessAddressLineTwo": "London",
+  "businessAddressLineThree": "Greater London",
+  "businessAddressLineFour": "United Kingdom",
+  "businessPostcode": "A9 9AA"
+}

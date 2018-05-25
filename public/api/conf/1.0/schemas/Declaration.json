@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "declaration",
+  "title": "Declaration",
+  "type": "object",
+  "properties": {
+    "finalised": {
+      "title": "Finalised",
+      "description": "Declaration for the finalised statement.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "finalised"
+  ],
+  "additionalProperties": false
+}
