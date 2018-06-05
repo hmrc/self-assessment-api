@@ -28,8 +28,8 @@ trait MockSelfEmploymentBISSConnector extends Mock{ _: Suite =>
 
   object MockSelfEmploymentBISSConnector {
 
-    def getSummary(nino: Nino, taxYear: TaxYear) = {
-      when(mockSelfEmploymentBISSConnector.getSummary(eqTo(nino), eqTo(taxYear))(any(), any()))
+    def getSummary(nino: Nino, taxYear: TaxYear, id: String) = {
+      when(mockSelfEmploymentBISSConnector.getSummary(eqTo(nino), eqTo(taxYear), eqTo(id))(any(), any()))
     }
   }
 

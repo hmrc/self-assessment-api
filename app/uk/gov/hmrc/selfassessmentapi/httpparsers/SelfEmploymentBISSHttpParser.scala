@@ -59,7 +59,7 @@ trait SelfEmploymentBISSHttpParser extends HttpParser {
           Logger.warn(s"[selfEmploymentBISSHttpParser] - No submissions data exists for provided tax year")
           Left(NoSubmissionDataExists)
         }
-        case (NOT_FOUND, ErrorCode(DesErrorCode.SELF_EMPLOYMENT_ID_NOT_FOUND)) => {
+        case (NOT_FOUND, ErrorCode(DesErrorCode.NOT_FOUND_INCOME_SOURCE)) => {
           Logger.warn(s"[selfEmploymentBISSHttpParser] - No submissions data can be found for the self-employment ID")
           Left(SelfEmploymentIDNotFound)
         }

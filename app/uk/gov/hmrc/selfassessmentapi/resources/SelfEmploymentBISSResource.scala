@@ -38,10 +38,10 @@ trait SelfEmploymentBISSResource extends BaseResource {
   val authService: AuthorisationService
   val connector : SelfEmploymentBISSConnector
 
-  def getSummary(nino: Nino, taxYear: TaxYear): Action[AnyContent] =
+  def getSummary(nino: Nino, taxYear: TaxYear, id: String): Action[AnyContent] =
   APIAction(nino, SourceType.SelfEmployments, Some("BISS")).async {
     implicit request =>
-      connector.getSummary(nino, taxYear).map{
+      connector.getSummary(nino, taxYear, id).map{
         case Left(error) => error match {
           case NinoInvalid | TaxYearInvalid => BadRequest(toJson(error))
           case NinoNotFound | TaxYearNotFound | NoSubmissionDataExists => NotFound(toJson(error))

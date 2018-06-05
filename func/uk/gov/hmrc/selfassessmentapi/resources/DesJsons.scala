@@ -1148,4 +1148,21 @@ object DesJsons {
     }
   }
 
+  object SelfEmploymentBISS {
+    val summary: String = {
+      s"""
+         |{
+         |  "totalIncome" : 10.55,
+         |  "totalExpenses" : 10.55,
+         |  "totalAdditions" : 10.55,
+         |  "totalDeductions" : 10.55,
+         |  "accountingAdjustments" : 10.55,
+         |  "netProfit" : 10.55,
+         |  "netLoss" : 10.55,
+         |  "taxableProfit" : 10.55,
+         |  "taxableLoss" : 10.55
+         |}
+       """.stripMargin
+    }
+  }
 }

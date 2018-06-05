@@ -5,11 +5,6 @@
 GET /ni/:nino/self-employments   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentsResource.retrieveAll(nino: uk.gov.hmrc.domain.Nino)
 POST /ni/:nino/self-employments   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentsResource.create(nino: uk.gov.hmrc.domain.Nino)
 
-####################
-#    Self-Employments BISS   #
-####################
-GET /ni/:nino/self-employments/:taxYear/income-summary  uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentBISSResource.getSummary(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
-
 GET /ni/:nino/self-employments/:id   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentsResource.retrieve(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
 #Disabled for Bravo release
 #PUT /ni/:nino/self-employments/:id   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentsResource.update(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)

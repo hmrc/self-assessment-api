@@ -37,17 +37,18 @@ class SelfEmploymentBISSConnectorSpec extends ConnectorSpec {
   lazy val desBaseUrl = "test-des-url"
 
   val selfEmploymentBISS = SelfEmploymentBISSFixture.selfEmploymentBISS
+  val selfEmploymentId = "test-source-id"
 
   "get" should {
 
-    val url = s"$desBaseUrl/income-store/nino/$nino/self-employments/income-source-summary/${taxYear.toDesTaxYear}"
+    val url = s"$desBaseUrl/income-store/nino/$nino/self-employments/$selfEmploymentId/income-source-summary/${taxYear.toDesTaxYear}"
 
     "return a SelfEmploymentBISS model" when {
       "des returns a 200 with a correct SelfEmploymentBISS response body" in new Setup {
         MockHttp.GET[Either[Error, SelfEmploymentBISS]](url)
           .returns(Future.successful(Right(selfEmploymentBISS)))
 
-        val result = await(connector.getSummary(nino, taxYear))
+        val result = await(connector.getSummary(nino, taxYear, selfEmploymentId))
         result shouldBe Right(selfEmploymentBISS)
       }
     }

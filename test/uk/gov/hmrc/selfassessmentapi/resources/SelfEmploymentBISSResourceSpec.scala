@@ -38,14 +38,15 @@ class SelfEmploymentBISSResourceSpec extends ResourceSpec
 
   val selfEmploymentBISS = SelfEmploymentBISSFixture.selfEmploymentBISS
   val selfEmploymentBISSJson = SelfEmploymentBISSFixture.selfEmploymentBISSJson
+  val selfEmploymentId = "test-source-id"
 
   "getSummary" should {
     "return a 200 with a SelfEmploymentBISS response" when {
       "a valid nino and tax year is supplied and DES return a SelfEmploymentBISS response" in new Setup {
-        MockSelfEmploymentBISSConnector.getSummary(nino, taxYear)
+        MockSelfEmploymentBISSConnector.getSummary(nino, taxYear, selfEmploymentId)
           .returns(Future.successful(Right(selfEmploymentBISS)))
 
-        val result = resource.getSummary(nino, taxYear)(FakeRequest())
+        val result = resource.getSummary(nino, taxYear, selfEmploymentId)(FakeRequest())
         status(result) shouldBe OK
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe selfEmploymentBISSJson
@@ -64,10 +65,10 @@ class SelfEmploymentBISSResourceSpec extends ResourceSpec
 
       s"return a $responseCode" when {
         s"a ${errorCode.code} error is returned from the connector" in new Setup {
-          MockSelfEmploymentBISSConnector.getSummary(nino, taxYear)
+          MockSelfEmploymentBISSConnector.getSummary(nino, taxYear, selfEmploymentId)
             .returns(Future.successful(Left(errorCode)))
 
-          val result = resource.getSummary(nino, taxYear)(FakeRequest())
+          val result = resource.getSummary(nino, taxYear, selfEmploymentId)(FakeRequest())
           status(result) shouldBe responseCode
           contentType(result) shouldBe Some(JSON)
           contentAsJson(result) shouldBe toJson(errorCode)
