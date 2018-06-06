@@ -17,10 +17,6 @@
 package fixtures
 
 import play.api.libs.json.Json
-import router.definition.AuthType.USER
-import router.definition.GroupName.SelfEmployments
-import router.definition.HttpMethod.GET
-import router.definition.ResourceThrottlingTier.UNLIMITED
 import router.definition._
 
 object SelfAssessmentApiDefinitionFixture {
@@ -35,6 +31,16 @@ object SelfAssessmentApiDefinitionFixture {
 
   private val accessType = "test type"
 
+  val apiVersion_1 = APIVersion(
+    version = "1.0",
+    access = Some(Access(
+      `type` = accessType,
+      whitelistedApplicationIds = Seq("test-whitelisted-id")
+    )),
+    status = APIStatus.ALPHA,
+    endpointsEnabled = true
+  )
+
   val selfAssessmentApiDefinition = Definition(
     scopes = Seq(
       Scope(
@@ -47,25 +53,7 @@ object SelfAssessmentApiDefinitionFixture {
       name = apiName,
       description = apiDescription,
       context = apiContext,
-      versions = Seq(APIVersion(
-        version = "1.0",
-        access = Some(Access(
-          `type` = accessType,
-          whitelistedApplicationIds = Seq("test-whitelisted-id")
-        )),
-        status = APIStatus.ALPHA,
-        endpointsEnabled = true,
-        endpoints = Seq(
-          Endpoint(
-            uriPattern = "/test/uri/pattern",
-            endpointName = "test endpoint name",
-            method = GET,
-            authType = USER,
-            throttlingTier = UNLIMITED,
-            scope = Some("test-scope"),
-            groupName = SelfEmployments)
-        )
-      )),
+      versions = Seq(apiVersion_1),
       requiresTrust = None
     )
   )
@@ -88,16 +76,7 @@ object SelfAssessmentApiDefinitionFixture {
             "whitelistedApplicationIds" -> Json.arr("test-whitelisted-id")
           ),
           "status" -> "ALPHA",
-          "endpointsEnabled" -> true,
-          "endpoints" -> Json.arr(Json.obj(
-            "uriPattern" -> "/test/uri/pattern",
-            "endpointName" -> "test endpoint name",
-            "method" -> "GET",
-            "authType" -> "USER",
-            "throttlingTier" -> "UNLIMITED",
-            "scope" -> scopeKey,
-            "groupName" -> "Self Employment Businesses"
-          ))
+          "endpointsEnabled" -> true
         ))
       )
     )

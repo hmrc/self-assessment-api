@@ -17,22 +17,10 @@
 package config
 
 import com.google.inject.AbstractModule
-import router.controllers._
-import router.definition.{SelfAssessmentApiDefinition, SelfAssessmentApiDefinitionImpl}
 
 class Module extends AbstractModule {
 
   override def configure(): Unit = {
-    bindControllers()
-    bindConfig()
-  }
-
-  def bindControllers() = {
-    bind(classOf[DocumentationController]).to(classOf[DocumentationControllerImpl])
-    bind(classOf[SelfAssessmentApiDefinition]).to(classOf[SelfAssessmentApiDefinitionImpl])
-  }
-
-  def bindConfig() = {
-    bind(classOf[AppConfig]).to(classOf[AppConfigImpl])
+    bind(classOf[ServiceLocator]).asEagerSingleton()
   }
 }

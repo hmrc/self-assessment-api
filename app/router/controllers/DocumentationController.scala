@@ -24,10 +24,8 @@ import router.definition.SelfAssessmentApiDefinition
 import uk.gov.hmrc.api.controllers.{DocumentationController => HmrcDocumentationController}
 
 @Singleton
-class DocumentationControllerImpl @Inject()(val selfAssessmentApiDefinition: SelfAssessmentApiDefinition) extends DocumentationController
-
-abstract class DocumentationController extends HmrcDocumentationController(LazyHttpErrorHandler) {
-  val selfAssessmentApiDefinition: SelfAssessmentApiDefinition
+class DocumentationController @Inject()(selfAssessmentApiDefinition: SelfAssessmentApiDefinition)
+  extends HmrcDocumentationController(LazyHttpErrorHandler) {
 
   override def definition() = Action {
     Ok(Json.toJson(selfAssessmentApiDefinition.definition))

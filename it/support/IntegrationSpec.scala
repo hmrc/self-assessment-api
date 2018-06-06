@@ -18,10 +18,24 @@ package support
 
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.OneServerPerSuite
+import play.api.Application
+import play.api.http.{HeaderNames, MimeTypes, Status}
+import play.api.inject.guice.GuiceApplicationBuilder
+import support.functional.FunctionalSyntax
+import support.wiremock.WireMock
 
 trait IntegrationSpec extends WordSpec
   with OneServerPerSuite
   with WireMock
-  with Matchers {
+  with Matchers
+  with Status
+  with HeaderNames
+  with MimeTypes
+  with FakeApplicationConfig
+  with FunctionalSyntax {
+
+  override implicit lazy val app: Application = new GuiceApplicationBuilder()
+    .configure(fakeApplicationConfig)
+    .build()
 
 }

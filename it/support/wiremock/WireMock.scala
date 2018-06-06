@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package support
+package support.wiremock
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
 
-object WireMockConfig {
+trait WireMockConfig {
   val wiremockHost = "localhost"
   val wiremockPort = 11111
   val wiremockUrl = s"http://$wiremockHost:$wiremockPort"
 }
 
-trait WireMock extends BeforeAndAfterAll with BeforeAndAfterEach { _: Suite =>
-  import WireMockConfig._
+trait WireMock extends WireMockConfig
+  with BeforeAndAfterAll
+  with BeforeAndAfterEach { _: Suite =>
 
   private val wireMockServer = new WireMockServer(wireMockConfig().port(wiremockPort))
 

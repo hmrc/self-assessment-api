@@ -20,366 +20,16 @@ import config.{AppConfig, FeatureSwitch}
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import router.definition.APIStatus.APIStatus
-import AuthType._
-import HttpMethod._
-import ResourceThrottlingTier._
-import GroupName._
 
 @Singleton
-class SelfAssessmentApiDefinitionImpl @Inject()(val appConfig: AppConfig) extends SelfAssessmentApiDefinition
-
-trait SelfAssessmentApiDefinition {
-  val appConfig: AppConfig
+class SelfAssessmentApiDefinition @Inject()(appConfig: AppConfig) {
 
   private val readScope = "read:self-assessment"
   private val writeScope = "write:self-assessment"
 
-  val selfEmploymentEndpoints: Seq[Endpoint] = {
-    Seq(
-      Endpoint(
-        uriPattern = "/ni/{nino}/self-employments",
-        endpointName = "List self employment businesses",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = SelfEmployments)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/self-employments",
-        endpointName = "Add a self employment business",
-        method = POST,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = SelfEmployments)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/self-employments/{selfEmploymentId}",
-        endpointName = "Update self-employment business details",
-        method = PUT,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = SelfEmployments)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/self-employments/{selfEmploymentId}",
-        endpointName = "Get self employment business",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = SelfEmployments)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/self-employments/{selfEmploymentId}/obligations",
-        endpointName = "Retrieve self employment business obligations",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = SelfEmployments)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/self-employments/{selfEmploymentId}/periods",
-        endpointName = "List all self employment periods",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = SelfEmployments)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/self-employments/{selfEmploymentId}/periods",
-        endpointName = "Create a self employment period",
-        method = POST,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = SelfEmployments)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/self-employments/{selfEmploymentId}/periods/{periodId}",
-        endpointName = "Get self employment periodic summary",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = SelfEmployments)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/self-employments/{selfEmploymentId}/periods/{periodId}",
-        endpointName = "Update self employment periodic summary",
-        method = PUT,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = SelfEmployments)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/self-employments/{selfEmploymentId}/{taxYear}",
-        endpointName = "Get self employment annual summary",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = SelfEmployments)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/self-employments/{selfEmploymentId}/{taxYear}",
-        endpointName = "Update self employment annual summary",
-        method = PUT,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = SelfEmployments)
-
-    )
+  object Version extends Enumeration {
+    val `1.0` = Value("1.0")
   }
-
-  val ukPropertyEndpoints: Seq[Endpoint] = {
-    Seq(
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties",
-        endpointName = "Get UK property business",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = UKProperties)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties",
-        endpointName = "Add a UK property business",
-        method = POST,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = UKProperties)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties/obligations",
-        endpointName = "Retrieve UK property business obligations",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = UKProperties),
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties/other/periods",
-        endpointName = "List all non FHL UK property periods",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = UKProperties)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties/other/periods",
-        endpointName = "Create a non FHL UK property periodic summary",
-        method = POST,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = UKProperties)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties/other/periods/{periodId}",
-        endpointName = "Get a non FHL UK property periodic summary",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = UKProperties)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties/other/periods/{periodId}",
-        endpointName = "Update a non FHL UK property periodic summary",
-        method = PUT,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = UKProperties)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties/other/{taxYear}",
-        endpointName = "Get non FHL UK property annual summary",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = UKProperties)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties/other/{taxYear}",
-        endpointName = "Update non FHL UK property annual summary",
-        method = PUT,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = UKProperties)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties/furnished-holiday-lettings/periods",
-        endpointName = "List all FHL UK property periods",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = UKProperties)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties/furnished-holiday-lettings/periods",
-        endpointName = "Create a FHL UK property period",
-        method = POST,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = UKProperties)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties/furnished-holiday-lettings/periods/{periodId}",
-        endpointName = "Get a FHL UK property periodic summary",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = UKProperties)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties/furnished-holiday-lettings/periods/{periodId}",
-        endpointName = "Update a FHL UK property periodic summary",
-        method = PUT,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = UKProperties)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties/furnished-holiday-lettings/{taxYear}",
-        endpointName = "Get FHL UK property annual summary",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = UKProperties)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/uk-properties/furnished-holiday-lettings/{taxYear}",
-        endpointName = "Update FHL UK property annual summary",
-        method = PUT,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = UKProperties)
-    )
-  }
-
-  val dividendEndpoints: Seq[Endpoint] = {
-    Seq(
-      Endpoint(
-        uriPattern = "/ni/{nino}/dividends/{taxYear}",
-        endpointName = "Get dividends annual summary",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = Dividends)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/dividends/{taxYear}",
-        endpointName = "Update dividends annual summary",
-        method = PUT,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = Dividends)
-    )
-  }
-
-
-  val bankSavingEndpoints: Seq[Endpoint] = {
-    Seq(
-      Endpoint(
-        uriPattern = "/ni/{nino}/savings-accounts",
-        endpointName = "List all savings accounts",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = BankSavings)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/savings-accounts",
-        endpointName = "Add a savings account",
-        method = POST,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = BankSavings)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/savings-accounts/{savingsAccountId}",
-        endpointName = "Get a savings account",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = BankSavings)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/savings-accounts/{savingsAccountId}",
-        endpointName = "Update a savings account",
-        method = PUT,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = BankSavings)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/savings-accounts/{savingsAccountId}/{taxYear}",
-        endpointName = "Get a savings account annual summary",
-        method = GET,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(readScope),
-        groupName = BankSavings)
-      ,
-      Endpoint(
-        uriPattern = "/ni/{nino}/savings-accounts/{savingsAccountId}/{taxYear}",
-        endpointName = "Update a savings account annual summary",
-        method = PUT,
-        authType = USER,
-        throttlingTier = UNLIMITED,
-        scope = Some(writeScope),
-        groupName = BankSavings)
-    )
-  }
-
-  val calculationEndpoints: Seq[Endpoint] = Seq(
-    Endpoint(
-      uriPattern = "/ni/{nino}/calculations",
-      endpointName = "Trigger a tax calculation",
-      method = POST,
-      authType = USER,
-      throttlingTier = UNLIMITED,
-      scope = Some(writeScope),
-      groupName = Calculation),
-    Endpoint(
-      uriPattern = "/ni/{nino}/calculations/{calculationId}",
-      endpointName = "Retrieve a tax calculation",
-      method = GET,
-      authType = USER,
-      throttlingTier = UNLIMITED,
-      scope = Some(readScope),
-      groupName = Calculation
-    )
-  )
-
-  private val allEndpoints =
-    selfEmploymentEndpoints ++ ukPropertyEndpoints ++ dividendEndpoints ++ bankSavingEndpoints ++ calculationEndpoints
-
 
   lazy val definition: Definition =
     Definition(
@@ -401,19 +51,17 @@ trait SelfAssessmentApiDefinition {
         context = appConfig.apiGatewayContext,
         versions = Seq(
           APIVersion(
-            version = "1.0",
+            version = Version.`1.0`.toString,
             access = buildWhiteListingAccess(),
-            status = buildAPIStatus(),
-            endpointsEnabled = true,
-            endpoints = allEndpoints
-          )
+            status = buildAPIStatus(Version.`1.0`),
+            endpointsEnabled = true)
         ),
         requiresTrust = None
       )
     )
 
-  private def buildAPIStatus(): APIStatus = {
-    appConfig.apiStatus match {
+  private[definition] def buildAPIStatus(version: Version.Value): APIStatus = {
+    appConfig.apiStatus(version.toString) match {
       case "ALPHA" => APIStatus.ALPHA
       case "BETA" => APIStatus.BETA
       case "STABLE" => APIStatus.STABLE
@@ -424,7 +72,7 @@ trait SelfAssessmentApiDefinition {
     }
   }
 
-  private def buildWhiteListingAccess(): Option[Access] = {
+  private[definition] def buildWhiteListingAccess(): Option[Access] = {
     val featureSwitch = FeatureSwitch(appConfig.featureSwitch)
     featureSwitch.isWhiteListingEnabled match {
       case true => Some(Access("PRIVATE", featureSwitch.whiteListedApplicationIds))

@@ -32,15 +32,21 @@ package support
  * limitations under the License.
  */
 
-import org.scalatest.{Matchers, WordSpec}
+
+import org.scalatest.{EitherValues, Matchers, WordSpecLike}
 import play.api.http.{HeaderNames, MimeTypes, Status}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits, ResultExtractors}
+import uk.gov.hmrc.http.HeaderCarrier
 
-trait UnitSpec extends WordSpec
+trait UnitSpec extends WordSpecLike
+  with EitherValues
   with Matchers
   with FutureAwaits
   with DefaultAwaitTimeout
   with ResultExtractors
   with HeaderNames
   with Status
-  with MimeTypes
+  with MimeTypes {
+
+  implicit val hc: HeaderCarrier = HeaderCarrier()
+}

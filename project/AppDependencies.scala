@@ -23,17 +23,10 @@ object AppDependencies {
     "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
     "org.pegdown" % "pegdown" % pegdownVersion % scope,
     "org.mockito" % "mockito-core" % "2.18.3" % scope,
-    "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
-  )
-
-  def it(scope: String = "it") = Seq(
-    "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope,
-    "org.scalatest" %% "scalatest" % scalaTestVersion % scope,
-    "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
-    "org.pegdown" % "pegdown" % pegdownVersion % scope,
     "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-    "com.github.tomakehurst" % "wiremock" % "2.17.0" % scope
+    "com.github.tomakehurst" % "wiremock" % "2.17.0" % scope,
+    "org.scoverage" %% "scalac-scoverage-runtime" % "1.2.0" % scope
   )
 
-  def apply() = compile ++ test() ++ it()
+  def apply() = compile ++ test()
 }

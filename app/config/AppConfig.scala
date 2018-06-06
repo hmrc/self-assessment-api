@@ -17,23 +17,19 @@
 package config
 
 import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-
-import scala.util.control.NoStackTrace
+import play.api.Mode.Mode
+import play.api.{Configuration, Environment}
+import uk.gov.hmrc.play.config.ServicesConfig
 
 @Singleton
-class AppConfigImpl @Inject()(val config: Configuration) extends AppConfig
+class AppConfig @Inject()(val environment: Environment,
+                          val config: Configuration) extends ServicesConfig {
 
-trait AppConfig {
-  val config: Configuration
+  override protected def mode: Mode = environment.mode
+  override protected def runModeConfiguration: Configuration = config
 
   def featureSwitch: Option[Configuration] = config.getConfig(s"feature-switch")
-  def apiStatus: String = getString("api.status")
+  def apiStatus(version: String): String = getString(s"api.$version.status")
   def apiGatewayContext: String = getString("api.gateway.context")
-
-  private def getString(key: String): String = config.getString(key).getOrElse(throw ConfigNotFoundException(key))
-
-  private case class ConfigNotFoundException(key: String) extends NoStackTrace {
-    override def getMessage: String = s"Could not find config for key $key"
-  }
+  def saApiUrl: String = baseUrl("self-assessment-api")
 }

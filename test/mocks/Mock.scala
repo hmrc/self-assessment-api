@@ -16,8 +16,8 @@
 
 package mocks
 
-import org.mockito.{ArgumentMatchers, Mockito}
 import org.mockito.stubbing.OngoingStubbing
+import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Suite}
 

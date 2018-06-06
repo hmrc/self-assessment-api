@@ -21,6 +21,16 @@ import play.api.libs.json._
 
 object EnumJson {
 
+  private object ErrorCode extends Enumeration {
+    type ErrorCode = Value
+    val
+    INVALID_VALUE,
+    INVALID_TYPE = Value
+
+    implicit val format: Format[ErrorCode] = EnumJson.enumFormat(ErrorCode,
+      Some(s"Recognized ErrorCode values: ${ErrorCode.values.mkString(", ")}"))
+  }
+
   def enumReads[E <: Enumeration](enum: E, valueMissingMessage: Option[String] = None): Reads[E#Value] = new Reads[E#Value] {
 
     def defaultValueMissingMessage(s: String)= s"Enumeration expected of type: '${enum.getClass}', but it does not contain '$s'"

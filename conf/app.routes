@@ -1,3 +1,5 @@
 # microservice specific routes
-
+GET   /*route                         router.resources.SelfAssessmentResource.get(route)
+POST  /*route                         router.resources.SelfAssessmentResource.post(route)
+PUT   /*route                         router.resources.SelfAssessmentResource.put(route)
 

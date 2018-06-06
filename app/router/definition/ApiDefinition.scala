@@ -18,10 +18,6 @@ package router.definition
 
 import play.api.libs.json.{Format, Json}
 import router.definition.APIStatus.APIStatus
-import router.definition.AuthType.AuthType
-import router.definition.GroupName.GroupName
-import router.definition.HttpMethod.HttpMethod
-import router.definition.ResourceThrottlingTier.ResourceThrottlingTier
 import router.enums.EnumJson
 
 
@@ -46,57 +42,13 @@ object APIStatus extends Enumeration {
   implicit val formatAPIStatus: Format[APIStatus] = EnumJson.enumFormat(APIStatus)
 }
 
-object AuthType extends Enumeration {
-  type AuthType = Value
-  val NONE, APPLICATION, USER = Value
+case class APIVersion(version: String,
+                      access: Option[Access] = None,
+                      status: APIStatus,
+                      endpointsEnabled: Boolean) {
 
-  implicit val formatAuthType: Format[AuthType] = EnumJson.enumFormat(AuthType)
+  require(version.nonEmpty, "version is required")
 }
-
-object HttpMethod extends Enumeration {
-  type HttpMethod = Value
-  val GET, POST, PUT = Value
-
-  implicit val formatHttpMethod: Format[HttpMethod] = EnumJson.enumFormat(HttpMethod)
-}
-
-object ResourceThrottlingTier extends Enumeration {
-  type ResourceThrottlingTier = Value
-  val UNLIMITED = Value
-
-  implicit val formatResourceThrottlingTier = EnumJson.enumFormat(ResourceThrottlingTier)
-}
-
-object GroupName extends Enumeration {
-  type GroupName = Value
-  val SelfEmployments = Value("Self Employment Businesses")
-  val UKProperties = Value("UK Property Business")
-  val Dividends = Value("Dividends Income")
-  val BankSavings = Value("Savings Accounts")
-  val Calculation = Value("Tax Calculations")
-
-  implicit val formatGroupName = EnumJson.enumFormat(GroupName)
-}
-
-case class Endpoint(uriPattern: String,
-                    endpointName: String,
-                    method: HttpMethod,
-                    authType: AuthType,
-                    throttlingTier: ResourceThrottlingTier,
-                    scope: Option[String] = None,
-                    groupName : GroupName,
-                    queryParameters: Option[Seq[Parameter]] = None)
-
-object Endpoint {
-  implicit val formatEndpoint = Json.format[Endpoint]
-}
-
-case class APIVersion(
-                       version: String,
-                       access: Option[Access] = None,
-                       status: APIStatus,
-                       endpointsEnabled: Boolean,
-                       endpoints: Seq[Endpoint])
 
 object APIVersion {
   implicit val formatAPIVersion = Json.format[APIVersion]
@@ -108,24 +60,11 @@ case class APIDefinition(name: String,
                          versions: Seq[APIVersion],
                          requiresTrust: Option[Boolean]) {
 
-  require(name.nonEmpty, s"name is required")
-  require(context.nonEmpty, s"context is required")
-  require(description.nonEmpty, s"description is required")
-  require(versions.nonEmpty, s"at least one version is required")
-  require(uniqueVersions, s"version numbers must be unique")
-  versions.foreach(version => {
-    require(version.version.nonEmpty, s"version is required")
-    version.endpoints.foreach(endpoint => {
-      require(endpoint.endpointName.nonEmpty, s"endpointName is required")
-      endpoint.queryParameters.getOrElse(Nil).foreach(parameter => {
-        require(parameter.name.nonEmpty, "parameter name is required")
-      })
-      endpoint.authType match {
-        case AuthType.USER => require(endpoint.scope.nonEmpty, s"scope is required if authType is USER")
-        case _ => ()
-      }
-    })
-  })
+  require(name.nonEmpty, "name is required")
+  require(context.nonEmpty, "context is required")
+  require(description.nonEmpty, "description is required")
+  require(versions.nonEmpty, "at least one version is required")
+  require(uniqueVersions, "version numbers must be unique")
 
   private def uniqueVersions = {
     !versions.map(_.version).groupBy(identity).mapValues(_.size).exists(_._2 > 1)

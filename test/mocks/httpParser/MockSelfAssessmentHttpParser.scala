@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package router.enums
+package mocks.httpParser
 
-import play.api.libs.json.Format
+import mocks.Mock
+import org.scalatest.Suite
+import router.httpParsers.SelfAssessmentHttpParser
 
-object ErrorCode extends Enumeration {
-  type ErrorCode = Value
-  val
-  INVALID_VALUE,
-  INVALID_TYPE = Value
+trait MockSelfAssessmentHttpParser extends Mock { _: Suite =>
 
-  implicit val format: Format[ErrorCode] = EnumJson.enumFormat(ErrorCode,
-    Some(s"Recognized ErrorCode values: ${ErrorCode.values.mkString(", ")}"))
+  val mockSelfAssessmentHttpParser = mock[SelfAssessmentHttpParser]
+
+  object MockSelfAssessmentHttpParser {
+    def read = {
+      when(mockSelfAssessmentHttpParser.read(any(), any(), any()))
+    }
+  }
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockSelfAssessmentHttpParser)
+  }
 }
-

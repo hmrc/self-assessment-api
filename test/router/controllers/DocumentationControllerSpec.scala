@@ -26,9 +26,9 @@ class DocumentationControllerSpec extends UnitSpec
   with MockSelfAssessmentApiDefinition {
 
   class Setup {
-    val controller = new DocumentationController {
-      override val selfAssessmentApiDefinition = mockSelfAssessmentApiDefinition
-    }
+    val controller = new DocumentationController(
+      selfAssessmentApiDefinition = mockSelfAssessmentApiDefinition
+    )
   }
 
   "definition" should {
