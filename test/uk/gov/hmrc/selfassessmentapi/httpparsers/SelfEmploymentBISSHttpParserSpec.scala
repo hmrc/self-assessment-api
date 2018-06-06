@@ -110,7 +110,7 @@ class SelfEmploymentBISSHttpParserSpec extends UnitSpec {
 
     "return a SelfEmploymentIDNotFound" when {
       "DES returns a 404 with a self employment id not found error code" in {
-        val responseBody = Json.obj("code" -> DesErrorCode.SELF_EMPLOYMENT_ID_NOT_FOUND)
+        val responseBody = Json.obj("code" -> DesErrorCode.NOT_FOUND_INCOME_SOURCE)
 
         val response = HttpResponse(NOT_FOUND, Some(responseBody))
         val result = httpParser.selfEmploymentBISSHttpParser.read(method, url, response)

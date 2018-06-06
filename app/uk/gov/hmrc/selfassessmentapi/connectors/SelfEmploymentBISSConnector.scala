@@ -38,6 +38,7 @@ trait SelfEmploymentBISSConnector extends SelfEmploymentBISSHttpParser with Base
   val http: HttpGet
 
   def getSummary(nino: Nino, taxYear: TaxYear, id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentBISSOutcome] = {
-    http.GET[SelfEmploymentBISSOutcome](s"$baseUrl/income-store/nino/$nino/self-employments/$id/income-source-summary/${taxYear.toDesTaxYear}")
+    http.GET[SelfEmploymentBISSOutcome](s"$baseUrl/income-store/nino/$nino/self-employments/$id/income-source-summary/${taxYear.toDesTaxYear}")(
+      selfEmploymentBISSHttpParser, withDesHeaders(hc), ec)
   }
 }
