@@ -21,7 +21,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentBISSConnector
-import uk.gov.hmrc.selfassessmentapi.models.Errors.{NinoInvalid, NinoNotFound, NoSubmissionDataExists, ServerError, TaxYearInvalid, TaxYearNotFound}
+import uk.gov.hmrc.selfassessmentapi.models.Errors.{NinoInvalid, NinoNotFound, NoSubmissionDataExists, SelfEmploymentIDNotFound, ServerError, TaxYearInvalid, TaxYearNotFound}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
@@ -46,6 +46,7 @@ trait SelfEmploymentBISSResource extends BaseResource {
           case NinoInvalid | TaxYearInvalid => BadRequest(toJson(error))
           case NinoNotFound | TaxYearNotFound | NoSubmissionDataExists => NotFound(toJson(error))
           case ServerError | Errors.ServiceUnavailable => InternalServerError(toJson(error))
+          case SelfEmploymentIDNotFound => BadRequest(toJson(error))
         }
         case Right(response) => Ok(toJson(response))
       }

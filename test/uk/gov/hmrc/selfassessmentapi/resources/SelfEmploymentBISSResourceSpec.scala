@@ -59,6 +59,7 @@ class SelfEmploymentBISSResourceSpec extends ResourceSpec
       NOT_FOUND -> NinoNotFound,
       NOT_FOUND -> TaxYearNotFound,
       NOT_FOUND -> NoSubmissionDataExists,
+      BAD_REQUEST -> SelfEmploymentIDNotFound,
       INTERNAL_SERVER_ERROR -> ServerError,
       INTERNAL_SERVER_ERROR -> ServiceUnavailable
     ).foreach { case (responseCode, errorCode) =>

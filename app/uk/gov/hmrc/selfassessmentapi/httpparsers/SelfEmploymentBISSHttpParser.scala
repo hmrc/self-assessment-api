@@ -72,7 +72,7 @@ trait SelfEmploymentBISSHttpParser extends HttpParser {
           Left(ServiceUnavailable)
         }
         case (status, _) =>
-          Logger.warn(s"[selfEmploymentBISSHttpParser] - Non-OK DES Response: STATUS $status ------- \n ${response.body}")
+          Logger.warn(s"[selfEmploymentBISSHttpParser] - Non-OK DES Response: STATUS $status")
           Left(ServerError)
       }
     }
