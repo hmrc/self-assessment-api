@@ -76,7 +76,8 @@ object DesErrorCode extends Enumeration {
   EARLY_SUBMISSION,
   NON_MATCHING_PERIOD,
   ALREADY_SUBMITTED,
-  NO_DATA_EXISTS= Value
+  NO_DATA_EXISTS,
+  SELF_EMPLOYMENT_ID_NOT_FOUND = Value
 
   implicit val format: Format[DesErrorCode] = EnumJson.enumFormat(DesErrorCode,
     Some(s"Recognized DesErrorCode values: ${DesErrorCode.values.mkString(", ")}"))

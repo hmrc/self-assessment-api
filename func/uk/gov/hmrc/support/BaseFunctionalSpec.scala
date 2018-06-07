@@ -10,6 +10,7 @@ import play.api.libs.json._
 import uk.gov.hmrc.api.controllers.ErrorNotFound
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.selfassessmentapi.fixtures.selfemployment.SelfEmploymentBISSFixture
 import uk.gov.hmrc.selfassessmentapi.models.obligations.ObligationsQueryParams
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
@@ -1983,6 +1984,30 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def getSummaryErrorResponse(nino: Nino, taxYear: TaxYear, status: Int, errorCode: String): Givens = {
           stubFor(get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/income-source-summary/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(status)
+                .withHeader("Content-Type", "application/json")
+                .withBody(errorCode)))
+
+          givens
+        }
+      }
+
+      object SelfEmploymentBISS {
+        def getSummary(nino: Nino, taxYear: TaxYear, id: String): Givens = {
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/income-source-summary/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.SelfEmploymentBISS.summary)))
+
+          givens
+        }
+
+        def getSummaryErrorResponse(nino: Nino, taxYear: TaxYear, id: String, status: Int, errorCode: String): Givens = {
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/income-source-summary/${taxYear.toDesTaxYear}"))
             .willReturn(
               aResponse()
                 .withStatus(status)

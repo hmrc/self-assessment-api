@@ -16,12 +16,13 @@
 
 package uk.gov.hmrc.selfassessmentapi.httpparsers
 
+import play.api.http.Status
 import play.api.libs.json._
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.util.{Failure, Success, Try}
 
-trait HttpParser {
+trait HttpParser extends Status {
 
   implicit class httpResponseOps(resp: HttpResponse){
     def jsonOpt: Option[JsValue] = {
