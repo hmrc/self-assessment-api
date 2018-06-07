@@ -38,6 +38,8 @@ import play.api.http.{HeaderNames, MimeTypes, Status}
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits, ResultExtractors}
 import uk.gov.hmrc.http.HeaderCarrier
 
+import scala.util.control.NoStackTrace
+
 trait UnitSpec extends WordSpecLike
   with EitherValues
   with Matchers
@@ -49,4 +51,8 @@ trait UnitSpec extends WordSpecLike
   with MimeTypes {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
+
+  val testException: Throwable = new NoStackTrace {
+    override def getMessage: String = "A test exception was thrown"
+  }
 }

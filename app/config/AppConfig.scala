@@ -28,8 +28,13 @@ class AppConfig @Inject()(val environment: Environment,
   override protected def mode: Mode = environment.mode
   override protected def runModeConfiguration: Configuration = config
 
+  def appName: String = getString("appName")
+  def appUrl: String = getString("appUrl")
+  def registrationEnabled: Boolean = getBoolean("microservice.services.service-locator.enabled")
+
   def featureSwitch: Option[Configuration] = config.getConfig(s"feature-switch")
   def apiStatus(version: String): String = getString(s"api.$version.status")
   def apiGatewayContext: String = getString("api.gateway.context")
   def saApiUrl: String = baseUrl("self-assessment-api")
+  def serviceLocatorUrl: String = baseUrl("service-locator")
 }

@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package config
+package config.locator
 
-import com.google.inject.AbstractModule
-import config.locator.ServiceLocatorRegistration
+import config.AppConfig
+import javax.inject.{Inject, Singleton}
+import play.api.Logger
+import uk.gov.hmrc.http.HeaderCarrier
 
-class Module extends AbstractModule {
+@Singleton
+class ServiceLocatorRegistration @Inject()(config: AppConfig,
+                                           serviceLocatorConnector: ServiceLocatorConnector) {
 
-  override def configure(): Unit = {
-    bind(classOf[ServiceLocatorRegistration]).asEagerSingleton()
+  if (config.registrationEnabled) {
+    serviceLocatorConnector.register(HeaderCarrier())
+  } else {
+    Logger.warn("Registration in Service Locator is disabled")
   }
 }

@@ -27,9 +27,13 @@ trait MockAppConfig extends Mock { _: Suite =>
   val mockAppConfig = mock[AppConfig]
 
   object MockAppConfig {
+    def appName: OngoingStubbing[String] = when(mockAppConfig.appName)
+    def appUrl: OngoingStubbing[String] = when(mockAppConfig.appUrl)
+    def serviceLocatorUrl: OngoingStubbing[String] = when(mockAppConfig.serviceLocatorUrl)
     def saApiUrl: OngoingStubbing[String] = when(mockAppConfig.saApiUrl)
     def apiStatus(version: String): OngoingStubbing[String] = when(mockAppConfig.apiStatus(any()))
     def featureSwitch: OngoingStubbing[Option[Configuration]] = when(mockAppConfig.featureSwitch)
+    def registrationEnabled: OngoingStubbing[Boolean] = when(mockAppConfig.registrationEnabled)
   }
 
   override protected def beforeEach(): Unit = {

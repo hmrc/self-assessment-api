@@ -14,14 +14,27 @@
  * limitations under the License.
  */
 
-package config
+package mocks.config.locator
 
-import com.google.inject.AbstractModule
-import config.locator.ServiceLocatorRegistration
+import config.locator.ServiceLocatorConnector
+import mocks.Mock
+import org.mockito.stubbing.OngoingStubbing
+import org.scalatest.Suite
 
-class Module extends AbstractModule {
+import scala.concurrent.Future
 
-  override def configure(): Unit = {
-    bind(classOf[ServiceLocatorRegistration]).asEagerSingleton()
+trait MockServiceLocatorConnector extends Mock { _: Suite =>
+
+  val mockServiceLocatorConnector = mock[ServiceLocatorConnector]
+
+  object MockServiceLocatorConnector {
+    def register(): OngoingStubbing[Future[Boolean]] = {
+      when(mockServiceLocatorConnector.register(any()))
+    }
+  }
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockServiceLocatorConnector)
   }
 }

@@ -16,8 +16,11 @@
 
 package mocks
 
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+
+import scala.concurrent.Future
 
 
 trait MockHttp extends Mock { _: Suite =>
@@ -30,8 +33,12 @@ trait MockHttp extends Mock { _: Suite =>
   }
 
   object MockHttp {
-    def GET[T](url: String) = {
+    def GET[T](url: String): OngoingStubbing[Future[T]] = {
       when(mockHttp.GET[T](eqTo(url))(any(), any(), any()))
+    }
+
+    def POST[I, O](url: String, body: I, headers: (String, String)*): OngoingStubbing[Future[O]] = {
+      when(mockHttp.POST[I, O](eqTo(url), eqTo(body), eqTo(headers))(any(), any(), any(), any()))
     }
   }
 }

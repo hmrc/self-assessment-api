@@ -24,6 +24,8 @@ trait FakeApplicationConfig { _: WireMockConfig =>
     "auditing.enabled" -> false,
     "httpHeadersWhitelist" -> Seq("Accept"),
     "internalServiceHostPatterns" -> Seq("localhost"),
+    "appUrl" -> "test-self-assessment-api-router",
+    "microservice.services.service-locator.enabled" -> false,
     "microservice.services.auth.host" -> wiremockHost,
     "microservice.services.auth.port" -> wiremockPort,
     "microservice.services.self-assessment-api.host" -> wiremockHost,
