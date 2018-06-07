@@ -59,12 +59,12 @@ class SelfEmploymentBISSResourceSpec extends ResourceSpec
       NOT_FOUND -> NinoNotFound,
       NOT_FOUND -> TaxYearNotFound,
       NOT_FOUND -> NoSubmissionDataExists,
-      BAD_REQUEST -> SelfEmploymentIDNotFound,
+      NOT_FOUND -> SelfEmploymentIDNotFound,
       INTERNAL_SERVER_ERROR -> ServerError,
       INTERNAL_SERVER_ERROR -> ServiceUnavailable
     ).foreach { case (responseCode, errorCode) =>
 
-      s"return a $responseCode" when {
+      s"return a status ($responseCode)" when {
         s"a ${errorCode.code} error is returned from the connector" in new Setup {
           MockSelfEmploymentBISSConnector.getSummary(nino, taxYear, selfEmploymentId)
             .returns(Future.successful(Left(errorCode)))

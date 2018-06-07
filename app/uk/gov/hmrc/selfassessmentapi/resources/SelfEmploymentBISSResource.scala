@@ -44,9 +44,8 @@ trait SelfEmploymentBISSResource extends BaseResource {
       connector.getSummary(nino, taxYear, id).map{
         case Left(error) => error match {
           case NinoInvalid | TaxYearInvalid => BadRequest(toJson(error))
-          case NinoNotFound | TaxYearNotFound | NoSubmissionDataExists => NotFound(toJson(error))
+          case NinoNotFound | TaxYearNotFound | NoSubmissionDataExists | SelfEmploymentIDNotFound => NotFound(toJson(error))
           case ServerError | Errors.ServiceUnavailable => InternalServerError(toJson(error))
-          case SelfEmploymentIDNotFound => BadRequest(toJson(error))
         }
         case Right(response) => Ok(toJson(response))
       }
