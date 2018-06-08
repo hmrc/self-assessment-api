@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.services
 
+import play.api.Logger
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentBISSConnector
@@ -31,12 +32,15 @@ object SelfEmploymentBISSService extends SelfEmploymentBISSService {
 trait SelfEmploymentBISSService {
 
   val connector: SelfEmploymentBISSConnector
+  val logger: Logger = Logger(this.getClass.getSimpleName)
 
   def getSummary(nino: Nino,
                  taxYear: TaxYear,
                  selfEmploymentId: String)
                 (implicit hc: HeaderCarrier,
                  ec: ExecutionContext): Future[SelfEmploymentBISSOutcome] = {
+
+    logger.debug(s"[SelfEmploymentBISSService][getSummary] Get BISS for NI number: $nino with selfEmploymentId: $selfEmploymentId")
 
     val selfEmploymentPattern = "^X[A-Z0-9]{1}IS[0-9]{11}$"
 

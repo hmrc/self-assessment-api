@@ -40,6 +40,7 @@ trait SelfEmploymentBISSResource extends BaseResource {
   def getSummary(nino: Nino, taxYear: TaxYear, id: String): Action[AnyContent] =
   APIAction(nino, SourceType.SelfEmployments, Some("BISS")).async {
     implicit request =>
+      logger.debug(s"[SelfEmploymentBISSResource][getSummary] Get BISS for NI number : $nino with selfEmploymentId: $id")
       service.getSummary(nino, taxYear, id).map{
         case Left(error) => error match {
           case NinoInvalid | TaxYearInvalid | SelfEmploymentIDInvalid => BadRequest(toJson(error))

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
+import play.api.Logger
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, WSHttp}
@@ -36,8 +37,12 @@ trait SelfEmploymentBISSConnector extends SelfEmploymentBISSHttpParser with Base
 
   val baseUrl: String
   val http: HttpGet
+  val logger: Logger = Logger(this.getClass.getSimpleName)
 
   def getSummary(nino: Nino, taxYear: TaxYear, id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentBISSOutcome] = {
+
+    logger.debug(s"[SelfEmploymentBISSConnector][getSummary] Get BISS for NI number: $nino with selfEmploymentId: $id")
+
     http.GET[SelfEmploymentBISSOutcome](s"$baseUrl/income-store/nino/$nino/self-employments/$id/income-source-summary/${taxYear.toDesTaxYear}")(
       selfEmploymentBISSHttpParser, withDesHeaders(hc), ec)
   }
