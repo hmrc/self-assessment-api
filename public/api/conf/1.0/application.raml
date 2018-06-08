@@ -55,10 +55,6 @@ traits:
           application/json:
             type: types.errorResponse
             examples:
-              failedRequest:
-                description: Invalid POST/PUT request by an agent who is not authorized by client
-                value:
-                  code: INVALID_REQUEST
       403:
         body:
           application/json:
@@ -598,7 +594,7 @@ traits:
               404:
           /income-summary:
              get:
-                displayName:  Get Self Employment Business Income Source Summary (BISS) [test only]
+                displayName:  Get Self-Employment Business Income Source Summary (BISS) [test only]
                 description: Get the summary of self-employment income for a given tax year. This API is not available in production.
                 (annotations.sandboxData): !include scenarios/self-employment-biss.md
                 is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
@@ -652,6 +648,10 @@ traits:
                             description: The given tax year is not found.
                             value:
                               code: TAX_YEAR_NOT_FOUND
+                          selfEmploymentIdNotFound:
+                            description: The given self-employment ID is not found.
+                            value:
+                              code: SELF_EMPLOYMENT_ID_NOT_FOUND
                           noSubmissionData:
                             description: No submission data exists for the accounting period.
                             value:

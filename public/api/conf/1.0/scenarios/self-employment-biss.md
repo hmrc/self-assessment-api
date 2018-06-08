@@ -24,6 +24,18 @@
             <td><p>Simulates the scenario where a resource can not be found for the self employment ID.</p></td>
         </tr>
         <tr>
+             <td><p>NOT_FOUND</p></td>
+             <td><p>Simulates the scenario where the endpoint has indicated that no data can be found.</p></td>
+        </tr>
+        <tr>
+              <td><p>NINO_NOT_FOUND</p></td>
+              <td><p>Simulates the scenario where the endpoint has indicated that no data can be found for the nino.</p></td>
+        </tr>
+        <tr>
+               <td><p>TAX_YEAR_NOT_FOUND</p></td>
+               <td><p>Simulates the scenario where the endpoint has indicated that no data can be found for the tax year.</p></td>
+        </tr>
+        <tr>
             <td><p>AGENT_NOT_SUBSCRIBED</p></td>
             <td><p>Simulate agent subscription check failure.</p></td>
         </tr>
