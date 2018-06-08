@@ -8,7 +8,7 @@ POST /ni/:nino/self-employments   uk.gov.hmrc.selfassessmentapi.resources.SelfEm
 ####################
 #    Self-Employments BISS   #
 ####################
-GET /ni/:nino/self-employments/:id/:taxYear/income-summary  uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentBISSResource.getSummary(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
+GET /ni/:nino/self-employments/:selfEmploymentId/:taxYear/income-summary  uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentBISSResource.getSummary(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear, selfEmploymentId: String)
 
 
 GET /ni/:nino/self-employments/:id   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentsResource.retrieve(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)

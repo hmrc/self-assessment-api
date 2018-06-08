@@ -20,15 +20,14 @@ import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentBISSConnector
-import uk.gov.hmrc.selfassessmentapi.models.Errors.{NinoInvalid, NinoNotFound, NoSubmissionDataExists, SelfEmploymentIDNotFound, ServerError, TaxYearInvalid, TaxYearNotFound}
+import uk.gov.hmrc.selfassessmentapi.models.Errors.{NinoInvalid, NinoNotFound, NoSubmissionDataExists, SelfEmploymentIDInvalid, SelfEmploymentIDNotFound, ServerError, TaxYearInvalid, TaxYearNotFound}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
-import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
+import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, SelfEmploymentBISSService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object SelfEmploymentBISSResource extends SelfEmploymentBISSResource {
-  override val connector: SelfEmploymentBISSConnector = SelfEmploymentBISSConnector
+  override val service: SelfEmploymentBISSService = SelfEmploymentBISSService
   override val appContext = AppContext
   override val authService = AuthorisationService
 }
@@ -36,14 +35,15 @@ object SelfEmploymentBISSResource extends SelfEmploymentBISSResource {
 trait SelfEmploymentBISSResource extends BaseResource {
   val appContext: AppContext
   val authService: AuthorisationService
-  val connector : SelfEmploymentBISSConnector
+  val service : SelfEmploymentBISSService
 
-  def getSummary(nino: Nino, taxYear: TaxYear, id: String): Action[AnyContent] =
+  def getSummary(nino: Nino, taxYear: TaxYear, selfEmploymentId: String): Action[AnyContent] =
   APIAction(nino, SourceType.SelfEmployments, Some("BISS")).async {
     implicit request =>
-      connector.getSummary(nino, taxYear, id).map{
+      logger.debug(s"[SelfEmploymentBISSResource][getSummary] Get BISS for NI number : $nino with selfEmploymentId: $selfEmploymentId")
+      service.getSummary(nino, taxYear, selfEmploymentId).map{
         case Left(error) => error match {
-          case NinoInvalid | TaxYearInvalid => BadRequest(toJson(error))
+          case NinoInvalid | TaxYearInvalid | SelfEmploymentIDInvalid => BadRequest(toJson(error))
           case NinoNotFound | TaxYearNotFound | NoSubmissionDataExists | SelfEmploymentIDNotFound => NotFound(toJson(error))
           case ServerError | Errors.ServiceUnavailable => InternalServerError(toJson(error))
         }

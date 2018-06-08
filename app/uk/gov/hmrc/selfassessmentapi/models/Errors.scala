@@ -114,6 +114,7 @@ object Errors {
   object ServiceUnavailable extends Error("SERVICE_UNAVAILABLE", "The server is currently unavailable", None)
   object NoSubmissionDataExists extends Error("NOT_FOUND", "The remote endpoint has indicated that no data can be found.", None)
   object SelfEmploymentIDNotFound extends Error("SELF_EMPLOYMENT_ID_NOT_FOUND", "The remote endpoint has indicated that no data can be found for the self-employment ID", None)
+  object SelfEmploymentIDInvalid extends Error("SELF_EMPLOYMENT_ID_INVALID", "The provided self-employment ID is invalid", None)
 
   def badRequest(validationErrors: ValidationErrors) = BadRequest(flattenValidationErrors(validationErrors), "Invalid request")
   def badRequest(error: Error) = BadRequest(Seq(error), "Invalid request")

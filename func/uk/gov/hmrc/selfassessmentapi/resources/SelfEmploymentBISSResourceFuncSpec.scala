@@ -5,16 +5,16 @@ import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class SelfEmploymentBISSResourceFuncSpec extends BaseFunctionalSpec {
 
-  val seId = "test-source-id"
+  val selfEmploymentId = "XKIS00000000988"
 
     "getSummary for SE BISS" should {
       "return code 200 for a supplied valid data" in {
         given()
           .userIsSubscribedToMtdFor(nino)
           .clientIsFullyAuthorisedForTheResource
-          .des().SelfEmploymentBISS.getSummary(nino, taxYear, seId)
+          .des().SelfEmploymentBISS.getSummary(nino, taxYear, selfEmploymentId)
           .when()
-          .get(s"/ni/$nino/self-employments/$seId/$taxYear/income-summary")
+          .get(s"/ni/$nino/self-employments/$selfEmploymentId/$taxYear/income-summary")
           .thenAssertThat()
           .statusIs(200)
       }
@@ -23,9 +23,9 @@ class SelfEmploymentBISSResourceFuncSpec extends BaseFunctionalSpec {
         given()
           .userIsSubscribedToMtdFor(nino)
           .clientIsFullyAuthorisedForTheResource
-          .des().SelfEmploymentBISS.getSummaryErrorResponse(nino, taxYear, seId, BAD_REQUEST, DesJsons.Errors.invalidNino)
+          .des().SelfEmploymentBISS.getSummaryErrorResponse(nino, taxYear, selfEmploymentId, BAD_REQUEST, DesJsons.Errors.invalidNino)
           .when()
-          .get(s"/ni/$nino/self-employments/$seId/$taxYear/income-summary")
+          .get(s"/ni/$nino/self-employments/$selfEmploymentId/$taxYear/income-summary")
           .thenAssertThat()
           .statusIs(400)
       }
