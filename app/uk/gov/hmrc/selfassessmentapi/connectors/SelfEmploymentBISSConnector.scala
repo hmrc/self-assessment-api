@@ -39,11 +39,11 @@ trait SelfEmploymentBISSConnector extends SelfEmploymentBISSHttpParser with Base
   val http: HttpGet
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def getSummary(nino: Nino, taxYear: TaxYear, id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentBISSOutcome] = {
+  def getSummary(nino: Nino, taxYear: TaxYear, selfEmploymentId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentBISSOutcome] = {
 
-    logger.debug(s"[SelfEmploymentBISSConnector][getSummary] Get BISS for NI number: $nino with selfEmploymentId: $id")
+    logger.debug(s"[SelfEmploymentBISSConnector][getSummary] Get BISS for NI number: $nino with selfEmploymentId: $selfEmploymentId")
 
-    http.GET[SelfEmploymentBISSOutcome](s"$baseUrl/income-store/nino/$nino/self-employments/$id/income-source-summary/${taxYear.toDesTaxYear}")(
+    http.GET[SelfEmploymentBISSOutcome](s"$baseUrl/income-store/nino/$nino/self-employments/$selfEmploymentId/income-source-summary/${taxYear.toDesTaxYear}")(
       selfEmploymentBISSHttpParser, withDesHeaders(hc), ec)
   }
 }

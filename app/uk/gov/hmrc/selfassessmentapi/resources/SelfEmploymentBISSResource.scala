@@ -37,11 +37,11 @@ trait SelfEmploymentBISSResource extends BaseResource {
   val authService: AuthorisationService
   val service : SelfEmploymentBISSService
 
-  def getSummary(nino: Nino, taxYear: TaxYear, id: String): Action[AnyContent] =
+  def getSummary(nino: Nino, taxYear: TaxYear, selfEmploymentId: String): Action[AnyContent] =
   APIAction(nino, SourceType.SelfEmployments, Some("BISS")).async {
     implicit request =>
-      logger.debug(s"[SelfEmploymentBISSResource][getSummary] Get BISS for NI number : $nino with selfEmploymentId: $id")
-      service.getSummary(nino, taxYear, id).map{
+      logger.debug(s"[SelfEmploymentBISSResource][getSummary] Get BISS for NI number : $nino with selfEmploymentId: $selfEmploymentId")
+      service.getSummary(nino, taxYear, selfEmploymentId).map{
         case Left(error) => error match {
           case NinoInvalid | TaxYearInvalid | SelfEmploymentIDInvalid => BadRequest(toJson(error))
           case NinoNotFound | TaxYearNotFound | NoSubmissionDataExists | SelfEmploymentIDNotFound => NotFound(toJson(error))
