@@ -28,6 +28,7 @@ object AppContext extends AppContext {
 trait AppContext extends ServicesConfig {
   val config: Configuration
 
+  lazy val selfAssessmentContextRoute: String = config.getString(s"$env.contextPrefix").getOrElse("")
   lazy val desEnv: String = config.getString(s"$env.microservice.services.des.env").getOrElse(throw new RuntimeException("desEnv is not configured"))
   lazy val desToken: String = config.getString(s"$env.microservice.services.des.token").getOrElse(throw new RuntimeException("desEnv is not configured"))
   lazy val appName: String = config.getString("appName").getOrElse(throw new RuntimeException("appName is not configured"))
@@ -36,9 +37,7 @@ trait AppContext extends ServicesConfig {
   lazy val apiGatewayRegistrationContext: String = apiGatewayContext.getOrElse(throw new RuntimeException("api.gateway.context is not configured"))
   lazy val apiGatewayLinkContext: String = apiGatewayContext.map(x => if(x.isEmpty) x else s"/$x").getOrElse("")
   lazy val apiStatus: String = config.getString("api.status").getOrElse(throw new RuntimeException("api.status is not configured"))
-  lazy val serviceLocatorUrl: String = baseUrl("service-locator")
   lazy val desUrl: String = baseUrl("des")
-  lazy val registrationEnabled: Boolean = current.configuration.getBoolean(s"$env.microservice.services.service-locator.enabled").getOrElse(true)
   lazy val featureSwitch: Option[Configuration] = config.getConfig(s"$env.feature-switch")
   lazy val auditEnabled: Boolean = config.getBoolean(s"auditing.enabled").getOrElse(true)
   lazy val authEnabled: Boolean = config.getBoolean(s"$env.microservice.services.auth.enabled").getOrElse(true)

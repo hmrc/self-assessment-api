@@ -46,7 +46,7 @@ trait CrystallisationResource extends BaseResource {
       crystallisationConnector.intentToCrystallise(nino, taxYear, getRequestDateTimestamp) map { response =>
         response.filter {
           case 200 =>
-            val contextPrefix = if (AppContext.registrationEnabled) "/self-assessment" else ""
+            val contextPrefix = AppContext.selfAssessmentContextRoute
             val url = response.calculationId.map(id => s"$contextPrefix/ni/$nino/calculations/$id").getOrElse("")
             SeeOther(url).withHeaders(LOCATION -> url)
           case 403 if response.errorCodeIs(REQUIRED_END_OF_PERIOD_STATEMENT) =>
