@@ -1,8 +1,0 @@
-{
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "UK property business",
-  "type": "object",
-  "properties": {
-  },
-  "additionalProperties": false
-}

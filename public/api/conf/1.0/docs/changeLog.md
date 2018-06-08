@@ -1,1 +1,0 @@
-The changelog can be found in API [Github](https://github.com/hmrc/self-assessment-api/blob/master/CHANGELOG.md) repository.

@@ -174,15 +174,8 @@ object HeaderValidatorFilter extends Filter with HeaderValidator with Microservi
   }
 }
 
-trait MicroserviceRegistration extends ServiceLocatorRegistration with ServiceLocatorConfig {
-  override lazy val registrationEnabled: Boolean = AppContext.registrationEnabled
-  override val slConnector: ServiceLocatorConnector = ServiceLocatorConnector(WSHttp)
-  override implicit val hc: HeaderCarrier = HeaderCarrier()
-}
-
 object MicroserviceGlobal
     extends DefaultMicroserviceGlobal
-    with MicroserviceRegistration
     with RunMode
     with RunningOfScheduledJobs {
 

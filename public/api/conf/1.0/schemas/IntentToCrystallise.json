@@ -1,8 +1,0 @@
-{
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Intent to crystallise",
-  "type": "object",
-  "properties": {
-  },
-  "additionalProperties": false
-}

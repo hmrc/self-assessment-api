@@ -1,5 +1,0 @@
-{
-  "code": "INVALID_ACCOUNTING_PERIOD",
-  "message": "The accounting period is invalid, 'start' date must be before 'end' date",
-  "path": "/accountingPeriod"
-}
