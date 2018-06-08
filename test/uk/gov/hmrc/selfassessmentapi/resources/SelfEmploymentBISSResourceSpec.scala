@@ -18,20 +18,20 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.Json.toJson
 import play.api.test.FakeRequest
 import uk.gov.hmrc.selfassessmentapi.fixtures.selfemployment.SelfEmploymentBISSFixture
-import uk.gov.hmrc.selfassessmentapi.mocks.connectors.MockSelfEmploymentBISSConnector
+import uk.gov.hmrc.selfassessmentapi.mocks.services.MockSelfEmploymentBISSService
 import uk.gov.hmrc.selfassessmentapi.models.Errors._
 import uk.gov.hmrc.selfassessmentapi.models.SourceType
 
 import scala.concurrent.Future
 
 class SelfEmploymentBISSResourceSpec extends ResourceSpec
-  with MockSelfEmploymentBISSConnector {
+  with MockSelfEmploymentBISSService {
 
   class Setup {
     val resource = new SelfEmploymentBISSResource {
       override val appContext = mockAppContext
       override val authService = mockAuthorisationService
-      override val connector = mockSelfEmploymentBISSConnector
+      override val service = mockSelfEmploymentBISSService
     }
     mockAPIAction(SourceType.SelfEmployments)
   }
@@ -43,7 +43,7 @@ class SelfEmploymentBISSResourceSpec extends ResourceSpec
   "getSummary" should {
     "return a 200 with a SelfEmploymentBISS response" when {
       "a valid nino and tax year is supplied and DES return a SelfEmploymentBISS response" in new Setup {
-        MockSelfEmploymentBISSConnector.getSummary(nino, taxYear, selfEmploymentId)
+        MockSelfEmploymentBISSService.getSummary(nino, taxYear, selfEmploymentId)
           .returns(Future.successful(Right(selfEmploymentBISS)))
 
         val result = resource.getSummary(nino, taxYear, selfEmploymentId)(FakeRequest())
@@ -56,6 +56,7 @@ class SelfEmploymentBISSResourceSpec extends ResourceSpec
     Seq(
       BAD_REQUEST -> NinoInvalid,
       BAD_REQUEST -> TaxYearInvalid,
+      BAD_REQUEST -> SelfEmploymentIDInvalid,
       NOT_FOUND -> NinoNotFound,
       NOT_FOUND -> TaxYearNotFound,
       NOT_FOUND -> NoSubmissionDataExists,
@@ -66,7 +67,7 @@ class SelfEmploymentBISSResourceSpec extends ResourceSpec
 
       s"return a status ($responseCode)" when {
         s"a ${errorCode.code} error is returned from the connector" in new Setup {
-          MockSelfEmploymentBISSConnector.getSummary(nino, taxYear, selfEmploymentId)
+          MockSelfEmploymentBISSService.getSummary(nino, taxYear, selfEmploymentId)
             .returns(Future.successful(Left(errorCode)))
 
           val result = resource.getSummary(nino, taxYear, selfEmploymentId)(FakeRequest())
