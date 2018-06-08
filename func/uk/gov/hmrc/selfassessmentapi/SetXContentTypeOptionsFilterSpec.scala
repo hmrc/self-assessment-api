@@ -8,15 +8,6 @@ class SetXContentTypeOptionsFilterSpec extends BaseFunctionalSpec {
 
   "SetXContentTypeOptionsFilter  filter should" should {
 
-    "be applied for api definition" in {
-      given()
-        .when()
-        .get("/api/definition")
-        .thenAssertThat()
-        .statusIs(200)
-        .responseContainsHeader(SetXContentTypeOptionsFilter.xContentTypeOptionsHeader, "nosniff".r)
-    }
-
     "be applied when returning an HTTP 201 e.g.: creating a self-employment" in {
       given()
         .userIsSubscribedToMtdFor(nino)

@@ -24,5 +24,4 @@ class DocumentationSpec extends BaseFunctionalSpec {
         .statusIs(404)
     }
   }
-
 }
