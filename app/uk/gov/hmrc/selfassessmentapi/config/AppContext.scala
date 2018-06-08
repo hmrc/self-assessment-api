@@ -28,6 +28,7 @@ object AppContext extends AppContext {
 trait AppContext extends ServicesConfig {
   val config: Configuration
 
+  lazy val selfAssessmentContextRoute: String = config.getString(s"$env.contextPrefix").getOrElse("")
   lazy val desEnv: String = config.getString(s"$env.microservice.services.des.env").getOrElse(throw new RuntimeException("desEnv is not configured"))
   lazy val desToken: String = config.getString(s"$env.microservice.services.des.token").getOrElse(throw new RuntimeException("desEnv is not configured"))
   lazy val appName: String = config.getString("appName").getOrElse(throw new RuntimeException("appName is not configured"))
