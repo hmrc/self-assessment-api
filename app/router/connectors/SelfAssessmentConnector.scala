@@ -18,6 +18,7 @@ package router.connectors
 
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import play.api.libs.json.JsValue
 import play.api.mvc.Request
 import router.httpParsers.SelfAssessmentHttpParser
@@ -34,14 +35,17 @@ class SelfAssessmentConnector @Inject()(val http: HttpClient,
                                         val appConfig: AppConfig) {
 
   def get()(implicit hc: HeaderCarrier, request: Request[_]): Future[SelfAssessmentOutcome] = {
+    Logger.info("[SelfAssessmentConnector] GET headers: " + hc.headers)
     http.GET[SelfAssessmentOutcome](s"${appConfig.saApiUrl}${request.uri}")(httpParser, hc, implicitly)
   }
 
   def post(body: JsValue)(implicit hc: HeaderCarrier, request: Request[_]): Future[SelfAssessmentOutcome] = {
-    http.POST[JsValue, SelfAssessmentOutcome](s"${appConfig.saApiUrl}${request.uri}", body, hc.headers)(implicitly, httpParser, hc, implicitly)
+    Logger.info("[SelfAssessmentConnector] POST headers: " + hc.headers)
+    http.POST[JsValue, SelfAssessmentOutcome](s"${appConfig.saApiUrl}${request.uri}", body)(implicitly, httpParser, hc, implicitly)
   }
 
   def put(body: JsValue)(implicit hc: HeaderCarrier, request: Request[_]): Future[SelfAssessmentOutcome] = {
+    Logger.info("[SelfAssessmentConnector] PUT headers: " + hc.headers)
     http.PUT[JsValue, SelfAssessmentOutcome](s"${appConfig.saApiUrl}${request.uri}", body)(implicitly, httpParser, hc, implicitly)
   }
 }
