@@ -33,7 +33,7 @@ class ServiceLocatorConnector @Inject()(config: AppConfig,
   val metadata: Option[Map[String, String]] = Some(Map("third-party-api" -> "true"))
 
   def register(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val registration = Registration(config.appName, config.appUrl, metadata)
+    val registration = Registration(config.appNameForServiceLocator, config.appUrl, metadata)
     http.POST(s"${config.serviceLocatorUrl}/registration", registration, Seq("Content-Type" -> "application/json")) map {
       _ =>
         Logger.info("Service is registered on the service locator")

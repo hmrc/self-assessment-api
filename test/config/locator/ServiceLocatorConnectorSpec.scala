@@ -23,7 +23,6 @@ import uk.gov.hmrc.api.domain.Registration
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
-import scala.util.control.NoStackTrace
 
 class ServiceLocatorConnectorSpec extends UnitSpec
   with MockAppConfig
@@ -34,7 +33,7 @@ class ServiceLocatorConnectorSpec extends UnitSpec
       config = mockAppConfig,
       http = mockHttp
     )
-    MockAppConfig.appName returns appName
+    MockAppConfig.appNameForServiceLocator returns appName
     MockAppConfig.appUrl returns appUrl
     MockAppConfig.serviceLocatorUrl returns serviceLocatorUrl
   }

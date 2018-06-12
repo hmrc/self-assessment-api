@@ -29,6 +29,7 @@ class AppConfig @Inject()(val environment: Environment,
   override protected def runModeConfiguration: Configuration = config
 
   def appName: String = getString("appName")
+  def appNameForServiceLocator: String = getString("appNameForServiceLocator")
   def appUrl: String = getString("appUrl")
   def registrationEnabled: Boolean = getBoolean("microservice.services.service-locator.enabled")
 
