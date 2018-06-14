@@ -1,4 +1,5 @@
 <p>You can simulate scenarios using Gov-Test-Scenario headers in the sandbox environment.</p>
+<p>You can test this endpoint independently, in the sandbox environment, by using any selfEmploymentId that matches the correct regular expression. (You are not required to generate the selfEmploymentId using a previous endpoint.)<p>
 <table>
     <thead>
         <tr>
