@@ -19,7 +19,7 @@ package router.services
 import mocks.connectors.MockSelfAssessmentConnector
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import router.connectors.BaseConnector
+import router.connectors.SelfAssessmentConnector
 import router.errors.{IncorrectAPIVersion, UnsupportedAPIVersion}
 import support.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -30,8 +30,8 @@ class SelfAssessmentServiceSpec extends UnitSpec
   with MockSelfAssessmentConnector {
 
   class Setup {
-    object Service extends SelfAssessmentServiceT {
-      override def saConnector(version: String): BaseConnector = mockSelfAssessmentConnector
+    object Service extends SelfAssessmentService {
+      override def selfAssessmentConnector: SelfAssessmentConnector = mockSelfAssessmentConnector
     }
   }
 

@@ -21,7 +21,6 @@ import javax.inject.{Inject, Named, Singleton}
 import router.httpParsers.SelfAssessmentHttpParser
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-@Named("self-assessment-1.0")
 @Singleton
 class SelfAssessmentConnector @Inject()(val http: HttpClient,
                                         val httpParser: SelfAssessmentHttpParser,

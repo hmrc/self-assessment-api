@@ -18,6 +18,7 @@ package router.services
 
 import mocks.connectors.{MockSelfAssessmentConnector, MockTaxCalcConnector}
 import play.api.test.FakeRequest
+import router.connectors.SelfAssessmentConnector
 import router.errors.{IncorrectAPIVersion, UnsupportedAPIVersion}
 import support.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -29,8 +30,8 @@ class TaxCalcServiceSpec extends UnitSpec
 
   class Setup {
 
-    object service extends TaxCalcServiceT {
-      override def saConnector(version: String) = mockSelfAssessmentConnector
+    object service extends TaxCalcService {
+      override def selfAssessmentConnector = mockSelfAssessmentConnector
 
       override def taxCalcConnector(version: String) = mockTaxCalcConnector
     }

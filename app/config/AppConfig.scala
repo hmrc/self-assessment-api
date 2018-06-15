@@ -40,6 +40,6 @@ class AppConfig @Inject()(val environment: Environment,
   //Services
   def serviceLocatorUrl: String = baseUrl("service-locator")
   def saApiUrl: String = baseUrl("self-assessment-api")
-  def taxCalcUrl: String = baseUrl("mtd-tax-caluclation")
+  def taxCalcUrl: String = baseUrl("mtd-tax-calculation")
 
 }

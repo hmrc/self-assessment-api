@@ -20,37 +20,35 @@ import javax.inject.{Inject, Provider}
 import play.api.Application
 import play.api.libs.json.JsValue
 import play.api.mvc.Request
-import router.connectors.{BaseConnector, SelfAssessmentConnector}
+import router.connectors.SelfAssessmentConnector
 import router.constants.Versions._
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class SelfAssessmentService @Inject()(app: Provider[Application]) extends SelfAssessmentServiceT {
-  def saConnector(version: String): BaseConnector =
-    app.get.injector.instanceOf(injectedConnector(classOf[SelfAssessmentConnector], s"self-assessment-$version"))
-}
+class SelfAssessmentServiceImpl @Inject()(app: Provider[Application],
+                                          val selfAssessmentConnector: SelfAssessmentConnector) extends SelfAssessmentService
 
-trait SelfAssessmentServiceT extends Service {
+trait SelfAssessmentService extends Service {
 
-  def saConnector(version: String): BaseConnector
+  def selfAssessmentConnector: SelfAssessmentConnector
 
   def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
-      case Some(VERSION_1) => saConnector(VERSION_1).get(s"${req.uri}")
+      case Some(VERSION_1) => selfAssessmentConnector.get(s"${req.uri}")
     }
   }
 
   def post(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
-      case Some(VERSION_1) => saConnector(VERSION_1).post(req.uri, body)
+      case Some(VERSION_1) => selfAssessmentConnector.post(req.uri, body)
     }
   }
 
   def put(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
-      case Some(VERSION_1) => saConnector(VERSION_1).put(req.uri, body)
+      case Some(VERSION_1) => selfAssessmentConnector.put(req.uri, body)
     }
   }
 }

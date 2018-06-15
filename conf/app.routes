@@ -1,5 +1,6 @@
 # microservice specific routes
-GET   /*route                         router.resources.SelfAssessmentResource.get(route)
-POST  /*route                         router.resources.SelfAssessmentResource.post(route)
-PUT   /*route                         router.resources.SelfAssessmentResource.put(route)
+GET   /self-assessment/ni/*nino/calculations/*calculationId         router.resources.TaxCalcResource.get(nino, calculationId)
 
+GET   /*route                                                       router.resources.SelfAssessmentResource.get(route)
+POST  /*route                                                       router.resources.SelfAssessmentResource.post(route)
+PUT   /*route                                                       router.resources.SelfAssessmentResource.put(route)
