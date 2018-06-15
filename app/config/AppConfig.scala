@@ -36,6 +36,10 @@ class AppConfig @Inject()(val environment: Environment,
   def featureSwitch: Option[Configuration] = config.getConfig(s"feature-switch")
   def apiStatus(version: String): String = getString(s"api.$version.status")
   def apiGatewayContext: String = getString("api.gateway.context")
-  def saApiUrl: String = baseUrl("self-assessment-api")
+
+  //Services
   def serviceLocatorUrl: String = baseUrl("service-locator")
+  def saApiUrl: String = baseUrl("self-assessment-api")
+  def taxCalcUrl: String = baseUrl("mtd-tax-caluclation")
+
 }

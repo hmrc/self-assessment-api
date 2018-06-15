@@ -18,10 +18,12 @@ package config
 
 import com.google.inject.AbstractModule
 import config.locator.ServiceLocatorRegistration
+import router.services.{SelfAssessmentService, SelfAssessmentServiceT}
 
 class Module extends AbstractModule {
 
   override def configure(): Unit = {
     bind(classOf[ServiceLocatorRegistration]).asEagerSingleton()
+    bind(classOf[SelfAssessmentServiceT]).to(classOf[SelfAssessmentService])
   }
 }

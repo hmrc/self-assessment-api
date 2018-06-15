@@ -16,53 +16,43 @@
 
 package router.services
 
-import router.constants.Versions._
+import com.google.inject.name.Names
 import javax.inject.Inject
-import play.api.Logger
-import play.api.mvc.Request
-import router.connectors.SelfAssessmentConnector
-import uk.gov.hmrc.http.HeaderCarrier
-import play.api.http.HeaderNames.ACCEPT
+import play.api.Application
+import play.api.inject.{BindingKey, QualifierInstance}
 import play.api.libs.json.JsValue
-import router.errors.{IncorrectAPIVersion, UnsupportedAPIVersion}
+import play.api.mvc.Request
+import router.connectors.{BaseConnector, SelfAssessmentConnector}
+import router.constants.Versions._
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class SelfAssessmentService @Inject()(val connector: SelfAssessmentConnector) {
+class SelfAssessmentService @Inject()(app: Application) extends SelfAssessmentServiceT {
+  def connector(version: String): BaseConnector =
+    app.injector.instanceOf(BindingKey(classOf[SelfAssessmentConnector], Some(QualifierInstance(Names.named(s"self-assessment-$version")))))
+}
+
+trait SelfAssessmentServiceT extends Service {
+
+  def connector(version: String): BaseConnector
 
   def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion{
-      case Some(`1.0`) => connector.get()
+      case Some(`1.0`) => connector(`1.0`).get(req.uri)
     }
   }
 
   def post(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion{
-      case Some(`1.0`) => connector.post(body)
+      case Some(`1.0`) => connector(`1.0`).post(req.uri, body)
     }
   }
 
   def put(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion{
-      case Some(`1.0`) => connector.put(body)
+      case Some(`1.0`) => connector(`1.0`).put(req.uri, body)
     }
-  }
-
-  private[services] def withApiVersion(pf: PartialFunction[Option[String], Future[SelfAssessmentOutcome]])
-                    (implicit hc: HeaderCarrier): Future[SelfAssessmentOutcome] = {
-    pf.orElse[Option[String], Future[SelfAssessmentOutcome]]{
-      case Some(_) =>
-        Logger.info("request header contains an unsupported api version")
-        Future.successful(Left(UnsupportedAPIVersion))
-      case None =>
-        Logger.info("request header contains an incorrect or empty api version")
-        Future.successful(Left(IncorrectAPIVersion))
-    }(getAPIVersionFromRequest)
-  }
-
-  private[services] def getAPIVersionFromRequest(implicit hc: HeaderCarrier): Option[String] = {
-    val versionRegex = """application\/vnd.hmrc.(\d.\d)\+json""".r
-    hc.headers.collectFirst{ case (ACCEPT, versionRegex(ver)) => ver }
   }
 }

@@ -17,31 +17,14 @@
 package router.connectors
 
 import config.AppConfig
-import javax.inject.{Inject, Singleton}
-import play.api.libs.json.JsValue
-import play.api.mvc.Request
+import javax.inject.{Inject, Named, Singleton}
 import router.httpParsers.SelfAssessmentHttpParser
-import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
-import scala.concurrent.Future
-
+@Named("self-assessment-1.0")
 @Singleton
-class SelfAssessmentConnector @Inject()(val http: HttpClient,
-                                        val httpParser: SelfAssessmentHttpParser,
-                                        val appConfig: AppConfig) {
-
-  def get()(implicit hc: HeaderCarrier, request: Request[_]): Future[SelfAssessmentOutcome] = {
-    http.GET[SelfAssessmentOutcome](s"${appConfig.saApiUrl}${request.uri}")(httpParser, hc, implicitly)
-  }
-
-  def post(body: JsValue)(implicit hc: HeaderCarrier, request: Request[_]): Future[SelfAssessmentOutcome] = {
-    http.POST[JsValue, SelfAssessmentOutcome](s"${appConfig.saApiUrl}${request.uri}", body)(implicitly, httpParser, hc, implicitly)
-  }
-
-  def put(body: JsValue)(implicit hc: HeaderCarrier, request: Request[_]): Future[SelfAssessmentOutcome] = {
-    http.PUT[JsValue, SelfAssessmentOutcome](s"${appConfig.saApiUrl}${request.uri}", body)(implicitly, httpParser, hc, implicitly)
-  }
+class SelfAssessmentConnector @Inject()(httpClient: HttpClient,
+                                        httpParser: SelfAssessmentHttpParser,
+                                        appConfig: AppConfig) extends BaseConnector(httpClient, httpParser, appConfig) {
+  override val serviceUrl: String = appConfig.saApiUrl
 }

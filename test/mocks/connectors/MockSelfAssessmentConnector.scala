@@ -30,16 +30,16 @@ trait MockSelfAssessmentConnector extends Mock { _: Suite =>
   val mockSelfAssessmentConnector = mock[SelfAssessmentConnector]
 
   object MockSelfAssessmentConnector {
-    def get(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSelfAssessmentConnector.get()(any(), any()))
+    def get(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockSelfAssessmentConnector.get(eqTo(uri))(any(), any()))
     }
 
-    def post(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSelfAssessmentConnector.post(eqTo(body))(any(), any()))
+    def post(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockSelfAssessmentConnector.post(eqTo(uri), eqTo(body))(any(), any()))
     }
 
-    def put(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSelfAssessmentConnector.put(eqTo(body))(any(), any()))
+    def put(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockSelfAssessmentConnector.put(eqTo(uri), eqTo(body))(any(), any()))
     }
   }
 

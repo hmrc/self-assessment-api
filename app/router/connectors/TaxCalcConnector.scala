@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-package router.constants
+package router.connectors
 
-object Versions {
-  val `1.0` = "1.0"
-  val `2.0` = "2.0"
+import config.AppConfig
+import javax.inject.{Inject, Named, Singleton}
+import router.httpParsers.SelfAssessmentHttpParser
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
+
+
+@Named("tax-calc-v2")
+@Singleton
+class TaxCalcConnector @Inject()(httpClient: HttpClient,
+                                 httpParser: SelfAssessmentHttpParser,
+                                 appConfig: AppConfig) extends BaseConnector(httpClient, httpParser, appConfig) {
+  override val serviceUrl: String = appConfig.taxCalcUrl
 }
