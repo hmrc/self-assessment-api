@@ -16,10 +16,8 @@
 
 package router.services
 
-import com.google.inject.name.Names
-import javax.inject.Inject
+import javax.inject.{Inject, Provider}
 import play.api.Application
-import play.api.inject.{BindingKey, QualifierInstance}
 import play.api.libs.json.JsValue
 import play.api.mvc.Request
 import router.connectors.{BaseConnector, SelfAssessmentConnector}
@@ -29,30 +27,30 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class SelfAssessmentService @Inject()(app: Application) extends SelfAssessmentServiceT {
-  def connector(version: String): BaseConnector =
-    app.injector.instanceOf(BindingKey(classOf[SelfAssessmentConnector], Some(QualifierInstance(Names.named(s"self-assessment-$version")))))
+class SelfAssessmentService @Inject()(app: Provider[Application]) extends SelfAssessmentServiceT {
+  def saConnector(version: String): BaseConnector =
+    app.get.injector.instanceOf(injectedConnector(classOf[SelfAssessmentConnector], s"self-assessment-$version"))
 }
 
 trait SelfAssessmentServiceT extends Service {
 
-  def connector(version: String): BaseConnector
+  def saConnector(version: String): BaseConnector
 
   def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
-    withApiVersion{
-      case Some(`1.0`) => connector(`1.0`).get(req.uri)
+    withApiVersion {
+      case Some(VERSION_1) => saConnector(VERSION_1).get(s"${req.uri}")
     }
   }
 
   def post(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
-    withApiVersion{
-      case Some(`1.0`) => connector(`1.0`).post(req.uri, body)
+    withApiVersion {
+      case Some(VERSION_1) => saConnector(VERSION_1).post(req.uri, body)
     }
   }
 
   def put(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
-    withApiVersion{
-      case Some(`1.0`) => connector(`1.0`).put(req.uri, body)
+    withApiVersion {
+      case Some(VERSION_1) => saConnector(VERSION_1).put(req.uri, body)
     }
   }
 }

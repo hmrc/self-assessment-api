@@ -14,25 +14,28 @@
  * limitations under the License.
  */
 
-package router.services
+package mocks.connectors
 
-import javax.inject.Inject
-import play.api.mvc.Request
-import router.connectors.{SelfAssessmentConnector, TaxCalcConnector}
-import router.constants.Versions._
+import mocks.Mock
+import org.mockito.stubbing.OngoingStubbing
+import org.scalatest.Suite
+import router.connectors.TaxCalcConnector
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class TaxCalcService @Inject()(
-                              ) extends Service {
+trait MockTaxCalcConnector extends Mock { _: Suite =>
 
-//  def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
-//    withApiVersion{
-//      case Some(`1.0`) => saConnector.get(req.uri)
-//      //Any other supported versions
-//      case Some(version) => taxCalcConnector.get(s"$version/${req.uri}")
-//    }
-//  }
+  val mockTaxCalcConnector = mock[TaxCalcConnector]
+
+  object MockTaxCalcConnector {
+    def get(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockTaxCalcConnector.get(eqTo(uri))(any(), any()))
+    }
+  }
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockTaxCalcConnector)
+  }
 }

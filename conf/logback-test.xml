@@ -42,10 +42,15 @@
       <appender-ref ref="STDOUT"/>
     </appender>
 
+
     <root level="OFF">
         <appender-ref ref="ASYNC_FILE"/>
         <appender-ref ref="ASYNC_STDOUT"/>
     </root>
 
-    <logger name="application" level="DEBUG"/>
+
+    <logger name="application" level="WARN"/>
+    <logger name="akka" level="WARN"/>
+    <logger name="org.eclipse.jetty" level="ERROR"/>
+
 </configuration>

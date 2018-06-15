@@ -31,7 +31,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
 
   class Setup {
     object Service extends SelfAssessmentServiceT {
-      override def connector(version: String): BaseConnector = mockSelfAssessmentConnector
+      override def saConnector(version: String): BaseConnector = mockSelfAssessmentConnector
     }
   }
 

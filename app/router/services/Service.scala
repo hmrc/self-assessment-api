@@ -16,8 +16,11 @@
 
 package router.services
 
+import com.google.inject.name.Names
 import play.api.Logger
 import play.api.http.HeaderNames.ACCEPT
+import play.api.inject.{BindingKey, QualifierInstance}
+import router.connectors.BaseConnector
 import router.errors.{IncorrectAPIVersion, UnsupportedAPIVersion}
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
@@ -25,6 +28,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.Future
 
 trait Service {
+
+  private[services] def injectedConnector(connector: Class[_ <: BaseConnector], name: String) =
+    BindingKey(connector, Some(QualifierInstance(Names.named(name))))
 
   private[services] def withApiVersion(pf: PartialFunction[Option[String], Future[SelfAssessmentOutcome]])
                                       (implicit hc: HeaderCarrier): Future[SelfAssessmentOutcome] = {

@@ -23,8 +23,8 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 @Named("self-assessment-1.0")
 @Singleton
-class SelfAssessmentConnector @Inject()(httpClient: HttpClient,
-                                        httpParser: SelfAssessmentHttpParser,
-                                        appConfig: AppConfig) extends BaseConnector(httpClient, httpParser, appConfig) {
+class SelfAssessmentConnector @Inject()(val http: HttpClient,
+                                        val httpParser: SelfAssessmentHttpParser,
+                                        val appConfig: AppConfig) extends BaseConnector {
   override val serviceUrl: String = appConfig.saApiUrl
 }

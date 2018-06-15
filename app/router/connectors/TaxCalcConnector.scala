@@ -21,11 +21,10 @@ import javax.inject.{Inject, Named, Singleton}
 import router.httpParsers.SelfAssessmentHttpParser
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-
-@Named("tax-calc-v2")
+@Named("tax-calc-2.0")
 @Singleton
-class TaxCalcConnector @Inject()(httpClient: HttpClient,
-                                 httpParser: SelfAssessmentHttpParser,
-                                 appConfig: AppConfig) extends BaseConnector(httpClient, httpParser, appConfig) {
+class TaxCalcConnector @Inject()(val http: HttpClient,
+                                 val httpParser: SelfAssessmentHttpParser,
+                                 val appConfig: AppConfig) extends BaseConnector {
   override val serviceUrl: String = appConfig.taxCalcUrl
 }

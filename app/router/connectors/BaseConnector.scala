@@ -28,9 +28,11 @@ import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
 import scala.concurrent.Future
 
-abstract class BaseConnector(http: HttpClient,
-                             httpParser: SelfAssessmentHttpParser,
-                             appConfig: AppConfig) {
+trait BaseConnector {
+
+  val http: HttpClient
+  val httpParser: SelfAssessmentHttpParser
+  val appConfig: AppConfig
 
   val serviceUrl: String
 

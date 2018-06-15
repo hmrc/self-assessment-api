@@ -23,6 +23,11 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(scoverageSettings: _*)
   .settings(publishingSettings: _*)
+  .settings(
+    Keys.fork in Test := true,
+    javaOptions in Test += "-Dlogger.resource=logback-test.xml",
+    scalaVersion := "2.11.11"
+  )
   .configs(itTest)
   .settings(inConfig(itTest)(Defaults.testSettings))
   .settings(
