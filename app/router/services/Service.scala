@@ -16,41 +16,24 @@
 
 package router.services
 
-import router.constants.Versions._
-import javax.inject.Inject
+import com.google.inject.name.Names
 import play.api.Logger
-import play.api.mvc.Request
-import router.connectors.SelfAssessmentConnector
-import uk.gov.hmrc.http.HeaderCarrier
 import play.api.http.HeaderNames.ACCEPT
-import play.api.libs.json.JsValue
+import play.api.inject.{BindingKey, QualifierInstance}
+import router.connectors.BaseConnector
 import router.errors.{IncorrectAPIVersion, UnsupportedAPIVersion}
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class SelfAssessmentService @Inject()(val connector: SelfAssessmentConnector) {
+trait Service {
 
-  def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
-    withApiVersion{
-      case Some(`1.0`) => connector.get()
-    }
-  }
-
-  def post(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
-    withApiVersion{
-      case Some(`1.0`) => connector.post(body)
-    }
-  }
-
-  def put(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
-    withApiVersion{
-      case Some(`1.0`) => connector.put(body)
-    }
-  }
+  private[services] def injectedConnector(connector: Class[_ <: BaseConnector], name: String) =
+    BindingKey(connector, Some(QualifierInstance(Names.named(name))))
 
   private[services] def withApiVersion(pf: PartialFunction[Option[String], Future[SelfAssessmentOutcome]])
-                    (implicit hc: HeaderCarrier): Future[SelfAssessmentOutcome] = {
+                                      (implicit hc: HeaderCarrier): Future[SelfAssessmentOutcome] = {
     pf.orElse[Option[String], Future[SelfAssessmentOutcome]]{
       case Some(_) =>
         Logger.info("request header contains an unsupported api version")

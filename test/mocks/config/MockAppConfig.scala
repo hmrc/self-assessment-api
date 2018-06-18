@@ -30,11 +30,13 @@ trait MockAppConfig extends Mock { _: Suite =>
     def appName: OngoingStubbing[String] = when(mockAppConfig.appName)
     def appNameForServiceLocator: OngoingStubbing[String] = when(mockAppConfig.appNameForServiceLocator)
     def appUrl: OngoingStubbing[String] = when(mockAppConfig.appUrl)
-    def serviceLocatorUrl: OngoingStubbing[String] = when(mockAppConfig.serviceLocatorUrl)
-    def saApiUrl: OngoingStubbing[String] = when(mockAppConfig.saApiUrl)
     def apiStatus(version: String): OngoingStubbing[String] = when(mockAppConfig.apiStatus(any()))
     def featureSwitch: OngoingStubbing[Option[Configuration]] = when(mockAppConfig.featureSwitch)
     def registrationEnabled: OngoingStubbing[Boolean] = when(mockAppConfig.registrationEnabled)
+
+    def serviceLocatorUrl: OngoingStubbing[String] = when(mockAppConfig.serviceLocatorUrl)
+    def saApiUrl: OngoingStubbing[String] = when(mockAppConfig.saApiUrl)
+    def taxCalcUrl: OngoingStubbing[String] = when(mockAppConfig.taxCalcUrl)
   }
 
   override protected def beforeEach(): Unit = {

@@ -14,37 +14,28 @@
  * limitations under the License.
  */
 
-package mocks.connectors
+package mocks.services
 
 import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
-import play.api.libs.json.JsValue
-import router.connectors.SelfAssessmentConnector
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
+import router.services.TaxCalcService
 
 import scala.concurrent.Future
 
-trait MockSelfAssessmentConnector extends Mock { _: Suite =>
+trait MockTaxCalcService extends Mock { _: Suite =>
 
-  val mockSelfAssessmentConnector = mock[SelfAssessmentConnector]
+  val mockTaxCalcService = mock[TaxCalcService]
 
-  object MockSelfAssessmentConnector {
-    def get(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSelfAssessmentConnector.get(eqTo(uri))(any(), any()))
-    }
-
-    def post(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSelfAssessmentConnector.post(eqTo(uri), eqTo(body))(any(), any()))
-    }
-
-    def put(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSelfAssessmentConnector.put(eqTo(uri), eqTo(body))(any(), any()))
+  object MockTaxCalcService {
+    def get(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockTaxCalcService.get()(any(), any()))
     }
   }
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockSelfAssessmentConnector)
+    reset(mockTaxCalcService)
   }
 }

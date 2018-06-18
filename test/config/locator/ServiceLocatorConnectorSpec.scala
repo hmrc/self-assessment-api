@@ -57,7 +57,7 @@ class ServiceLocatorConnectorSpec extends UnitSpec
     }
 
     "return false" when {
-      "when an exception is returned from the HttpClient" in new Setup {
+      "an exception is returned from the HttpClient" in new Setup {
         MockHttp.POST[Registration, HttpResponse](url, body, CONTENT_TYPE -> JSON)
           .returns(Future.failed(testException))
 

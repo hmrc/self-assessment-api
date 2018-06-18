@@ -57,26 +57,4 @@ class SelfAssessmentResource @Inject()(service: SelfAssessmentService,
         }
       }
   }
-
-  private def buildResponse(apiResponse: HttpResponse): Result = {
-    Try(apiResponse.json) match {
-      case Success(_: JsValue) =>
-        new Status(apiResponse.status)(apiResponse.json)
-        .withHeaders(toSimpleHeaders(apiResponse.allHeaders):_*)
-      case _ =>
-        new Status(apiResponse.status)
-          .withHeaders(toSimpleHeaders(apiResponse.allHeaders): _*)
-    }
-  }
-
-  private def buildErrorResponse(error: SelfAssessmentAPIError): Result = {
-    error match {
-      case IncorrectAPIVersion => NotAcceptable(ErrorCode.invalidAcceptHeader.asJson)
-      case UnsupportedAPIVersion => NotFound(ErrorCode.notFound.asJson)
-    }
-  }
-
-  private def toSimpleHeaders(headers: Map[String, Seq[String]]): Seq[(String, String)] = {
-    headers.flatMap{ case (name, values) => values.map(name -> _)}.toSeq
-  }
 }

@@ -16,7 +16,36 @@
 
 package router.resources
 
+import play.api.libs.json.JsValue
+import play.api.mvc.Result
 import router.auth.AuthorisedActions
+import router.errors.{ErrorCode, IncorrectAPIVersion, SelfAssessmentAPIError, UnsupportedAPIVersion}
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
-trait BaseResource extends BaseController with AuthorisedActions
+import scala.util.{Success, Try}
+
+trait BaseResource extends BaseController with AuthorisedActions {
+
+  private[resources] def buildResponse(apiResponse: HttpResponse): Result = {
+    Try(apiResponse.json) match {
+      case Success(_: JsValue) =>
+        new Status(apiResponse.status)(apiResponse.json)
+          .withHeaders(toSimpleHeaders(apiResponse.allHeaders):_*)
+      case _ =>
+        new Status(apiResponse.status)
+          .withHeaders(toSimpleHeaders(apiResponse.allHeaders): _*)
+    }
+  }
+
+  private[resources] def buildErrorResponse(error: SelfAssessmentAPIError): Result = {
+    error match {
+      case IncorrectAPIVersion => NotAcceptable(ErrorCode.invalidAcceptHeader.asJson)
+      case UnsupportedAPIVersion => NotFound(ErrorCode.notFound.asJson)
+    }
+  }
+
+  private def toSimpleHeaders(headers: Map[String, Seq[String]]): Seq[(String, String)] = {
+    headers.flatMap{ case (name, values) => values.map(name -> _)}.toSeq
+  }
+}

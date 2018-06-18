@@ -17,5 +17,6 @@
 package router.constants
 
 object Versions {
-  val `1.0` = "1.0"
+  val VERSION_1 = "1.0"
+  val VERSION_2 = "2.0"
 }

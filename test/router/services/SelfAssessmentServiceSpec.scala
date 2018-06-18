@@ -19,6 +19,7 @@ package router.services
 import mocks.connectors.MockSelfAssessmentConnector
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import router.connectors.SelfAssessmentConnector
 import router.errors.{IncorrectAPIVersion, UnsupportedAPIVersion}
 import support.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -29,9 +30,9 @@ class SelfAssessmentServiceSpec extends UnitSpec
   with MockSelfAssessmentConnector {
 
   class Setup {
-    val service = new SelfAssessmentService(
-      connector = mockSelfAssessmentConnector
-    )
+    object Service extends SelfAssessmentService {
+      override def selfAssessmentConnector: SelfAssessmentConnector = mockSelfAssessmentConnector
+    }
   }
 
   implicit val request = FakeRequest()
@@ -42,10 +43,10 @@ class SelfAssessmentServiceSpec extends UnitSpec
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
         val response = HttpResponse(200)
 
-        MockSelfAssessmentConnector.get()
+        MockSelfAssessmentConnector.get(request.uri)
           .returns(Future.successful(Right(response)))
 
-        val result = await(service.get())
+        val result = await(Service.get())
         result shouldBe Right(response)
       }
     }
@@ -54,7 +55,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
       "the Accept header contains an unsupported API version" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.5.0+json"))
 
-        val result = await(service.get())
+        val result = await(Service.get())
         result shouldBe Left(UnsupportedAPIVersion)
       }
     }
@@ -63,7 +64,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
       "the Accept header contains an incorrect value" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "incorrect value"))
 
-        val result = await(service.get())
+        val result = await(Service.get())
         result shouldBe Left(IncorrectAPIVersion)
       }
     }
@@ -78,10 +79,10 @@ class SelfAssessmentServiceSpec extends UnitSpec
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
         val response = HttpResponse(200)
 
-        MockSelfAssessmentConnector.post(requestBody)
+        MockSelfAssessmentConnector.post(request.uri, requestBody)
           .returns(Future.successful(Right(response)))
 
-        val result = await(service.post(requestBody))
+        val result = await(Service.post(requestBody))
         result shouldBe Right(response)
       }
     }
@@ -90,7 +91,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
       "the Accept header contains an unsupported API version" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.5.0+json"))
 
-        val result = await(service.post(requestBody))
+        val result = await(Service.post(requestBody))
         result shouldBe Left(UnsupportedAPIVersion)
       }
     }
@@ -99,7 +100,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
       "the Accept header contains an incorrect value" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "incorrect value"))
 
-        val result = await(service.post(requestBody))
+        val result = await(Service.post(requestBody))
         result shouldBe Left(IncorrectAPIVersion)
       }
     }
@@ -114,10 +115,10 @@ class SelfAssessmentServiceSpec extends UnitSpec
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
         val response = HttpResponse(200)
 
-        MockSelfAssessmentConnector.put(requestBody)
+        MockSelfAssessmentConnector.put(request.uri, requestBody)
           .returns(Future.successful(Right(response)))
 
-        val result = await(service.put(requestBody))
+        val result = await(Service.put(requestBody))
         result shouldBe Right(response)
       }
     }
@@ -126,7 +127,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
       "the Accept header contains an unsupported API version" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.5.0+json"))
 
-        val result = await(service.put(requestBody))
+        val result = await(Service.put(requestBody))
         result shouldBe Left(UnsupportedAPIVersion)
       }
     }
@@ -135,7 +136,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
       "the Accept header contains an incorrect value" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "incorrect value"))
 
-        val result = await(service.put(requestBody))
+        val result = await(Service.put(requestBody))
         result shouldBe Left(IncorrectAPIVersion)
       }
     }
@@ -152,7 +153,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
       "extract and return the version number from the Accept header" when {
         s"the Accept header contains a value of $headerValue" in new Setup {
           val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> headerValue))
-          service.getAPIVersionFromRequest(hc) shouldBe Some(version)
+          Service.getAPIVersionFromRequest(hc) shouldBe Some(version)
         }
       }
     }
@@ -169,7 +170,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
       "return a None" when {
         s"the Accept header contains an incorrect value of $headerValue" in new Setup {
           val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> headerValue))
-          service.getAPIVersionFromRequest(hc) shouldBe None
+          Service.getAPIVersionFromRequest(hc) shouldBe None
         }
       }
     }

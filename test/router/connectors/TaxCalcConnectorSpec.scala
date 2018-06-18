@@ -28,22 +28,22 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class SelfAssessmentConnectorSpec extends UnitSpec
+class TaxCalcConnectorSpec extends UnitSpec
   with MockHttp
   with MockAppConfig
   with MockSelfAssessmentHttpParser {
 
   class Setup {
-    object TestConnector extends SelfAssessmentConnector(
+    object TestConnector extends TaxCalcConnector(
       mockHttp,
       mockSelfAssessmentHttpParser,
       mockAppConfig
     )
-    MockAppConfig.saApiUrl returns saApiUrl
+    MockAppConfig.taxCalcUrl returns taxCalcUrl
   }
 
-  lazy val saApiUrl = "test-sa-api-url"
-  val path = "/test-path"
+  lazy val taxCalcUrl = "test-sa-api-url"
+  val path = "/2.0/test-path"
 
   "get" should {
     "return a HttpResponse" when {
@@ -52,7 +52,7 @@ class SelfAssessmentConnectorSpec extends UnitSpec
         val response  = HttpResponse(Status.OK, Some(Json.obj()))
 
         MockSelfAssessmentHttpParser.read.returns(Right(response))
-        MockHttp.GET[SelfAssessmentOutcome](s"$saApiUrl$path").returns(Future.successful(Right(response)))
+        MockHttp.GET[SelfAssessmentOutcome](s"$taxCalcUrl$path").returns(Future.successful(Right(response)))
         await(TestConnector.get(path)(hc, request)) shouldBe Right(response)
       }
     }
