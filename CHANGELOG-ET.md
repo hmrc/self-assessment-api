@@ -1,4 +1,4 @@
-## [0.162.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.160.0) 14-Jun-2018
+## [0.162.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.162.0) 14-Jun-2018
 * NEW API to retrieve Self-Employment Business Income Sources summary (BISS)
 
 ## [0.160.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.160.0) 22-May-2018
