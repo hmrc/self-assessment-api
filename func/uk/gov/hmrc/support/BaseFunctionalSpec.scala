@@ -1676,6 +1676,7 @@ trait BaseFunctionalSpec extends TestApplication {
                 rentIncome = 200.00,
                 premiumsOfLeaseGrant = Some(200.00),
                 reversePremiums = Some(200.00),
+                otherIncome = Some(200.00),
                 premisesRunningCosts = Some(200.00),
                 repairsAndMaintenance = Some(200.00),
                 financialCosts = Some(200.00),
