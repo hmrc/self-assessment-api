@@ -96,7 +96,8 @@ object Other {
 
   case class Incomes(rentIncome: Option[Income] = None,
                      premiumsOfLeaseGrant: Option[BigDecimal] = None,
-                     reversePremiums: Option[BigDecimal] = None)
+                     reversePremiums: Option[BigDecimal] = None,
+                     otherIncome: Option[BigDecimal] = None)
 
   object Incomes {
     implicit val format: OFormat[Incomes] = Json.format[Incomes]
@@ -104,7 +105,8 @@ object Other {
     def from(o: properties.Other.Incomes): Incomes =
       Incomes(rentIncome = o.rentIncome.map(Income.fromIncome),
               premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(_.amount),
-              reversePremiums = o.reversePremiums.map(_.amount))
+              reversePremiums = o.reversePremiums.map(_.amount),
+              otherIncome = o.otherIncome.map(_.amount))
   }
 
   case class Deductions(premisesRunningCosts: Option[BigDecimal] = None,

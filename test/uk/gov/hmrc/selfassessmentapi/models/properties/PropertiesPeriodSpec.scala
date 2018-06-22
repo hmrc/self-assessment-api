@@ -217,7 +217,8 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         rentIncome <- Gen.option(genIncome)
         premiumsOfLeaseGrant <- Gen.option(genIncome)
         reversePremiums <- Gen.option(genIncome)
-      } yield Other.Incomes(rentIncome, premiumsOfLeaseGrant, reversePremiums)
+        otherIncome <- Gen.option(genIncome)
+      } yield Other.Incomes(rentIncome, premiumsOfLeaseGrant, reversePremiums, otherIncome)
 
     val genExpense: Gen[Other.Expense] = for (amount <- amount) yield Other.Expense(amount)
 
