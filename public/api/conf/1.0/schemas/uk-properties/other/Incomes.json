@@ -6,7 +6,7 @@
   "properties": {
     "rentIncome": {
       "title": "rentIncome",
-      "description": "Total rents and other income from property",
+      "description": "Total property rental income",
       "$ref": "../../Income.json"
     },
     "premiumsOfLeaseGrant": {
@@ -17,6 +17,11 @@
     "reversePremiums": {
       "title": "Reverse premiums",
       "description": "Reverse premiums and inducements",
+      "$ref": "../../SimpleIncome.json"
+    },
+    "otherPropertyIncome": {
+      "title": "otherPropertyIncome",
+      "description": "Other income from property, such as rent charges and ground rents, income from letting others tip waste on your land, and income for the use of a caravan or houseboat at a fixed location.",
       "$ref": "../../SimpleIncome.json"
     }
   },
