@@ -5,7 +5,8 @@
       "taxDeducted": 100.25
     },
     "premiumsOfLeaseGrant": { "amount": 100.25 },
-    "reversePremiums": { "amount": 100.25 }
+    "reversePremiums": { "amount": 100.25 },
+    "otherPropertyIncome": {"amount": 100.25}
   },
   "expenses": {
     "premisesRunningCosts": { "amount": 100.25 },
