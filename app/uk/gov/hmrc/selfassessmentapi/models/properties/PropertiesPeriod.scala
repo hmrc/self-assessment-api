@@ -252,12 +252,12 @@ object Other {
   case class Incomes(rentIncome: Option[Income] = None,
                      premiumsOfLeaseGrant: Option[Income] = None,
                      reversePremiums: Option[Income] = None,
-                     otherIncome: Option[Income] = None) {
+                     otherPropertyIncome: Option[Income] = None) {
     def hasIncomes: Boolean =
       rentIncome.isDefined ||
         premiumsOfLeaseGrant.isDefined ||
         reversePremiums.isDefined ||
-        otherIncome.isDefined
+        otherPropertyIncome.isDefined
   }
 
   object Incomes {
@@ -270,7 +270,7 @@ object Other {
         rentIncome = o.rentIncome.map(income => Income(amount = income.amount, taxDeducted = income.taxDeducted)),
         premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(Income(_, None)),
         reversePremiums = o.reversePremiums.map(Income(_, None)),
-        otherIncome = o.otherIncome.map(Income(_, None))
+        otherPropertyIncome = o.otherPropertyIncome.map(Income(_, None))
       )
   }
 

@@ -482,7 +482,7 @@ object DesJsons {
                 rentIncomeTaxDeducted: Option[BigDecimal] = Some(0),
                 premiumsOfLeaseGrant: Option[BigDecimal] = Some(0),
                 reversePremiums: Option[BigDecimal] = Some(0),
-                otherIncome: Option[BigDecimal] = Some(0),
+                otherPropertyIncome: Option[BigDecimal] = Some(0),
                 premisesRunningCosts: Option[BigDecimal] = Some(0),
                 repairsAndMaintenance: Option[BigDecimal] = Some(0),
                 financialCosts: Option[BigDecimal] = Some(0),
@@ -501,7 +501,7 @@ object DesJsons {
                 incomes = Some(Other.Incomes(rentIncome = Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
                   premiumsOfLeaseGrant = premiumsOfLeaseGrant,
                   reversePremiums = reversePremiums,
-                  otherIncome = otherIncome)),
+                  otherPropertyIncome = otherPropertyIncome)),
                 deductions = Some(Other.Deductions(
                   premisesRunningCosts = premisesRunningCosts,
                   repairsAndMaintenance = repairsAndMaintenance,

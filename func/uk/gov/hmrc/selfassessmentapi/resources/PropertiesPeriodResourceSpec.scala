@@ -742,7 +742,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         rentIncomeTaxDeducted = 250.55,
         premiumsOfLeaseGrant = Some(200.22),
         reversePremiums = 22.35,
-        otherIncome = Some(13.10)
+        otherPropertyIncome = Some(13.10)
       )
     case PropertyType.OTHER if onlyConsolidated =>
       Jsons.Properties.consolidationPeriod(
@@ -752,7 +752,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         rentIncomeTaxDeducted = 250.55,
         premiumsOfLeaseGrant = Some(200.22),
         reversePremiums = 22.35,
-        otherIncome = Some(13.10),
+        otherPropertyIncome = Some(13.10),
         consolidatedExpenses = Some(100.55)
       )
     case PropertyType.OTHER if onlyResidential =>
@@ -763,7 +763,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         rentIncomeTaxDeducted = 250.55,
         premiumsOfLeaseGrant = Some(200.22),
         reversePremiums = 22.35,
-        otherIncome = Some(13.10),
+        otherPropertyIncome = Some(13.10),
         residentialFinancialCost = Some(100.55)
       )
     case PropertyType.OTHER if overConsolidatedExpenses =>
@@ -774,7 +774,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         rentIncomeTaxDeducted = 250.55,
         premiumsOfLeaseGrant = Some(200.22),
         reversePremiums = 22.35,
-        otherIncome = Some(13.10),
+        otherPropertyIncome = Some(13.10),
         consolidatedExpenses = Some(99999999999999.50)
       )
     case PropertyType.OTHER =>
@@ -785,7 +785,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         rentIncomeTaxDeducted = 250.55,
         premiumsOfLeaseGrant = Some(200.22),
         reversePremiums = 22.35,
-        otherIncome = Some(13.10),
+        otherPropertyIncome = Some(13.10),
         premisesRunningCosts = Some(100.50),
         repairsAndMaintenance = Some(100.50),
         financialCosts = Some(100),
@@ -849,7 +849,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           rentIncome = 200.00,
           premiumsOfLeaseGrant = Some(200),
           reversePremiums = 200,
-          otherIncome = Some(200),
+          otherPropertyIncome = Some(200),
           premisesRunningCosts = Some(200),
           repairsAndMaintenance = Some(200),
           financialCosts = Some(200),
