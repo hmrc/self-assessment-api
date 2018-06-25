@@ -1,3 +1,6 @@
+## [0.163.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.163.0) 25-Jun-2018
+* Include Other Property Income in non-FHL Periodic endpoints
+
 ## [0.162.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.162.0) 14-Jun-2018
 * NEW API to retrieve Self-Employment Business Income Sources summary (BISS)
 
