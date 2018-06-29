@@ -1,0 +1,28 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Period",
+    "properties": {
+        "from": {
+            "title": "From date",
+            "description": "Start date for the period",
+            "$ref": "FullDate.json"
+        },
+        "to": {
+            "title": "To date",
+            "description": "End date for the period",
+            "$ref": "FullDate.json"
+        },
+        "incomes": {
+            "$ref": "uk-properties/other/Incomes.json"
+        },
+        "expenses": {
+            "$ref": "uk-properties/other/OtherExpenses.json"
+        }
+    },
+    "required": [
+        "from",
+        "to"
+    ],
+    "additionalProperties": false
+}

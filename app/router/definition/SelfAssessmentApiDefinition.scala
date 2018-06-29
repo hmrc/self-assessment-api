@@ -20,16 +20,13 @@ import config.{AppConfig, FeatureSwitch}
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import router.definition.APIStatus.APIStatus
+import router.constants.Versions._
 
 @Singleton
 class SelfAssessmentApiDefinition @Inject()(appConfig: AppConfig) {
 
   private val readScope = "read:self-assessment"
   private val writeScope = "write:self-assessment"
-
-  object Version extends Enumeration {
-    val `1.0` = Value("1.0")
-  }
 
   lazy val definition: Definition =
     Definition(
@@ -51,17 +48,22 @@ class SelfAssessmentApiDefinition @Inject()(appConfig: AppConfig) {
         context = appConfig.apiGatewayContext,
         versions = Seq(
           APIVersion(
-            version = Version.`1.0`.toString,
+            version = VERSION_1,
             access = buildWhiteListingAccess(),
-            status = buildAPIStatus(Version.`1.0`),
-            endpointsEnabled = true)
+            status = buildAPIStatus(VERSION_1),
+            endpointsEnabled = true),
+          APIVersion(
+            version = VERSION_2,
+            access = buildWhiteListingAccess(),
+            status = buildAPIStatus(VERSION_2),
+            endpointsEnabled = false)
         ),
         requiresTrust = None
       )
     )
 
-  private[definition] def buildAPIStatus(version: Version.Value): APIStatus = {
-    appConfig.apiStatus(version.toString) match {
+  private[definition] def buildAPIStatus(version: String): APIStatus = {
+    appConfig.apiStatus(version) match {
       case "ALPHA" => APIStatus.ALPHA
       case "BETA" => APIStatus.BETA
       case "STABLE" => APIStatus.STABLE

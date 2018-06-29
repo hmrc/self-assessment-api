@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "class4-exemption-code",
+  "description": "Indicates the status of the obligation",
+  "oneOf": [
+    { "enum": ["Open"], "description": "The obligation is open or has not been fulfilled"},
+    { "enum": ["Fulfilled"], "description": "The obligation has been Fulfilled"}
+  ],
+  "example": "Open"
+}

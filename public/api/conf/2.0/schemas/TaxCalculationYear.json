@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "RequestCalculation",
+  "type": "object",
+  "properties": {
+    "taxYear": {
+      "title": "Tax Year",
+      "description": "Tax year the calculation is requested for",
+      "$ref": "tax-year.json"
+    }
+  },
+  "required": [
+    "taxYear"
+  ],
+  "additionalProperties": false
+}

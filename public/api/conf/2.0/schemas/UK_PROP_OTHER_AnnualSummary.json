@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Annual summary",
+  "type": "object",
+  "properties": {
+    "adjustments": {
+      "$ref": "uk-properties/other/Adjustments.json"
+    },
+    "allowances": {
+      "$ref": "uk-properties/other/Allowances.json"
+    }
+  },
+  "additionalProperties": false
+}

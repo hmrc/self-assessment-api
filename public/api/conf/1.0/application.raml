@@ -22,8 +22,8 @@ documentation:
     content: !include docs/terminology.md
   - title: Changelog
     content: !include docs/changeLog.md
-  - title: Technical support
-    content: !include docs/technicalSupport.md
+  - title: Support
+    content: !include docs/support.md
   - title: Testing
     content: !include docs/testing.md
   - title: Versioning
@@ -215,7 +215,7 @@ traits:
         uriParameters:
           selfEmploymentId:
             displayName: Self-employment ID
-            description: An identifier for the self-employment business, unique to the customer.<p>Must conform to the regular expression <code class="code--slim">^X[A-Z0-9]{1}IS[0-9]{11}$</code><p>
+            description: An identifier for the self-employment business, unique to the customer.<p>Must conform to the regular expression `^X[A-Z0-9]{1}IS[0-9]{11}$`<p>
             type: string
         get:
           displayName: Get a self-employment business
@@ -1888,7 +1888,6 @@ traits:
                 application/json:
                   type: !include schemas/TaxCalculation.json
                   example: !include examples/calculation/TaxCalculation.json
-            204:
             404:
             400:
               body:

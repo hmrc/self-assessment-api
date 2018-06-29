@@ -1,0 +1,1 @@
+This is the final step of the crystallisation process which allows a taxpayer to crystallise for a tax year by agreeing to the HMRC's tax calculation. This API is not available in production.

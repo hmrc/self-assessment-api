@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Period",
+    "properties": {
+        "id": {
+            "title": "ID",
+            "description": "Unique period identifier for the income source",
+            "type": "string"
+        },
+        "from": {
+            "title": "From date",
+            "description": "Start date for the period",
+            "$ref": "FullDate.json"
+        },
+        "to": {
+            "title": "To date",
+            "description": "End date for the period",
+            "$ref": "FullDate.json"
+        },
+        "incomes": {
+            "$ref": "uk-properties/fhl/Incomes.json"
+        },
+        "expenses": {
+            "$ref": "uk-properties/fhl/FHLExpenses.json"
+        }
+    },
+    "required": [
+        "from",
+        "to"
+    ],
+    "additionalProperties": false
+}

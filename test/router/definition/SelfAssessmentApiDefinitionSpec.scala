@@ -20,6 +20,7 @@ import mocks.config.MockAppConfig
 import play.api.Configuration
 import router.definition.APIStatus.APIStatus
 import support.UnitSpec
+import router.constants.Versions._
 
 class SelfAssessmentApiDefinitionSpec extends UnitSpec
   with MockAppConfig {
@@ -42,7 +43,7 @@ class SelfAssessmentApiDefinitionSpec extends UnitSpec
         MockAppConfig.apiStatus("1.0")
           .returns(input)
 
-        val apiStatus: APIStatus = saApiDefinition.buildAPIStatus(saApiDefinition.Version.`1.0`)
+        val apiStatus: APIStatus = saApiDefinition.buildAPIStatus(VERSION_1)
         apiStatus shouldBe output
       }
     }

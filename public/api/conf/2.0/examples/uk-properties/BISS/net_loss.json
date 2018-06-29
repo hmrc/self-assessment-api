@@ -1,0 +1,16 @@
+{
+  "total": {
+    "income": 50.00,
+    "expenses": 100.00,
+    "additions": 60.00,
+    "deductions": 5.00
+  },
+  "profit": {
+    "net": 0.00,
+    "taxable": 5.00
+  },
+  "loss": {
+    "net": 50.00,
+    "taxable": 0.00
+  }
+}

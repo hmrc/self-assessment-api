@@ -1,0 +1,20 @@
+{
+  "incomes": {
+    "rentIncome": {
+      "amount": 100.25,
+      "taxDeducted": 100.25
+    },
+    "premiumsOfLeaseGrant": { "amount": 100.25 },
+    "reversePremiums": { "amount": 100.25 },
+    "otherPropertyIncome": {"amount": 100.25}
+  },
+  "expenses": {
+    "premisesRunningCosts": { "amount": 100.25 },
+    "repairsAndMaintenance": { "amount": 100.25 },
+    "financialCosts": { "amount": 100.25 },
+    "professionalFees": { "amount": 100.25 },
+    "costOfServices": { "amount": 100.25 },
+    "residentialFinancialCost": { "amount": 200.25 },
+    "other": { "amount": 100.25 }
+  }
+}

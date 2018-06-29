@@ -1,0 +1,16 @@
+{
+  "code": "INVALID_REQUEST",
+  "message": "Invalid request",
+  "errors": [
+    {
+      "code": "INVALID_MONETARY_AMOUNT",
+      "message": "taxedUkInterest should be non-negative number up to 2 decimal values",
+      "path": "/taxedUkInterest"
+    },
+    {
+      "code": "INVALID_MONETARY_AMOUNT",
+      "message": "untaxedUkInterest should be non-negative number up to 2 decimal values",
+      "path": "/untaxedUkInterest"
+    }
+  ]
+}

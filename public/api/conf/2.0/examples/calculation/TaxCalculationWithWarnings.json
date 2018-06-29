@@ -1,0 +1,82 @@
+{
+  "year": "2018-19",
+  "intentToCrystallise": true,
+  "crystallised": true,
+  "validationMessageCount": 0,
+  "incomeTaxAndNicYTD": 765.39,
+  "nationalRegime": "Scotland",
+  "taxableIncome": {
+    "selfEmployments": {
+      "totalIncome": 5197.01,
+      "selfEmployment": [
+        {
+          "selfEmploymentId": "XKIS00000000988",
+          "taxableIncome": 521.94,
+          "finalised": true,
+          "losses": 1460.21
+        }
+      ]
+    },
+    "totalIncomeReceived": 5197.00,
+    "allowancesAndDeductions": {
+      "totalAllowancesAndDeductions": 2923.02
+    },
+    "totalTaxableIncome": 2242
+  },
+  "incomeTax": {
+    "taxableIncome": 20142.00,
+    "payPensionsProfit": {
+      "totalAmount": 238.71,
+      "band": [
+        {
+          "name": "BRT",
+          "rate": 20.00,
+          "threshold": 40000,
+          "apportionedThreshold": 20000,
+          "income": 2242.12,
+          "amount": 448.40
+        }
+      ],
+      "personalAllowanceUsed": 2955,
+      "taxableIncome": 5197
+    },
+    "totalBeforeReliefs": 498.40,
+    "allowancesAndReliefs": {
+      "propertyFinanceRelief": 1235.00,
+      "totalAllowancesAndReliefs": 90.12
+    },
+    "totalAfterReliefs": 135.23,
+    "giftAid": {
+      "paymentsMade": 504.25,
+      "rate": 40.00,
+      "taxableAmount": 50.22
+    },
+    "totalAfterGiftAid": 19304.28,
+    "totalIncomeTax": 24469.42
+  },
+  "eoyEstimate": {
+    "selfEmployments": [
+      {
+        "selfEmploymentId": "XKIS00000000988",
+        "taxableIncome": 11615.42,
+        "supplied": true,
+        "finalised": true
+      }
+    ],
+    "totalTaxableIncome": 31615.02,
+    "incomeTaxAmount": 3953
+  },
+  "calculationMessageCount": 1,
+  "calculationMessages": [
+    {
+      "type": "warning",
+      "text": "This is an example warning message."
+    }
+  ],
+  "annualAllowances": {
+    "personalAllowance": 11850.00,
+    "personalAllowanceThreshold": 12000,
+    "reducedPersonalAllowance": 100000,
+    "giftAidExtender": 540
+  }
+}

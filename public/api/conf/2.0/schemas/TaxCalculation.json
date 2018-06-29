@@ -1,0 +1,1017 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "year": {
+      "title": "Year",
+      "description": "The tax year to which the calculation relates. Must be tax year 2016-17 or later.",
+      "type": "string",
+      "example": "2018-19",
+      "pattern": "^[2-9][0-9]{3}-[0-9]{2}$"
+    },
+    "intentToCrystallise": {
+      "title": "Intent To Crystallise",
+      "description": "Shows if this calculation is provided with the intent to crystallise.",
+      "type": "boolean",
+      "example": "false"
+    },
+    "crystallised": {
+      "title": "Crystallised",
+      "description": "Shows if the calculation has been performed on the crystallised position.",
+      "type": "boolean",
+      "example": "false"
+    },
+    "validationMessageCount": {
+      "title": "Validation Message Count",
+      "description": "The quantity of validation messages encountered during the calculation.",
+      "type": "number",
+      "example": "1",
+      "minimum": 0
+    },
+    "incomeTaxAndNicYTD": {
+      "title": "Income Tax And Nic YTD",
+      "description": "The Income Tax and National Insurance contributions due, based on year-to-date figures. The value must be between -99999999999999.98 and 99999999999999.98.",
+      "type": "number",
+      "example": "1000.25",
+      "minimum": -99999999999999.98,
+      "maximum": 99999999999999.98
+    },
+    "nationalRegime": {
+      "title": "National Regime",
+      "description": "Defines which national tax rates and rules to apply to the calculation. Must be one of: UK, Scotland",
+      "type": "string",
+      "example": "UK"
+    },
+    "taxableIncome": {
+      "type": "object",
+      "properties": {
+        "employments": {
+          "type": "object",
+          "properties": {
+            "totalIncome": {
+              "title": "Total Income",
+              "description": "The total income from all employments. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "totalPay": {
+              "title": "Total Pay",
+              "description": "The total net pay from all employments. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "totalBenefitsAndExpenses": {
+              "title": "Total Benefits And Expenses",
+              "description": "The total benefits and expenses from all employments. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "totalAllowableExpenses": {
+              "title": "Total Allowable Expenses",
+              "description": "The total allowable expenses from all employments. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "employment": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "employmentId": {
+                    "title": "Employment ID",
+                    "description": "The identifier of the employment.",
+                    "type": "string",
+                    "example": "XKIS00000000968",
+                    "pattern": "^[A-Za-z0-9]{15}$"
+                  },
+                  "netPay": {
+                    "title": "Net Pay",
+                    "description": "The year-to-date net pay for this employment. The value must be between 0 and 99999999999999.98.",
+                    "type": "number",
+                    "example": "1000.25",
+                    "minimum": 0,
+                    "maximum": 99999999999999.98
+                  },
+                  "benefitsAndExpenses": {
+                    "title": "Benefits And Expenses",
+                    "description": "The benefits and expenses relating to this employment. The value must be between 0 and 99999999999999.98.",
+                    "type": "number",
+                    "example": "1000.25",
+                    "minimum": 0,
+                    "maximum": 99999999999999.98
+                  },
+                  "allowableExpenses": {
+                    "title": "Allowable Expenses",
+                    "default": "The allowable expenses relating to this employment. The value must be between 0 and 99999999999999.98.",
+                    "type": "number",
+                    "example": "1000.25",
+                    "minimum": 0,
+                    "maximum": 99999999999999.98
+                  }
+                }
+              }
+            }
+          }
+        },
+        "selfEmployments": {
+          "type": "object",
+          "properties": {
+            "totalIncome": {
+              "title": "Total Income",
+              "description": "The total income from all self-employments. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "selfEmployment": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "selfEmploymentId": {
+                    "title": "Self-Employment ID",
+                    "description": "An identifier for the self-employment business, unique to the customer.",
+                    "type": "string",
+                    "example": "XKIS00000000988",
+                    "pattern": "^[A-Za-z0-9]{15}$"
+                  },
+                  "taxableIncome": {
+                    "title": "Taxable Income",
+                    "description": "The taxable income from this self-employment business. The value must be between 0 and 99999999999999.98.",
+                    "type": "number",
+                    "example": "1000.25",
+                    "minimum": 0,
+                    "maximum": 99999999999999.98
+                  },
+                  "finalised": {
+                    "title": "Finalised",
+                    "description": "Shows whether this self-employment income has been finalised.",
+                    "type": "boolean",
+                    "example": "false"
+                  },
+                  "losses": {
+                    "title": "Losses",
+                    "description": "Any loss from this self-employment. The value must be between 0 and 99999999999999.98.",
+                    "type": "number",
+                    "example": "1000.25",
+                    "minimum": 0,
+                    "maximum": 99999999999999.98
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ukProperty": {
+          "type": "object",
+          "properties": {
+            "totalIncome": {
+              "title": "Total Income",
+              "description": "The total income from all UK property. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "nonFurnishedHolidayLettingsTaxableProfit": {
+              "title": "Non-Furnished Holiday Lettings Taxable Profit",
+              "description": "Taxable profit from UK non-furnished holiday lettings. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "nonFurnishedHolidayLettingsLoss": {
+              "title": "Non-Furnished Holiday Lettings Taxable Loss",
+              "description": "Loss from UK non-furnished holiday lettings. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "furnishedHolidayLettingsTaxableProfit": {
+              "title": "Furnished Holiday Lettings Taxable Profit",
+              "description": "Taxable profit from UK furnished holiday lettings. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "furnishedHolidayLettingsLoss": {
+              "title": "Furnished Holiday Lettings Taxable Loss",
+              "description": "Loss from UK furnished holiday lettings. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "finalised": {
+              "title": "Finalised",
+              "description": "Shows whether the self-employment income has been finalised.",
+              "type": "boolean",
+              "example": "false"
+            }
+          }
+        },
+        "ukDividends": {
+          "type": "object",
+          "properties": {
+            "totalIncome": {
+              "title": "Total Income",
+              "description": "The total income from all UK dividends. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            }
+          }
+        },
+        "totalIncomeReceived": {
+          "type": "number",
+          "title": "Total Income Received",
+          "description": "The total income received for the tax year. The value must be between 0 and 99999999999999.98.",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        },
+        "allowancesAndDeductions": {
+          "type": "object",
+          "properties": {
+            "totalAllowancesAndDeductions": {
+              "title": "Total Allowances And Deductions",
+              "description": "The total of all allowances and deductions. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "giftOfInvestmentsAndPropertyToCharity": {
+              "title": "Gift Of Investments And Property To Charity",
+              "description": "Investments and/or property gifts made to charity. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "apportionedPersonalAllowance": {
+              "title": "Apportioned Personal Allowance",
+              "description": "The amount of the annual personal allowance that has been apportioned. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            }
+          }
+        },
+        "totalTaxableIncome": {
+          "type": "number",
+          "title": "Total Taxable Income",
+          "description": "The total taxable income (income less allowances and deductions). The value must be between 0 and 99999999999999.98.",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        }
+      }
+    },
+    "incomeTax": {
+      "type": "object",
+      "properties": {
+        "taxableIncome": {
+          "title": "Taxable Income",
+          "description": "The total income subject to Income Tax calculation. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        },
+        "payPensionsProfit": {
+          "type": "object",
+          "properties": {
+            "totalAmount": {
+              "title": "Total Amount",
+              "description": "The total amount of income tax associated with pay and pensions. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "band": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "title": "Name",
+                    "description": "The name of the tax band. Must be one of: ART, BRT, HRT, SRT, ZRT",
+                    "type": "string",
+                    "example": "BRT"
+                  },
+                  "rate": {
+                    "title": "Rate",
+                    "description": "The rate associated with the tax band. The value must be between 0 and 99.99.",
+                    "type": "number",
+                    "example": "10.25",
+                    "minimum": 0,
+                    "maximum": 99.99
+                  },
+                  "threshold": {
+                    "title": "Threshold",
+                    "description": "The upper threshold for the tax band. The value must be between 0 and 99999999999999.",
+                    "type": "number",
+                    "example": "1025",
+                    "minimum": 0,
+                    "maximum": 99999999999999
+                  },
+                  "apportionedThreshold": {
+                    "title": "Apportioned Threshold",
+                    "description": "The amount of the upper threshold that has been apportioned. The value must be between 0 and 99999999999999.",
+                    "type": "number",
+                    "example": "1025",
+                    "minimum": 0,
+                    "maximum": 99999999999999
+                  },
+                  "income": {
+                    "title": "Income",
+                    "description": "The amount of taxable income for the tax band. The value must be between 0 and 99999999999999.98.",
+                    "type": "number",
+                    "example": "1000.25",
+                    "minimum": 0,
+                    "maximum": 99999999999999.98
+                  },
+                  "amount": {
+                    "title": "Amount",
+                    "description": "The calculated amount of Income Tax for the tax band. The value must be between 0 and 99999999999999.98.",
+                    "type": "number",
+                    "example": "1000.25",
+                    "minimum": 0,
+                    "maximum": 99999999999999.98
+                  }
+                }
+              }
+            },
+            "personalAllowanceUsed": {
+              "title": "Personal Allowance Used",
+              "description": "The amount of the apportioned annual personal allowance that has been offset against pay and pensions. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "taxableIncome": {
+              "title": "Taxable Income",
+              "description": "The taxable income associated with pay and pensions. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            }
+          }
+        },
+        "savingsAndGains": {
+          "type": "object",
+          "properties": {
+            "totalAmount": {
+              "title": "Total Amount",
+              "description": "The total amount of Income Tax associated with savings and gains. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "band": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "title": "Name",
+                    "description": "The name of the tax band. Must be one of: ART, BRT, HRT, SRT, ZRT",
+                    "type": "string",
+                    "example": "BRT"
+                  },
+                  "rate": {
+                    "title": "Rate",
+                    "description": "The rate associated with the tax band. The value must be between 0 and 99.99.",
+                    "type": "number",
+                    "example": "10.25",
+                    "minimum": 0,
+                    "maximum": 99.99
+                  },
+                  "threshold": {
+                    "title": "Threshold",
+                    "description": "The upper threshold for the tax band. The value must be between 0 and 99999999999999.",
+                    "type": "number",
+                    "example": "1025",
+                    "minimum": 0,
+                    "maximum": 99999999999999
+                  },
+                  "apportionedThreshold": {
+                    "title": "Apportioned Threshold",
+                    "description": "The amount of the upper threshold that has been apportioned. The value must be between 0 and 99999999999999.",
+                    "type": "number",
+                    "example": "1025",
+                    "minimum": 0,
+                    "maximum": 99999999999999
+                  },
+                  "income": {
+                    "title": "Income",
+                    "description": "The amount of taxable income for the tax band. The value must be between 0 and 99999999999999.98.",
+                    "type": "number",
+                    "example": "1000.25",
+                    "minimum": 0,
+                    "maximum": 99999999999999.98
+                  },
+                  "amount": {
+                    "title": "Amount",
+                    "description": "The calculated amount of Income Tax for the tax band. The value must be between 0 and 99999999999999.98.",
+                    "type": "number",
+                    "example": "1000.25",
+                    "minimum": 0,
+                    "maximum": 99999999999999.98
+                  }
+                }
+              }
+            },
+            "personalAllowanceUsed": {
+              "title": "Personal Allowance Used",
+              "description": "The amount of the apportioned annual personal allowance that has been offset against savings and gains. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "taxableIncome": {
+              "title": "Taxable Income",
+              "description": "The taxable income associated with savings and gains. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            }
+          }
+        },
+        "dividends": {
+          "type": "object",
+          "properties": {
+            "totalAmount": {
+              "title": "Total Amount",
+              "description": "The total amount of Income Tax associated with dividends. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "band": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "title": "Name",
+                    "description": "The name of the tax band. Must be one of: ART, BRT, HRT, SRT, ZRT",
+                    "type": "string",
+                    "example": "BRT"
+                  },
+                  "rate": {
+                    "title": "Rate",
+                    "description": "The rate associated with the tax band. The value must be between 0 and 99.99.",
+                    "type": "number",
+                    "example": "10.25",
+                    "minimum": 0,
+                    "maximum": 99.99
+                  },
+                  "threshold": {
+                    "title": "Threshold",
+                    "description": "The upper threshold for the tax band. The value must be between 0 and 99999999999999.",
+                    "type": "number",
+                    "example": "1025",
+                    "minimum": 0,
+                    "maximum": 99999999999999
+                  },
+                  "apportionedThreshold": {
+                    "title": "Apportioned Threshold",
+                    "description": "The amount of the upper threshold that has been apportioned. The value must be between 0 and 99999999999999.",
+                    "type": "number",
+                    "example": "1025",
+                    "minimum": 0,
+                    "maximum": 99999999999999
+                  },
+                  "income": {
+                    "title": "Income",
+                    "description": "The amount of taxable income for the tax band. The value must be between 0 and 99999999999999.98.",
+                    "type": "number",
+                    "example": "1000.25",
+                    "minimum": 0,
+                    "maximum": 99999999999999.98
+                  },
+                  "amount": {
+                    "title": "Amount",
+                    "description": "The calculated amount of Income Tax for the tax band. The value must be between 0 and 99999999999999.98.",
+                    "type": "number",
+                    "example": "1000.25",
+                    "minimum": 0,
+                    "maximum": 99999999999999.98
+                  }
+                }
+              }
+            },
+            "personalAllowanceUsed": {
+              "title": "Personal Allowance Used",
+              "description": "The amount of the apportioned annual personal allowance that has been offset against dividends. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "taxableIncome": {
+              "title": "Taxable Income",
+              "description": "The taxable income associated with dividends. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            }
+          }
+        },
+        "totalBeforeReliefs": {
+          "title": "Total Before Reliefs",
+          "description": "The total Income Tax before allowances and reliefs. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        },
+        "allowancesAndReliefs": {
+          "type": "object",
+          "properties": {
+            "propertyFinanceRelief": {
+              "title": "Property Finance Relief",
+              "description": "The relief against property finance costs. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "totalAllowancesAndReliefs": {
+              "title": "Total Allowances And Reliefs",
+              "description": "The total amount of allowances and reliefs. The value must be between -99999999999999.98 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": -99999999999999.98,
+              "maximum": 99999999999999.98
+            }
+          }
+        },
+        "totalAfterReliefs": {
+          "title": "Total After Reliefs",
+          "description": "The total Income Tax after allowances and reliefs. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        },
+        "giftAid": {
+          "type": "object",
+          "properties": {
+            "paymentsMade": {
+              "title": "Payments Made",
+              "description": "The total amount of Gift Aid payments made for the tax year. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "rate": {
+              "title": "Rate",
+              "description": "The basic rate of tax that applies to Gift Aid. The value must be between 0 and 99.99.",
+              "type": "number",
+              "example": "10.25",
+              "minimum": 0,
+              "maximum": 99.99
+            },
+            "taxableAmount": {
+              "title": "Taxable Amount",
+              "description": "The taxable amount of the Gift Aid payments made. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            }
+          }
+        },
+        "totalAfterGiftAid": {
+          "title": "Total After Gift Aid",
+          "description": "The total Income Tax after Gift Aid. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        },
+        "totalIncomeTax": {
+          "title": "Total Income Tax",
+          "description": "The total calculated Income Tax after allowances and reliefs. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        }
+      }
+    },
+    "nic": {
+      "type": "object",
+      "properties": {
+        "totalNic": {
+          "title": "Total NIC",
+          "description": "The calculated amount of National Insurance contributions. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        },
+        "class2": {
+          "type": "object",
+          "properties": {
+            "amount": {
+              "title": "Amount",
+              "description": "The calculated amount of Class 2 National Insurance contributions. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "weekRate": {
+              "title": "Week Rate",
+              "description": "The weekly rate for Class 2 National Insurance contributions. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "weeks": {
+              "title": "Weeks",
+              "description": "The number of weeks applied to the calculation.",
+              "type": "number",
+              "example": "1"
+            },
+            "limit": {
+              "title": "Limit",
+              "description": "The annual limit of Class 2 National Insurance contributions. The value must be between 0 and 99999999999999.",
+              "type": "number",
+              "example": "1025",
+              "minimum": 0,
+              "maximum": 99999999999999
+            },
+            "apportionedLimit": {
+              "title": "Apportioned Limit",
+              "description": "The apportioned amount of annual Class 2 National Insurance contributions. The value must be between 0 and 99999999999999.",
+              "type": "number",
+              "example": "1025",
+              "minimum": 0,
+              "maximum": 99999999999999
+            }
+          }
+        },
+        "class4": {
+          "type": "object",
+          "properties": {
+            "totalAmount": {
+              "title": "Total Amount",
+              "description": "The calculated amount of Class 4 National Insurance contributions. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "band": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "title": "Name",
+                    "description": "The name of the tax band. Must be one of: BRT, HRT, ZRT",
+                    "type": "string",
+                    "example": "BRT"
+                  },
+                  "rate": {
+                    "title": "Rate",
+                    "description": "The rate associated with the tax band. The value must be between 0 and 99.99.",
+                    "type": "number",
+                    "example": "10.25",
+                    "minimum": 0,
+                    "maximum": 99.99
+                  },
+                  "threshold": {
+                    "title": "Threshold",
+                    "description": "The upper threshold for the tax band. The value must be between 0 and 99999999999999.",
+                    "type": "number",
+                    "example": "1025",
+                    "minimum": 0,
+                    "maximum": 99999999999999
+                  },
+                  "apportionedThreshold": {
+                    "title": "Apportioned Threshold",
+                    "description": "The amount of the upper threshold that has been apportioned. The value must be between 0 and 99999999999999.",
+                    "type": "number",
+                    "example": "1025",
+                    "minimum": 0,
+                    "maximum": 99999999999999
+                  },
+                  "income": {
+                    "title": "Income",
+                    "description": "The amount of taxable income for the tax band. The value must be between 0 and 99999999999999.98.",
+                    "type": "number",
+                    "example": "1000.25",
+                    "minimum": 0,
+                    "maximum": 99999999999999.98
+                  },
+                  "amount": {
+                    "title": "Amount",
+                    "description": "The calculated amount of Income Tax for the tax band. The value must be between 0 and 99999999999999.98.",
+                    "type": "number",
+                    "example": "1000.25",
+                    "minimum": 0,
+                    "maximum": 99999999999999.98
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "totalBeforeTaxDeducted": {
+      "title": "Total Before Tax Deducted",
+      "description": "The subtotal of Income Tax and National Insurance before tax is deducted. The value must be between 0 and 99999999999999.98.",
+      "type": "number",
+      "example": "1000.25",
+      "minimum": 0,
+      "maximum": 99999999999999.98
+    },
+    "taxDeducted": {
+      "type": "object",
+      "properties": {
+        "ukLandAndProperty": {
+          "title": "UK Land And Property",
+          "description": "Tax that has been deducted for UK land and property. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        },
+        "totalTaxDeducted": {
+          "title": "Total Tax Deducted",
+          "description": "The total amount of Income Tax and National Insurance that has been deducted. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        }
+      }
+    },
+    "eoyEstimate": {
+      "type": "object",
+      "properties": {
+        "employments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "employmentId": {
+                "title": "Employment ID",
+                "description": "The identifier of the employment.",
+                "type": "string",
+                "example": "XKIS00000000988",
+                "pattern": "^[A-Za-z0-9]{15}$"
+              },
+              "taxableIncome": {
+                "title": "Taxable Income",
+                "description": "The estimated taxable income from this employment. The value must be between 0 and 99999999999999.98.",
+                "type": "number",
+                "example": "1000.25",
+                "minimum": 0,
+                "maximum": 99999999999999.98
+              },
+              "supplied": {
+                "title": "Supplied",
+                "description": "Shows whether the employment income has been supplied or calculated. If true, the employment income has been supplied. If false, the employment income has been calculated.",
+                "type": "boolean",
+                "example": "false"
+              },
+              "finalised": {
+                "title": "Finalised",
+                "description": "Shows whether the employment income has been finalised.",
+                "type": "boolean",
+                "example": "false"
+              }
+            }
+          }
+        },
+        "selfEmployments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "selfEmploymentId": {
+                "title": "Self-Employment ID",
+                "description": "An identifier for the self-employment business, unique to the customer.",
+                "type": "string",
+                "example": "XKIS00000000988",
+                "pattern": "^[A-Za-z0-9]{15}$"
+              },
+              "taxableIncome": {
+                "title": "Taxable Income",
+                "description": "The estimated taxable income from this self-employment. The value must be between 0 and 99999999999999.98.",
+                "type": "number",
+                "example": "1000.25",
+                "minimum": 0,
+                "maximum": 99999999999999.98
+              },
+              "supplied": {
+                "title": "Supplied",
+                "description": "Shows whether this self-employment income has been supplied or calculated. If true, the self-employment income has been supplied. If false, the self-employment income has been calculated.",
+                "type": "boolean",
+                "example": "false"
+              },
+              "finalised": {
+                "title": "Finalised",
+                "description": "Shows whether this self-employment income has been finalised.",
+                "type": "boolean",
+                "example": "false"
+              }
+            }
+          }
+        },
+        "ukProperty": {
+          "type": "object",
+          "properties": {
+            "taxableIncome": {
+              "title": "Taxable Income",
+              "description": "The estimated taxable income from UK property. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "supplied": {
+              "title": "Supplied",
+              "description": "Shows whether the UK property income has been supplied or calculated. If true, UK property income has been supplied. If false, the UK property income has been calculated.",
+              "type": "boolean",
+              "example": "false"
+            },
+            "finalised": {
+              "title": "Finalised",
+              "description": "Shows whether the UK property income has been finalised.",
+              "type": "boolean",
+              "example": "false"
+            }
+          }
+        },
+        "ukDividends": {
+          "type": "object",
+          "properties": {
+            "taxableIncome": {
+              "title": "Taxable Income",
+              "description": "The estimated taxable income from UK dividends. The value must be between 0 and 99999999999999.98.",
+              "type": "number",
+              "example": "1000.25",
+              "minimum": 0,
+              "maximum": 99999999999999.98
+            },
+            "supplied": {
+              "title": "Supplied",
+              "description": "Shows whether the UK dividend income has been supplied or calculated. If true, UK dividend income has been supplied. If false, the UK dividend income has been calculated.",
+              "type": "boolean",
+              "example": "false"
+            },
+            "finalised": {
+              "title": "Finalised",
+              "description": "Shows whether the UK dividend income has been finalised.",
+              "type": "boolean",
+              "example": "false"
+            }
+          }
+        },
+        "totalTaxableIncome": {
+          "title": "Total Taxable Income",
+          "description": "The total estimated taxable income from all income. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        },
+        "incomeTaxAmount": {
+          "title": "Income Tax Amount",
+          "description": "The estimated amount of Income Tax. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        },
+        "nic2": {
+          "title": "NIC 2",
+          "description": "The estimated amount of Class 2 National Insurance contributions, net of deductions. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        },
+        "nic4": {
+          "title": "NIC 4",
+          "description": "The estimated amount of Class 4 National Insurance contributions, net of deductions. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        },
+        "totalNicAmount": {
+          "title": "Total NIC Amount",
+          "description": "The total estimated amount of National Insurance contributions. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        },
+        "incomeTaxAndNicAmount": {
+          "title": "Income Tax And NIC Amount",
+          "description": "The total estimated amount of Income Tax and National Insurance contributions. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        }
+      }
+    },
+    "calculationMessageCount": {
+      "title": "Calculation Message Count",
+      "description": "The quantity of warning/information messages for the calculation.",
+      "type": "number",
+      "example": "1"
+    },
+    "calculationMessages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "title": "Type",
+            "description": "The message type. Must be one of: warning information",
+            "type": "string",
+            "example": "warning"
+          }
+        },
+        "text": {
+          "title": "Text",
+          "description": "The message description.",
+          "type": "string"
+        }
+      }
+    },
+    "annualAllowances": {
+      "type": "object",
+      "properties": {
+        "personalAllowance": {
+          "title": "Personal Allowance",
+          "description": "The annual amount of personal allowance available for the tax year. The value must be between 0 and 99999999999999.",
+          "type": "number",
+          "example": "1025",
+          "minimum": 0,
+          "maximum": 99999999999999
+        },
+        "personalAllowanceThreshold": {
+          "title": "Personal Allowance Threshold",
+          "description": "The threshold at which the annual personal allowance is reduced. The value must be between 0 and 99999999999999.",
+          "type": "number",
+          "example": "1025",
+          "minimum": 0,
+          "maximum": 99999999999999
+        },
+        "reducedPersonalAllowance": {
+          "title": "Reduced Personal Allowance",
+          "description": "The annual amount that the personal allowance is reduced to, if the income exceeds the personalAllowanceThreshold amount. The value must be between 0 and 99999999999999.",
+          "type": "number",
+          "example": "1025",
+          "minimum": 0,
+          "maximum": 99999999999999
+        },
+        "giftAidExtender": {
+          "title": "Gift Aid Extender",
+          "description": "The amount by which the rate band thresholds are extended as a result of Gift Aid claimed against this tax year. The value must be between 0 and 99999999999999.98.",
+          "type": "number",
+          "example": "1000.25",
+          "minimum": 0,
+          "maximum": 99999999999999.98
+        }
+      }
+    }
+  }
+}

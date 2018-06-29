@@ -1,0 +1,4 @@
+{
+  "code": "TOO_MANY_SOURCES",
+  "message": "The maxiumum number of source of income have been created, you cannot create any more. The maxium number is 1."
+}

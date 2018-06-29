@@ -1,0 +1,183 @@
+{
+  "year": "2018-19",
+  "intentToCrystallise": false,
+  "crystallised": false,
+  "validationMessageCount": 1,
+  "incomeTaxAndNicYTD": 765.39,
+  "nationalRegime": "UK",
+  "taxableIncome": {
+    "employments": {
+      "totalIncome": 7523.01,
+      "totalPay": 6524.65,
+      "totalBenefitsAndExpenses": 545.23,
+      "totalAllowableExpenses": 75.33,
+      "employment": [
+        {
+          "employmentId": "XKIS00000000968",
+          "netPay": 6524.65,
+          "benefitsAndExpenses": 545.23,
+          "allowableExpenses": 75.33
+        }
+      ]
+    },
+    "selfEmployments": {
+      "totalIncome": 5197.01,
+      "selfEmployment": [
+        {
+          "selfEmploymentId": "XKIS00000000988",
+          "taxableIncome": 521.94,
+          "finalised": false,
+          "losses": 1460.21
+        }
+      ]
+    },
+    "ukProperty": {
+      "totalIncome": 1536.31,
+      "nonFurnishedHolidayLettingsTaxableProfit": 873.29,
+      "nonFurnishedHolidayLettingsLoss": 475.85,
+      "furnishedHolidayLettingsTaxableProfit": 477.88,
+      "furnishedHolidayLettingsLoss": 312.99,
+      "finalised": false
+    },
+    "ukDividends": {
+      "totalIncome": 765.22
+    },
+    "totalIncomeReceived": 5197.00,
+    "allowancesAndDeductions": {
+      "totalAllowancesAndDeductions": 2923.02,
+      "giftOfInvestmentsAndPropertyToCharity": 2502.25,
+      "apportionedPersonalAllowance": 1842.42
+    },
+    "totalTaxableIncome": 2242
+  },
+  "incomeTax": {
+    "taxableIncome": 20142.00,
+    "payPensionsProfit": {
+      "totalAmount": 238.71,
+      "band": [
+        {
+          "name": "BRT",
+          "rate": 20.00,
+          "threshold": 40000,
+          "apportionedThreshold": 20000,
+          "income": 2242.12,
+          "amount": 448.40
+        }
+      ],
+      "personalAllowanceUsed": 2955,
+      "taxableIncome": 5197
+    },
+    "savingsAndGains": {
+      "totalAmount": 448.40,
+      "band": [
+        {
+          "name": "BRT",
+          "rate": 20.00,
+          "threshold": 45000,
+          "apportionedThreshold": 30000,
+          "income": 2242.25,
+          "amount": 528.47
+        }
+      ],
+      "personalAllowanceUsed": 2925.05,
+      "taxableIncome": 5197.00
+    },
+    "dividends": {
+      "totalAmount": 448.4,
+      "band": [
+        {
+          "name": "BRT",
+          "rate": 20.00,
+          "threshold": 50000,
+          "apportionedThreshold": 20000,
+          "income": 2142.53,
+          "amount": 248.45
+        }
+      ],
+      "personalAllowanceUsed": 2955.64,
+      "taxableIncome": 5197.04
+    },
+    "totalBeforeReliefs": 498.40,
+    "allowancesAndReliefs": {
+      "propertyFinanceRelief": 1235.00,
+      "totalAllowancesAndReliefs": 90.12
+    },
+    "totalAfterReliefs": 135.23,
+    "giftAid": {
+      "paymentsMade": 504.25,
+      "rate": 40.00,
+      "taxableAmount": 50.22
+    },
+    "totalAfterGiftAid": 19304.28,
+    "totalIncomeTax": 24469.42
+  },
+  "nic": {
+    "totalNic": 316.99,
+    "class2": {
+      "amount": 38.35,
+      "weekRate": 2.96,
+      "weeks": 13,
+      "limit": 6205,
+      "apportionedLimit": 1547
+    },
+    "class4": {
+      "totalAmount": 278.64,
+      "band": [
+        {
+          "name": "ZRT",
+          "rate": 5.00,
+          "threshold": 8424,
+          "apportionedThreshold": 2101,
+          "income": 2101.23,
+          "amount": 0.50
+        }
+      ]
+    }
+  },
+  "totalBeforeTaxDeducted": 1570.25,
+  "taxDeducted": {
+    "ukLandAndProperty": 1840.25,
+    "totalTaxDeducted": 1095.25
+  },
+  "eoyEstimate": {
+    "employments": [
+      {
+        "employmentId": "XKIS00000000968",
+        "taxableIncome": 1860.25,
+        "supplied": true,
+        "finalised": false
+      }
+    ],
+    "selfEmployments": [
+      {
+        "selfEmploymentId": "XKIS00000000988",
+        "taxableIncome": 11615.42,
+        "supplied": true,
+        "finalised": false
+      }
+    ],
+    "ukProperty": {
+      "taxableIncome": 14570.85,
+      "supplied": true,
+      "finalised": false
+    },
+    "ukDividends": {
+      "taxableIncome": 12350.25,
+      "supplied": true,
+      "finalised": false
+    },
+    "totalTaxableIncome": 31615.02,
+    "incomeTaxAmount": 3953,
+    "nic2": 153.4,
+    "nic4": 2087.19,
+    "totalNicAmount": 2240.59,
+    "incomeTaxAndNicAmount": 6193.59
+  },
+  "calculationMessageCount": 0,
+  "annualAllowances": {
+    "personalAllowance": 11850.00,
+    "personalAllowanceThreshold": 12000,
+    "reducedPersonalAllowance": 100000,
+    "giftAidExtender": 540
+  }
+}
