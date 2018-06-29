@@ -1872,10 +1872,6 @@ traits:
                       code: TAX_YEAR_INVALID
       /{calculationId}:
         uriParameters:
-          nino:
-            description: National Insurance number.<p>Must conform to the regular expression `^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D]$`</p>
-            type: string
-            example: AA999999A
           calculationId:
             description: The ID of the tax calculation.<p>Must conform to the regular expression `^[0-9]{8}|[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`</p>
             type: string
