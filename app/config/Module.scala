@@ -17,18 +17,11 @@
 package config
 
 import com.google.inject.AbstractModule
-import com.google.inject.name.Names
 import config.locator.ServiceLocatorRegistration
-import router.connectors.{BaseConnector, SelfAssessmentConnector, TaxCalcConnector}
-import router.services._
 
 class Module extends AbstractModule {
 
   override def configure(): Unit = {
     bind(classOf[ServiceLocatorRegistration]).asEagerSingleton()
-    bind(classOf[SelfAssessmentService]).to(classOf[SelfAssessmentServiceImpl])
-    bind(classOf[TaxCalcService]).to(classOf[TaxCalcServiceImpl])
-    bind(classOf[BaseConnector]).to(classOf[SelfAssessmentConnector])
-    bind(classOf[BaseConnector]).annotatedWith(Names.named("tax-calc-2.0")).to(classOf[TaxCalcConnector])
   }
 }

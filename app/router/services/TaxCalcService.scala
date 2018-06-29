@@ -16,33 +16,24 @@
 
 package router.services
 
-import javax.inject.{Inject, Provider}
-import play.api.Application
+import javax.inject.Inject
 import play.api.mvc.Request
-import router.connectors.{BaseConnector, SelfAssessmentConnector, TaxCalcConnector}
+import router.connectors.{SelfAssessmentConnector, TaxCalcConnector}
 import router.constants.Versions._
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class TaxCalcServiceImpl @Inject()(app: Provider[Application],
-                                   val selfAssessmentConnector: SelfAssessmentConnector) extends TaxCalcService {
-
-  def taxCalcConnector(version: String): BaseConnector =
-    app.get.injector.instanceOf(injectedConnector(classOf[TaxCalcConnector], s"tax-calc-$version"))
-}
-
-trait TaxCalcService extends Service {
-
-  def selfAssessmentConnector: SelfAssessmentConnector
-
-  def taxCalcConnector(version: String): BaseConnector
+class TaxCalcService @Inject()(val selfAssessmentConnector: SelfAssessmentConnector,
+                               val taxCalcConnector: TaxCalcConnector) extends Service {
 
   def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.get(req.uri)
-      case Some(VERSION_2) => taxCalcConnector(VERSION_2).get(s"$VERSION_2/${req.uri}")
+      case Some(VERSION_1) =>
+        selfAssessmentConnector.get(req.uri)
+      case Some(VERSION_2) =>
+        taxCalcConnector.get(s"/$VERSION_2${req.uri}")
     }
   }
 }

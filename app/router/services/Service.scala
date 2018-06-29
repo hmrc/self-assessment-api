@@ -29,9 +29,6 @@ import scala.concurrent.Future
 
 trait Service {
 
-  private[services] def injectedConnector(connector: Class[_ <: BaseConnector], name: String) =
-    BindingKey(connector, Some(QualifierInstance(Names.named(name))))
-
   private[services] def withApiVersion(pf: PartialFunction[Option[String], Future[SelfAssessmentOutcome]])
                                       (implicit hc: HeaderCarrier): Future[SelfAssessmentOutcome] = {
     pf.orElse[Option[String], Future[SelfAssessmentOutcome]]{

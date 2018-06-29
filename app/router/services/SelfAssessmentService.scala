@@ -27,12 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class SelfAssessmentServiceImpl @Inject()(app: Provider[Application],
-                                          val selfAssessmentConnector: SelfAssessmentConnector) extends SelfAssessmentService
-
-trait SelfAssessmentService extends Service {
-
-  def selfAssessmentConnector: SelfAssessmentConnector
+class SelfAssessmentService @Inject()(val selfAssessmentConnector: SelfAssessmentConnector) extends Service {
 
   def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {

@@ -30,9 +30,9 @@ class SelfAssessmentServiceSpec extends UnitSpec
   with MockSelfAssessmentConnector {
 
   class Setup {
-    object Service extends SelfAssessmentService {
-      override def selfAssessmentConnector: SelfAssessmentConnector = mockSelfAssessmentConnector
-    }
+    object Service extends SelfAssessmentService(
+      mockSelfAssessmentConnector
+    )
   }
 
   implicit val request = FakeRequest()
