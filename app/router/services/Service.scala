@@ -45,4 +45,12 @@ trait Service {
     val versionRegex = """application\/vnd.hmrc.(\d.\d)\+json""".r
     hc.headers.collectFirst{ case (ACCEPT, versionRegex(ver)) => ver }
   }
+
+  private [services] def convertHeaderToVersion1(implicit hc: HeaderCarrier) = {
+    val headers = hc.headers.map{
+      case (ACCEPT, _) => (ACCEPT, "application/vnd.hmrc.1.0+json")
+      case header =>  header
+    }
+    hc.withExtraHeaders(headers:_*)
+  }
 }

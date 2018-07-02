@@ -45,6 +45,24 @@ class SelfAssessmentResourceISpec extends IntegrationSpec {
           .verify(mockFor("/any/url")
             .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
       }
+
+      "a version 2.0 header is provided and the downstream response from the self assessment api returns a 200 with a json response body" in {
+        Given()
+          .theClientIsAuthorised
+        .And()
+          .get("/any/url")
+            .returns(aResponse
+              .withStatus(OK)
+              .withBody(jsonResponse))
+        .When()
+          .get("/any/url")
+          .withHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json")
+        .Then()
+          .statusIs(OK)
+          .bodyIs(jsonResponse)
+          .verify(mockFor("/any/url")
+            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+      }
     }
   }
 

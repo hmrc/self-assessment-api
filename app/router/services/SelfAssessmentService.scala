@@ -32,18 +32,21 @@ class SelfAssessmentService @Inject()(val selfAssessmentConnector: SelfAssessmen
   def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.get(s"${req.uri}")
+      case Some(VERSION_2) => selfAssessmentConnector.get(req.uri)(convertHeaderToVersion1, req)
     }
   }
 
   def post(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.post(req.uri, body)
+      case Some(VERSION_2) => selfAssessmentConnector.post(req.uri, body)(convertHeaderToVersion1, req)
     }
   }
 
   def put(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.put(req.uri, body)
+      case Some(VERSION_2) => selfAssessmentConnector.put(req.uri, body)(convertHeaderToVersion1, req)
     }
   }
 }

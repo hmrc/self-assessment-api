@@ -49,6 +49,17 @@ class SelfAssessmentServiceSpec extends UnitSpec
         val result = await(Service.get())
         result shouldBe Right(response)
       }
+
+      "the request contains a version 2.0 header and the connector preforms a successful get" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+        val response = HttpResponse(200)
+
+        MockSelfAssessmentConnector.get(request.uri)
+          .returns(Future.successful(Right(response)))
+
+        val result = await(Service.get())
+        result shouldBe Right(response)
+      }
     }
 
     "return an UnsupportedAPIVersion error" when {
@@ -85,6 +96,17 @@ class SelfAssessmentServiceSpec extends UnitSpec
         val result = await(Service.post(requestBody))
         result shouldBe Right(response)
       }
+
+      "the request contains a version 2.0 header and the connector preforms a successful post" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+        val response = HttpResponse(200)
+
+        MockSelfAssessmentConnector.post(request.uri, requestBody)
+          .returns(Future.successful(Right(response)))
+
+        val result = await(Service.post(requestBody))
+        result shouldBe Right(response)
+      }
     }
 
     "return an UnsupportedAPIVersion error" when {
@@ -113,6 +135,17 @@ class SelfAssessmentServiceSpec extends UnitSpec
     "return a HttpResponse" when {
       "the request contains a version 1.0 header and the connector preforms a successful post" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+        val response = HttpResponse(200)
+
+        MockSelfAssessmentConnector.put(request.uri, requestBody)
+          .returns(Future.successful(Right(response)))
+
+        val result = await(Service.put(requestBody))
+        result shouldBe Right(response)
+      }
+
+      "the request contains a version 2.0 header and the connector preforms a successful post" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
         val response = HttpResponse(200)
 
         MockSelfAssessmentConnector.put(request.uri, requestBody)
@@ -172,6 +205,15 @@ class SelfAssessmentServiceSpec extends UnitSpec
           val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> headerValue))
           Service.getAPIVersionFromRequest(hc) shouldBe None
         }
+      }
+    }
+  }
+
+  "convertHeaderToVersion1" should {
+    "return a version 1 header" when {
+      "a non version 1 header is supplied" in new Setup {
+        val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+        Service.convertHeaderToVersion1(hc).headers should contain oneElementOf Seq(ACCEPT -> "application/vnd.hmrc.1.0+json")
       }
     }
   }
