@@ -30,11 +30,10 @@ class TaxCalcServiceSpec extends UnitSpec
 
   class Setup {
 
-    object service extends TaxCalcService {
-      override def selfAssessmentConnector = mockSelfAssessmentConnector
-
-      override def taxCalcConnector(version: String) = mockTaxCalcConnector
-    }
+    object service extends TaxCalcService(
+      mockSelfAssessmentConnector,
+      mockTaxCalcConnector
+    )
   }
 
   implicit val request = FakeRequest()
@@ -57,7 +56,7 @@ class TaxCalcServiceSpec extends UnitSpec
       implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
       val response = HttpResponse(200)
 
-      MockTaxCalcConnector.get("2.0/"+request.uri)
+      MockTaxCalcConnector.get("/2.0/"+request.uri)
         .returns(Future.successful(Right(response)))
 
       val result = await(service.get())

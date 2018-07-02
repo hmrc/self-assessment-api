@@ -17,11 +17,10 @@
 package router.connectors
 
 import config.AppConfig
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{Inject, Singleton}
 import router.httpParsers.SelfAssessmentHttpParser
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-@Named("tax-calc-2.0")
 @Singleton
 class TaxCalcConnector @Inject()(val http: HttpClient,
                                  val httpParser: SelfAssessmentHttpParser,

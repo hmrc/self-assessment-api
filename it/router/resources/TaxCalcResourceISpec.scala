@@ -26,7 +26,7 @@ class TaxCalcResourceISpec extends IntegrationSpec {
 
   "GET Tax Calculation" should {
     "return a 200 with a json response body" when {
-      "the downstream response from the self assessment api returns a 200 with a json response body" in {
+      "the downstream response from the self assessment api version 1.0 returns a 200 with a json response body" in {
         val url = "/self-assessment/ni/AA111111A/calculations/041f7e4d-87d9-4d4a-a296-3cfbdf92f7e2"
 
         Given()
@@ -44,6 +44,25 @@ class TaxCalcResourceISpec extends IntegrationSpec {
           .bodyIs(jsonResponse)
           .verify(mockFor(url)
             .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+      }
+      "the downstream response from the self assessment api version 2.0 returns a 200 with a json response body" in {
+        val url = "/self-assessment/ni/AA111111A/calculations/041f7e4d-87d9-4d4a-a296-3cfbdf92f7e2"
+
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .get(url)
+          .returns(aResponse
+            .withStatus(OK)
+            .withBody(jsonResponse))
+          .When()
+          .get(url)
+          .withHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json")
+          .Then()
+          .statusIs(OK)
+          .bodyIs(jsonResponse)
+          .verify(mockFor(url)
+            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
       }
     }
   }

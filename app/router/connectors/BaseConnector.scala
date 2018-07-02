@@ -37,14 +37,14 @@ trait BaseConnector {
   val serviceUrl: String
 
   def get(uri: String)(implicit hc: HeaderCarrier, request: Request[_]): Future[SelfAssessmentOutcome] = {
-    http.GET[SelfAssessmentOutcome](s"$serviceUrl${request.uri}")(httpParser, hc, implicitly)
+    http.GET[SelfAssessmentOutcome](s"$serviceUrl$uri")(httpParser, hc, implicitly)
   }
 
   def post(uri: String, body: JsValue)(implicit hc: HeaderCarrier, request: Request[_]): Future[SelfAssessmentOutcome] = {
-    http.POST[JsValue, SelfAssessmentOutcome](s"$serviceUrl${request.uri}", body)(implicitly, httpParser, hc, implicitly)
+    http.POST[JsValue, SelfAssessmentOutcome](s"$serviceUrl$uri", body)(implicitly, httpParser, hc, implicitly)
   }
 
   def put(uri: String, body: JsValue)(implicit hc: HeaderCarrier, request: Request[_]): Future[SelfAssessmentOutcome] = {
-    http.PUT[JsValue, SelfAssessmentOutcome](s"$serviceUrl${request.uri}", body)(implicitly, httpParser, hc, implicitly)
+    http.PUT[JsValue, SelfAssessmentOutcome](s"$serviceUrl$uri", body)(implicitly, httpParser, hc, implicitly)
   }
 }
