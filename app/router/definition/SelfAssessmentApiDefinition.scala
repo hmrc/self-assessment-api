@@ -56,7 +56,7 @@ class SelfAssessmentApiDefinition @Inject()(appConfig: AppConfig) {
             version = VERSION_2,
             access = buildWhiteListingAccess(),
             status = buildAPIStatus(VERSION_2),
-            endpointsEnabled = false)
+            endpointsEnabled = true)
         ),
         requiresTrust = None
       )
