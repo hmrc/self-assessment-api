@@ -4,10 +4,10 @@
   "properties": {
     "year": {
       "title": "Year",
-      "description": "The tax year to which the calculation relates. Must be tax year 2016-17 or later.",
-      "type": "string",
-      "example": "2018-19",
-      "pattern": "^[2-9][0-9]{3}-[0-9]{2}$"
+      "description": "The ending year of the tax year to which the calculation relates, in the format YYYY. For example, tax year 2016 to 2017 is expressed as 2017. Value must be 2016 or greater.",
+      "type": "number",
+      "example": "2019",
+      "pattern": "^(201[6-9]|20[2-9][0-9])$"
     },
     "intentToCrystallise": {
       "title": "Intent To Crystallise",

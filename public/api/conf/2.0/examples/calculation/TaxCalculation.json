@@ -1,8 +1,8 @@
 {
-  "year": "2018-19",
+  "year": 2019,
   "intentToCrystallise": false,
   "crystallised": false,
-  "validationMessageCount": 1,
+  "validationMessageCount": 0,
   "incomeTaxAndNicYTD": 765.39,
   "nationalRegime": "UK",
   "taxableIncome": {
