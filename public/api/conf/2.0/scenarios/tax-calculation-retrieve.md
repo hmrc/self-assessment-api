@@ -16,19 +16,7 @@
         <tr>
             <td><p>N/A - Default</p></td>
             <td><p>Simulates a successful calculation</p></td>
-        </tr>
-        <tr>
-            <td><p>TAX_CALCULATION</p></td>
-            <td><p>Simulates a successful calculation</p></td>
-        </tr>
-        <tr>
-            <td><p>TAX_CALCULATION_WITH_WARNINGS</p></td>
-            <td><p>Simulates a successful calculation, with warnings</p></td>
-        </tr>
-        <tr>
-            <td><p>BVR_ONLY_CALCULATION</p></td>
-            <td><p>Simulates an unsuccessful calculation, due to business validation failure(s)</p></td>
-        </tr> 
+        </tr>      
         <tr>
             <td><p>NOT_FOUND</p></td>
             <td><p>Simulates the scenario where no data can be found</p></td>
