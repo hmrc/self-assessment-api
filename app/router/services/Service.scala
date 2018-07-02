@@ -16,11 +16,8 @@
 
 package router.services
 
-import com.google.inject.name.Names
 import play.api.Logger
 import play.api.http.HeaderNames.ACCEPT
-import play.api.inject.{BindingKey, QualifierInstance}
-import router.connectors.BaseConnector
 import router.errors.{IncorrectAPIVersion, UnsupportedAPIVersion}
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
@@ -47,10 +44,10 @@ trait Service {
   }
 
   private [services] def convertHeaderToVersion1(implicit hc: HeaderCarrier) = {
-    val headers = hc.headers.map{
+    val convertAcceptHeader: PartialFunction[(String, String), (String, String)] = {
       case (ACCEPT, _) => (ACCEPT, "application/vnd.hmrc.1.0+json")
       case header =>  header
     }
-    hc.withExtraHeaders(headers:_*)
+    hc.copy(otherHeaders = hc.otherHeaders.map(convertAcceptHeader))
   }
 }

@@ -212,8 +212,12 @@ class SelfAssessmentServiceSpec extends UnitSpec
   "convertHeaderToVersion1" should {
     "return a version 1 header" when {
       "a non version 1 header is supplied" in new Setup {
-        val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+        val hc = HeaderCarrier(
+          otherHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json", "test" -> "header"),
+          extraHeaders = Seq("other" -> "test-header")
+        )
         Service.convertHeaderToVersion1(hc).headers should contain oneElementOf Seq(ACCEPT -> "application/vnd.hmrc.1.0+json")
+        Service.convertHeaderToVersion1(hc).headers should contain noElementsOf Seq(ACCEPT -> "application/vnd.hmrc.2.0+json")
       }
     }
   }
