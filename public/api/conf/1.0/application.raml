@@ -1877,7 +1877,7 @@ traits:
             type: string
         get:
           displayName: Retrieve a tax calculation
-          description: Retrieve a tax calculation. Please note that in sandbox environment this API will return pre-defined responses that are representative of what may be returned in production.
+          description: Retrieve a tax calculation. Please note that in sandbox environment this API will return pre-defined responses that are representative of what may be returned in production. <p>A new version of this endpoint is available.</p>
           (annotations.sandboxData): !include scenarios/agent-scenarios.md
           is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
