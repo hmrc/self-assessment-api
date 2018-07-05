@@ -24,14 +24,14 @@ private object AppDependencies {
   import play.sbt.PlayImport._
   import play.core.PlayVersion
 
-  private val hmrcTestVersion = "2.3.0"
+  private val hmrcTestVersion = "3.0.0"
 
   val compile = Seq(
-    "uk.gov.hmrc" %% "play-reactivemongo" % "5.2.0",
+    "uk.gov.hmrc" %% "play-reactivemongo" % "6.2.0",
     ws exclude("org.apache.httpcomponents", "httpclient") exclude("org.apache.httpcomponents", "httpcore"),
-    "uk.gov.hmrc" %% "microservice-bootstrap" % "6.9.0",
-    "uk.gov.hmrc" %% "auth-client" % "2.3.0",
-    "uk.gov.hmrc" %% "domain" % "5.0.0",
+    "uk.gov.hmrc" %% "microservice-bootstrap" % "6.18.0",
+    "uk.gov.hmrc" %% "auth-client" % "2.6.0",
+    "uk.gov.hmrc" %% "domain" % "5.1.0",
     "uk.gov.hmrc" %% "play-hmrc-api" % "2.0.0",
     "uk.gov.hmrc" %% "play-scheduling" % "4.1.0",
     "ai.x" %% "play-json-extensions" % "0.8.0",
@@ -51,7 +51,7 @@ private object AppDependencies {
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
         "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % scope,
         "com.github.tomakehurst" % "wiremock" % "2.2.2" % scope,
-        "uk.gov.hmrc" %% "reactivemongo-test" % "2.0.0" % scope,
+        "uk.gov.hmrc" %% "reactivemongo-test" % "3.1.0" % scope,
         "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "2.0.0" % scope,
         "org.mongodb" %% "casbah" % "3.1.1" % scope,
         "org.scalacheck" %% "scalacheck" % "1.13.4" % scope,

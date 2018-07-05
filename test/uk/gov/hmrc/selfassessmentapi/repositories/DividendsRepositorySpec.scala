@@ -27,7 +27,7 @@ import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class DividendsRepositorySpec extends MongoEmbeddedDatabase {
-  private val repo = new DividendsRepository
+  private lazy val repo = new DividendsRepository()(mongo)
 
   private val nino = NinoGenerator().nextNino()
 

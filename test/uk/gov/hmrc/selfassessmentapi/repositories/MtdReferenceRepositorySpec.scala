@@ -24,7 +24,7 @@ import uk.gov.hmrc.selfassessmentapi.models.MtdId
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class MtdReferenceRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach {
-  private val repo = new MtdReferenceRepository
+  private lazy val repo = new MtdReferenceRepository()(mongo)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
