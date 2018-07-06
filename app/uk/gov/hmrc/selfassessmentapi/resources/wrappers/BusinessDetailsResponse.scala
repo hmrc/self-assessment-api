@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
-import uk.gov.hmrc.play.http.HttpResponse
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.MtdId
 
 case class BusinessDetailsResponse(underlying: HttpResponse) extends Response {

@@ -22,7 +22,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import play.api.mvc.Results._
 import play.api.test.{FakeHeaders, FakeRequest, Helpers}
-import uk.gov.hmrc.play.http.HttpResponse
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.contexts.{Agent, FilingOnlyAgent, Individual}
 import uk.gov.hmrc.selfassessmentapi.models.Errors

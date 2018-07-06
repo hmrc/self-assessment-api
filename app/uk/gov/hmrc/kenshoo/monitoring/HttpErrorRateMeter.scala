@@ -18,7 +18,7 @@ package uk.gov.hmrc.kenshoo.monitoring
 
 import play.api.Logger
 import play.api.mvc.Result
-import uk.gov.hmrc.play.http._
+import uk.gov.hmrc.http._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}

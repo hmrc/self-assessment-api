@@ -24,7 +24,7 @@ import org.mockito.BDDMockito._
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.Matchers
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global

@@ -22,7 +22,7 @@ import play.api.libs.json.JsValue
 import play.api.libs.json.Json.toJson
 import play.api.mvc.Result
 import play.api.mvc.Results._
-import uk.gov.hmrc.play.http.HttpResponse
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode.{DesErrorCode, _}
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, MultiDesError}

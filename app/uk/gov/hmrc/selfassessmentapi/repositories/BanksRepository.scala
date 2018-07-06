@@ -23,6 +23,7 @@ import reactivemongo.api.DB
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.play.json.ImplicitBSONHandlers._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
@@ -53,7 +54,7 @@ class BanksRepository(implicit mongo: () => DB) extends ReactiveRepository[Bank,
 
   def create(bank: Bank): Future[Boolean] = {
     insert(bank).map { res =>
-      if (res.hasErrors) logger.error(s"Database error occurred. Error: ${res.errmsg} Code: ${res.code}")
+      if (!res.writeErrors.isEmpty) logger.error(s"Database error occurred. Errors: ${res.writeErrors} Code: ${res.code}")
       res.ok
     }
   }
@@ -64,7 +65,7 @@ class BanksRepository(implicit mongo: () => DB) extends ReactiveRepository[Bank,
         BSONDocument("nino" -> nino.nino, "sourceId" -> id),
         d
       ).map { res =>
-        if (res.hasErrors) logger.error(s"Database error occurred. Error: ${res.errmsg} Code: ${res.code}")
+        if (!res.writeErrors.isEmpty) logger.error(s"Database error occurred. Error: ${res.errmsg} Code: ${res.code}")
         res.ok && res.nModified > 0
       }
       case _ => Future.successful(false)

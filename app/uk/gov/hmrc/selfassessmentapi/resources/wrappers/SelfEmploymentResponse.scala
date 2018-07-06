@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
 import play.api.libs.json._
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HttpResponse
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.{DesTransformError, DesTransformValidator, SourceId}
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}

@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Failure
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuditConnector
 import uk.gov.hmrc.selfassessmentapi.models.audit.AuditDetail
 
@@ -52,7 +52,7 @@ trait AuditService {
 
   def sendEvent(event: ExtendedDataEvent, connector: AuditConnector): Future[AuditResult] =
     try {
-      connector.sendEvent(event)
+      connector.sendExtendedEvent(event)
     } catch {
       case NonFatal(ex) =>
         val msg = s"An exception [$ex] occurred in the Audit service while sending event [$event]"

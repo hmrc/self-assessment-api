@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.services
 
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
-import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.connectors.BusinessDetailsConnector
 import uk.gov.hmrc.selfassessmentapi.models.MtdId
@@ -26,6 +26,8 @@ import uk.gov.hmrc.selfassessmentapi.repositories.MtdReferenceRepository
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.BusinessDetailsResponse
 
 import scala.concurrent.Future
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class MtdRefLookupServiceSpec extends UnitSpec with MockitoSugar {
   implicit val hc: HeaderCarrier = HeaderCarrier()

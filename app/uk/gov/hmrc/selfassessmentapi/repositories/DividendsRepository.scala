@@ -25,6 +25,7 @@ import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.mongo.ReactiveRepository
+import reactivemongo.play.json.ImplicitBSONHandlers._
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.selfassessmentapi.domain.Dividends
 
@@ -54,7 +55,7 @@ class DividendsRepository(implicit mongo: () => DB)
           BSONDocument("nino" -> nino.nino),
           d
         ).map { res =>
-          if (res.hasErrors) logger.error(s"Database error occurred. Error: ${res.errmsg} Code: ${res.code}")
+          if (!res.writeErrors.isEmpty) logger.error(s"Database error occurred. Error: ${res.writeErrors} Code: ${res.code}")
           res.ok && res.nModified > 0
         }
       case _ => Future.successful(false)

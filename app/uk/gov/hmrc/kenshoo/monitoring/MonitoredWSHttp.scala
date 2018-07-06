@@ -18,7 +18,7 @@ package uk.gov.hmrc.kenshoo.monitoring
 
 import play.api.Logger
 import play.api.libs.json.Writes
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.http.ws._
 
 import scala.concurrent.ExecutionContext.Implicits.global

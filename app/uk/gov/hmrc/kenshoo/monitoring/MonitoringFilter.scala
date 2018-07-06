@@ -18,7 +18,7 @@ package uk.gov.hmrc.kenshoo.monitoring
 
 import play.api.Logger
 import play.api.mvc.{Filter, RequestHeader, Result}
-import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -35,7 +35,7 @@ trait MonitoringFilter extends Filter with HttpAPIMonitor {
   }
 
   override def apply(nextFilter: (RequestHeader) => Future[Result])(requestHeader: RequestHeader): Future[Result] = {
-    implicit val hc = HeaderCarrier.fromHeadersAndSession(requestHeader.headers)
+    implicit val hc = HeaderCarrierConverter.fromHeadersAndSession(requestHeader.headers)
 
     apiName(requestHeader.uri, requestHeader.method) match {
       case None =>

@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
 import play.api.libs.json.Reads
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HttpResponse
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHL, Other}
 import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId, PeriodSummary, des}

@@ -20,7 +20,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.http.HttpResponse
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 
 class SelfEmploymentAnnualSummaryResponseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {

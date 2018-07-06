@@ -43,7 +43,7 @@ class MtdReferenceRepository(implicit mongo: () => DB) extends ReactiveRepositor
 
   def store(nino: Nino, mtdId: MtdId): Future[Boolean] =
     insert(MtdRefEntry(nino.nino, mtdId.mtdId)).map { res =>
-      if (res.hasErrors) logger.error(s"Database error occurred. Error: [${res.errmsg}] Code: [${res.code}]")
+      if (!res.writeErrors.isEmpty) logger.error(s"Database error occurred. Errors: [${res.writeErrors}] Code: [${res.code}]")
       res.ok && res.n > 0
     } recoverWith {
       case e: DatabaseException =>

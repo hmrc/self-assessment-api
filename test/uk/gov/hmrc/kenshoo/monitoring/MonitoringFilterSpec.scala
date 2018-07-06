@@ -23,7 +23,7 @@ import com.codahale.metrics.MetricRegistry
 import org.scalatest.Matchers
 import play.api.http.HttpEntity
 import play.api.mvc.{Headers, RequestHeader, ResponseHeader, Result}
-import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global

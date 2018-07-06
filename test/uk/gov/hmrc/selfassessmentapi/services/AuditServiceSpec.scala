@@ -18,13 +18,13 @@ package uk.gov.hmrc.selfassessmentapi.services
 
 import org.joda.time.DateTime
 import play.api.libs.json.Json
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Failure, Success}
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
-import uk.gov.hmrc.play.audit.model.{AuditEvent, ExtendedDataEvent}
-import uk.gov.hmrc.play.http.HeaderCarrier
-import uk.gov.hmrc.play.http.logging.Authorization
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.selfassessmentapi.AsyncUnitSpec
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 
@@ -65,7 +65,7 @@ class AuditServiceSpec extends AsyncUnitSpec {
       val connector = new AuditConnector {
         override def auditingConfig: AuditingConfig = ???
 
-        override def sendEvent(event: AuditEvent)(implicit hc: HeaderCarrier,
+        override def sendExtendedEvent(event: ExtendedDataEvent)(implicit hc: HeaderCarrier,
                                                   ec: ExecutionContext): Future[AuditResult] =
           Future.successful(Success)
       }
@@ -81,7 +81,7 @@ class AuditServiceSpec extends AsyncUnitSpec {
       val connector = new AuditConnector {
         override def auditingConfig: AuditingConfig = ???
 
-        override def sendEvent(event: AuditEvent)(implicit hc: HeaderCarrier,
+        override def sendExtendedEvent(event: ExtendedDataEvent)(implicit hc: HeaderCarrier,
                                                   ec: ExecutionContext): Future[AuditResult] =
           throw ex
       }
