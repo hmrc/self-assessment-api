@@ -26,7 +26,7 @@ import uk.gov.hmrc.selfassessmentapi.models.banks.BankAnnualSummary
 import scala.concurrent.ExecutionContext.Implicits.global
  
 class BanksRepositorySpec extends MongoEmbeddedDatabase {
-  private val repo = new BanksRepository
+  private lazy val repo = new BanksRepository()(mongo)
   private val nino = generateNino
 
   private def createBank(nino: Nino, lastModifiedDateTime: DateTime, id: BSONObjectID = BSONObjectID.generate): Bank = {
