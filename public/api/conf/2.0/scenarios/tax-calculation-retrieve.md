@@ -14,9 +14,37 @@
     </thead>
     <tbody>
         <tr>
-            <td><p>N/A - Default</p></td>
-            <td><p>Simulates a successful calculation</p></td>
+            <td><p>Default (No header value)</p></td>
+            <td><p>Simulates a calculation with self-employment periodic updates and annual summaries</p></td>
+        </tr>
+        <tr>
+            <td><p>SE_PERIODIC_ANNUALS</p></td>
+            <td><p>Simulates a calculation with self-employment periodic updates and annual summaries</p></td>
         </tr>      
+        <tr>
+            <td><p>SE_PERIODIC</p></td>
+            <td><p>Simulates a calculation with self-employment periodic updates</p></td>
+        </tr>
+        <tr>
+            <td><p>PROP_OTHER_PERIODIC_ANNUALS</p></td>
+            <td><p>Simulates a calculation with UK property Non-FHL periodic updates and annual summaries</p></td>
+        </tr>
+        <tr>
+            <td><p>PROP_FHL_PERIODIC_ANNUALS</p></td>
+            <td><p>Simulates a calculation with UK property FHL periodic updates and annual summaries</p></td>
+        </tr>
+        <tr>
+            <td><p>SE_PROPERTY</p></td>
+            <td><p>Simulates a calculation with self-employment and UK property income sources</p></td>
+        </tr>
+        <tr>
+            <td><p>SE_SCOTTISH_MIS</p></td>
+            <td><p>Simulates a calculation with a Scottish regime and multiple income sources</p></td>
+        </tr>
+        <tr>
+            <td><p>RESPONSE_BEING_PREPARED</p></td>
+            <td><p>Simulates the scenario where the calculation is in progress</p></td>
+        </tr>
         <tr>
             <td><p>NOT_FOUND</p></td>
             <td><p>Simulates the scenario where no data can be found</p></td>
