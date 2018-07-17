@@ -26,10 +26,6 @@
             <td><p>Simulates a calculation with self-employment periodic updates</p></td>
         </tr>
         <tr>
-            <td><p>PROP_OTHER_PERIODIC_ANNUALS</p></td>
-            <td><p>Simulates a calculation with UK property Non-FHL periodic updates and annual summaries</p></td>
-        </tr>
-        <tr>
             <td><p>PROP_FHL_PERIODIC_ANNUALS</p></td>
             <td><p>Simulates a calculation with UK property FHL periodic updates and annual summaries</p></td>
         </tr>
@@ -48,18 +44,6 @@
         <tr>
             <td><p>NOT_FOUND</p></td>
             <td><p>Simulates the scenario where no data can be found</p></td>
-        </tr>
-        <tr>
-            <td><p>AGENT_NOT_SUBSCRIBED</p></td>
-            <td><p>Simulates the scenario where the agent is not subscribed to Agent Services</p></td>
-        </tr>
-        <tr>
-            <td><p>AGENT_NOT_AUTHORIZED</p></td>
-            <td><p>Simulates the scenario where the agent is not authorized by the client to act on their behalf</p></td>
-        </tr>
-        <tr>
-            <td><p>CLIENT_NOT_SUBSCRIBED</p></td>
-            <td><p>Simulates the scenario where the client is not subscribed to Making Tax Digital</p></td>
         </tr>
     </tbody>
 </table>
