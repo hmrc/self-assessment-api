@@ -1,6 +1,14 @@
 
 ### Please refer to [CHANGELOG-ET.md](https://github.com/hmrc/self-assessment-api-router/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to Sandbox Test Environment.
 
+## 17-Jul-2018
+<b>[self-assessment-api v0.141.13](https://github.com/hmrc/self-assessment-api/releases/tag/v0.141.13)<br>
+[self-assessment-api-router v1.8.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.8.0)<br>
+[mtd-tax-calculation v0.10.0](https://github.com/hmrc/mtd-tax-calculation/releases/tag/v0.10.0)</b>
+* Moved API documentation to self-assessment-api-router
+* Includes versioning for self-assessment-api
+* NEW endpoint Retrieve Tax Calculation (2.0)
+
 ## [0.141.4](https://github.com/hmrc/self-assessment-api/releases/tag/v0.141.4) 21-Dec-2017
 
 * Documentation updated to say, In production it can take up to an hour for the obligation to be updated
