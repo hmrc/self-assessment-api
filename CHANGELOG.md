@@ -4,7 +4,7 @@
 ## 17-Jul-2018
 <b>[self-assessment-api v0.141.13](https://github.com/hmrc/self-assessment-api/releases/tag/v0.141.13)<br>
 [self-assessment-api-router v1.8.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.8.0)<br>
-[mtd-tax-calculation v0.10.0](https://github.com/hmrc/mtd-tax-calculation/releases/tag/v0.10.0)</b>
+[mtd-tax-calculation v0.11.0](https://github.com/hmrc/mtd-tax-calculation/releases/tag/v0.11.0)</b>
 * Moved API documentation to self-assessment-api-router
 * Includes versioning for self-assessment-api
 * NEW endpoint Retrieve Tax Calculation (2.0)
