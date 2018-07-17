@@ -79,6 +79,17 @@ traits:
                   description: The client is not subscribed to MTD
                   value:
                     code: CLIENT_NOT_SUBSCRIBED
+  clientOrAgentNotAuthorised:
+    responses:
+      403:
+        body:
+          application/json:
+            type: types.errorResponse
+            examples:
+              clientNotSubscribedToMTD:
+                description: The client and/or agent is not authorised.
+                value:
+                  code: CLIENT_OR_AGENT_NOT_AUTHORISED
   periodBVRs:
     responses:
       403:
@@ -1880,7 +1891,7 @@ traits:
           displayName: Retrieve a tax calculation
           description: Use this endpoint to retrieve a tax calculation. In the sandbox environment, this endpoint returns pre-defined responses that are representative of what may be returned in production.
           (annotations.sandboxData): !include scenarios/tax-calculation-retrieve.md
-          is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+          is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
           securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
           responses:
