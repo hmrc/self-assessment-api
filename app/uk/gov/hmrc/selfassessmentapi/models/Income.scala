@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.models
 
-import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -27,9 +26,6 @@ object Income {
     (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "taxDeducted").readNullable[BigDecimal](nonNegativeAmountValidator)
     ) (Income.apply _)
-    .filter(ValidationError("Tax deducted must be equal to or less than amount", ErrorCode.INVALID_TAX_DEDUCTION_AMOUNT)) {
-      income => income.taxDeducted.forall(income.amount >= _)
-    }
 
 
   implicit val writes: Writes[Income] = Json.writes[Income]
