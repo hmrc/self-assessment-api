@@ -24,10 +24,6 @@ class IncomeSpec extends JsonSpec {
       roundTripJson(Income(500.55, Some(100.11)))
     }
 
-    "reject payloads where the taxDeducted is greater than the amount" in {
-      assertValidationErrorWithCode(Income(500.55, Some(500.56)), "", ErrorCode.INVALID_TAX_DEDUCTION_AMOUNT)
-    }
-
     "reject payload where the amount is negative" in {
       assertValidationErrorWithCode(Income(-200.55, None), "/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
@@ -50,6 +46,10 @@ class IncomeSpec extends JsonSpec {
 
     "accept payloads where the taxDeducted is less than the amount" in {
       assertValidationPasses(Income(500.55, Some(500.54)))
+    }
+
+    "accept payloads where the taxDeducted can be more than the amount" in {
+      assertValidationPasses(Income(500.55, Some(500.80)))
     }
   }
 
