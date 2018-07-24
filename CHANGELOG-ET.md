@@ -1,3 +1,9 @@
+## 24-Jul-2018
+<b>[self-assessment-api v0.165.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.165.0)<br>
+[self-assessment-api-router v1.10.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.10.0)</b>
+* Removed INVALID_TAX_DEDUCTION_AMOUNT rule from all UK Property Period Create/Update endpoints.
+* Documentation for the error marked as (Production only) for time being.
+
 ## [mtd-tax-calculation v0.5.0](https://github.com/hmrc/mtd-tax-calculation/releases/tag/v0.5.0) 4-Jul-2018
 * Includes versioning for self-assessment-api
 * NEW endpoint Retrieve Tax Calculation (2.0)
