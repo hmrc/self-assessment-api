@@ -767,7 +767,7 @@ traits:
                       description: Unique id for operation tracking
                   body:
                     application/json:
-                      type: !include schemas/Obligations-Eops.json
+                      type: !include schemas/Obligations-Eops-SE.json
                       examples:
                         example-1:
                           description: Example response for EOPs obligation that is Open
@@ -1536,6 +1536,82 @@ traits:
                               description: You cannot submit a statement before the end of your accounting period.
                               value:
                                 code: EARLY_SUBMISSION
+        /obligations:
+                    get:
+                      displayName: Retrieve End of Period Statement Obligations for a UK Property Business [test only]
+                      description: Use this endpoint to retrieve the End of Period Statement (EOPS) of obligations for a UK property business. In the sandbox environment, this endpoint returns pre-defined responses that are representative of what may be returned in production.
+                      (annotations.sandboxData): !include scenarios/eops-property-obligation-scenarios.md
+                      is: [headers.acceptHeader, contentType, testScenarioHeader]
+                      (annotations.scope): "read:self-assessment"
+                      securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
+                      queryParameters:
+                        from:
+                          description: The start date of the range by which to filter obligations, in the format YYYY-MM-DD.
+                          type: string
+                          example: 2017-04-06
+                          required: true
+                        to:
+                          description: The end date of the range by which to filter obligations, in the format YYYY-MM-DD.
+                          type: string
+                          example: 2018-04-05
+                          required: true
+                      responses:
+                        200:
+                          headers:
+                            X-CorrelationId:
+                              example: 5968c22d620000620096db59
+                              description: Unique id for operation tracking
+                          body:
+                            application/json:
+                              type: !include schemas/Obligations-Eops-Property.json
+                              examples:
+                                example-1:
+                                  description: Open obligation
+                                  value: !include examples/obligations-eops/Obligations-Eops-Open.json
+                                example-2:
+                                  description: Fulfilled obligation
+                                  value: !include examples/obligations-eops/Obligations-Eops-Fulfilled.json
+                        400:
+                          body:
+                            application/json:
+                              type: types.errorResponse
+                              examples:
+                                invalidNino:
+                                  description: The format of the National Insurance number is invalid.
+                                  value:
+                                    code: FORMAT_NINO
+                                invalidFromDate:
+                                  description: The From date is not a valid ISO format date.
+                                  value:
+                                    code: FORMAT_FROM_DATE
+                                invalidToDate:
+                                  description: The To date is not a valid ISO format date.
+                                  value:
+                                    code: FORMAT_TO_DATE
+                                missingFromDate:
+                                  description: The From date parameter is missing.
+                                  value:
+                                    code: MISSING_FROM_DATE
+                                missingToDate:
+                                  description: The To date parameter is missing.
+                                  value:
+                                    code: MISSING_TO_DATE
+                                rangeToDateBeforeFrom:
+                                  description: The To date is before the From date.
+                                  value:
+                                    code: RANGE_TO_DATE_BEFORE_FROM_DATE
+                                rangeDateTooLong:
+                                  description: The date range is longer than 366 days.
+                                  value:
+                                    code: RANGE_DATE_TOO_LONG
+                        404:
+                          body:
+                            type: types.errorResponse
+                            examples:
+                              resourceNotFound:
+                                description: Resource not found.
+                                value:
+                                  code: NOT_FOUND
       /{taxYear}/income-summary:
         uriParameters:
           taxYear:

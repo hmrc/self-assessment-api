@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "EOPS Obligation",
+  "type": "object",
+  "properties": {
+    "start": {
+      "title": "Start",
+      "description": "The start date of the range by which to filter obligations.",
+      "$ref": "FullDate.json"
+    },
+    "end": {
+      "title": "End",
+      "description": "The end date of the range by which to filter obligations.",
+      "$ref": "FullDate.json"
+    },
+    "due": {
+      "title": "Due",
+      "description": "The due date for this obligation.",
+      "$ref": "FullDate.json"
+    },
+    "processed": {
+      "title": "Processed date",
+      "description": "Date that HMRC processed the EOPS submission. Returned only if the status is Fulfilled.",
+      "$ref": "FullDate.json"
+    },
+    "status": {
+      "$ref": "ObligationStatus.json"
+    }
+  },
+  "required": [
+    "start",
+    "end",
+    "due",
+    "status"
+  ],
+  "additionalProperties": false
+}
