@@ -31,6 +31,8 @@ trait FakeApplicationConfig { _: WireMockConfig =>
     "microservice.services.self-assessment-api.host" -> wiremockHost,
     "microservice.services.self-assessment-api.port" -> wiremockPort,
     "microservice.services.mtd-tax-calculation.host" -> wiremockHost,
-    "microservice.services.mtd-tax-calculation.port" -> wiremockPort
+    "microservice.services.mtd-tax-calculation.port" -> wiremockPort,
+    "microservice.services.mtd-property-api.host" -> wiremockHost,
+    "microservice.services.mtd-property-api.port" -> wiremockPort
   )
 }

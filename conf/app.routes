@@ -1,5 +1,10 @@
 # microservice specific routes
+
+#Tax Calculation
 GET   /ni/*nino/calculations/*calculationId         router.resources.TaxCalcResource.get(nino, calculationId)
+
+#Property EOPS Obligations
+GET /ni/*nino/uk-properties/end-of-period-statements/obligations     router.resources.PropertyEopsObligationsResource.get(nino, from, to)
 
 GET   /*route                                                       router.resources.SelfAssessmentResource.get(route)
 POST  /*route                                                       router.resources.SelfAssessmentResource.post(route)

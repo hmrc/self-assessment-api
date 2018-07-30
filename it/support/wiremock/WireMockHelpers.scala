@@ -42,7 +42,7 @@ trait WireMockHelpers {
     ))
   }
 
-  def partialStubGet(url: String): MappingBuilder = get(urlPathMatching(url))
+  def partialStubGet(url: String): MappingBuilder = get(urlEqualTo(url))
 
   def stubPost(url: String, status: Int, body: JsValue): StubMapping = {
     stubPost(url, status, Some(body.toString()))

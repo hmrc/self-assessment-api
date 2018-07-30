@@ -30,7 +30,8 @@ trait WireMockVerify {
   private def allMocks: List[LoggedRequest] = WireMock.findAll(RequestPatternBuilder.allRequests()).toList
 
   def getMockFor(url: String): LoggedRequest = {
-    val mock = allMocks.find(_.getUrl.matches(url))
+    // use equals as well as regex matching to account for query parameters separators not being able to be passed
+    val mock: Option[LoggedRequest] = allMocks.find(y=> y.getUrl.equalsIgnoreCase(url) || y.getUrl.matches(url))
     require(mock.isDefined, s"Trying to verify WireMock stubbing but none found for $url")
     mock.get
   }
