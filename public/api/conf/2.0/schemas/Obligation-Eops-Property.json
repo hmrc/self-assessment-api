@@ -18,20 +18,20 @@
       "description": "The due date for this obligation.",
       "$ref": "FullDate.json"
     },
+    "status": {
+      "$ref": "ObligationStatus.json"
+    },
     "processed": {
       "title": "Processed date",
       "description": "Date that HMRC processed the EOPS submission. Returned only if the status is Fulfilled.",
       "$ref": "FullDate.json"
-    },
-    "status": {
-      "$ref": "ObligationStatus.json"
     }
   },
   "required": [
     "start",
     "end",
-    "due",
-    "status"
+    "status",
+    "due"
   ],
   "additionalProperties": false
 }
