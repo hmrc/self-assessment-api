@@ -1,3 +1,6 @@
+## [mtd-property-api v0.6.0](https://github.com/hmrc/mtd-property-api/releases/tag/v0.6.0) 31-Jul-2018
+* Added GET UK Property EOPS obligations endpoint.
+
 ## 24-Jul-2018
 <b>[self-assessment-api v0.165.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.165.0)<br>
 [self-assessment-api-router v1.10.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.10.0)</b>
