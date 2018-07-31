@@ -1,4 +1,4 @@
-<p>Scenario simulations using _Gov-Test-Scenario_ headers is only available in sandbox environment</p>
+<p>You can simulate scenarios using Gov-Test-Scenario headers in the sandbox environment.</p>
 <table>
     <thead>
         <tr>

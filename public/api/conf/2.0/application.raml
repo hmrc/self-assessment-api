@@ -1560,7 +1560,7 @@ traits:
                           headers:
                             X-CorrelationId:
                               example: 5968c22d620000620096db59
-                              description: Unique id for operation tracking
+                              description: Unique ID for operation-tracking
                           body:
                             application/json:
                               type: !include schemas/Obligations-Eops-Property.json
@@ -1604,6 +1604,14 @@ traits:
                                   description: The date range is longer than 366 days.
                                   value:
                                     code: RANGE_DATE_TOO_LONG
+                        403:
+                          body:
+                            type: types.errorResponse
+                            examples:
+                              clientOrAgentNotAuthorised:
+                                description: 'The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.'
+                                value:
+                                  code: CLIENT_OR_AGENT_NOT_AUTHORISED
                         404:
                           body:
                             type: types.errorResponse
