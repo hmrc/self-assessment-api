@@ -39,36 +39,49 @@ object Generators {
       disallowableAmount <- Gen.option(amountGen(0, amount))
     } yield Expense(amount = amount, disallowableAmount = if (depreciation) Some(amount) else disallowableAmount)
 
+  def genExpenseNegativeOrPositive(depreciation: Boolean = false): Gen[ExpenseNegativeOrPositive] =
+    for {
+      amount <- amount
+      disallowableAmount <- Gen.option(amountGen(0, amount))
+    } yield ExpenseNegativeOrPositive(amount = amount, disallowableAmount = if (depreciation) Some(amount) else disallowableAmount)
+
+  def genExpenseProfessionalFees(depreciation: Boolean = false): Gen[ExpenseProfessionalFees] =
+    for {
+      amount <- amount
+      disallowableAmount <- Gen.option(amountGen(0, amount))
+    } yield ExpenseProfessionalFees(amount = amount, disallowableAmount = if (depreciation) Some(amount) else disallowableAmount)
+
   val genExpenses: Gen[Expenses] =
     for {
-      costOfGoodsBought <- Gen.option(genExpense())
+      costOfGoodsBought <- Gen.option(genExpenseNegativeOrPositive())
       cisPaymentsToSubcontractors <- Gen.option(genExpense())
       staffCosts <- Gen.option(genExpense())
       travelCosts <- Gen.option(genExpense())
-      premisesRunningCosts <- Gen.option(genExpense())
-      maintenanceCosts <- Gen.option(genExpense())
+      premisesRunningCosts <- Gen.option(genExpenseNegativeOrPositive())
+      maintenanceCosts <- Gen.option(genExpenseNegativeOrPositive())
       adminCosts <- Gen.option(genExpense())
       advertisingCosts <- Gen.option(genExpense())
-      interest <- Gen.option(genExpense())
-      financialCharges <- Gen.option(genExpense())
+      interest <- Gen.option(genExpenseNegativeOrPositive())
+      financialCharges <- Gen.option(genExpenseNegativeOrPositive())
       badDebt <- Gen.option(genExpense())
-      professionalFees <- Gen.option(genExpense())
-      depreciation <- Gen.option(genExpense(depreciation = true))
+      professionalFees <- Gen.option(genExpenseProfessionalFees())
+      depreciation <- Gen.option(genExpenseNegativeOrPositive(depreciation = true))
       other <- Gen.option(genExpense())
     } yield
-      Expenses(costOfGoodsBought = costOfGoodsBought,
-               cisPaymentsToSubcontractors = cisPaymentsToSubcontractors,
-               staffCosts = staffCosts,
-               travelCosts = travelCosts,
-               premisesRunningCosts = premisesRunningCosts,
-               maintenanceCosts = maintenanceCosts,
-               adminCosts = adminCosts,
-               advertisingCosts = advertisingCosts,
-               interest = interest,
-               financialCharges = financialCharges,
-               badDebt = badDebt,
-               professionalFees = professionalFees,
-               depreciation = depreciation,
-               other = other)
+      Expenses(costOfGoodsBought,
+               cisPaymentsToSubcontractors,
+               staffCosts,
+               travelCosts,
+               premisesRunningCosts,
+               maintenanceCosts,
+               adminCosts,
+               advertisingCosts,
+               None,
+               interest,
+               financialCharges,
+               badDebt,
+               professionalFees,
+               depreciation ,
+               other)
 
 }

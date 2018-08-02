@@ -21,7 +21,7 @@ import uk.gov.hmrc.selfassessmentapi.models
 import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.Deduction
 
 package object des {
-  def expense2Deduction(expense: models.Expense): Deduction =
+  def expense2Deduction(expense: models.BaseExpense): Deduction =
     Deduction(amount = expense.amount, disallowableAmount = expense.disallowableAmount)
 
   implicit val bigIntFormat = new Format[BigInt] {

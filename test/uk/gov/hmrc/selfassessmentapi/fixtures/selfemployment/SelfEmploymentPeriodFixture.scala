@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.fixtures.selfemployment
 
 import org.joda.time.LocalDate
 import uk.gov.hmrc.selfassessmentapi.models
-import uk.gov.hmrc.selfassessmentapi.models.{Expense, SimpleIncome}
+import uk.gov.hmrc.selfassessmentapi.models.{Expense, SimpleIncome, ExpenseNegativeOrPositive, ExpenseProfessionalFees}
 
 object SelfEmploymentPeriodFixture {
 
@@ -34,17 +34,17 @@ object SelfEmploymentPeriodFixture {
         other = Some(SimpleIncome(10.10)))),
       Some(models.selfemployment.Expenses(
         cisPaymentsToSubcontractors = Some(Expense(10.10, Some(10.10))),
-        depreciation = Some(Expense(10.10, Some(10.10))),
-        costOfGoodsBought = Some(Expense(10.10, Some(10.10))),
-        professionalFees = Some(Expense(10.10, Some(10.10))),
+        depreciation = Some(ExpenseNegativeOrPositive(10.10, Some(10.10))),
+        costOfGoodsBought = Some(ExpenseNegativeOrPositive(10.10, Some(10.10))),
+        professionalFees = Some(ExpenseProfessionalFees(10.10, Some(10.10))),
         badDebt = Some(Expense(10.10, Some(10.10))),
         adminCosts = Some(Expense(10.10, Some(10.10))),
         advertisingCosts = Some(Expense(10.10, Some(10.10))),
         businessEntertainmentCosts = Some(Expense(10.10, Some(10.10))),
-        financialCharges = Some(Expense(10.10, Some(10.10))),
-        interest = Some(Expense(10.10, Some(10.10))),
-        maintenanceCosts = Some(Expense(10.10, Some(10.10))),
-        premisesRunningCosts = Some(Expense(10.10, Some(10.10))),
+        financialCharges = Some(ExpenseNegativeOrPositive(10.10, Some(10.10))),
+        interest = Some(ExpenseNegativeOrPositive(10.10, Some(10.10))),
+        maintenanceCosts = Some(ExpenseNegativeOrPositive(10.10, Some(10.10))),
+        premisesRunningCosts = Some(ExpenseNegativeOrPositive(10.10, Some(10.10))),
         staffCosts = Some(Expense(10.10, Some(10.10))),
         travelCosts = Some(Expense(10.10, Some(10.10))),
         other = Some(Expense(10.10, Some(10.10)))
