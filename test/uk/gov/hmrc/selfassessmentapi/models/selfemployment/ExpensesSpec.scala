@@ -16,43 +16,75 @@
 
 package uk.gov.hmrc.selfassessmentapi.models.selfemployment
 
-import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, Expense}
+import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, Expense, ExpenseNegativeOrPositive, ExpenseProfessionalFees}
 import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
-import play.api.libs.json.Json.toJson
 
 class ExpensesSpec extends JsonSpec {
 
   "Expenses" should {
 
     "round trip in" in
-      roundTripJson(Expenses(depreciation = Some(Expense(200, Some(200))), badDebt = Some(Expense(200, Some(100)))))
-
-    "reject Expenses with depreciation expense where disallowable amount is not equal to amount" in
-      assertValidationErrorWithCode(
-        Expenses(depreciation = Some(Expense(200, Some(100))), badDebt = Some(Expense(200, Some(100)))),
-        "/depreciation/disallowableAmount",
-        ErrorCode.DEPRECIATION_DISALLOWABLE_AMOUNT
-      )
-
-    "reject Expenses where the disallowable amount is greater than the amount" in
-      assertValidationErrorWithCode(Expenses(costOfGoodsBought = Some(Expense(30.00, Some(50.00)))),
-                                    "/costOfGoodsBought/disallowableAmount",
-                                    ErrorCode.INVALID_DISALLOWABLE_AMOUNT)
-
-    "reject Expenses with multiple validation errors" in
-      assertValidationErrorsWithCode[Expenses](
-        toJson(
-          Expenses(depreciation = Some(Expense(200, Some(100))),
-                   badDebt = Some(Expense(200, Some(100))),
-                   costOfGoodsBought = Some(Expense(30.00, Some(50.00))))),
-        Map(
-          "/depreciation/disallowableAmount" -> Seq(ErrorCode.DEPRECIATION_DISALLOWABLE_AMOUNT),
-          "/costOfGoodsBought/disallowableAmount" -> Seq(ErrorCode.INVALID_DISALLOWABLE_AMOUNT)
-        )
-      )
+      roundTripJson(Expenses(depreciation = Some(ExpenseNegativeOrPositive(200, Some(200))), badDebt = Some(Expense(200, Some(100)))))
 
     "accept Expenses with depreciation expense where disallowable amount is not defined" in
-      roundTripJson(Expenses(depreciation = Some(Expense(200, None))))
+      roundTripJson(Expenses(depreciation = Some(ExpenseNegativeOrPositive(200, None))))
+
+    "accept full Expenses" in
+      roundTripJson(Expenses(
+        costOfGoodsBought = Some(ExpenseNegativeOrPositive(200, Some(200))),
+        cisPaymentsToSubcontractors = Some(Expense(200, Some(100))),
+        staffCosts = Some(Expense(200, Some(100))),
+        travelCosts = Some(Expense(200, Some(100))),
+        premisesRunningCosts = Some(ExpenseNegativeOrPositive(200, Some(200))),
+        maintenanceCosts = Some(ExpenseNegativeOrPositive(200, Some(200))),
+        adminCosts = Some(Expense(200, Some(100))),
+        advertisingCosts = Some(Expense(200, Some(100))),
+        businessEntertainmentCosts = Some(Expense(200, Some(100))),
+        interest = Some(ExpenseNegativeOrPositive(200, Some(200))),
+        financialCharges = Some(ExpenseNegativeOrPositive(200, Some(200))),
+        badDebt = Some(Expense(200, Some(100))),
+        professionalFees = Some(ExpenseProfessionalFees(200, Some(200))),
+        depreciation = Some(ExpenseNegativeOrPositive(200, Some(200))),
+        other = Some(Expense(200, Some(100)))
+      ))
+
+    "accept full Expenses where disallowableAmount is not defined" in
+      roundTripJson(Expenses(
+        costOfGoodsBought = Some(ExpenseNegativeOrPositive(200, None)),
+        cisPaymentsToSubcontractors = Some(Expense(200, None)),
+        staffCosts = Some(Expense(200, None)),
+        travelCosts = Some(Expense(200, None)),
+        premisesRunningCosts = Some(ExpenseNegativeOrPositive(200, None)),
+        maintenanceCosts = Some(ExpenseNegativeOrPositive(200, None)),
+        adminCosts = Some(Expense(200, None)),
+        advertisingCosts = Some(Expense(200, None)),
+        businessEntertainmentCosts = Some(Expense(200, None)),
+        interest = Some(ExpenseNegativeOrPositive(200, None)),
+        financialCharges = Some(ExpenseNegativeOrPositive(200, None)),
+        badDebt = Some(Expense(200, None)),
+        professionalFees = Some(ExpenseProfessionalFees(200, None)),
+        depreciation = Some(ExpenseNegativeOrPositive(200, None)),
+        other = Some(Expense(200, None))
+      ))
+
+    "reject an invalid amount for costOfGoodsBought" in
+    assertValidationErrorWithCode(Expenses(
+      costOfGoodsBought = Some(ExpenseNegativeOrPositive(BigDecimal(-100000000000.00), None)),
+      cisPaymentsToSubcontractors = Some(Expense(200, None)),
+      staffCosts = Some(Expense(200, None)),
+      travelCosts = Some(Expense(200, None)),
+      premisesRunningCosts = Some(ExpenseNegativeOrPositive(200, None)),
+      maintenanceCosts = Some(ExpenseNegativeOrPositive(200, None)),
+      adminCosts = Some(Expense(200, None)),
+      advertisingCosts = Some(Expense(200, None)),
+      businessEntertainmentCosts = Some(Expense(200, None)),
+      interest = Some(ExpenseNegativeOrPositive(200, None)),
+      financialCharges = Some(ExpenseNegativeOrPositive(200, None)),
+      badDebt = Some(Expense(200, None)),
+      professionalFees = Some(ExpenseProfessionalFees(200, None)),
+      depreciation = Some(ExpenseNegativeOrPositive(200, None)),
+      other = Some(Expense(200, None))), "/costOfGoodsBought/amount", ErrorCode.INVALID_MONETARY_AMOUNT)
+
   }
 
 }

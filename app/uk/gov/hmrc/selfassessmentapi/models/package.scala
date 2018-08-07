@@ -53,6 +53,17 @@ package object models {
       ErrorCode.INVALID_MONETARY_AMOUNT))(
       amount => amount >= 0 && amount.scale < 3 && amount <= MAX_AMOUNT)
 
+  /**
+    * Asserts that amounts must have a maximum of two decimal places
+    */
+  val positiveOrNegativeAmountValidator: Reads[BigDecimal] = Reads
+    .of[BigDecimal]
+    .filter(
+      ValidationError("amount should be a number between -99999999999.99 and 99999999999.99 with up to 2 decimal places",
+        ErrorCode.INVALID_MONETARY_AMOUNT))(
+        amount => amount >= -99999999999.99 && amount.scale < 3 && amount <= 99999999999.99)
+
+
   val sicClassifications: Try[Seq[String]] =
     for {
       lines <- {

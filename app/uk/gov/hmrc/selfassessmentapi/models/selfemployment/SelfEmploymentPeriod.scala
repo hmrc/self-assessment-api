@@ -64,11 +64,11 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
         cisPaymentsToSubcontractors = deductions.constructionIndustryScheme.map(deduction =>
           Expense(deduction.amount, deduction.disallowableAmount)),
         depreciation =
-          deductions.depreciation.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
+          deductions.depreciation.map(deduction => ExpenseNegativeOrPositive(deduction.amount, deduction.disallowableAmount)),
         costOfGoodsBought =
-          deductions.costOfGoods.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
+          deductions.costOfGoods.map(deduction => ExpenseNegativeOrPositive(deduction.amount, deduction.disallowableAmount)),
         professionalFees =
-          deductions.professionalFees.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
+          deductions.professionalFees.map(deduction => ExpenseProfessionalFees(deduction.amount, deduction.disallowableAmount)),
         badDebt = deductions.badDebt.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         adminCosts = deductions.adminCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         advertisingCosts =
@@ -76,12 +76,12 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
         businessEntertainmentCosts =
                   deductions.businessEntertainmentCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         financialCharges =
-          deductions.financialCharges.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
-        interest = deductions.interest.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
+          deductions.financialCharges.map(deduction => ExpenseNegativeOrPositive(deduction.amount, deduction.disallowableAmount)),
+        interest = deductions.interest.map(deduction => ExpenseNegativeOrPositive(deduction.amount, deduction.disallowableAmount)),
         maintenanceCosts =
-          deductions.maintenanceCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
+          deductions.maintenanceCosts.map(deduction => ExpenseNegativeOrPositive(deduction.amount, deduction.disallowableAmount)),
         premisesRunningCosts =
-          deductions.premisesRunningCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
+          deductions.premisesRunningCosts.map(deduction => ExpenseNegativeOrPositive(deduction.amount, deduction.disallowableAmount)),
         staffCosts = deductions.staffCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         travelCosts = deductions.travelCosts.map(deduction => Expense(deduction.amount, deduction.disallowableAmount)),
         other = deductions.other.map(deduction => Expense(deduction.amount, deduction.disallowableAmount))
