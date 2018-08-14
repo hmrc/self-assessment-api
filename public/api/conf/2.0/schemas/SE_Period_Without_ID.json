@@ -21,7 +21,7 @@
     },
     "consolidatedExpenses": {
       "title": "Consolidated expenses",
-      "description": "Sum of all expenses for the specified period",
+      "description": "Sum of all expenses for the specified period. The value must be between 0 and 99999999999999.98.",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,

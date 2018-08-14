@@ -1,7 +1,10 @@
-## 07-Aug-2018
+## 14-Aug-2018
 <b>[self-assessment-api v0.166.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.166.0)<br>
-[self-assessment-api-router v1.15.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.15.0)</b>
+[self-assessment-api-router v1.17.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.17.0)</b>
 * Removed DEPRECIATION_DISALLOWABLE_AMOUNT error from Self-employment Period endpoints.
+    * Create a Self-employment Periodic update
+    * Amend a Self-employment Periodic update
+    * Get a Self-employment Periodic update
 * Removed INVALID_DISALLOWABLE_AMOUNT error from Self-employment Period endpoints.
 * Correct validation to allow value range -99999999999.99 to 99999999999.99, for following fields on Self-employment Period endpoints:
     * costOfGoods.amount

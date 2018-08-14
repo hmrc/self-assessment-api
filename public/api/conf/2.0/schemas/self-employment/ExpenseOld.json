@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Expense",
+  "description": "Expense",
+  "type": "object",
+  "properties": {
+    "amount": {
+      "title": "Amount",
+      "description": "Expenses associated with the running of the business. The value must be between 0 and 99999999999999.98.",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "1000.45"
+    },
+    "disallowableAmount": {
+      "title": "Disallowable amount",
+      "description": "Any expense or partial expense that cannot be claimed for tax purposes. The value must be between 0 and 99999999999999.98.",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999999.98,
+      "example": "1000.45"
+    }
+  },
+  "required": [
+    "amount"
+  ],
+  "additionalProperties": false
+}
