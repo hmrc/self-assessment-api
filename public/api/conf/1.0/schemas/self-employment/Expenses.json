@@ -7,77 +7,77 @@
     "costOfGoodsBought": {
       "title": "Cost of goods bought",
       "description": "Cost of goods bought for resale or goods used",
-      "$ref": "../Expense.json"
+      "$ref": "../self-employment/ExpenseNew-PosNeg-PosNeg.json"
     },
     "cisPaymentsToSubcontractors": {
       "title": "Construction industry - payments to subcontractors",
       "description": "Payments to subcontractors - Construction Industry Scheme (CIS)",
-      "$ref": "../Expense.json"
+      "$ref": "../self-employment/ExpenseOld.json"
     },
     "staffCosts": {
       "title": "Staff costs",
-      "description": "Wages, salaries and other staff costs",
-      "$ref": "../Expense.json"
+      "description": "Wages, salaries and other staff costs.",
+      "$ref": "../self-employment/ExpenseOld.json"
     },
     "travelCosts": {
       "title": "Travel costs",
       "description": "Car, van and travel expenses",
-      "$ref": "../Expense.json"
+      "$ref": "../self-employment/ExpenseOld.json"
     },
     "premisesRunningCosts": {
       "title": "Premises running costs",
       "description": "Rent, rates, power and insurance costs",
-      "$ref": "../Expense.json"
+      "$ref": "../self-employment/ExpenseNew-PosNeg-PosNeg.json"
     },
     "maintenanceCosts": {
       "title": "Maintenance costs",
       "description": "Repairs and renewals of property and equipment",
-      "$ref": "../Expense.json"
+      "$ref": "../self-employment/ExpenseNew-PosNeg-PosNeg.json"
     },
     "adminCosts": {
       "title": "Admin costs",
       "description": "Phone, fax, stationery and other office costs",
-      "$ref": "../Expense.json"
+      "$ref": "../self-employment/ExpenseOld.json"
     },
     "advertisingCosts": {
       "title": "Advertising costs",
       "description": "Advertising costs",
-      "$ref": "../Expense.json"
+      "$ref": "../self-employment/ExpenseOld.json"
     },
     "businessEntertainmentCosts": {
       "title": "Business entertainment costs",
       "description": "Business entertainment costs",
-      "$ref": "../Expense.json"
+      "$ref": "../self-employment/ExpenseOld.json"
     },
     "interest": {
       "title": "Interest",
       "description": "Interest on bank and other loans",
-      "$ref": "../Expense.json"
+      "$ref": "../self-employment/ExpenseNew-PosNeg-PosNeg.json"
     },
     "financialCharges": {
       "title": "Financial charges",
       "description": "Bank, credit card and other financial charges",
-      "$ref": "../Expense.json"
+      "$ref": "../self-employment/ExpenseNew-PosNeg-PosNeg.json"
     },
     "badDebt": {
       "title": "Bad debt",
       "description": "Irrecoverable debts written off",
-      "$ref": "../Expense.json"
+      "$ref": "../self-employment/ExpenseNew-PosNeg-PosNeg.json"
     },
     "professionalFees": {
       "title": "Professional fees",
       "description": "Accountancy, legal and other professional fees",
-      "$ref": "../Expense.json"
+      "$ref": "../self-employment/ExpenseNew-PosNeg-Pos.json"
     },
     "depreciation": {
       "title": "Depreciation",
       "description": "Depreciation and loss/profit on sales of assets",
-      "$ref": "../Expense.json"
+      "$ref": "../self-employment/ExpenseNew-PosNeg-PosNeg.json"
     },
     "other": {
       "title": "Other",
       "description": "Other business expenses",
-      "$ref": "../Expense.json"
+      "$ref": "../self-employment/ExpenseOld.json"
     }
   },
   "additionalProperties": false

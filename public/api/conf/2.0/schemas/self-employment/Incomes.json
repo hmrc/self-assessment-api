@@ -7,12 +7,12 @@
     "turnover": {
       "title": "Turnover",
       "description": "The takings, fees, sales or money earned by your business",
-      "$ref": "../SimpleIncome.json"
+      "$ref": "../self-employment/SimpleIncome.json"
     },
     "other": {
       "title": "Other",
       "description": "Any other business income not included in turnover",
-      "$ref": "../SimpleIncome.json"
+      "$ref": "../self-employment/SimpleIncome.json"
     }
   },
   "additionalProperties": false
