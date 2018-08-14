@@ -15,27 +15,15 @@
     <tbody>
         <tr>
             <td><p>Default (No header value)</p></td>
-            <td><p>Simulates a calculation with self-employment periodic updates and annual summaries</p></td>
+            <td><p>Simulates a calculation with self-employment income</p></td>
         </tr>
         <tr>
-            <td><p>SE_PERIODIC_ANNUALS</p></td>
-            <td><p>Simulates a calculation with self-employment periodic updates and annual summaries</p></td>
+            <td><p>SELF_EMPLOYMENT</p></td>
+            <td><p>Simulates a calculation with self-employment income</p></td>
         </tr>      
         <tr>
-            <td><p>SE_PERIODIC</p></td>
-            <td><p>Simulates a calculation with self-employment periodic updates</p></td>
-        </tr>
-        <tr>
-            <td><p>PROP_FHL_PERIODIC_ANNUALS</p></td>
-            <td><p>Simulates a calculation with UK property FHL periodic updates and annual summaries</p></td>
-        </tr>
-        <tr>
-            <td><p>SE_PROPERTY</p></td>
-            <td><p>Simulates a calculation with self-employment and UK property income sources</p></td>
-        </tr>
-        <tr>
-            <td><p>SE_SCOTTISH_MIS</p></td>
-            <td><p>Simulates a calculation with a Scottish regime and multiple income sources</p></td>
+            <td><p>BVR_ERRORS</p></td>
+            <td><p>Simulates a calculation with four BVR errors and one BVR warning</p></td>
         </tr>
         <tr>
             <td><p>RESPONSE_BEING_PREPARED</p></td>

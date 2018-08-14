@@ -87,7 +87,7 @@ traits:
             type: types.errorResponse
             examples:
               clientNotSubscribedToMTD:
-                description: The client and/or agent is not authorised.
+                description: 'The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.'
                 value:
                   code: CLIENT_OR_AGENT_NOT_AUTHORISED
   periodBVRs:
@@ -1541,7 +1541,7 @@ traits:
                       displayName: Retrieve End of Period Statement Obligations for a UK Property Business [test only]
                       description: Use this endpoint to retrieve the End of Period Statement (EOPS) of obligations for a UK property business. In the sandbox environment, this endpoint returns pre-defined responses that are representative of what may be returned in production.
                       (annotations.sandboxData): !include scenarios/eops-property-obligation-scenarios.md
-                      is: [headers.acceptHeader, contentType, testScenarioHeader]
+                      is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
                       (annotations.scope): "read:self-assessment"
                       securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
                       queryParameters:
@@ -1604,14 +1604,6 @@ traits:
                                   description: The date range is longer than 366 days.
                                   value:
                                     code: RANGE_DATE_TOO_LONG
-                        403:
-                          body:
-                            type: types.errorResponse
-                            examples:
-                              clientOrAgentNotAuthorised:
-                                description: 'The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.'
-                                value:
-                                  code: CLIENT_OR_AGENT_NOT_AUTHORISED
                         404:
                           body:
                             type: types.errorResponse
@@ -1968,7 +1960,7 @@ traits:
       /{calculationId}:
         uriParameters:
           calculationId:
-            description: The ID of the tax calculation.<p>Must conform to the regular expression `^[0-9]{8}|[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`</p>
+            description: The ID of the tax calculation.<p>Must conform to the regular expression `^[0-9]{8}$|^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`</p>
             type: string
             example: 041f7e4d-87d9-4d4a-a296-3cfbdf92f7e2
         get:
@@ -1997,28 +1989,32 @@ traits:
                     description: >
                       Scenario: Successful calculation
                     value: !include examples/calculation/TaxCalculation.json
+                   example-2:
+                    description: >
+                      Scenario: Unsuccessful calculation due to business validation failure(s)
+                    value: !include examples/calculation/TaxCalculationBvrErrors.json
             400:
               body:
                 application/json:
                   type: types.errorResponse
                   examples:
                     invalidNino:
-                      description: Invalid National Insurance number
+                      description: The format of the National Insurance number is invalid.
                       value:
-                        code: NINO_INVALID
+                        code: FORMAT_NINO
                     invalidCalcId:
-                      description: The calculation ID provided is invalid
+                      description: The format of the calculation ID is invalid.
                       value:
-                        code: INVALID_CALCID
+                        code: FORMAT_CALCID
             404:
               body:
                 application/json:
                   type: types.errorResponse
                   examples:
                     notFound:
-                      description: Resource not found
+                      description: The matching resource is not found.
                       value:
-                        code: NOT_FOUND
+                        code: MATCHING_RESOURCE_NOT_FOUND
     /{taxYear}:
       uriParameters:
         taxYear:
