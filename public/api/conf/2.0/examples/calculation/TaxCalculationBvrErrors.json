@@ -1,3 +1,5 @@
 {
-  "validationMessageCount": 5
+  "validationMessageCount": 5,
+  "intentToCrystallise": false,
+  "crystallised": false
 }

@@ -1,0 +1,31 @@
+{
+  "warningCount": 1,
+  "errorCount": 4,
+  "messages": [
+    {
+      "id": "C11101",
+      "type": "warning",
+      "text": "You have entered a large amount in total Gift Aid payments. Please check."
+    },
+    {
+      "id": "C15102",
+      "type": "error",
+      "text": "Total amount of one-off Gift Aid payments cannot exceed the total gift aid payments. Please check."
+    },
+    {
+      "id": "C15103",
+      "type": "error",
+      "text": "Gift aid payments made this year treated as paid in the previous year cannot exceed the total gift aid payments. Please check."
+    },
+    {
+      "id": "C15104",
+      "type": "error",
+      "text": "Value of qualifying investments gifted to non-UK charities cannot exceed the sum of 'Value of qualifying shares and securities gifted to charity' and 'Value of qualifying land and buildings gifted to charity'. Please check."
+    },
+    {
+      "id": "C15105",
+      "type": "error",
+      "text": "Gift aid payments to non-UK charities cannot exceed the total gift aid payments. Please check."
+    }
+  ]
+}

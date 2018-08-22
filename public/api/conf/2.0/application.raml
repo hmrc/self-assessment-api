@@ -1974,7 +1974,6 @@ traits:
             204:
               body:
                 application/json:
-                  type: !include schemas/TaxCalculation.json
                   examples:
                    example-1:
                     description: >
@@ -2015,6 +2014,54 @@ traits:
                       description: The matching resource is not found.
                       value:
                         code: MATCHING_RESOURCE_NOT_FOUND
+        /validation-messages:
+                get:
+                  displayName: Retrieve validation messages associated with a tax calculation
+                  description: Use this endpoint to retrieve the validation messages associated with a tax calculation. In the sandbox environment, this endpoint returns pre-defined responses that are representative of what may be returned in production.
+                  (annotations.sandboxData): !include scenarios/tax-calculation-bvr.md
+                  is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
+                  (annotations.scope): "read:self-assessment"
+                  securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
+                  responses:
+                    200:
+                      body:
+                        application/json:
+                          type: !include schemas/TaxCalculationBvr.json
+                          examples:
+                           example-1:
+                            description: >
+                              Scenario: Warnings and errors returned for an unsuccessful calculation.
+                            value: !include examples/calculation/TaxCalculationValidationMessages.json
+                    204:
+                      body:
+                        application/json:
+                          examples:
+                           example-1:
+                            description: >
+                              Scenario: The calculation is in progress. This will return an empty body
+                            value: {}
+                    400:
+                      body:
+                        application/json:
+                          type: types.errorResponse
+                          examples:
+                            invalidNino:
+                              description: The format of the National Insurance number is invalid.
+                              value:
+                                code: FORMAT_NINO
+                            invalidCalcId:
+                              description: The format of the calculation ID is invalid.
+                              value:
+                                code: FORMAT_CALC_ID
+                    404:
+                      body:
+                        application/json:
+                          type: types.errorResponse
+                          examples:
+                            notFound:
+                              description: The matching resource is not found.
+                              value:
+                                code: MATCHING_RESOURCE_NOT_FOUND
     /{taxYear}:
       uriParameters:
         taxYear:
