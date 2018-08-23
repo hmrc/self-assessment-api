@@ -22,7 +22,7 @@
             <td><p>Simulates a calculation with self-employment income</p></td>
         </tr>      
         <tr>
-            <td><p>BVR_ERRORS</p></td>
+            <td><p>ERRORS_AND_WARNINGS</p></td>
             <td><p>Simulates a calculation with four BVR errors and one BVR warning</p></td>
         </tr>
         <tr>

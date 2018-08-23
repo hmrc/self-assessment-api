@@ -15,7 +15,7 @@
     <tbody>
         <tr>
             <td><p>Default (No header value)</p></td>
-            <td><p>Simulates an unsuccessful calculation due to errors and warnings</p></td>
+            <td><p>Simulates a calculation that does not have any associated errors or warnings</p></td>
         </tr>
         <tr>
             <td><p>ERRORS_AND_WARNINGS</p></td>
