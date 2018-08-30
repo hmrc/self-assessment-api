@@ -1,7 +1,9 @@
-## 28-Aug-2018
+## 30-Aug-2018
 <b>[mtd-tax-calc-api v​1.2.0](https://github.com/hmrc/mtd-tax-calculation/releases/tag/v1.2.0)<br>
 [self-assessment-api-router v1.19.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.19.0)</b>
 * Updated Retrieve Tax Calculation endpoint (2.0) to align with new backend specification
+    * Min/max values previously (+/-) 999999999999.98 changed to (+/-) 99999999999.99
+    * Test data for Gov-test-scenarios, including examples with errors/warnings
 * NEW endpoint Retrieve validation messages associated with a tax calculation (2.0)
 
 ## 14-Aug-2018
