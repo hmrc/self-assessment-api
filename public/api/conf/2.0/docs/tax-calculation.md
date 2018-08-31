@@ -7,5 +7,8 @@ Here, the developer can:
 
 * trigger a tax calculation
 * retrieve the result of a previously performed tax calculation
+* retrieve the validation messages associated with a tax calculation
 
-If the tax calculation is successfully triggered, the response location header includes calculationId. Use the calculationId to retrieve the tax calculation.
+If the tax calculation is successfully triggered, the response _location_ header includes _calculationId_. Use the _calculationId_ to retrieve the tax calculation.
+
+When retrieving a tax calculation returns the HTTP response code 204, the calculation is still in progress and needs to be retrieved again when the `etaSeconds` have elapsed.
