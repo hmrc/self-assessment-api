@@ -1479,9 +1479,9 @@ traits:
                     example: 2018-04-05
                 post:
                   displayName: Submit UK Property End-of-Period Statement
-                  description: Finalise the uk-property, end-of-period statement for this accounting period.
-                  (annotations.sandboxData): !include scenarios/declaration-scenarios.md
-                  is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+                  description: Use this endpoint to finalise the end-of-period statement, for this accounting period, for a UK property business.
+                  (annotations.sandboxData): !include scenarios/uk-prop-declaration-scenarios.md
+                  is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
                   (annotations.scope): "write:self-assessment"
                   securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
                   body:
@@ -1496,19 +1496,19 @@ traits:
                           type: types.errorResponse
                           examples:
                             invalidNino:
-                              description: Invalid NINO
+                              description: The format of the National Insurance number is invalid.
                               value:
-                                code: NINO_INVALID
+                                code: FORMAT_NINO
                             invalidDateRange:
-                              description: Invalid accounting period, i.e. when the start date is the later than the end date.
+                              description: The date range for the accounting period is invalid, for example the start date is after the end date.
                               value:
-                                code: INVALID_DATE_RANGE
+                                code: RANGE_INVALID
                             invalidDate:
                               description: Invalid date in accounting period range.
                               value:
                                 code: INVALID_DATE
                             invalidStartDate:
-                              description: The start date must be on or after 6th April 2017
+                              description: The start date must be on or after 6th April 2017.
                               value:
                                 code: INVALID_START_DATE
                     403:
@@ -1531,11 +1531,43 @@ traits:
                             alreadySubmitted:
                               description: You cannot submit a statement for the same accounting period twice.
                               value:
-                                code: ALREADY_SUBMITTED
+                                code: RULE_ALREADY_SUBMITTED
                             earlySubmission:
                               description: You cannot submit a statement before the end of your accounting period.
                               value:
-                                code: EARLY_SUBMISSION
+                                code: RULE_EARLY_SUBMISSION
+                            lateSubmission:
+                              description: The period to finalise has passed.
+                              value:
+                                code: RULE_LATE_SUBMISSION
+                            consolidatedExpenses:
+                              description: Consolidated expenses are not allowed if the cumulative turnover amount exceeds the threshold.
+                              value:
+                                code: RULE_CONSOLIDATED_EXPENSES
+                            class4Over16:
+                              description: Class 4 exemption is not allowed because the individual’s age is greater than or equal to 16 years old on the 6th April of the current tax year.
+                              value:
+                                code: RULE_CLASS4_OVER_16
+                            class4PensionAge:
+                              description: Class 4 exemption is not allowed because the individual's age is less than their State Pension age on the 6th April of the current tax year.
+                              value:
+                                code: RULE_CLASS4_PENSION_AGE
+                            fhlPrivateUse:
+                              description: For UK Furnished Holiday Lettings, the private use adjustment must not exceed the total allowable expenses.
+                              value:
+                                code: RULE_FHL_PRIVATE_USE_ADJUSTMENT
+                            nonFhlPrivateUse:
+                              description: For UK non-Furnished Holiday Lettings, the private use adjustment must not exceed the total allowable expenses.
+                              value:
+                                code: RULE_NON_FHL_PRIVATE_USE_ADJUSTMENT
+                            accountingPeriodStartDate:
+                              description: The period submission start date must match the accounting period start date of dd-mm-yyyy.
+                              value:
+                                code: RULE_ACCOUNTING_PERIOD_START_DATE
+                            accountingPeriodEndDate:
+                              description: The period submission end date must match the accounting period end date of dd-mm-yyyy.
+                              value:
+                                code: RULE_ACCOUNTING_PERIOD_END_DATE
         /obligations:
                     get:
                       displayName: Retrieve End of Period Statement Obligations for a UK Property Business [test only]
