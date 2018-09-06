@@ -694,6 +694,19 @@ traits:
                         example: !include examples/self-employment/Declaration.json
                     responses:
                       204:
+                        body:
+                          application/json:
+                            type:
+                            examples:
+                              example-1:
+                                description: Successful submission returns an empty body.
+                                value: ""
+                              example-2:
+                                description: Failed submission with single business rule error.
+                                value: !include examples/eopsDeclarations/singleBvrError.json
+                              example-3:
+                                description: Failed submission with multiple business rule errors.
+                                value: !include examples/eopsDeclarations/multipleBvrErrors.json
                       400:
                         body:
                           application/json:
@@ -703,18 +716,18 @@ traits:
                                 description: The format of the National Insurance number is invalid.
                                 value:
                                   code: FORMAT_NINO
+                              invalidStartDate:
+                                description: The start date must be on or after 6th April 2017.
+                                value:
+                                  code: FORMAT_START_DATE
+                              invalidEndDate:
+                                description: Invalid account period end date
+                                value:
+                                  code: FORMAT_END_DATE
                               invalidDateRange:
                                 description: The date range for the accounting period is invalid, for example the start date is after the end date.
                                 value:
                                   code: RANGE_INVALID
-                              invalidDate:
-                                description: Invalid date in accounting period range.
-                                value:
-                                  code: INVALID_DATE
-                              invalidStartDate:
-                                description: The start date must be on or after 6th April 2017.
-                                value:
-                                  code: INVALID_START_DATE
                       403:
                         body:
                           application/json:
@@ -723,17 +736,9 @@ traits:
                               notFinalised:
                                 description: Statement not declared as finalised.
                                 value:
-                                  code: NOT_FINALISED
-                              periodicUpdateMissing:
-                                description: Periodic update missing for this period.
-                                value:
-                                  code: PERIODIC_UPDATE_MISSING
-                              nonMatchingPeriod:
-                                description: You cannot submit a statement with a period that does not match the accounting period of your business.
-                                value:
-                                  code: NON_MATCHING_PERIOD
+                                  code: RULE_NOT_FINALISED
                               alreadySubmitted:
-                                description: You cannot submit a statement for the same accounting period twice.
+                                description: The start date must be the same day or before the from date.
                                 value:
                                   code: RULE_ALREADY_SUBMITTED
                               earlySubmission:
@@ -764,6 +769,15 @@ traits:
                                 description: The period submission end date must match the accounting period end date of dd-mm-yyyy.
                                 value:
                                   code: RULE_ACCOUNTING_PERIOD_END_DATE
+                      404:
+                        body:
+                          application/json:
+                            type: types.errorResponse
+                            examples:
+                              notFound:
+                                description: No submission data exists for the accounting period.
+                                value:
+                                  code: MATCHING_RESOURCE_NOT_FOUND
           /obligations:
             get:
               displayName: Retrieve End of Period Statement Obligations for a Self-Employment Business [test only]
@@ -1502,7 +1516,7 @@ traits:
                     type: string
                     example: 2018-04-05
                 post:
-                  displayName: Submit UK Property End-of-Period Statement
+                  displayName: Submit UK Property End-of-Period Statement [test only]
                   description: Use this endpoint to finalise the end-of-period statement, for this accounting period, for a UK property business.
                   (annotations.sandboxData): !include scenarios/uk-prop-declaration-scenarios.md
                   is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
@@ -1514,6 +1528,19 @@ traits:
                       example: !include examples/uk-properties/Declaration.json
                   responses:
                     204:
+                      body:
+                        application/json:
+                          type:
+                          examples:
+                            example-1:
+                              description: Successful submission returns an empty body.
+                              value: ""
+                            example-2:
+                              description: Failed submission with single business rule error.
+                              value: !include examples/eopsDeclarations/singleBvrError.json
+                            example-3:
+                              description: Failed submission with multiple business rule errors.
+                              value: !include examples/eopsDeclarations/multipleBvrErrors.json
                     400:
                       body:
                         application/json:
@@ -1523,18 +1550,18 @@ traits:
                               description: The format of the National Insurance number is invalid.
                               value:
                                 code: FORMAT_NINO
+                            invalidStartDate:
+                              description: The start date must be on or after 6th April 2017.
+                              value:
+                                code: FORMAT_START_DATE
+                            invalidEndDate:
+                              description: Invalid account period end date
+                              value:
+                                code: FORMAT_END_DATE
                             invalidDateRange:
                               description: The date range for the accounting period is invalid, for example the start date is after the end date.
                               value:
                                 code: RANGE_INVALID
-                            invalidDate:
-                              description: Invalid date in accounting period range.
-                              value:
-                                code: INVALID_DATE
-                            invalidStartDate:
-                              description: The start date must be on or after 6th April 2017.
-                              value:
-                                code: INVALID_START_DATE
                     403:
                       body:
                         application/json:
@@ -1543,17 +1570,9 @@ traits:
                             notFinalised:
                               description: Statement not declared as finalised.
                               value:
-                                code: NOT_FINALISED
-                            periodicUpdateMissing:
-                              description: Periodic update missing for this period
-                              value:
-                                code: PERIODIC_UPDATE_MISSING
-                            nonMatchingPeriod:
-                              description: You cannot submit a statement with a period that does not match the accounting period of your business.
-                              value:
-                                code: NON_MATCHING_PERIOD
+                                code: RULE_NOT_FINALISED
                             alreadySubmitted:
-                              description: You cannot submit a statement for the same accounting period twice.
+                              description: The start date must be the same day or before the from date.
                               value:
                                 code: RULE_ALREADY_SUBMITTED
                             earlySubmission:
@@ -1592,6 +1611,15 @@ traits:
                               description: The period submission end date must match the accounting period end date of dd-mm-yyyy.
                               value:
                                 code: RULE_ACCOUNTING_PERIOD_END_DATE
+                    404:
+                      body:
+                        application/json:
+                          type: types.errorResponse
+                          examples:
+                            notFound:
+                              description: No submission data exists for the accounting period.
+                              value:
+                                code: MATCHING_RESOURCE_NOT_FOUND
         /obligations:
                     get:
                       displayName: Retrieve End of Period Statement Obligations for a UK Property Business [test only]
