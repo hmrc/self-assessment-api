@@ -105,7 +105,7 @@ object SelfEmploymentStatementResource extends BaseResource {
         case 200 =>
           logger.debug("Self-employment statements from DES = " + Json.stringify(response.json))
           //TODO: ITSBEOPS is made up for now, it needs to be agreed with the des folks! replace with sourceId
-          response.retrieveEOPSObligation("ITSBEOPS", id) match {
+          response.retrieveEOPSObligation(id) match {
             case Right(obj) =>
               obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
             case Left(ex) =>
