@@ -1,12 +1,11 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json._
-import play.api.mvc.Results.Conflict
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.models.{CessationReason, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.models.des.properties.{Common, FHL, Other}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
+import uk.gov.hmrc.selfassessmentapi.models.{CessationReason, TaxYear}
 
 object DesJsons {
 
@@ -765,7 +764,7 @@ object DesJsons {
          |  "obligations": [
          |    {
          |      "identification": {
-         |        "incomeSourceType":"ITSBEOPS",
+         |        "incomeSourceType":"ITSB",
          |        "referenceNumber": "$id",
          |        "referenceType":"MTDBIS"
          |    },
@@ -773,29 +772,9 @@ object DesJsons {
          |        {
          |          "status": "O",
          |          "inboundCorrespondenceFromDate": "2017-04-06",
-         |          "inboundCorrespondenceToDate": "2017-07-05",
-         |          "inboundCorrespondenceDueDate": "2017-08-05"
-         |        },
-         |        {
-         |          "status": "F",
-         |          "inboundCorrespondenceFromDate": "2017-10-06",
-         |          "inboundCorrespondenceToDate": "2018-01-05",
-         |          "inboundCorrespondenceDueDate": "2018-02-05",
-         |          "inboundCorrespondenceDateReceived": "2018-02-01"
-         |        },
-         |        {
-         |          "status": "F",
-         |          "inboundCorrespondenceFromDate": "2017-07-06",
-         |          "inboundCorrespondenceToDate": "2017-10-05",
-         |          "inboundCorrespondenceDueDate": "2017-11-05",
-         |          "inboundCorrespondenceDateReceived": "2017-11-01"
-         |        },
-         |        {
-         |          "status": "F",
-         |          "inboundCorrespondenceFromDate": "2018-01-06",
          |          "inboundCorrespondenceToDate": "2018-04-05",
          |          "inboundCorrespondenceDueDate": "2018-05-06",
-         |          "inboundCorrespondenceDateReceived": "2018-05-01"
+         |          "periodKey": "EOPS"
          |        }
          |      ]
          |    }
@@ -811,7 +790,7 @@ object DesJsons {
          |      "inboundCorrespondenceFromDate" : "2017-04-06",
          |      "inboundCorrespondenceToDate" : "2017-07-05",
          |      "inboundCorrespondenceDueDate" : "2017-08-12",
-         |      "periodKey" : "#001"
+         |      "periodKey" : "EOPS"
          |    } ]
          |  } ]
          |}""".stripMargin

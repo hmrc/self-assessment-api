@@ -1226,39 +1226,15 @@ object Jsons {
          """.stripMargin)
     }
 
-    def eops(firstMet: Boolean = false,
-             secondMet: Boolean = false,
-             thirdMet: Boolean = false,
-             fourthMet: Boolean = false): JsValue = {
+    val eops: JsValue = {
       Json.parse(s"""
            |{
            |  "obligations": [
            |    {
            |      "start": "2017-04-06",
-           |      "end": "2017-07-05",
-           |      "due": "2017-08-05",
-           |      "status": "${if (firstMet) "Fulfilled" else "Open"}"
-           |    },
-           |    {
-           |      "start": "2017-07-06",
-           |      "end": "2017-10-05",
-           |      "due": "2017-11-05",
-           |      "processed": "2017-11-01",
-           |      "status": "${if (secondMet) "Fulfilled" else "Open"}"
-           |    },
-           |    {
-           |      "start": "2017-10-06",
-           |      "end": "2018-01-05",
-           |      "due": "2018-02-05",
-           |      "processed": "2018-02-01",
-           |      "status": "${if (thirdMet) "Fulfilled" else "Open"}"
-           |    },
-           |    {
-           |      "start": "2018-01-06",
            |      "end": "2018-04-05",
            |      "due": "2018-05-06",
-           |      "processed": "2018-05-01",
-           |      "status": "${if (fourthMet) "Fulfilled" else "Open"}"
+           |      "status": "Open"
            |    }
            |  ]
            |}

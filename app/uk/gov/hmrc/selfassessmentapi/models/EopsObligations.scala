@@ -23,7 +23,7 @@ import uk.gov.hmrc.selfassessmentapi.models.EopsStatus.EopsStatus
 
 import scala.util.{Failure, Success, Try}
 
-case class EopsObligations(id: Option[SourceId] = None, obligations: Seq[EopsObligation])
+case class EopsObligations(obligations: Seq[EopsObligation])
 
 object EopsObligations {
   implicit val writes: Writes[EopsObligations] = Json.writes[EopsObligations]

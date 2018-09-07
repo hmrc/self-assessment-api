@@ -22,7 +22,7 @@ class SelfAssessmentEndOfPeriodObligationsSpec extends BaseFunctionalSpec {
         .get(s"/ni/$nino/self-employments/$testRefNo/end-of-period-statements/obligations?from=$from&to=$to")
         .thenAssertThat()
         .statusIs(200)
-        .bodyIsLike(Jsons.Obligations.eops(secondMet = true, thirdMet = true, fourthMet = true).toString)
+        .bodyIsLike(Jsons.Obligations.eops.toString)
     }
 
     "return code 404 when obligations with no 'identification' data is returned" in {

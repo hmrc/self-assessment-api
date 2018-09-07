@@ -22,7 +22,9 @@ import uk.gov.hmrc.selfassessmentapi.models.{DesTransformError, DesTransformVali
 
 case class SelfEmploymentStatementResponse(underlying: HttpResponse) extends Response {
 
-  def retrieveEOPSObligation(incomeSourceType: String, refNumber: SourceId): Either[DesTransformError, Option[EopsObligations]] = {
+  def retrieveEOPSObligation(identifier: SourceId): Either[DesTransformError, Option[EopsObligations]] = {
+
+    val incomeSourceType = "ITSB"
 
     val desObligations = json.asOpt[des.Obligations]
 
@@ -38,16 +40,17 @@ case class SelfEmploymentStatementResponse(underlying: HttpResponse) extends Res
       val result = for {
         obl <- obligation.obligations
         if obl.identification.exists(
-          identification => identification.referenceNumber == refNumber && identification.incomeSourceType.contains(incomeSourceType)
+          identification => identification.referenceNumber == identifier && identification.incomeSourceType.contains(incomeSourceType)
         )
-        details <- obl.obligationDetails
+        details <- obl.obligationDetails.filter(_.periodKey.contains("EOPS"))
       } yield DesTransformValidator[ObligationDetail, EopsObligation].from(details)
 
       result.find(_.isLeft) match {
-        case Some(ex) => Left(ex.left.get)
+        case Some(ex) =>
+          Left(ex.left.get)
         case None =>
           val obligations: Seq[EopsObligation] = result map (_.right.get)
-          if (obligations.isEmpty) Right(None) else Right(Some(EopsObligations(obligations = result map (_.right.get))))
+          if (obligations.isEmpty) Right(None) else Right(Some(EopsObligations(obligations = obligations)))
       }
     }
     desObligations.fold(noneFound)(oneFound)

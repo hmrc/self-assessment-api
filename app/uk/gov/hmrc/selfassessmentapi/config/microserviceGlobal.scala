@@ -16,10 +16,9 @@
 
 package uk.gov.hmrc.selfassessmentapi.config
 
-import javax.inject.Inject
-
 import com.kenshoo.play.metrics.Metrics
 import com.typesafe.config.Config
+import javax.inject.Inject
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.{StringReader, ValueReader}
 import play.api.http.HttpEntity
@@ -29,10 +28,8 @@ import play.api.mvc.Results._
 import play.api.mvc._
 import play.api.{Application, Configuration, Play}
 import play.routing.Router.Tags
-import uk.gov.hmrc.api.config.{ServiceLocatorConfig, ServiceLocatorRegistration}
-import uk.gov.hmrc.api.connector.ServiceLocatorConnector
 import uk.gov.hmrc.api.controllers.{ErrorAcceptHeaderInvalid, ErrorNotFound, HeaderValidator}
-import uk.gov.hmrc.http.{HeaderCarrier, NotImplementedException}
+import uk.gov.hmrc.http.NotImplementedException
 import uk.gov.hmrc.kenshoo.monitoring.MonitoringFilter
 import uk.gov.hmrc.play.auth.controllers.AuthParamsControllerConfig
 import uk.gov.hmrc.play.auth.microservice.filters.AuthorisationFilter

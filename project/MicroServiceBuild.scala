@@ -29,10 +29,10 @@ private object AppDependencies {
   val compile = Seq(
     "uk.gov.hmrc" %% "play-reactivemongo" % "6.2.0",
     ws exclude("org.apache.httpcomponents", "httpclient") exclude("org.apache.httpcomponents", "httpcore"),
-    "uk.gov.hmrc" %% "microservice-bootstrap" % "6.18.0",
+    "uk.gov.hmrc" %% "microservice-bootstrap" % "8.2.0",
     "uk.gov.hmrc" %% "auth-client" % "2.6.0",
-    "uk.gov.hmrc" %% "domain" % "5.1.0",
-    "uk.gov.hmrc" %% "play-hmrc-api" % "2.0.0",
+    "uk.gov.hmrc" %% "domain" % "5.2.0",
+    "uk.gov.hmrc" %% "play-hmrc-api" % "3.2.0",
     "uk.gov.hmrc" %% "play-scheduling" % "4.1.0",
     "ai.x" %% "play-json-extensions" % "0.8.0",
     "org.typelevel" %% "cats-core" % "1.0.0-RC1"
