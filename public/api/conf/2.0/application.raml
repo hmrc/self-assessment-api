@@ -701,12 +701,6 @@ traits:
                               example-1:
                                 description: Successful submission returns an empty body.
                                 value: ""
-                              example-2:
-                                description: Failed submission with single business rule error.
-                                value: !include examples/eopsDeclarations/singleBvrError.json
-                              example-3:
-                                description: Failed submission with multiple business rule errors.
-                                value: !include examples/eopsDeclarations/multipleBvrErrors.json
                       400:
                         body:
                           application/json:
@@ -762,11 +756,11 @@ traits:
                                 value:
                                   code: RULE_CLASS4_PENSION_AGE
                               accountingStartDate:
-                                description: The period submission start date must match the accounting period start date of dd-mm-yyyy.
+                                description: The period submission start date must match the accounting period start date.
                                 value:
                                   code: RULE_ACCOUNTING_PERIOD_START_DATE
                               accountingEndDate:
-                                description: The period submission end date must match the accounting period end date of dd-mm-yyyy.
+                                description: The period submission end date must match the accounting period end date.
                                 value:
                                   code: RULE_ACCOUNTING_PERIOD_END_DATE
                       404:
@@ -1535,12 +1529,6 @@ traits:
                             example-1:
                               description: Successful submission returns an empty body.
                               value: ""
-                            example-2:
-                              description: Failed submission with single business rule error.
-                              value: !include examples/eopsDeclarations/singleBvrError.json
-                            example-3:
-                              description: Failed submission with multiple business rule errors.
-                              value: !include examples/eopsDeclarations/multipleBvrErrors.json
                     400:
                       body:
                         application/json:
@@ -1604,11 +1592,11 @@ traits:
                               value:
                                 code: RULE_NON_FHL_PRIVATE_USE_ADJUSTMENT
                             accountingPeriodStartDate:
-                              description: The period submission start date must match the accounting period start date of dd-mm-yyyy.
+                              description: The period submission start date must match the accounting period start date.
                               value:
                                 code: RULE_ACCOUNTING_PERIOD_START_DATE
                             accountingPeriodEndDate:
-                              description: The period submission end date must match the accounting period end date of dd-mm-yyyy.
+                              description: The period submission end date must match the accounting period end date.
                               value:
                                 code: RULE_ACCOUNTING_PERIOD_END_DATE
                     404:

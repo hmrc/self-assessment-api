@@ -1,23 +1,5 @@
 Below are some example errors, for specific errors refer to the individual resources below 
 
-
-HTTP status : 400
-
-Example error responses returned if invalid values are present in the url. 
-<pre class="snippet--block code_text">
-{
-  "code": "NINO_INVALID",
-  "message": "The provided Nino is invalid"
-}
-</pre>
-
-<pre class="snippet--block code_text">
-{
-  "code": "TAX_YEAR_INVALID",
-  "message": "Tax year invalid"
-}
-</pre>
-
 Example error response returned if invalid values are present in the body of POST/PUT.
 <pre class="snippet--block code_text">
 {
@@ -39,20 +21,28 @@ Example error response returned if invalid values are present in the body of POS
 </pre>
 
 
-
-HTTP status : 403
+Example error response returned if multiple business rule errors are returned.
 <pre class="snippet--block code_text">
 {
   "code": "BUSINESS_ERROR",
   "message": "Business validation error",
   "errors": [
     {
-      "code": "TOO_MANY_SOURCES",
-      "message": "The maximum number of Self-Employment incomes sources is 1",
-      "path": ""
+      "code": "RULE_CLASS4_OVER_16",
+      "message": "Class 4 exemption is not allowed because the individual's age is greater than or equal to 16 years old on the 6th April of the current tax year."
+    },
+    {
+      "code": "RULE_CLASS4_PENSION_AGE",
+      "message": "Class 4 exemption is not allowed because the individual's age is less than their State Pension age on the 6th April of the current tax year."
     }
   ]
 }
 </pre>
 
-
+Example error response returned if a single business rule error is returned.
+<pre class="snippet--block code_text">
+{
+  "code": "RULE_CLASS4_OVER_16",
+  "message": "Class 4 exemption is not allowed because the individual's age is greater than or equal to 16 years old on the 6th April of the current tax year."
+}
+</pre>
