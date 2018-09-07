@@ -34,6 +34,7 @@ import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 
 import scala.concurrent.ExecutionContext.Implicits._
+import scala.concurrent.Future
 
 object SelfEmploymentStatementResource extends BaseResource {
   val appContext = AppContext
@@ -100,20 +101,25 @@ object SelfEmploymentStatementResource extends BaseResource {
 
   def retrieveObligationsById(nino: Nino, id: SourceId, params: ObligationQueryParams): Action[Unit] =
   APIAction(nino, SourceType.SelfEmployments, Some("statements")).async(parse.empty) { implicit request =>
-    statementConnector.get(nino, params).map { response =>
-      response.filter {
-        case 200 =>
-          logger.debug("Self-employment statements from DES = " + Json.stringify(response.json))
-          //TODO: ITSBEOPS is made up for now, it needs to be agreed with the des folks! replace with sourceId
-          response.retrieveEOPSObligation(id) match {
-            case Right(obj) =>
-              obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
-            case Left(ex) =>
-              logger.error(ex.msg)
-              InternalServerError(Json.toJson(Errors.InternalServerError))
-          }
-      }
-    } recoverWith exceptionHandling
+    val selfEmploymentPattern = "^[A-Za-z0-9]{15}$"
+    if (id.matches(selfEmploymentPattern)) {
+      statementConnector.get(nino, params).map { response =>
+        response.filter {
+          case 200 =>
+            logger.debug("Self-employment statements from DES = " + Json.stringify(response.json))
+            //TODO: ITSBEOPS is made up for now, it needs to be agreed with the des folks! replace with sourceId
+            response.retrieveEOPSObligation(id) match {
+              case Right(obj) =>
+                obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
+              case Left(ex) =>
+                logger.error(ex.msg)
+                InternalServerError(Json.toJson(Errors.InternalServerError))
+            }
+        }
+      } recoverWith exceptionHandling
+    }
+    else {
+      Future.successful(BadRequest(Json.toJson(Errors.SelfEmploymentIDInvalid)))
+    }
   }
-
 }
