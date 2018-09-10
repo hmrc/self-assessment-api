@@ -41,7 +41,7 @@ case class ObligationsResponse(underlying: HttpResponse) extends Response {
         else
           obl.identification.exists(identification => identification.incomeSourceType.contains(incomeSourceType))
         if check
-        detail <- obl.obligationDetails
+        detail <- obl.obligationDetails.filterNot(_.periodKey.contains("EOPS"))
       } yield DesTransformValidator[ObligationDetail, Obligation].from(detail)
 
       result.find(_.isLeft) match {
