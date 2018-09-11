@@ -12,6 +12,10 @@
             <td><p>Returns a EOPs obligation for standard tax year dates with Open status</p></td>
         </tr>
         <tr>
+            <td><p>EOPS_OPEN</p></td>
+            <td><p>Returns a EOPs obligation for standard tax year dates with Open status</p></td>
+        </tr>
+        <tr>
             <td><p>EOPS_FULFILLED</p></td>
             <td><p>Returns a EOPs obligation for standard tax year dates with Fulfilled status</p></td>
         </tr>
@@ -28,5 +32,9 @@
             <td><p>CLIENT_NOT_SUBSCRIBED</p></td>
             <td><p>Simulate client subscription to MTD check failure</p></td>
         </tr>
+        <tr>
+            <td><p>NOT_FOUND</p></td>
+            <td><p>Simulate a not found response</p></td>
+        /tr>
     </tbody>
 </table>
