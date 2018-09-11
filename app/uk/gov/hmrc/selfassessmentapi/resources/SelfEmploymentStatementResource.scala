@@ -28,10 +28,10 @@ import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.audit.EndOfPeriodStatementDeclaration
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode._
 import uk.gov.hmrc.selfassessmentapi.models.{Declaration, Errors, Period, SourceId, SourceType}
-import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
+import uk.gov.hmrc.selfassessmentapi.resources.utils.EopsObligationQueryParams
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{EmptyResponse, Response}
-import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
+import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
@@ -99,7 +99,7 @@ object SelfEmploymentStatementResource extends BaseResource {
       transactionName = s"$id-end-of-year-statement-finalised"
     )
 
-  def retrieveObligationsById(nino: Nino, id: SourceId, params: ObligationQueryParams): Action[Unit] =
+  def retrieveObligationsById(nino: Nino, id: SourceId, params: EopsObligationQueryParams): Action[Unit] =
   APIAction(nino, SourceType.SelfEmployments, Some("statements")).async(parse.empty) { implicit request =>
     val selfEmploymentPattern = "^[A-Za-z0-9]{15}$"
     if (id.matches(selfEmploymentPattern)) {
@@ -107,7 +107,6 @@ object SelfEmploymentStatementResource extends BaseResource {
         response.filter {
           case 200 =>
             logger.debug("Self-employment statements from DES = " + Json.stringify(response.json))
-            //TODO: ITSBEOPS is made up for now, it needs to be agreed with the des folks! replace with sourceId
             response.retrieveEOPSObligation(id) match {
               case Right(obj) =>
                 obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
@@ -115,10 +114,19 @@ object SelfEmploymentStatementResource extends BaseResource {
                 logger.error(ex.msg)
                 InternalServerError(Json.toJson(Errors.InternalServerError))
             }
+          case 400 if response.errorCodeIsOneOf(INVALID_STATUS, INVALID_REGIME, INVALID_IDTYPE) =>
+            InternalServerError(Json.toJson(Errors.InternalServerError))
+          case 400 if response.errorCodeIsOneOf(INVALID_DATE_TO, INVALID_DATE_FROM) =>
+            BadRequest(Json.toJson(Errors.InvalidDate))
+          case 400 if response.errorCodeIsOneOf(INVALID_DATE_RANGE) =>
+            BadRequest(Json.toJson(Errors.InvalidDateRange_2))
+          case 400 if response.errorCodeIsOneOf(INVALID_IDNUMBER) =>
+            BadRequest(Json.toJson(Errors.NinoInvalid))
+          case 403 if response.errorCodeIs(NOT_FOUND_BPKEY) =>
+            NotFound
         }
       } recoverWith exceptionHandling
-    }
-    else {
+    } else {
       Future.successful(BadRequest(Json.toJson(Errors.SelfEmploymentIDInvalid)))
     }
   }

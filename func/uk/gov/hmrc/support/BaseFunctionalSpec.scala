@@ -10,7 +10,6 @@ import play.api.libs.json._
 import uk.gov.hmrc.api.controllers.ErrorNotFound
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.selfassessmentapi.fixtures.selfemployment.SelfEmploymentBISSFixture
 import uk.gov.hmrc.selfassessmentapi.models.obligations.ObligationsQueryParams
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
@@ -1460,6 +1459,27 @@ trait BaseFunctionalSpec extends TestApplication {
                 .withHeader("Content-Type", "application/json")
                 .withHeader("CorrelationId", "abc")
                 .withBody(DesJsons.Obligations.eopsObligations(refNo))))
+          givens
+        }
+
+        def returnEopsObligationsErrorFor(nino: Nino, refNo: String)(status: Int, body: String): Givens = {
+
+          def error(code: String): String = {
+            s"""
+               |{
+               |  "code": "$code",
+               |  "reason": ""
+               |}
+            """.stripMargin
+          }
+
+          stubFor(get(urlMatching(s"/enterprise/obligation-data/nino/$nino/ITSA/.*"))
+            .willReturn(
+              aResponse()
+                .withStatus(status)
+                .withHeader("Content-Type", "application/json")
+                .withHeader("CorrelationId", "abc")
+                .withBody(error(body))))
           givens
         }
 
