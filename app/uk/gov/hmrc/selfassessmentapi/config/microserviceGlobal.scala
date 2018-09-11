@@ -231,7 +231,9 @@ object MicroserviceGlobal
         case "ERROR_INVALID_DATE"          => BadRequest(toJson(ErrorBadRequest(INVALID_DATE, "The provided dates are invalid")))
         case "ERROR_INVALID_DATE_FROM"     => BadRequest(toJson(ErrorBadRequest(INVALID_DATE, "The from date in the query string is invalid")))
         case "ERROR_INVALID_DATE_TO"       => BadRequest(toJson(ErrorBadRequest(INVALID_DATE, "The to date in the query string is invalid")))
+        case "ERROR_EOPS_INVALID_DATE"     => BadRequest(toJson(Errors.InvalidDate))
         case "ERROR_INVALID_DATE_RANGE"    => BadRequest(toJson(ErrorBadRequest(INVALID_DATE_RANGE, "The date range in the query string is invalid")))
+        case "ERROR_EOPS_INVALID_DATE_RANGE" => BadRequest(toJson(Errors.InvalidDateRange_2))
         case "ERROR_INVALID_PROPERTY_TYPE" => NotFound(toJson(ErrorNotFound))
         case _                             => result
       }
