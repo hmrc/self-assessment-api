@@ -1,6 +1,12 @@
+## 11-Sep-2018
+<b>[self-assessment-api v0.167.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.167.0)<br>
+<b>[self-assessment-api-router v1.20.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.20.0)</b>
+* Updated the Self-employment EOPS obligations by adding the validation for self-employment-id with new regex
+* Updated the error scenarios, with additional SELF_EMPLOYMENT_ID_INVALID error
+
 ## 30-Aug-2018
 <b>[mtd-tax-calc-api v​1.2.0](https://github.com/hmrc/mtd-tax-calculation/releases/tag/v1.2.0)<br>
-[self-assessment-api-router v1.19.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.19.0)</b>
+<b>[self-assessment-api-router v1.19.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.19.0)</b>
 * Updated Retrieve Tax Calculation endpoint (2.0) to align with new backend specification
     * Min/max values previously (+/-) 999999999999.98 changed to (+/-) 99999999999.99
     * Test data for Gov-test-scenarios, including examples with errors/warnings
@@ -8,7 +14,7 @@
 
 ## 14-Aug-2018
 <b>[self-assessment-api v0.166.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.166.0)<br>
-[self-assessment-api-router v1.17.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.17.0)</b>
+<b>[self-assessment-api-router v1.17.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.17.0)</b>
 * The following changes apply to endpoints:
     * Create a Self-employment Periodic update
     * Amend a Self-employment Periodic update
@@ -38,7 +44,7 @@
 
 ## 24-Jul-2018
 <b>[self-assessment-api v0.165.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.165.0)<br>
-[self-assessment-api-router v1.10.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.10.0)</b>
+<b>[self-assessment-api-router v1.10.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.10.0)</b>
 * Removed INVALID_TAX_DEDUCTION_AMOUNT rule from all UK Property Period Create/Update endpoints.
 * Documentation for the error marked as (Production only) for time being.
 
