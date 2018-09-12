@@ -1,4 +1,4 @@
-<p>Scenario simulations using _Gov-Test-Scenario_ headers is only available in sandbox environment</p>
+<p>Scenario simulations using Gov-Test-Scenario headers is only available in sandbox environment</p>
 <table>
     <thead>
         <tr>
@@ -20,7 +20,6 @@
             <td><p>Returns a EOPs obligation for standard tax year dates with Fulfilled status</p></td>
         </tr>
         <tr>
-        <tr>
             <td><p>AGENT_NOT_SUBSCRIBED</p></td>
             <td><p>Simulate agent subscription check failure</p></td>
         </tr>
@@ -35,6 +34,6 @@
         <tr>
             <td><p>NOT_FOUND</p></td>
             <td><p>Simulate a not found response</p></td>
-        /tr>
+        </tr>
     </tbody>
 </table>
