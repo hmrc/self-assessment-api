@@ -72,7 +72,7 @@ object DesJsons {
     val earlySubmission = error("EARLY_SUBMISSION", "End-of-period statement cannot be submitted early.")
     val lateSubmission = error("LATE_SUBMISSION", "End-of-period statement cannot be submitted for this period later than 31 January 20XX.")
     val nonMatchingPeriod = error("NON_MATCHING_PERIOD", "Statement period does not match you accounting period.")
-    val requiredEndOfPeriodStatement = error("REQUIRED_END_OF_PERIOD_STATEMENT", "End of Period Statement is Not Completed.")
+    val requiredEndOfPeriodStatement = error("INVALID_REQUEST", "The remote endpoint has indicated that it is an Invalid Request")
     val invalidTaxCalculationId = error("INVALID_TAX_CALCULATION_ID", "The remote endpoint has indicated that the calculation id does not match the calculation id returned by the latest intent to crystallise")
     val requiredIntentToCrystallise = error("REQUIRED_INTENT_TO_CRYSTALLISE", "The remote endpoint has indicated that the Crystallisation could occur only after an intent to crystallise is sent")
     val alreadySubmitted = error("ALREADY_SUBMITTED", "You cannot submit a statement for the same accounting period twice.")
