@@ -1281,7 +1281,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
       object crystallisation {
         def intentToCrystallise(nino: Nino, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
-          stubFor(post(urlMatching(s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/intent-to-crystallise"))
+          stubFor(post(urlEqualTo(s"/income-tax/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation?crystallise=true"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -1292,7 +1292,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def intentToCrystalliseRequiredEndOfPeriodStatement(nino: Nino, taxYear: TaxYear) = {
-          stubFor(post(urlMatching(s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/intent-to-crystallise"))
+          stubFor(post(urlEqualTo(s"/income-tax/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation?crystallise=true"))
             .willReturn(
               aResponse()
                 .withStatus(403)
