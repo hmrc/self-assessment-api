@@ -38,8 +38,8 @@ trait CrystallisationConnector extends BaseConnector {
   protected val baseUrl: String
 
   def intentToCrystallise(nino: Nino, taxYear: TaxYear, requestTimestamp: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CrystallisationIntentResponse] =
-    httpPost[RequestDateTime, CrystallisationIntentResponse](
-      baseUrl + s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/intent-to-crystallise", RequestDateTime(requestTimestamp),
+    httpEmptyPost[CrystallisationIntentResponse](
+      baseUrl + s"/income-tax/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation?crystallise=true",
       CrystallisationIntentResponse)
 
   def crystallise(nino: Nino, taxYear: TaxYear, request: CrystallisationRequest, requestTimestamp: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] =
