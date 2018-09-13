@@ -20,7 +20,7 @@ import uk.gov.hmrc.http.HttpResponse
 
 case class CrystallisationIntentResponse(underlying: HttpResponse) extends Response {
   def calculationId: Option[String] = {
-    (json \ "calculationId").asOpt[String] match {
+    (json \ "id").asOpt[String] match {
       case x@Some(_) => x
       case None => {
         logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
