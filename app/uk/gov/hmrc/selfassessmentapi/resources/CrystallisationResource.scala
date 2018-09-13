@@ -43,7 +43,7 @@ trait CrystallisationResource extends BaseResource {
 
   def intentToCrystallise(nino: Nino, taxYear: TaxYear): Action[AnyContent] =
     APIAction(nino, SourceType.Crystallisation).async { implicit request =>
-      crystallisationConnector.intentToCrystallise(nino, taxYear, getRequestDateTimestamp) map { response =>
+      crystallisationConnector.intentToCrystallise(nino, taxYear) map { response =>
         response.filter {
           case 200 =>
             val contextPrefix = AppContext.selfAssessmentContextRoute

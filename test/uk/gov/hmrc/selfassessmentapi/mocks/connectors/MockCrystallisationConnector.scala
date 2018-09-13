@@ -32,7 +32,7 @@ trait MockCrystallisationConnector extends Mock {
   object MockCrystallisationConnector {
 
     def intentToCrystallise(nino: Nino, taxYear: TaxYear, requestTS: String) = {
-      when(mockCrystallisationConnector.intentToCrystallise(eqTo(nino), eqTo(taxYear), eqTo(requestTS))(any(), any()))
+      when(mockCrystallisationConnector.intentToCrystallise(eqTo(nino), eqTo(taxYear))(any(), any()))
     }
 
     def crystallise(nino: Nino, taxYear: TaxYear, request: CrystallisationRequest, requestTS: String) = {
