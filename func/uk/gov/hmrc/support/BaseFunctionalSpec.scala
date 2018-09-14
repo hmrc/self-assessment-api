@@ -1295,7 +1295,7 @@ trait BaseFunctionalSpec extends TestApplication {
           stubFor(post(urlEqualTo(s"/income-tax/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation?crystallise=true"))
             .willReturn(
               aResponse()
-                .withStatus(403)
+                .withStatus(400)
                 .withHeader("Content-Type", "application/json")
                 .withBody(DesJsons.Errors.requiredEndOfPeriodStatement)))
           givens

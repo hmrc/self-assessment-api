@@ -49,7 +49,9 @@ trait CrystallisationResource extends BaseResource {
             val contextPrefix = AppContext.selfAssessmentContextRoute
             val url = response.calculationId.map(id => s"$contextPrefix/ni/$nino/calculations/$id").getOrElse("")
             SeeOther(url).withHeaders(LOCATION -> url)
-          case 403 if response.errorCodeIs(REQUIRED_END_OF_PERIOD_STATEMENT) =>
+          case 400 if response.errorCodeIs(INVALID_TAX_CRYSTALLISE) =>
+            InternalServerError(toJson(Errors.InternalServerError))
+          case 400 if response.errorCodeIs(INVALID_REQUEST) =>
             Forbidden(toJson(Errors.businessError(Errors.RequiredEndOfPeriodStatement)))
         }
       } recoverWith exceptionHandling
