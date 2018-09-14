@@ -1301,8 +1301,8 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def crystallise(nino: Nino, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
-          stubFor(post(urlMatching(s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/crystallise"))
+        def crystallise(nino: Nino, taxYear: TaxYear = TaxYear("2017-18"), calcId: String): Givens = {
+          stubFor(post(urlMatching(s"/income-tax/calculation/nino/$nino/taxYear/${taxYear.toDesTaxYear}/$calcId/crystallise"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -1316,8 +1316,8 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def crystalliseInvalidCalculationId(nino: Nino, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
-          stubFor(post(urlMatching(s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/crystallise"))
+        def crystalliseInvalidCalculationId(nino: Nino, taxYear: TaxYear = TaxYear("2017-18"), calcId: String): Givens = {
+          stubFor(post(urlMatching(s"/income-tax/calculation/nino/$nino/taxYear/${taxYear.toDesTaxYear}/$calcId/crystallise"))
             .willReturn(
               aResponse()
                 .withStatus(403)
@@ -1327,8 +1327,8 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def crystalliseRequiredIntentToCrystallise(nino: Nino, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
-          stubFor(post(urlMatching(s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/crystallise"))
+        def crystalliseRequiredIntentToCrystallise(nino: Nino, taxYear: TaxYear = TaxYear("2017-18"), calcId: String): Givens = {
+          stubFor(post(urlMatching(s"/income-tax/calculation/nino/$nino/taxYear/${taxYear.toDesTaxYear}/$calcId/crystallise"))
             .willReturn(
               aResponse()
                 .withStatus(403)

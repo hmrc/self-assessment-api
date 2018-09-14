@@ -21,10 +21,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 import uk.gov.hmrc.selfassessmentapi.models.crystallisation.CrystallisationRequest
-import uk.gov.hmrc.selfassessmentapi.models.des.crystallisation.Crystallisation
-import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.RequestDateTime
 import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
-import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CrystObligationsResponse, CrystallisationIntentResponse, EmptyResponse, ObligationsResponse}
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CrystObligationsResponse, CrystallisationIntentResponse, EmptyResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,10 +40,9 @@ trait CrystallisationConnector extends BaseConnector {
       baseUrl + s"/income-tax/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation?crystallise=true",
       CrystallisationIntentResponse)
 
-  def crystallise(nino: Nino, taxYear: TaxYear, request: CrystallisationRequest, requestTimestamp: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] =
-    httpPost[Crystallisation, EmptyResponse](
-      baseUrl + s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/crystallise",
-      Crystallisation(request.calculationId, requestTimestamp),
+  def crystallise(nino: Nino, taxYear: TaxYear, request: CrystallisationRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] =
+    httpEmptyPost[EmptyResponse](
+      baseUrl + s"/income-tax/calculation/nino/$nino/taxYear/${taxYear.toDesTaxYear}/${request.calculationId}/crystallise",
       EmptyResponse)
 
   def get(nino: Nino, queryParams: ObligationQueryParams)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CrystObligationsResponse] = {

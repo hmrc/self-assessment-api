@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
-import org.joda.time.LocalDate
 import play.api.libs.json.JsValue
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HttpResponse
@@ -24,7 +23,7 @@ import uk.gov.hmrc.selfassessmentapi.mocks.connectors.MockCrystallisationConnect
 import uk.gov.hmrc.selfassessmentapi.models.SourceType
 import uk.gov.hmrc.selfassessmentapi.models.crystallisation.CrystallisationRequest
 import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
-import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CrystallisationIntentResponse, EmptyResponse}
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.CrystallisationIntentResponse
 
 import scala.concurrent.Future
 
@@ -72,7 +71,7 @@ class CrystallisationResourceSpec extends ResourceSpec
           .withHeaders("X-Request-Timestamp" -> requestTimestamp)
           .withBody[JsValue](crystallisationRequestJson)
 
-        MockCrystallisationConnector.crystallise(nino, taxYear, crystallisationRequest, requestTimestamp)
+        MockCrystallisationConnector.crystallise(nino, taxYear, crystallisationRequest)
           .returns(Future.failed(new RuntimeException("something went wrong")))
 
         val result = resource.crystallisation(nino, taxYear)(request)
