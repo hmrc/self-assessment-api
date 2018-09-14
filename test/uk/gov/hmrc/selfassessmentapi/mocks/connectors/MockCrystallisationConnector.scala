@@ -35,8 +35,8 @@ trait MockCrystallisationConnector extends Mock {
       when(mockCrystallisationConnector.intentToCrystallise(eqTo(nino), eqTo(taxYear))(any(), any()))
     }
 
-    def crystallise(nino: Nino, taxYear: TaxYear, request: CrystallisationRequest, requestTS: String) = {
-      when(mockCrystallisationConnector.crystallise(eqTo(nino), eqTo(taxYear), eqTo(request), eqTo(requestTS))(any(), any()))
+    def crystallise(nino: Nino, taxYear: TaxYear, request: CrystallisationRequest) = {
+      when(mockCrystallisationConnector.crystallise(eqTo(nino), eqTo(taxYear), eqTo(request))(any(), any()))
     }
 
     def get(nino: Nino, queryParams: ObligationQueryParams) = {

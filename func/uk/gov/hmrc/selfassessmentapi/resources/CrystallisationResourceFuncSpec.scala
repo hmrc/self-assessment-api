@@ -58,13 +58,16 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
 
   "crystallise" should {
 
+    val calcId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
+    val crystallisationRequest = Jsons.Crystallisation.crystallisationRequest(calcId)
     "return 201 in happy scenario" in {
+
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().crystallisation.crystallise(nino, taxYear)
+        .des().crystallisation.crystallise(nino, taxYear, calcId)
         .when()
-        .post(Jsons.Crystallisation.crystallisationRequest()).to(s"/ni/$nino/$taxYear/crystallisation")
+        .post(crystallisationRequest).to(s"/ni/$nino/$taxYear/crystallisation")
         .thenAssertThat()
         .statusIs(201)
     }
@@ -73,9 +76,9 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().crystallisation.crystalliseInvalidCalculationId(nino, taxYear)
+        .des().crystallisation.crystalliseInvalidCalculationId(nino, taxYear, calcId)
         .when()
-        .post(Jsons.Crystallisation.crystallisationRequest()).to(s"/ni/$nino/$taxYear/crystallisation")
+        .post(crystallisationRequest).to(s"/ni/$nino/$taxYear/crystallisation")
         .thenAssertThat()
         .statusIs(403)
         .bodyHasPath("\\code", "BUSINESS_ERROR")
@@ -88,9 +91,9 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().crystallisation.crystalliseRequiredIntentToCrystallise(nino, taxYear)
+        .des().crystallisation.crystalliseRequiredIntentToCrystallise(nino, taxYear, calcId)
         .when()
-        .post(Jsons.Crystallisation.crystallisationRequest()).to(s"/ni/$nino/$taxYear/crystallisation")
+        .post(crystallisationRequest).to(s"/ni/$nino/$taxYear/crystallisation")
         .thenAssertThat()
         .statusIs(403)
         .bodyHasPath("\\code", "BUSINESS_ERROR")

@@ -60,7 +60,7 @@ trait CrystallisationResource extends BaseResource {
   def crystallisation(nino: Nino, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.Crystallisation).async(parse.json) { implicit request =>
       validate[CrystallisationRequest, EmptyResponse](request.body) {
-         crystallisationConnector.crystallise(nino, taxYear, _, getRequestDateTimestamp)
+         crystallisationConnector.crystallise(nino, taxYear, _)
       } map {
         case Left(error) => handleErrors(error)
         case Right(response) => response.filter {
