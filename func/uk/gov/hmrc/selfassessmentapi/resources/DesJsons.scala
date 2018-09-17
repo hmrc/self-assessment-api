@@ -30,6 +30,9 @@ object DesJsons {
         .toString()
     }
 
+    val invalidIdType: String = error("INVALID_IDTYPE", "Submission has not passed validation. Invalid parameter idType.")
+    val invalidIdValue: String = error("INVALID_IDVALUE", "Submission has not passed validation. Invalid parameter idValue.")
+    val invalidTaxYear: String = error("INVALID_TAXYEAR", "Submission has not passed validation. Invalid parameter taxYear.")
     val invalidNino: String = error("INVALID_NINO", "Submission has not passed validation. Invalid parameter NINO.")
     val invalidPayload: String = error("INVALID_PAYLOAD", "Submission has not passed validation. Invalid PAYLOAD.")
     val ninoNotFound: String = error("NOT_FOUND_NINO", "The remote endpoint has indicated that no data can be found.")
@@ -59,7 +62,7 @@ object DesJsons {
     val invalidBusinessId: String = error("INVALID_BUSINESSID", "Submission has not passed validation. Invalid parameter businessId.")
     val invalidOriginatorId: String =
       error("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
-    val invalidCalcId: String = error("INVALID_CALCID", "Submission has not passed validation")
+    val invalidCalcId: String = error("INVALID_CALCID", "Submission has not passed validation. Invalid parameter calcId.")
     val propertyConflict: String = error("CONFLICT", "Property already exists.")
     val invalidIncomeSource: String = error(
       "INVALID_INCOME_SOURCE",

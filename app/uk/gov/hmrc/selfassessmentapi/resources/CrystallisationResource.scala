@@ -65,6 +65,13 @@ trait CrystallisationResource extends BaseResource {
         case Left(error) => handleErrors(error)
         case Right(response) => response.filter {
           case 200 => Created
+          case 400 if response.errorCodeIsOneOf(INVALID_TAXYEAR) =>
+            BadRequest(Json.toJson(Errors.TaxYearInvalid))
+          case 400 if response.errorCodeIsOneOf(INVALID_CALCID) =>
+            Forbidden(Json.toJson(Errors.InvalidTaxCalculationId))
+          case 404 =>
+            NotFound
+          case 409 => Forbidden(Json.toJson(Errors.RequiredIntentToCrystallise))
         }
       } recoverWith exceptionHandling
     }

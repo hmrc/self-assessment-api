@@ -1,5 +1,6 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import uk.gov.hmrc.selfassessmentapi.models.Errors._
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
@@ -72,32 +73,74 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
         .statusIs(201)
     }
 
-    "return 403 when the tax calculation id is invalid" in {
+    "return 500 when INVALID_IDTYPE is returned from DES" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().crystallisation.crystalliseInvalidCalculationId(nino, taxYear, calcId)
+        .des().crystallisation.crystalliseError(nino, taxYear, calcId)(400, DesJsons.Errors.invalidIdType)
         .when()
         .post(crystallisationRequest).to(s"/ni/$nino/$taxYear/crystallisation")
         .thenAssertThat()
-        .statusIs(403)
-        .bodyHasPath("\\code", "BUSINESS_ERROR")
-        .bodyHasPath("\\errors(0)\\code", "INVALID_TAX_CALCULATION_ID")
-        .bodyHasPath("\\errors(0)\\path", "/calculationId")
-
+        .statusIs(500)
     }
 
-    "return 403 when not preceded with the intent to crystallise call" in {
+    "return 400 NINO_INVALID when INVALID_IDVALUE is returned from DES" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
-        .des().crystallisation.crystalliseRequiredIntentToCrystallise(nino, taxYear, calcId)
+        .des().crystallisation.crystalliseError(nino, taxYear, calcId)(400, DesJsons.Errors.invalidIdValue)
+        .when()
+        .post(crystallisationRequest).to(s"/ni/$nino/$taxYear/crystallisation")
+        .thenAssertThat()
+        .statusIs(400)
+        .bodyIsError(NinoInvalid.code)
+    }
+
+    "return 400 TAX_YEAR_INVALID when INVALID_TAXYEAR is returned from DES" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().crystallisation.crystalliseError(nino, taxYear, calcId)(400, DesJsons.Errors.invalidTaxYear)
+        .when()
+        .post(crystallisationRequest).to(s"/ni/$nino/$taxYear/crystallisation")
+        .thenAssertThat()
+        .statusIs(400)
+        .bodyIsError(TaxYearInvalid.code)
+    }
+
+    "return 403 INVALID_TAX_CALCULATION_ID when INVALID_CALCID is returned from DES" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().crystallisation.crystalliseError(nino, taxYear, calcId)(400, DesJsons.Errors.invalidCalcId)
         .when()
         .post(crystallisationRequest).to(s"/ni/$nino/$taxYear/crystallisation")
         .thenAssertThat()
         .statusIs(403)
-        .bodyHasPath("\\code", "BUSINESS_ERROR")
-        .bodyHasPath("\\errors(0)\\code", "REQUIRED_INTENT_TO_CRYSTALLISE")
+        .bodyIsError(InvalidTaxCalculationId.code)
+    }
+
+    "return 404 when any 404 is returned from DES" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().crystallisation.crystalliseError(nino, taxYear, calcId)(404, "any body")
+        .when()
+        .post(crystallisationRequest).to(s"/ni/$nino/$taxYear/crystallisation")
+        .thenAssertThat()
+        .statusIs(404)
+    }
+
+    "return 403 REQUIRED_INTENT_TO_CRYSTALLISE when any 409 is returned from DES" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().crystallisation.crystalliseError(nino, taxYear, calcId)(409, "any body")
+        .when()
+        .post(crystallisationRequest).to(s"/ni/$nino/$taxYear/crystallisation")
+        .thenAssertThat()
+        .statusIs(403)
+        .bodyIsError(RequiredIntentToCrystallise.code)
     }
   }
 
