@@ -117,7 +117,8 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
         .post(crystallisationRequest).to(s"/ni/$nino/$taxYear/crystallisation")
         .thenAssertThat()
         .statusIs(403)
-        .bodyIsError(InvalidTaxCalculationId.code)
+        .bodyHasPath("\\code", "BUSINESS_ERROR")
+        .bodyHasPath("\\errors(0)\\code", InvalidTaxCalculationId.code)
     }
 
     "return 404 when any 404 is returned from DES" in {
@@ -140,7 +141,8 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
         .post(crystallisationRequest).to(s"/ni/$nino/$taxYear/crystallisation")
         .thenAssertThat()
         .statusIs(403)
-        .bodyIsError(RequiredIntentToCrystallise.code)
+        .bodyHasPath("\\code", "BUSINESS_ERROR")
+        .bodyHasPath("\\errors(0)\\code", RequiredIntentToCrystallise.code)
     }
   }
 

@@ -109,7 +109,7 @@ object Errors {
   object EarlySubmission extends Error("EARLY_SUBMISSION", "You cannot submit a statement before the end of your accounting period.", None)
   object NonMatchingPeriod extends Error("NON_MATCHING_PERIOD", "You cannot submit your end-of-period statement for a period that does not match your accounting period.", None)
   object RequiredEndOfPeriodStatement extends Error("REQUIRED_END_OF_PERIOD_STATEMENT", "Cannot submit intent to crystallisation without submitting End of Period Statement.", Some(""))
-  object RequiredIntentToCrystallise extends Error("REQUIRED_INTENT_TO_CRYSTALLISE", "Changes have been made, or a more recent submission exists.   Please resubmit Intent to Crystallise.", None)
+  object RequiredIntentToCrystallise extends Error("REQUIRED_INTENT_TO_CRYSTALLISE", "Changes have been made, or a more recent submission exists. Please resubmit Intent to Crystallise.", None)
   object InvalidTaxCalculationId extends Error("INVALID_TAX_CALCULATION_ID", "Invalid Calculation ID.", Some("/calculationId"))
   object AlreadySubmitted extends Error("ALREADY_SUBMITTED", "You cannot submit a statement for the same accounting period twice", None)
   object ServerError extends Error(SERVER_ERROR, "An error has occurred", None)
