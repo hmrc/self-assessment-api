@@ -1316,28 +1316,16 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def crystalliseInvalidCalculationId(nino: Nino, taxYear: TaxYear = TaxYear("2017-18"), calcId: String): Givens = {
+        def crystalliseError(nino: Nino, taxYear: TaxYear = TaxYear("2017-18"), calcId: String)(responseStatus: Int, responseBody: String): Givens = {
           stubFor(post(urlMatching(s"/income-tax/calculation/nino/$nino/taxYear/${taxYear.toDesTaxYear}/$calcId/crystallise"))
             .willReturn(
               aResponse()
-                .withStatus(403)
+                .withStatus(responseStatus)
                 .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.Errors.invalidTaxCalculationId)))
-
+                .withBody(responseBody)))
           givens
         }
-
-        def crystalliseRequiredIntentToCrystallise(nino: Nino, taxYear: TaxYear = TaxYear("2017-18"), calcId: String): Givens = {
-          stubFor(post(urlMatching(s"/income-tax/calculation/nino/$nino/taxYear/${taxYear.toDesTaxYear}/$calcId/crystallise"))
-            .willReturn(
-              aResponse()
-                .withStatus(403)
-                .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.Errors.requiredIntentToCrystallise)))
-
-          givens
-        }
-
+  
         def crystallisationObligation(nino: Nino, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
           stubFor(get(urlEqualTo(s"/enterprise/obligation-data/nino/${nino.nino}/ITSA?from=${taxYear.taxYearFromDate}&to=${taxYear.taxYearToDate}"))
             .willReturn(
