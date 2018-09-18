@@ -365,6 +365,21 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .matches(Period.periodPattern)
       }
 
+      s"return a 200 response with an empty array when an empty $propertyType periods list is returned" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .emptyPeriodsWillBeReturnedFor(nino, propertyType)
+          .when()
+          .get(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(200)
+          .contentTypeIsJson()
+          .jsonBodyIsEmptyArray
+      }
+
       s"return code 404 for an $propertyType property business containing no periods" in {
         given()
           .userIsSubscribedToMtdFor(nino)

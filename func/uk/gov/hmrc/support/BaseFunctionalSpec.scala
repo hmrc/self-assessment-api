@@ -1723,7 +1723,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def periodsWillBeReturnedFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
-            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            get(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
                   .withStatus(200)
@@ -1733,9 +1733,28 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def emptyPeriodsWillBeReturnedFor(nino: Nino, propertyType: PropertyType): Givens = {
+
+          val emptyPeriodJson =
+            s"""
+               |{
+               |  "periods": []
+               |}""".stripMargin
+
+          stubFor(
+            get(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+              .willReturn(
+                aResponse()
+                  .withStatus(200)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(emptyPeriodJson)))
+
+          givens
+        }
+
         def invalidPeriodsJsonFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
-            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            get(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
                   .withStatus(200)
