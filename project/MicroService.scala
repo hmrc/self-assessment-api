@@ -9,12 +9,11 @@ trait MicroService {
 
   import uk.gov.hmrc._
   import DefaultBuildSettings._
-  import TestPhases._
   import play.sbt.routes.RoutesKeys.routesGenerator
 
   val appName: String
 
-  lazy val appDependencies: Seq[ModuleID] = ???
+  lazy val appDependencies: Seq[ModuleID] = Seq.empty
   lazy val plugins: Seq[Plugins] = Seq(play.sbt.PlayScala)
   lazy val playSettings: Seq[Setting[_]] = Seq.empty
 
@@ -68,7 +67,7 @@ trait MicroService {
               unmanagedResourceDirectories in FuncTest += baseDirectory.value,
               unmanagedResourceDirectories in Compile += baseDirectory.value / "resources",
               addTestReportOption(FuncTest, "int-test-reports"),
-              testGrouping in FuncTest := oneForkedJvmPerTest((definedTests in FuncTest).value),
+              testGrouping in FuncTest := TestPhases.oneForkedJvmPerTest((definedTests in FuncTest).value),
               parallelExecution in FuncTest := false,
               routesGenerator := StaticRoutesGenerator)
     .settings(resolvers += Resolver.bintrayRepo("hmrc", "releases"), resolvers += Resolver.jcenterRepo, resolvers += Resolver.sonatypeRepo("snapshots"))
