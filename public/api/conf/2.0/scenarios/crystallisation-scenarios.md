@@ -21,11 +21,15 @@
         </tr>
         <tr>
             <td><p>INVALID_TAX_CALCULATION_ID</p></td>
-            <td><p>Simulate client submits a tax calculation id but not from the latest intent to crystallisation submission</p></td>
+            <td><p>Simulate invalid taxCalculationId</p></td>
         </tr>
         <tr>
             <td><p>REQUIRED_INTENT_TO_CRYSTALLISE</p></td>
-            <td><p>Simulate client submits crystallisation without previously submitted intent to crystallise</p></td>
+            <td><p>Simulates the scenario where changes have been made, or a more recent submission exists, and resubmission of Intent to Crystallise is required</p></td>
+        </tr>
+        <tr>
+             <td><p>NOT_FOUND</p></td>
+             <td><p>Simulates the scenario where no data can be found, either because no calculation exists for this calculation ID, or it does not relate to an intent-to-crystallise calculation</p></td>
         </tr>
     </tbody>
 </table>

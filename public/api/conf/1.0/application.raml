@@ -2000,12 +2000,12 @@ traits:
                 application/json:
                   type: types.errorResponse
                   examples:
-                    wrongCalcId:
-                      description: Client submits a tax calculation id but not from the latest intent to crystallisation submission
+                    invalidCalcId:
+                      description: Invalid Calculation ID
                       value:
                         code: INVALID_TAX_CALCULATION_ID
-                    noIntent:
-                      description: Client submits crystallisation without previously submitted intent to crystallise
+                    resubmitIntentToCrystallise:
+                      description: Changes have been made, or a more recent submission exists.  Please resubmit Intent to Crystallise
                       value:
                         code: REQUIRED_INTENT_TO_CRYSTALLISE
     /charitable-giving:
