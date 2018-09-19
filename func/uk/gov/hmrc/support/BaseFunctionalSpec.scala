@@ -1428,7 +1428,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def returnEopsObligationsWithNoIdentificationFor(nino: Nino):Givens = {
-          stubFor(get(urlMatching(s"/enterprise/obligation-data/nino/$nino/ITSA/.*"))
+          stubFor(get(urlMatching(s"/enterprise/obligation-data/nino/$nino/ITSA.*"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -1440,7 +1440,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
 
         def returnEndOfPeriodObligationsFor(nino: Nino, refNo: String): Givens = {
-          stubFor(get(urlMatching(s"/enterprise/obligation-data/nino/$nino/ITSA/.*"))
+          stubFor(get(urlMatching(s"/enterprise/obligation-data/nino/$nino/ITSA.*"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -1461,7 +1461,7 @@ trait BaseFunctionalSpec extends TestApplication {
             """.stripMargin
           }
 
-          stubFor(get(urlMatching(s"/enterprise/obligation-data/nino/$nino/ITSA/.*"))
+          stubFor(get(urlMatching(s"/enterprise/obligation-data/nino/$nino/ITSA.*"))
             .willReturn(
               aResponse()
                 .withStatus(status)
