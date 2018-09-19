@@ -89,7 +89,7 @@ object Financials {
             depreciation = exp.depreciation.map(expense2Deduction),
             other = exp.other.map(expense2Deduction))
       ).fold {
-         sePeriodUpdate.consolidatedExpenses.map(se => Deductions(simplifiedExpenses = Option(se)))
+         sePeriodUpdate.consolidatedExpenses.map{se => Deductions(simplifiedExpenses = Option(se))}
       }(Option(_)))
 }
 

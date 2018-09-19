@@ -25,7 +25,7 @@ import uk.gov.hmrc.selfassessmentapi.models.{ErrorCode, Validation, _}
 
 case class SelfEmploymentPeriodUpdate(incomes: Option[Incomes],
                                       expenses: Option[Expenses],
-                                      consolidatedExpenses: Option[BigDecimal]) extends ExpensesDef[Expenses]
+                                      consolidatedExpenses: Option[BigDecimal]) extends SelfEmploymentExpensesDef[Expenses]
 
 object SelfEmploymentPeriodUpdate {
   implicit val writes: Writes[SelfEmploymentPeriodUpdate] = Json.writes[SelfEmploymentPeriodUpdate]
