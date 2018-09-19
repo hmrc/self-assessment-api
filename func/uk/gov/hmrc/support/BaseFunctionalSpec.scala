@@ -1350,10 +1350,10 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def isAcceptedFor(nino: Nino, taxYear: TaxYear = TaxYear("2017-18")): Givens = {
-          stubFor(post(urlMatching(s"/income-tax-self-assessment/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation"))
+          stubFor(post(urlMatching(s"/income-tax/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation"))
             .willReturn(
               aResponse()
-                .withStatus(202)
+                .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody(DesJsons.TaxCalculation.createResponse())))
 

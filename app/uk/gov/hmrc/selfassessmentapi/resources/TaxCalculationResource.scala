@@ -52,7 +52,7 @@ object TaxCalculationResource extends BaseResource {
         case Right(response)   =>
           audit(makeTaxCalcTriggerAudit(nino, request.authContext, response))
           response.filter {
-            case 202 =>
+            case 200 =>
               Accepted(Json.parse(cannedEtaResponse))
                 .withHeaders(
                   LOCATION -> response.calcId
