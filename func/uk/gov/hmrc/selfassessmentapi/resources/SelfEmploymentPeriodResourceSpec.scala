@@ -31,7 +31,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(201)
         .responseContainsHeader("Location",
-                                s"/self-assessment/ni/$nino/self-employments/\\w+/periods/2017-04-06_2017-07-04".r)
+          s"/self-assessment/ni/$nino/self-employments/\\w+/periods/2017-04-06_2017-07-04".r)
         .when()
         .get("/admin/metrics")
         .thenAssertThat()
@@ -44,8 +44,8 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
     "return code 201 containing a location header containing from date and to date when creating a period with consolidated expenses" in {
 
       val period = Jsons.SelfEmployment.periodWithSimplifiedExpenses(fromDate = Some("2017-04-06"),
-                                                                     toDate = Some("2017-07-04"),
-                                                                     consolidatedExpenses = Some(1234))
+        toDate = Some("2017-07-04"),
+        consolidatedExpenses = Some(1234))
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -67,7 +67,7 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(201)
         .responseContainsHeader("Location",
-                                s"/self-assessment/ni/$nino/self-employments/\\w+/periods/2017-04-06_2017-07-04".r)
+          s"/self-assessment/ni/$nino/self-employments/\\w+/periods/2017-04-06_2017-07-04".r)
     }
 
     "return code 400 when attempting to create a period with the 'from' and 'to' dates are in the incorrect order" in {
@@ -325,9 +325,9 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
   "updatePeriod" should {
     "return code 204 when updating a period that exists" in {
       val updatePeriod = Jsons.SelfEmployment.period(turnover = 200.25,
-                                                     otherIncome = 100.25,
-                                                     costOfGoodsBought = (200.25, 50.25),
-                                                     cisPaymentsToSubcontractors = (100.25, 55.25))
+        otherIncome = 100.25,
+        costOfGoodsBought = (200.25, 50.25),
+        cisPaymentsToSubcontractors = (100.25, 55.25))
 
       given()
         .userIsSubscribedToMtdFor(nino)
@@ -340,6 +340,36 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
         .thenAssertThat()
         .statusIs(204)
+    }
+
+    "return code 400 when attempting to amend a period where the payload contains both the 'expenses' and 'consolidatedExpenses'" in {
+
+      val updatePeriod = Jsons.SelfEmployment.period( turnover = 200.25,
+                                                      otherIncome = 100.25,
+                                                      costOfGoodsBought = (200.25, 50.25),
+                                                      cisPaymentsToSubcontractors = (100.25, 55.25),
+                                                      consolidatedExpenses = Some(12345))
+
+      val expectedBody = Jsons.Errors.invalidRequest(("BOTH_EXPENSES_SUPPLIED", ""))
+
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des()
+        .selfEmployment
+        .periodWillBeUpdatedFor(nino, from = "2017-04-05", to = "2018-04-04")
+//        .when()
+//        .post(Jsons.SelfEmployment())
+//        .to(s"/ni/$nino/self-employments")
+//        .thenAssertThat()
+//        .statusIs(201)
+        .when()
+        .put(updatePeriod)
+        .at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
+        .thenAssertThat()
+        .statusIs(400)
+        .contentTypeIsJson()
+        .bodyIsLike(expectedBody)
     }
 
     "return code 404 when attempting to update a non-existent period" in {
