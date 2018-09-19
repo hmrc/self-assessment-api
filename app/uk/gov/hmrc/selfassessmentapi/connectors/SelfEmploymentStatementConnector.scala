@@ -42,6 +42,6 @@ object SelfEmploymentStatementConnector extends BaseConnector{
       case (Some(f), None) => s"?from=$f"
       case (None, Some(t)) => s"?to=$t"
     }
-    httpGet[SelfEmploymentStatementResponse](baseUrl + s"/enterprise/obligation-data/nino/$nino/ITSA/$queryString", SelfEmploymentStatementResponse)
+    httpGet[SelfEmploymentStatementResponse](baseUrl + s"/enterprise/obligation-data/nino/$nino/ITSA$queryString", SelfEmploymentStatementResponse)
   }
 }
