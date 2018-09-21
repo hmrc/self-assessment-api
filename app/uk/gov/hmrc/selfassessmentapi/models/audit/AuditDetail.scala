@@ -27,6 +27,12 @@ sealed trait AuditDetail {
   val responsePayload: Option[JsValue]
 }
 
+sealed trait ExtendedAuditDetail {
+  val auditType: String
+  val httpStatus: Int
+  val responsePayload: Option[JsValue]
+}
+
 case class PeriodicUpdate(override val auditType: String,
                           override val httpStatus: Int,
                           nino: Nino,
@@ -112,3 +118,18 @@ case class EndOfPeriodStatementDeclaration(override val auditType: String = "dec
 object EndOfPeriodStatementDeclaration {
   implicit val format: Format[EndOfPeriodStatementDeclaration] = Json.format[EndOfPeriodStatementDeclaration]
 }
+
+object IntentToCrystallise {
+  implicit val format: Format[IntentToCrystallise] = Json.format[IntentToCrystallise]
+}
+
+case class IntentToCrystallise(override val auditType: String = "submitIntentToCrystallise",
+                                 override val httpStatus: Int,
+                                 nino: Nino,
+                                 taxYear: TaxYear,
+                                 calculationId: String,
+                                 affinityGroup: String,
+                                 agentCode: String,
+                                 `X-CorrelationId` : String,
+                                 override val responsePayload: Option[JsValue])
+  extends AuditDetail

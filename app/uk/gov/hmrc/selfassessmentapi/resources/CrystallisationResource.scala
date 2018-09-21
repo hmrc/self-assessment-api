@@ -21,14 +21,18 @@ import play.api.libs.json.Json.toJson
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.CrystallisationConnector
+import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
+import uk.gov.hmrc.selfassessmentapi.models.audit.IntentToCrystallise
 import uk.gov.hmrc.selfassessmentapi.models.crystallisation.CrystallisationRequest
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode._
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
-import uk.gov.hmrc.selfassessmentapi.resources.wrappers.EmptyResponse
-import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
+import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CrystallisationIntentResponse, EmptyResponse}
+import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
+import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 
 object CrystallisationResource extends CrystallisationResource {
   override val appContext = AppContext
@@ -46,6 +50,7 @@ trait CrystallisationResource extends BaseResource {
       crystallisationConnector.intentToCrystallise(nino, taxYear) map { response =>
         response.filter {
           case 200 =>
+            audit(makeIntentToCrystalliseAudit(nino, taxYear, request.authContext, response))
             val contextPrefix = AppContext.selfAssessmentContextRoute
             val url = response.calculationId.map(id => s"$contextPrefix/ni/$nino/calculations/$id").getOrElse("")
             SeeOther(url).withHeaders(LOCATION -> url)
@@ -90,4 +95,22 @@ trait CrystallisationResource extends BaseResource {
         }
       } recoverWith exceptionHandling
     }
+
+
+  private def makeIntentToCrystalliseAudit(nino: Nino, taxYear: TaxYear,
+                                           authCtx: AuthContext, response: CrystallisationIntentResponse)(
+    implicit hc: HeaderCarrier): AuditData[IntentToCrystallise] =
+    AuditData(
+      detail = IntentToCrystallise(
+        httpStatus = response.status,
+        nino = nino,
+        taxYear = taxYear,
+        affinityGroup = authCtx.affinityGroup,
+        agentCode = authCtx.agentCode.getOrElse(""),
+        calculationId = response.calculationId.getOrElse(""),
+        `X-CorrelationId` = response.underlying.header("CorrelationId").getOrElse(""),
+        responsePayload = None
+      ),
+      transactionName = "intent-to-crystallise"
+    )
 }
