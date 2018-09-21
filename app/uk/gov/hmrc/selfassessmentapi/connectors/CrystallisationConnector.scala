@@ -42,7 +42,7 @@ trait CrystallisationConnector extends BaseConnector {
 
   def crystallise(nino: Nino, taxYear: TaxYear, request: CrystallisationRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] =
     httpEmptyPost[EmptyResponse](
-      baseUrl + s"/income-tax/calculation/nino/$nino/taxYear/${taxYear.toDesTaxYear}/${request.calculationId}/crystallise",
+      baseUrl + s"/income-tax/calculation/nino/$nino/${taxYear.toDesTaxYear}/${request.calculationId}/crystallise",
       EmptyResponse)
 
   def get(nino: Nino, queryParams: ObligationQueryParams)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CrystObligationsResponse] = {

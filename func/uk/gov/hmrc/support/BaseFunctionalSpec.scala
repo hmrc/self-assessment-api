@@ -1302,7 +1302,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def crystallise(nino: Nino, taxYear: TaxYear = TaxYear("2017-18"), calcId: String): Givens = {
-          stubFor(post(urlMatching(s"/income-tax/calculation/nino/$nino/taxYear/${taxYear.toDesTaxYear}/$calcId/crystallise"))
+          stubFor(post(urlMatching(s"/income-tax/calculation/nino/$nino/${taxYear.toDesTaxYear}/$calcId/crystallise"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -1317,7 +1317,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def crystalliseError(nino: Nino, taxYear: TaxYear = TaxYear("2017-18"), calcId: String)(responseStatus: Int, responseBody: String): Givens = {
-          stubFor(post(urlMatching(s"/income-tax/calculation/nino/$nino/taxYear/${taxYear.toDesTaxYear}/$calcId/crystallise"))
+          stubFor(post(urlMatching(s"/income-tax/calculation/nino/$nino/${taxYear.toDesTaxYear}/$calcId/crystallise"))
             .willReturn(
               aResponse()
                 .withStatus(responseStatus)
