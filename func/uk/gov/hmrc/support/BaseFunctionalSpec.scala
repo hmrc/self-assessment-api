@@ -1616,7 +1616,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def periodWillBeCreatedFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
-            post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            post(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
                   .withStatus(200)
@@ -1628,7 +1628,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def overlappingPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
-            post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            post(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
                   .withStatus(409)
@@ -1639,7 +1639,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def misalignedPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
-          stubFor(post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+          stubFor(post(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
             .willReturn(
               aResponse()
                 .withStatus(409)
@@ -1651,7 +1651,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def periodWillBeNotBeCreatedFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
-            post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            post(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
                   .withStatus(404)
@@ -1864,7 +1864,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def createWithNotAllowedConsolidatedExpenses(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
-            post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            post(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
                   .withStatus(409)

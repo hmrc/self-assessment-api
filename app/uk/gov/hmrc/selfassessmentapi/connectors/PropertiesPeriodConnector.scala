@@ -46,7 +46,7 @@ object PropertiesPeriodConnector extends BaseConnector{
     override def create(nino: Nino, properties: Other.Properties)(
         implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesPeriodResponse] =
       httpPost[des.properties.Other.Properties, PropertiesPeriodResponse](
-        baseUrl + s"/income-store/nino/$nino/uk-properties/other/periodic-summaries",
+        baseUrl + s"/income-tax/nino/$nino/uk-properties/other/periodic-summaries",
         des.properties.Other.Properties.from(properties),
         PropertiesPeriodResponse)
 
@@ -62,7 +62,7 @@ object PropertiesPeriodConnector extends BaseConnector{
     override def create(nino: Nino, properties: FHL.Properties)(
         implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesPeriodResponse] =
       httpPost[des.properties.FHL.Properties, PropertiesPeriodResponse](
-        baseUrl + s"/income-store/nino/$nino/uk-properties/furnished-holiday-lettings/periodic-summaries",
+        baseUrl + s"/income-tax/nino/$nino/uk-properties/furnished-holiday-lettings/periodic-summaries",
         des.properties.FHL.Properties.from(properties),
         PropertiesPeriodResponse)
 
