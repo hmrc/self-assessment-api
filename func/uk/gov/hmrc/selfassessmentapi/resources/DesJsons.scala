@@ -491,7 +491,7 @@ object DesJsons {
                 professionalFees: Option[BigDecimal] = Some(0),
                 costOfServices: Option[BigDecimal] = Some(0),
                 residentialFinancialCost: Option[BigDecimal] = Some(0),
-                simplifiedExpenses: Option[BigDecimal] = Some(0),
+                consolidatedExpenses: Option[BigDecimal] = Some(0),
                 other: Option[BigDecimal] = Some(0)): JsValue =
         Json.toJson(
           Other
@@ -511,7 +511,7 @@ object DesJsons {
                   professionalFees = professionalFees,
                   costOfServices = costOfServices,
                   residentialFinancialCost = residentialFinancialCost,
-                  simplifiedExpenses = simplifiedExpenses,
+                  consolidatedExpenses = consolidatedExpenses,
                   other = other
                 ))
               ))
