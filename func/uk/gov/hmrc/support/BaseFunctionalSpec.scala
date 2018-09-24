@@ -1834,7 +1834,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def periodWillBeUpdatedFor(nino: Nino, propertyType: PropertyType, from: String = "2017-04-06", to: String = "2018-04-05"): Givens = {
-          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
+          stubFor(put(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
             .willReturn(
               aResponse()
                 .withStatus(204)))
@@ -1843,7 +1843,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def periodWillNotBeUpdatedFor(nino: Nino, propertyType: PropertyType, from: String = "2017-04-06", to: String = "2018-04-05"): Givens = {
-          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
+          stubFor(put(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
             .willReturn(
               aResponse()
                 .withStatus(404)))
@@ -1852,7 +1852,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def invalidPeriodUpdateFor(nino: Nino, propertyType: PropertyType, from: String = "2017-04-06", to: String = "2018-04-05"): Givens = {
-          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
+          stubFor(put(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
             .willReturn(
               aResponse()
                 .withStatus(400)
@@ -1876,7 +1876,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def updateWithNotAllowedConsolidatedExpenses(nino: Nino, propertyType: PropertyType, from: String = "2017-04-06", to: String = "2018-04-05"): Givens = {
           stubFor(
-            put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
+            put(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
               .willReturn(
                 aResponse()
                   .withStatus(409)
