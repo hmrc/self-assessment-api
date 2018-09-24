@@ -25,11 +25,13 @@ import uk.gov.hmrc.play.audit.http.connector.AuditResult.Failure
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuditConnector
-import uk.gov.hmrc.selfassessmentapi.models.audit.AuditDetail
+import uk.gov.hmrc.selfassessmentapi.models.audit.{AuditDetail, ExtendedAuditDetail}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 import uk.gov.hmrc.http.HeaderCarrier
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 trait AuditService {
   val logger: Logger = Logger(this.getClass)
@@ -58,8 +60,27 @@ trait AuditService {
         logger.error(msg)
         Future.successful(Failure(msg, Some(ex)))
     }
+
+
+  def extendedAudit[T <: ExtendedAuditDetail](extendedAuditData: ExtendedAuditData[T])
+                                             (implicit hc: HeaderCarrier,
+                                              fmt: Format[T],
+                                              request: Request[_]): Future[AuditResult] = {
+
+    val event = ExtendedDataEvent(
+      auditSource = "self-assessment-api",
+      auditType = extendedAuditData.auditType,
+      tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(extendedAuditData.transactionName, request.path),
+      detail = Json.toJson(extendedAuditData.detail),
+      generatedAt = DateTime.now(DateTimeZone.UTC)
+    )
+
+    MicroserviceAuditConnector.sendExtendedEvent(event)
+  }
 }
 
 object AuditService extends AuditService
 
 case class AuditData[T <: AuditDetail](detail: T, transactionName: String)
+
+case class ExtendedAuditData[T <: ExtendedAuditDetail](detail: T, transactionName: String, auditType: String)

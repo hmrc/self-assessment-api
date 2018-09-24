@@ -25,14 +25,14 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.CrystallisationConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
-import uk.gov.hmrc.selfassessmentapi.models.audit.IntentToCrystallise
+import uk.gov.hmrc.selfassessmentapi.models.audit.{IntentToCrystallise, SubmitCrystallisation}
 import uk.gov.hmrc.selfassessmentapi.models.crystallisation.CrystallisationRequest
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode._
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CrystallisationIntentResponse, EmptyResponse}
-import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
-import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
+import uk.gov.hmrc.selfassessmentapi.services.AuditService.extendedAudit
+import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, ExtendedAuditData}
 
 object CrystallisationResource extends CrystallisationResource {
   override val appContext = AppContext
@@ -50,7 +50,7 @@ trait CrystallisationResource extends BaseResource {
       crystallisationConnector.intentToCrystallise(nino, taxYear) map { response =>
         response.filter {
           case 200 =>
-            audit(makeIntentToCrystalliseAudit(nino, taxYear, request.authContext, response))
+            extendedAudit(makeIntentToCrystalliseAudit(nino, taxYear, request.authContext, response))
             val contextPrefix = AppContext.selfAssessmentContextRoute
             val url = response.calculationId.map(id => s"$contextPrefix/ni/$nino/calculations/$id").getOrElse("")
             SeeOther(url).withHeaders(LOCATION -> url)
@@ -69,7 +69,9 @@ trait CrystallisationResource extends BaseResource {
       } map {
         case Left(error) => handleErrors(error)
         case Right(response) => response.filter {
-          case 200 => Created
+          case 200 =>
+            extendedAudit(makeSubmitCrystallisationAudit(nino, taxYear, request.authContext, response))
+            Created
           case 400 if response.errorCodeIsOneOf(INVALID_TAXYEAR) =>
             BadRequest(Json.toJson(Errors.TaxYearInvalid))
           case 400 if response.errorCodeIsOneOf(INVALID_CALCID) =>
@@ -81,7 +83,7 @@ trait CrystallisationResource extends BaseResource {
       } recoverWith exceptionHandling
     }
 
-  def retrieveObligation(nino: Nino, taxYear: TaxYear, queryParams: ObligationQueryParams)  =
+  def retrieveObligation(nino: Nino, taxYear: TaxYear, queryParams: ObligationQueryParams): Action[AnyContent] =
     APIAction(nino, SourceType.Crystallisation).async { implicit request =>
       crystallisationConnector.get(nino, queryParams.copy(from = Some(taxYear.taxYearFromDate), to = Some(taxYear.taxYearToDate))) map { response =>
         response.filter {
@@ -99,18 +101,34 @@ trait CrystallisationResource extends BaseResource {
 
   private def makeIntentToCrystalliseAudit(nino: Nino, taxYear: TaxYear,
                                            authCtx: AuthContext, response: CrystallisationIntentResponse)(
-    implicit hc: HeaderCarrier): AuditData[IntentToCrystallise] =
-    AuditData(
+    implicit hc: HeaderCarrier): ExtendedAuditData[IntentToCrystallise] =
+    ExtendedAuditData(
       detail = IntentToCrystallise(
-        httpStatus = response.status,
         nino = nino,
-        taxYear = taxYear,
-        affinityGroup = authCtx.affinityGroup,
-        agentCode = authCtx.agentCode.getOrElse(""),
+        taxYear = taxYear.toDesTaxYear,
+        userType = authCtx.affinityGroup,
+        agentReferenceNumber = authCtx.agentCode,
         calculationId = response.calculationId.getOrElse(""),
-        `X-CorrelationId` = response.underlying.header("CorrelationId").getOrElse(""),
-        responsePayload = None
+        `X-CorrelationId` = response.underlying.header("CorrelationId")
       ),
-      transactionName = "intent-to-crystallise"
+      transactionName = "intent-to-crystallise",
+      auditType = "submitIntentToCrystallise"
+    )
+
+  private def makeSubmitCrystallisationAudit(nino: Nino, taxYear: TaxYear,
+                                           authCtx: AuthContext, response: EmptyResponse)(
+    implicit hc: HeaderCarrier,
+    requestJson: Request[JsValue]): ExtendedAuditData[SubmitCrystallisation] =
+    ExtendedAuditData(
+      detail = SubmitCrystallisation(
+        nino = nino,
+        taxYear = taxYear.toDesTaxYear,
+        userType = authCtx.affinityGroup,
+        agentReferenceNumber = authCtx.agentCode,
+        request = requestJson.body,
+        `X-CorrelationId` = response.underlying.header("CorrelationId")
+      ),
+      transactionName = "crystallisation",
+      auditType = "submitCrystallisation"
     )
 }
