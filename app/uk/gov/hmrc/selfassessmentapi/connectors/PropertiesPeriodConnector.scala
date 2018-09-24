@@ -53,7 +53,7 @@ object PropertiesPeriodConnector extends BaseConnector{
     override def update(nino: Nino, propertyType: PropertyType, period: Period, financials: Other.Financials)(
         implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesPeriodResponse] =
       httpPut[Option[des.properties.Other.Financials], PropertiesPeriodResponse](
-        baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=${period.from}&to=${period.to}",
+        baseUrl + s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=${period.from}&to=${period.to}",
         des.properties.Other.Financials.from(Some(financials)),
         PropertiesPeriodResponse)
   }
@@ -69,7 +69,7 @@ object PropertiesPeriodConnector extends BaseConnector{
     override def update(nino: Nino, propertyType: PropertyType, period: Period, financials: FHL.Financials)(
         implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesPeriodResponse] =
       httpPut[Option[des.properties.FHL.Financials], PropertiesPeriodResponse](
-        baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=${period.from}&to=${period.to}",
+        baseUrl + s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=${period.from}&to=${period.to}",
         des.properties.FHL.Financials.from(Some(financials)),
         PropertiesPeriodResponse)
   }
