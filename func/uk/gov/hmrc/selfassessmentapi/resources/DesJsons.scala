@@ -48,6 +48,8 @@ object DesJsons {
       error("TOO_MANY_SOURCES", "You may only have a maximum of one self-employment source.")
     val invalidPeriod: String =
       error("INVALID_PERIOD", "The remote endpoint has indicated that a overlapping period was submitted.")
+    val invalidCreatePeriod: String =
+      error("INVALID_PERIOD", "The remote endpoint has indicated that the submission period already exists.")
     val overlappingPeriod: String =
       error("OVERLAPS_IN_PERIOD",
         "The remote endpoint has indicated that the submission period overlaps another period submitted.")
@@ -64,9 +66,9 @@ object DesJsons {
       error("INVALID_ORIGINATOR_ID", "Submission has not passed validation. Invalid header Originator-Id.")
     val invalidCalcId: String = error("INVALID_CALCID", "Submission has not passed validation. Invalid parameter calcId.")
     val propertyConflict: String = error("CONFLICT", "Property already exists.")
-    val invalidIncomeSource: String = error(
-      "INVALID_INCOME_SOURCE",
-      "The remote endpoint has indicated that the taxpayer does not have an associated property.")
+    val bothExpensesSupplied: String = error(
+      "BOTH_EXPENSES_SUPPLIED",
+      "The remote endpoint has indicated that the submission contains both simplified and a full breakdown of expenses.")
     val notFoundIncomeSource: String = error("NOT_FOUND_INCOME_SOURCE", "The remote endpoint has indicated that no data can be found for the given income source id.")
     val invalidDateFrom: String =
       error("INVALID_DATE_FROM", "Submission has not passed validation. Invalid parameter from.")

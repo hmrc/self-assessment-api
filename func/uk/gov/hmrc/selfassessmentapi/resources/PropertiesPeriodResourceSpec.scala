@@ -1,9 +1,11 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId}
+import uk.gov.hmrc.selfassessmentapi.models.Errors._
+import uk.gov.hmrc.selfassessmentapi.models.{Errors, Period, PeriodId}
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
+import uk.gov.hmrc.selfassessmentapi.resources.DesJsons.Errors
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
@@ -37,7 +39,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
             s"/self-assessment/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05".r)
       }
 
-      s"return code 201 when creating an $propertyType period where the paylod contains only 'consolidatedExpenses'"  in {
+      s"return code 201 when creating an $propertyType period where the payload contains only 'consolidatedExpenses'"  in {
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource
@@ -62,7 +64,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
             s"/self-assessment/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05".r)
       }
 
-      s"return code 201 when creating an $propertyType period where the paylod contains no expenses"  in {
+      s"return code 201 when creating an $propertyType period where the payload contains no expenses"  in {
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource
@@ -87,7 +89,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
             s"/self-assessment/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05".r)
       }
 
-      s"return code 201 when creating an $propertyType period where the paylod contains only 'residentialFinancialCost'"  in {
+      s"return code 201 when creating an $propertyType period where the payload contains only 'residentialFinancialCost'"  in {
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource
@@ -232,7 +234,8 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .bodyIsLike(Jsons.Errors.misalignedPeriod)
       }
 
-      s"return code 400 when attempting to create a period where the paylod contains both the 'expenses' and 'consolidatedExpenses' for $propertyType" in {
+      s"return code 400 when attempting to create a period where the payload contains both the" +
+        s"'expenses' and 'consolidatedExpenses' for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
           .clientIsFullyAuthorisedForTheResource
@@ -283,18 +286,66 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       }
 
       s"""return code 404 when attempting to create a period for a property that does not exist for $propertyType
-         |and DES returns HTTP 403 INVALID_INCOME_SOURCE""".stripMargin in {
+         |and DES returns HTTP 403 NOT_FOUND_INCOME_SOURCE""".stripMargin in {
         given()
           .userIsSubscribedToMtdFor(nino)
           .userIsFullyAuthorisedForTheResource
           .des()
           .properties
-          .periodWillBeNotBeCreatedForInexistentIncomeSource(nino, propertyType)
+          .propertyPeriodPostError(nino, propertyType)(403, DesJsons.Errors.notFoundIncomeSource)
           .when()
           .post(period(propertyType))
           .to(s"/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(404)
+      }
+
+      s"return code 400 when DES returns a 409 BOTH_EXPENSES_SUPPLIED for $propertyType" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .propertyPeriodPostError(nino, propertyType)(409, DesJsons.Errors.bothExpensesSupplied)
+          .when()
+          .post(period(propertyType))
+          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(400)
+      }
+
+      s"return code 409 when DES returns a 409 INVALID_PERIOD for $propertyType" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .willBeCreatedFor(nino)
+          .des()
+          .properties
+          .propertyPeriodPostError(nino, propertyType)(409, DesJsons.Errors.invalidCreatePeriod)
+          .when()
+          .post(period(propertyType))
+          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(409)
+      }
+
+      s"return code 409 when 'from' date is before 'to' date for $propertyType" in {
+        val invalidPeriod = period(propertyType, to = Some("2017-04-06"), from = Some("2018-04-05"))
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .willBeCreatedFor(nino)
+          .when()
+          .post(invalidPeriod)
+          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .thenAssertThat()
+          .statusIs(400)
+          .contentTypeIsJson()
+          .bodyIsLike(Jsons.Errors.invalidRequest(InvalidPeriod.code -> ""))
       }
 
       s"return code 500 when DES is experiencing issues for $propertyType" in {

@@ -10,6 +10,7 @@ import play.api.libs.json._
 import uk.gov.hmrc.api.controllers.ErrorNotFound
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.selfassessmentapi.models.Errors.DesError
 import uk.gov.hmrc.selfassessmentapi.models.obligations.ObligationsQueryParams
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
@@ -1709,15 +1710,26 @@ trait BaseFunctionalSpec extends TestApplication {
           }
         }
 
-        def periodWillBeNotBeCreatedForInexistentIncomeSource(nino: Nino, propertyType: PropertyType): Givens = {
+//        def periodWillBeNotBeCreatedForInexistentIncomeSource(nino: Nino, propertyType: PropertyType): Givens = {
+//          stubFor(
+//            post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+//              .willReturn(
+//                aResponse()
+//                  .withStatus(403)
+//                  .withHeader("Content-Type", "application/json")
+//                  .withBody(DesJsons.Errors.invalidIncomeSource)))
+//
+//          givens
+//        }
+
+        def propertyPeriodPostError(nino: Nino, propertyType: PropertyType)(status:Int, code: String): Givens = {
           stubFor(
-            post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            post(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
-                  .withStatus(403)
+                  .withStatus(status)
                   .withHeader("Content-Type", "application/json")
-                  .withBody(DesJsons.Errors.invalidIncomeSource)))
-
+                  .withBody(code)))
           givens
         }
 
