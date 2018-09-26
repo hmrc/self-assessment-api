@@ -3,7 +3,10 @@ import sbt.Keys._
 import sbt.Tests.{Group, SubProcess}
 import sbt._
 import scoverage.ScoverageKeys
+import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
+import uk.gov.hmrc.versioning.SbtGitVersioning
+import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 trait MicroService {
 
@@ -14,7 +17,8 @@ trait MicroService {
   val appName: String
 
   lazy val appDependencies: Seq[ModuleID] = Seq.empty
-  lazy val plugins: Seq[Plugins] = Seq(play.sbt.PlayScala)
+  lazy val plugins: Seq[Plugins] = Seq(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory
+  )
   lazy val playSettings: Seq[Setting[_]] = Seq.empty
 
   lazy val FuncTest = config("func") extend Test
@@ -36,6 +40,7 @@ trait MicroService {
     .settings(publishingSettings: _*)
     .settings(scoverageSettings: _*)
     .settings(defaultSettings(): _*)
+    .settings(majorVersion := 0)
     .settings(
       targetJvm := "jvm-1.8",
       scalaVersion := "2.11.11",
