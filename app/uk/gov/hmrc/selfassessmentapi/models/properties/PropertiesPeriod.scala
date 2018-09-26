@@ -134,7 +134,7 @@ object FHL {
         financialCosts = o.financialCosts.map(Expense(_)),
         professionalFees = o.professionalFees.map(Expense(_)),
         costOfServices = o.costOfServices.map(Expense(_)),
-        consolidatedExpenses = o.simplifiedExpenses.map(Expense(_)),
+        consolidatedExpenses = o.consolidatedExpenses.map(Expense(_)),
         other = o.other.map(Expense(_))
       )
   }
