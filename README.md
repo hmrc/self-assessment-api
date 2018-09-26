@@ -61,5 +61,5 @@ steps to reproduce the issue, as this will help to reduce the time it takes us t
 a solution. 
 
 Please note that our GitHub issues page is for technical queries only. If you have any 
-business-related questions please direct them to the Software Developer Support Team (SDST), 
+business-related questions please direct them to the Software Developer Support Team (SDST),
 who can be contacted at SDSTeam@hmrc.gsi.gov.uk.
