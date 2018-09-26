@@ -17,8 +17,6 @@ trait MicroService {
   val appName: String
 
   lazy val appDependencies: Seq[ModuleID] = Seq.empty
-  lazy val plugins: Seq[Plugins] = Seq(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory
-  )
   lazy val playSettings: Seq[Setting[_]] = Seq.empty
 
   lazy val FuncTest = config("func") extend Test
@@ -34,7 +32,7 @@ trait MicroService {
   }
 
   lazy val microservice = Project(appName, file("."))
-    .enablePlugins(Seq(play.sbt.PlayScala) ++ plugins: _*)
+    .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
     .settings(playSettings: _*)
     .settings(scalaSettings: _*)
     .settings(publishingSettings: _*)
@@ -72,13 +70,13 @@ trait MicroService {
               unmanagedResourceDirectories in FuncTest += baseDirectory.value,
               unmanagedResourceDirectories in Compile += baseDirectory.value / "resources",
               addTestReportOption(FuncTest, "int-test-reports"),
-              testGrouping in FuncTest := TestPhases.oneForkedJvmPerTest((definedTests in FuncTest).value),
+              testGrouping in FuncTest := FuncTestPhases.oneForkedJvmPerTest((definedTests in FuncTest).value),
               parallelExecution in FuncTest := false,
               routesGenerator := StaticRoutesGenerator)
     .settings(resolvers += Resolver.bintrayRepo("hmrc", "releases"), resolvers += Resolver.jcenterRepo, resolvers += Resolver.sonatypeRepo("snapshots"))
 }
 
-private object TestPhases {
+private object FuncTestPhases {
 
   def oneForkedJvmPerTest(tests: Seq[TestDefinition]) =
     tests map { test =>
