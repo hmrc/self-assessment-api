@@ -3,20 +3,16 @@ import sbt._
 import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning
+import uk.gov.hmrc.SbtArtifactory
 
 object MicroServiceBuild extends Build with MicroService {
 
   val appName = "self-assessment-api"
 
-  override lazy val plugins: Seq[Plugins] = Seq(
-    SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin
-  )
-
   override lazy val appDependencies: Seq[ModuleID] = AppDependencies()
   override lazy val playSettings: Seq[Setting[_]] = Seq(
     routesImport += "uk.gov.hmrc.selfassessmentapi.resources.Binders._"
   )
-
 }
 
 private object AppDependencies {
