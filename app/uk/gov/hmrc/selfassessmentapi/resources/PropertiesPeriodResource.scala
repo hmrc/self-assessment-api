@@ -17,7 +17,6 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.libs.json.Json.toJson
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.domain.Nino
@@ -27,7 +26,6 @@ import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
-import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{PeriodMapper, PropertiesPeriodResponse, ResponseMapper}
@@ -50,12 +48,6 @@ object PropertiesPeriodResource extends BaseResource {
           response.filter {
             case 200 =>
               Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
-            case 403 if response.errorCodeIs(DesErrorCode.NOT_FOUND_INCOME_SOURCE) =>
-              NotFound
-            case 409 if response.errorCodeIs(DesErrorCode.BOTH_EXPENSES_SUPPLIED) =>
-              BadRequest(toJson(Errors.badRequest(Errors.BothExpensesSupplied)))
-            case 409 if response.errorCodeIs(DesErrorCode.INVALID_PERIOD) =>
-              Conflict(toJson(Errors.badRequest(Errors.InvalidPeriod.copy(message = "Update period already exists"))))
           }
       } recoverWith exceptionHandling
     }

@@ -17,14 +17,15 @@
 package uk.gov.hmrc.selfassessmentapi.connectors
 
 import org.joda.time.LocalDate
+import play.api.libs.json.Json
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
 import uk.gov.hmrc.selfassessmentapi.models.{Financials, Period, PeriodId, des}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesPeriodResponse
-
 import uk.gov.hmrc.http.HeaderCarrier
+
 import scala.concurrent.{ExecutionContext, Future}
 
 trait PropertiesPeriodConnector[P <: Period, F <: Financials] {
@@ -45,15 +46,18 @@ object PropertiesPeriodConnector extends BaseConnector{
       extends PropertiesPeriodConnector[Other.Properties, Other.Financials] {
     override def create(nino: Nino, properties: Other.Properties)(
         implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesPeriodResponse] =
-      httpPost[des.properties.Other.Properties, PropertiesPeriodResponse](
-        baseUrl + s"/income-tax/nino/$nino/uk-properties/other/periodic-summaries",
-        des.properties.Other.Properties.from(properties),
-        PropertiesPeriodResponse)
+    {
+        println(s"\n${Json.prettyPrint(Json.toJson(properties))}\n${Json.prettyPrint(Json.toJson(des.properties.Other.Properties.from(properties)))}\n")
+        httpPost[des.properties.Other.Properties, PropertiesPeriodResponse](
+          baseUrl + s"/income-store/nino/$nino/uk-properties/other/periodic-summaries",
+          des.properties.Other.Properties.from(properties),
+          PropertiesPeriodResponse)
+      }
 
     override def update(nino: Nino, propertyType: PropertyType, period: Period, financials: Other.Financials)(
         implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesPeriodResponse] =
       httpPut[Option[des.properties.Other.Financials], PropertiesPeriodResponse](
-        baseUrl + s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=${period.from}&to=${period.to}",
+        baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=${period.from}&to=${period.to}",
         des.properties.Other.Financials.from(Some(financials)),
         PropertiesPeriodResponse)
   }
@@ -62,14 +66,14 @@ object PropertiesPeriodConnector extends BaseConnector{
     override def create(nino: Nino, properties: FHL.Properties)(
         implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesPeriodResponse] =
       httpPost[des.properties.FHL.Properties, PropertiesPeriodResponse](
-        baseUrl + s"/income-tax/nino/$nino/uk-properties/furnished-holiday-lettings/periodic-summaries",
+        baseUrl + s"/income-store/nino/$nino/uk-properties/furnished-holiday-lettings/periodic-summaries",
         des.properties.FHL.Properties.from(properties),
         PropertiesPeriodResponse)
 
     override def update(nino: Nino, propertyType: PropertyType, period: Period, financials: FHL.Financials)(
         implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesPeriodResponse] =
       httpPut[Option[des.properties.FHL.Financials], PropertiesPeriodResponse](
-        baseUrl + s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=${period.from}&to=${period.to}",
+        baseUrl + s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=${period.from}&to=${period.to}",
         des.properties.FHL.Financials.from(Some(financials)),
         PropertiesPeriodResponse)
   }

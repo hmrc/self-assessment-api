@@ -300,53 +300,53 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(404)
       }
 
-      s"return code 400 when DES returns a 409 BOTH_EXPENSES_SUPPLIED for $propertyType" in {
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .propertyPeriodPostError(nino, propertyType)(409, DesJsons.Errors.bothExpensesSupplied)
-          .when()
-          .post(period(propertyType))
-          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
-          .thenAssertThat()
-          .statusIs(400)
-      }
+//      s"return code 400 when DES returns a 409 BOTH_EXPENSES_SUPPLIED for $propertyType" in {
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .userIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .propertyPeriodPostError(nino, propertyType)(409, DesJsons.Errors.bothExpensesSupplied)
+//          .when()
+//          .post(period(propertyType))
+//          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+//          .thenAssertThat()
+//          .statusIs(400)
+//      }
 
-      s"return code 409 when DES returns a 409 INVALID_PERIOD for $propertyType" in {
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .willBeCreatedFor(nino)
-          .des()
-          .properties
-          .propertyPeriodPostError(nino, propertyType)(409, DesJsons.Errors.invalidCreatePeriod)
-          .when()
-          .post(period(propertyType))
-          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
-          .thenAssertThat()
-          .statusIs(409)
-      }
+//      s"return code 409 when DES returns a 409 INVALID_PERIOD for $propertyType" in {
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .userIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .willBeCreatedFor(nino)
+//          .des()
+//          .properties
+//          .propertyPeriodPostError(nino, propertyType)(409, DesJsons.Errors.invalidCreatePeriod)
+//          .when()
+//          .post(period(propertyType))
+//          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+//          .thenAssertThat()
+//          .statusIs(409)
+//      }
 
-      s"return code 409 when 'from' date is before 'to' date for $propertyType" in {
-        val invalidPeriod = period(propertyType, to = Some("2017-04-06"), from = Some("2018-04-05"))
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .userIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .willBeCreatedFor(nino)
-          .when()
-          .post(invalidPeriod)
-          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
-          .thenAssertThat()
-          .statusIs(400)
-          .contentTypeIsJson()
-          .bodyIsLike(Jsons.Errors.invalidRequest(InvalidPeriod.code -> ""))
-      }
+//      s"return code 409 when 'from' date is before 'to' date for $propertyType" in {
+//        val invalidPeriod = period(propertyType, to = Some("2017-04-06"), from = Some("2018-04-05"))
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .userIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .willBeCreatedFor(nino)
+//          .when()
+//          .post(invalidPeriod)
+//          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+//          .thenAssertThat()
+//          .statusIs(400)
+//          .contentTypeIsJson()
+//          .bodyIsLike(Jsons.Errors.invalidRequest(InvalidPeriod.code -> ""))
+//      }
 
       s"return code 500 when DES is experiencing issues for $propertyType" in {
         given()
