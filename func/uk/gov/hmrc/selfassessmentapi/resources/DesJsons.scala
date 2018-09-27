@@ -48,7 +48,7 @@ object DesJsons {
       error("TOO_MANY_SOURCES", "You may only have a maximum of one self-employment source.")
     val invalidPeriod: String =
       error("INVALID_PERIOD", "The remote endpoint has indicated that a overlapping period was submitted.")
-//    val invalidCreatePeriod: String = error("INVALID_PERIOD", "The remote endpoint has indicated that the submission period already exists.")
+    val invalidCreatePeriod: String = error("INVALID_PERIOD", "The remote endpoint has indicated that the submission period already exists.")
     val overlappingPeriod: String =
       error("OVERLAPS_IN_PERIOD",
         "The remote endpoint has indicated that the submission period overlaps another period submitted.")
