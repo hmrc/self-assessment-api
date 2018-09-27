@@ -50,7 +50,7 @@ object FHL {
                         professionalFees: Option[BigDecimal] = None,
                         costOfServices: Option[BigDecimal] = None,
                         other: Option[BigDecimal] = None,
-                        simplifiedExpenses: Option[BigDecimal] = None)
+                        consolidatedExpenses: Option[BigDecimal] = None)
 
   object Deductions {
     implicit val format: OFormat[Deductions] = Json.format[Deductions]
@@ -61,7 +61,7 @@ object FHL {
                  financialCosts = o.financialCosts.map(_.amount),
                  professionalFees = o.professionalFees.map(_.amount),
                  costOfServices = o.costOfServices.map(_.amount),
-                 simplifiedExpenses = o.consolidatedExpenses.map(_.amount),
+                 consolidatedExpenses = o.consolidatedExpenses.map(_.amount),
                  other = o.other.map(_.amount))
   }
 
