@@ -108,8 +108,7 @@ trait Response {
     case 403 if errorCodeIsOneOf(INVALID_TAX_CALCULATION_ID) => Forbidden(toJson(Errors.businessError(Errors.InvalidTaxCalculationId)))
     case 403                                         => NotFound
     case 404                                         => NotFound
-    case 409 if errorCodeIsOneOf(INVALID_PERIOD)     =>
-      //This has been superceded by InvalidCreatePeriod in the PropertiesPeriodResource.
+    case 409 if errorCodeIsOneOf(INVALID_PERIOD)     => BadRequest(toJson(Errors.badRequest(Errors.InvalidPeriod)))
       BadRequest(toJson(Errors.badRequest(Errors.InvalidPeriod)))
     case 409 if errorCodeIsOneOf(NOT_CONTIGUOUS_PERIOD) =>
       Forbidden(toJson(Errors.businessError(Errors.NotContiguousPeriod)))
