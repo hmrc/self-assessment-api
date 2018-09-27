@@ -81,7 +81,7 @@ class ResponseSpec extends UnitSpec with TableDrivenPropertyChecks {
              INVALID_INCOMESOURCEID,
              INVALID_BUSINESSID,
              INVALID_INCOME_SOURCE,
-             INVALID_INCOMESOURCEID,
+             INVALID_INCOME_SOURCEID,
              INVALID_TYPE,
              INVALID_IDENTIFIER,
              INVALID_CALCID),
