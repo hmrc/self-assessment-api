@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.concurrent.Execution.Implicits._
+import play.api.libs.json.Json.toJson
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.domain.Nino
@@ -26,6 +27,7 @@ import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
+import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{PeriodMapper, PropertiesPeriodResponse, ResponseMapper}
@@ -48,6 +50,12 @@ object PropertiesPeriodResource extends BaseResource {
           response.filter {
             case 200 =>
               Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
+            case 403 if response.errorCodeIs(DesErrorCode.NOT_FOUND_INCOME_SOURCE) =>
+              NotFound
+            case 409 if response.errorCodeIs(DesErrorCode.BOTH_EXPENSES_SUPPLIED) =>
+              BadRequest(toJson(Errors.badRequest(Errors.BothExpensesSupplied)))
+            case 409 if response.errorCodeIs(DesErrorCode.INVALID_PERIOD) =>
+              Conflict(toJson(Errors.badRequest(Errors.InvalidPeriod.copy(message = "Update period already exists"))))
           }
       } recoverWith exceptionHandling
     }
@@ -69,10 +77,10 @@ object PropertiesPeriodResource extends BaseResource {
     }
 
   private def toResult[P <: Period, D <: des.properties.Period](response: PropertiesPeriodResponse)(
-      implicit rm: ResponseMapper[P, D],
-      pm: PeriodMapper[P, D],
-      r: Reads[D],
-      w: Writes[P]): Result =
+    implicit rm: ResponseMapper[P, D],
+    pm: PeriodMapper[P, D],
+    r: Reads[D],
+    w: Writes[P]): Result =
     ResponseMapper[P, D].period(response).map(period => Ok(Json.toJson(period))).getOrElse(NotFound)
 
   def retrievePeriod(nino: Nino, id: PropertyType, periodId: PeriodId): Action[AnyContent] =
@@ -114,9 +122,9 @@ object PropertiesPeriodResource extends BaseResource {
     }
 
   private def validateAndCreate[P <: Period, F <: Financials](nino: Nino, request: Request[JsValue])(
-      implicit hc: HeaderCarrier,
-      p: PropertiesPeriodConnector[P, F],
-      r: Reads[P]): Future[Either[ErrorResult, (PeriodId, PropertiesPeriodResponse)]] =
+    implicit hc: HeaderCarrier,
+    p: PropertiesPeriodConnector[P, F],
+    r: Reads[P]): Future[Either[ErrorResult, (PeriodId, PropertiesPeriodResponse)]] =
     validate[P, (PeriodId, PropertiesPeriodResponse)](request.body) { period =>
       PropertiesPeriodConnector[P, F]
         .create(nino, period)
@@ -124,7 +132,7 @@ object PropertiesPeriodResource extends BaseResource {
     }
 
   private def validateCreateRequest(id: PropertyType, nino: Nino, request: Request[JsValue])(
-      implicit hc: HeaderCarrier): Future[Either[ErrorResult, (PeriodId, PropertiesPeriodResponse)]] =
+    implicit hc: HeaderCarrier): Future[Either[ErrorResult, (PeriodId, PropertiesPeriodResponse)]] =
     id match {
       case PropertyType.OTHER => validateAndCreate[Other.Properties, Other.Financials](nino, request)
       case PropertyType.FHL   => validateAndCreate[FHL.Properties, FHL.Financials](nino, request)
@@ -134,26 +142,26 @@ object PropertiesPeriodResource extends BaseResource {
                                                               nino: Nino,
                                                               period: Period,
                                                               request: Request[JsValue])(
-      implicit hc: HeaderCarrier,
-      p: PropertiesPeriodConnector[P, F],
-      r: Reads[P],
-      w: Format[F]): Future[Either[ErrorResult, PropertiesPeriodResponse]] = {
+                                                               implicit hc: HeaderCarrier,
+                                                               p: PropertiesPeriodConnector[P, F],
+                                                               r: Reads[P],
+                                                               w: Format[F]): Future[Either[ErrorResult, PropertiesPeriodResponse]] = {
     validate[F, PropertiesPeriodResponse](request.body)(PropertiesPeriodConnector[P, F].update(nino, id, period, _))
   }
 
   private def validateUpdateRequest(id: PropertyType, nino: Nino, period: Period, request: Request[JsValue])(
-      implicit hc: HeaderCarrier): Future[Either[ErrorResult, PropertiesPeriodResponse]] =
+    implicit hc: HeaderCarrier): Future[Either[ErrorResult, PropertiesPeriodResponse]] =
     id match {
       case PropertyType.OTHER => validateAndUpdate[Other.Properties, Other.Financials](id, nino, period, request)
       case PropertyType.FHL   => validateAndUpdate[FHL.Properties, FHL.Financials](id, nino, period, request)
     }
 
   private def makePeriodCreateAudit(
-      nino: Nino,
-      id: PropertyType,
-      authCtx: AuthContext,
-      response: PropertiesPeriodResponse,
-      periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): AuditData[PeriodicUpdate] =
+                                     nino: Nino,
+                                     id: PropertyType,
+                                     authCtx: AuthContext,
+                                     response: PropertiesPeriodResponse,
+                                     periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): AuditData[PeriodicUpdate] =
     AuditData(
       detail = PeriodicUpdate(
         auditType = "submitPeriodicUpdate",
@@ -181,8 +189,8 @@ object PropertiesPeriodResource extends BaseResource {
                                     periodId: PeriodId,
                                     authCtx: AuthContext,
                                     response: PropertiesPeriodResponse)(
-      implicit hc: HeaderCarrier,
-      request: Request[JsValue]): AuditData[PeriodicUpdate] =
+                                     implicit hc: HeaderCarrier,
+                                     request: Request[JsValue]): AuditData[PeriodicUpdate] =
     AuditData(
       detail = PeriodicUpdate(
         auditType = "amendPeriodicUpdate",
