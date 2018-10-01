@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, Request, Result}
@@ -24,8 +25,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
+import uk.gov.hmrc.selfassessmentapi.models.Errors.InvalidPeriod
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
+import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{PeriodMapper, PropertiesPeriodResponse, ResponseMapper}
@@ -48,6 +51,17 @@ object PropertiesPeriodResource extends BaseResource {
           response.filter {
             case 200 =>
               Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
+            case 403 if response.errorCodeIs(DesErrorCode.NOT_FOUND_INCOME_SOURCE) =>
+              Logger.warn(s"[PropertiesPeriodResource] [createPeriod#$id] - Converted NOT_FOUND_INCOME_SOURCE to NotFound")
+              NotFound
+            case 409 if response.errorCodeIs(DesErrorCode.BOTH_EXPENSES_SUPPLIED) =>
+              BadRequest(Json.toJson(Errors.badRequest(Errors.BothExpensesSupplied)))
+            case 409 if response.errorCodeIs(DesErrorCode.INVALID_PERIOD) =>
+              Logger.warn(
+                s"[PropertiesPeriodResource] [createPeriod#$id]\n" +
+                  s"Received DES:\n ${response.underlying.body}\n" +
+                  s"Transformed to:\n${Json.toJson(InvalidPeriod)}.")
+              BadRequest(Json.toJson(Errors.badRequest(Errors.InvalidPeriod)))
           }
       } recoverWith exceptionHandling
     }
