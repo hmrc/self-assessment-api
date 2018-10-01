@@ -68,7 +68,4 @@ case class SelfEmploymentPeriodResponse(underlying: HttpResponse) extends Respon
   def isInvalidPeriod: Boolean =
     json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_PERIOD)
 
-  def isInvalidBusinessId: Boolean =
-    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_BUSINESSID)
-
-}
+ }
