@@ -46,13 +46,11 @@ object PropertiesPeriodConnector extends BaseConnector{
       extends PropertiesPeriodConnector[Other.Properties, Other.Financials] {
     override def create(nino: Nino, properties: Other.Properties)(
         implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesPeriodResponse] =
-    {
-        println(s"\n${Json.prettyPrint(Json.toJson(properties))}\n${Json.prettyPrint(Json.toJson(des.properties.Other.Properties.from(properties)))}\n")
         httpPost[des.properties.Other.Properties, PropertiesPeriodResponse](
           baseUrl + s"/income-store/nino/$nino/uk-properties/other/periodic-summaries",
           des.properties.Other.Properties.from(properties),
           PropertiesPeriodResponse)
-      }
+
 
     override def update(nino: Nino, propertyType: PropertyType, period: Period, financials: Other.Financials)(
         implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesPeriodResponse] =
