@@ -745,12 +745,27 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .userIsFullyAuthorisedForTheResource
           .des()
           .properties
-          .periodWillNotBeUpdatedFor(nino, propertyType)
+          .amendPropertyUpdateError(nino, propertyType)(404, DesJsons.Errors.notFoundProperty)
           .when()
           .put(period)
           .at(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(404)
+      }
+
+      s"return InternalServerError (500) when updating an $propertyType and a 409 INVALID_PERIOD response is returned" in {
+        val period = Jsons.Properties.fhlPeriod(fromDate = Some("2017-04-06"), toDate = Some("2018-04-05"))
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .userIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .amendPropertyUpdateError(nino, propertyType)(409, DesJsons.Errors.invalidPeriod)
+          .when()
+          .put(period)
+          .at(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .thenAssertThat()
+          .statusIs(500)
       }
     }
   }
