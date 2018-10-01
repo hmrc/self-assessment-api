@@ -55,6 +55,7 @@ object PropertiesPeriodResource extends BaseResource {
               Logger.warn(s"[PropertiesPeriodResource] [createPeriod#$id] - Converted NOT_FOUND_INCOME_SOURCE to NotFound")
               NotFound
             case 409 if response.errorCodeIs(DesErrorCode.BOTH_EXPENSES_SUPPLIED) =>
+              Logger.warn(s"[PropertiesPeriodResource] [createPeriod#$id] - DES returned ${response.json}")
               BadRequest(Json.toJson(Errors.badRequest(Errors.BothExpensesSupplied)))
             case 409 if response.errorCodeIs(DesErrorCode.INVALID_PERIOD) =>
               Logger.warn(
