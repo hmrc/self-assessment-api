@@ -938,7 +938,7 @@ traits:
                         value:
                           code: INVALID_DATE
                       invalidPeriod:
-                        description: Update period already exists
+                        description: The period 'from' date should come before the 'to' date
                         value:
                           code: INVALID_PERIOD
                       invalidMonetaryAmount:
@@ -966,15 +966,6 @@ traits:
                         description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
                         value:
                           code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
-              409:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      example:
-                        description: There is already an update period that exists
-                        value:
-                          code: INVALID_PERIOD
-                          message: The update period already exists
           get:
             displayName: List all non-FHL UK property update periods
             description: List all non-FHL UK property update periods.
@@ -1252,15 +1243,6 @@ traits:
                         description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
                         value:
                           code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
-              409:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      example:
-                        description: There is already an update period that exists
-                        value:
-                          code: INVALID_PERIOD
-                          message: The update period already exists
           get:
             displayName: List all FHL UK property update periods
             description: List all FHL UK property update periods.
