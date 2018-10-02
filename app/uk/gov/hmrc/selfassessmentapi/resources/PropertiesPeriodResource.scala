@@ -18,7 +18,9 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits._
+import play.api.libs.json.Json.toJson
 import play.api.libs.json._
+import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
@@ -61,8 +63,8 @@ object PropertiesPeriodResource extends BaseResource {
               Logger.warn(
                 s"[PropertiesPeriodResource] [createPeriod#$id]\n" +
                   s"Received DES:\n ${response.underlying.body}\n" +
-                  s"Transformed to:\n${Json.toJson(InvalidPeriod)}.")
-              BadRequest(Json.toJson(Errors.badRequest(Errors.InvalidPeriod)))
+                  s"Transformed to:\n${toJson(InvalidPeriod)}.")
+              BadRequest(toJson(Errors.badRequest(Errors.InvalidPeriod)))
           }
       } recoverWith exceptionHandling
     }
@@ -76,7 +78,16 @@ object PropertiesPeriodResource extends BaseResource {
             case Right(response) =>
               audit(makePeriodUpdateAudit(nino, id, periodId, request.authContext, response))
               response.filter {
-                case 204 => NoContent
+                case 200 => NoContent
+                case 409 if response.errorCodeIs(DesErrorCode.INVALID_PERIOD) =>
+                  Logger.warn(
+                    s"[PropertiesPeriodResource] [createPeriod#$id]\n" +
+                      s"Received DES:\n ${response.underlying.body}\n" +
+                      s"Transformed to:\n${toJson(Errors.InternalServerError)}.")
+                  InternalServerError(toJson(Errors.InternalServerError))
+                case 404 if response.errorCodeIs(DesErrorCode.NOT_FOUND_PROPERTY) =>
+                  Logger.warn(s"[PpropertiesPeriodResource] [createPeriod#$id] - Des Returned: ${DesErrorCode.NOT_FOUND_PROPERTY}. Returning 404")
+                  NotFound
               }
           } recoverWith exceptionHandling
         case _ => Future.successful(NotFound)

@@ -1710,18 +1710,6 @@ trait BaseFunctionalSpec extends TestApplication {
           }
         }
 
-//        def periodWillBeNotBeCreatedForInexistentIncomeSource(nino: Nino, propertyType: PropertyType): Givens = {
-//          stubFor(
-//            post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
-//              .willReturn(
-//                aResponse()
-//                  .withStatus(403)
-//                  .withHeader("Content-Type", "application/json")
-//                  .withBody(DesJsons.Errors.invalidIncomeSource)))
-//
-//          givens
-//        }
-
         def propertyPeriodPostError(nino: Nino, propertyType: PropertyType)(status:Int, code: String): Givens = {
           stubFor(
             post(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
@@ -1849,7 +1837,7 @@ trait BaseFunctionalSpec extends TestApplication {
           stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
             .willReturn(
               aResponse()
-                .withStatus(204)))
+                .withStatus(200)))
 
           givens
         }
@@ -1870,6 +1858,19 @@ trait BaseFunctionalSpec extends TestApplication {
                 .withStatus(400)
                 .withHeader("Content-Type", "application/json")
                 .withBody(DesJsons.Errors.invalidPeriod)))
+
+          givens
+        }
+
+        def amendPropertyUpdateError(nino: Nino, propertyType: PropertyType, from: String = "2017-04-06", to: String = "2018-04-05")
+                                    (status:Int,code:String): Givens = {
+          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries?from=$from&to=$to"))
+            .willReturn(
+              aResponse()
+                .withStatus(status)
+                  .withHeader("Content-Type", "Application/json")
+                  .withBody(code)
+            ))
 
           givens
         }
