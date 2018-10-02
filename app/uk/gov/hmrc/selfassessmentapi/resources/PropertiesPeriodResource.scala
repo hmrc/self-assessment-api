@@ -79,14 +79,15 @@ object PropertiesPeriodResource extends BaseResource {
               audit(makePeriodUpdateAudit(nino, id, periodId, request.authContext, response))
               response.filter {
                 case 200 => NoContent
-                case 409 if response.errorCodeIs(DesErrorCode.INVALID_PERIOD) =>
+                case 400 if response.errorCodeIs(DesErrorCode.INVALID_PERIOD) =>
                   Logger.warn(
                     s"[PropertiesPeriodResource] [createPeriod#$id]\n" +
-                      s"Received DES:\n ${response.underlying.body}\n" +
-                      s"Transformed to:\n${toJson(Errors.InternalServerError)}.")
+                      s"Received from DES:\n ${response.underlying.body}\n" +
+                      s"Transformed to:\n${toJson(Errors.InternalServerError)}.\n" +
+                      s"CorrelationId: ${response.underlying.header("X-CorrelationId").getOrElse("No CorrelationID returned")}")
                   InternalServerError(toJson(Errors.InternalServerError))
                 case 404 if response.errorCodeIs(DesErrorCode.NOT_FOUND_PROPERTY) =>
-                  Logger.warn(s"[PpropertiesPeriodResource] [createPeriod#$id] - Des Returned: ${DesErrorCode.NOT_FOUND_PROPERTY}. Returning 404")
+                  Logger.warn(s"[PropertiesPeriodResource] [createPeriod#$id] - Des Returned: ${DesErrorCode.NOT_FOUND_PROPERTY}. Returning 404")
                   NotFound
               }
           } recoverWith exceptionHandling
