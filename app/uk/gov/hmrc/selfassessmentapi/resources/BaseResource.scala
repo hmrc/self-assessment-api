@@ -75,7 +75,7 @@ trait BaseResource extends BaseController {
 
   def exceptionHandling(implicit req: Request[_]): PartialFunction[Throwable, Future[Result]] = {
     case ex =>
-      logger.warn(s"when requesting ${req.uri} an uncaught error occurred : ${ex.getMessage}")
+      logger.warn(s"when requesting ${req.uri} an uncaught error occurred.", ex)
       Future.successful(InternalServerError)
   }
 }
