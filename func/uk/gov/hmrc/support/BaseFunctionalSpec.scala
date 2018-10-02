@@ -1306,7 +1306,7 @@ trait BaseFunctionalSpec extends TestApplication {
           stubFor(post(urlMatching(s"/income-tax/calculation/nino/$nino/${taxYear.toDesTaxYear}/$calcId/crystallise"))
             .willReturn(
               aResponse()
-                .withStatus(200)
+                .withStatus(204)
                 .withHeader("Content-Type", "application/json")
                 .withBody(s"""
                              |{

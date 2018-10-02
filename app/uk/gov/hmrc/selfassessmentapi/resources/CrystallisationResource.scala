@@ -69,7 +69,7 @@ trait CrystallisationResource extends BaseResource {
       } map {
         case Left(error) => handleErrors(error)
         case Right(response) => response.filter {
-          case 200 =>
+          case 204 =>
             extendedAudit(makeSubmitCrystallisationAudit(nino, taxYear, request.authContext, response))
             Created
           case 400 if response.errorCodeIsOneOf(INVALID_TAXYEAR) =>
