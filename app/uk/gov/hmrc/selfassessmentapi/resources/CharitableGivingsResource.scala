@@ -51,13 +51,13 @@ trait CharitableGivingsResource extends BaseResource {
             case 204 => Logger.debug(s"[CharitableGivingsResource][updatePayments] Update gift aid payments " +
               s" is successful for nino: $nino and tax year: $taxYear")
               NoContent
-            case 400 => Logger.error(s"[CharitableGivingsResource][updatePayments] Update gift aid payments " +
+            case 400 => Logger.warn(s"[CharitableGivingsResource][updatePayments] Update gift aid payments " +
               s" is unsuccessful for nino: $nino and tax year: $taxYear due to ${Errors.desErrorToApiError(response.json)}")
               BadRequest(Errors.desErrorToApiError(response.json))
-            case 404 => Logger.error(s"[CharitableGivingsResource][updatePayments] Update gift aid payments " +
+            case 404 => Logger.warn(s"[CharitableGivingsResource][updatePayments] Update gift aid payments " +
               s" is unsuccessful for nino: $nino and tax year: $taxYear due to ${Errors.desErrorToApiError(response.json)}")
               NotFound(Errors.desErrorToApiError(response.json))
-            case _ => Logger.error(s"[CharitableGivingsResource][updatePayments] Update gift aid payments " +
+            case _ => Logger.warn(s"[CharitableGivingsResource][updatePayments] Update gift aid payments " +
               s" is unsuccessful for nino: $nino and tax year: $taxYear due to ${Errors.desErrorToApiError(response.json)}")
               InternalServerError(Errors.desErrorToApiError(response.json))
           }
@@ -76,14 +76,14 @@ trait CharitableGivingsResource extends BaseResource {
                 Ok(Json.toJson(payments))
               case None => NotFound
             }
-          case 400 => Logger.error(s"[CharitableGivingsResource][retrievePayments] Update gift aid payments " +
+          case 400 => Logger.warn(s"[CharitableGivingsResource][retrievePayments] Update gift aid payments " +
             s" is unsuccessful for nino: $nino and tax year: $taxYear due to ${Errors.desErrorToApiError(response.json)}")
             BadRequest(Errors.desErrorToApiError(response.json))
           case 404 =>
-            Logger.error(s"[CharitableGivingsResource][retrievePayments] Update gift aid payments " +
+            Logger.warn(s"[CharitableGivingsResource][retrievePayments] Update gift aid payments " +
               s" is unsuccessful for nino: $nino and tax year: $taxYear due to ${Errors.desErrorToApiError(response.json)}")
             NotFound(Errors.desErrorToApiError(response.json))
-          case _ => Logger.error(s"[CharitableGivingsResource][retrievePayments] Update gift aid payments " +
+          case _ => Logger.warn(s"[CharitableGivingsResource][retrievePayments] Update gift aid payments " +
             s" is unsuccessful for nino: $nino and tax year: $taxYear due to ${Errors.desErrorToApiError(response.json)}")
             InternalServerError(Errors.desErrorToApiError(response.json))
         }

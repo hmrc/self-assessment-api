@@ -96,7 +96,7 @@ object SelfEmploymentsResource extends BaseResource {
         NotFound
       case error @ Left(DesTransformError(msg)) =>
         error match {
-          case Left(ParseError(_)) => logger.error(msg)
+          case Left(ParseError(_)) => logger.warn(msg)
           case _ => logger.warn(msg)
         }
         InternalServerError(Json.toJson(Errors.InternalServerError))

@@ -57,7 +57,7 @@ trait AuditService {
     } catch {
       case NonFatal(ex) =>
         val msg = s"An exception [$ex] occurred in the Audit service while sending event [$event]"
-        logger.error(msg)
+        logger.warn(msg)
         Future.successful(Failure(msg, Some(ex)))
     }
 

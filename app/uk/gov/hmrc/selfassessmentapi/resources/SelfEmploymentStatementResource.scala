@@ -111,7 +111,7 @@ object SelfEmploymentStatementResource extends BaseResource {
               case Right(obj) =>
                 obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
               case Left(ex) =>
-                logger.error(ex.msg)
+                logger.warn(ex.msg)
                 InternalServerError(Json.toJson(Errors.InternalServerError))
             }
           case 400 if response.errorCodeIsOneOf(INVALID_STATUS, INVALID_REGIME, INVALID_IDTYPE) =>

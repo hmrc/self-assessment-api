@@ -28,7 +28,7 @@ case class CrystObligationsResponse(underlying: HttpResponse) extends Response {
   def obligations(incomeSourceType: String, nino: Nino, taxYearFromDate: LocalDate): Either[DesTransformError, Option[CrystObligation]] = {
 
     def noneFound: Either[DesTransformError, Option[CrystObligation]] = {
-      logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
+      logger.warn(s"The response from DES does not match the expected format. JSON: [$json]")
       Right(None)
     }
 

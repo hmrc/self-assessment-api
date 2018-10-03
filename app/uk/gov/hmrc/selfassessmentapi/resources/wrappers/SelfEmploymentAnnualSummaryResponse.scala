@@ -26,7 +26,7 @@ case class SelfEmploymentAnnualSummaryResponse(underlying: HttpResponse) extends
     json.asOpt[des.selfemployment.SelfEmploymentAnnualSummary] match {
       case Some(desSummary) => Some(SelfEmploymentAnnualSummary.from(desSummary))
       case None => {
-        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
+        logger.warn(s"The response from DES does not match the expected format. JSON: [$json]")
         None
       }
     }
@@ -36,7 +36,7 @@ case class SelfEmploymentAnnualSummaryResponse(underlying: HttpResponse) extends
     (json \ "transactionReference").asOpt[String] match {
       case x@Some(_) => x
       case None =>
-        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
+        logger.warn(s"The response from DES does not match the expected format. JSON: [$json]")
         None
     }
   }

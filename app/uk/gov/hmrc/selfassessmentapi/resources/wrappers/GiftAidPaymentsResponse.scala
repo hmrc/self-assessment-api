@@ -27,7 +27,7 @@ case class CharitableGivingsResponse(underlying: HttpResponse) extends Response 
       case Some(charitableGivings) =>
         Some(CharitableGivings.from(charitableGivings))
       case None =>
-        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
+        logger.warn(s"The response from DES does not match the expected format. JSON: [$json]")
         None
     }
   }
