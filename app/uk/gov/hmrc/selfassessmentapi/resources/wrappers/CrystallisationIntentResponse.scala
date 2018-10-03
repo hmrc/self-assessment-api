@@ -23,7 +23,7 @@ case class CrystallisationIntentResponse(underlying: HttpResponse) extends Respo
     (json \ "id").asOpt[String] match {
       case x@Some(_) => x
       case None => {
-        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
+        logger.warn(s"The response from DES does not match the expected format. JSON: [$json]")
         None
       }
     }

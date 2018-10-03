@@ -30,7 +30,7 @@ case class SelfEmploymentResponse(underlying: HttpResponse) extends Response {
     (json \ "incomeSources" \\ "incomeSourceId").map(_.asOpt[String]) match {
       case Some(id) +: _ => Some(s"/self-assessment/ni/$nino/self-employments/$id")
       case _ =>
-        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
+        logger.warn(s"The response from DES does not match the expected format. JSON: [$json]")
         None
     }
 

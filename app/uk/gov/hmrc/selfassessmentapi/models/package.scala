@@ -70,7 +70,7 @@ package object models {
         Try(Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("SICs.txt"))(Codec.UTF8))
           .recover {
             case ex =>
-              Logger.error(s"Error loading SIC classifications file SICs.txt: ${ex.getMessage}")
+              Logger.warn(s"Error loading SIC classifications file SICs.txt: ${ex.getMessage}")
               throw ex
           }
       }

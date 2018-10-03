@@ -27,7 +27,7 @@ case class TaxCalculationResponse(underlying: HttpResponse) extends Response {
     (json \ "id").asOpt[String] match {
       case x @ Some(_) => x
       case None => {
-        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
+        logger.warn(s"The response from DES does not match the expected format. JSON: [$json]")
         None
       }
     }
@@ -37,7 +37,7 @@ case class TaxCalculationResponse(underlying: HttpResponse) extends Response {
     (json \ "calcResult").validate[des.TaxCalculation] match {
       case JsSuccess(calcResult, _) => Some(ApiTaxCalculation.from(calcResult))
       case JsError(errors) => {
-        logger.error(s"The response from DES does not match the expected format ($errors). JSON: [$json]")
+        logger.warn(s"The response from DES does not match the expected format ($errors). JSON: [$json]")
         None
       }
     }

@@ -33,7 +33,7 @@ case class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlyin
         case Some(other) =>
           Some(OtherPropertiesAnnualSummary.from(other))
         case None =>
-          logger.error(
+          logger.warn(
             s"The response from DES does not match the expected format. PropertyType: [$propertyType] JSON: [$json]")
           None
       }
@@ -42,7 +42,7 @@ case class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlyin
         case Some(fhl) =>
           Some(FHLPropertiesAnnualSummary.from(fhl))
         case None =>
-          logger.error(
+          logger.warn(
             s"The response from DES does not match the expected format. PropertyType: [$propertyType] JSON: [$json]")
           None
       }
@@ -52,7 +52,7 @@ case class PropertiesAnnualSummaryResponse(propertyType: PropertyType, underlyin
     (json \ "transactionReference").asOpt[String] match {
       case x @ Some(_) => x
       case None =>
-        logger.error(s"The response from DES does not match the expected format. JSON: [$json]")
+        logger.warn(s"The response from DES does not match the expected format. JSON: [$json]")
         None
     }
   }

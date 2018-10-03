@@ -49,7 +49,7 @@ trait SelfEmploymentObligationsResource extends BaseResource {
             response.obligations(incomeSourceType, Some(id)) match {
               case Right(obj) => obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
               case Left(ex) =>
-                logger.error(ex.msg)
+                logger.warn(ex.msg)
                 InternalServerError(Json.toJson(Errors.InternalServerError))
             }
         }

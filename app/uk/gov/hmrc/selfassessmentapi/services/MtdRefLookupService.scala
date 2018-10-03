@@ -60,10 +60,10 @@ trait MtdRefLookupService {
           logger.debug(s"NINO to MTD reference lookup was not found. Status code: [${response.status}]")
           Left(403)
         case 500 =>
-          logger.error(s"NINO to MTD reference lookup failed with server error. Is there an issue with DES? Status code: [${response.status}]")
+          logger.warn(s"NINO to MTD reference lookup failed with server error. Is there an issue with DES? Status code: [${response.status}]")
           Left(500)
         case 503 | _ =>
-          logger.error(s"NINO to MTD reference lookup failed with service error. Is there an issue with DES? Status code: [${response.status}]")
+          logger.warn(s"NINO to MTD reference lookup failed with service error. Is there an issue with DES? Status code: [${response.status}]")
           Left(500)
       }
     }

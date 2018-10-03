@@ -39,7 +39,7 @@ package object resources {
   val GovTestScenarioHeader = "Gov-Test-Scenario"
 
   def unhandledResponse(status: Int, logger: Logger): Result = {
-    logger.error(s"Unhandled response from DES. Status code: $status. Returning 500 to client.")
+    logger.warn(s"Unhandled response from DES. Status code: $status. Returning 500 to client.")
     InternalServerError(Json.toJson(Errors.InternalServerError("An internal server error occurred")))
   }
 

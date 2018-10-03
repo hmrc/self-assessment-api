@@ -125,16 +125,16 @@ trait AuthorisationService extends AuthorisedFunctions {
 
     locally { // http://www.scala-lang.org/old/node/3594
       case e @ (_: AuthorisationException | Upstream5xxResponse(regex(_*), _, _)) =>
-        logger.error(s"Authorisation failed with unexpected exception. Bad token? Exception: [$e]")
+        logger.warn(s"Authorisation failed with unexpected exception. Bad token? Exception: [$e]")
         Future.successful(Left(Forbidden(toJson(Errors.BadToken))))
       case e: Upstream4xxResponse =>
-        logger.error(s"Unhandled 4xx response from play-auth: [$e]. Returning 500 to client.")
+        logger.warn(s"Unhandled 4xx response from play-auth: [$e]. Returning 500 to client.")
         internalServerError
       case e: Upstream5xxResponse =>
-        logger.error(s"Unhandled 5xx response from play-auth: [$e]. Returning 500 to client.")
+        logger.warn(s"Unhandled 5xx response from play-auth: [$e]. Returning 500 to client.")
         internalServerError
       case NonFatal(e) =>
-        logger.error(s"Unhandled non-fatal exception from play-auth: [$e]. Returning 500 to client.")
+        logger.warn(s"Unhandled non-fatal exception from play-auth: [$e]. Returning 500 to client.")
         internalServerError
     }
   }
