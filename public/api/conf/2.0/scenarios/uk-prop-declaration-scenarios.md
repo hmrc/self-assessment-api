@@ -44,6 +44,10 @@
             <td><p>Simulates an error with a Class 4 exemption.</p></td>
         </tr>
         <tr>
+            <td><p>RULE_CONSOLIDATED_EXPENSES</p></td>
+            <td><p>Simulates an error with consolidated expenses.</p></td>
+        </tr>                            
+        <tr>
             <td><p>RULE_FHL_PRIVATE_USE_ADJUSTMENT</p></td>
             <td><p>Simulates an error with UK Furnished holiday lettings.</p></td>
         </tr>
