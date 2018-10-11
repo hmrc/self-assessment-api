@@ -14,35 +14,28 @@
  * limitations under the License.
  */
 
-package mocks
+package mocks.services
 
+import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
+import router.services.PropertyEopsDeclarationService
 
 import scala.concurrent.Future
 
+trait MockPropertyEopsDeclarationService extends Mock { _: Suite =>
 
-trait MockHttp extends Mock { _: Suite =>
+  val mockPropertyEopsDeclarationService = mock[PropertyEopsDeclarationService]
 
-  val mockHttp: HttpClient = mock[HttpClient]
+  object MockPropertyEopsDeclarationService {
+    def post(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockPropertyEopsDeclarationService.post(any())(any(), any()))
+    }
+  }
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockHttp)
-  }
-
-  object MockHttp {
-    def GET[T](url: String): OngoingStubbing[Future[T]] = {
-      when(mockHttp.GET[T](eqTo(url))(any(), any(), any()))
-    }
-
-    def POST[I, O](url: String, body: I, headers: (String, String)*): OngoingStubbing[Future[O]] = {
-      when(mockHttp.POST[I, O](eqTo(url), eqTo(body), eqTo(headers))(any(), any(), any(), any()))
-    }
-
-    def POST[I, O](url: String, body: I): OngoingStubbing[Future[O]] = {
-      when(mockHttp.POST[I, O](eqTo(url), eqTo(body), any())(any(), any(), any(), any()))
-    }
+    reset(mockPropertyEopsDeclarationService)
   }
 }

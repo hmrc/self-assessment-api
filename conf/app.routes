@@ -9,6 +9,9 @@ GET   /ni/*nino/calculations/*calculationId/validation-messages      router.reso
 #Property EOPS Obligations
 GET /ni/*nino/uk-properties/end-of-period-statements/obligations     router.resources.PropertyEopsObligationsResource.get(nino, from: String ?="", to: String ?= "")
 
+#Property EOPS Declaration
+POST /ni/*nino/uk-properties/end-of-period-statements/from/*from/to/*to    router.resources.PropertyEopsDeclarationResource.post(nino, from, to)
+
 GET   /*route                                                       router.resources.SelfAssessmentResource.get(route)
 POST  /*route                                                       router.resources.SelfAssessmentResource.post(route)
 PUT   /*route                                                       router.resources.SelfAssessmentResource.put(route)

@@ -19,22 +19,15 @@ package router.resources
 import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
-import router.services.SelfAssessmentService
+import router.services.PropertyEopsDeclarationService
 import uk.gov.hmrc.auth.core.AuthConnector
+
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
-class SelfAssessmentResource @Inject()(service: SelfAssessmentService,
-                                       val authConnector: AuthConnector) extends BaseResource {
+class PropertyEopsDeclarationResource @Inject()(service: PropertyEopsDeclarationService,
+                                                val authConnector: AuthConnector) extends BaseResource {
 
-  def get(route: String): Action[AnyContent] = AuthAction.async {
-    implicit request =>
-      service.get().map{
-        case Left(error) => buildErrorResponse(error)
-        case Right(apiResponse) => buildResponse(apiResponse)
-      }
-  }
-
-  def post(route: String): Action[JsValue] = AuthAction.async(parse.json) {
+  def post(nino: String, from: String, to: String): Action[JsValue] = AuthAction.async(parse.json) {
     implicit request =>
       withJsonBody[JsValue]{
         service.post(_).map {
@@ -42,15 +35,6 @@ class SelfAssessmentResource @Inject()(service: SelfAssessmentService,
           case Right(apiResponse) => buildResponse(apiResponse)
         }
       }
-  }
 
-  def put(route: String): Action[JsValue] = AuthAction.async(parse.json) {
-    implicit request =>
-      withJsonBody[JsValue]{
-        service.put(_).map {
-          case Left(error) => buildErrorResponse(error)
-          case Right(apiResponse) => buildResponse(apiResponse)
-        }
-      }
   }
 }

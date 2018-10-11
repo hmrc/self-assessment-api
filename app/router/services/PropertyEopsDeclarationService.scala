@@ -14,32 +14,26 @@
  * limitations under the License.
  */
 
-package mocks.connectors
+package router.services
 
-import mocks.Mock
-import org.mockito.stubbing.OngoingStubbing
-import org.scalatest.Suite
+import javax.inject.Inject
 import play.api.libs.json.JsValue
-import router.connectors.PropertyConnector
+import play.api.mvc.Request
+import router.connectors.{PropertyConnector, SelfAssessmentConnector}
+import router.constants.Versions._
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-trait MockPropertyConnector extends Mock { _: Suite =>
+class PropertyEopsDeclarationService @Inject()( val selfAssessmentConnector: SelfAssessmentConnector,
+                                                val propertyConnector: PropertyConnector) extends Service {
 
-  val mockPropertyConnector = mock[PropertyConnector]
-
-  object MockPropertyConnector {
-    def get(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockPropertyConnector.get(eqTo(uri))(any(), any()))
+  def post(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
+    withApiVersion {
+      case Some(VERSION_1) => selfAssessmentConnector.post(req.uri, body)
+      case Some(VERSION_2) =>
+        propertyConnector.post(s"/$VERSION_2${req.uri}", body)
     }
-    def post(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockPropertyConnector.post(eqTo(uri), eqTo(body))(any(), any()))
-    }
-  }
-
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockPropertyConnector)
   }
 }
