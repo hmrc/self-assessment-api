@@ -779,7 +779,7 @@ traits:
                   description: An identifier for the self-employment business, unique to the customer.<p>Must conform to the regular expression `^[A-Za-z0-9]{15}$`<p>
                   type: string
               get:
-                displayName: Retrieve End of Period Statement Obligations for a Self-Employment Business [test only]
+                displayName: Retrieve End of Period Statement Obligations for a Self-Employment Business
                 description: This end point allows you to retrieve End of Period Statement Obligations for a Self-Employment Business. The response can be filtered by providing a date range in query parameters.
                 (annotations.sandboxData): !include scenarios/eops-se-obligation-scenarios.md
                 is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
@@ -2144,7 +2144,7 @@ traits:
         description: !include docs/crystallisation.md
       /intent-to-crystallise:
         post:
-          displayName: Intent to crystallise [test only]
+          displayName: Intent to crystallise
           description: !include docs/intent-to-crystallise.md
           (annotations.sandboxData): !include scenarios/intent-to-crystallise-scenarios.md
           is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
@@ -2188,7 +2188,7 @@ traits:
                         code: REQUIRED_END_OF_PERIOD_STATEMENT
       /crystallisation:
         post:
-          displayName: Crystallisation [test only]
+          displayName: Crystallisation
           description: !include docs/crystallisation-endpoint.md
           (annotations.sandboxData): !include scenarios/crystallisation-scenarios.md
           is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]

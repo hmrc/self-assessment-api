@@ -1,6 +1,19 @@
 
 ### Please refer to [CHANGELOG-ET.md](https://github.com/hmrc/self-assessment-api-router/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to Sandbox Test Environment.
 
+
+## 22-Oct-2018
+<b>[self-assessment-api v0.198.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.198.0)<br>
+[self-assessment-api-router v1.37.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.37.0)<br>
+[mtd-tax-calculation v1.9.0](https://github.com/hmrc/mtd-tax-calculation/releases/tag/v1.9.0)</b>
+<br>Version 1.0 endpoints released into Production
+  * Retrieve End of Period Statement Obligations for a Self-Employment Business
+    * /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}/end-of-period-statements/obligations
+  * Intent to crystallise
+    * /self-assessment/ni/{nino}/{taxYear}/intent-to-crystallise
+  * Crystallisation
+    * /self-assessment/ni/{nino}/{taxYear}/crystallisation
+  
 ## 17-Jul-2018
 <b>[self-assessment-api v0.141.13](https://github.com/hmrc/self-assessment-api/releases/tag/v0.141.13)<br>
 [self-assessment-api-router v1.8.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.8.0)<br>
@@ -10,7 +23,6 @@
 * NEW endpoint Retrieve Tax Calculation (2.0)
 
 ## [0.141.4](https://github.com/hmrc/self-assessment-api/releases/tag/v0.141.4) 21-Dec-2017
-
 * Documentation updated to say, In production it can take up to an hour for the obligation to be updated
 
 ## [0.141.3](https://github.com/hmrc/self-assessment-api/releases/tag/v0.141.3) 12-Dec-2017
