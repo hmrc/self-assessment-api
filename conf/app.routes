@@ -12,6 +12,9 @@ GET /ni/*nino/uk-properties/end-of-period-statements/obligations     router.reso
 #Property EOPS Declaration
 POST /ni/*nino/uk-properties/end-of-period-statements/from/*from/to/*to    router.resources.PropertyEopsDeclarationResource.post(nino, from, to)
 
+#Self Employments EOPS Declaration
+POST /ni/*nino/self-employments/*seId/end-of-period-statements/from/*from/to/*to  router.resources.SelfEmploymentEopsDeclarationResource.post(nino, seId, from, to)
+
 GET   /*route                                                       router.resources.SelfAssessmentResource.get(route)
 POST  /*route                                                       router.resources.SelfAssessmentResource.post(route)
 PUT   /*route                                                       router.resources.SelfAssessmentResource.put(route)

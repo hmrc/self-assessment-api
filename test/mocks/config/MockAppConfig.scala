@@ -38,6 +38,7 @@ trait MockAppConfig extends Mock { _: Suite =>
     def saApiUrl: OngoingStubbing[String] = when(mockAppConfig.saApiUrl)
     def taxCalcUrl: OngoingStubbing[String] = when(mockAppConfig.taxCalcUrl)
     def propertyUrl: OngoingStubbing[String] =  when(mockAppConfig.propertyUrl)
+    def selfEmploymentUrl: OngoingStubbing[String] =  when(mockAppConfig.selfEmploymentUrl)
   }
 
   override protected def beforeEach(): Unit = {

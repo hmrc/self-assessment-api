@@ -19,15 +19,15 @@ package router.resources
 import play.api.libs.json.{JsObject, Json}
 import support.IntegrationSpec
 
-class PropertyEopsDeclarationResourceISpec extends IntegrationSpec {
+class SelfEmploymentEopsDeclarationResourceISpec extends IntegrationSpec {
 
   val jsonRequest: JsObject = Json.obj("test" -> "json request")
   val jsonResponse: JsObject = Json.obj("test" -> "json response")
 
-  "Post UK Property EOPS declaration" should {
+  "Post Self Employment EOPS declaration" should {
     "return a 204 with no json response body" when {
       "the downstream response from the self assessment api version 1.0 returns a 204 with no json response body" in {
-        val url = "/ni/AA111111A/uk-properties/end-of-period-statements/from/2018-01-01/to/2018-12-12"
+        val url = "/ni/AA111111A/self-employments/123456789012345/end-of-period-statements/from/2018-01-01/to/2018-12-12"
 
         Given()
           .theClientIsAuthorised
@@ -46,8 +46,8 @@ class PropertyEopsDeclarationResourceISpec extends IntegrationSpec {
           .verify(mockFor(url)
             .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
       }
-      "the downstream response from the UK property api version 2.0 returns a 204 with no json response body" in {
-        val incomingUrl = "/ni/AA111111A/uk-properties/end-of-period-statements/from/2018-01-01/to/2018-12-12"
+      "the downstream response from the self employment version 2.0 returns a 204 with no json response body" in {
+        val incomingUrl = "/ni/AA111111A/self-employments/123456789012345/end-of-period-statements/from/2018-01-01/to/2018-12-12"
         val outgoingUrl = "/2.0" + incomingUrl
 
         Given()

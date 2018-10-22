@@ -16,7 +16,7 @@
 
 package router.resources
 
-import mocks.services.MockPropertyEopsDeclarationService
+import mocks.services.MockSelfEmploymentEopsDeclarationService
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import router.errors.{ErrorCode, IncorrectAPIVersion, UnsupportedAPIVersion}
@@ -25,12 +25,12 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class PropertyEopsDeclarationResourceSpec extends ResourceSpec
-  with MockPropertyEopsDeclarationService {
+class SelfEmploymentEopsDeclarationResourceSpec extends ResourceSpec
+  with MockSelfEmploymentEopsDeclarationService {
 
   class Setup {
-    val resource = new PropertyEopsDeclarationResource(
-      service = mockPropertyEopsDeclarationService,
+    val resource = new SelfEmploymentEopsDeclarationResource(
+      service = mockSelfEmploymentEopsDeclarationService,
       authConnector = mockAuthConnector
     )
     mockAuthAction
@@ -45,10 +45,10 @@ class PropertyEopsDeclarationResourceSpec extends ResourceSpec
   "post" should {
     "return a 204 with the response headers" when {
       "the service returns a HttpResponse containing a 204 with no json response body" in new Setup {
-        MockPropertyEopsDeclarationService.post()
+        MockSelfEmploymentEopsDeclarationService.post()
           .returns(Future.successful(Right(HttpResponse(NO_CONTENT, None, testHeaderResponse))))
 
-        val result = resource.post("","","")(FakeRequest().withBody(requestJson))
+        val result = resource.post("","","","")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NO_CONTENT
         headers(result) shouldBe Map(testHeader)
         contentType(result) shouldBe None
@@ -57,10 +57,10 @@ class PropertyEopsDeclarationResourceSpec extends ResourceSpec
 
     "return a 200 with a json response body and response headers" when {
       "the service returns a HttpResponse containing a 200 with a json response body" in new Setup {
-        MockPropertyEopsDeclarationService.post()
+        MockSelfEmploymentEopsDeclarationService.post()
           .returns(Future.successful(Right(HttpResponse(OK, Some(responseJson), testHeaderResponse))))
 
-        val result = resource.post("","","")(FakeRequest().withBody(requestJson))
+        val result = resource.post("","","","")(FakeRequest().withBody(requestJson))
         status(result) shouldBe OK
         headers(result) shouldBe Map(testHeader)
         contentType(result) shouldBe Some(JSON)
@@ -70,10 +70,10 @@ class PropertyEopsDeclarationResourceSpec extends ResourceSpec
 
     "return a 406 with a json response body representing the error" when {
       "the service returns an IncorrectAPIVersion response" in new Setup {
-        MockPropertyEopsDeclarationService.post()
+        MockSelfEmploymentEopsDeclarationService.post()
           .returns(Future.successful(Left(IncorrectAPIVersion)))
 
-        val result = resource.post("","","")(FakeRequest().withBody(requestJson))
+        val result = resource.post("","","","")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NOT_ACCEPTABLE
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
@@ -82,10 +82,10 @@ class PropertyEopsDeclarationResourceSpec extends ResourceSpec
 
     "return a 404 with a json response body representing the error" when {
       "the service returns an UnsupportedAPIVersion response" in new Setup {
-        MockPropertyEopsDeclarationService.post()
+        MockSelfEmploymentEopsDeclarationService.post()
           .returns(Future.successful(Left(UnsupportedAPIVersion)))
 
-        val result = resource.post("","","")(FakeRequest().withBody(requestJson))
+        val result = resource.post("","","","")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NOT_FOUND
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.notFound.asJson

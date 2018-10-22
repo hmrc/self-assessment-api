@@ -28,44 +28,31 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class PropertyConnectorSpec extends UnitSpec
+class SelfEmploymentConnectorSpec extends UnitSpec
   with MockHttp
   with MockAppConfig
   with MockSelfAssessmentHttpParser {
 
   class Setup {
-    object TestConnector extends PropertyConnector(
+    object TestConnector extends SelfEmploymentConnector(
       mockHttp,
       mockSelfAssessmentHttpParser,
       mockAppConfig
     )
-    MockAppConfig.propertyUrl returns propertyUrl
+    MockAppConfig.selfEmploymentUrl returns selfEmploymentUrl
   }
 
-  lazy val propertyUrl = "test-sa-api-url"
+  lazy val selfEmploymentUrl = "test-sa-api-url"
   val path = "/2.0/test-path"
-
-  "get" should {
-    "return a HttpResponse" when {
-      "a successful HttpResponse is returned" in new Setup {
-        val request = FakeRequest("GET", path)
-        val response  = HttpResponse(Status.OK, Some(Json.obj()))
-
-        MockSelfAssessmentHttpParser.read.returns(Right(response))
-        MockHttp.GET[SelfAssessmentOutcome](s"$propertyUrl$path").returns(Future.successful(Right(response)))
-        await(TestConnector.get(path)(hc, request)) shouldBe Right(response)
-      }
-    }
-  }
 
   "post" should {
     "return an HttpResponse" when {
       "a successful HttpResponse with no content is returned" in new Setup {
         val request = FakeRequest("POST", path)
-        val response = HttpResponse(Status.NO_CONTENT)
+        val response  = HttpResponse(Status.NO_CONTENT)
         val requestJson = Json.obj("test" -> "request json")
 
-        MockHttp.POST[JsValue, SelfAssessmentOutcome](s"$propertyUrl$path", requestJson).returns(Future.successful(Right(response)))
+        MockHttp.POST[JsValue, SelfAssessmentOutcome](s"$selfEmploymentUrl$path", requestJson).returns(Future.successful(Right(response)))
         await(TestConnector.post(path, requestJson)(hc, request)) shouldBe Right(response)
       }
     }
