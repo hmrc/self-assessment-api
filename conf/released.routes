@@ -21,6 +21,10 @@ PUT /ni/:nino/self-employments/:id/periods/:periodId    uk.gov.hmrc.selfassessme
 PUT /ni/:nino/self-employments/:id/:taxYear    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentAnnualSummaryResource.updateAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 GET /ni/:nino/self-employments/:id/:taxYear    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentAnnualSummaryResource.retrieveAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 
+# Self-Employment End-of-Period Statements
+GET /ni/:nino/self-employments/:id/end-of-period-statements/obligations   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentStatementResource.retrieveObligationsById(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, queryParams: uk.gov.hmrc.selfassessmentapi.resources.utils.EopsObligationQueryParams)
+
+
 ####################
 #    Properties    #
 ####################
@@ -46,4 +50,8 @@ GET  /ni/:nino/uk-properties/:id/:taxYear   uk.gov.hmrc.selfassessmentapi.resour
 POST    /ni/:nino/calculations       uk.gov.hmrc.selfassessmentapi.resources.TaxCalculationResource.requestCalculation(nino: uk.gov.hmrc.domain.Nino)
 GET     /ni/:nino/calculations/:id   uk.gov.hmrc.selfassessmentapi.resources.TaxCalculationResource.retrieveCalculation(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
 
-
+#######################
+#     Crystallisation #
+#######################
+POST   /ni/:nino/:taxYear/intent-to-crystallise        uk.gov.hmrc.selfassessmentapi.resources.CrystallisationResource.intentToCrystallise(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+POST   /ni/:nino/:taxYear/crystallisation              uk.gov.hmrc.selfassessmentapi.resources.CrystallisationResource.crystallisation(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
