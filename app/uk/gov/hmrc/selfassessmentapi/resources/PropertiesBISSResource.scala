@@ -42,11 +42,12 @@ trait PropertiesBISSResource extends BaseResource {
     APIAction(nino, SourceType.Properties, Some("BISS")).async {
       implicit request =>
         propertiesBISSConnector.getSummary(nino, taxYear).map {
-          case Left(error) => error match {
+          case Left(error) => error.error match {
             case NinoInvalid | TaxYearInvalid => BadRequest(toJson(error))
             case NinoNotFound | TaxYearNotFound | NoSubmissionDataExists => NotFound(toJson(error))
             case ServerError => InternalServerError(toJson(error))
             case Errors.ServiceUnavailable => ServiceUnavailable(toJson(error))
+            case Errors.InvalidRequest => BadRequest(toJson(error))
           }
           case Right(response) => Ok(toJson(response))
         }

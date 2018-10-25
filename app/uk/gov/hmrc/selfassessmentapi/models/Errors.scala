@@ -49,6 +49,10 @@ object Errors {
 
   case class Error(code: String, message: String, path: Option[String])
 
+  object Error {
+    implicit val reads: Reads[Error] = Json.reads[Error]
+  }
+
   object ErrorCode {
     val reads: Reads[Option[DesErrorCode]] = (__ \ "code").readNullable[DesErrorCode]
 
@@ -60,6 +64,36 @@ object Errors {
     }
   }
 
+  object MultipleErrorCode {
+    val multipleErrorReads: Reads[Seq[DesError]] = (__ \ "failures").read[Seq[DesError]]
+
+    def unapply(arg: Option[JsValue]): Boolean = {
+      arg match {
+        case Some(json) => multipleErrorReads.reads(json).isSuccess
+        case _ => false
+      }
+    }
+  }
+
+  case class ErrorWrapper(error: Error, errors: Option[Seq[Error]])
+
+  object ErrorWrapper {
+    implicit val writes: Writes[ErrorWrapper] = new Writes[ErrorWrapper] {
+      override def writes(errorResponse: ErrorWrapper): JsValue = {
+
+        val json = Json.obj(
+          "code" -> errorResponse.error.code,
+          "message" -> errorResponse.error.message
+        )
+
+        errorResponse.errors match {
+          case Some(errors) if errors.nonEmpty => json + ("errors" -> Json.toJson(errors))
+          case _ => json
+        }
+
+      }
+    }
+  }
 
   case class DesError(code: String, reason: String)
 

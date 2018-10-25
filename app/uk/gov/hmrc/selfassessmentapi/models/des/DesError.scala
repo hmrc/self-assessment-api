@@ -85,7 +85,8 @@ object DesErrorCode extends Enumeration {
   ALREADY_SUBMITTED,
   NO_DATA_EXISTS,
   SELF_EMPLOYMENT_ID_NOT_FOUND,
-  INVALID_TAX_CRYSTALLISE = Value
+  INVALID_TAX_CRYSTALLISE,
+  MULTIPLE_ERRORS = Value
 
   implicit val format: Format[DesErrorCode] = EnumJson.enumFormat(DesErrorCode,
     Some(s"Recognized DesErrorCode values: ${DesErrorCode.values.mkString(", ")}"))
