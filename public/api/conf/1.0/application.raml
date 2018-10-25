@@ -945,10 +945,6 @@ traits:
                         description: income or expense is not a non-negative amount or up to 2 decimal places
                         value:
                           code: INVALID_MONETARY_AMOUNT
-                      invalidTaxDeducted:
-                        description: taxDeducted > amount (Production only)
-                        value:
-                          code: INVALID_TAX_DEDUCTION_AMOUNT
                       noIncomesAndExpenses:
                         description: No incomes and expenses are supplied
                         value:
@@ -1071,10 +1067,6 @@ traits:
                           description: income or expense is not a non-negative amount or up to 2 decimal places
                           value:
                             code: INVALID_MONETARY_AMOUNT
-                        invalidTaxDeducted:
-                          description: taxDeducted > amount (Production only)
-                          value:
-                            code: INVALID_TAX_DEDUCTION_AMOUNT
                         noIncomesAndExpenses:
                           description: No incomes and expenses are supplied
                           value:
@@ -1230,10 +1222,6 @@ traits:
                         description: Both expenses and consolidatedExpenses can not be present at the same time
                         value:
                           code: BOTH_EXPENSES_SUPPLIED
-                      invalidTaxDeducted:
-                        description: taxDeducted > amount (Production only)
-                        value:
-                          code: INVALID_TAX_DEDUCTION_AMOUNT
               403:
                 body:
                   application/json:
@@ -1360,10 +1348,6 @@ traits:
                           description: Both expenses and consolidatedExpenses can not be present at the same time
                           value:
                             code: BOTH_EXPENSES_SUPPLIED
-                        invalidTaxDeducted:
-                          description: taxDeducted > amount (Production only)
-                          value:
-                            code: INVALID_TAX_DEDUCTION_AMOUNT
                 403:
                   body:
                     application/json:
