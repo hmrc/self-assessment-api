@@ -1,3 +1,13 @@
+## 25-Oct-2018
+<b>[mtd-self-employment v0.14.0](https://github.com/hmrc/mtd-self-employment/releases/tag/v0.14.0)<br>
+<b>[self-assessment-api-router v1.40.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.40.0)</b>
+* NEW endpoint available in Sandbox: Submit Self-Employment EOPS Declaration (v2.0)
+
+## 23-Oct-2018
+<b>[mtd-property-api v0.32.0](https://github.com/hmrc/mtd-property-api/releases/tag/v0.32.0)<br>
+<b>[self-assessment-api-router v1.37.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.37.0)</b>
+* NEW endpoint available in Sandbox: Submit UK Property EOPS Declaration (v2.0)
+
 ## 11-Sep-2018
 <b>[self-assessment-api v0.167.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.167.0)<br>
 <b>[self-assessment-api-router v1.20.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.20.0)</b>
