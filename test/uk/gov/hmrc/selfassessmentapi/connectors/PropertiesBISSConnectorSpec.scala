@@ -40,7 +40,7 @@ class PropertiesBISSConnectorSpec extends ConnectorSpec {
 
   "getSummary" should {
 
-    val getSummaryUrl = s"$desBaseUrl/income-store/nino/$nino/uk-properties/income-source-summary/${taxYear.toDesTaxYear}"
+    val getSummaryUrl = s"$desBaseUrl/income-tax/income-sources/nino/$nino/uk-property/${taxYear.toDesTaxYear}/biss"
 
     "return a PropertiesBISS model" when {
       "des returns a 200 with a correct PropertiesBISS response body" in new Setup {

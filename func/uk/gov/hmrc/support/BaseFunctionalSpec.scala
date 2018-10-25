@@ -2013,7 +2013,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
       object PropertiesBISS {
         def getSummary(nino: Nino, taxYear: TaxYear): Givens = {
-          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/income-source-summary/${taxYear.toDesTaxYear}"))
+          stubFor(get(urlEqualTo(s"/income-tax/income-sources/nino/$nino/uk-property/${taxYear.toDesTaxYear}/biss"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -2024,7 +2024,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def getSummaryErrorResponse(nino: Nino, taxYear: TaxYear, status: Int, errorCode: String): Givens = {
-          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/income-source-summary/${taxYear.toDesTaxYear}"))
+          stubFor(get(urlEqualTo(s"/income-tax/income-sources/nino/$nino/uk-property/${taxYear.toDesTaxYear}/biss"))
             .willReturn(
               aResponse()
                 .withStatus(status)

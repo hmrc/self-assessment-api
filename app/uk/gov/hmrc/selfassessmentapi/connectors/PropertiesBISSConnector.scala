@@ -38,7 +38,7 @@ trait PropertiesBISSConnector extends PropertiesBISSHttpParser with BaseConnecto
   val http: HttpGet
 
   def getSummary(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier, ex: ExecutionContext): Future[PropertiesBISSOutcome] = {
-    http.GET[PropertiesBISSOutcome](s"$baseUrl/income-store/nino/$nino/uk-properties/income-source-summary/${taxYear.toDesTaxYear}")(
+    http.GET[PropertiesBISSOutcome](s"$baseUrl/income-tax/income-sources/nino/$nino/uk-property/${taxYear.toDesTaxYear}/biss")(
       propertiesBISSHttpParser, withDesHeaders(hc), ex
     )
   }
