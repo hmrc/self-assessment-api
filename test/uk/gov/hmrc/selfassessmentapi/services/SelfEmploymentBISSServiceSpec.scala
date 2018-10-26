@@ -23,6 +23,7 @@ import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentBISSConnector
 import uk.gov.hmrc.selfassessmentapi.fixtures.selfemployment.SelfEmploymentBISSFixture
 import uk.gov.hmrc.selfassessmentapi.mocks.connectors.MockSelfEmploymentBISSConnector
+import uk.gov.hmrc.selfassessmentapi.models.Errors.ErrorWrapper
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, TaxYear}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -40,7 +41,7 @@ class SelfEmploymentBISSServiceSpec extends UnitSpec with MockitoSugar with Mock
 
     "self employment ID is invalid" should {
       "return a SELF_EMPLOYMENT_ID_INVALID error" in {
-        val expected = Left(Errors.SelfEmploymentIDInvalid)
+        val expected = Left(ErrorWrapper(Errors.SelfEmploymentIDInvalid, None))
 
         val result = target.getSummary(Nino("AA123456A"), TaxYear("2017-18"), "invalidID")
 

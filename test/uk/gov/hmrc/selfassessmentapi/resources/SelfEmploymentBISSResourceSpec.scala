@@ -15,6 +15,7 @@
  */
 
 package uk.gov.hmrc.selfassessmentapi.resources
+import org.omg.CosNaming.NamingContextPackage.NotFound
 import play.api.libs.json.Json.toJson
 import play.api.test.FakeRequest
 import uk.gov.hmrc.selfassessmentapi.fixtures.selfemployment.SelfEmploymentBISSFixture
@@ -57,18 +58,15 @@ class SelfEmploymentBISSResourceSpec extends ResourceSpec
       BAD_REQUEST -> NinoInvalid,
       BAD_REQUEST -> TaxYearInvalid,
       BAD_REQUEST -> SelfEmploymentIDInvalid,
-      NOT_FOUND -> NinoNotFound,
-      NOT_FOUND -> TaxYearNotFound,
       NOT_FOUND -> NoSubmissionDataExists,
-      NOT_FOUND -> SelfEmploymentIDNotFound,
       INTERNAL_SERVER_ERROR -> ServerError,
       INTERNAL_SERVER_ERROR -> ServiceUnavailable
     ).foreach { case (responseCode, errorCode) =>
 
       s"return a status ($responseCode)" when {
         s"a ${errorCode.code} error is returned from the connector" in new Setup {
-          MockSelfEmploymentBISSService.getSummary(nino, taxYear, selfEmploymentId)
-            .returns(Future.successful(Left(errorCode)))
+          MockSelfEmploymentBISSService.getSummary(nino,taxYear, selfEmploymentId)
+            .returns(Future.successful(Left(ErrorWrapper(errorCode, None))))
 
           val result = resource.getSummary(nino, taxYear, selfEmploymentId)(FakeRequest())
           status(result) shouldBe responseCode

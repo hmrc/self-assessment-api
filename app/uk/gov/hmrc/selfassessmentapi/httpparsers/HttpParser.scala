@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.httpparsers
 import play.api.http.Status
 import play.api.libs.json._
 import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.selfassessmentapi.models.Errors.{DesError, Error, ErrorWrapper, InvalidRequest, NinoInvalid, NoSubmissionDataExists, SelfEmploymentIDInvalid, ServerError, ServiceUnavailable, TaxYearInvalid}
 
 import scala.util.{Failure, Success, Try}
 
@@ -44,4 +45,26 @@ trait HttpParser extends Status {
       case None => JsError()
     }
   }
+
+  private val multipleErrorReads: Reads[Seq[DesError]] = (__ \ "failures").read[Seq[DesError]]
+
+  def parseErrors(arg: JsValue): ErrorWrapper = {
+
+    val errorWrapper = multipleErrorReads.reads(arg).get.map(_.code).map(desErrorToMtdError)
+    if(errorWrapper.contains(ServerError))
+      ErrorWrapper(ServerError, None)
+    else
+      ErrorWrapper(InvalidRequest, Some(multipleErrorReads.reads(arg).get.map(_.code).map(desErrorToMtdError)))
+  }
+
+  private val desErrorToMtdError: Map[String, Error] = Map(
+    "NOT_FOUND" -> NoSubmissionDataExists,
+    "INVALID_IDTYPE" -> ServerError,
+    "INVALID_IDVALUE" -> NinoInvalid,
+    "SERVER_ERROR" -> ServerError,
+    "INVALID_TAXYEAR" -> TaxYearInvalid,
+    "SERVICE_UNAVAILABLE" -> ServiceUnavailable,
+    "INVALID_INCOMESOURCEID" -> SelfEmploymentIDInvalid,
+    "INVALID_INCOMESOURCETYPE" -> ServerError
+  )
 }

@@ -2037,7 +2037,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
       object SelfEmploymentBISS {
         def getSummary(nino: Nino, taxYear: TaxYear, id: String): Givens = {
-          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/income-source-summary/${taxYear.toDesTaxYear}"))
+          stubFor(get(urlEqualTo(s"/income-tax/income-sources/nino/$nino/self-employment/${taxYear.toDesTaxYear}/biss?incomesourceid=$id"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -2048,7 +2048,7 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def getSummaryErrorResponse(nino: Nino, taxYear: TaxYear, id: String, status: Int, errorCode: String): Givens = {
-          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/income-source-summary/${taxYear.toDesTaxYear}"))
+          stubFor(get(urlEqualTo(s"/income-tax/income-sources/nino/$nino/self-employment/${taxYear.toDesTaxYear}/biss?incomesourceid=$id"))
             .willReturn(
               aResponse()
                 .withStatus(status)

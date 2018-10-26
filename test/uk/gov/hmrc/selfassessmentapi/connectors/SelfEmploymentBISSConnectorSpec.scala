@@ -41,7 +41,7 @@ class SelfEmploymentBISSConnectorSpec extends ConnectorSpec {
 
   "get" should {
 
-    val url = s"$desBaseUrl/income-store/nino/$nino/self-employments/$selfEmploymentId/income-source-summary/${taxYear.toDesTaxYear}"
+    val url = s"$desBaseUrl/income-tax/income-sources/nino/$nino/self-employment/${taxYear.toDesTaxYear}/biss?incomesourceid=$selfEmploymentId"
 
     "return a SelfEmploymentBISS model" when {
       "des returns a 200 with a correct SelfEmploymentBISS response body" in new Setup {

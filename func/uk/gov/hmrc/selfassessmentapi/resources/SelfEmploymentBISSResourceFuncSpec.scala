@@ -23,7 +23,7 @@ class SelfEmploymentBISSResourceFuncSpec extends BaseFunctionalSpec {
         given()
           .userIsSubscribedToMtdFor(nino)
           .clientIsFullyAuthorisedForTheResource
-          .des().SelfEmploymentBISS.getSummaryErrorResponse(nino, taxYear, selfEmploymentId, BAD_REQUEST, DesJsons.Errors.invalidNino)
+          .des().SelfEmploymentBISS.getSummaryErrorResponse(nino, taxYear, selfEmploymentId, BAD_REQUEST, DesJsons.Errors.invalidIdValue)
           .when()
           .get(s"/ni/$nino/self-employments/$selfEmploymentId/$taxYear/income-summary")
           .thenAssertThat()

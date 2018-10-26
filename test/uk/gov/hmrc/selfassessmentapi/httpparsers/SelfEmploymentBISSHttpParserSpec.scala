@@ -50,7 +50,7 @@ class SelfEmploymentBISSHttpParserSpec extends UnitSpec {
         val response = HttpResponse(OK, Some(Json.obj("invalid" -> "response")))
         val result = httpParser.selfEmploymentBISSHttpParser.read(method, url, response)
 
-        result shouldBe Left(Errors.ServerError)
+        result shouldBe Left(ErrorWrapper(Errors.ServerError, None))
       }
 
       "DES returns a 500 with a ServerError error code" in {
@@ -59,7 +59,7 @@ class SelfEmploymentBISSHttpParserSpec extends UnitSpec {
         val response = HttpResponse(INTERNAL_SERVER_ERROR, Some(responseBody))
         val result = httpParser.selfEmploymentBISSHttpParser.read(method, url, response)
 
-        result shouldBe Left(Errors.ServerError)
+        result shouldBe Left(ErrorWrapper(Errors.ServerError, None))
       }
 
       "DES returns an unknown response code" in {
@@ -68,32 +68,32 @@ class SelfEmploymentBISSHttpParserSpec extends UnitSpec {
         val response = HttpResponse(999, Some(responseBody))
         val result = httpParser.selfEmploymentBISSHttpParser.read(method, url, response)
 
-        result shouldBe Left(Errors.ServerError)
+        result shouldBe Left(ErrorWrapper(Errors.ServerError, None))
       }
 
       "DES returns an empty response body" in {
         val response = HttpResponse(500, None)
         val result = httpParser.selfEmploymentBISSHttpParser.read(method, url, response)
 
-        result shouldBe Left(Errors.ServerError)
+        result shouldBe Left(ErrorWrapper(Errors.ServerError, None))
       }
 
       "DES returns a 200 with an empty response body" in {
         val response = HttpResponse(200, None)
         val result = httpParser.selfEmploymentBISSHttpParser.read(method, url, response)
 
-        result shouldBe Left(Errors.ServerError)
+        result shouldBe Left(ErrorWrapper(Errors.ServerError, None))
       }
     }
 
     "return a NinoInvalid" when {
       "DES returns a 400 with a NinoInvalid error code" in {
-        val responseBody = Json.obj("code" -> DesErrorCode.INVALID_NINO)
+        val responseBody = Json.obj("code" -> DesErrorCode.INVALID_IDVALUE)
 
         val response = HttpResponse(BAD_REQUEST, Some(responseBody))
         val result = httpParser.selfEmploymentBISSHttpParser.read(method, url, response)
 
-        result shouldBe Left(Errors.NinoInvalid)
+        result shouldBe Left(ErrorWrapper(Errors.NinoInvalid, None))
       }
     }
 
@@ -104,40 +104,7 @@ class SelfEmploymentBISSHttpParserSpec extends UnitSpec {
         val response = HttpResponse(BAD_REQUEST, Some(responseBody))
         val result = httpParser.selfEmploymentBISSHttpParser.read(method, url, response)
 
-        result shouldBe Left(Errors.TaxYearInvalid)
-      }
-    }
-
-    "return a SelfEmploymentIDNotFound" when {
-      "DES returns a 404 with a self employment id not found error code" in {
-        val responseBody = Json.obj("code" -> DesErrorCode.NOT_FOUND_INCOME_SOURCE)
-
-        val response = HttpResponse(NOT_FOUND, Some(responseBody))
-        val result = httpParser.selfEmploymentBISSHttpParser.read(method, url, response)
-
-        result shouldBe Left(Errors.SelfEmploymentIDNotFound)
-      }
-    }
-
-    "return a NinoNotFound" when {
-      "DES returns a 404 with a NinoNotFound error code" in {
-        val responseBody = Json.obj("code" -> DesErrorCode.NOT_FOUND_NINO)
-
-        val response = HttpResponse(NOT_FOUND, Some(responseBody))
-        val result = httpParser.selfEmploymentBISSHttpParser.read(method, url, response)
-
-        result shouldBe Left(Errors.NinoNotFound)
-      }
-    }
-
-    "return a TaxYearNotFound" when {
-      "DES returns a 404 with a TaxYearNotFound error code" in {
-        val responseBody = Json.obj("code" -> DesErrorCode.NOT_FOUND_TAX_YEAR)
-
-        val response = HttpResponse(NOT_FOUND, Some(responseBody))
-        val result = httpParser.selfEmploymentBISSHttpParser.read(method, url, response)
-
-        result shouldBe Left(Errors.TaxYearNotFound)
+        result shouldBe Left(ErrorWrapper(Errors.TaxYearInvalid, None))
       }
     }
 
@@ -148,7 +115,7 @@ class SelfEmploymentBISSHttpParserSpec extends UnitSpec {
         val response = HttpResponse(NOT_FOUND, Some(responseBody))
         val result = httpParser.selfEmploymentBISSHttpParser.read(method, url, response)
 
-        result shouldBe Left(NoSubmissionDataExists)
+        result shouldBe Left(ErrorWrapper(NoSubmissionDataExists, None))
       }
     }
   }

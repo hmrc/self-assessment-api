@@ -20,7 +20,7 @@ import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.models.Errors.{NinoInvalid, NinoNotFound, NoSubmissionDataExists, SelfEmploymentIDInvalid, SelfEmploymentIDNotFound, ServerError, TaxYearInvalid, TaxYearNotFound}
+import uk.gov.hmrc.selfassessmentapi.models.Errors.{InvalidRequest, NinoInvalid, NinoNotFound, NoSubmissionDataExists, SelfEmploymentIDInvalid, SelfEmploymentIDNotFound, ServerError, TaxYearInvalid, TaxYearNotFound}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, SelfEmploymentBISSService}
 
@@ -42,10 +42,11 @@ trait SelfEmploymentBISSResource extends BaseResource {
     implicit request =>
       logger.debug(s"[SelfEmploymentBISSResource][getSummary] Get BISS for NI number : $nino with selfEmploymentId: $selfEmploymentId")
       service.getSummary(nino, taxYear, selfEmploymentId).map{
-        case Left(error) => error match {
+        case Left(error) => error.error match {
           case NinoInvalid | TaxYearInvalid | SelfEmploymentIDInvalid => BadRequest(toJson(error))
           case NinoNotFound | TaxYearNotFound | NoSubmissionDataExists | SelfEmploymentIDNotFound => NotFound(toJson(error))
           case ServerError | Errors.ServiceUnavailable => InternalServerError(toJson(error))
+          case InvalidRequest => BadRequest(toJson(error))
         }
         case Right(response) => Ok(toJson(response))
       }

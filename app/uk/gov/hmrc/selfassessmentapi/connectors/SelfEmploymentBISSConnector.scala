@@ -43,7 +43,7 @@ trait SelfEmploymentBISSConnector extends SelfEmploymentBISSHttpParser with Base
 
     logger.debug(s"[SelfEmploymentBISSConnector][getSummary] Get BISS for NI number: $nino with selfEmploymentId: $selfEmploymentId")
 
-    http.GET[SelfEmploymentBISSOutcome](s"$baseUrl/income-store/nino/$nino/self-employments/$selfEmploymentId/income-source-summary/${taxYear.toDesTaxYear}")(
+    http.GET[SelfEmploymentBISSOutcome](s"$baseUrl/income-tax/income-sources/nino/$nino/self-employment/${taxYear.toDesTaxYear}/biss?incomesourceid=$selfEmploymentId")(
       selfEmploymentBISSHttpParser, withDesHeaders(hc), ec)
   }
 }
