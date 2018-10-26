@@ -17,7 +17,6 @@
 package uk.gov.hmrc.selfassessmentapi.httpparsers
 
 import play.api.Logger
-import play.api.libs.json.{JsValue, Reads, __}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.selfassessmentapi.models.Errors.{NinoInvalid, NoSubmissionDataExists, ServerError, ServiceUnavailable, _}
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode
@@ -48,6 +47,9 @@ trait PropertiesBISSHttpParser extends HttpParser {
         case (BAD_REQUEST, ErrorCode(DesErrorCode.INVALID_IDVALUE)) =>
           Logger.warn(s"[PropertiesBISSHttpParser] - Invalid Nino")
           Left(ErrorWrapper(NinoInvalid, None))
+        case (BAD_REQUEST, ErrorCode(DesErrorCode.INVALID_IDTYPE)) =>
+          Logger.warn(s"[PropertiesBISSHttpParser] - Invalid ID TYPE")
+          Left(ErrorWrapper(ServerError, None))
         case (BAD_REQUEST, ErrorCode(DesErrorCode.INVALID_TAX_YEAR)) =>
           Logger.warn(s"[PropertiesBISSHttpParser] - Invalid tax year")
           Left(ErrorWrapper(TaxYearInvalid, None))
@@ -66,25 +68,5 @@ trait PropertiesBISSHttpParser extends HttpParser {
       }
     }
   }
-
-  private val multipleErrorReads: Reads[Seq[DesError]] = (__ \ "failures").read[Seq[DesError]]
-
-  def parseErrors(arg: JsValue): ErrorWrapper = {
-
-    val errorWrapper = multipleErrorReads.reads(arg).get.map(_.code).map(desErrorToMtdError)
-    if(errorWrapper.contains(ServerError))
-      ErrorWrapper(ServerError, None)
-    else
-      ErrorWrapper(InvalidRequest, Some(multipleErrorReads.reads(arg).get.map(_.code).map(desErrorToMtdError)))
-  }
-
-  private val desErrorToMtdError: Map[String, Error] = Map(
-    "NOT_FOUND" -> NoSubmissionDataExists,
-    "INVALID_IDTYPE" -> ServerError,
-    "INVALID_IDVALUE" -> NinoInvalid,
-    "SERVER_ERROR" -> ServerError,
-    "INVALID_TAXYEAR" -> TaxYearInvalid,
-    "SERVICE_UNAVAILABLE" -> ServiceUnavailable
-  )
 }
 

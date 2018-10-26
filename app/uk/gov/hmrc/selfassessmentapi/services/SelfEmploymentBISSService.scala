@@ -21,6 +21,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentBISSConnector
 import uk.gov.hmrc.selfassessmentapi.httpparsers.SelfEmploymentBISSHttpParser.SelfEmploymentBISSOutcome
+import uk.gov.hmrc.selfassessmentapi.models.Errors.ErrorWrapper
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, TaxYear}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,7 +48,7 @@ trait SelfEmploymentBISSService {
     if (selfEmploymentId.matches(selfEmploymentPattern)) {
       connector.getSummary(nino, taxYear, selfEmploymentId)
     } else {
-      Future.successful(Left(Errors.SelfEmploymentIDInvalid))
+      Future.successful(Left(ErrorWrapper(Errors.SelfEmploymentIDInvalid, None)))
     }
   }
 }
