@@ -17,13 +17,14 @@
 package uk.gov.hmrc.selfassessmentapi.httpparsers
 
 import play.api.Logger
+import play.api.libs.json.{JsValue, Reads, __}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesBISS
-import uk.gov.hmrc.selfassessmentapi.models.Errors._
+import uk.gov.hmrc.selfassessmentapi.models.Errors.{NinoInvalid, NoSubmissionDataExists, ServerError, ServiceUnavailable, _}
 import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode
+import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesBISS
 
 object PropertiesBISSHttpParser {
-  type PropertiesBISSOutcome = Either[Error, PropertiesBISS]
+  type PropertiesBISSOutcome = Either[ErrorWrapper, PropertiesBISS]
 
   val NO_DATA_EXISTS = "NO_DATA_EXISTS"
 }
@@ -37,43 +38,53 @@ trait PropertiesBISSHttpParser extends HttpParser {
         case (OK, _) => response.jsonOpt.validate[PropertiesBISS].fold(
           invalid => {
             Logger.warn(s"[PropertiesBISSHttpParser] - Error reading DES Response: $invalid")
-            Left(ServerError)
+            Left(ErrorWrapper(ServerError, None))
           },
           valid => Right(valid)
         )
-        case (BAD_REQUEST, ErrorCode(DesErrorCode.INVALID_NINO)) => {
+        case (BAD_REQUEST, MultipleErrorCode()) =>
+          Logger.warn(s"[PropertiesBISSHttpParser] - Multiple errors")
+          Left(parseErrors(response.jsonOpt.get))
+        case (BAD_REQUEST, ErrorCode(DesErrorCode.INVALID_IDVALUE)) =>
           Logger.warn(s"[PropertiesBISSHttpParser] - Invalid Nino")
-          Left(NinoInvalid)
-        }
-        case (BAD_REQUEST, ErrorCode(DesErrorCode.INVALID_TAX_YEAR)) => {
+          Left(ErrorWrapper(NinoInvalid, None))
+        case (BAD_REQUEST, ErrorCode(DesErrorCode.INVALID_TAX_YEAR)) =>
           Logger.warn(s"[PropertiesBISSHttpParser] - Invalid tax year")
-          Left(TaxYearInvalid)
-        }
-        case (NOT_FOUND, ErrorCode(DesErrorCode.NOT_FOUND_NINO)) => {
-          Logger.warn(s"[PropertiesBISSHttpParser] - Nino not found")
-          Left(NinoNotFound)
-        }
-        case (NOT_FOUND, ErrorCode(DesErrorCode.NOT_FOUND_TAX_YEAR)) => {
-          Logger.warn(s"[PropertiesBISSHttpParser] - Tax year not found")
-          Left(TaxYearNotFound)
-        }
-        case (NOT_FOUND, ErrorCode(DesErrorCode.NOT_FOUND)) => {
+          Left(ErrorWrapper(TaxYearInvalid, None))
+        case (NOT_FOUND, ErrorCode(DesErrorCode.NOT_FOUND)) =>
           Logger.warn(s"[PropertiesBISSHttpParser] - No submissions data exists for provided tax year")
-          Left(NoSubmissionDataExists)
-        }
-        case (INTERNAL_SERVER_ERROR, ErrorCode(DesErrorCode.SERVER_ERROR)) => {
+          Left(ErrorWrapper(NoSubmissionDataExists, None))
+        case (INTERNAL_SERVER_ERROR, ErrorCode(DesErrorCode.SERVER_ERROR)) =>
           Logger.warn(s"[PropertiesBISSHttpParser] - An error has occurred with DES")
-          Left(ServerError)
-        }
-        case (SERVICE_UNAVAILABLE, ErrorCode(DesErrorCode.SERVICE_UNAVAILABLE)) => {
+          Left(ErrorWrapper(ServerError, None))
+        case (SERVICE_UNAVAILABLE, ErrorCode(DesErrorCode.SERVICE_UNAVAILABLE)) =>
           Logger.warn(s"[PropertiesBISSHttpParser] - DES is currently down")
-          Left(ServiceUnavailable)
-        }
+          Left(ErrorWrapper(ServiceUnavailable, None))
         case (status, _) =>
           Logger.warn(s"[PropertiesBISSHttpParser] - Non-OK DES Response: STATUS $status")
-          Left(ServerError)
+          Left(ErrorWrapper(ServerError, None))
       }
     }
   }
+
+  private val multipleErrorReads: Reads[Seq[DesError]] = (__ \ "failures").read[Seq[DesError]]
+
+  def parseErrors(arg: JsValue): ErrorWrapper = {
+
+    val errorWrapper = multipleErrorReads.reads(arg).get.map(_.code).map(desErrorToMtdError)
+    if(errorWrapper.contains(ServerError))
+      ErrorWrapper(ServerError, None)
+    else
+      ErrorWrapper(InvalidRequest, Some(multipleErrorReads.reads(arg).get.map(_.code).map(desErrorToMtdError)))
+  }
+
+  private val desErrorToMtdError: Map[String, Error] = Map(
+    "NOT_FOUND" -> NoSubmissionDataExists,
+    "INVALID_IDTYPE" -> ServerError,
+    "INVALID_IDVALUE" -> NinoInvalid,
+    "SERVER_ERROR" -> ServerError,
+    "INVALID_TAXYEAR" -> TaxYearInvalid,
+    "SERVICE_UNAVAILABLE" -> ServiceUnavailable
+  )
 }
 

@@ -21,11 +21,23 @@ class PropertiesBISSResourceFuncSpec extends BaseFunctionalSpec {
         given()
           .userIsSubscribedToMtdFor(nino)
           .clientIsFullyAuthorisedForTheResource
-          .des().PropertiesBISS.getSummaryErrorResponse(nino, taxYear, BAD_REQUEST, DesJsons.Errors.invalidNino)
+          .des().PropertiesBISS.getSummaryErrorResponse(nino, taxYear, BAD_REQUEST, DesJsons.Errors.invalidIdValue)
           .when()
           .get(s"/ni/$nino/uk-properties/$taxYear/income-summary")
           .thenAssertThat()
           .statusIs(400)
       }
+
+      "return multiple errors for a supplied invalid request" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .clientIsFullyAuthorisedForTheResource
+          .des().PropertiesBISS.getSummaryErrorResponse(nino, taxYear, BAD_REQUEST, DesJsons.Errors.multipleErrors)
+          .when()
+          .get(s"/ni/$nino/uk-properties/$taxYear/income-summary")
+          .thenAssertThat()
+          .statusIs(400)
+      }
+
     }
 }

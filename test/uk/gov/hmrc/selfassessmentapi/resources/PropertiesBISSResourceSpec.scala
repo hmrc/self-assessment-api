@@ -21,7 +21,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.fixtures.properties.PropertiesBISSFixture
 import uk.gov.hmrc.selfassessmentapi.mocks.connectors.MockPropertiesBISSConnector
-import uk.gov.hmrc.selfassessmentapi.models.Errors.{NinoInvalid, NinoNotFound, NoSubmissionDataExists, ServerError, ServiceUnavailable, TaxYearInvalid, TaxYearNotFound}
+import uk.gov.hmrc.selfassessmentapi.models.Errors.{ErrorWrapper, NinoInvalid, NinoNotFound, NoSubmissionDataExists, ServerError, ServiceUnavailable, TaxYearInvalid, TaxYearNotFound}
 import uk.gov.hmrc.selfassessmentapi.models.SourceType
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
@@ -67,84 +67,99 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec
 
     "return invalid nino error response" when {
       "invalid nino and valid tax year is supplied" in new SetUp {
+        val expected = ErrorWrapper(NinoInvalid, None)
+
         MockPropertiesBISSConnector.get(nino, taxYear).
-          returns(Future.successful(Left(NinoInvalid)))
+          returns(Future.successful(Left(expected)))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
           result => status(result) shouldBe BAD_REQUEST
-            contentAsJson(result) shouldBe toJson(NinoInvalid)
+            contentAsJson(result) shouldBe toJson(expected)
         }
       }
     }
 
     "return invalid tax year error response" when {
       "valid nino and invalid tax year is supplied" in new SetUp {
+        val expected = ErrorWrapper(TaxYearInvalid, None)
+
         MockPropertiesBISSConnector.get(nino, taxYear).
-          returns(Future.successful(Left(TaxYearInvalid)))
+          returns(Future.successful(Left(expected)))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
           result => status(result) shouldBe BAD_REQUEST
-            contentAsJson(result) shouldBe toJson(TaxYearInvalid)
+            contentAsJson(result) shouldBe toJson(expected)
         }
       }
     }
 
     "return nino not found error response" when {
       "nino supplied not found in the backend" in new SetUp {
+
+        val expected = ErrorWrapper(NinoNotFound, None)
+
         MockPropertiesBISSConnector.get(nino, taxYear).
-          returns(Future.successful(Left(NinoNotFound)))
+          returns(Future.successful(Left(expected)))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
           result => status(result) shouldBe NOT_FOUND
-            contentAsJson(result) shouldBe toJson(NinoNotFound)
+            contentAsJson(result) shouldBe toJson(expected)
         }
       }
     }
 
     "return tax year not found error response" when {
       "tax year supplied not found in the backend" in new SetUp {
+        val expected = ErrorWrapper(TaxYearNotFound, None)
+
         MockPropertiesBISSConnector.get(nino, taxYear).
-          returns(Future.successful(Left(TaxYearNotFound)))
+          returns(Future.successful(Left(expected)))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
           result => status(result) shouldBe NOT_FOUND
-            contentAsJson(result) shouldBe toJson(TaxYearNotFound)
+            contentAsJson(result) shouldBe toJson(expected)
         }
       }
     }
 
     "return data not found error response" when {
       "no data found with the supplied details in the backend" in new SetUp {
+        val expected = ErrorWrapper(NoSubmissionDataExists, None)
+
         MockPropertiesBISSConnector.get(nino, taxYear).
-          returns(Future.successful(Left(NoSubmissionDataExists)))
+          returns(Future.successful(Left(expected)))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
           result => status(result) shouldBe NOT_FOUND
-            contentAsJson(result) shouldBe toJson(NoSubmissionDataExists)
+            contentAsJson(result) shouldBe toJson(expected)
         }
       }
     }
 
     "return server error response" when {
       "unknown error in the backend" in new SetUp {
+        val expected = ErrorWrapper(ServerError, None)
+
         MockPropertiesBISSConnector.get(nino, taxYear).
-          returns(Future.successful(Left(ServerError)))
+          returns(Future.successful(Left(expected)))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
           result => status(result) shouldBe INTERNAL_SERVER_ERROR
-            contentAsJson(result) shouldBe toJson(ServerError)
+            contentAsJson(result) shouldBe toJson(expected)
         }
       }
     }
 
     "return service unavailable error response" when {
       "backend is not available" in new SetUp {
+        val expected = ErrorWrapper(ServiceUnavailable, None)
+
         MockPropertiesBISSConnector.get(nino, taxYear).
-          returns(Future.successful(Left(ServiceUnavailable)))
+          returns(Future.successful(Left(expected)))
 
         showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
           result => status(result) shouldBe SERVICE_UNAVAILABLE
-            contentAsJson(result) shouldBe toJson(ServiceUnavailable)
+            contentAsJson(result) shouldBe toJson(expected)
         }
       }
     }

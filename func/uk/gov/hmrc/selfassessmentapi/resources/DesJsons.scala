@@ -30,6 +30,8 @@ object DesJsons {
         .toString()
     }
 
+    val multipleErrors: String = multiError(("INVALID_IDVALUE", "Submission has not passed validation. Invalid parameter idValue."),
+      ("INVALID_TAXYEAR", "Submission has not passed validation. Invalid parameter taxYear."))
     val invalidIdType: String = error("INVALID_IDTYPE", "Submission has not passed validation. Invalid parameter idType.")
     val invalidIdValue: String = error("INVALID_IDVALUE", "Submission has not passed validation. Invalid parameter idValue.")
     val invalidTaxYear: String = error("INVALID_TAXYEAR", "Submission has not passed validation. Invalid parameter taxYear.")
