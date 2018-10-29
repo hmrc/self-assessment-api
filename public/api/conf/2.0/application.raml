@@ -651,18 +651,6 @@ traits:
                       application/json:
                         type: types.errorResponse
                         examples:
-                          notFoundNino:
-                            description: The given National Insurance number is not found.
-                            value:
-                              code: NINO_NOT_FOUND
-                          taxYearNotFound:
-                            description: The given tax year is not found.
-                            value:
-                              code: TAX_YEAR_NOT_FOUND
-                          selfEmploymentIdNotFound:
-                            description: The given self-employment ID is not found.
-                            value:
-                              code: SELF_EMPLOYMENT_ID_NOT_FOUND
                           noSubmissionData:
                             description: No submission data exists for the accounting period.
                             value:
@@ -1716,14 +1704,6 @@ traits:
                 application/json:
                   type: types.errorResponse
                   examples:
-                    notFoundNino:
-                      description: The given National Insurance number is not found.
-                      value:
-                        code: NINO_NOT_FOUND
-                    taxYearNotFound:
-                      description: The given tax year is not found.
-                      value:
-                        code: TAX_YEAR_NOT_FOUND
                     noSubmissionData:
                       description: No submission data exists for the accounting period.
                       value:
