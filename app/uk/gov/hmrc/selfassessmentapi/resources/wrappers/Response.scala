@@ -47,7 +47,7 @@ trait Response {
         BadRequest(toJson(Errors.InvalidRequest))
       case (4, _) | (5, _) =>
         logResponse()
-        (pf orElse errorMapping)(status)
+        ((pf andThen addCorrelationHeader) orElse errorMapping)(status)
       case _ => ((pf andThen addCorrelationHeader) orElse errorMapping)(status)
     }
 
