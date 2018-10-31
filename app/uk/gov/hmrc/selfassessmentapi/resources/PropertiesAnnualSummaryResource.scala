@@ -24,7 +24,7 @@ import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.audit.AnnualSummaryUpdate
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHLPropertiesAnnualSummary, OtherPropertiesAnnualSummary, PropertiesAnnualSummary, PropertyType}
-import uk.gov.hmrc.selfassessmentapi.models.{SourceType, TaxYear}
+import uk.gov.hmrc.selfassessmentapi.models.{ErrorResult, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
 import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
@@ -33,6 +33,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
+import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode
 
 object PropertiesAnnualSummaryResource extends PropertiesAnnualSummaryResource {
   override val appContext = AppContext
@@ -53,6 +54,10 @@ trait PropertiesAnnualSummaryResource extends BaseResource {
           audit(makeAnnualSummaryUpdateAudit(nino, propertyId, taxYear, request.authContext, response))
           response.filter {
             case 200 => NoContent
+            case 404 if response.errorCodeIs(DesErrorCode.NOT_FOUND_PROPERTY) =>
+              logger.warn(s"[PropertiesAnnualSummaryResource] [updateAnnualSummary] - DES Returned: ${DesErrorCode.NOT_FOUND_PROPERTY} " +
+                s"CorrelationId: ${correlationId(response)}")
+              NotFound
           }
       } recoverWith exceptionHandling
     }
@@ -76,7 +81,7 @@ trait PropertiesAnnualSummaryResource extends BaseResource {
 
   private def validateProperty(propertyId: PropertyType,
                                body: JsValue,
-                               f: PropertiesAnnualSummary => Future[PropertiesAnnualSummaryResponse]) =
+                               f: PropertiesAnnualSummary => Future[PropertiesAnnualSummaryResponse]): Future[Either[ErrorResult, PropertiesAnnualSummaryResponse]] =
     propertyId match {
       case PropertyType.OTHER => validate[OtherPropertiesAnnualSummary, PropertiesAnnualSummaryResponse](body)(f)
       case PropertyType.FHL   => validate[FHLPropertiesAnnualSummary, PropertiesAnnualSummaryResponse](body)(f)

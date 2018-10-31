@@ -84,7 +84,7 @@ object PropertiesPeriodResource extends BaseResource {
                     s"[PropertiesPeriodResource] [createPeriod#$id]\n" +
                       s"Received from DES:\n ${response.underlying.body}\n" +
                       s"Transformed to:\n${toJson(Errors.InternalServerError)}.\n" +
-                      s"CorrelationId: ${response.underlying.header("CorrelationId").getOrElse("No CorrelationID returned")}")
+                      s"CorrelationId: ${correlationId(response)}")
                   InternalServerError(toJson(Errors.InternalServerError))
                 case 404 if response.errorCodeIs(DesErrorCode.NOT_FOUND_PROPERTY) =>
                   Logger.warn(s"[PropertiesPeriodResource] [createPeriod#$id] - Des Returned: ${DesErrorCode.NOT_FOUND_PROPERTY}. Returning 404")
