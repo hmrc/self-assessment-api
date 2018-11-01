@@ -55,7 +55,7 @@ trait PropertiesAnnualSummaryResource extends BaseResource {
           response.filter {
             case 200 => NoContent
             case 404 if response.errorCodeIs(DesErrorCode.NOT_FOUND_PROPERTY) =>
-              logger.warn(s"[PropertiesAnnualSummaryResource] [updateAnnualSummary] - DES Returned: ${DesErrorCode.NOT_FOUND_PROPERTY} " +
+              logger.warn(s"[PropertiesAnnualSummaryResource] [updateAnnualSummary #$propertyId] - DES Returned: ${DesErrorCode.NOT_FOUND_PROPERTY} " +
                 s"CorrelationId: ${correlationId(response)}")
               NotFound
           }
