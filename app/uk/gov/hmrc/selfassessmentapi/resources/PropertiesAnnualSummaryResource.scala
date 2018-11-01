@@ -24,11 +24,12 @@ import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.audit.AnnualSummaryUpdate
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHLPropertiesAnnualSummary, OtherPropertiesAnnualSummary, PropertiesAnnualSummary, PropertyType}
-import uk.gov.hmrc.selfassessmentapi.models.{ErrorResult, SourceType, TaxYear}
+import uk.gov.hmrc.selfassessmentapi.models.{ErrorResult, Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
 import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 import play.api.libs.concurrent.Execution.Implicits._
+import play.api.mvc.Results.NotFound
 
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
@@ -75,6 +76,13 @@ trait PropertiesAnnualSummaryResource extends BaseResource {
                 }
               case None => NotFound
             }
+          case 404 if response.errorCodeIsOneOf(DesErrorCode.NOT_FOUND_PROPERTY, DesErrorCode.NOT_FOUND_PERIOD) => {
+            logger.warn(
+              s"[PropertiesAnnualSummaryResource] [retrieveAnnualSummary#$propertyId]\n" +
+                s"Received from DES:\n ${response.underlying.body}\n" +
+                s"CorrelationId: ${correlationId(response)}")
+            NotFound
+          }
         }
       } recoverWith exceptionHandling
     }

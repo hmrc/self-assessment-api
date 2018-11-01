@@ -41,6 +41,9 @@ object DesJsons {
     val notFoundProperty: String = error(
       "NOT_FOUND_PROPERTY",
       "The remote endpoint has indicated that no data can be found for the given property type.")
+    val notFoundPeriod: String = error(
+      "NOT_FOUND_PERIOD",
+      "The remote endpoint has indicated that no data can be found for the given period.")
     val notFound: String = error("NOT_FOUND", "DES     The remote endpoint has indicated that no data can be found.")
     val tradingNameConflict: String = error("CONFLICT", "Duplicated trading name.")
     val serverError: String =

@@ -189,7 +189,18 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         given()
           .userIsSubscribedToMtdFor(nino)
           .clientIsFullyAuthorisedForTheResource
-          .des().properties.annualSummaryWillNotBeReturnedFor(nino, propertyType, taxYear)
+          .des().properties.annualSummaryWillNotBeReturnedDueToNotFoundProperty(nino, propertyType, taxYear)
+          .when()
+          .get(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
+          .thenAssertThat()
+          .statusIs(404)
+      }
+
+      s"return code 404 when retrieving an annual summary for a non-existent period for $propertyType" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .clientIsFullyAuthorisedForTheResource
+          .des().properties.annualSummaryWillNotBeReturnedDueToNotFoundPeriod(nino, propertyType, taxYear)
           .when()
           .get(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
           .thenAssertThat()
