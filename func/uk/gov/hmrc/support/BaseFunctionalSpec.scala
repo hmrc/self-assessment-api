@@ -1571,6 +1571,21 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def annualSummaryWillNotBeReturnedDueToNotFoundProperty(nino: Nino,
+                                              propertyType: PropertyType,
+                                              taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(
+            any(urlEqualTo(
+              s"/income-store/nino/$nino/uk-properties/$propertyType/annual-summaries/${taxYear.toDesTaxYear}"))
+              .willReturn(
+                aResponse()
+                  .withStatus(404)
+                  .withHeader("Content-Type", "application/json")
+                  .withBody(DesJsons.Errors.notFoundProperty)))
+
+          givens
+        }
+
         def annualSummaryWillNotBeReturnedFor(nino: Nino,
                                               propertyType: PropertyType,
                                               taxYear: TaxYear = TaxYear("2017-18")): Givens = {

@@ -45,6 +45,17 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .statusIs(404)
       }
 
+      s"return code 404 when amending annual summaries and DES returns a NOT_FOUND_PROPERTY error for $propertyType" in {
+        given()
+          .userIsSubscribedToMtdFor(nino)
+          .clientIsFullyAuthorisedForTheResource
+          .des().properties.annualSummaryWillNotBeReturnedDueToNotFoundProperty(nino, propertyType, taxYear)
+          .when()
+          .put(annualSummary(propertyType)).at(s"/ni/$nino/uk-properties/$propertyType/$taxYear")
+          .thenAssertThat()
+          .statusIs(404)
+      }
+
       s"return code 500 when provided with an invalid Originator-Id header for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
