@@ -56,14 +56,14 @@ class AuthorisedActionsSpec extends UnitSpec
       }
     }
 
-    "return a 500" when {
+    "return a 403" when {
       "the auth connector throws any other AuthorisationException exception" in new Setup {
         MockAuthConnector.authorise() returns Future.failed(InternalError())
 
         val result = authorisedActions.AuthAction(_ => Ok)(FakeRequest())
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(result) shouldBe FORBIDDEN
         contentType(result) shouldBe Some(JSON)
-        contentAsJson(result) shouldBe ErrorCode.internalServerError.asJson
+        contentAsJson(result) shouldBe ErrorCode.unauthorisedError.asJson
       }
     }
   }
