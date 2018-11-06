@@ -1,7 +1,27 @@
 
 ### Please refer to [CHANGELOG-ET.md](https://github.com/hmrc/self-assessment-api-router/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to Sandbox Test Environment.
 
-
+## 6-Nov-2018
+<b>[self-assessment-api v0.207.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.207.0)<br>
+[self-assessment-api-router v1.45.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.45.0)<br>
+[mtd-self-employment v0.21.0](https://github.com/hmrc/mtd-self-employment/releases/tag/v0.21.0)<br>
+[mtd-property-api v0.38.0](https://github.com/hmrc/mtd-self-employment/releases/tag/v0.38.0)</b>
+<br>Version 1.0 endpoints released into Production
+  * Get Self-Employment Business Income Source Summary (BISS)
+    * /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}/{taxYear}/income-summary
+  * Get UK property Business Income Source Summary (BISS)
+    * /self-assessment/ni/{nino}/uk-properties/{taxYear}/income-summary
+    
+Version 2.0 endpoints released into Production
+  * Submit Self-Employment End-of-Period Statement
+    * /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}/end-of-period-statements/from/{start}/to/{end}
+  * Retrieve End of Period Statement Obligations for a UK Property Business
+    * /self-assessment/ni/{nino}/uk-properties/end-of-period-statements/obligations
+  * Submit UK Property End-of-Period Statement
+    * /self-assessment/ni/{nino}/uk-properties/end-of-period-statements/from/{start}/to/{end}
+    
+Please note v1.0 'Submit Self-employment End-of-Period Statement' and 'Submit UK Property End-of-Period Statement' will not be released into Production.
+        
 ## 22-Oct-2018
 <b>[self-assessment-api v0.198.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.198.0)<br>
 [self-assessment-api-router v1.37.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.37.0)<br>

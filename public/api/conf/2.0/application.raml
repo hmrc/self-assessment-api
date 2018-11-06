@@ -605,7 +605,7 @@ traits:
               404:
           /income-summary:
              get:
-                displayName:  Get Self-Employment Business Income Source Summary (BISS) [test only]
+                displayName:  Get Self-Employment Business Income Source Summary (BISS)
                 description: Get the summary of self-employment income for a given tax year. This API is not available in production.
                 (annotations.sandboxData): !include scenarios/self-employment-biss.md
                 is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
@@ -670,7 +670,7 @@ traits:
                       type: string
                       example: 2018-04-05
                   post:
-                    displayName: Submit Self-Employment End-of-Period Statement [test only]
+                    displayName: Submit Self-Employment End-of-Period Statement
                     description: Use this endpoint to finalise the end-of-period statement, for this accounting period, for a self-employment business.
                     (annotations.sandboxData): !include scenarios/self-employment-declaration-scenarios.md
                     is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
@@ -1481,7 +1481,7 @@ traits:
                     type: string
                     example: 2018-04-05
                 post:
-                  displayName: Submit UK Property End-of-Period Statement [test only]
+                  displayName: Submit UK Property End-of-Period Statement
                   description: Use this endpoint to finalise the end-of-period statement, for this accounting period, for a UK property business.
                   (annotations.sandboxData): !include scenarios/uk-prop-declaration-scenarios.md
                   is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
@@ -1581,7 +1581,7 @@ traits:
                                 code: MATCHING_RESOURCE_NOT_FOUND
         /obligations:
                     get:
-                      displayName: Retrieve End of Period Statement Obligations for a UK Property Business [test only]
+                      displayName: Retrieve End of Period Statement Obligations for a UK Property Business
                       description: Use this endpoint to retrieve the End of Period Statement (EOPS) of obligations for a UK property business. In the sandbox environment, this endpoint returns pre-defined responses that are representative of what may be returned in production.
                       (annotations.sandboxData): !include scenarios/eops-property-obligation-scenarios.md
                       is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
@@ -1662,7 +1662,7 @@ traits:
             type: string
             example: 2017-18
         get:
-          displayName:  Get UK property Business Income Source Summary (BISS) [test only]
+          displayName:  Get UK property Business Income Source Summary (BISS)
           description: Get the summary of property income for a given tax year. This API is not available in production.
           (annotations.sandboxData): !include scenarios/uk-properties-biss.md
           is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
