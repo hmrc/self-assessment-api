@@ -8,6 +8,11 @@ GET        /admin/metrics        @com.kenshoo.play.metrics.MetricsController.met
 GET /ni/:nino/self-employments   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentsResource.retrieveAll(nino: uk.gov.hmrc.domain.Nino)
 GET /ni/:nino/self-employments/:id   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentsResource.retrieve(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
 
+####################
+#    Self-Employments BISS   #
+####################
+GET /ni/:nino/self-employments/:selfEmploymentId/:taxYear/income-summary  uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentBISSResource.getSummary(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear, selfEmploymentId: String)
+
 # Obligations
 GET /ni/:nino/self-employments/:id/obligations   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentObligationsResource.retrieveObligations(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
 
@@ -24,6 +29,10 @@ GET /ni/:nino/self-employments/:id/:taxYear    uk.gov.hmrc.selfassessmentapi.res
 # Self-Employment End-of-Period Statements
 GET /ni/:nino/self-employments/:id/end-of-period-statements/obligations   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentStatementResource.retrieveObligationsById(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, queryParams: uk.gov.hmrc.selfassessmentapi.resources.utils.EopsObligationQueryParams)
 
+####################
+#    Properties BISS   #
+####################
+GET /ni/:nino/uk-properties/:taxYear/income-summary  uk.gov.hmrc.selfassessmentapi.resources.PropertiesBISSResource.getSummary(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 
 ####################
 #    Properties    #
