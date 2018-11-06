@@ -36,7 +36,7 @@ trait AuthorisedActions extends AuthorisedFunctions { _: BaseController =>
           Forbidden(ErrorCode.invalidBearerToken.asJson)
         case ex: AuthorisationException =>
           Logger.warn(s"[AuthorisedActions] authorisation exception caught when trying to access ${request.uri} : ${ex.reason}")
-          InternalServerError(ErrorCode.internalServerError.asJson)
+          Forbidden(ErrorCode.unauthorisedError.asJson)
       }
     }
   }

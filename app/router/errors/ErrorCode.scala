@@ -29,4 +29,5 @@ object ErrorCode {
   val invalidAcceptHeader = ErrorCode("ACCEPT_HEADER_INVALID", "The accept header is missing or invalid")
   val notFound = ErrorCode("NOT_FOUND", "The requested resource could not be found.")
   val internalServerError = ErrorCode("INTERNAL_SERVER_ERROR", "An internal server error occurred")
+  val unauthorisedError = ErrorCode("CLIENT_OR_AGENT_NOT_AUTHORISED", "The client and/or agent is not authorised.")
 }
