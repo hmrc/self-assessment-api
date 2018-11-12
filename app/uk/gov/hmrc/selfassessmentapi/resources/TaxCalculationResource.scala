@@ -59,6 +59,10 @@ object TaxCalculationResource extends BaseResource {
                     .map(id => s"/self-assessment/ni/$nino/calculations/$id")
                     .getOrElse(""))
             case 400 if response.isInvalidNino => BadRequest(Json.toJson(Errors.NinoInvalid))
+            case 400 if response.isInvalidRequest =>
+              logger.warn("[TaxCalculationResource] [requestCalculation] DES returned INVALID_REQUEST. This could be due to;" +
+                "\n1. No valid income sources at backend\n2. No income submissions exist at backend")
+              unhandledResponse(response.status, logger)
             case _                             => unhandledResponse(response.status, logger)
           }
       } recoverWith exceptionHandling

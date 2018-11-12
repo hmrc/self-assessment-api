@@ -6,11 +6,11 @@ import org.joda.time.LocalDate
 import org.json.{JSONArray, JSONObject}
 import org.skyscreamer.jsonassert.JSONAssert.assertEquals
 import org.skyscreamer.jsonassert.JSONCompareMode.LENIENT
+import play.api.http.Status.NO_CONTENT
 import play.api.libs.json._
 import uk.gov.hmrc.api.controllers.ErrorNotFound
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.selfassessmentapi.models.Errors.DesError
 import uk.gov.hmrc.selfassessmentapi.models.obligations.ObligationsQueryParams
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
@@ -389,6 +389,14 @@ trait BaseFunctionalSpec extends TestApplication {
     implicit val urlPathVariables: mutable.Map[String, String] = mutable.Map()
 
     def when() = new HttpVerbs()
+
+    def stubAudit: Givens = {
+      stubFor(post(urlPathMatching(s"/write/audit.*"))
+        .willReturn(
+          aResponse()
+            .withStatus(NO_CONTENT)))
+      this
+    }
 
     def userIsSubscribedToMtdFor(nino: Nino, mtdId: String = "abc"): Givens = {
       stubFor(any(urlMatching(s".*/registration/business-details/nino/$nino"))
@@ -1388,6 +1396,17 @@ trait BaseFunctionalSpec extends TestApplication {
                 .withStatus(400)
                 .withHeader("Content-Type", "application/json")
                 .withBody(DesJsons.Errors.invalidCalcId)))
+
+          givens
+        }
+
+        def invalidRequestFor(nino: Nino, calcId: String = "abc"): Givens = {
+          stubFor(post(urlMatching(s"/income-tax/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.Errors.invalidRequest)))
 
           givens
         }
