@@ -51,4 +51,7 @@ case class TaxCalculationResponse(underlying: HttpResponse) extends Response {
 
   def isInvalidIdentifier: Boolean =
     json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_IDENTIFIER)
+
+  def isInvalidRequest: Boolean =
+    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_REQUEST)
 }

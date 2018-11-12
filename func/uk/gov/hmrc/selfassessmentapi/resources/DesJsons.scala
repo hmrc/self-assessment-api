@@ -37,6 +37,7 @@ object DesJsons {
     val invalidTaxYear: String = error("INVALID_TAXYEAR", "Submission has not passed validation. Invalid parameter taxYear.")
     val invalidNino: String = error("INVALID_NINO", "Submission has not passed validation. Invalid parameter NINO.")
     val invalidPayload: String = error("INVALID_PAYLOAD", "Submission has not passed validation. Invalid PAYLOAD.")
+    val invalidRequest: String = error("INVALID_REQUEST", "does not matter")
     val ninoNotFound: String = error("NOT_FOUND_NINO", "The remote endpoint has indicated that no data can be found.")
     val notFoundProperty: String = error(
       "NOT_FOUND_PROPERTY",
