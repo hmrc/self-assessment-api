@@ -38,7 +38,7 @@ class SelfAssessmentResourceSpec extends ResourceSpec
 
   val requestJson = Json.obj("test" -> "request json")
   val responseJson = Json.obj("test" -> "response json")
-  val testHeader = "test" -> "header"
+  val testHeader = Map("test" -> "header",  "X-Content-Type-Options" -> "nosniff")
   val testHeaderResponse = Map("test" -> Seq("header"))
 
   "get" should {
@@ -49,7 +49,7 @@ class SelfAssessmentResourceSpec extends ResourceSpec
 
         val result = resource.get("")(FakeRequest())
         status(result) shouldBe OK
-        headers(result) shouldBe Map(testHeader)
+        headers(result) shouldBe testHeader
         contentType(result) shouldBe None
       }
     }
@@ -61,7 +61,7 @@ class SelfAssessmentResourceSpec extends ResourceSpec
 
         val result = resource.get("")(FakeRequest())
         status(result) shouldBe OK
-        headers(result) shouldBe Map(testHeader)
+        headers(result) shouldBe testHeader
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe responseJson
       }
@@ -100,7 +100,7 @@ class SelfAssessmentResourceSpec extends ResourceSpec
 
         val result = resource.post("")(FakeRequest().withBody(requestJson))
         status(result) shouldBe OK
-        headers(result) shouldBe Map(testHeader)
+        headers(result) shouldBe testHeader
         contentType(result) shouldBe None
       }
     }
@@ -112,7 +112,7 @@ class SelfAssessmentResourceSpec extends ResourceSpec
 
         val result = resource.post("")(FakeRequest().withBody(requestJson))
         status(result) shouldBe OK
-        headers(result) shouldBe Map(testHeader)
+        headers(result) shouldBe testHeader
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe responseJson
       }
@@ -151,7 +151,7 @@ class SelfAssessmentResourceSpec extends ResourceSpec
 
         val result = resource.put("")(FakeRequest().withBody(requestJson))
         status(result) shouldBe OK
-        headers(result) shouldBe Map(testHeader)
+        headers(result) shouldBe testHeader
         contentType(result) shouldBe None
       }
     }
@@ -163,7 +163,7 @@ class SelfAssessmentResourceSpec extends ResourceSpec
 
         val result = resource.put("")(FakeRequest().withBody(requestJson))
         status(result) shouldBe OK
-        headers(result) shouldBe Map(testHeader)
+        headers(result) shouldBe testHeader
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe responseJson
       }

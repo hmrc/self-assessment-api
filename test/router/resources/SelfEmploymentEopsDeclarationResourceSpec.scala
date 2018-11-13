@@ -39,7 +39,7 @@ class SelfEmploymentEopsDeclarationResourceSpec extends ResourceSpec
   val request = FakeRequest()
   val requestJson = Json.obj("test" -> "request json")
   val responseJson = Json.obj("test" -> "response json")
-  val testHeader = "test" -> "header"
+  val testHeader = Map("test" -> "header",  "X-Content-Type-Options" -> "nosniff")
   val testHeaderResponse = Map("test" -> Seq("header"))
 
   "post" should {
@@ -50,7 +50,7 @@ class SelfEmploymentEopsDeclarationResourceSpec extends ResourceSpec
 
         val result = resource.post("","","","")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NO_CONTENT
-        headers(result) shouldBe Map(testHeader)
+        headers(result) shouldBe testHeader
         contentType(result) shouldBe None
       }
     }
@@ -62,7 +62,7 @@ class SelfEmploymentEopsDeclarationResourceSpec extends ResourceSpec
 
         val result = resource.post("","","","")(FakeRequest().withBody(requestJson))
         status(result) shouldBe OK
-        headers(result) shouldBe Map(testHeader)
+        headers(result) shouldBe testHeader
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe responseJson
       }

@@ -31,10 +31,10 @@ trait BaseResource extends BaseController with AuthorisedActions {
     Try(apiResponse.json) match {
       case Success(_: JsValue) =>
         new Status(apiResponse.status)(apiResponse.json)
-          .withHeaders(toSimpleHeaders(apiResponse.allHeaders):_*)
+          .withHeaders(toSimpleHeaders(apiResponse.allHeaders ++ Map("X-Content-Type-Options" -> Seq("nosniff"))):_*)
       case _ =>
         new Status(apiResponse.status)
-          .withHeaders(toSimpleHeaders(apiResponse.allHeaders): _*)
+          .withHeaders(toSimpleHeaders(apiResponse.allHeaders ++ Map("X-Content-Type-Options" -> Seq("nosniff"))):_*)
     }
   }
 
