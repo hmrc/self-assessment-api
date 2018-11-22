@@ -31,10 +31,10 @@ trait BaseResource extends BaseController with AuthorisedActions {
     Try(apiResponse.json) match {
       case Success(_: JsValue) =>
         new Status(apiResponse.status)(apiResponse.json)
-          .withHeaders(toSimpleHeaders(apiResponse.allHeaders ++ Map("X-Content-Type-Options" -> Seq("nosniff"))):_*)
+          .withHeaders(toSimpleHeaders(apiResponse.allHeaders):_*)
       case _ =>
         new Status(apiResponse.status)
-          .withHeaders(toSimpleHeaders(apiResponse.allHeaders ++ Map("X-Content-Type-Options" -> Seq("nosniff"))):_*)
+          .withHeaders(toSimpleHeaders(apiResponse.allHeaders):_*)
     }
   }
 
@@ -46,6 +46,6 @@ trait BaseResource extends BaseController with AuthorisedActions {
   }
 
   private def toSimpleHeaders(headers: Map[String, Seq[String]]): Seq[(String, String)] = {
-    headers.flatMap{ case (name, values) => values.map(name -> _)}.toSeq
+    (headers ++ Map("X-Content-Type-Options" -> Seq("nosniff"))).flatMap{ case (name, values) => values.map(name -> _)}.toSeq
   }
 }

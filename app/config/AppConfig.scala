@@ -43,5 +43,6 @@ class AppConfig @Inject()(val environment: Environment,
   def taxCalcUrl: String = baseUrl("mtd-tax-calculation")
   def propertyUrl: String = baseUrl("mtd-property-api")
   def selfEmploymentUrl: String = baseUrl("mtd-self-employment")
+  def release2Enabled: Boolean = getBoolean("release-2.enabled")
 
 }
