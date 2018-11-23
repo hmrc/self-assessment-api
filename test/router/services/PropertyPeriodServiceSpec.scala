@@ -63,7 +63,7 @@ class PropertyPeriodServiceSpec extends UnitSpec
         val release2EnabledConfig = Configuration("release-2.enabled" -> true)
         MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
 
-        MockPropertyConnector.post(s"r2${request.uri}", requestBody)
+        MockPropertyConnector.post(s"/r2${request.uri}", requestBody)
           .returns(Future.successful(Right(response)))
 
         val result = await(service.create(requestBody))
@@ -91,7 +91,7 @@ class PropertyPeriodServiceSpec extends UnitSpec
         val release2EnabledConfig = Configuration("release-2.enabled" -> true)
         MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
 
-        MockPropertyConnector.post(s"r2${request.uri}", requestBody)
+        MockPropertyConnector.post(s"/r2${request.uri}", requestBody)
           .returns(Future.successful(Right(response)))
 
         val result = await(service.create(requestBody))

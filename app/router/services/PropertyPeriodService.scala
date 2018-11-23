@@ -35,7 +35,7 @@ class PropertyPeriodService @Inject()(val appConfig: AppConfig,
     def uri = {
       val featureSwitch = FeatureSwitch(appConfig.featureSwitch)
       if (featureSwitch.isRelease2Enabled) {
-        s"r2${req.uri}"
+        s"/r2${req.uri}"
       }
       else {
         s"${req.uri}"
