@@ -23,6 +23,11 @@
       "title": "otherPropertyIncome",
       "description": "Other income from property, such as rent charges and ground rents, income from letting others tip waste on your land, and income for the use of a caravan or houseboat at a fixed location.",
       "$ref": "../../SimpleIncome.json"
+    },
+    "rarRentReceived": {
+      "title": "Rent a Room rent received",
+      "description": "Rental income received under the Rent a Room scheme for the period",
+      "$ref": "../../RentARoomIncome.json"
     }
   },
   "additionalProperties": false

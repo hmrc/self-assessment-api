@@ -10,6 +10,7 @@
   },
   "expenses": {
     "consolidatedExpenses": { "amount": 100.25 },
-    "residentialFinancialCost": { "amount": 200.25 }
+    "residentialFinancialCost": { "amount": 200.25 },
+    "broughtFwdResidentialFinancialCost": { "amount": 100.25 }
   }
 }
