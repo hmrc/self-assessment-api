@@ -20,7 +20,7 @@ import com.jayway.restassured.RestAssured
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers._
 import play.api.Logger
-import uk.gov.hmrc.r2.selfassessmentapi.UnitSpec
+import uk.gov.hmrc.selfassessmentapi.UnitSpec
 
 import scala.concurrent.Future
 

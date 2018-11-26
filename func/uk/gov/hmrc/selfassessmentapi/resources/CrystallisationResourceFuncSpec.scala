@@ -1,6 +1,6 @@
-package uk.gov.hmrc.r2.selfassessmentapi.resources
+package uk.gov.hmrc.selfassessmentapi.resources
 
-import uk.gov.hmrc.r2.selfassessmentapi.models.Errors._
+import uk.gov.hmrc.selfassessmentapi.models.Errors._
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {

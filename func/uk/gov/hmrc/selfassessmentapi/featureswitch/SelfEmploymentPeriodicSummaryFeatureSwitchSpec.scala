@@ -1,7 +1,7 @@
-package uk.gov.hmrc.r2.selfassessmentapi.featureswitch
+package uk.gov.hmrc.selfassessmentapi.featureswitch
 
 import play.api.test.FakeApplication
-import uk.gov.hmrc.r2.selfassessmentapi.resources.Jsons
+import uk.gov.hmrc.selfassessmentapi.resources.Jsons
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class SelfEmploymentPeriodicSummaryFeatureSwitchSpec extends BaseFunctionalSpec {

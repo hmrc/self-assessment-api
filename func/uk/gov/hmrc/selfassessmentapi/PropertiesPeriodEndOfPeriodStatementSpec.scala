@@ -1,4 +1,4 @@
-package uk.gov.hmrc.r2.selfassessmentapi
+package uk.gov.hmrc.selfassessmentapi
 
 import org.joda.time.LocalDate
 import play.api.libs.json.Json

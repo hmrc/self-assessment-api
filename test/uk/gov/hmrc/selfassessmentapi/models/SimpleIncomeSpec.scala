@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.r2.selfassessmentapi.models
+package uk.gov.hmrc.selfassessmentapi.models
 
-import uk.gov.hmrc.r2.selfassessmentapi.resources.JsonSpec
+import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
 class SimpleIncomeSpec extends JsonSpec {
   "SimpleIncome" should {

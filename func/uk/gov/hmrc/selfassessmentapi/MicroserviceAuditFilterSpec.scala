@@ -1,9 +1,9 @@
-package uk.gov.hmrc.r2.selfassessmentapi
+package uk.gov.hmrc.selfassessmentapi
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{urlPathEqualTo, _}
 import org.scalatest.time.{Millis, Seconds, Span}
-import uk.gov.hmrc.r2.selfassessmentapi.resources.Jsons
+import uk.gov.hmrc.selfassessmentapi.resources.Jsons
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class MicroserviceAuditFilterSpec extends BaseFunctionalSpec {

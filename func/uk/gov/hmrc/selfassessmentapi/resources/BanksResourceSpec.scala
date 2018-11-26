@@ -1,4 +1,4 @@
-package uk.gov.hmrc.r2.selfassessmentapi.resources
+package uk.gov.hmrc.selfassessmentapi.resources
 
 import uk.gov.hmrc.support.BaseFunctionalSpec
 

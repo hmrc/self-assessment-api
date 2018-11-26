@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.r2.selfassessmentapi
+package uk.gov.hmrc.selfassessmentapi
 
 import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatest.{AsyncWordSpec, Matchers, OptionValues, WordSpec}
-import uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear
+import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}

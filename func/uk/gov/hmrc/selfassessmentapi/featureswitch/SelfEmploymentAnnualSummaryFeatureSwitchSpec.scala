@@ -1,9 +1,9 @@
-package uk.gov.hmrc.r2.selfassessmentapi.featureswitch
+package uk.gov.hmrc.selfassessmentapi.featureswitch
 
 import play.api.libs.json.Json
 import play.api.test.FakeApplication
-import uk.gov.hmrc.r2.selfassessmentapi.resources.Jsons
-import uk.gov.hmrc.r2.selfassessmentapi.models.selfemployment.SelfEmploymentAnnualSummary
+import uk.gov.hmrc.selfassessmentapi.resources.Jsons
+import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentAnnualSummary
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class SelfEmploymentAnnualSummaryFeatureSwitchSpec extends BaseFunctionalSpec {

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.r2.selfassessmentapi.models
+package uk.gov.hmrc.selfassessmentapi.models
 
-import uk.gov.hmrc.r2.selfassessmentapi.models.Class4NicsExemptionCode.NON_RESIDENT
-import uk.gov.hmrc.r2.selfassessmentapi.models.ErrorCode._
-import uk.gov.hmrc.r2.selfassessmentapi.resources.JsonSpec
+import uk.gov.hmrc.selfassessmentapi.models.Class4NicsExemptionCode.NON_RESIDENT
+import uk.gov.hmrc.selfassessmentapi.models.ErrorCode._
+import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
 
 class Class4NicInfoSpec extends JsonSpec {
 

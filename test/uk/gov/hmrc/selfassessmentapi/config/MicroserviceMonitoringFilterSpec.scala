@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.r2.selfassessmentapi.config
+package uk.gov.hmrc.selfassessmentapi.config
 
 import com.kenshoo.play.metrics.Metrics
 import org.scalatest.mockito.MockitoSugar
-import uk.gov.hmrc.r2.selfassessmentapi.UnitSpec
-import uk.gov.hmrc.r2.selfassessmentapi.models.SourceType.sourceTypeToDocumentationName
-import uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear.taxYearFormat
+import uk.gov.hmrc.selfassessmentapi.UnitSpec
+import uk.gov.hmrc.selfassessmentapi.models.SourceType.sourceTypeToDocumentationName
+import uk.gov.hmrc.selfassessmentapi.models.TaxYear.taxYearFormat
 
 class MicroserviceMonitoringFilterSpec extends UnitSpec with MockitoSugar{
 

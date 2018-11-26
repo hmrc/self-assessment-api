@@ -1,6 +1,6 @@
-package uk.gov.hmrc.r2.selfassessmentapi
+package uk.gov.hmrc.selfassessmentapi
 
-import uk.gov.hmrc.r2.selfassessmentapi.resources.Jsons
+import uk.gov.hmrc.selfassessmentapi.resources.Jsons
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class MicroserviceMonitoringFilterSpec extends BaseFunctionalSpec {
