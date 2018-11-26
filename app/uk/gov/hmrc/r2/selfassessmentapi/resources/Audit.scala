@@ -16,15 +16,6 @@
 
 package uk.gov.hmrc.r2.selfassessmentapi.resources
 
-import play.api.mvc.Request
-import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.r2.selfassessmentapi.contexts.AuthContext
-import uk.gov.hmrc.r2.selfassessmentapi.models.SourceId
-import uk.gov.hmrc.r2.selfassessmentapi.models.audit.RetrieveObligations
-import uk.gov.hmrc.r2.selfassessmentapi.resources.wrappers.ObligationsResponse
-import uk.gov.hmrc.r2.selfassessmentapi.services.AuditData
-import uk.gov.hmrc.http.HeaderCarrier
-
 sealed trait RetrieveObligationTransaction
 
 case object UkPropertiesRetrieveObligations extends RetrieveObligationTransaction {
@@ -36,25 +27,5 @@ case object SelfEmploymentRetrieveObligations extends RetrieveObligationTransact
 }
 
 object Audit {
-  def makeObligationsRetrievalAudit(nino: Nino,
-                                    id: Option[SourceId] = None,
-                                    authCtx: AuthContext,
-                                    response: ObligationsResponse,
-                                    transaction: RetrieveObligationTransaction)(
-      implicit hc: HeaderCarrier,
-      request: Request[_]): AuditData[RetrieveObligations] =
-    AuditData(
-      detail = RetrieveObligations(
-        httpStatus = response.status,
-        nino = nino,
-        sourceId = id,
-        affinityGroup = authCtx.affinityGroup,
-        agentCode = authCtx.agentCode,
-        responsePayload = response.status match {
-          case 200 | 400 => Some(response.json)
-          case _         => None
-        }
-      ),
-      transactionName = transaction.toString
-    )
+
 }
