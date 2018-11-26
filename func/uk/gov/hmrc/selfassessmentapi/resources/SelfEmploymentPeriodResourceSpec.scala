@@ -1,7 +1,7 @@
-package uk.gov.hmrc.selfassessmentapi.resources
+package uk.gov.hmrc.r2.selfassessmentapi.resources
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId}
+import uk.gov.hmrc.r2.selfassessmentapi.models.{Period, PeriodId}
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {

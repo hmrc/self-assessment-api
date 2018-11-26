@@ -19,10 +19,10 @@ package uk.gov.hmrc.r2.selfassessmentapi.repositories
 import org.joda.time.{DateTime, DateTimeUtils, DateTimeZone}
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.{MongoEmbeddedDatabase, NinoGenerator}
-import uk.gov.hmrc.selfassessmentapi.domain.Dividends
-import uk.gov.hmrc.selfassessmentapi.models
-import uk.gov.hmrc.selfassessmentapi.models.TaxYear
+import uk.gov.hmrc.r2.selfassessmentapi.{MongoEmbeddedDatabase, NinoGenerator}
+import uk.gov.hmrc.r2.selfassessmentapi.domain.Dividends
+import uk.gov.hmrc.r2.selfassessmentapi.models
+import uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

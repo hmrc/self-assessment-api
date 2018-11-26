@@ -18,8 +18,8 @@ package uk.gov.hmrc.r2.selfassessmentapi.repositories
 
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
-import uk.gov.hmrc.selfassessmentapi.models.MtdId
+import uk.gov.hmrc.r2.selfassessmentapi.MongoEmbeddedDatabase
+import uk.gov.hmrc.r2.selfassessmentapi.models.MtdId
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

@@ -17,8 +17,8 @@
 package uk.gov.hmrc.r2.selfassessmentapi.config
 
 import play.api.Configuration
-import uk.gov.hmrc.selfassessmentapi.config.AppContext._
-import uk.gov.hmrc.selfassessmentapi.models.SourceType.SourceType
+import uk.gov.hmrc.r2.selfassessmentapi.config.AppContext._
+import uk.gov.hmrc.r2.selfassessmentapi.models.SourceType.SourceType
 
 case class FeatureSwitch(value: Option[Configuration]) {
   val DEFAULT_VALUE = true

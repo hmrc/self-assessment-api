@@ -1,11 +1,11 @@
-package uk.gov.hmrc.selfassessmentapi.resources
+package uk.gov.hmrc.r2.selfassessmentapi.resources
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.selfassessmentapi.models.Errors._
-import uk.gov.hmrc.selfassessmentapi.models.{Errors, Period, PeriodId}
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
-import uk.gov.hmrc.selfassessmentapi.resources.DesJsons.Errors
+import uk.gov.hmrc.r2.selfassessmentapi.models.Errors._
+import uk.gov.hmrc.r2.selfassessmentapi.models.{Errors, Period, PeriodId}
+import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType
+import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType
+import uk.gov.hmrc.r2.selfassessmentapi.resources.DesJsons.Errors
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {

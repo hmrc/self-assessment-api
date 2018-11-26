@@ -11,12 +11,12 @@ import play.api.libs.json._
 import uk.gov.hmrc.api.controllers.ErrorNotFound
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.selfassessmentapi.models.obligations.ObligationsQueryParams
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
-import uk.gov.hmrc.selfassessmentapi.models.{ErrorNotImplemented, Period, TaxYear}
-import uk.gov.hmrc.selfassessmentapi.resources.DesJsons
-import uk.gov.hmrc.selfassessmentapi.{NinoGenerator, TestApplication}
+import uk.gov.hmrc.r2.selfassessmentapi.models.obligations.ObligationsQueryParams
+import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType
+import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType
+import uk.gov.hmrc.r2.selfassessmentapi.models.{ErrorNotImplemented, Period, TaxYear}
+import uk.gov.hmrc.r2.selfassessmentapi.resources.DesJsons
+import uk.gov.hmrc.r2.selfassessmentapi.{NinoGenerator, TestApplication}
 
 import scala.collection.mutable
 import scala.util.matching.Regex

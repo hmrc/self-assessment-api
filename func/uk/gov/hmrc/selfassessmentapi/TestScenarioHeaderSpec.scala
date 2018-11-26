@@ -1,6 +1,6 @@
-package uk.gov.hmrc.selfassessmentapi
+package uk.gov.hmrc.r2.selfassessmentapi
 
-import uk.gov.hmrc.selfassessmentapi.resources.GovTestScenarioHeader
+import uk.gov.hmrc.r2.selfassessmentapi.resources.GovTestScenarioHeader
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class TestScenarioHeaderSpec extends BaseFunctionalSpec {

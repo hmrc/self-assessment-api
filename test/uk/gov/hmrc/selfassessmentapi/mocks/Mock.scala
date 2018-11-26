@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.mocks
+package uk.gov.hmrc.r2.selfassessmentapi.mocks
 
 import org.mockito.Matchers
 import org.mockito.Mockito

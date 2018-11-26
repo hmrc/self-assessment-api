@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.mocks.connectors
+package uk.gov.hmrc.r2.selfassessmentapi.mocks.connectors
 
 import org.scalatest.Suite
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.connectors.CrystallisationConnector
-import uk.gov.hmrc.selfassessmentapi.mocks.Mock
-import uk.gov.hmrc.selfassessmentapi.models.TaxYear
-import uk.gov.hmrc.selfassessmentapi.models.crystallisation.CrystallisationRequest
-import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
+import uk.gov.hmrc.r2.selfassessmentapi.connectors.CrystallisationConnector
+import uk.gov.hmrc.r2.selfassessmentapi.mocks.Mock
+import uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear
+import uk.gov.hmrc.r2.selfassessmentapi.models.crystallisation.CrystallisationRequest
+import uk.gov.hmrc.r2.selfassessmentapi.resources.utils.ObligationQueryParams
 
 trait MockCrystallisationConnector extends Mock {
   _: Suite =>

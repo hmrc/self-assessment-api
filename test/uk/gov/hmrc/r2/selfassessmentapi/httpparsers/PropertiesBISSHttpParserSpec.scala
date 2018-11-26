@@ -18,13 +18,13 @@ package uk.gov.hmrc.r2.selfassessmentapi.httpparsers
 
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.UnitSpec
-import uk.gov.hmrc.selfassessmentapi.fixtures.properties.PropertiesBISSFixture
-import uk.gov.hmrc.selfassessmentapi.models.Errors
-import uk.gov.hmrc.selfassessmentapi.models.Errors._
+import uk.gov.hmrc.r2.selfassessmentapi.UnitSpec
+import uk.gov.hmrc.r2.selfassessmentapi.fixtures.properties.PropertiesBISSFixture
+import uk.gov.hmrc.r2.selfassessmentapi.models.Errors
+import uk.gov.hmrc.r2.selfassessmentapi.models.Errors._
 import play.api.http.Status._
-import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesBISS
+import uk.gov.hmrc.r2.selfassessmentapi.models.des.DesErrorCode
+import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertiesBISS
 
 class PropertiesBISSHttpParserSpec extends UnitSpec {
 

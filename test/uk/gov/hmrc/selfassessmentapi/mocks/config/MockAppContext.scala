@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.mocks.config
+package uk.gov.hmrc.r2.selfassessmentapi.mocks.config
 
 import org.scalatest.Suite
-import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.mocks.Mock
+import uk.gov.hmrc.r2.selfassessmentapi.config.AppContext
+import uk.gov.hmrc.r2.selfassessmentapi.mocks.Mock
 
 trait MockAppContext extends Mock { _: Suite =>
 

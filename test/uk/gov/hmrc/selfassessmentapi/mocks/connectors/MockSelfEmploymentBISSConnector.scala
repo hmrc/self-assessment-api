@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.mocks.connectors
+package uk.gov.hmrc.r2.selfassessmentapi.mocks.connectors
 
 import org.scalatest.Suite
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentBISSConnector
-import uk.gov.hmrc.selfassessmentapi.mocks.Mock
-import uk.gov.hmrc.selfassessmentapi.models.TaxYear
+import uk.gov.hmrc.r2.selfassessmentapi.connectors.SelfEmploymentBISSConnector
+import uk.gov.hmrc.r2.selfassessmentapi.mocks.Mock
+import uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear
 
 trait MockSelfEmploymentBISSConnector extends Mock{ _: Suite =>
 

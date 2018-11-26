@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.mocks.services
+package uk.gov.hmrc.r2.selfassessmentapi.mocks.services
 
 import org.scalatest.Suite
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.mocks.Mock
-import uk.gov.hmrc.selfassessmentapi.models.TaxYear
-import uk.gov.hmrc.selfassessmentapi.models.dividends.Dividends
-import uk.gov.hmrc.selfassessmentapi.services.DividendsAnnualSummaryService
+import uk.gov.hmrc.r2.selfassessmentapi.mocks.Mock
+import uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear
+import uk.gov.hmrc.r2.selfassessmentapi.models.dividends.Dividends
+import uk.gov.hmrc.r2.selfassessmentapi.services.DividendsAnnualSummaryService
 
 trait MockDividendsAnnualSummaryService extends Mock {
   _: Suite =>

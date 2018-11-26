@@ -1,8 +1,8 @@
-package uk.gov.hmrc.selfassessmentapi.resources
+package uk.gov.hmrc.r2.selfassessmentapi.resources
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.resources.Jsons.TaxCalculation.eta
-import uk.gov.hmrc.selfassessmentapi.resources.Jsons.Errors.invalidRequest
+import uk.gov.hmrc.r2.selfassessmentapi.resources.Jsons.TaxCalculation.eta
+import uk.gov.hmrc.r2.selfassessmentapi.resources.Jsons.Errors.invalidRequest
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class TaxCalculationResourceSpec extends BaseFunctionalSpec {

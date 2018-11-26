@@ -1,11 +1,11 @@
-package uk.gov.hmrc.selfassessmentapi.resources
+package uk.gov.hmrc.r2.selfassessmentapi.resources
 
 import play.api.libs.json._
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.models.des.properties.{Common, FHL, Other}
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
-import uk.gov.hmrc.selfassessmentapi.models.{CessationReason, TaxYear}
+import uk.gov.hmrc.r2.selfassessmentapi.models.des.properties.{Common, FHL, Other}
+import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType
+import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType
+import uk.gov.hmrc.r2.selfassessmentapi.models.{CessationReason, TaxYear}
 
 object DesJsons {
 

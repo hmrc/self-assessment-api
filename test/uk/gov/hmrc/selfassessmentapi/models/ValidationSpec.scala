@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.models
+package uk.gov.hmrc.r2.selfassessmentapi.models
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.models.Validation._
-import uk.gov.hmrc.selfassessmentapi.resources.JsonSpec
+import uk.gov.hmrc.r2.selfassessmentapi.models.Validation._
+import uk.gov.hmrc.r2.selfassessmentapi.resources.JsonSpec
 import play.api.data.validation.ValidationError
 
 class ValidationSpec extends JsonSpec {

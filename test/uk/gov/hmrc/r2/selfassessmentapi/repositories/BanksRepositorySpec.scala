@@ -19,9 +19,9 @@ package uk.gov.hmrc.r2.selfassessmentapi.repositories
 import org.joda.time.{DateTime, DateTimeZone}
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
-import uk.gov.hmrc.selfassessmentapi.domain.Bank
-import uk.gov.hmrc.selfassessmentapi.models.banks.BankAnnualSummary
+import uk.gov.hmrc.r2.selfassessmentapi.MongoEmbeddedDatabase
+import uk.gov.hmrc.r2.selfassessmentapi.domain.Bank
+import uk.gov.hmrc.r2.selfassessmentapi.models.banks.BankAnnualSummary
 
 import scala.concurrent.ExecutionContext.Implicits.global
  

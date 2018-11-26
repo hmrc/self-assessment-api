@@ -1,4 +1,4 @@
-package uk.gov.hmrc.selfassessmentapi
+package uk.gov.hmrc.r2.selfassessmentapi
 
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.support.BaseFunctionalSpec

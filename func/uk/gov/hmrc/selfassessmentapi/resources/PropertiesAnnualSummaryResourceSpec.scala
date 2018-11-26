@@ -1,6 +1,6 @@
-package uk.gov.hmrc.selfassessmentapi.resources
+package uk.gov.hmrc.r2.selfassessmentapi.resources
 
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
+import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {

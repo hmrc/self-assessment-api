@@ -1,9 +1,9 @@
-package uk.gov.hmrc.selfassessmentapi
+package uk.gov.hmrc.r2.selfassessmentapi
 
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
-import uk.gov.hmrc.selfassessmentapi.models.Errors
-import uk.gov.hmrc.selfassessmentapi.resources.Jsons
+import uk.gov.hmrc.r2.selfassessmentapi.models.Errors
+import uk.gov.hmrc.r2.selfassessmentapi.resources.Jsons
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class SelfAssessmentEndOfPeriodObligationsSpec extends BaseFunctionalSpec {

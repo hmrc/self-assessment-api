@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.mocks.connectors
+package uk.gov.hmrc.r2.selfassessmentapi.mocks.connectors
 
 import org.joda.time.LocalDate
 import org.scalatest.Suite
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentPeriodConnector
-import uk.gov.hmrc.selfassessmentapi.mocks.Mock
-import uk.gov.hmrc.selfassessmentapi.models.SourceId
-import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodUpdate}
+import uk.gov.hmrc.r2.selfassessmentapi.connectors.SelfEmploymentPeriodConnector
+import uk.gov.hmrc.r2.selfassessmentapi.mocks.Mock
+import uk.gov.hmrc.r2.selfassessmentapi.models.SourceId
+import uk.gov.hmrc.r2.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodUpdate}
 
 trait MockSelfEmploymentPeriodConnector extends Mock {
   _: Suite =>

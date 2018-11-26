@@ -1,8 +1,8 @@
-package uk.gov.hmrc.selfassessmentapi
+package uk.gov.hmrc.r2.selfassessmentapi
 
 import play.api.libs.json.JsString
-import uk.gov.hmrc.selfassessmentapi.resources.{GovTestScenarioHeader, Jsons}
-import uk.gov.hmrc.selfassessmentapi.models.ErrorCode
+import uk.gov.hmrc.r2.selfassessmentapi.resources.{GovTestScenarioHeader, Jsons}
+import uk.gov.hmrc.r2.selfassessmentapi.models.ErrorCode
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
 class AgentAuthorisationSimulationSpec extends BaseFunctionalSpec {
