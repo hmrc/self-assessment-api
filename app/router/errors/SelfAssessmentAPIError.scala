@@ -20,3 +20,4 @@ sealed trait SelfAssessmentAPIError
 
 case object UnsupportedAPIVersion extends SelfAssessmentAPIError
 case object IncorrectAPIVersion extends SelfAssessmentAPIError
+case object InvalidRequest extends SelfAssessmentAPIError
