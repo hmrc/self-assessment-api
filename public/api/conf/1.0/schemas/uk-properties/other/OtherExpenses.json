@@ -39,10 +39,25 @@
       "description": "Sum of all expenses for the specified period",
       "$ref": "../../SimpleExpense.json"
     },
+    "travelCosts": {
+      "title": "Car, van and travel expenses",
+      "description": "Car, van and travel costs incurred in running a property business",
+      "$ref": "../../SimpleExpense.json"
+    },
     "residentialFinancialCost": {
       "title": "Residential Financial cost",
       "description": "Captures residential financial cost that can be deductible from rental income (tax relief)",
       "$ref": "../../SimpleExpense.json"
+    },
+    "broughtFwdResidentialFinancialCost": {
+      "title": "Brought forward relievable amount in respect of restricted residential finance costs",
+      "description": "Amount of relief brought forward for restricted residential financial costs",
+      "$ref": "../../SimpleExpense.json"
+    },
+    "rarReliefClaimed": {
+      "title": "Rent a Room: Relief Claimed",
+      "description": "Rent a Room relief claimed during the period",
+      "$ref": "../../RarReliefAmount.json"
     }
   },
   "additionalProperties": false

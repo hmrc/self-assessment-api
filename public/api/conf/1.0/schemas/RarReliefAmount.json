@@ -1,15 +1,15 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Expense",
+  "title": "Relief",
   "type": "object",
   "properties": {
     "amount": {
       "title": "Amount",
-      "description": "Expenses associated with the running of the business - Between 0 and 99999999999.99",
+      "description": "Amount of Rent a Room relief claimed - Between 0 and 99999999999.99",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
-      "maximum": 99999999999999.98,
+      "maximum": 99999999999.99,
       "example": "1000.45"
     }
   },

@@ -11,7 +11,8 @@
     "otherPropertyIncome": {"amount": 100.25}
   },
   "expenses": {
-    "consolidatedExpenses": { "amount": 200.25 },
-    "residentialFinancialCost": { "amount": 200.25 }
+    "consolidatedExpenses": { "amount": 100.25 },
+    "residentialFinancialCost": { "amount": 100.25 },
+    "broughtFwdResidentialFinancialCost": { "amount": 100.25 }
   }
 }
