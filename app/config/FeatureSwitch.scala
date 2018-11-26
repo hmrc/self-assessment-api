@@ -57,11 +57,6 @@ case class FeatureSwitch(value: Option[Configuration]) {
       case None => Seq()
     }
   }
-
-  def isRelease2Enabled: Boolean = value match {
-    case Some(config) => config.getBoolean("release-2.enabled").getOrElse(false)
-    case None => false
-  }
 }
 
 sealed case class FeatureConfig(config: Configuration) {
