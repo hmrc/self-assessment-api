@@ -17,7 +17,7 @@
 package uk.gov.hmrc.r2.selfassessmentapi.models
 
 import org.joda.time.LocalDate
-import uk.gov.hmrc.selfassessmentapi.UnitSpec
+import uk.gov.hmrc.r2.selfassessmentapi.UnitSpec
 
 class PeriodSpec extends UnitSpec {
   "createPeriodId" should {

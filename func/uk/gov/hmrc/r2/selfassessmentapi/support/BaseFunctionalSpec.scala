@@ -15,7 +15,8 @@ import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.r2.selfassessmentapi.models.{ErrorNotImplemented, Period, TaxYear}
 import uk.gov.hmrc.r2.selfassessmentapi.resources.DesJsons
-import uk.gov.hmrc.selfassessmentapi.{NinoGenerator, TestApplication}
+import uk.gov.hmrc.r2.selfassessmentapi.TestApplication
+import uk.gov.hmrc.selfassessmentapi.NinoGenerator
 import uk.gov.hmrc.support.{Http, UrlInterpolation}
 
 import scala.collection.mutable
@@ -395,6 +396,17 @@ trait BaseFunctionalSpec extends TestApplication {
         .willReturn(
           aResponse()
             .withStatus(NO_CONTENT)))
+      this
+    }
+
+    def userIsSubscribedToMtdFor(nino: Nino, mtdId: String = "abc"): Givens = {
+      stubFor(any(urlMatching(s".*/registration/business-details/nino/$nino"))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withHeader("Content-Type", "application/json")
+            .withBody(DesJsons.SelfEmployment(nino, mtdId))))
+
       this
     }
 

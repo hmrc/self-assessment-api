@@ -1,11 +1,11 @@
 package uk.gov.hmrc.r2.selfassessmentapi.resources
 
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.selfassessmentapi.models.Errors._
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
-import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId}
-import uk.gov.hmrc.support.BaseFunctionalSpec
+import uk.gov.hmrc.r2.selfassessmentapi.models.Errors._
+import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType
+import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType
+import uk.gov.hmrc.r2.selfassessmentapi.models.{Period, PeriodId}
+import uk.gov.hmrc.r2.selfassessmentapi.support.BaseFunctionalSpec
 
 class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
 
@@ -25,7 +25,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .periodWillBeCreatedFor(nino, propertyType)
           .when()
           .post(Jsons.Properties())
-          .to(s"/ni/$nino/uk-properties")
+          .to(s"/r2/ni/$nino/uk-properties")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -50,7 +50,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .periodWillBeCreatedFor(nino, propertyType)
           .when()
           .post(Jsons.Properties())
-          .to(s"/ni/$nino/uk-properties")
+          .to(s"/r2/ni/$nino/uk-properties")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -75,7 +75,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .periodWillBeCreatedFor(nino, propertyType)
           .when()
           .post(Jsons.Properties())
-          .to(s"/ni/$nino/uk-properties")
+          .to(s"/r2/ni/$nino/uk-properties")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -100,7 +100,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .periodWillBeCreatedFor(nino, propertyType)
           .when()
           .post(Jsons.Properties())
-          .to(s"/ni/$nino/uk-properties")
+          .to(s"/r2/ni/$nino/uk-properties")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -122,7 +122,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .willBeCreatedFor(nino)
           .when()
           .post(Jsons.Properties())
-          .to(s"/ni/$nino/uk-properties")
+          .to(s"/r2/ni/$nino/uk-properties")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -151,7 +151,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .willBeCreatedFor(nino)
           .when()
           .post(Jsons.Properties())
-          .to(s"/ni/$nino/uk-properties")
+          .to(s"/r2/ni/$nino/uk-properties")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -175,7 +175,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .overlappingPeriodFor(nino, propertyType)
           .when()
           .post(Jsons.Properties())
-          .to(s"/ni/$nino/uk-properties")
+          .to(s"/r2/ni/$nino/uk-properties")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -198,7 +198,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .createWithNotAllowedConsolidatedExpenses(nino, propertyType)
           .when()
           .post(Jsons.Properties())
-          .to(s"/ni/$nino/uk-properties")
+          .to(s"/r2/ni/$nino/uk-properties")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -222,7 +222,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .misalignedPeriodFor(nino, propertyType)
           .when()
           .post(Jsons.Properties())
-          .to(s"/ni/$nino/uk-properties")
+          .to(s"/r2/ni/$nino/uk-properties")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -243,7 +243,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .willBeCreatedFor(nino)
           .when()
           .post(Jsons.Properties())
-          .to(s"/ni/$nino/uk-properties")
+          .to(s"/r2/ni/$nino/uk-properties")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -264,7 +264,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .periodWillBeNotBeCreatedFor(nino, propertyType)
           .when()
           .post(period(propertyType))
-          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .to(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(404)
       }
@@ -278,7 +278,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .userIsFullyAuthorisedForTheResource
           .when()
           .post(period(propertyType, costOfServices = Some(1234.567)))
-          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .to(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(400)
           .bodyIsLike(expectedJson)
@@ -294,7 +294,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .propertyPeriodPostError(nino, propertyType)(403, DesJsons.Errors.notFoundIncomeSource)
           .when()
           .post(period(propertyType))
-          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .to(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(404)
       }
@@ -308,7 +308,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .propertyPeriodPostError(nino, propertyType)(409, DesJsons.Errors.bothExpensesSupplied)
           .when()
           .post(period(propertyType))
-          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .to(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(400)
       }
@@ -325,7 +325,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .propertyPeriodPostError(nino, propertyType)(409, DesJsons.Errors.invalidCreatePeriod)
           .when()
           .post(period(propertyType))
-          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .to(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(400)
           .bodyIsLike(Jsons.Errors.invalidRequest(InvalidPeriod.code -> ""))
@@ -341,7 +341,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .willBeCreatedFor(nino)
           .when()
           .post(invalidPeriod)
-          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .to(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(400)
           .contentTypeIsJson()
@@ -356,7 +356,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .serverErrorFor(nino)
           .when()
           .post(period(propertyType))
-          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .to(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(500)
           .bodyIsLike(Jsons.Errors.internalServerError)
@@ -370,7 +370,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .serviceUnavailableFor(nino)
           .when()
           .post(period(propertyType))
-          .to(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .to(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(500)
           .bodyIsLike(Jsons.Errors.internalServerError)
@@ -383,7 +383,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .des()
           .isATeapotFor(nino)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(500)
       }
@@ -406,7 +406,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .properties
           .periodsWillBeReturnedFor(nino, propertyType)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(200)
           .contentTypeIsJson()
@@ -424,7 +424,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .properties
           .emptyPeriodsWillBeReturnedFor(nino, propertyType)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(200)
           .contentTypeIsJson()
@@ -439,7 +439,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .properties
           .noPeriodsFor(nino, propertyType)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(404)
       }
@@ -452,7 +452,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .properties
           .doesNotExistPeriodFor(nino, propertyType)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(404)
       }
@@ -465,7 +465,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .properties
           .invalidPeriodsJsonFor(nino, propertyType)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(500)
       }
@@ -477,7 +477,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .des()
           .isATeapotFor(nino)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods")
+          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
           .thenAssertThat()
           .statusIs(500)
       }
@@ -496,7 +496,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .properties
           .periodWillBeReturnedFor(nino, propertyType)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(200)
           .contentTypeIsJson()
@@ -512,7 +512,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .properties
           .noPeriodFor(nino, propertyType)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(404)
       }
@@ -524,7 +524,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .des()
           .isATeapotFor(nino)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(500)
       }
@@ -537,7 +537,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .properties
           .invalidDateFrom(nino, propertyType)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(500)
       }
@@ -550,7 +550,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .properties
           .invalidDateTo(nino, propertyType)
           .when()
-          .get(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(500)
       }
@@ -571,7 +571,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .periodWillBeUpdatedFor(nino, propertyType)
           .when()
           .put(updatedPeriod)
-          .at(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(204)
       }
@@ -586,7 +586,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .periodWillBeUpdatedFor(nino, propertyType)
           .when()
           .put(updatedPeriod)
-          .at(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(204)
       }
@@ -601,7 +601,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .periodWillBeUpdatedFor(nino, propertyType)
           .when()
           .put(updatedPeriod)
-          .at(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(204)
       }
@@ -616,7 +616,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .periodWillBeUpdatedFor(nino, propertyType)
           .when()
           .put(updatedPeriod)
-          .at(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(204)
       }
@@ -643,7 +643,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .invalidPeriodUpdateFor(nino, propertyType)
           .when()
           .post(property)
-          .to(s"/ni/$nino/uk-properties")
+          .to(s"/r2/ni/$nino/uk-properties")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -669,7 +669,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .userIsFullyAuthorisedForTheResource
           .when()
           .put(period(propertyType, costOfServices = Some(1234.567)))
-          .at(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(400)
           .bodyIsLike(expectedJson)
@@ -687,7 +687,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .periodWillBeCreatedFor(nino, propertyType)
           .when()
           .post(Jsons.Properties())
-          .to(s"/ni/$nino/uk-properties")
+          .to(s"/r2/ni/$nino/uk-properties")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -719,7 +719,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .updateWithNotAllowedConsolidatedExpenses(nino, propertyType)
           .when()
           .post(Jsons.Properties())
-          .to(s"/ni/$nino/uk-properties")
+          .to(s"/r2/ni/$nino/uk-properties")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -747,7 +747,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .amendPropertyUpdateError(nino, propertyType)(404, DesJsons.Errors.notFoundProperty)
           .when()
           .put(period)
-          .at(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(404)
       }
@@ -762,7 +762,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .amendPropertyUpdateError(nino, propertyType)(400, DesJsons.Errors.invalidPeriod)
           .when()
           .put(period)
-          .at(s"/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
           .thenAssertThat()
           .statusIs(500)
       }

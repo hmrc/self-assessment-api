@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.r2.selfassessmentapi.resources.utils
+package uk.gov.hmrc.r2.selfassessmentapi.services
 
-import org.joda.time.LocalDate
+import uk.gov.hmrc.selfassessmentapi.UnitSpec
+import uk.gov.hmrc.selfassessmentapi.mocks.MockHttp
 
-case class ObligationQueryParams(from: Option[LocalDate], to: Option[LocalDate], status: Option[String]) {
-  val map = Map("from" -> from, "to" -> to, "status" -> status)
+trait ServiceSpec extends UnitSpec with MockHttp {
+
+  val nino = generateNino
 }

@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.r2.selfassessmentapi.models
 
-import uk.gov.hmrc.selfassessmentapi.UnitSpec
+import uk.gov.hmrc.r2.selfassessmentapi.UnitSpec
 
 class TaxYearSpec extends UnitSpec {
   "validateFormat" should {

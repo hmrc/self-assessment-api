@@ -14,13 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.r2.selfassessmentapi.config.simulation
+package uk.gov.hmrc.r2.selfassessmentapi.connectors
 
-import play.api.mvc.{RequestHeader, Result}
+import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.selfassessmentapi.UnitSpec
+import uk.gov.hmrc.r2.selfassessmentapi.mocks.MockHttp
+import uk.gov.hmrc.r2.selfassessmentapi.mocks.config.MockAppContext
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
-trait Simulation {
-  def apply(f: RequestHeader => Future[Result], rh: RequestHeader, method: String)(implicit ec: ExecutionContext): Future[Result]
+trait ConnectorSpec extends UnitSpec
+  with MockHttp
+  with MockAppContext {
+
+  val nino: Nino = generateNino
+
+  implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val ec: ExecutionContext =  scala.concurrent.ExecutionContext.global
+
+  val desToken = "test-token"
+  val desEnv = "test-env"
 }

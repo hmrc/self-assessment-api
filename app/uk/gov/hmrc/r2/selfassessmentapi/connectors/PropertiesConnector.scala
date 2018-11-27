@@ -19,9 +19,9 @@ package uk.gov.hmrc.r2.selfassessmentapi.connectors
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.r2.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.NewProperties
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.r2.selfassessmentapi.resources.wrappers.PropertiesResponse
 
-import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 object PropertiesConnector extends PropertiesConnector {
