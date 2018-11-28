@@ -24,7 +24,10 @@ trait MicroService {
   lazy val scoverageSettings: Seq[Def.Setting[_]] = {
 
     Seq(
-      ScoverageKeys.coverageExcludedPackages := "<empty>;.*(Reverse|BuildInfo|Routes).*",
+      ScoverageKeys.coverageExcludedPackages := "<empty>;.*(Reverse|BuildInfo|Routes).*;" +
+        "uk.gov.hmrc.r2.selfassessmentapi.config.*; uk.gov.hmrc.r2.selfassessmentapi.domain.*;" +
+        "uk.gov.hmrc.r2.selfassessmentapi.services.*;" +
+        "uk.gov.hmrc.selfassessmentapi.domain.*;",
       ScoverageKeys.coverageMinimum := 85,
       ScoverageKeys.coverageFailOnMinimum := true,
       ScoverageKeys.coverageHighlighting := true

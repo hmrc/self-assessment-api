@@ -1,10 +1,12 @@
 package uk.gov.hmrc.r2.selfassessmentapi.resources
 
 import play.api.libs.json._
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear
 import uk.gov.hmrc.r2.selfassessmentapi.models.des.properties.{Common, FHL, Other}
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType
+import uk.gov.hmrc.selfassessmentapi.models.CessationReason
 
 object DesJsons {
 
@@ -89,6 +91,255 @@ object DesJsons {
     val requiredIntentToCrystallise = error("REQUIRED_INTENT_TO_CRYSTALLISE", "The remote endpoint has indicated that the Crystallisation could occur only after an intent to crystallise is sent")
     val alreadySubmitted = error("ALREADY_SUBMITTED", "You cannot submit a statement for the same accounting period twice.")
     val notAllowedConsolidatedExpenses = error("NOT_ALLOWED_SIMPLIFIED_EXPENSES", "The remote endpoint has indicated that the submission contains simplified expenses but the accumulative turnover amount exceeds the threshold.")
+  }
+
+  object SelfEmployment {
+    def apply(nino: Nino,
+              mtdId: String,
+              id: String = "123456789012345",
+              accPeriodStart: String = "2017-04-06",
+              accPeriodEnd: String = "2018-04-05",
+              accountingType: String = "cash",
+              commencementDate: String = "2017-01-01",
+              cessationDate: String = "2017-01-02",
+              cessationReason: String = CessationReason.Bankruptcy.toString,
+              tradingName: String = "Acme Ltd",
+              description: String = "Accountancy services",
+              addressLineOne: String = "1 Acme Rd.",
+              addressLineTwo: String = "London",
+              addressLineThree: String = "Greater London",
+              addressLineFour: String = "United Kingdom",
+              postalCode: String = "A9 9AA",
+              countryCode: String = "GB"): String = {
+      s"""
+         |{
+         |   "safeId": "XE00001234567890",
+         |   "nino": "$nino",
+         |   "mtdbsa": "$mtdId",
+         |   "propertyIncome": false,
+         |   "businessData": [
+         |      {
+         |         "incomeSourceId": "$id",
+         |         "accountingPeriodStartDate": "$accPeriodStart",
+         |         "accountingPeriodEndDate": "$accPeriodEnd",
+         |         "tradingName": "$tradingName",
+         |         "businessAddressDetails": {
+         |            "addressLine1": "$addressLineOne",
+         |            "addressLine2": "$addressLineTwo",
+         |            "addressLine3": "$addressLineThree",
+         |            "addressLine4": "$addressLineFour",
+         |            "postalCode": "$postalCode",
+         |            "countryCode": "$countryCode"
+         |         },
+         |         "businessContactDetails": {
+         |            "phoneNumber": "01332752856",
+         |            "mobileNumber": "07782565326",
+         |            "faxNumber": "01332754256",
+         |            "emailAddress": "stephen@manncorpone.co.uk"
+         |         },
+         |         "tradingStartDate": "$commencementDate",
+         |         "cashOrAccruals": "$accountingType",
+         |         "seasonal": true,
+         |         "cessationDate": "$cessationDate",
+         |         "cessationReason": "$cessationReason"
+         |      }
+         |   ]
+         |}
+         |
+       """.stripMargin
+    }
+
+    def emptySelfEmployment(nino: Nino, mtdId: String): String = {
+      s"""
+         |{
+         |   "safeId": "XE00001234567890",
+         |   "nino": "$nino",
+         |   "mtdbsa": "$mtdId",
+         |   "propertyIncome": false
+         |}
+       """.stripMargin
+    }
+
+    def createResponse(id: String, mtdId: String): String = {
+      s"""
+         |{
+         |  "safeId": "XA0001234567890",
+         |  "mtdsba": "$mtdId",
+         |  "incomeSources": [
+         |    {
+         |      "incomeSourceId": "$id"
+         |    }
+         |  ]
+         |}
+      """.stripMargin
+    }
+
+    object Period {
+      def apply(id: String = "abc", from: String = "2017-04-05", to: String = "2018-04-04"): String = {
+        s"""
+           |{
+           |   "id": "$id",
+           |   "from": "$from",
+           |   "to": "$to",
+           |   "financials": {
+           |      "incomes": {
+           |         "turnover": 200.00,
+           |         "other": 200.00
+           |      },
+           |      "deductions": {
+           |         "costOfGoods": {
+           |            "amount": 200.00,
+           |            "disallowableAmount": 200.00
+           |         },
+           |         "constructionIndustryScheme": {
+           |            "amount": 200.00,
+           |            "disallowableAmount": 200.00
+           |         },
+           |         "staffCosts": {
+           |            "amount": 200.00,
+           |            "disallowableAmount": 200.00
+           |         },
+           |         "travelCosts": {
+           |            "amount": 200.00,
+           |            "disallowableAmount": 200.00
+           |         },
+           |         "premisesRunningCosts": {
+           |            "amount": 200.00,
+           |            "disallowableAmount": 200.00
+           |         },
+           |         "maintenanceCosts": {
+           |            "amount": 200.00,
+           |            "disallowableAmount": 200.00
+           |         },
+           |         "adminCosts": {
+           |            "amount": 200.00,
+           |            "disallowableAmount": 200.00
+           |         },
+           |         "advertisingCosts": {
+           |            "amount": 200.00,
+           |            "disallowableAmount": 200.00
+           |         },
+           |         "interest": {
+           |            "amount": 200.00,
+           |            "disallowableAmount": 200.00
+           |         },
+           |         "financialCharges": {
+           |            "amount": 200.00,
+           |            "disallowableAmount": 200.00
+           |         },
+           |         "badDebt": {
+           |            "amount": 200.00,
+           |            "disallowableAmount": 200.00
+           |         },
+           |         "professionalFees": {
+           |            "amount": 200.00,
+           |            "disallowableAmount": 200.00
+           |         },
+           |         "depreciation": {
+           |            "amount": 200.00,
+           |            "disallowableAmount": 200.00
+           |         },
+           |         "businessEntertainmentCosts": {
+           |           "amount": 200.00,
+           |           "disallowableAmount": 200.00
+           |         },
+           |         "other": {
+           |            "amount": 200.00,
+           |            "disallowableAmount": 200.00
+           |         }
+           |      }
+           |   }
+           |}
+         """.stripMargin
+      }
+
+      def periods: String = {
+        s"""
+           |{
+           |  "periods": [
+           |      {
+           |          "from": "2017-04-06",
+           |          "to": "2017-07-04",
+           |          "transactionReference": "abc"
+           |      },
+           |      {
+           |          "from": "2017-07-05",
+           |          "to": "2017-08-04",
+           |          "transactionReference": "def"
+           |      }
+           |   ]
+           |}
+         """.stripMargin
+      }
+
+      def emptyPeriods: String = {
+        s"""
+           |{
+           |  "periods": []
+           |}
+         """.stripMargin
+      }
+
+      def createResponse(id: String = "123456789012345"): String = {
+        s"""
+           |{
+           |   "transactionReference": "$id"
+           |}
+        """.stripMargin
+      }
+    }
+
+    object AnnualSummary {
+      def apply(): String = {
+        s"""
+           |{
+           |   "annualAdjustments": {
+           |      "includedNonTaxableProfits": 200.00,
+           |      "basisAdjustment": 200.00,
+           |      "overlapReliefUsed": 200.00,
+           |      "accountingAdjustment": 200.00,
+           |      "averagingAdjustment": 200.00,
+           |      "lossBroughtForward": 200.00,
+           |      "outstandingBusinessIncome": 200.00,
+           |      "balancingChargeBpra": 200.00,
+           |      "balancingChargeOther": 200.00,
+           |      "goodsAndServicesOwnUse": 200.00,
+           |      "overlapProfitCarriedForward": 500.25,
+           |      "overlapProfitBroughtForward": 500.25,
+           |      "lossCarriedForwardTotal": 500.25,
+           |      "cisDeductionsTotal": 500.25,
+           |      "taxDeductionsFromTradingIncome": 500.25,
+           |      "class4NicProfitAdjustment": 500.25
+           |   },
+           |   "annualAllowances": {
+           |      "annualInvestmentAllowance": 200.00,
+           |      "businessPremisesRenovationAllowance": 200.00,
+           |      "capitalAllowanceMainPool": 200.00,
+           |      "capitalAllowanceSpecialRatePool": 200.00,
+           |      "zeroEmissionGoodsVehicleAllowance": 200.00,
+           |      "enhanceCapitalAllowance": 200.00,
+           |      "allowanceOnSales": 200.00,
+           |      "capitalAllowanceSingleAssetPool": 500.25
+           |   },
+           |   "annualNonFinancials": {
+           |      "businessDetailsChangedRecently": true,
+           |      "payClass2Nics": false,
+           |      "exemptFromPayingClass4Nics": true,
+           |      "class4NicsExemptionReason": "003"
+           |   }
+           |}
+       """.stripMargin
+      }
+
+      val response: String = {
+        s"""
+           |{
+           |  "transactionReference": "abc"
+           |}
+         """.stripMargin
+      }
+    }
+
   }
 
   object Properties {

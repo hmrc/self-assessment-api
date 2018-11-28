@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.r2.selfassessmentapi.resources.utils
+package uk.gov.hmrc.r2.selfassessmentapi.models
 
 import org.joda.time.LocalDate
+import uk.gov.hmrc.r2.selfassessmentapi.UnitSpec
 
-case class EopsObligationQueryParams(from: Option[LocalDate], to: Option[LocalDate]) {
-  val map = Map("from" -> from, "to" -> to)
+class PeriodSpec extends UnitSpec {
+  "createPeriodId" should {
+    "concatenate the from and to dates separated by an underscore" in {
+      (new Period {
+        override val from: LocalDate = LocalDate.parse("2017-04-07")
+        override val to: LocalDate = LocalDate.parse("2018-04-07")
+      } periodId) shouldBe "2017-04-07_2018-04-07"
+    }
+  }
 }

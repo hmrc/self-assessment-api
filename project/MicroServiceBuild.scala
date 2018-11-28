@@ -1,4 +1,4 @@
-import play.sbt.routes.RoutesKeys._
+import play.sbt.routes.RoutesKeys.{routesImport, _}
 import sbt._
 import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
@@ -11,8 +11,7 @@ object MicroServiceBuild extends Build with MicroService {
 
   override lazy val appDependencies: Seq[ModuleID] = AppDependencies()
   override lazy val playSettings: Seq[Setting[_]] = Seq(
-    routesImport += "uk.gov.hmrc.selfassessmentapi.resources.Binders._"
-  )
+    routesImport += "uk.gov.hmrc.selfassessmentapi.resources.Binders._")
 }
 
 private object AppDependencies {

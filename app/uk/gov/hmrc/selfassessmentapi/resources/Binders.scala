@@ -22,10 +22,7 @@ import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
 import play.api.mvc.{PathBindable, QueryStringBindable}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.models.Errors.InvalidDate
 import uk.gov.hmrc.selfassessmentapi.models.SourceType.SourceType
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType
-import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.{SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.utils.{EopsObligationQueryParams, ObligationQueryParams}
 
@@ -79,18 +76,29 @@ object Binders {
     }
   }
 
-  implicit val propertyTypeBinder = new PathBindable[PropertyType] {
+  implicit val r2PropertyTypeBinder = new PathBindable[uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType] {
 
-    override def unbind(key: String, value: PropertyType): String = value.toString
+    override def unbind(key: String, value: uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType): String = value.toString
 
-    override def bind(key: String, value: String): Either[String, PropertyType] = {
-      PropertyType.values.find(propType => value.equals(propType.toString)) match {
+    override def bind(key: String, value: String): Either[String, uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType] = {
+      uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.values.find(propType => value.equals(propType.toString)) match {
         case Some(v) => Right(v)
         case None => Left("ERROR_INVALID_PROPERTY_TYPE")
       }
     }
   }
 
+  implicit val propertyTypeBinder = new PathBindable[uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType] {
+
+    override def unbind(key: String, value: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType): String = value.toString
+
+    override def bind(key: String, value: String): Either[String, uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType] = {
+      uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.values.find(propType => value.equals(propType.toString)) match {
+        case Some(v) => Right(v)
+        case None => Left("ERROR_INVALID_PROPERTY_TYPE")
+      }
+    }
+  }
   val format: String = "yyy-MM-dd"
 
   implicit val datePathBinder = new PathBindable[LocalDate] {
