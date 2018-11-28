@@ -116,7 +116,11 @@ object Other {
                         costOfServices: Option[BigDecimal] = None,
                         other: Option[BigDecimal] = None,
                         consolidatedExpenses: Option[BigDecimal] = None,
-                        residentialFinancialCost: Option[BigDecimal] = None)
+                        residentialFinancialCost: Option[BigDecimal] = None,
+                        travelCosts: Option[BigDecimal] = None,
+                        broughtFwdResidentialFinancialCost: Option[BigDecimal] = None,
+                        rarRentReceived: Option[BigDecimal] = None,
+                        rarReliefClaimed: Option[BigDecimal] = None)
 
   object Deductions {
     implicit val format: OFormat[Deductions] = Json.format[Deductions]
@@ -129,7 +133,11 @@ object Other {
                  costOfServices = o.costOfServices.map(_.amount),
                  consolidatedExpenses = o.consolidatedExpenses.map(_.amount),
                  residentialFinancialCost = o.residentialFinancialCost.map(_.amount),
-                 other = o.other.map(_.amount))
+                 other = o.other.map(_.amount),
+                 travelCosts = o.travelCosts.map(_.amount),
+                 broughtFwdResidentialFinancialCost = o.broughtFwdResidentialFinancialCost.map(_.amount),
+                 rarRentReceived = o.rarRentReceived.map(_.amount),
+                 rarReliefClaimed = o.rarReliefClaimed.map(_.amount))
   }
 
   case class Financials(incomes: Option[Incomes] = None, deductions: Option[Deductions] = None)

@@ -834,7 +834,8 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         premiumsOfLeaseGrant = Some(200.22),
         reversePremiums = 22.35,
         otherPropertyIncome = Some(13.10),
-        consolidatedExpenses = Some(100.55)
+        consolidatedExpenses = Some(100.55),
+        broughtFwdResidentialFinancialCost = Some(13.10)
       )
     case PropertyType.OTHER if onlyResidential =>
       Jsons.Properties.residentialPeriod(

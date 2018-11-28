@@ -114,6 +114,7 @@ object FHL {
                       professionalFees: Option[Expense] = None,
                       costOfServices: Option[Expense] = None,
                       consolidatedExpenses: Option[Expense] = None,
+
                       other: Option[Expense] = None) {
     def hasExpenses: Boolean =
       premisesRunningCosts.isDefined ||
@@ -289,14 +290,22 @@ object Other {
                       costOfServices: Option[Expense] = None,
                       consolidatedExpenses: Option[Expense] = None,
                       residentialFinancialCost: Option[Expense] = None,
-                      other: Option[Expense] = None) {
+                      other: Option[Expense] = None,
+                      travelCosts: Option[Expense] = None,
+                      broughtFwdResidentialFinancialCost: Option[Expense] = None,
+                      rarRentReceived: Option[Expense] = None,
+                      rarReliefClaimed: Option[Expense] = None
+                     ) {
     def hasExpenses: Boolean =
       premisesRunningCosts.isDefined ||
         repairsAndMaintenance.isDefined ||
         financialCosts.isDefined ||
         professionalFees.isDefined ||
         costOfServices.isDefined ||
-        other.isDefined
+        other.isDefined ||
+        travelCosts.isDefined ||
+        rarRentReceived.isDefined ||
+        rarReliefClaimed.isDefined
   }
 
   object Expenses {
@@ -311,7 +320,11 @@ object Other {
         costOfServices = o.costOfServices.map(Expense(_)),
         consolidatedExpenses = o.consolidatedExpenses.map(Expense(_)),
         residentialFinancialCost = o.residentialFinancialCost.map(Expense(_)),
-        other = o.other.map(Expense(_))
+        other = o.other.map(Expense(_)),
+        travelCosts = o.travelCosts.map(Expense(_)),
+        broughtFwdResidentialFinancialCost = o.broughtFwdResidentialFinancialCost.map(Expense(_)),
+        rarRentReceived = o.rarRentReceived.map(Expense(_)),
+        rarReliefClaimed = o.rarReliefClaimed.map(Expense(_))
       )
   }
 
