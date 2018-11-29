@@ -10,8 +10,8 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
-      "maximum": 99999999999999.98,
-      "example": "10000.89"
+      "maximum": 99999999999.99,
+      "example": "10000.45"
     },
     "taxDeducted": {
       "title": "Tax deducted",
@@ -19,8 +19,8 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
-      "maximum": 99999999999999.98,
-      "example": "10000.89"
+      "maximum": 99999999999.99,
+      "example": "10000.45"
     }
   },
   "required": [

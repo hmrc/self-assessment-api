@@ -29,11 +29,21 @@
       "description": "Cost of services provided, including wages",
       "$ref": "../../SimpleExpense.json"
     },
+    "travelCosts": {
+      "title": "Travel costs",
+      "description": "Car, van and travel costs incurred in running a property business",
+      "$ref": "../../SimpleExpense.json"
+    },
     "other": {
       "title": "Other",
       "description": "Other allowable property expenses",
       "$ref": "../../SimpleExpense.json"
     },
+    "rarReliefClaimed": {
+      "title": "Rent a Room relief claimed",
+      "description": "Amount of Rent a Room relief claimed during the period",
+      "$ref": "../../RarReliefAmount.json"
+    },    
     "consolidatedExpenses": {
       "title": "Consolidated expenses",
       "description": "Sum of all expenses for the specified period",

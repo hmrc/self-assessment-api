@@ -28,7 +28,24 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     Keys.fork in Test := true,
     javaOptions in Test += "-Dlogger.resource=logback-test.xml",
-    scalaVersion := "2.11.11"
+    scalaVersion in ThisBuild := "2.11.12",
+    scalacOptions ++= Seq(
+      "-unchecked",
+      "-deprecation",
+      "-encoding", "UTF-8",
+      "-feature",
+      "-Xfuture",
+      "-Xcheckinit",
+      "-explaintypes",
+      "-Ypartial-unification",
+      "-language:postfixOps",
+      "-language:higherKinds",
+      "-language:implicitConversions",
+      "-Ywarn-dead-code",
+      "-Ywarn-value-discard",
+      "-Ywarn-numeric-widen",
+      "-Ywarn-unused"
+    )
   )
   .configs(itTest)
   .settings(inConfig(itTest)(Defaults.testSettings))

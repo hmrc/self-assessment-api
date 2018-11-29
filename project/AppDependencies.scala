@@ -22,9 +22,9 @@ object AppDependencies {
     "org.scalatest" %% "scalatest" % scalaTestVersion % scope,
     "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
     "org.pegdown" % "pegdown" % pegdownVersion % scope,
-    "org.mockito" % "mockito-core" % "2.18.3" % scope,
+    "org.mockito" % "mockito-core" % "2.23.4" % scope,
     "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-    "com.github.tomakehurst" % "wiremock" % "2.17.0" % scope,
+    "com.github.tomakehurst" % "wiremock" % "2.19.0" % scope,
     "org.scoverage" %% "scalac-scoverage-runtime" % "1.2.0" % scope
   )
 
