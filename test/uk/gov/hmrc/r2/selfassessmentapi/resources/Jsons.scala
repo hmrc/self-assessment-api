@@ -217,7 +217,11 @@ object Jsons {
                     costOfServices: Option[BigDecimal] = None,
                     otherCost: Option[BigDecimal] = None,
                     residentialFinancialCost: Option[BigDecimal] = None,
-                    consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
+                    consolidatedExpenses: Option[BigDecimal] = None,
+                    travelCosts: Option[BigDecimal] = None,
+                    broughtFwdResidentialFinancialCost: Option[BigDecimal] = None,
+                    rarRentReceived: Option[BigDecimal] = None,
+                    rarReliefClaimed: Option[BigDecimal] = None): JsValue = {
 
       val from =
         fromDate
@@ -256,7 +260,11 @@ object Jsons {
                                     costOfServices,
                                     otherCost,
                                     residentialFinancialCost,
-                                    consolidatedExpenses)}
+                                    consolidatedExpenses,
+                                    travelCosts,
+                                    broughtFwdResidentialFinancialCost,
+                                    rarRentReceived,
+                                    rarReliefClaimed)}
            |}
        """.stripMargin)
     }
@@ -268,7 +276,11 @@ object Jsons {
                           costOfServices: Option[BigDecimal] = None,
                           otherCost: Option[BigDecimal] = None,
                           residentialFinancialCost: Option[BigDecimal] = None,
-                          consolidatedExpenses: Option[BigDecimal] = None): String = {
+                          consolidatedExpenses: Option[BigDecimal] = None,
+                          travelCosts: Option[BigDecimal] = None,
+                          broughtFwdResidentialFinancialCost: Option[BigDecimal] = None,
+                          rarRentReceived: Option[BigDecimal] = None,
+                          rarReliefClaimed: Option[BigDecimal] = None): String = {
       Json
         .toJson(
           Other.Expenses(
@@ -279,7 +291,11 @@ object Jsons {
             costOfServices.map(Other.Expense(_)),
             consolidatedExpenses.map(Other.Expense(_)),
             residentialFinancialCost.map(Other.Expense(_)),
-            otherCost.map(Other.Expense(_))
+            otherCost.map(Other.Expense(_)),
+            travelCosts.map(Other.Expense(_)),
+            broughtFwdResidentialFinancialCost.map(Other.Expense(_)),
+            rarRentReceived.map(Other.Expense(_)),
+            rarReliefClaimed.map(Other.Expense(_))
           ))
         .toString
     }
@@ -298,7 +314,8 @@ object Jsons {
                             costOfServices: Option[BigDecimal] = None,
                             otherCost: Option[BigDecimal] = None,
                             residentialFinancialCost: Option[BigDecimal] = None,
-                            consolidatedExpenses: Option[BigDecimal] = None): JsValue = {
+                            consolidatedExpenses: Option[BigDecimal] = None,
+                            broughtFwdResidentialFinancialCost: Option[BigDecimal] = None): JsValue = {
 
       val from =
         fromDate
@@ -327,6 +344,14 @@ object Jsons {
           }
           .getOrElse("")
 
+      val be = broughtFwdResidentialFinancialCost
+          .map { be =>
+            s"""
+               | ,"broughtFwdResidentialFinancialCost": { "amount": $be }
+         """.stripMargin
+          }
+          .getOrElse("")
+
       Json.parse(s"""
                     |{
                     |  $from
@@ -340,6 +365,7 @@ object Jsons {
                     |  },
                     |  "expenses": {
                     |    $ce
+                    |    $be
                     |  }
                     |}
        """.stripMargin)

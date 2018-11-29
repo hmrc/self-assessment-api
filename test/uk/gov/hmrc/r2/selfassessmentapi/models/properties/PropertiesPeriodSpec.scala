@@ -234,6 +234,10 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         costOfServices <- Gen.option(genExpense)
         residentialFinancialCost <- Gen.option(genExpense)
         other <- Gen.option(genExpense)
+        travelCosts <- Gen.option(genExpense)
+        broughtFwdResidentialFinancialCost <- Gen.option(genExpense)
+        rarRentReceived <- Gen.option(genExpense)
+        rarReliefClaimed <- Gen.option(genExpense)
       } yield
         Other
           .Expenses(premisesRunningCosts = premisesRunningCosts,
@@ -242,7 +246,11 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
             professionalFees = professionalFees,
             costOfServices = costOfServices,
             residentialFinancialCost = residentialFinancialCost,
-            other = other)
+            other = other,
+            travelCosts = travelCosts,
+            broughtFwdResidentialFinancialCost = broughtFwdResidentialFinancialCost,
+            rarRentReceived = rarRentReceived,
+            rarReliefClaimed = rarReliefClaimed)
 
     val genExpensesBoth: Gen[Other.Expenses] =
       for {
@@ -254,6 +262,10 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         consolidatedExpenses <- Gen.option(genExpense)
         residentialFinancialCost <- Gen.option(genExpense)
         other <- Gen.option(genExpense)
+        travelCosts <- Gen.option(genExpense)
+        broughtFwdResidentialFinancialCost <- Gen.option(genExpense)
+        rarRentReceived <- Gen.option(genExpense)
+        rarReliefClaimed <- Gen.option(genExpense)
       } yield
         Other
           .Expenses(premisesRunningCosts,
@@ -263,13 +275,19 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
                     costOfServices,
                     consolidatedExpenses,
                     residentialFinancialCost,
-                    other)
+                    other,
+                    travelCosts,
+                    broughtFwdResidentialFinancialCost,
+                    rarRentReceived,
+                    rarReliefClaimed)
 
     val genConsolidatedExpenses: Gen[Other.Expenses] =
       for {
         consolidatedExpenses <- Gen.option(genExpense)
         residentialFinancialCost <- Gen.option(genExpense)
-      } yield Other.Expenses(consolidatedExpenses = consolidatedExpenses, residentialFinancialCost = residentialFinancialCost)
+        broughtFwdResidentialFinancialCost <- Gen.option(genExpense)
+      } yield Other.Expenses(consolidatedExpenses = consolidatedExpenses, residentialFinancialCost = residentialFinancialCost,
+        broughtFwdResidentialFinancialCost = broughtFwdResidentialFinancialCost)
 
     val genResidentialExpenses: Gen[Other.Expenses] =
       for {
