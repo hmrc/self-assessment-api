@@ -17,7 +17,7 @@
 package router.services
 
 import mocks.config.MockAppConfig
-import mocks.connectors.MockPropertyConnector
+import mocks.connectors.MockSelfAssessmentConnector
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -28,13 +28,13 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import scala.concurrent.Future
 
 class PropertyPeriodServiceSpec extends UnitSpec
-  with MockPropertyConnector with MockAppConfig {
+  with MockSelfAssessmentConnector with MockAppConfig {
 
   class Setup {
 
     object service extends PropertyPeriodService(
       mockAppConfig,
-      mockPropertyConnector
+      mockSelfAssessmentConnector
     )
   }
 
@@ -50,7 +50,7 @@ class PropertyPeriodServiceSpec extends UnitSpec
         val release2EnabledConfig = Configuration("release-2.enabled" -> false)
         MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
 
-        MockPropertyConnector.post(request.uri, requestBody)
+        MockSelfAssessmentConnector.post(request.uri, requestBody)
           .returns(Future.successful(Right(response)))
 
         val result = await(service.create(requestBody))
@@ -63,7 +63,7 @@ class PropertyPeriodServiceSpec extends UnitSpec
         val release2EnabledConfig = Configuration("release-2.enabled" -> true)
         MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
 
-        MockPropertyConnector.post(s"/r2${request.uri}", requestBody)
+        MockSelfAssessmentConnector.post(s"/r2${request.uri}", requestBody)
           .returns(Future.successful(Right(response)))
 
         val result = await(service.create(requestBody))
@@ -77,7 +77,7 @@ class PropertyPeriodServiceSpec extends UnitSpec
         val release2EnabledConfig = Configuration("release-2.enabled" -> false)
         MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
 
-        MockPropertyConnector.post(request.uri, requestBody)
+        MockSelfAssessmentConnector.post(request.uri, requestBody)
           .returns(Future.successful(Right(response)))
 
         val result = await(service.create(requestBody))
@@ -91,7 +91,7 @@ class PropertyPeriodServiceSpec extends UnitSpec
         val release2EnabledConfig = Configuration("release-2.enabled" -> true)
         MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
 
-        MockPropertyConnector.post(s"/r2${request.uri}", requestBody)
+        MockSelfAssessmentConnector.post(s"/r2${request.uri}", requestBody)
           .returns(Future.successful(Right(response)))
 
         val result = await(service.create(requestBody))

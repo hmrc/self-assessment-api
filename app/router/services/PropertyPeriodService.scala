@@ -20,7 +20,7 @@ import config.{AppConfig, FeatureSwitch}
 import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.Request
-import router.connectors.PropertyConnector
+import router.connectors.SelfAssessmentConnector
 import router.constants.Versions.{VERSION_1, VERSION_2}
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.Future
 
 class PropertyPeriodService @Inject()(val appConfig: AppConfig,
-                                      val propertyConnector: PropertyConnector) extends Service {
+                                      val selfAssessmentConnector: SelfAssessmentConnector) extends Service {
 
   def create(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
 
@@ -43,8 +43,8 @@ class PropertyPeriodService @Inject()(val appConfig: AppConfig,
     }
 
     withApiVersion {
-      case Some(VERSION_1) => propertyConnector.post(uri, body)
-      case Some(VERSION_2) => propertyConnector.post(uri, body)(convertHeaderToVersion1, req)
+      case Some(VERSION_1) => selfAssessmentConnector.post(uri, body)
+      case Some(VERSION_2) => selfAssessmentConnector.post(uri, body)(convertHeaderToVersion1, req)
     }
   }
 }
