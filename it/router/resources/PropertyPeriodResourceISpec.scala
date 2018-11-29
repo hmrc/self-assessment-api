@@ -28,7 +28,7 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
     "return a 201 with no json response body" when {
       "the downstream response from the self assessment api version 1.0 returns a 201 with no json response body" in {
         val incomingUrl = "/ni/AA111111A/uk-properties/other/periods"
-        val outgoingUrl = "/r2/ni/AA111111A/uk-properties/other/periods"
+        val outgoingUrl = "/ni/AA111111A/uk-properties/other/periods"
 
         Given()
           .theClientIsAuthorised
@@ -50,7 +50,7 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
 
       "the downstream response from the self assessment api version 2.0 returns a 201 with no json response body" in {
         val incomingUrl = "/ni/AA111111A/uk-properties/other/periods"
-        val outgoingUrl = "/r2/ni/AA111111A/uk-properties/other/periods"
+        val outgoingUrl = "/ni/AA111111A/uk-properties/other/periods"
 
         Given()
           .theClientIsAuthorised
