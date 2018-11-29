@@ -5,7 +5,8 @@
     "rentIncome": {
       "amount": 100.25,
       "taxDeducted": 100.25
-    }
+    },
+    "rarRentReceived" : { "amount" : 100.44 }
   },
   "expenses": {
     "premisesRunningCosts": { "amount": 100.25 },
@@ -13,6 +14,8 @@
     "financialCosts": { "amount": 100.25 },
     "professionalFees": { "amount": 100.25 },
     "costOfServices": { "amount": 100.25},
-    "other": { "amount": 100.25 }
+    "travelCosts": { "amount": 100.25},
+    "other": { "amount": 100.25 },
+    "rarReliefClaimed" : { "amount" : 100.44 }
   }
 }

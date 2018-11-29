@@ -175,7 +175,7 @@
   },
   "calculationMessageCount": 0,
   "annualAllowances": {
-    "personalAllowance": 11850.00,
+    "personalAllowance": 11850,
     "personalAllowanceThreshold": 12000,
     "reducedPersonalAllowance": 100000,
     "giftAidExtender": 540

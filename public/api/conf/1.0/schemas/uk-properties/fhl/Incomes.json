@@ -2,12 +2,17 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "title": "Incomes",
-  "description": "Do not include furnished holiday lettings, Real Estate Investment Trust or Property Authorised Investment Funds dividends/distributions here",
+  "description": "Do not include non-furnished holiday lettings, Real Estate Investment Trust or Property Authorised Investment Funds dividends/distributions here",
   "properties": {
     "rentIncome": {
       "title": "rentIncome",
       "description": "Total rents and other income from property",
       "$ref": "../../Income.json"
+    },
+    "rarRentReceived": {
+      "title": "Rent a Room Income Received",
+      "description": "Rental income received under the Rent a Room scheme for the period",
+      "$ref": "../../RaRIncome.json"
     }
   },
   "additionalProperties": false
