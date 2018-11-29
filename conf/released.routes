@@ -1,66 +1,68 @@
-->         /                     health.Routes
+->          /                                                                           health.Routes
 
-GET        /admin/metrics        @com.kenshoo.play.metrics.MetricsController.metrics
+->          /r2                                                                         r2.Routes
+
+GET         /admin/metrics                                                              @com.kenshoo.play.metrics.MetricsController.metrics
 
 ####################
 # Self-Employments #
 ####################
-GET /ni/:nino/self-employments   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentsResource.retrieveAll(nino: uk.gov.hmrc.domain.Nino)
-GET /ni/:nino/self-employments/:id   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentsResource.retrieve(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
+GET         /ni/:nino/self-employments                                                  uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentsResource.retrieveAll(nino: uk.gov.hmrc.domain.Nino)
+GET         /ni/:nino/self-employments/:id                                              uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentsResource.retrieve(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
 
 ####################
 #    Self-Employments BISS   #
 ####################
-GET /ni/:nino/self-employments/:selfEmploymentId/:taxYear/income-summary  uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentBISSResource.getSummary(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear, selfEmploymentId: String)
+GET         /ni/:nino/self-employments/:selfEmploymentId/:taxYear/income-summary        uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentBISSResource.getSummary(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear, selfEmploymentId: String)
 
 # Obligations
-GET /ni/:nino/self-employments/:id/obligations   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentObligationsResource.retrieveObligations(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
+GET         /ni/:nino/self-employments/:id/obligations                                  uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentObligationsResource.retrieveObligations(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
 
 # Self-Employments Periodic Summaries
-POST /ni/:nino/self-employments/:id/periods    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentPeriodResource.createPeriod(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
-GET /ni/:nino/self-employments/:id/periods    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentPeriodResource.retrievePeriods(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
-GET /ni/:nino/self-employments/:id/periods/:periodId    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentPeriodResource.retrievePeriod(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, periodId: uk.gov.hmrc.selfassessmentapi.models.PeriodId)
-PUT /ni/:nino/self-employments/:id/periods/:periodId    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentPeriodResource.updatePeriod(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, periodId: uk.gov.hmrc.selfassessmentapi.models.PeriodId)
+POST        /ni/:nino/self-employments/:id/periods                                      uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentPeriodResource.createPeriod(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
+GET         /ni/:nino/self-employments/:id/periods                                      uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentPeriodResource.retrievePeriods(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
+GET         /ni/:nino/self-employments/:id/periods/:periodId                            uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentPeriodResource.retrievePeriod(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, periodId: uk.gov.hmrc.selfassessmentapi.models.PeriodId)
+PUT         /ni/:nino/self-employments/:id/periods/:periodId                            uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentPeriodResource.updatePeriod(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, periodId: uk.gov.hmrc.selfassessmentapi.models.PeriodId)
 
 # Self-Employments Annual Summaries
-PUT /ni/:nino/self-employments/:id/:taxYear    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentAnnualSummaryResource.updateAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
-GET /ni/:nino/self-employments/:id/:taxYear    uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentAnnualSummaryResource.retrieveAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+PUT         /ni/:nino/self-employments/:id/:taxYear                                     uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentAnnualSummaryResource.updateAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+GET         /ni/:nino/self-employments/:id/:taxYear                                     uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentAnnualSummaryResource.retrieveAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 
 # Self-Employment End-of-Period Statements
-GET /ni/:nino/self-employments/:id/end-of-period-statements/obligations   uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentStatementResource.retrieveObligationsById(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, queryParams: uk.gov.hmrc.selfassessmentapi.resources.utils.EopsObligationQueryParams)
+GET         /ni/:nino/self-employments/:id/end-of-period-statements/obligations         uk.gov.hmrc.selfassessmentapi.resources.SelfEmploymentStatementResource.retrieveObligationsById(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId, queryParams: uk.gov.hmrc.selfassessmentapi.resources.utils.EopsObligationQueryParams)
 
 ####################
 #    Properties BISS   #
 ####################
-GET /ni/:nino/uk-properties/:taxYear/income-summary  uk.gov.hmrc.selfassessmentapi.resources.PropertiesBISSResource.getSummary(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+GET         /ni/:nino/uk-properties/:taxYear/income-summary                             uk.gov.hmrc.selfassessmentapi.resources.PropertiesBISSResource.getSummary(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 
 ####################
 #    Properties    #
 ####################
-GET  /ni/:nino/uk-properties   uk.gov.hmrc.selfassessmentapi.resources.PropertiesResource.retrieve(nino: uk.gov.hmrc.domain.Nino)
+GET         /ni/:nino/uk-properties                                                     uk.gov.hmrc.selfassessmentapi.resources.PropertiesResource.retrieve(nino: uk.gov.hmrc.domain.Nino)
 
 # Obligations
-GET /ni/:nino/uk-properties/obligations   uk.gov.hmrc.selfassessmentapi.resources.PropertiesObligationsResource.retrieveObligations(nino: uk.gov.hmrc.domain.Nino)
+GET         /ni/:nino/uk-properties/obligations                                         uk.gov.hmrc.selfassessmentapi.resources.PropertiesObligationsResource.retrieveObligations(nino: uk.gov.hmrc.domain.Nino)
 
 # Properties Periodic Summaries
-POST /ni/:nino/uk-properties/:id/periods   uk.gov.hmrc.selfassessmentapi.resources.PropertiesPeriodResource.createPeriod(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType)
-GET  /ni/:nino/uk-properties/:id/periods   uk.gov.hmrc.selfassessmentapi.resources.PropertiesPeriodResource.retrievePeriods(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType)
-GET  /ni/:nino/uk-properties/:id/periods/:periodId   uk.gov.hmrc.selfassessmentapi.resources.PropertiesPeriodResource.retrievePeriod(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType, periodId: uk.gov.hmrc.selfassessmentapi.models.PeriodId)
-PUT  /ni/:nino/uk-properties/:id/periods/:periodId   uk.gov.hmrc.selfassessmentapi.resources.PropertiesPeriodResource.updatePeriod(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType, periodId: uk.gov.hmrc.selfassessmentapi.models.PeriodId)
+POST        /ni/:nino/uk-properties/:id/periods                                         uk.gov.hmrc.selfassessmentapi.resources.PropertiesPeriodResource.createPeriod(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType)
+GET         /ni/:nino/uk-properties/:id/periods                                         uk.gov.hmrc.selfassessmentapi.resources.PropertiesPeriodResource.retrievePeriods(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType)
+GET         /ni/:nino/uk-properties/:id/periods/:periodId                               uk.gov.hmrc.selfassessmentapi.resources.PropertiesPeriodResource.retrievePeriod(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType, periodId: uk.gov.hmrc.selfassessmentapi.models.PeriodId)
+PUT         /ni/:nino/uk-properties/:id/periods/:periodId                               uk.gov.hmrc.selfassessmentapi.resources.PropertiesPeriodResource.updatePeriod(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType, periodId: uk.gov.hmrc.selfassessmentapi.models.PeriodId)
 
 # Properties Annual Summaries
-PUT  /ni/:nino/uk-properties/:id/:taxYear   uk.gov.hmrc.selfassessmentapi.resources.PropertiesAnnualSummaryResource.updateAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
-GET  /ni/:nino/uk-properties/:id/:taxYear   uk.gov.hmrc.selfassessmentapi.resources.PropertiesAnnualSummaryResource.retrieveAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+PUT         /ni/:nino/uk-properties/:id/:taxYear                                        uk.gov.hmrc.selfassessmentapi.resources.PropertiesAnnualSummaryResource.updateAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+GET         /ni/:nino/uk-properties/:id/:taxYear                                        uk.gov.hmrc.selfassessmentapi.resources.PropertiesAnnualSummaryResource.retrieveAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 
 
 ##########################
 #    Tax Calculations    #
 ##########################
-POST    /ni/:nino/calculations       uk.gov.hmrc.selfassessmentapi.resources.TaxCalculationResource.requestCalculation(nino: uk.gov.hmrc.domain.Nino)
-GET     /ni/:nino/calculations/:id   uk.gov.hmrc.selfassessmentapi.resources.TaxCalculationResource.retrieveCalculation(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
+POST        /ni/:nino/calculations                                                      uk.gov.hmrc.selfassessmentapi.resources.TaxCalculationResource.requestCalculation(nino: uk.gov.hmrc.domain.Nino)
+GET         /ni/:nino/calculations/:id                                                  uk.gov.hmrc.selfassessmentapi.resources.TaxCalculationResource.retrieveCalculation(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.SourceId)
 
 #######################
 #     Crystallisation #
 #######################
-POST   /ni/:nino/:taxYear/intent-to-crystallise        uk.gov.hmrc.selfassessmentapi.resources.CrystallisationResource.intentToCrystallise(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
-POST   /ni/:nino/:taxYear/crystallisation              uk.gov.hmrc.selfassessmentapi.resources.CrystallisationResource.crystallisation(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+POST        /ni/:nino/:taxYear/intent-to-crystallise                                    uk.gov.hmrc.selfassessmentapi.resources.CrystallisationResource.intentToCrystallise(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
+POST        /ni/:nino/:taxYear/crystallisation                                          uk.gov.hmrc.selfassessmentapi.resources.CrystallisationResource.crystallisation(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
