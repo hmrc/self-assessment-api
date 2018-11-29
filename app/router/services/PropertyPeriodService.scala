@@ -43,7 +43,7 @@ class PropertyPeriodService @Inject()(val appConfig: AppConfig,
     }
 
     withApiVersion {
-      case Some(VERSION_1) => propertyConnector.post( uri, body)
+      case Some(VERSION_1) => propertyConnector.post(uri, body)
       case Some(VERSION_2) => propertyConnector.post(uri, body)(convertHeaderToVersion1, req)
     }
   }
