@@ -6,36 +6,45 @@
   "properties": {
     "lossBroughtForward": {
       "title": "Loss brought forward",
-      "description": "Loss brought forward from earlier years",
+      "description": "Loss brought forward from earlier years. The value must be between 0 and 99999999999.99",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
-      "maximum": 99999999999999.98,
+      "maximum": 99999999999.99,
       "example": "100.25"
     },
     "privateUseAdjustment": {
       "title": "Private use adjustment",
-      "description": "Any expenses incurred not solely for the property business",
+      "description": "Any expenses incurred not solely for the property business. The value must be between 0 and 99999999999.99",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
-      "maximum": 99999999999999.98,
+      "maximum": 99999999999.99,
       "example": "100.25"
     },
     "balancingCharge": {
       "title": "Balancing charge",
-      "description": "If an item for which capital allowance was claimed has been sold, given away or is no longer in use",
+      "description": "If an item for which capital allowance was claimed has been sold, given away or is no longer in use. The value must be between 0 and 99999999999.99",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
-      "maximum": 99999999999999.98,
+      "maximum": 99999999999.99,
+      "example": "100.25"
+    },
+    "bpraBalancingCharge": {
+      "title": "bpraBalancing charge",
+      "description": "Income from the sale or grant of a long lease for a premium of renovated business premises within 7 years of first use. The value must be between 0 and 99999999999.99",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999.99,
       "example": "100.25"
     },
     "periodOfGraceAdjustment": {
       "title": "Period of grace adjustment",
       "description": "Identifies a property which didn't qualify for FHL this year but qualified the year previous",
       "type": "boolean",
-      "example": "true or false"
+      "example": "true"
     }
   },
   "additionalProperties": false
