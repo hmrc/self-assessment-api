@@ -294,8 +294,7 @@ object Jsons {
             otherCost.map(Other.Expense(_)),
             travelCosts.map(Other.Expense(_)),
             broughtFwdResidentialFinancialCost.map(Other.Expense(_)),
-            rarRentReceived.map(Other.Expense(_)),
-            rarReliefClaimed.map(Other.Expense(_))
+            rarRentReceived.map(Other.Expense(_))
           ))
         .toString
     }
