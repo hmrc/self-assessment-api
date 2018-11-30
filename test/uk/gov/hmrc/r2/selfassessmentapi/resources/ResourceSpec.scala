@@ -22,7 +22,7 @@ import org.scalatestplus.play.OneAppPerSuite
 import play.api.Configuration
 import play.api.http.{HeaderNames, MimeTypes, Status}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, ResultExtractors}
-import uk.gov.hmrc.selfassessmentapi.TestUtils
+import uk.gov.hmrc.r2.selfassessmentapi.TestUtils
 import uk.gov.hmrc.r2.selfassessmentapi.mocks.auth.MockAuthorisationService
 import uk.gov.hmrc.r2.selfassessmentapi.mocks.config.MockAppContext
 import uk.gov.hmrc.r2.selfassessmentapi.models.SourceType.SourceType
