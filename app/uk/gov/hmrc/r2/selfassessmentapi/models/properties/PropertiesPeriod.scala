@@ -253,12 +253,14 @@ object Other {
   case class Incomes(rentIncome: Option[Income] = None,
                      premiumsOfLeaseGrant: Option[Income] = None,
                      reversePremiums: Option[Income] = None,
-                     otherPropertyIncome: Option[Income] = None) {
+                     otherPropertyIncome: Option[Income] = None,
+                     rarRentReceived: Option[Income] = None) {
     def hasIncomes: Boolean =
       rentIncome.isDefined ||
         premiumsOfLeaseGrant.isDefined ||
         reversePremiums.isDefined ||
-        otherPropertyIncome.isDefined
+        otherPropertyIncome.isDefined ||
+        rarRentReceived.isDefined
   }
 
   object Incomes {
@@ -271,7 +273,8 @@ object Other {
         rentIncome = o.rentIncome.map(income => Income(amount = income.amount, taxDeducted = income.taxDeducted)),
         premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(Income(_, None)),
         reversePremiums = o.reversePremiums.map(Income(_, None)),
-        otherPropertyIncome = o.otherIncome.map(Income(_, None))
+        otherPropertyIncome = o.otherIncome.map(Income(_, None)),
+        rarRentReceived = o.rarRentReceived.map(Income(_, None))
       )
   }
 
@@ -293,7 +296,6 @@ object Other {
                       other: Option[Expense] = None,
                       travelCosts: Option[Expense] = None,
                       broughtFwdResidentialFinancialCost: Option[Expense] = None,
-                      rarRentReceived: Option[Expense] = None,
                       rarReliefClaimed: Option[Expense] = None
                      ) {
     def hasExpenses: Boolean =
@@ -304,7 +306,6 @@ object Other {
         costOfServices.isDefined ||
         other.isDefined ||
         travelCosts.isDefined ||
-        rarRentReceived.isDefined ||
         rarReliefClaimed.isDefined
   }
 
@@ -323,7 +324,6 @@ object Other {
         other = o.other.map(Expense(_)),
         travelCosts = o.travelCosts.map(Expense(_)),
         broughtFwdResidentialFinancialCost = o.broughtFwdResidentialFinancialCost.map(Expense(_)),
-        rarRentReceived = o.rarRentReceived.map(Expense(_)),
         rarReliefClaimed = o.rarReliefClaimed.map(Expense(_))
       )
   }

@@ -221,7 +221,8 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         premiumsOfLeaseGrant <- Gen.option(genIncome)
         reversePremiums <- Gen.option(genIncome)
         otherPropertyIncome <- Gen.option(genIncome)
-      } yield Other.Incomes(rentIncome, premiumsOfLeaseGrant, reversePremiums, otherPropertyIncome)
+        rarRentReceived <- Gen.option(genIncome)
+      } yield Other.Incomes(rentIncome, premiumsOfLeaseGrant, reversePremiums, otherPropertyIncome, rarRentReceived)
 
     val genExpense: Gen[Other.Expense] = for (amount <- amount) yield Other.Expense(amount)
 
@@ -236,7 +237,6 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         other <- Gen.option(genExpense)
         travelCosts <- Gen.option(genExpense)
         broughtFwdResidentialFinancialCost <- Gen.option(genExpense)
-        rarRentReceived <- Gen.option(genExpense)
         rarReliefClaimed <- Gen.option(genExpense)
       } yield
         Other
@@ -249,7 +249,6 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
             other = other,
             travelCosts = travelCosts,
             broughtFwdResidentialFinancialCost = broughtFwdResidentialFinancialCost,
-            rarRentReceived = rarRentReceived,
             rarReliefClaimed = rarReliefClaimed)
 
     val genExpensesBoth: Gen[Other.Expenses] =
@@ -264,7 +263,6 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         other <- Gen.option(genExpense)
         travelCosts <- Gen.option(genExpense)
         broughtFwdResidentialFinancialCost <- Gen.option(genExpense)
-        rarRentReceived <- Gen.option(genExpense)
         rarReliefClaimed <- Gen.option(genExpense)
       } yield
         Other
@@ -278,7 +276,6 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
                     other,
                     travelCosts,
                     broughtFwdResidentialFinancialCost,
-                    rarRentReceived,
                     rarReliefClaimed)
 
     val genConsolidatedExpenses: Gen[Other.Expenses] =
