@@ -35,6 +35,7 @@ trait FakeApplicationConfig { _: WireMockConfig =>
     "microservice.services.mtd-property-api.host" -> wiremockHost,
     "microservice.services.mtd-property-api.port" -> wiremockPort,
     "microservice.services.mtd-self-employment.host" -> wiremockHost,
-    "microservice.services.mtd-self-employment.port" -> wiremockPort
+    "microservice.services.mtd-self-employment.port" -> wiremockPort,
+    "feature-switch.release-2.enabled" -> false
   )
 }

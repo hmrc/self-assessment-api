@@ -25,8 +25,8 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
   val jsonResponse: JsObject = Json.obj("test" -> "json response")
 
   "Create Non-FHL UK Property period with release-2 enabled" should {
-    "return a 201 with no json response body" when {
-      "the downstream response from the self assessment api version 1.0 returns a 201 with no json response body" in {
+    "return a 200 with no json response body" when {
+      "the downstream response from the self assessment api version 1.0 returns a 200 with a json response body" in {
         val incomingUrl = "/ni/AA111111A/uk-properties/other/periods"
         val outgoingUrl = "/ni/AA111111A/uk-properties/other/periods"
 
@@ -35,7 +35,7 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
           .And()
           .post(outgoingUrl)
           .returns(aResponse
-            .withStatus(CREATED))
+            .withStatus(OK))
           .When()
           .post(incomingUrl)
             .withBody(jsonRequest)
@@ -43,12 +43,12 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
             ACCEPT -> "application/vnd.hmrc.1.0+json",
             CONTENT_TYPE -> JSON)
           .Then()
-          .statusIs(CREATED)
+          .statusIs(OK)
           .verify(mockFor(outgoingUrl)
             .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
       }
 
-      "the downstream response from the self assessment api version 2.0 returns a 201 with no json response body" in {
+      "the downstream response from the self assessment api version 2.0 returns a 200 with a json response body" in {
         val incomingUrl = "/ni/AA111111A/uk-properties/other/periods"
         val outgoingUrl = "/ni/AA111111A/uk-properties/other/periods"
 
@@ -57,7 +57,7 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
           .And()
           .post(outgoingUrl)
           .returns(aResponse
-            .withStatus(CREATED))
+            .withStatus(OK))
           .When()
           .post(incomingUrl)
           .withBody(jsonRequest)
@@ -65,7 +65,127 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
             ACCEPT -> "application/vnd.hmrc.2.0+json",
             CONTENT_TYPE -> JSON)
           .Then()
-          .statusIs(CREATED)
+          .statusIs(OK)
+          .verify(mockFor(outgoingUrl)
+            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+      }
+    }
+  }
+
+  "GET All Non-FHL UK Property period with release-2 enabled" should {
+    "return a 200 with a json response body" when {
+      "the downstream response from the self assessment api returns returns a 200 with a json response body" in {
+        val incomingUrl = "/ni/AA111111A/uk-properties/other/periods"
+        val outgoingUrl = "/ni/AA111111A/uk-properties/other/periods"
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .get(outgoingUrl)
+          .returns(aResponse
+            .withStatus(OK)
+            .withBody(jsonResponse))
+          .When()
+          .get(incomingUrl)
+          .withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json")
+          .Then()
+          .statusIs(OK)
+          .bodyIs(jsonResponse)
+          .verify(mockFor(outgoingUrl)
+            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+      }
+
+      "a version 2.0 header is provided and the downstream response from the self assessment api returns a 200 with a json response body" in {
+        val incomingUrl = "/ni/AA111111A/uk-properties/other/periods"
+        val outgoingUrl = "/ni/AA111111A/uk-properties/other/periods"
+
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .get(outgoingUrl)
+          .returns(aResponse
+            .withStatus(OK)
+            .withBody(jsonResponse))
+          .When()
+          .get(incomingUrl)
+          .withHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json")
+          .Then()
+          .statusIs(OK)
+          .bodyIs(jsonResponse)
+          .verify(mockFor(outgoingUrl)
+            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+      }
+    }
+  }
+
+  "GET Non-FHL UK Property period with release-2 enabled" should {
+    "return a 200 with a json response body" when {
+      "the downstream response from the self assessment api returns returns a 200 with a json response body" in {
+        val incomingUrl = "/ni/AA111111A/uk-properties/other/periods/periodId"
+        val outgoingUrl = "/ni/AA111111A/uk-properties/other/periods/periodId"
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .get(outgoingUrl)
+          .returns(aResponse
+            .withStatus(OK)
+            .withBody(jsonResponse))
+          .When()
+          .get(incomingUrl)
+          .withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json")
+          .Then()
+          .statusIs(OK)
+          .bodyIs(jsonResponse)
+          .verify(mockFor(outgoingUrl)
+            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+      }
+
+      "a version 2.0 header is provided and the downstream response from the self assessment api returns a 200 with a json response body" in {
+        val incomingUrl = "/ni/AA111111A/uk-properties/other/periods/periodId"
+        val outgoingUrl = "/ni/AA111111A/uk-properties/other/periods/periodId"
+
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .get(outgoingUrl)
+          .returns(aResponse
+            .withStatus(OK)
+            .withBody(jsonResponse))
+          .When()
+          .get(incomingUrl)
+          .withHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json")
+          .Then()
+          .statusIs(OK)
+          .bodyIs(jsonResponse)
+          .verify(mockFor(outgoingUrl)
+            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+      }
+    }
+  }
+
+
+  "PUT Non-FHL UK Property period with release-2 enabled" should {
+    "return a 200 with no json response body" when {
+      "the downstream response from the self assessment api returns a 200 with a json response body" in {
+        val incomingUrl = "/ni/AA111111A/uk-properties/other/periods/periodId"
+        val outgoingUrl = "/ni/AA111111A/uk-properties/other/periods/periodId"
+
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .put(outgoingUrl)
+          .returns(aResponse
+            .withStatus(OK)
+            .withBody(jsonResponse))
+          .When()
+          .put(incomingUrl)
+          .withBody(jsonRequest)
+          .withHeaders(
+            ACCEPT -> "application/vnd.hmrc.1.0+json",
+            CONTENT_TYPE -> JSON
+          )
+          .Then()
+          .statusIs(OK)
+          .bodyIs(jsonResponse)
           .verify(mockFor(outgoingUrl)
             .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
       }
