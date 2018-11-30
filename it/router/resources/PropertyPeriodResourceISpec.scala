@@ -25,8 +25,8 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
   val jsonResponse: JsObject = Json.obj("test" -> "json response")
 
   "Create Non-FHL UK Property period with release-2 enabled" should {
-    "return a 200 with no json response body" when {
-      "the downstream response from the self assessment api version 1.0 returns a 200 with a json response body" in {
+    "return a 201 with no json response body" when {
+      "the downstream response from the self assessment api version 1.0 returns a 201 with a json response body" in {
         val incomingUrl = "/ni/AA111111A/uk-properties/other/periods"
         val outgoingUrl = "/ni/AA111111A/uk-properties/other/periods"
 
@@ -35,7 +35,7 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
           .And()
           .post(outgoingUrl)
           .returns(aResponse
-            .withStatus(OK))
+            .withStatus(CREATED))
           .When()
           .post(incomingUrl)
             .withBody(jsonRequest)
@@ -43,12 +43,12 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
             ACCEPT -> "application/vnd.hmrc.1.0+json",
             CONTENT_TYPE -> JSON)
           .Then()
-          .statusIs(OK)
+          .statusIs(CREATED)
           .verify(mockFor(outgoingUrl)
             .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
       }
 
-      "the downstream response from the self assessment api version 2.0 returns a 200 with a json response body" in {
+      "the downstream response from the self assessment api version 2.0 returns a 201 with a json response body" in {
         val incomingUrl = "/ni/AA111111A/uk-properties/other/periods"
         val outgoingUrl = "/ni/AA111111A/uk-properties/other/periods"
 
@@ -57,7 +57,7 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
           .And()
           .post(outgoingUrl)
           .returns(aResponse
-            .withStatus(OK))
+            .withStatus(CREATED))
           .When()
           .post(incomingUrl)
           .withBody(jsonRequest)
@@ -65,7 +65,7 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
             ACCEPT -> "application/vnd.hmrc.2.0+json",
             CONTENT_TYPE -> JSON)
           .Then()
-          .statusIs(OK)
+          .statusIs(CREATED)
           .verify(mockFor(outgoingUrl)
             .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
       }
@@ -164,8 +164,8 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
 
 
   "PUT Non-FHL UK Property period with release-2 enabled" should {
-    "return a 200 with no json response body" when {
-      "the downstream response from the self assessment api returns a 200 with a json response body" in {
+    "return a 204 with no json response body" when {
+      "the downstream response from the self assessment api returns a 204 with a json response body" in {
         val incomingUrl = "/ni/AA111111A/uk-properties/other/periods/periodId"
         val outgoingUrl = "/ni/AA111111A/uk-properties/other/periods/periodId"
 
@@ -174,7 +174,7 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
           .And()
           .put(outgoingUrl)
           .returns(aResponse
-            .withStatus(OK)
+            .withStatus(NO_CONTENT)
             .withBody(jsonResponse))
           .When()
           .put(incomingUrl)
@@ -184,8 +184,8 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
             CONTENT_TYPE -> JSON
           )
           .Then()
-          .statusIs(OK)
-          .bodyIs(jsonResponse)
+          .statusIs(NO_CONTENT)
+          .bodyIs("")
           .verify(mockFor(outgoingUrl)
             .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
       }

@@ -42,13 +42,13 @@ class PropertyPeriodResourceSpec extends ResourceSpec
   val testHeaderResponse = Map("test" -> Seq("header"))
 
   "create" should {
-    "return a 200 with the response headers" when {
-      "the service returns a HttpResponse containing a 200 with no json response body" in new Setup {
+    "return a 201 with the response headers" when {
+      "the service returns a HttpResponse containing a 201 with no json response body" in new Setup {
         MockPropertyPeriodService.create(requestJson)
-          .returns(Future.successful(Right(HttpResponse(OK, None, testHeaderResponse))))
+          .returns(Future.successful(Right(HttpResponse(CREATED, None, testHeaderResponse))))
 
         private val result = resource.createOtherPeriod("")(FakeRequest().withBody(requestJson))
-        status(result) shouldBe OK
+        status(result) shouldBe CREATED
         headers(result) shouldBe testHeader
         contentType(result) shouldBe None
       }
@@ -84,13 +84,13 @@ class PropertyPeriodResourceSpec extends ResourceSpec
   }
 
   "amend" should {
-    "return a 200 with the response headers" when {
-      "the service returns a HttpResponse containing a 200 with no json response body" in new Setup {
+    "return a 204 with the response headers" when {
+      "the service returns a HttpResponse containing a 204 with no json response body" in new Setup {
         MockPropertyPeriodService.amend(requestJson)
-          .returns(Future.successful(Right(HttpResponse(OK, None, testHeaderResponse))))
+          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, None, testHeaderResponse))))
 
         private val result = resource.updateOtherPeriod("", "")(FakeRequest().withBody(requestJson))
-        status(result) shouldBe OK
+        status(result) shouldBe NO_CONTENT
         headers(result) shouldBe testHeader
         contentType(result) shouldBe None
       }
