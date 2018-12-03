@@ -28,7 +28,7 @@ import uk.gov.hmrc.r2.selfassessmentapi.models.{ExpensesDef, _}
 object FHL {
 
   case class Properties(id: Option[String], from: LocalDate, to: LocalDate, financials: Option[Financials])
-      extends Period {
+    extends Period {
     def asSummary: PeriodSummary = PeriodSummary(id.getOrElse(""), from, to)
   }
 
@@ -40,7 +40,7 @@ object FHL {
         (__ \ "to").write[LocalDate] and
         (__ \ "incomes").writeNullable[Incomes] and
         (__ \ "expenses").writeNullable[Expenses]
-    )(p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses)))
+      )(p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses)))
 
     private def financialsValidator(period: Properties): Boolean = {
       val incomePassed = period.financials.exists(_.incomes.exists(_.hasIncomes))
@@ -61,7 +61,7 @@ object FHL {
         (__ \ "to").read[LocalDate] and
         (__ \ "incomes").readNullable[Incomes] and
         (__ \ "expenses").readNullable[Expenses]
-    )((id, from, to, incomes, expenses) => {
+      )((id, from, to, incomes, expenses) => {
       val financials = (incomes, expenses) match {
         case (None, None) => None
         case (inc, exp)   => Some(Financials(inc, exp))
@@ -69,35 +69,37 @@ object FHL {
       Properties(id, from, to, financials)
     }).validate(Seq(
       Validation(JsPath(),
-                 periodDateValidator,
-                 ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD)),
+        periodDateValidator,
+        ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD)),
       Validation(
         JsPath(),
         bothExpensesValidator,
         ValidationError(s"Both expenses and consolidatedExpenses elements cannot be present at the same time",
-                        ErrorCode.BOTH_EXPENSES_SUPPLIED)
+          ErrorCode.BOTH_EXPENSES_SUPPLIED)
       ),
       Validation(JsPath(),
-                 financialsValidator,
-                 ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))
+        financialsValidator,
+        ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))
     ))
 
     def from(o: des.properties.FHL.Properties): Properties =
       Properties(id = o.transactionReference,
-                 from = LocalDate.parse(o.from),
-                 to = LocalDate.parse(o.to),
-                 financials = Financials.from(o.financials))
+        from = LocalDate.parse(o.from),
+        to = LocalDate.parse(o.to),
+        financials = Financials.from(o.financials))
   }
 
-  case class Incomes(rentIncome: Option[Income] = None) {
-    def hasIncomes: Boolean = rentIncome.isDefined
+  case class Incomes(rentIncome: Option[Income] = None,
+                     rarRentReceived: Option[Income] = None) {
+    def hasIncomes: Boolean = rentIncome.isDefined || rarRentReceived.isDefined
   }
 
   object Incomes {
     implicit val format: Format[Incomes] = Json.format[Incomes]
 
     def from(o: des.properties.FHL.Incomes): Incomes =
-      Incomes(rentIncome = o.rentIncome.map(income => Income(amount = income.amount, taxDeducted = income.taxDeducted)))
+      Incomes(rentIncome = o.rentIncome.map(income => Income(amount = income.amount, taxDeducted = income.taxDeducted)),
+        rarRentReceived = o.rarRentReceived.map(income => Income(amount = income.amount, None)) )
   }
 
   case class Expense(amount: BigDecimal)
@@ -114,15 +116,18 @@ object FHL {
                       professionalFees: Option[Expense] = None,
                       costOfServices: Option[Expense] = None,
                       consolidatedExpenses: Option[Expense] = None,
-
-                      other: Option[Expense] = None) {
+                      other: Option[Expense] = None,
+                      travelCosts: Option[Expense] = None,
+                      rarReliefClaimed: Option[Expense] = None) {
     def hasExpenses: Boolean =
       premisesRunningCosts.isDefined ||
         repairsAndMaintenance.isDefined ||
         financialCosts.isDefined ||
         professionalFees.isDefined ||
         costOfServices.isDefined ||
-        other.isDefined
+        other.isDefined ||
+        travelCosts.isDefined ||
+        rarReliefClaimed.isDefined
   }
 
   object Expenses {
@@ -136,12 +141,14 @@ object FHL {
         professionalFees = o.professionalFees.map(Expense(_)),
         costOfServices = o.costOfServices.map(Expense(_)),
         consolidatedExpenses = o.consolidatedExpenses.map(Expense(_)),
-        other = o.other.map(Expense(_))
+        other = o.other.map(Expense(_)),
+        travelCosts = o.travelCosts.map(Expense(_)),
+        rarReliefClaimed = o.rarReliefClaimed.map(Expense(_))
       )
   }
 
   case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None)
-      extends models.Financials
+    extends models.Financials
       with ExpensesDef[Expenses]
 
   object Financials {
@@ -160,16 +167,16 @@ object FHL {
     implicit val reads: Reads[Financials] = (
       (__ \ "incomes").readNullable[Incomes] and
         (__ \ "expenses").readNullable[Expenses]
-    )(Financials.apply _)
+      )(Financials.apply _)
       .validate(Seq(
         Validation(JsPath(),
-                   financialsValidator,
-                   ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES)),
+          financialsValidator,
+          ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES)),
         Validation(
           JsPath(),
           bothExpensesValidator,
           ValidationError(s"Both expenses and consolidatedExpenses elements cannot be present at the same time",
-                          ErrorCode.BOTH_EXPENSES_SUPPLIED)
+            ErrorCode.BOTH_EXPENSES_SUPPLIED)
         )
       ))
 
@@ -189,7 +196,7 @@ object FHL {
 object Other {
 
   case class Properties(id: Option[String], from: LocalDate, to: LocalDate, financials: Option[Financials])
-      extends Period {
+    extends Period {
     def asSummary: PeriodSummary = PeriodSummary(id.getOrElse(""), from, to)
   }
 
@@ -201,7 +208,7 @@ object Other {
         (__ \ "to").write[LocalDate] and
         (__ \ "incomes").writeNullable[Incomes] and
         (__ \ "expenses").writeNullable[Expenses]
-    )(p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses)))
+      )(p => (p.id, p.from, p.to, p.financials.flatMap(_.incomes), p.financials.flatMap(_.expenses)))
 
     private def financialsValidator(period: Properties): Boolean = {
       val incomePassed = period.financials.exists(_.incomes.exists(_.hasIncomes))
@@ -222,7 +229,7 @@ object Other {
         (__ \ "to").read[LocalDate] and
         (__ \ "incomes").readNullable[Incomes] and
         (__ \ "expenses").readNullable[Expenses]
-    )((id, from, to, incomes, expenses) => {
+      )((id, from, to, incomes, expenses) => {
       val financials = (incomes, expenses) match {
         case (None, None) => None
         case (inc, exp)   => Some(Financials(inc, exp))
@@ -230,24 +237,24 @@ object Other {
       Properties(id, from, to, financials)
     }).validate(Seq(
       Validation(JsPath(),
-                 periodDateValidator,
-                 ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD)),
+        periodDateValidator,
+        ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD)),
       Validation(
         JsPath(),
         bothExpensesValidator,
         ValidationError(s"Both expenses and consolidatedExpenses elements cannot be present at the same time",
-                        ErrorCode.BOTH_EXPENSES_SUPPLIED)
+          ErrorCode.BOTH_EXPENSES_SUPPLIED)
       ),
       Validation(JsPath(),
-                 financialsValidator,
-                 ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))
+        financialsValidator,
+        ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))
     ))
 
     def from(o: des.properties.Other.Properties): Properties =
       Properties(id = o.transactionReference,
-                 from = LocalDate.parse(o.from),
-                 to = LocalDate.parse(o.to),
-                 financials = Financials.from(o.financials))
+        from = LocalDate.parse(o.from),
+        to = LocalDate.parse(o.to),
+        financials = Financials.from(o.financials))
   }
 
   case class Incomes(rentIncome: Option[Income] = None,
@@ -329,7 +336,7 @@ object Other {
   }
 
   case class Financials(incomes: Option[Incomes] = None, expenses: Option[Expenses] = None)
-      extends models.Financials
+    extends models.Financials
       with ExpensesDef[Expenses]
 
   object Financials {
@@ -349,18 +356,18 @@ object Other {
     implicit val reads: Reads[Financials] = (
       (__ \ "incomes").readNullable[Incomes] and
         (__ \ "expenses").readNullable[Expenses]
-    )(Financials.apply _)
+      )(Financials.apply _)
       .filter(ValidationError(s"Both expenses and consolidatedExpenses elements cannot be present at the same time",
-                              BOTH_EXPENSES_SUPPLIED))(_.singleExpensesTypeSpecified)
+        BOTH_EXPENSES_SUPPLIED))(_.singleExpensesTypeSpecified)
       .validate(Seq(
         Validation(JsPath(),
-                   financialsValidator,
-                   ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES)),
+          financialsValidator,
+          ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES)),
         Validation(
           JsPath(),
           bothExpensesValidator,
           ValidationError(s"Both expenses and consolidatedExpenses elements cannot be present at the same time",
-                          ErrorCode.BOTH_EXPENSES_SUPPLIED)
+            ErrorCode.BOTH_EXPENSES_SUPPLIED)
         )
       ))
 
