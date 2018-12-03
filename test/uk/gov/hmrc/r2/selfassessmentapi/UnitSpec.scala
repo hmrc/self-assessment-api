@@ -18,7 +18,7 @@ package uk.gov.hmrc.r2.selfassessmentapi
 
 import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatest.{AsyncWordSpec, Matchers, OptionValues, WordSpec}
-import uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear
+import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -41,7 +41,7 @@ trait TestUtils {
 
   def now = DateTime.now(DateTimeZone.UTC)
 
-  val taxYear = TaxYear("2017-18")
+  val taxYear: TaxYear = TaxYear("2017-18")
 
   implicit def taxYearToString(taxYear: TaxYear): String = taxYear.value
 }

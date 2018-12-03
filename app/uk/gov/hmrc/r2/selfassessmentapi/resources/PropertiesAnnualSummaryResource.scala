@@ -16,25 +16,25 @@
 
 package uk.gov.hmrc.r2.selfassessmentapi.resources
 
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, Request}
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.r2.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.r2.selfassessmentapi.connectors.PropertiesAnnualSummaryConnector
 import uk.gov.hmrc.r2.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.r2.selfassessmentapi.models.audit.AnnualSummaryUpdate
+import uk.gov.hmrc.r2.selfassessmentapi.models.des.DesErrorCode
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.{FHLPropertiesAnnualSummary, OtherPropertiesAnnualSummary, PropertiesAnnualSummary, PropertyType}
-import uk.gov.hmrc.r2.selfassessmentapi.models.{ErrorResult, Errors, SourceType, TaxYear}
+import uk.gov.hmrc.r2.selfassessmentapi.models.{ErrorResult, SourceType}
 import uk.gov.hmrc.r2.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
-import uk.gov.hmrc.r2.selfassessmentapi.services.{AuditData, AuthorisationService}
 import uk.gov.hmrc.r2.selfassessmentapi.services.AuditService.audit
-import play.api.libs.concurrent.Execution.Implicits._
-import play.api.mvc.Results.NotFound
+import uk.gov.hmrc.r2.selfassessmentapi.services.{AuditData, AuthorisationService}
+import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.r2.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.r2.selfassessmentapi.models.des.DesErrorCode
 
 object PropertiesAnnualSummaryResource extends PropertiesAnnualSummaryResource {
   override val appContext = AppContext

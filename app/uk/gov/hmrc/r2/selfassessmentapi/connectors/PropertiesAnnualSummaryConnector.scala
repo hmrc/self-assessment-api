@@ -21,10 +21,11 @@ import uk.gov.hmrc.r2.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.r2.selfassessmentapi.models.des.{FHLPropertiesAnnualSummary, OtherPropertiesAnnualSummary}
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertiesAnnualSummary
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType
-import uk.gov.hmrc.r2.selfassessmentapi.models.{TaxYear, des, properties}
+import uk.gov.hmrc.r2.selfassessmentapi.models.{des, properties}
 import uk.gov.hmrc.r2.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
-
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.selfassessmentapi.models.TaxYear
+
 import scala.concurrent.{ExecutionContext, Future}
 
 object PropertiesAnnualSummaryConnector extends PropertiesAnnualSummaryConnector {

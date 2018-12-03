@@ -13,10 +13,11 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType
-import uk.gov.hmrc.r2.selfassessmentapi.models.{ErrorNotImplemented, Period, TaxYear}
+import uk.gov.hmrc.r2.selfassessmentapi.models.{ErrorNotImplemented, Period}
 import uk.gov.hmrc.r2.selfassessmentapi.resources.DesJsons
 import uk.gov.hmrc.r2.selfassessmentapi.TestApplication
-import uk.gov.hmrc.selfassessmentapi.NinoGenerator
+import uk.gov.hmrc.r2.selfassessmentapi.NinoGenerator
+import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 import uk.gov.hmrc.support.{Http, UrlInterpolation}
 
 import scala.collection.mutable
