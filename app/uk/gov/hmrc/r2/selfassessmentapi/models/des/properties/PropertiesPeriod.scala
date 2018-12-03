@@ -35,13 +35,15 @@ object Common {
 
 object FHL {
 
-  case class Incomes(rentIncome: Option[Income] = None)
+  case class Incomes(rentIncome: Option[Income] = None,
+                     rarRentReceived: Option[Income] = None)
 
   object Incomes {
     implicit val format: OFormat[Incomes] = Json.format[Incomes]
 
     def from(o: properties.FHL.Incomes): Incomes =
-      Incomes(rentIncome = o.rentIncome.map(Income.fromIncome))
+      Incomes(rentIncome = o.rentIncome.map(Income.fromIncome),
+              rarRentReceived = o.rarRentReceived.map(Income.fromIncome))
   }
 
   case class Deductions(premisesRunningCosts: Option[BigDecimal] = None,
@@ -50,7 +52,9 @@ object FHL {
                         professionalFees: Option[BigDecimal] = None,
                         costOfServices: Option[BigDecimal] = None,
                         other: Option[BigDecimal] = None,
-                        consolidatedExpenses: Option[BigDecimal] = None)
+                        consolidatedExpenses: Option[BigDecimal] = None,
+                        travelCosts: Option[BigDecimal] = None,
+                        rarReliefClaimed: Option[BigDecimal] = None)
 
   object Deductions {
     implicit val format: OFormat[Deductions] = Json.format[Deductions]
@@ -62,7 +66,9 @@ object FHL {
                  professionalFees = o.professionalFees.map(_.amount),
                  costOfServices = o.costOfServices.map(_.amount),
                  consolidatedExpenses = o.consolidatedExpenses.map(_.amount),
-                 other = o.other.map(_.amount))
+                 other = o.other.map(_.amount),
+                 travelCosts = o.travelCosts.map(_.amount),
+                 rarReliefClaimed = o.rarReliefClaimed.map(_.amount))
   }
 
   case class Financials(incomes: Option[Incomes] = None, deductions: Option[Deductions] = None)
