@@ -16,7 +16,10 @@ POST /ni/*nino/uk-properties/end-of-period-statements/from/*from/to/*to    route
 POST /ni/*nino/self-employments/*seId/end-of-period-statements/from/*from/to/*to  router.resources.SelfEmploymentEopsDeclarationResource.post(nino, seId, from, to)
 
 #Property non-FHL Periodic endpoints
-POST /ni/:nino/uk-properties/other/periods   router.resources.PropertyPeriodResource.create(nino)
+POST /ni/:nino/uk-properties/other/periods                         router.resources.PropertyPeriodResource.createOtherPeriod(nino)
+GET  /ni/:nino/uk-properties/other/periods                         router.resources.PropertyPeriodResource.getAllOtherPeriods(nino)
+GET  /ni/:nino/uk-properties/other/periods/:periodId               router.resources.PropertyPeriodResource.getOtherPeriod(nino, periodId: String)
+PUT  /ni/:nino/uk-properties/other/periods/:periodId               router.resources.PropertyPeriodResource.updateOtherPeriod(nino, periodId: String)
 
 GET   /*route                                                       router.resources.SelfAssessmentResource.get(route)
 POST  /*route                                                       router.resources.SelfAssessmentResource.post(route)

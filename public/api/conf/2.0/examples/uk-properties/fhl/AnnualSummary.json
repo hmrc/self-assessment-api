@@ -3,10 +3,17 @@
     "lossBroughtForward": 100.25,
     "privateUseAdjustment": 100.25,
     "balancingCharge": 100.25,
+    "bpraBalancingCharge": 100.25,
     "periodOfGraceAdjustment": true
   },
   "allowances": {
     "annualInvestmentAllowance": 100.25,
-    "otherCapitalAllowance": 100.25
+    "otherCapitalAllowance": 100.25,
+    "businessPremisesRenovationAllowance": 100.25,
+    "propertyIncomeAllowance": 100.25
+  },
+  "other": {
+    "nonResidentLandlord": false,
+    "rarJoinLet": true
   }
 }

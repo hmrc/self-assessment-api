@@ -19,6 +19,7 @@ package mocks.services
 import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
+import play.api.libs.json.JsValue
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import router.services.PropertyPeriodService
 
@@ -29,8 +30,20 @@ trait MockPropertyPeriodService extends Mock { _: Suite =>
   val mockPropertyPeriodService = mock[PropertyPeriodService]
 
   object MockPropertyPeriodService {
-    def create(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockPropertyPeriodService.create(any())(any(), any()))
+    def create(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockPropertyPeriodService.create(eqTo(body))(any(), any()))
+    }
+
+    def getAll(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockPropertyPeriodService.getAll()(any(), any()))
+    }
+
+    def get(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockPropertyPeriodService.get()(any(), any()))
+    }
+
+    def amend(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockPropertyPeriodService.amend(eqTo(body))(any(), any()))
     }
   }
 

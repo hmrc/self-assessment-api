@@ -28,7 +28,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     Keys.fork in Test := true,
     javaOptions in Test += "-Dlogger.resource=logback-test.xml",
-    scalaVersion := "2.11.12"
+    scalaVersion := "2.11.12",
     scalaVersion in ThisBuild := "2.11.12",
     scalacOptions ++= Seq(
       "-unchecked",

@@ -8,6 +8,9 @@
     },
     "allowances": {
       "$ref": "uk-properties/fhl/Allowances.json"
+    },
+    "other": {
+      "$ref": "uk-properties/fhl/Other.json"
     }
   },
   "additionalProperties": false
