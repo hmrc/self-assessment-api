@@ -1,3 +1,11 @@
+## 04-Dec-2018
+<b>[self-assessment-api v0.216.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.216.0)<br>
+<b>[self-assessment-api-router v1.71.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.71.0)</b>
+* New optional fields added to UK Property FHL Periodic endpoints (Create, Amend, Retrieve) in Sandbox:
+    * rarRentReceived
+    * travelCosts
+    * rarReliefClaimed
+    
 ## 03-Dec-2018
 <b>[self-assessment-api v0.214.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.214.0)<br>
 <b>[self-assessment-api-router v1.64.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.64.0)</b>

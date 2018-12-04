@@ -41,7 +41,7 @@ class PropertyPeriodResourceSpec extends ResourceSpec
   val testHeader = Map("test" -> "header",  "X-Content-Type-Options" -> "nosniff")
   val testHeaderResponse = Map("test" -> Seq("header"))
 
-  "create" should {
+  "create Non-FHL" should {
     "return a 201 with the response headers" when {
       "the service returns a HttpResponse containing a 201 with no json response body" in new Setup {
         MockPropertyPeriodService.create(requestJson)
@@ -55,7 +55,7 @@ class PropertyPeriodResourceSpec extends ResourceSpec
     }
   }
 
-  "get" should {
+  "get Non-FHL" should {
     "return a 200 with the response headers" when {
       "the service returns a HttpResponse containing a 200 with no json response body" in new Setup {
         MockPropertyPeriodService.get()
@@ -69,21 +69,7 @@ class PropertyPeriodResourceSpec extends ResourceSpec
     }
   }
 
-  "getAll" should {
-    "return a 200 with the response headers" when {
-      "the service returns a HttpResponse containing a 200 with no json response body" in new Setup {
-        MockPropertyPeriodService.getAll()
-          .returns(Future.successful(Right(HttpResponse(OK, None, testHeaderResponse))))
-
-        private val result = resource.getAllOtherPeriods("")(FakeRequest())
-        status(result) shouldBe OK
-        headers(result) shouldBe testHeader
-        contentType(result) shouldBe None
-      }
-    }
-  }
-
-  "amend" should {
+  "amend Non-FHL" should {
     "return a 204 with the response headers" when {
       "the service returns a HttpResponse containing a 204 with no json response body" in new Setup {
         MockPropertyPeriodService.amend(requestJson)
@@ -97,4 +83,45 @@ class PropertyPeriodResourceSpec extends ResourceSpec
     }
   }
 
+  "create FHL" should {
+    "return a 201 with the response headers" when {
+      "the service returns a HttpResponse containing a 201 with no json response body" in new Setup {
+        MockPropertyPeriodService.create(requestJson)
+          .returns(Future.successful(Right(HttpResponse(CREATED, None, testHeaderResponse))))
+
+        private val result = resource.createFhlPeriod("")(FakeRequest().withBody(requestJson))
+        status(result) shouldBe CREATED
+        headers(result) shouldBe testHeader
+        contentType(result) shouldBe None
+      }
+    }
+  }
+
+  "get FHL" should {
+    "return a 200 with the response headers" when {
+      "the service returns a HttpResponse containing a 200 with no json response body" in new Setup {
+        MockPropertyPeriodService.get()
+          .returns(Future.successful(Right(HttpResponse(OK, None, testHeaderResponse))))
+
+        private val result = resource.getFhlPeriod("", "")(FakeRequest())
+        status(result) shouldBe OK
+        headers(result) shouldBe testHeader
+        contentType(result) shouldBe None
+      }
+    }
+  }
+
+  "amend FHL" should {
+    "return a 204 with the response headers" when {
+      "the service returns a HttpResponse containing a 204 with no json response body" in new Setup {
+        MockPropertyPeriodService.amend(requestJson)
+          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, None, testHeaderResponse))))
+
+        private val result = resource.updateFhlPeriod("", "")(FakeRequest().withBody(requestJson))
+        status(result) shouldBe NO_CONTENT
+        headers(result) shouldBe testHeader
+        contentType(result) shouldBe None
+      }
+    }
+  }
 }

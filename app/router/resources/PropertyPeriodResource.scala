@@ -27,9 +27,12 @@ class PropertyPeriodResource @Inject()(service: PropertyPeriodService,
                                        val authConnector: AuthConnector) extends BaseResource {
 
   def createOtherPeriod(nino: String) = create()
-  def getAllOtherPeriods(nino: String) = getAll()
   def getOtherPeriod(nino: String, periodId: String) = get()
   def updateOtherPeriod(nino: String, periodId: String) = update()
+
+  def createFhlPeriod(nino: String) = create()
+  def getFhlPeriod(nino: String, periodId: String) = get()
+  def updateFhlPeriod(nino: String, periodId: String) = update()
 
   private def create(): Action[JsValue] = AuthAction.async(parse.json) {
     implicit request =>
@@ -38,14 +41,6 @@ class PropertyPeriodResource @Inject()(service: PropertyPeriodService,
           case Left(error) => buildErrorResponse(error)
           case Right(apiResponse) => buildResponse(apiResponse)
         }
-      }
-  }
-
-  private def getAll(): Action[AnyContent] = AuthAction.async {
-    implicit request =>
-      service.getAll().map {
-        case Left(error) => buildErrorResponse(error)
-        case Right(apiResponse) => buildResponse(apiResponse)
       }
   }
 
