@@ -17,7 +17,6 @@
 package uk.gov.hmrc.r2.selfassessmentapi.domain
 
 import play.api.libs.json.{Format, JsResult, JsSuccess, JsValue}
-import uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.FHLExpenseType.FHLExpenseType
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.FHLIncomeType.FHLIncomeType
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.{FHLExpenseType, FHLIncomeType}
@@ -42,7 +41,7 @@ object JsonFormatters {
 
     import uk.gov.hmrc.r2.selfassessmentapi.models.properties.ExpenseType.ExpenseType
     import uk.gov.hmrc.r2.selfassessmentapi.models.properties.IncomeType.IncomeType
-    import uk.gov.hmrc.r2.selfassessmentapi.models.properties.{ ExpenseType, IncomeType}
+    import uk.gov.hmrc.r2.selfassessmentapi.models.properties.{ExpenseType, IncomeType}
 
     implicit def incomeTypeFormat[V: Format]: MapEnumFormat[IncomeType, V] = new MapEnumFormat[IncomeType, V] {
       override def reads(json: JsValue): JsResult[Map[IncomeType, V]] = {

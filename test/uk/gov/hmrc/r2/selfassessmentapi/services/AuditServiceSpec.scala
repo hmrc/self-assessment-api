@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.audit.http.config.AuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Failure, Success}
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-import uk.gov.hmrc.selfassessmentapi.AsyncUnitSpec
+import uk.gov.hmrc.r2.selfassessmentapi.AsyncUnitSpec
 import uk.gov.hmrc.r2.selfassessmentapi.models.audit.PeriodicUpdate
 
 import scala.concurrent.{ExecutionContext, Future}
