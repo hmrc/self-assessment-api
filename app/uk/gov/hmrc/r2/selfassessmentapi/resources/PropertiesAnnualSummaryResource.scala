@@ -32,7 +32,7 @@ import uk.gov.hmrc.r2.selfassessmentapi.models.{ErrorResult, SourceType}
 import uk.gov.hmrc.r2.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
 import uk.gov.hmrc.r2.selfassessmentapi.services.AuditService.audit
 import uk.gov.hmrc.r2.selfassessmentapi.services.{AuditData, AuthorisationService}
-import uk.gov.hmrc.selfassessmentapi.models.TaxYear
+import uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear
 
 import scala.concurrent.Future
 

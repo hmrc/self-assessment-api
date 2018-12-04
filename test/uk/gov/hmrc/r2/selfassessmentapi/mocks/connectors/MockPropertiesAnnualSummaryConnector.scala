@@ -22,7 +22,7 @@ import uk.gov.hmrc.r2.selfassessmentapi.connectors.PropertiesAnnualSummaryConnec
 import uk.gov.hmrc.r2.selfassessmentapi.mocks.Mock
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertiesAnnualSummary
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType
-import uk.gov.hmrc.selfassessmentapi.models.TaxYear
+import uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear
 
 trait MockPropertiesAnnualSummaryConnector extends Mock {
   _: Suite =>

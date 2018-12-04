@@ -24,7 +24,7 @@ import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyT
 import uk.gov.hmrc.r2.selfassessmentapi.models.{des, properties}
 import uk.gov.hmrc.r2.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.selfassessmentapi.models.TaxYear
+import uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear
 
 import scala.concurrent.{ExecutionContext, Future}
 
