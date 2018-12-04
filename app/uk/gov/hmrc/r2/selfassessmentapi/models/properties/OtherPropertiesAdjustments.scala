@@ -22,7 +22,9 @@ import uk.gov.hmrc.r2.selfassessmentapi.models._
 
 case class OtherPropertiesAdjustments(lossBroughtForward: Option[BigDecimal] = None,
                                       privateUseAdjustment: Option[BigDecimal] = None,
-                                      balancingCharge: Option[BigDecimal] = None)
+                                      balancingCharge: Option[BigDecimal] = None,
+                                      bpraBalancingCharge: Option[BigDecimal] = None
+                                     )
 
 object OtherPropertiesAdjustments {
   implicit val writes: Writes[OtherPropertiesAdjustments] = Json.writes[OtherPropertiesAdjustments]
@@ -30,6 +32,7 @@ object OtherPropertiesAdjustments {
   implicit val reads: Reads[OtherPropertiesAdjustments] = (
     (__ \ "lossBroughtForward").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "privateUseAdjustment").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "balancingCharge").readNullable[BigDecimal](nonNegativeAmountValidator)
+      (__ \ "balancingCharge").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "bpraBalancingCharge").readNullable[BigDecimal](nonNegativeAmountValidator)
   ) (OtherPropertiesAdjustments.apply _)
 }

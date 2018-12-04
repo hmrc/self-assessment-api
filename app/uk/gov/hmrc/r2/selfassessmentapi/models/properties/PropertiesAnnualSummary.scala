@@ -46,7 +46,9 @@ object OtherPropertiesAnnualSummary {
     } yield OtherPropertiesAdjustments(
       adj.lossBroughtForward,
       adj.privateUseAdjustment,
-      adj.balancingCharge)
+      adj.balancingCharge,
+      adj.bpraBalancingCharge
+    )
     OtherPropertiesAnnualSummary(allowances, adjustments)
   }
 

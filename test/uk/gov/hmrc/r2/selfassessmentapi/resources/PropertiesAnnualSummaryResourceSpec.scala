@@ -46,7 +46,8 @@ class PropertiesAnnualSummaryResourceSpec extends ResourceSpec
   val otherPropertiesAdjustments = OtherPropertiesAdjustments(
     lossBroughtForward = Some(0.0),
     privateUseAdjustment = Some(0.0),
-    balancingCharge = Some(0.0)
+    balancingCharge = Some(0.0),
+    bpraBalancingCharge = Some(0.0)
   )
   val otherPropertiesAnnualSummary: PropertiesAnnualSummary = OtherPropertiesAnnualSummary(
     Some(otherPropertiesAllowances),

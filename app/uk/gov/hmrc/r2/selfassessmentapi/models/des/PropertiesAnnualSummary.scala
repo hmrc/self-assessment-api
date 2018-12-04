@@ -48,7 +48,8 @@ object OtherPropertiesAnnualSummary {
       OtherPropertiesAdjustments(
         adj.lossBroughtForward,
         adj.privateUseAdjustment,
-        adj.balancingCharge
+        adj.balancingCharge,
+        adj.bpraBalancingCharge
       )
     }
     OtherPropertiesAnnualSummary(allowances, adjustments)
@@ -69,7 +70,8 @@ object OtherPropertiesAllowances {
 
 case class OtherPropertiesAdjustments(lossBroughtForward: Option[BigDecimal] = None,
                                       privateUseAdjustment: Option[BigDecimal] = None,
-                                      balancingCharge: Option[BigDecimal] = None)
+                                      balancingCharge: Option[BigDecimal] = None,
+                                      bpraBalancingCharge: Option[BigDecimal] = None)
 
 object OtherPropertiesAdjustments {
   implicit val reads: Reads[OtherPropertiesAdjustments] = Json.reads[OtherPropertiesAdjustments]
