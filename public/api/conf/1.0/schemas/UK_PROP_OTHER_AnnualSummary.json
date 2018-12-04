@@ -8,6 +8,9 @@
     },
     "allowances": {
       "$ref": "uk-properties/other/Allowances.json"
+    },
+    "other": {
+      "$ref": "uk-properties/other/Other.json"
     }
   },
   "additionalProperties": false

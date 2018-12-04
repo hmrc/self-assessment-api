@@ -10,7 +10,7 @@
       "type": "boolean",
       "example": "true"
     },
-    "rarJoinLet": {
+    "rarJointLet": {
       "title": "Other Capital allowance",
       "description": "A notification that the Rent A Room income (RAR) is shared with another individual.",
       "type": "boolean",
