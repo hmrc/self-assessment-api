@@ -5,39 +5,57 @@
   "type": "object",
   "properties": {
     "annualInvestmentAllowance": {
-      "title": "Annual investment allowance",
-      "description": "Can be claimed on equipment bought (except cars) up to maximum annual amount",
+      "title": "Annual Investment Allowance",
+      "description": "Can be claimed on equipment bought (except cars) up to maximum annual amount. The value must be between 0 and 99999999999.99.",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
-      "maximum": 99999999999999.98,
+      "maximum": 99999999999.99,
       "example": "100.25"
     },
     "costOfReplacingDomesticItems": {
       "title": "Cost of Replacing Domestic Items",
-      "description": "Cost of Replacing Domestic Items - formerly Wear and Tear allowance",
+      "description": "Cost of Replacing Domestic Items - formerly Wear and Tear allowance. The value must be between 0 and 99999999999.99.",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
-      "maximum": 99999999999999.98,
+      "maximum": 99999999999.99,
       "example": "100.25"
     },
     "zeroEmissionsGoodsVehicleAllowance": {
       "title": "Zero Emissions Goods Vehicle Allowance",
-      "description": "Zero Emissions Goods Vehicle Allowance",
+      "description": "Zero Emissions Goods Vehicle Allowance. The value must be between 0 and 99999999999.99.",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
-      "maximum": 99999999999999.98,
+      "maximum": 99999999999.99,
+      "example": "100.25"
+    },
+    "businessPremisesRenovationAllowance": {
+      "title": "Business Premises Renovation Allowance",
+      "description": "Allowance for renovation or conversion of derelict business properties. The value must be between 0 and 99999999999.99.",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999.99,
+      "example": "100.25"
+    },
+    "propertyAllowance": {
+      "title": "Property Allowance",
+      "description": "The limited amount Tax exemption for individuals with income from land or property. The value must be between 0 and 99999999999.99.",
+      "type": "number",
+      "multipleOf": 0.01,
+      "minimum": 0,
+      "maximum": 99999999999.99,
       "example": "100.25"
     },
     "otherCapitalAllowance": {
       "title": "Other Capital allowance",
-      "description": "All other capital allowances",
+      "description": "All other capital allowances - Between 0 and 99999999999.99",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
-      "maximum": 99999999999999.98,
+      "maximum": 99999999999.99,
       "example": "100.25"
     }
   },
