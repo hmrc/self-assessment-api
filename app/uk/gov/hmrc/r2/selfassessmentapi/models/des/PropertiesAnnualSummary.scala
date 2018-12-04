@@ -41,7 +41,9 @@ object OtherPropertiesAnnualSummary {
         annualInvestmentAllowance = allow.annualInvestmentAllowance,
         otherCapitalAllowance = allow.otherCapitalAllowance,
         costOfReplacingDomGoods = allow.costOfReplacingDomesticItems,
-        zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionsGoodsVehicleAllowance
+        zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionsGoodsVehicleAllowance,
+        businessPremisesRenovationAllowance = allow.businessPremisesRenovationAllowance,
+        propertyAllowance = allow.propertyAllowance
       )
     }
     val adjustments = other.adjustments.map { adj =>
@@ -60,7 +62,10 @@ object OtherPropertiesAnnualSummary {
 case class OtherPropertiesAllowances(annualInvestmentAllowance: Option[BigDecimal] = None,
                                      otherCapitalAllowance: Option[BigDecimal] = None,
                                      costOfReplacingDomGoods: Option[BigDecimal] = None,
-                                     zeroEmissionGoodsVehicleAllowance: Option[BigDecimal] = None)
+                                     zeroEmissionGoodsVehicleAllowance: Option[BigDecimal] = None,
+                                     businessPremisesRenovationAllowance: Option[BigDecimal] = None,
+                                     propertyAllowance: Option[BigDecimal] = None
+                                    )
 
 object OtherPropertiesAllowances {
   implicit val reads: Reads[OtherPropertiesAllowances] = Json.reads[OtherPropertiesAllowances]

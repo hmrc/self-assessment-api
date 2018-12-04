@@ -357,7 +357,9 @@ object DesJsons {
            |      "otherCapitalAllowance": 0.0,
            |      "zeroEmissionGoodsVehicleAllowance": 0.0,
            |      "businessPremisesRenovationAllowance": 0.0,
-           |      "costOfReplacingDomGoods": 0.0
+           |      "costOfReplacingDomGoods": 0.0,
+           |      "businessPremisesRenovationAllowance": 0.0,
+           |      "propertyAllowance": 0.0
            |   }
            |}
       """.stripMargin

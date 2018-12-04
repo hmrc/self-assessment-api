@@ -497,7 +497,9 @@ object Jsons {
                            lossBroughtForward: BigDecimal = 0.0,
                            privateUseAdjustment: BigDecimal = 0.0,
                            balancingCharge: BigDecimal = 0.0,
-                           bpraBalancingCharge: BigDecimal = 0.0
+                           bpraBalancingCharge: BigDecimal = 0.0,
+                           businessPremisesRenovationAllowance: BigDecimal = 0.0,
+                           propertyAllowance: BigDecimal = 0.0
                           ): JsValue = {
       Json.parse(s"""
            |{
@@ -505,7 +507,9 @@ object Jsons {
            |    "annualInvestmentAllowance": $annualInvestmentAllowance,
            |    "otherCapitalAllowance": $otherCapitalAllowance,
            |    "costOfReplacingDomesticItems": $costOfReplacingDomesticItems,
-           |    "zeroEmissionsGoodsVehicleAllowance": $zeroEmissionsGoodsVehicleAllowance
+           |    "zeroEmissionsGoodsVehicleAllowance": $zeroEmissionsGoodsVehicleAllowance,
+           |    "businessPremisesRenovationAllowance": $businessPremisesRenovationAllowance,
+           |    "propertyAllowance": $propertyAllowance
            |  },
            |  "adjustments": {
            |   "lossBroughtForward": $lossBroughtForward,
