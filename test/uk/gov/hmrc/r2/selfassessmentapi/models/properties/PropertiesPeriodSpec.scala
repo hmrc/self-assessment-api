@@ -131,15 +131,18 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         repairsAndMaintenance <- Gen.option(genExpense)
         financialCosts <- Gen.option(genExpense)
         professionalFees <- Gen.option(genExpense)
+        costOfServices <- Gen.option(genExpense)
         other <- Gen.option(genExpense)
         travelCosts <- Gen.option(genExpense)
         rarReliefClaimed <- Gen.option(genExpense)
+
       } yield
         FHL.Expenses(
           premisesRunningCosts = premisesRunningCosts,
           repairsAndMaintenance = repairsAndMaintenance,
           financialCosts = financialCosts,
           professionalFees = professionalFees,
+          costOfServices = costOfServices,
           other = other,
           travelCosts = travelCosts,
           rarReliefClaimed = rarReliefClaimed
@@ -151,6 +154,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         repairsAndMaintenance <- Gen.option(genExpense)
         financialCosts <- Gen.option(genExpense)
         professionalFees <- Gen.option(genExpense)
+        costOfServices <- Gen.option(genExpense)
         consolidatedExpenses <- Gen.option(genExpense)
         other <- Gen.option(genExpense)
         travelCosts <- Gen.option(genExpense)
@@ -164,8 +168,9 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
           consolidatedExpenses = consolidatedExpenses,
           other = other,
           travelCosts = travelCosts,
-          rarReliefClaimed = rarReliefClaimed
-        )
+          rarReliefClaimed = rarReliefClaimed,
+          costOfServices = costOfServices
+    )
 
     val genConsolidatedExpenses: Gen[FHL.Expenses] =
       for {
