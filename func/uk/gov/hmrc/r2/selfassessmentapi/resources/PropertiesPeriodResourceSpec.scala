@@ -624,7 +624,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
       s"return code 400 when updating an $propertyType period with invalid data" in {
         val property = Jsons.Properties()
 
-        val invalidPeriod = Jsons.Properties.fhlPeriod(rentIncome = -500, financialCosts = Some(400.234))
+        val invalidPeriod = Jsons.Properties.fhlPeriod(rentIncome = -500, rarRentReceived = 100, financialCosts = Some(400.234))
 
         val expectedJson = Jsons.Errors.invalidRequest("INVALID_MONETARY_AMOUNT" -> "/incomes/rentIncome/amount",
                                                        "INVALID_MONETARY_AMOUNT" -> "/expenses/financialCosts/amount")
@@ -914,6 +914,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           fromDate = Some("2017-04-05"),
           toDate = Some("2018-04-04"),
           rentIncome = 200.00,
+          rarRentReceived = 100.00,
           premisesRunningCosts = Some(200),
           repairsAndMaintenance = Some(200),
           financialCosts = Some(200),

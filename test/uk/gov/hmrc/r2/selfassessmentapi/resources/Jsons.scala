@@ -137,6 +137,7 @@ object Jsons {
     def fhlPeriod(fromDate: Option[String] = None,
                   toDate: Option[String] = None,
                   rentIncome: BigDecimal = 0,
+                  rarRentReceived: BigDecimal = 0,
                   premisesRunningCosts: Option[BigDecimal] = None,
                   repairsAndMaintenance: Option[BigDecimal] = None,
                   financialCosts: Option[BigDecimal] = None,
@@ -168,7 +169,8 @@ object Jsons {
            |  $from
            |  $to
            |  "incomes": {
-           |    "rentIncome": { "amount": $rentIncome }
+           |    "rentIncome": { "amount": $rentIncome },
+           |    "rarRentReceived": { "amount": $rarRentReceived }
            |  },
            |  "expenses":
            |    ${fhlExpensesJson(premisesRunningCosts,
@@ -188,7 +190,9 @@ object Jsons {
                         professionalFees: Option[BigDecimal] = None,
                         costOfServices: Option[BigDecimal] = None,
                         otherCost: Option[BigDecimal] = None,
-                        consolidatedExpenses: Option[BigDecimal] = None): String = {
+                        consolidatedExpenses: Option[BigDecimal] = None,
+                        travelCosts: Option[BigDecimal] = None,
+                        rarReliefClaimed: Option[BigDecimal] = None): String = {
       Json
         .toJson(
           FHL.Expenses(
@@ -198,7 +202,9 @@ object Jsons {
             professionalFees.map(FHL.Expense(_)),
             costOfServices.map(FHL.Expense(_)),
             consolidatedExpenses.map(FHL.Expense(_)),
-            otherCost.map(FHL.Expense(_))
+            otherCost.map(FHL.Expense(_)),
+            travelCosts.map(FHL.Expense(_)),
+            rarReliefClaimed.map(FHL.Expense(_))
           ))
         .toString
     }
@@ -220,7 +226,6 @@ object Jsons {
                     consolidatedExpenses: Option[BigDecimal] = None,
                     travelCosts: Option[BigDecimal] = None,
                     broughtFwdResidentialFinancialCost: Option[BigDecimal] = None,
-                    rarRentReceived: Option[BigDecimal] = None,
                     rarReliefClaimed: Option[BigDecimal] = None): JsValue = {
 
       val from =
@@ -263,7 +268,6 @@ object Jsons {
                                     consolidatedExpenses,
                                     travelCosts,
                                     broughtFwdResidentialFinancialCost,
-                                    rarRentReceived,
                                     rarReliefClaimed)}
            |}
        """.stripMargin)
@@ -279,7 +283,6 @@ object Jsons {
                           consolidatedExpenses: Option[BigDecimal] = None,
                           travelCosts: Option[BigDecimal] = None,
                           broughtFwdResidentialFinancialCost: Option[BigDecimal] = None,
-                          rarRentReceived: Option[BigDecimal] = None,
                           rarReliefClaimed: Option[BigDecimal] = None): String = {
       Json
         .toJson(
@@ -294,7 +297,7 @@ object Jsons {
             otherCost.map(Other.Expense(_)),
             travelCosts.map(Other.Expense(_)),
             broughtFwdResidentialFinancialCost.map(Other.Expense(_)),
-            rarRentReceived.map(Other.Expense(_))
+            rarReliefClaimed.map(Other.Expense(_))
           ))
         .toString
     }

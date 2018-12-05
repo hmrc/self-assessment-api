@@ -1509,6 +1509,7 @@ trait BaseFunctionalSpec extends TestApplication {
                 from = "2017-04-05",
                 to = "2018-04-04",
                 rentIncome = 200.00,
+                rarRentReceived = 100.00,
                 premisesRunningCosts = 200.00,
                 repairsAndMaintenance = 200.00,
                 financialCosts = 200.00,

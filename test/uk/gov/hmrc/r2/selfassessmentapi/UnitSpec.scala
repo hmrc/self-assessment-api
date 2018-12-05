@@ -18,7 +18,11 @@ package uk.gov.hmrc.r2.selfassessmentapi
 
 import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatest.{AsyncWordSpec, Matchers, OptionValues, WordSpec}
+<<<<<<< HEAD
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear
+=======
+import uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear
+>>>>>>> master
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}

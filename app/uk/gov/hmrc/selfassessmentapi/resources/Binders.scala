@@ -52,7 +52,7 @@ object Binders {
     }
   }
 
-  implicit def taxYearBinder(implicit stringBinder: PathBindable[String]) = new PathBindable[TaxYear] {
+  implicit def taxYearBinder(implicit stringBinder: PathBindable[String]) = new PathBindable[uk.gov.hmrc.selfassessmentapi.models.TaxYear] {
 
     def unbind(key: String, taxYear: TaxYear): String = stringBinder.unbind(key, taxYear.value)
 
@@ -63,6 +63,19 @@ object Binders {
       }
     }
   }
+
+  implicit def taxYearBinderR2(implicit stringBinder: PathBindable[String]) = new PathBindable[uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear] {
+
+    def unbind(key: String, taxYear: uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear): String = stringBinder.unbind(key, taxYear.value)
+
+    def bind(key: String, value: String): Either[String, uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear] = {
+      uk.gov.hmrc.r2.selfassessmentapi.models.TaxYear.createTaxYear(value) match {
+        case Some(taxYear) => Right(taxYear)
+        case None => Left("ERROR_TAX_YEAR_INVALID")
+      }
+    }
+  }
+
 
   implicit val sourceTypeBinder = new PathBindable[SourceType] {
 

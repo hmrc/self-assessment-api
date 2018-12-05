@@ -27,7 +27,7 @@ trait MicroService {
       ScoverageKeys.coverageExcludedPackages := "<empty>;.*(Reverse|BuildInfo|Routes).*;" +
         "uk.gov.hmrc.r2.selfassessmentapi.config.*; uk.gov.hmrc.r2.selfassessmentapi.domain.*;" +
         "uk.gov.hmrc.r2.selfassessmentapi.services.*;" +
-        "uk.gov.hmrc.selfassessmentapi.domain.*;",
+        "uk.gov.hmrc.selfassessmentapi.domain.*; uk.gov.hmrc.kenshoo.monitoring.*;",
       ScoverageKeys.coverageMinimum := 85,
       ScoverageKeys.coverageFailOnMinimum := true,
       ScoverageKeys.coverageHighlighting := true
