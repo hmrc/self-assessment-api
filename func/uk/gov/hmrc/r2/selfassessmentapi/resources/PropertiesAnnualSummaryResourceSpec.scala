@@ -38,6 +38,9 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         given()
           .userIsSubscribedToMtdFor(nino)
           .clientIsFullyAuthorisedForTheResource
+          .des()
+          .properties
+          .willBeCreatedFor(nino)
           .des().properties.annualSummaryWillNotBeReturnedFor(nino, propertyType, taxYear)
           .when()
           .put(annualSummary(propertyType)).at(s"/r2/ni/$nino/uk-properties/$propertyType/$taxYear")
