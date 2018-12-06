@@ -23,26 +23,28 @@ import uk.gov.hmrc.r2.selfassessmentapi.models.des
 sealed trait PropertiesAnnualSummary
 
 case class OtherPropertiesAnnualSummary(allowances: Option[OtherPropertiesAllowances],
-                                        adjustments: Option[OtherPropertiesAdjustments]) extends PropertiesAnnualSummary
+                                        adjustments: Option[OtherPropertiesAdjustments],
+                                        other: Option[OtherPropertiesOther]) extends PropertiesAnnualSummary
 
 object OtherPropertiesAnnualSummary {
   implicit val writes: Writes[OtherPropertiesAnnualSummary] = Json.writes[OtherPropertiesAnnualSummary]
 
   implicit val reads: Reads[OtherPropertiesAnnualSummary] = (
     (__ \ "allowances").readNullable[OtherPropertiesAllowances] and
-      (__ \ "adjustments").readNullable[OtherPropertiesAdjustments]
+      (__ \ "adjustments").readNullable[OtherPropertiesAdjustments] and
+      (__ \ "other").readNullable[OtherPropertiesOther]
     ) (OtherPropertiesAnnualSummary.apply _)
 
   def from(summary: des.OtherPropertiesAnnualSummary): OtherPropertiesAnnualSummary = {
     val allowances = for {
-      allow <- summary.annualAllowances
+        allow <- summary.annualAllowances
     } yield OtherPropertiesAllowances(
-      allow.annualInvestmentAllowance,
-      allow.otherCapitalAllowance,
-      allow.costOfReplacingDomGoods,
-      allow.zeroEmissionGoodsVehicleAllowance,
-      allow.businessPremisesRenovationAllowance,
-      allow.propertyAllowance
+        allow.annualInvestmentAllowance,
+        allow.otherCapitalAllowance,
+        allow.costOfReplacingDomGoods,
+        allow.zeroEmissionGoodsVehicleAllowance,
+        allow.businessPremisesRenovationAllowance,
+        allow.propertyAllowance
     )
     val adjustments = for {
       adj <- summary.annualAdjustments
@@ -52,7 +54,15 @@ object OtherPropertiesAnnualSummary {
       adj.balancingCharge,
       adj.bpraBalancingCharge
     )
-    OtherPropertiesAnnualSummary(allowances, adjustments)
+
+    val other = for {
+      adj <- summary.annualAdjustments
+    } yield OtherPropertiesOther(
+      nonResidentLandlord = Option(adj.nonResidentLandlord),
+      rarJointLet = adj.ukOtherRentARoom.map(_.jointlyLet)
+    )
+
+    OtherPropertiesAnnualSummary(allowances, adjustments, other)
   }
 
 }

@@ -270,7 +270,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
   }
 
   private def annualSummary(propertyType: PropertyType.Value) = propertyType match {
-    case PropertyType.OTHER => Jsons.Properties.otherAnnualSummary()
+    case PropertyType.OTHER => Jsons.Properties.otherAnnualSummary(rarJointLet = false)
     case PropertyType.FHL => Jsons.Properties.fhlAnnualSummary()
   }
 
@@ -283,7 +283,9 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       lossBroughtForward = 20.22,
       privateUseAdjustment = -22.23,
       balancingCharge = 350.34,
-      bpraBalancingCharge = 0.0
+      bpraBalancingCharge = 0.0,
+      nonResidentLandlord = true,
+      rarJointLet = false
     )
     case PropertyType.FHL => Jsons.Properties.fhlAnnualSummary(
       annualInvestmentAllowance = -10000.50,

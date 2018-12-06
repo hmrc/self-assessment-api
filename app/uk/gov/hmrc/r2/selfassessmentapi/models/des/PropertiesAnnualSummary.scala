@@ -51,7 +51,9 @@ object OtherPropertiesAnnualSummary {
         adj.lossBroughtForward,
         adj.privateUseAdjustment,
         adj.balancingCharge,
-        adj.bpraBalancingCharge
+        adj.bpraBalancingCharge,
+        other.other.flatMap(_.nonResidentLandlord).getOrElse(false),
+        other.other.flatMap(_.rarJointLet.map(OtherPropertiesUkOtherRentARoom(_)))
       )
     }
     OtherPropertiesAnnualSummary(allowances, adjustments)
@@ -76,7 +78,18 @@ object OtherPropertiesAllowances {
 case class OtherPropertiesAdjustments(lossBroughtForward: Option[BigDecimal] = None,
                                       privateUseAdjustment: Option[BigDecimal] = None,
                                       balancingCharge: Option[BigDecimal] = None,
-                                      bpraBalancingCharge: Option[BigDecimal] = None)
+                                      bpraBalancingCharge: Option[BigDecimal] = None,
+                                      nonResidentLandlord: Boolean = false,
+                                      ukOtherRentARoom: Option[OtherPropertiesUkOtherRentARoom] = None
+                                     )
+
+case class OtherPropertiesUkOtherRentARoom(jointlyLet: Boolean)
+object OtherPropertiesUkOtherRentARoom {
+  implicit val reads: Reads[OtherPropertiesUkOtherRentARoom] = Json.reads[OtherPropertiesUkOtherRentARoom]
+  implicit val writes: Writes[OtherPropertiesUkOtherRentARoom] = Json.writes[OtherPropertiesUkOtherRentARoom]
+}
+
+// TODO businessPremisesRenovationAllowanceBalancingCharges name change
 
 object OtherPropertiesAdjustments {
   implicit val reads: Reads[OtherPropertiesAdjustments] = Json.reads[OtherPropertiesAdjustments]

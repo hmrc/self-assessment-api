@@ -41,7 +41,9 @@ class PropertiesAnnualSummaryResourceSpec extends ResourceSpec
     annualInvestmentAllowance = Some(0.0),
     otherCapitalAllowance = Some(0.0),
     costOfReplacingDomesticItems = Some(0.0),
-    zeroEmissionsGoodsVehicleAllowance = Some(0.0)
+    zeroEmissionsGoodsVehicleAllowance = Some(0.0),
+    businessPremisesRenovationAllowance = Some(0.0),
+    propertyAllowance = Some(0.0)
   )
   val otherPropertiesAdjustments = OtherPropertiesAdjustments(
     lossBroughtForward = Some(0.0),
@@ -49,11 +51,17 @@ class PropertiesAnnualSummaryResourceSpec extends ResourceSpec
     balancingCharge = Some(0.0),
     bpraBalancingCharge = Some(0.0)
   )
+  val otherPropertiesOther = OtherPropertiesOther(
+    nonResidentLandlord = Some(false),
+    rarJointLet = Some(false)
+  )
+
   val otherPropertiesAnnualSummary: PropertiesAnnualSummary = OtherPropertiesAnnualSummary(
     Some(otherPropertiesAllowances),
-    Some(otherPropertiesAdjustments)
+    Some(otherPropertiesAdjustments),
+    Some(otherPropertiesOther)
   )
-  val otherPropertiesAnnualSummaryJson = Jsons.Properties.otherAnnualSummary()
+  val otherPropertiesAnnualSummaryJson = Jsons.Properties.otherAnnualSummary(rarJointLet = false)
 
   "updateAnnualSummary" should {
     "return a 500" when {

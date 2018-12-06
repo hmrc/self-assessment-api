@@ -499,7 +499,9 @@ object Jsons {
                            balancingCharge: BigDecimal = 0.0,
                            bpraBalancingCharge: BigDecimal = 0.0,
                            businessPremisesRenovationAllowance: BigDecimal = 0.0,
-                           propertyAllowance: BigDecimal = 0.0
+                           propertyAllowance: BigDecimal = 0.0,
+                           nonResidentLandlord: Boolean = false,
+                           rarJointLet: Boolean
                           ): JsValue = {
       Json.parse(s"""
            |{
@@ -516,6 +518,10 @@ object Jsons {
            |   "privateUseAdjustment": $privateUseAdjustment,
            |   "balancingCharge": $balancingCharge,
            |   "bpraBalancingCharge" : $bpraBalancingCharge
+           |  },
+           |  "other": {
+           |    "nonResidentLandlord" : $nonResidentLandlord,
+           |    "rarJointLet" : $rarJointLet
            |  }
            |}
     """.stripMargin)
