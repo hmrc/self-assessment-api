@@ -43,7 +43,7 @@ object OtherPropertiesAnnualSummary {
         costOfReplacingDomGoods = allow.costOfReplacingDomesticItems,
         zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionsGoodsVehicleAllowance,
         businessPremisesRenovationAllowance = allow.businessPremisesRenovationAllowance,
-        propertyAllowance = allow.propertyAllowance
+        propertyIncomeAllowance = allow.propertyAllowance
       )
     }
     val adjustments = other.adjustments.map { adj =>
@@ -66,7 +66,7 @@ case class OtherPropertiesAllowances(annualInvestmentAllowance: Option[BigDecima
                                      costOfReplacingDomGoods: Option[BigDecimal] = None,
                                      zeroEmissionGoodsVehicleAllowance: Option[BigDecimal] = None,
                                      businessPremisesRenovationAllowance: Option[BigDecimal] = None,
-                                     propertyAllowance: Option[BigDecimal] = None
+                                     propertyIncomeAllowance: Option[BigDecimal] = None
                                     )
 
 object OtherPropertiesAllowances {
