@@ -22,7 +22,7 @@ import uk.gov.hmrc.r2.selfassessmentapi.resources.JsonSpec
 class OtherPropertiesAdjustmentsSpec extends JsonSpec {
   "json" should {
     "round trip" in {
-      roundTripJson(OtherPropertiesAdjustments(Some(50.12), Some(12.34), Some(66.34)))
+      roundTripJson(OtherPropertiesAdjustments(Some(50.12), Some(12.34), Some(66.34), Some(12.12)))
     }
 
     "round trip with empty object" in {
@@ -74,6 +74,21 @@ class OtherPropertiesAdjustmentsSpec extends JsonSpec {
     "reject balancingCharge with more than 2 decimal places" in {
       assertValidationErrorWithCode(OtherPropertiesAdjustments(balancingCharge = Some(50.123)),
         "/balancingCharge", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject bpraBalancingCharge with a negative value" in {
+      assertValidationErrorWithCode(OtherPropertiesAdjustments(bpraBalancingCharge = Some(-50)),
+        "/bpraBalancingCharge", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject bpraBalancingCharge more than 99999999999999.98" in {
+      assertValidationErrorWithCode(OtherPropertiesAdjustments(bpraBalancingCharge = Some(BigDecimal("99999999999999.99"))),
+        "/bpraBalancingCharge", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject bpraBalancingCharge with more than 2 decimal places" in {
+      assertValidationErrorWithCode(OtherPropertiesAdjustments(bpraBalancingCharge = Some(50.123)),
+        "/bpraBalancingCharge", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
   }
 }

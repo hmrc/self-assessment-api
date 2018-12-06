@@ -349,14 +349,21 @@ object DesJsons {
            |   "annualAdjustments": {
            |      "lossBroughtForward": 0.0,
            |      "balancingCharge": 0.0,
-           |      "privateUseAdjustment": 0.0
+           |      "privateUseAdjustment": 0.0,
+           |      "businessPremisesRenovationAllowanceBalancingCharges" : 0.0,
+           |      "nonResidentLandlord": false,
+           |      "ukOtherRentARoom" : {
+           |      "jointlyLet": false
+           |      }
            |   },
            |   "annualAllowances": {
            |      "annualInvestmentAllowance": 0.0,
            |      "otherCapitalAllowance": 0.0,
            |      "zeroEmissionGoodsVehicleAllowance": 0.0,
            |      "businessPremisesRenovationAllowance": 0.0,
-           |      "costOfReplacingDomGoods": 0.0
+           |      "costOfReplacingDomGoods": 0.0,
+           |      "businessPremisesRenovationAllowance": 0.0,
+           |      "propertyIncomeAllowance": 0.0
            |   }
            |}
       """.stripMargin

@@ -11,15 +11,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         given()
           .userIsSubscribedToMtdFor(nino)
           .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .willBeCreatedFor(nino)
           .des().properties.annualSummaryWillBeUpdatedFor(nino, propertyType, taxYear)
-          .when()
-          .post(Jsons.Properties())
-          .to(s"/r2/ni/$nino/uk-properties")
-          .thenAssertThat()
-          .statusIs(201)
           .when()
           .put(annualSummary(propertyType)).at(s"/r2/ni/$nino/uk-properties/$propertyType/$taxYear")
           .thenAssertThat()
@@ -50,11 +42,6 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .properties
           .willBeCreatedFor(nino)
           .des().properties.annualSummaryWillNotBeReturnedFor(nino, propertyType, taxYear)
-          .when()
-          .post(Jsons.Properties())
-          .to(s"/r2/ni/$nino/uk-properties")
-          .thenAssertThat()
-          .statusIs(201)
           .when()
           .put(annualSummary(propertyType)).at(s"/r2/ni/$nino/uk-properties/$propertyType/$taxYear")
           .thenAssertThat()
@@ -181,15 +168,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         given()
           .userIsSubscribedToMtdFor(nino)
           .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .willBeCreatedFor(nino)
           .des().properties.annualSummaryWillBeReturnedFor(nino, propertyType, taxYear, desAnnualSummary(propertyType))
-          .when()
-          .post(Jsons.Properties())
-          .to(s"/r2/ni/$nino/uk-properties")
-          .thenAssertThat()
-          .statusIs(201)
           .when()
           .get(s"/r2/ni/$nino/uk-properties/$propertyType/$taxYear")
           .thenAssertThat()
@@ -294,7 +273,7 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
   }
 
   private def annualSummary(propertyType: PropertyType.Value) = propertyType match {
-    case PropertyType.OTHER => Jsons.Properties.otherAnnualSummary()
+    case PropertyType.OTHER => Jsons.Properties.otherAnnualSummary(rarJointLet = false)
     case PropertyType.FHL => Jsons.Properties.fhlAnnualSummary()
   }
 
@@ -306,7 +285,11 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
       costOfReplacingDomesticItems = 150.55,
       lossBroughtForward = 20.22,
       privateUseAdjustment = -22.23,
-      balancingCharge = 350.34)
+      balancingCharge = 350.34,
+      bpraBalancingCharge = 0.0,
+      nonResidentLandlord = true,
+      rarJointLet = false
+    )
     case PropertyType.FHL => Jsons.Properties.fhlAnnualSummary(
       annualInvestmentAllowance = -10000.50,
       otherCapitalAllowance = 1000.20,

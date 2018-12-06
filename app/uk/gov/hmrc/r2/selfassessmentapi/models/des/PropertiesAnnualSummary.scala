@@ -41,14 +41,19 @@ object OtherPropertiesAnnualSummary {
         annualInvestmentAllowance = allow.annualInvestmentAllowance,
         otherCapitalAllowance = allow.otherCapitalAllowance,
         costOfReplacingDomGoods = allow.costOfReplacingDomesticItems,
-        zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionsGoodsVehicleAllowance
+        zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionsGoodsVehicleAllowance,
+        businessPremisesRenovationAllowance = allow.businessPremisesRenovationAllowance,
+        propertyIncomeAllowance = allow.propertyAllowance
       )
     }
     val adjustments = other.adjustments.map { adj =>
       OtherPropertiesAdjustments(
         adj.lossBroughtForward,
         adj.privateUseAdjustment,
-        adj.balancingCharge
+        adj.balancingCharge,
+        adj.bpraBalancingCharge,
+        other.other.flatMap(_.nonResidentLandlord).getOrElse(false),
+        other.other.flatMap(_.rarJointLet.map(OtherPropertiesUkOtherRentARoom(_)))
       )
     }
     OtherPropertiesAnnualSummary(allowances, adjustments)
@@ -59,7 +64,10 @@ object OtherPropertiesAnnualSummary {
 case class OtherPropertiesAllowances(annualInvestmentAllowance: Option[BigDecimal] = None,
                                      otherCapitalAllowance: Option[BigDecimal] = None,
                                      costOfReplacingDomGoods: Option[BigDecimal] = None,
-                                     zeroEmissionGoodsVehicleAllowance: Option[BigDecimal] = None)
+                                     zeroEmissionGoodsVehicleAllowance: Option[BigDecimal] = None,
+                                     businessPremisesRenovationAllowance: Option[BigDecimal] = None,
+                                     propertyIncomeAllowance: Option[BigDecimal] = None
+                                    )
 
 object OtherPropertiesAllowances {
   implicit val reads: Reads[OtherPropertiesAllowances] = Json.reads[OtherPropertiesAllowances]
@@ -69,7 +77,17 @@ object OtherPropertiesAllowances {
 
 case class OtherPropertiesAdjustments(lossBroughtForward: Option[BigDecimal] = None,
                                       privateUseAdjustment: Option[BigDecimal] = None,
-                                      balancingCharge: Option[BigDecimal] = None)
+                                      balancingCharge: Option[BigDecimal] = None,
+                                      businessPremisesRenovationAllowanceBalancingCharges: Option[BigDecimal] = None,
+                                      nonResidentLandlord: Boolean = false,
+                                      ukOtherRentARoom: Option[OtherPropertiesUkOtherRentARoom] = None
+                                     )
+
+case class OtherPropertiesUkOtherRentARoom(jointlyLet: Boolean)
+object OtherPropertiesUkOtherRentARoom {
+  implicit val reads: Reads[OtherPropertiesUkOtherRentARoom] = Json.reads[OtherPropertiesUkOtherRentARoom]
+  implicit val writes: Writes[OtherPropertiesUkOtherRentARoom] = Json.writes[OtherPropertiesUkOtherRentARoom]
+}
 
 object OtherPropertiesAdjustments {
   implicit val reads: Reads[OtherPropertiesAdjustments] = Json.reads[OtherPropertiesAdjustments]
