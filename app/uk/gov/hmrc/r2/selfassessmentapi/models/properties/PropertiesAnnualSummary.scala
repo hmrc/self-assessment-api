@@ -52,7 +52,7 @@ object OtherPropertiesAnnualSummary {
       adj.lossBroughtForward,
       adj.privateUseAdjustment,
       adj.balancingCharge,
-      adj.bpraBalancingCharge
+      adj.businessPremisesRenovationAllowanceBalancingCharges
     )
 
     val other = for {

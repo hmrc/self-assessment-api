@@ -78,7 +78,7 @@ object OtherPropertiesAllowances {
 case class OtherPropertiesAdjustments(lossBroughtForward: Option[BigDecimal] = None,
                                       privateUseAdjustment: Option[BigDecimal] = None,
                                       balancingCharge: Option[BigDecimal] = None,
-                                      bpraBalancingCharge: Option[BigDecimal] = None,
+                                      businessPremisesRenovationAllowanceBalancingCharges: Option[BigDecimal] = None,
                                       nonResidentLandlord: Boolean = false,
                                       ukOtherRentARoom: Option[OtherPropertiesUkOtherRentARoom] = None
                                      )
@@ -88,8 +88,6 @@ object OtherPropertiesUkOtherRentARoom {
   implicit val reads: Reads[OtherPropertiesUkOtherRentARoom] = Json.reads[OtherPropertiesUkOtherRentARoom]
   implicit val writes: Writes[OtherPropertiesUkOtherRentARoom] = Json.writes[OtherPropertiesUkOtherRentARoom]
 }
-
-// TODO businessPremisesRenovationAllowanceBalancingCharges name change
 
 object OtherPropertiesAdjustments {
   implicit val reads: Reads[OtherPropertiesAdjustments] = Json.reads[OtherPropertiesAdjustments]
