@@ -108,18 +108,6 @@ class PropertiesAnnualSummaryResourceSpec extends BaseFunctionalSpec {
           .bodyIsError("TAX_YEAR_INVALID")
       }
 
-      s"return code 404 when attempting to update annual summaries for an invalid property type for $propertyType" in {
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .when()
-          .put(annualSummary(propertyType)).at(s"/r2/ni/$nino/uk-properties/silly/$taxYear")
-          .thenAssertThat()
-          .statusIs(404)
-          .contentTypeIsJson()
-          .bodyIsLike(Jsons.Errors.notFound)
-      }
-
       s"return code 500 when DES is experiencing problems for $propertyType" in {
         given()
           .userIsSubscribedToMtdFor(nino)
