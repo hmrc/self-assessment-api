@@ -27,12 +27,12 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.Future
 
-class PropertyPeriodServiceSpec extends UnitSpec
+class ReleaseTwoServiceSpec extends UnitSpec
   with MockSelfAssessmentConnector with MockAppConfig {
 
   class Setup {
 
-    object service extends PropertyPeriodService(
+    object service extends ReleaseTwoService(
       mockAppConfig,
       mockSelfAssessmentConnector
     )

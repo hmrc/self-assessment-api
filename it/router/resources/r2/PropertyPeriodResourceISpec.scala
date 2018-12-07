@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package router.resources
+package router.resources.r2
 
 import play.api.libs.json.{JsObject, Json}
-import support.IntegrationSpec
+import support.ReleaseTwoIntegrationSpec
 
-class PropertyPeriodResourceISpec extends IntegrationSpec {
+class PropertyPeriodResourceISpec extends ReleaseTwoIntegrationSpec {
 
   val jsonRequest: JsObject = Json.obj("test" -> "json request")
   val jsonResponse: JsObject = Json.obj("test" -> "json response")
@@ -27,14 +27,14 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
   val propertyTypes = Seq("other", "furnished-holiday-lettings")
 
 
-  "Create Property periods with release-2 disabled" should {
+  "Create Property periods with release-2 enabled" should {
 
     for ( propertyType <- propertyTypes) {
 
       s"return a 201 with no json response body for $propertyType properties" when {
         "the downstream response from the self assessment api version 1.0 returns a 201 with a json response body" in {
           val incomingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods"
-          val outgoingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods"
+          val outgoingUrl = s"/r2/ni/AA111111A/uk-properties/$propertyType/periods"
 
           Given()
             .theClientIsAuthorised
@@ -56,7 +56,7 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
 
         "the downstream response from the self assessment api version 2.0 returns a 201 with a json response body" in {
           val incomingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods"
-          val outgoingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods"
+          val outgoingUrl = s"/r2/ni/AA111111A/uk-properties/$propertyType/periods"
 
           Given()
             .theClientIsAuthorised
@@ -79,14 +79,14 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
     }
   }
 
-  "GET Property periods with release-2 disabled" should {
+  "GET Property periods with release-2 enabled" should {
 
     for ( propertyType <- propertyTypes) {
 
       s"return a 200 with a json response body for $propertyType properties" when {
         "the downstream response from the self assessment api returns returns a 200 with a json response body" in {
           val incomingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
-          val outgoingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
+          val outgoingUrl = s"/r2/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
           Given()
             .theClientIsAuthorised
             .And()
@@ -106,7 +106,7 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
 
         "a version 2.0 header is provided and the downstream response from the self assessment api returns a 200 with a json response body" in {
           val incomingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
-          val outgoingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
+          val outgoingUrl = s"/r2/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
 
           Given()
             .theClientIsAuthorised
@@ -128,14 +128,14 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
     }
   }
 
-  "PUT Property periods with release-2 disabled" should {
+  "PUT Property periods with release-2 enabled" should {
 
     for ( propertyType <- propertyTypes) {
 
       s"return a 204 with no json response body for $propertyType properties" when {
         "the downstream response from the self assessment api returns a 204 with a json response body" in {
           val incomingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
-          val outgoingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
+          val outgoingUrl = s"/r2/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
 
           Given()
             .theClientIsAuthorised
@@ -159,7 +159,7 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
         }
         "a version 2.0 header is provided and the downstream response from the self assessment api returns a 204 with a json response body" in {
           val incomingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
-          val outgoingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
+          val outgoingUrl = s"/r2/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
 
           Given()
             .theClientIsAuthorised

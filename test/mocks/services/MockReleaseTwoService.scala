@@ -21,34 +21,30 @@ import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
 import play.api.libs.json.JsValue
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
-import router.services.PropertyPeriodService
+import router.services.ReleaseTwoService
 
 import scala.concurrent.Future
 
-trait MockPropertyPeriodService extends Mock { _: Suite =>
+trait MockReleaseTwoService extends Mock { _: Suite =>
 
-  val mockPropertyPeriodService = mock[PropertyPeriodService]
+  val mockReleaseTwoService = mock[ReleaseTwoService]
 
-  object MockPropertyPeriodService {
+  object MockReleaseTwoService {
     def create(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockPropertyPeriodService.create(eqTo(body))(any(), any()))
-    }
-
-    def getAll(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockPropertyPeriodService.getAll()(any(), any()))
+      when(mockReleaseTwoService.create(eqTo(body))(any(), any()))
     }
 
     def get(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockPropertyPeriodService.get()(any(), any()))
+      when(mockReleaseTwoService.get()(any(), any()))
     }
 
     def amend(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockPropertyPeriodService.amend(eqTo(body))(any(), any()))
+      when(mockReleaseTwoService.amend(eqTo(body))(any(), any()))
     }
   }
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockPropertyPeriodService)
+    reset(mockReleaseTwoService)
   }
 }

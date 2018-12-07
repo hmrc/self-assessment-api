@@ -19,22 +19,14 @@ package router.resources
 import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
-import router.services.PropertyPeriodService
+import router.services.ReleaseTwoService
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
-class PropertyPeriodResource @Inject()(service: PropertyPeriodService,
-                                       val authConnector: AuthConnector) extends BaseResource {
+class ReleaseTwoResource @Inject()(service: ReleaseTwoService,
+                                   val authConnector: AuthConnector) extends BaseResource {
 
-  def createOtherPeriod(nino: String) = create()
-  def getOtherPeriod(nino: String, periodId: String) = get()
-  def updateOtherPeriod(nino: String, periodId: String) = update()
-
-  def createFhlPeriod(nino: String) = create()
-  def getFhlPeriod(nino: String, periodId: String) = get()
-  def updateFhlPeriod(nino: String, periodId: String) = update()
-
-  private def create(): Action[JsValue] = AuthAction.async(parse.json) {
+    def create(param:Any*): Action[JsValue] = AuthAction.async(parse.json) {
     implicit request =>
       withJsonBody[JsValue]{
         service.create(_).map {
@@ -44,7 +36,7 @@ class PropertyPeriodResource @Inject()(service: PropertyPeriodService,
       }
   }
 
-  private def get(): Action[AnyContent] = AuthAction.async {
+  def get(param:Any*): Action[AnyContent] = AuthAction.async {
     implicit request =>
       service.get().map {
           case Left(error) => buildErrorResponse(error)
@@ -52,7 +44,7 @@ class PropertyPeriodResource @Inject()(service: PropertyPeriodService,
       }
   }
 
-  private def update(): Action[JsValue] = AuthAction.async(parse.json) {
+  def update(param:Any*): Action[JsValue] = AuthAction.async(parse.json) {
     implicit request =>
       withJsonBody[JsValue]{
         service.amend(_).map {
