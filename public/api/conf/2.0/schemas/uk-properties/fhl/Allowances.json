@@ -31,7 +31,7 @@
       "maximum": 99999999999999.98,
       "example": "100.25"
     },
-    "propertyIncomeAllowance": {
+    "propertyAllowance": {
       "title": "Other Capital allowance",
       "description": "The limited amount Tax exemption for individuals with income from land or property. The value must be between 0 and 99999999999.99",
       "type": "number",
