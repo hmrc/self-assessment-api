@@ -48,11 +48,20 @@ Now you can test sandbox:
 
     curl -v http://localhost:9000/sandbox/$UTR -H 'Accept: application/vnd.hmrc.1.0+json'
 
-### License
+## Highlighted SBT Tasks
+Task | Description | Command
+:-------|:------------|:-----
+test | Runs the standard unit tests | ```$ sbt test```
+func:test  | Runs the functional tests | ```$ sbt func:test ```
+dependencyCheck | Runs dependency-check against the current project. It aggregates dependencies and generates a report | ```$ sbt dependencyCheck```
+dependencyUpdates |  Shows a list of project dependencies that can be updated | ```$ sbt dependencyUpdates```
+dependencyUpdatesReport | Writes a list of project dependencies to a file | ```$ sbt dependencyUpdatesReport```
+
+## License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
 
-### Reporting Issues
+## Reporting Issues
 If you encounter an issue with this API, you can use the GitHub issues page to seek help.
 
 When submitting a technical query, please be as detailed as possible in your explanation. 
