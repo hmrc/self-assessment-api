@@ -22,7 +22,7 @@ import uk.gov.hmrc.r2.selfassessmentapi.resources.JsonSpec
 class FHLPropertiesAdjustmentsSpec extends JsonSpec {
   "FHLPropertiesAdjustments" should {
     "round trip" in {
-      roundTripJson(FHLPropertiesAdjustments(Some(50.55), Some(12.22), Some(123.45), Some(true)))
+      roundTripJson(FHLPropertiesAdjustments(Some(50.55), Some(12.22), Some(123.45), Some(43.34), Some(true)))
     }
 
     "round trip with empty json" in {

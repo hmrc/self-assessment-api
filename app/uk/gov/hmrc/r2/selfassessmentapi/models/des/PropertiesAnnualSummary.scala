@@ -96,7 +96,8 @@ object OtherPropertiesAdjustments {
 
 
 case class FHLPropertiesAnnualSummary(annualAllowances: Option[FHLPropertiesAllowances],
-                                      annualAdjustments: Option[FHLPropertiesAdjustments]) extends PropertiesAnnualSummary
+                                      annualAdjustments: Option[FHLPropertiesAdjustments],
+                                      annualOther: Option[FHLPropertiesOther]) extends PropertiesAnnualSummary
 
 object FHLPropertiesAnnualSummary {
   implicit val reads: Reads[FHLPropertiesAnnualSummary] = Json.reads[FHLPropertiesAnnualSummary]
@@ -106,7 +107,9 @@ object FHLPropertiesAnnualSummary {
     val allowances = fhl.allowances.map { allow =>
       FHLPropertiesAllowances(
         allow.annualInvestmentAllowance,
-        allow.otherCapitalAllowance
+        allow.otherCapitalAllowance,
+        allow.businessPremisesRenovationAllowance,
+        allow.propertyIncomeAllowance
       )
     }
     val adjustments = fhl.adjustments.map { adj =>
@@ -114,16 +117,25 @@ object FHLPropertiesAnnualSummary {
         adj.lossBroughtForward,
         adj.privateUseAdjustment,
         adj.balancingCharge,
+        adj.bpraBalancingCharge,
         adj.periodOfGraceAdjustment
       )
     }
-    FHLPropertiesAnnualSummary(allowances, adjustments)
+    val other = fhl.other.map { other => 
+      FHLPropertiesOther(
+        other.nonResidentLandlord,
+        other.rarJointLet
+      )
+    }
+    FHLPropertiesAnnualSummary(allowances, adjustments, other)
   }
 }
 
 
 case class FHLPropertiesAllowances(annualInvestmentAllowance: Option[BigDecimal] = None,
-                                   otherCapitalAllowance: Option[BigDecimal] = None)
+                                   otherCapitalAllowance: Option[BigDecimal] = None,
+                                   businessPremisesRenovationAllowance: Option[BigDecimal] = None,
+                                   propertyIncomeAllowance: Option[BigDecimal] = None)
 
 object FHLPropertiesAllowances {
   implicit val reads: Reads[FHLPropertiesAllowances] = Json.reads[FHLPropertiesAllowances]
@@ -133,9 +145,18 @@ object FHLPropertiesAllowances {
 case class FHLPropertiesAdjustments(lossBroughtForward: Option[BigDecimal] = None,
                                     privateUseAdjustment: Option[BigDecimal] = None,
                                     balancingCharge: Option[BigDecimal] = None,
+                                    bpraBalancingCharge: Option[BigDecimal] = None,
                                     periodOfGraceAdjustment: Option[Boolean] = None)
 
 object FHLPropertiesAdjustments {
   implicit val reads: Reads[FHLPropertiesAdjustments] = Json.reads[FHLPropertiesAdjustments]
   implicit val writes: Writes[FHLPropertiesAdjustments] = Json.writes[FHLPropertiesAdjustments]
+}
+
+case class FHLPropertiesOther(nonResidentLandlord: Option[Boolean] = Some(false),
+                              rarJointLet: Option[Boolean] = Some(false))
+
+object FHLPropertiesOther {
+  implicit val reads: Reads[FHLPropertiesOther]   = Json.reads[FHLPropertiesOther]
+  implicit val writes: Writes[FHLPropertiesOther] = Json.writes[FHLPropertiesOther]
 }

@@ -16,6 +16,7 @@ eclipse
 *.iml
 *.ipr
 *.iws
+*.log
 lib
 lib_managed
 log
@@ -36,4 +37,5 @@ tmp
 .idea_modules
 bin
 .ensime
+ensime.sbt
 

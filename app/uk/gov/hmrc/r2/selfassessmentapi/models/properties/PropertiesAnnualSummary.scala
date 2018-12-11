@@ -68,14 +68,16 @@ object OtherPropertiesAnnualSummary {
 }
 
 case class FHLPropertiesAnnualSummary(allowances: Option[FHLPropertiesAllowances],
-                                      adjustments: Option[FHLPropertiesAdjustments]) extends PropertiesAnnualSummary
+                                      adjustments: Option[FHLPropertiesAdjustments],
+                                      other: Option[FHLPropertiesOther]) extends PropertiesAnnualSummary
 
 object FHLPropertiesAnnualSummary {
   implicit val writes: Writes[FHLPropertiesAnnualSummary] = Json.writes[FHLPropertiesAnnualSummary]
 
   implicit val reads: Reads[FHLPropertiesAnnualSummary] = (
     (__ \ "allowances").readNullable[FHLPropertiesAllowances] and
-      (__ \ "adjustments").readNullable[FHLPropertiesAdjustments]
+      (__ \ "adjustments").readNullable[FHLPropertiesAdjustments] and
+      (__ \ "other").readNullable[FHLPropertiesOther]
     ) (FHLPropertiesAnnualSummary.apply _)
 
   def from(summary: des.FHLPropertiesAnnualSummary): FHLPropertiesAnnualSummary = {
@@ -83,14 +85,25 @@ object FHLPropertiesAnnualSummary {
       allow <- summary.annualAllowances
     } yield FHLPropertiesAllowances(
       allow.annualInvestmentAllowance,
-      allow.otherCapitalAllowance)
+      allow.otherCapitalAllowance,
+      allow.businessPremisesRenovationAllowance,
+      allow.propertyIncomeAllowance)
+
     val adjustments = for {
       adj <- summary.annualAdjustments
     } yield FHLPropertiesAdjustments(
       adj.lossBroughtForward,
       adj.privateUseAdjustment,
       adj.balancingCharge,
+      adj.bpraBalancingCharge,
       adj.periodOfGraceAdjustment)
-    FHLPropertiesAnnualSummary(allowances, adjustments)
+
+    val other = for {
+      other <- summary.annualOther
+    } yield FHLPropertiesOther(
+      other.nonResidentLandlord,
+      other.rarJointLet)
+      
+    FHLPropertiesAnnualSummary(allowances, adjustments, other)
   }
 }

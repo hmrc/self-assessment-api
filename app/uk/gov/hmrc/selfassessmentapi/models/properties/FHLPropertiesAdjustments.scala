@@ -23,7 +23,6 @@ import uk.gov.hmrc.selfassessmentapi.models._
 case class FHLPropertiesAdjustments(lossBroughtForward: Option[BigDecimal] = None,
                                     privateUseAdjustment: Option[BigDecimal] = None,
                                     balancingCharge: Option[BigDecimal] = None,
-                                    bpraBalancingCharge: Option[BigDecimal] = None,
                                     periodOfGraceAdjustment: Option[Boolean] = None)
 
 object FHLPropertiesAdjustments {
@@ -33,7 +32,6 @@ object FHLPropertiesAdjustments {
     (__ \ "lossBroughtForward").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "privateUseAdjustment").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "balancingCharge").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "bpraBalancingCharge").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "periodOfGraceAdjustment").readNullable[Boolean]
     ) (FHLPropertiesAdjustments.apply _)
 }

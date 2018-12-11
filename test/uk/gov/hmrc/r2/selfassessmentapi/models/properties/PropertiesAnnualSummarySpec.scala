@@ -23,9 +23,9 @@ class PropertiesAnnualSummarySpec extends JsonSpec {
     "round trip" in {
       roundTripJson(
         OtherPropertiesAnnualSummary(
-          allowances = Some(OtherPropertiesAllowances(Some(50), Some(20.20), Some(15.15), Some(12.34))),
-          adjustments = Some(OtherPropertiesAdjustments(Some(20.23), Some(50.55), Some(12.34))),
-          other = None)
+          allowances = Some(OtherPropertiesAllowances(Some(50), Some(20.20), Some(15.15), Some(12.34), Some(66.75), Some(22.54))),
+          adjustments = Some(OtherPropertiesAdjustments(Some(20.23), Some(50.55), Some(12.34), Some(12.21))),
+          other = Some(OtherPropertiesOther(Some(false), Some(false))) )
         )
     }
   }
@@ -34,14 +34,15 @@ class PropertiesAnnualSummarySpec extends JsonSpec {
     "round trip" in {
       roundTripJson(
         FHLPropertiesAnnualSummary(
-          allowances = Some(FHLPropertiesAllowances(Some(50), Some(20.20))),
+          allowances = Some(FHLPropertiesAllowances(Some(50), Some(20.20), Some(12.21), Some(34.32))),
           adjustments =
             Some(
               FHLPropertiesAdjustments(
                 lossBroughtForward = Some(20.23),
                 privateUseAdjustment = Some(50.55),
                 balancingCharge = Some(12.34),
-                periodOfGraceAdjustment = Some(false)))))
+                periodOfGraceAdjustment = Some(false))),
+          other = Some(FHLPropertiesOther(Some(false), Some(false)))))
     }
   }
 }
