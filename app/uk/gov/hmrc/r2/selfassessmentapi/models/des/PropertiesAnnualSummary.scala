@@ -43,7 +43,7 @@ object OtherPropertiesAnnualSummary {
         costOfReplacingDomGoods = allow.costOfReplacingDomesticItems,
         zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionsGoodsVehicleAllowance,
         businessPremisesRenovationAllowance = allow.businessPremisesRenovationAllowance,
-        propertyIncomeAllowance = allow.propertyAllowance
+        propertyAllowance = allow.propertyAllowance
       )
     }
     val adjustments = other.adjustments.map { adj =>
@@ -66,7 +66,7 @@ case class OtherPropertiesAllowances(annualInvestmentAllowance: Option[BigDecima
                                      costOfReplacingDomGoods: Option[BigDecimal] = None,
                                      zeroEmissionGoodsVehicleAllowance: Option[BigDecimal] = None,
                                      businessPremisesRenovationAllowance: Option[BigDecimal] = None,
-                                     propertyIncomeAllowance: Option[BigDecimal] = None
+                                     propertyAllowance: Option[BigDecimal] = None
                                     )
 
 object OtherPropertiesAllowances {
@@ -109,7 +109,7 @@ object FHLPropertiesAnnualSummary {
         allow.annualInvestmentAllowance,
         allow.otherCapitalAllowance,
         allow.businessPremisesRenovationAllowance,
-        allow.propertyIncomeAllowance
+        allow.propertyAllowance
       )
     }
     val adjustments = fhl.adjustments.map { adj =>
@@ -135,7 +135,7 @@ object FHLPropertiesAnnualSummary {
 case class FHLPropertiesAllowances(annualInvestmentAllowance: Option[BigDecimal] = None,
                                    otherCapitalAllowance: Option[BigDecimal] = None,
                                    businessPremisesRenovationAllowance: Option[BigDecimal] = None,
-                                   propertyIncomeAllowance: Option[BigDecimal] = None)
+                                   propertyAllowance: Option[BigDecimal] = None)
 
 object FHLPropertiesAllowances {
   implicit val reads: Reads[FHLPropertiesAllowances] = Json.reads[FHLPropertiesAllowances]

@@ -36,7 +36,7 @@ class PropertiesAnnualSummarySpec extends JsonSpec {
             annualInvestmentAllowance = Some(50), 
             otherCapitalAllowance = Some(20.20), 
             businessPremisesRenovationAllowance = Some(74.32), 
-            propertyIncomeAllowance = Some(100.25))),
+            propertyAllowance = Some(100.25))),
           annualAdjustments = Some(FHLPropertiesAdjustments(
                 lossBroughtForward = Some(20.23),
                 privateUseAdjustment = Some(50.55),

@@ -44,7 +44,7 @@ object OtherPropertiesAnnualSummary {
         allow.costOfReplacingDomGoods,
         allow.zeroEmissionGoodsVehicleAllowance,
         allow.businessPremisesRenovationAllowance,
-        allow.propertyIncomeAllowance
+        allow.propertyAllowance
     )
     val adjustments = for {
       adj <- summary.annualAdjustments
@@ -87,7 +87,7 @@ object FHLPropertiesAnnualSummary {
       allow.annualInvestmentAllowance,
       allow.otherCapitalAllowance,
       allow.businessPremisesRenovationAllowance,
-      allow.propertyIncomeAllowance)
+      allow.propertyAllowance)
 
     val adjustments = for {
       adj <- summary.annualAdjustments
