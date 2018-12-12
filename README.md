@@ -49,7 +49,9 @@ Now you can test sandbox:
     curl -v http://localhost:9000/sandbox/$UTR -H 'Accept: application/vnd.hmrc.1.0+json'
 
 ## Highlighted SBT Tasks
+
 Prior to raising a pull request, perform the following actions, taking any remidiation that is necessary.
+
 Task | Description | Command
 :-------|:------------|:-----
 clean | remove all previously built artefacts | ```sbt clean```
