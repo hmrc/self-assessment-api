@@ -104,8 +104,8 @@ object OtherPropertiesAdjustments {
  */
 
 case class FHLPropertiesAnnualSummary(annualAllowances: Option[FHLPropertiesAllowances],
-                                      annualAdjustments: Option[FHLPropertiesAdjustments]/*,
-                                      annualOther: Option[FHLPropertiesOther]*/) extends PropertiesAnnualSummary
+                                      annualAdjustments: Option[FHLPropertiesAdjustments]
+                                     ) extends PropertiesAnnualSummary
 
 object FHLPropertiesAnnualSummary {
   implicit val reads: Reads[FHLPropertiesAnnualSummary] = Json.reads[FHLPropertiesAnnualSummary]
