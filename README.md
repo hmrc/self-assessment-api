@@ -54,7 +54,7 @@ Prior to raising a pull request, perform the following actions, taking any remid
 
 Task | Description | Command
 :-------|:------------|:-----
-clean | remove all previously built artefacts | ```sbt clean```
+clean | remove all previously built artefacts | ```$ sbt clean```
 test | Runs the standard unit tests | ```$ sbt test```
 func:test  | Runs the functional tests | ```$ sbt func:test ```
 dependencyCheck | Runs dependency-check against the current project. It aggregates dependencies and generates a report | ```$ sbt dependencyCheck```
