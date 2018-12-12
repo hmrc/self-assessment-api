@@ -126,7 +126,7 @@ object FHLPropertiesAnnualSummary {
         adj.balancingCharge,
         adj.bpraBalancingCharge,
         adj.periodOfGraceAdjustment,
-        fhl.other.flatMap(_.nonResidentLandlord),
+        fhl.other.flatMap(_.nonResidentLandlord).getOrElse(false),
         ukFhlRentARoom = fhl.other.flatMap(_.rarJointLet.map(FHLPropertiesUkFhlRentARoom(_)))
       )
     }
@@ -134,7 +134,6 @@ object FHLPropertiesAnnualSummary {
   }
 }
 
-// newly added December 2018 See Jira MTDSA-1650
 case class FHLPropertiesUkFhlRentARoom(jointlyLet: Boolean)
 
 object FHLPropertiesUkFhlRentARoom {
@@ -157,7 +156,7 @@ case class FHLPropertiesAdjustments(lossBroughtForward: Option[BigDecimal] = Non
                                     balancingCharge: Option[BigDecimal] = None,
                                     businessPremisesRenovationAllowanceBalancingCharges: Option[BigDecimal] = None,
                                     periodOfGraceAdjustment: Option[Boolean] = None,
-                                    nonResidentLandlord: Option[Boolean] = None,
+                                    nonResidentLandlord: Boolean = false,
                                     ukFhlRentARoom: Option[FHLPropertiesUkFhlRentARoom] = None)
 
 object FHLPropertiesAdjustments {
