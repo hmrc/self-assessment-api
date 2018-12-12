@@ -52,7 +52,7 @@
   },
   "incomeTax": {
     "taxableIncome": 20142.00,
-    "payPensionsProfit": {
+    "payAndPensionsProfit": {
       "totalAmount": 238.71,
       "band": [
         {
@@ -171,7 +171,7 @@
     "nic2": 153.4,
     "nic4": 2087.19,
     "totalNicAmount": 2240.59,
-    "incomeTaxAndNicAmount": 6193.59
+    "incomeTaxNicAmount": 6193.59
   },
   "calculationMessageCount": 0,
   "annualAllowances": {
