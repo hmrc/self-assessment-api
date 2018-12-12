@@ -50,7 +50,7 @@ Now you can test sandbox:
 
 ## Highlighted SBT Tasks
 
-Prior to raising a pull request, perform the following actions, taking any remidiation that is necessary.
+Prior to raising a pull request, perform the following actions, taking any remediation that is necessary.
 
 Task | Description | Command
 :-------|:------------|:-----
