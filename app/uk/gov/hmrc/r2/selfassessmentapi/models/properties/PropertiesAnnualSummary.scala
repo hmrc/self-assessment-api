@@ -34,7 +34,7 @@ object OtherPropertiesAnnualSummary {
       (__ \ "adjustments").readNullable[OtherPropertiesAdjustments] and
       (__ \ "other").readNullable[OtherPropertiesOther]
     ) (OtherPropertiesAnnualSummary.apply _)
-
+  // FROM DES -> Internal
   def from(summary: des.OtherPropertiesAnnualSummary): OtherPropertiesAnnualSummary = {
     val allowances = for {
         allow <- summary.annualAllowances
@@ -79,7 +79,7 @@ object FHLPropertiesAnnualSummary {
       (__ \ "adjustments").readNullable[FHLPropertiesAdjustments] and
       (__ \ "other").readNullable[FHLPropertiesOther]
     ) (FHLPropertiesAnnualSummary.apply _)
-
+  // FROM DES -> Internal
   def from(summary: des.FHLPropertiesAnnualSummary): FHLPropertiesAnnualSummary = {
     val allowances = for {
       allow <- summary.annualAllowances
@@ -87,7 +87,7 @@ object FHLPropertiesAnnualSummary {
       allow.annualInvestmentAllowance,
       allow.otherCapitalAllowance,
       allow.businessPremisesRenovationAllowance,
-      allow.propertyAllowance)
+      propertyAllowance = allow.propertyIncomeAllowance)
 
     val adjustments = for {
       adj <- summary.annualAdjustments
@@ -95,14 +95,14 @@ object FHLPropertiesAnnualSummary {
       adj.lossBroughtForward,
       adj.privateUseAdjustment,
       adj.balancingCharge,
-      adj.bpraBalancingCharge,
+      adj.businessPremisesRenovationAllowanceBalancingCharges,
       adj.periodOfGraceAdjustment)
 
     val other = for {
-      other <- summary.annualOther
+      other <- summary.annualAdjustments
     } yield FHLPropertiesOther(
       other.nonResidentLandlord,
-      other.rarJointLet)
+      other.ukFhlRentARoom.map(_.jointlyLet))
       
     FHLPropertiesAnnualSummary(allowances, adjustments, other)
   }

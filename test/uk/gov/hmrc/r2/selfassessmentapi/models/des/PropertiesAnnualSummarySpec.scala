@@ -36,14 +36,16 @@ class PropertiesAnnualSummarySpec extends JsonSpec {
             annualInvestmentAllowance = Some(50), 
             otherCapitalAllowance = Some(20.20), 
             businessPremisesRenovationAllowance = Some(74.32), 
-            propertyAllowance = Some(100.25))),
+            propertyIncomeAllowance = Some(100.25))),
           annualAdjustments = Some(FHLPropertiesAdjustments(
-                lossBroughtForward = Some(20.23),
-                privateUseAdjustment = Some(50.55),
-                balancingCharge = Some(12.34),
-                bpraBalancingCharge = Some(200.00),
-                periodOfGraceAdjustment = Some(false))),
-          annualOther = Some (FHLPropertiesOther( Some(false), Some(false)))))
+            lossBroughtForward = Some(20.23),
+            privateUseAdjustment = Some(50.55),
+            balancingCharge = Some(12.34),
+            periodOfGraceAdjustment = Some(false),
+            businessPremisesRenovationAllowanceBalancingCharges = Some(200.00),
+            nonResidentLandlord = Some(true),
+            ukFhlRentARoom = Some(FHLPropertiesUkFhlRentARoom(jointlyLet = false) )
+          ))))
     }
   }
 }
