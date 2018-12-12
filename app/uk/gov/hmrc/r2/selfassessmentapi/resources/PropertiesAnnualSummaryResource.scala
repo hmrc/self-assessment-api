@@ -47,6 +47,9 @@ trait PropertiesAnnualSummaryResource extends BaseResource {
   val authService: AuthorisationService
   val connector: PropertiesAnnualSummaryConnector
 
+  def updateFHLAnnualSummary(nino: Nino, taxYear: TaxYear): Action[JsValue] = updateAnnualSummary(nino, PropertyType.FHL, taxYear)
+  def updateOtherAnnualSummary(nino: Nino, taxYear: TaxYear): Action[JsValue] = updateAnnualSummary(nino, PropertyType.OTHER, taxYear)
+
   def updateAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.Properties, Some("annual")).async(parse.json) { implicit request =>
       validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) map {
@@ -62,6 +65,9 @@ trait PropertiesAnnualSummaryResource extends BaseResource {
           }
       } recoverWith exceptionHandling
     }
+
+  def retrieveFHLAnnualSummary(nino: Nino, taxYear: TaxYear): Action[AnyContent] = retrieveAnnualSummary(nino, PropertyType.FHL, taxYear)
+  def retrieveOtherAnnualSummary(nino: Nino, taxYear: TaxYear): Action[AnyContent] = retrieveAnnualSummary(nino, PropertyType.OTHER, taxYear)
 
   def retrieveAnnualSummary(nino: Nino, propertyId: PropertyType, taxYear: TaxYear): Action[AnyContent] =
     APIAction(nino, SourceType.Properties, Some("annual")).async { implicit request =>
