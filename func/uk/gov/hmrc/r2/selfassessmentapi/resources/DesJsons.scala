@@ -377,7 +377,11 @@ object DesJsons {
            |      "balancingCharge": 0.0,
            |      "privateUseAdjustment": 0.0,
            |      "bpraBalancingCharge": 0.0,
-           |      "periodOfGraceAdjustment": false
+           |      "periodOfGraceAdjustment": false,
+           |      "nonResidentLandlord": false,
+           |      "ukFhlRentARoom": {
+           |        "jointlyLet": false
+           |      }
            |   },
            |   "annualAllowances": {
            |      "annualInvestmentAllowance": 0.0,

@@ -21,7 +21,7 @@ import play.api.libs.json._
 import uk.gov.hmrc.r2.selfassessmentapi.models._
 
 case class FHLPropertiesOther(nonResidentLandlord: Option[Boolean] = Some(false),
-                              rarJointLet: Option[Boolean] = Some(false))
+                              rarJointLet: Option[Boolean] = None)
 
 object FHLPropertiesOther {
   implicit val writes: Writes[FHLPropertiesOther] = Json.writes[FHLPropertiesOther]
