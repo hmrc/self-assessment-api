@@ -32,14 +32,20 @@ class PropertiesAnnualSummarySpec extends JsonSpec {
     "round trip" in {
       roundTripJson(
         FHLPropertiesAnnualSummary(
-          annualAllowances = Some(FHLPropertiesAllowances(Some(50), Some(20.20))),
-          annualAdjustments =
-            Some(
-              FHLPropertiesAdjustments(
-                lossBroughtForward = Some(20.23),
-                privateUseAdjustment = Some(50.55),
-                balancingCharge = Some(12.34),
-                periodOfGraceAdjustment = Some(false)))))
+          annualAllowances = Some(FHLPropertiesAllowances(
+            annualInvestmentAllowance = Some(50), 
+            otherCapitalAllowance = Some(20.20), 
+            businessPremisesRenovationAllowance = Some(74.32), 
+            propertyIncomeAllowance = Some(100.25))),
+          annualAdjustments = Some(FHLPropertiesAdjustments(
+            lossBroughtForward = Some(20.23),
+            privateUseAdjustment = Some(50.55),
+            balancingCharge = Some(12.34),
+            periodOfGraceAdjustment = Some(false),
+            businessPremisesRenovationAllowanceBalancingCharges = Some(200.00),
+            nonResidentLandlord = true,
+            ukFhlRentARoom = Some(FHLPropertiesUkFhlRentARoom(jointlyLet = false)))
+          )))
     }
   }
 }

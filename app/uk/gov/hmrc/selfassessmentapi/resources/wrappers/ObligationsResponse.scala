@@ -35,7 +35,7 @@ case class ObligationsResponse(underlying: HttpResponse) extends Response {
       errorMessage = "Obligation for source id and/or business type was not found."
       val result = for {
         obl <- obligation.obligations
-        val check =
+        check =
         if (refNo.isDefined)
           obl.identification.exists(identification => identification.referenceNumber == refNo.get) && obl.identification.get.incomeSourceType.contains(incomeSourceType)
         else

@@ -28,13 +28,17 @@ object PropertiesAnnualSummary {
   }
 }
 
+/*
+ * Non-Furnished Holiday Let [a.k.a. Other] section
+ * type and value declarations, using Json reads and writes
+ */
 case class OtherPropertiesAnnualSummary(annualAllowances: Option[OtherPropertiesAllowances],
                                         annualAdjustments: Option[OtherPropertiesAdjustments]) extends PropertiesAnnualSummary
 
 object OtherPropertiesAnnualSummary {
   implicit val reads: Reads[OtherPropertiesAnnualSummary] = Json.reads[OtherPropertiesAnnualSummary]
   implicit val writes: Writes[OtherPropertiesAnnualSummary] = Json.writes[OtherPropertiesAnnualSummary]
-
+  // FROM Internal -> DES
   def from(other: models.properties.OtherPropertiesAnnualSummary): OtherPropertiesAnnualSummary = {
     val allowances = other.allowances.map { allow =>
       OtherPropertiesAllowances(
@@ -43,7 +47,7 @@ object OtherPropertiesAnnualSummary {
         costOfReplacingDomGoods = allow.costOfReplacingDomesticItems,
         zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionsGoodsVehicleAllowance,
         businessPremisesRenovationAllowance = allow.businessPremisesRenovationAllowance,
-        propertyIncomeAllowance = allow.propertyAllowance
+        propertyAllowance = allow.propertyAllowance
       )
     }
     val adjustments = other.adjustments.map { adj =>
@@ -66,7 +70,7 @@ case class OtherPropertiesAllowances(annualInvestmentAllowance: Option[BigDecima
                                      costOfReplacingDomGoods: Option[BigDecimal] = None,
                                      zeroEmissionGoodsVehicleAllowance: Option[BigDecimal] = None,
                                      businessPremisesRenovationAllowance: Option[BigDecimal] = None,
-                                     propertyIncomeAllowance: Option[BigDecimal] = None
+                                     propertyAllowance: Option[BigDecimal] = None
                                     )
 
 object OtherPropertiesAllowances {
@@ -94,19 +98,25 @@ object OtherPropertiesAdjustments {
   implicit val writes: Writes[OtherPropertiesAdjustments] = Json.writes[OtherPropertiesAdjustments]
 }
 
+/*
+ * Furnished Holiday Let section
+ * type and value declarations using Json reads and writes
+ */
 
 case class FHLPropertiesAnnualSummary(annualAllowances: Option[FHLPropertiesAllowances],
-                                      annualAdjustments: Option[FHLPropertiesAdjustments]) extends PropertiesAnnualSummary
+                                      annualAdjustments: Option[FHLPropertiesAdjustments]
+                                     ) extends PropertiesAnnualSummary
 
 object FHLPropertiesAnnualSummary {
   implicit val reads: Reads[FHLPropertiesAnnualSummary] = Json.reads[FHLPropertiesAnnualSummary]
   implicit val writes: Writes[FHLPropertiesAnnualSummary] = Json.writes[FHLPropertiesAnnualSummary]
-
+  // FROM internal -> DES
   def from(fhl: models.properties.FHLPropertiesAnnualSummary): FHLPropertiesAnnualSummary = {
     val allowances = fhl.allowances.map { allow =>
       FHLPropertiesAllowances(
         allow.annualInvestmentAllowance,
-        allow.otherCapitalAllowance
+        allow.otherCapitalAllowance,
+        propertyIncomeAllowance = allow.propertyAllowance
       )
     }
     val adjustments = fhl.adjustments.map { adj =>
@@ -114,16 +124,27 @@ object FHLPropertiesAnnualSummary {
         adj.lossBroughtForward,
         adj.privateUseAdjustment,
         adj.balancingCharge,
-        adj.periodOfGraceAdjustment
+        adj.bpraBalancingCharge,
+        adj.periodOfGraceAdjustment,
+        fhl.other.flatMap(_.nonResidentLandlord).getOrElse(false),
+        ukFhlRentARoom = fhl.other.flatMap(_.rarJointLet.map(FHLPropertiesUkFhlRentARoom(_)))
       )
     }
     FHLPropertiesAnnualSummary(allowances, adjustments)
   }
 }
 
+case class FHLPropertiesUkFhlRentARoom(jointlyLet: Boolean)
+
+object FHLPropertiesUkFhlRentARoom {
+  implicit val reads: Reads[FHLPropertiesUkFhlRentARoom] = Json.reads[FHLPropertiesUkFhlRentARoom]
+  implicit val writes: Writes[FHLPropertiesUkFhlRentARoom] = Json.writes[FHLPropertiesUkFhlRentARoom]
+}
 
 case class FHLPropertiesAllowances(annualInvestmentAllowance: Option[BigDecimal] = None,
-                                   otherCapitalAllowance: Option[BigDecimal] = None)
+                                   otherCapitalAllowance: Option[BigDecimal] = None,
+                                   businessPremisesRenovationAllowance: Option[BigDecimal] = None,
+                                   propertyIncomeAllowance: Option[BigDecimal] = None)
 
 object FHLPropertiesAllowances {
   implicit val reads: Reads[FHLPropertiesAllowances] = Json.reads[FHLPropertiesAllowances]
@@ -133,9 +154,20 @@ object FHLPropertiesAllowances {
 case class FHLPropertiesAdjustments(lossBroughtForward: Option[BigDecimal] = None,
                                     privateUseAdjustment: Option[BigDecimal] = None,
                                     balancingCharge: Option[BigDecimal] = None,
-                                    periodOfGraceAdjustment: Option[Boolean] = None)
+                                    businessPremisesRenovationAllowanceBalancingCharges: Option[BigDecimal] = None,
+                                    periodOfGraceAdjustment: Option[Boolean] = None,
+                                    nonResidentLandlord: Boolean = false,
+                                    ukFhlRentARoom: Option[FHLPropertiesUkFhlRentARoom] = None)
 
 object FHLPropertiesAdjustments {
   implicit val reads: Reads[FHLPropertiesAdjustments] = Json.reads[FHLPropertiesAdjustments]
   implicit val writes: Writes[FHLPropertiesAdjustments] = Json.writes[FHLPropertiesAdjustments]
+}
+
+case class FHLPropertiesOther(nonResidentLandlord: Option[Boolean] = Some(false),
+                              rarJointLet: Option[Boolean] = Some(false))
+
+object FHLPropertiesOther {
+  implicit val reads: Reads[FHLPropertiesOther]   = Json.reads[FHLPropertiesOther]
+  implicit val writes: Writes[FHLPropertiesOther] = Json.writes[FHLPropertiesOther]
 }

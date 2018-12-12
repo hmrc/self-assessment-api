@@ -23,7 +23,7 @@ case class ObligationsQueryParams(from: LocalDate, to: LocalDate = LocalDate.now
 
 object ObligationsQueryParams {
 
-  val MAX_PAST_RANGE_DAYS = 366
+  val MAX_PAST_RANGE_DAYS = 366L
 
   implicit def toString(date: LocalDate) : String = {
     val dateFormat = "YYYY-MM-dd"
