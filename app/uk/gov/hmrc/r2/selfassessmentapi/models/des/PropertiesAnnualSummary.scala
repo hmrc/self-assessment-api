@@ -116,7 +116,8 @@ object FHLPropertiesAnnualSummary {
       FHLPropertiesAllowances(
         allow.annualInvestmentAllowance,
         allow.otherCapitalAllowance,
-        propertyIncomeAllowance = allow.propertyAllowance
+        propertyIncomeAllowance = allow.propertyAllowance,
+        businessPremisesRenovationAllowance = allow.businessPremisesRenovationAllowance
       )
     }
     val adjustments = fhl.adjustments.map { adj =>
