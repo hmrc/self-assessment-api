@@ -363,7 +363,7 @@ object DesJsons {
            |      "businessPremisesRenovationAllowance": 0.0,
            |      "costOfReplacingDomGoods": 0.0,
            |      "businessPremisesRenovationAllowance": 0.0,
-           |      "propertyAllowance": 0.0
+           |      "propertyIncomeAllowance": 0.0
            |   }
            |}
       """.stripMargin
@@ -387,7 +387,7 @@ object DesJsons {
            |      "annualInvestmentAllowance": 0.0,
            |      "otherCapitalAllowance": 0.0,
            |      "businessPremisesRenovationAllowance": 0.0,
-           |      "propertyAllowance": 0.0
+           |      "propertyIncomeAllowance": 0.0
            |   }
            |}
       """.stripMargin
