@@ -1,3 +1,7 @@
+## 06-Dec-2018
+<b>[self-assessment-api-router v1.72.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.72.0)</b>
+Documentation change to include Welsh rate of income tax.
+
 ## 04-Dec-2018
 <b>[self-assessment-api v0.216.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.216.0)<br>
 <b>[self-assessment-api-router v1.71.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.71.0)</b>
