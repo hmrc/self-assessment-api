@@ -302,13 +302,7 @@ object DesJsons {
            |      "outstandingBusinessIncome": 200.00,
            |      "balancingChargeBpra": 200.00,
            |      "balancingChargeOther": 200.00,
-           |      "goodsAndServicesOwnUse": 200.00,
-           |      "overlapProfitCarriedForward": 500.25,
-           |      "overlapProfitBroughtForward": 500.25,
-           |      "lossCarriedForwardTotal": 500.25,
-           |      "cisDeductionsTotal": 500.25,
-           |      "taxDeductionsFromTradingIncome": 500.25,
-           |      "class4NicProfitAdjustment": 500.25
+           |      "goodsAndServicesOwnUse": 200.00
            |   },
            |   "annualAllowances": {
            |      "annualInvestmentAllowance": 200.00,
@@ -318,7 +312,8 @@ object DesJsons {
            |      "zeroEmissionGoodsVehicleAllowance": 200.00,
            |      "enhanceCapitalAllowance": 200.00,
            |      "allowanceOnSales": 200.00,
-           |      "capitalAllowanceSingleAssetPool": 500.25
+           |      "capitalAllowanceSingleAssetPool": 500.25,
+           |      "tradingAllowance": 200.00
            |   },
            |   "annualNonFinancials": {
            |      "businessDetailsChangedRecently": true,
