@@ -1,9 +1,14 @@
 ## 06-Dec-2018
 <b>[self-assessment-api-router v1.72.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.72.0)</b>
 <b>[self-assessment-api v0.227.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v0.227.0)</b>
-*Documentation change to include Welsh rate of income tax.
-*Added new fields to FHL and Non-FHL Property Annual Summary
-
+* Documentation change to include Welsh rate of income tax for Retrieve Tax Calculation.
+* Added new fields to FHL and non-FHL Property Annual Summary (Update, Amend)
+   * businessPremisesRenovationAllowance
+   * bpraBalancingCharges
+   * propertyIncomeAllowance
+   * nonResidentLandlord
+   * rarjointLet
+   
 ## 04-Dec-2018
 <b>[self-assessment-api v0.216.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.216.0)<br>
 <b>[self-assessment-api-router v1.71.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.71.0)</b>
