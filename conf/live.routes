@@ -57,7 +57,7 @@ PUT  /ni/:nino/uk-properties/:id/periods/:periodId   uk.gov.hmrc.selfassessmenta
 PUT  /ni/:nino/uk-properties/:id/:taxYear   uk.gov.hmrc.selfassessmentapi.resources.PropertiesAnnualSummaryResource.updateAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 GET  /ni/:nino/uk-properties/:id/:taxYear   uk.gov.hmrc.selfassessmentapi.resources.PropertiesAnnualSummaryResource.retrieveAnnualSummary(nino: uk.gov.hmrc.domain.Nino, id: uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType, taxYear: uk.gov.hmrc.selfassessmentapi.models.TaxYear)
 
-# Propertiest End-of-Period Statements
+# Properties End-of-Period Statements
 POST /ni/:nino/uk-properties/end-of-period-statements/from/:start/to/:end    uk.gov.hmrc.selfassessmentapi.resources.PropertiesPeriodStatementResource.finaliseEndOfPeriodStatement(nino: uk.gov.hmrc.domain.Nino, start: org.joda.time.LocalDate, end: org.joda.time.LocalDate)
 
 ####################

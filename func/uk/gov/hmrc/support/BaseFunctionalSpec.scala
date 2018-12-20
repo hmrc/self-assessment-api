@@ -310,6 +310,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
     val url = s"http://localhost:$port$interpolatedPath"
     var addAcceptHeader = true
+    var acceptHeader = "application/vnd.hmrc.1.0+json"
 
     def thenAssertThat(): Assertions = {
       implicit val carrier =
@@ -358,7 +359,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
   class HttpVerbs()(implicit urlPathVariables: mutable.Map[String, String] = mutable.Map()) {
 
-    def post(body: JsValue) = {
+    def post(body: JsValue): HttpPostBodyWrapper = {
       new HttpPostBodyWrapper("POST", Some(body))
     }
 
@@ -1378,27 +1379,27 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def doesNotExistFor(nino: Nino, calcId: String = "abc"): Givens = {
-          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
-            .willReturn(
-              aResponse()
-                .withStatus(404)
-                .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.Errors.notFound)))
+//        def doesNotExistFor(nino: Nino, calcId: String = "abc"): Givens = {
+//          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
+//            .willReturn(
+//              aResponse()
+//                .withStatus(404)
+//                .withHeader("Content-Type", "application/json")
+//                .withBody(DesJsons.Errors.notFound)))
+//
+//          givens
+//        }
 
-          givens
-        }
-
-        def invalidCalculationIdFor(nino: Nino, calcId: String = "abc"): Givens = {
-          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
-            .willReturn(
-              aResponse()
-                .withStatus(400)
-                .withHeader("Content-Type", "application/json")
-                .withBody(DesJsons.Errors.invalidCalcId)))
-
-          givens
-        }
+//        def invalidCalculationIdFor(nino: Nino, calcId: String = "abc"): Givens = {
+//          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
+//            .willReturn(
+//              aResponse()
+//                .withStatus(400)
+//                .withHeader("Content-Type", "application/json")
+//                .withBody(DesJsons.Errors.invalidCalcId)))
+//
+//          givens
+//        }
 
         def invalidRequestFor(nino: Nino, calcId: String = "abc"): Givens = {
           stubFor(post(urlMatching(s"/income-tax/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation"))

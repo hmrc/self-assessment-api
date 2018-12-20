@@ -21,13 +21,13 @@ object Http {
       implicit writes: Writes[A],
       hc: HeaderCarrier,
       timeout: FiniteDuration): HttpResponse = perform(url) { request =>
-    request.post(Json.toJson(body))
+    request.withFollowRedirects(false).post(Json.toJson(body))
   }
 
   def postJson(url: String, body: JsValue, headers: Seq[(String, String)] = Seq.empty)(
       implicit hc: HeaderCarrier,
       timeout: FiniteDuration): HttpResponse = perform(url) { request =>
-    request.post(body)
+    request.withFollowRedirects(false).post(body)
   }
 
   def putJson(url: String, body: JsValue, headers: Seq[(String, String)] = Seq.empty)(

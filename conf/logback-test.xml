@@ -42,6 +42,14 @@
       <appender-ref ref="STDOUT"/>
     </appender>
 
+
+    <logger name ="org.eclipse.jetty" level="OFF"/>
+    <logger name ="org.apache.http" level="OFF"/>
+    <logger name ="org.netty" level="OFF"/>
+    <logger name ="io.netty" level="OFF"/>
+    <logger name ="javax.management" level="OFF"/>
+    <logger name ="org.mongodb" level="OFF"/>
+
     <root level="OFF">
         <appender-ref ref="ASYNC_FILE"/>
         <appender-ref ref="ASYNC_STDOUT"/>

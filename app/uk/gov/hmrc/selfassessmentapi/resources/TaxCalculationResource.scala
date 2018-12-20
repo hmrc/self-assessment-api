@@ -31,6 +31,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import play.api.libs.concurrent.Execution.Implicits._
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 
+import scala.concurrent.Future
+
 object TaxCalculationResource extends BaseResource {
   val appContext = AppContext
   val authService = AuthorisationService
@@ -70,17 +72,7 @@ object TaxCalculationResource extends BaseResource {
 
   def retrieveCalculation(nino: Nino, calcId: SourceId): Action[Unit] =
     APIAction(nino, SourceType.Calculation).async(parse.empty) { implicit request =>
-      connector.retrieveCalculation(nino, calcId).map { response =>
-        audit(makeTaxCalcRequestAudit(nino, calcId, request.authContext, response))
-        response.filter {
-          case 200                                 => Ok(Json.toJson(response.calculation))
-          case 204                                 => NoContent
-          case 400 if response.isInvalidCalcId     => NotFound
-          case 400 if response.isInvalidIdentifier => BadRequest(Json.toJson(Errors.NinoInvalid))
-          case 404                                 => NotFound
-          case _                                   => unhandledResponse(response.status, logger)
-        }
-      } recoverWith exceptionHandling
+      Future.successful(Gone(Json.toJson(Errors.TaxCalcGone)))
     }
 
   private def makeTaxCalcTriggerAudit(nino: Nino, authCtx: AuthContext, response: TaxCalculationResponse)(
