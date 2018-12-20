@@ -19,12 +19,13 @@ package router.resources
 import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
-import router.services.SelfAssessmentService
+import router.services.{ReleaseTwoService, SelfAssessmentService}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
-class SelfAssessmentResource @Inject()(service: SelfAssessmentService,
-                                       val authConnector: AuthConnector) extends BaseResource {
+class ReleaseOneResource @Inject()(service: SelfAssessmentService,
+                                   r2Service: ReleaseTwoService,
+                                   val authConnector: AuthConnector) extends BaseResource {
 
   def get(route: Any*): Action[AnyContent] = AuthAction.async {
     implicit request =>
