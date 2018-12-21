@@ -16,20 +16,20 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, Request}
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.TaxCalculationConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
-import uk.gov.hmrc.selfassessmentapi.models.audit.{TaxCalculationRequest, TaxCalculationTrigger}
+import uk.gov.hmrc.selfassessmentapi.models.audit.TaxCalculationTrigger
 import uk.gov.hmrc.selfassessmentapi.models.calculation.CalculationRequest
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.TaxCalculationResponse
-import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
-import uk.gov.hmrc.http.HeaderCarrier
-import play.api.libs.concurrent.Execution.Implicits._
-import uk.gov.hmrc.selfassessmentapi.config.AppContext
+import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 
 import scala.concurrent.Future
 
@@ -95,26 +95,5 @@ object TaxCalculationResource extends BaseResource {
         }
       ),
       transactionName = "trigger-tax-calculation"
-    )
-
-  private def makeTaxCalcRequestAudit(nino: Nino,
-                                      calcId: String,
-                                      authCtx: AuthContext,
-                                      response: TaxCalculationResponse)(
-      implicit hc: HeaderCarrier,
-      request: Request[_]): AuditData[TaxCalculationRequest] =
-    AuditData(
-      detail = TaxCalculationRequest(
-        httpStatus = response.status,
-        nino = nino,
-        calculationId = calcId,
-        affinityGroup = authCtx.affinityGroup,
-        agentCode = authCtx.agentCode,
-        responsePayload = response.status match {
-          case 200 | 400 => Some(response.json)
-          case _         => None
-        }
-      ),
-      transactionName = "retrieve-tax-calculation"
     )
 }

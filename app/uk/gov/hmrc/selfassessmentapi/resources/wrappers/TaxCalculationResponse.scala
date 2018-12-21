@@ -17,10 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources.wrappers
 
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.selfassessmentapi.models.calculation.ApiTaxCalculation
-import uk.gov.hmrc.selfassessmentapi.models.des
 import uk.gov.hmrc.selfassessmentapi.models.des.{DesError, DesErrorCode}
-import play.api.libs.json.{JsError, JsSuccess}
 
 case class TaxCalculationResponse(underlying: HttpResponse) extends Response {
   def calcId: Option[String] = {
@@ -33,24 +30,8 @@ case class TaxCalculationResponse(underlying: HttpResponse) extends Response {
     }
   }
 
-  def calculation: Option[ApiTaxCalculation] = {
-    (json \ "calcResult").validate[des.TaxCalculation] match {
-      case JsSuccess(calcResult, _) => Some(ApiTaxCalculation.from(calcResult))
-      case JsError(errors) => {
-        logger.warn(s"The response from DES does not match the expected format ($errors). JSON: [$json]")
-        None
-      }
-    }
-  }
-
-  def isInvalidCalcId: Boolean =
-    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_CALCID)
-
   def isInvalidNino: Boolean =
     json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_NINO)
-
-  def isInvalidIdentifier: Boolean =
-    json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_IDENTIFIER)
 
   def isInvalidRequest: Boolean =
     json.asOpt[DesError].exists(_.code == DesErrorCode.INVALID_REQUEST)

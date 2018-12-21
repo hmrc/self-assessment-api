@@ -1370,36 +1370,6 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
-        def isNotReadyFor(nino: Nino, calcId: String = "abc"): Givens = {
-          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
-            .willReturn(
-              aResponse()
-                .withStatus(204)))
-
-          givens
-        }
-
-//        def doesNotExistFor(nino: Nino, calcId: String = "abc"): Givens = {
-//          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
-//            .willReturn(
-//              aResponse()
-//                .withStatus(404)
-//                .withHeader("Content-Type", "application/json")
-//                .withBody(DesJsons.Errors.notFound)))
-//
-//          givens
-//        }
-
-//        def invalidCalculationIdFor(nino: Nino, calcId: String = "abc"): Givens = {
-//          stubFor(get(urlMatching(s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId"))
-//            .willReturn(
-//              aResponse()
-//                .withStatus(400)
-//                .withHeader("Content-Type", "application/json")
-//                .withBody(DesJsons.Errors.invalidCalcId)))
-//
-//          givens
-//        }
 
         def invalidRequestFor(nino: Nino, calcId: String = "abc"): Givens = {
           stubFor(post(urlMatching(s"/income-tax/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation"))

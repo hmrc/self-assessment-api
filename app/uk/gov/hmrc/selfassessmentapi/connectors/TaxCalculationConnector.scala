@@ -33,8 +33,4 @@ object TaxCalculationConnector extends BaseConnector{
     httpEmptyPost[TaxCalculationResponse](
     baseUrl + s"/income-tax/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation",
     TaxCalculationResponse)
-
-  def retrieveCalculation(nino: Nino, calcId: SourceId)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaxCalculationResponse] =
-    httpGet[TaxCalculationResponse](baseUrl + s"/calculation-store/02.00.00/calculation-data/$nino/calcId/$calcId",
-                                    TaxCalculationResponse)
 }
