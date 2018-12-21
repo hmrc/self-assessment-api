@@ -134,6 +134,7 @@ trait BaseFunctionalSpec extends TestApplication {
     }
 
     def bodyIsLike(expectedBody: String) = {
+      println(s"\nEXPECTED: ${Json.prettyPrint(Json.toJson(expectedBody))}\nRETURNED: ${Json.prettyPrint(response.json)}\n")
       response.json match {
         case JsArray(_) => assertEquals(expectedBody, new JSONArray(response.body), LENIENT)
         case _ => assertEquals(expectedBody, new JSONObject(response.body), LENIENT)
@@ -1030,6 +1031,16 @@ trait BaseFunctionalSpec extends TestApplication {
           givens
         }
 
+        def annualSummaryWillBeUpdatedFor(nino: Nino, id: String = "abc", taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          stubFor(put(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/annual-summaries/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withBody(DesJsons.SelfEmployment.AnnualSummary.response)))
+
+          givens
+        }
+
         def annualSummaryWillNotBeUpdatedFor(nino: Nino, id: String = "abc", taxYear: TaxYear = TaxYear("2017-18")): Givens = {
           stubFor(put(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/annual-summaries/${taxYear.toDesTaxYear}"))
             .willReturn(
@@ -1037,6 +1048,18 @@ trait BaseFunctionalSpec extends TestApplication {
                 .withStatus(404)
                 .withHeader("Content-Type", "application/json")
                 .withBody(DesJsons.Errors.ninoNotFound)))
+
+          givens
+        }
+
+        def annualSummaryWillBeReturnedFor(nino: Nino, id: String = "abc", taxYear: TaxYear = TaxYear("2017-18")): Givens = {
+          println(s"\nDES RETURNED: ${DesJsons.SelfEmployment.AnnualSummary()}\n")
+          stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/annual-summaries/${taxYear.toDesTaxYear}"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(DesJsons.SelfEmployment.AnnualSummary())))
 
           givens
         }

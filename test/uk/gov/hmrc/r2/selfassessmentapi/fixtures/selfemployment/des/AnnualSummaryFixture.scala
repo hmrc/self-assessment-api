@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi.fixtures.selfemployment.des
+package uk.gov.hmrc.r2.selfassessmentapi.fixtures.selfemployment.des
 
-import uk.gov.hmrc.selfassessmentapi.models.des
+import uk.gov.hmrc.r2.selfassessmentapi.models.des
 
 object AnnualSummaryFixture {
 
@@ -31,13 +31,7 @@ object AnnualSummaryFixture {
       outstandingBusinessIncome = Some(500.25),
       balancingChargeBpra = Some(500.25),
       balancingChargeOther = Some(500.25),
-      goodsAndServicesOwnUse = Some(500.25),
-      overlapProfitCarriedForward = Some(500.25),
-      overlapProfitBroughtForward = Some(500.25),
-      lossCarriedForwardTotal = Some(500.25),
-      cisDeductionsTotal = Some(500.25),
-      taxDeductionsFromTradingIncome = Some(500.25),
-      class4NicProfitAdjustment = Some(500.25)
+      goodsAndServicesOwnUse = Some(500.25)
     )),
     Some(des.selfemployment.AnnualAllowances(
       annualInvestmentAllowance = Some(500.25),
@@ -47,7 +41,8 @@ object AnnualSummaryFixture {
       enhanceCapitalAllowance = Some(500.25),
       allowanceOnSales = Some(500.25),
       zeroEmissionGoodsVehicleAllowance = Some(500.25),
-      capitalAllowanceSingleAssetPool = Some(500.25)
+      capitalAllowanceSingleAssetPool = Some(500.25),
+      tradingAllowance = Some(500.25)
     )),
     Some(des.selfemployment.AnnualNonFinancials(
       businessDetailsChangedRecently = None,
