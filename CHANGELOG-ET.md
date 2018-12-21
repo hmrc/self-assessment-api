@@ -1,3 +1,17 @@
+## 21-Dec-2018
+<b>[self-assessment-api-router v1.93.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.93.0)</br>
+<b>[self-assessment-api v0.234.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.234.0)</b>
+* Remove unused fields and add Trading Allowance to Self-employment annual endpoint
+* Added new field to Allowances model:
+   * tradingAllowance
+* Removed unused fields to Adjustments model:
+   * overlapProfitCarriedForward
+   * overlapProfitBroughtForward
+   * lossCarriedForwardTotal
+   * cisDeductionsTotal
+   * taxDeductionsFromTradingIncome
+   * class4NicProfitAdjustment
+   
 ## 06-Dec-2018
 <b>[self-assessment-api-router v1.72.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.72.0)</br>
 <b>[self-assessment-api v0.227.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v0.227.0)</b>
