@@ -62,7 +62,7 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
 
   }
 
-  "crystallise" ignore {
+  "crystallise" should {
 
     val calcId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
     val crystallisationRequest = Jsons.Crystallisation.crystallisationRequest(calcId)
