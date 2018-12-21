@@ -83,8 +83,8 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
         .when()
         .get(s"/ni/$nino/calculations/abc")
         .thenAssertThat()
-        .statusIs(200)
-        .bodyIsLike(Jsons.TaxCalculation().toString)
+        .statusIs(410)
+        .bodyIsLike(Jsons.Errors.taxCalcGone)
     }
 
     "return 204 when the calculation is not ready" in {
@@ -96,7 +96,8 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
         .when()
         .get(s"/ni/$nino/calculations/abc")
         .thenAssertThat()
-        .statusIs(204)
+        .statusIs(410)
+        .bodyIsLike(Jsons.Errors.taxCalcGone)
     }
 
     "return 404 when provided with an invalid calculation ID" in {
@@ -104,11 +105,11 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
         .stubAudit
-        .des().taxCalculation.invalidCalculationIdFor(nino)
         .when()
         .get(s"/ni/$nino/calculations/abc")
         .thenAssertThat()
-        .statusIs(404)
+        .statusIs(410)
+        .bodyIsLike(Jsons.Errors.taxCalcGone)
     }
 
     "return 404 when attempting to retrieve a calculation using an invalid id" in {
@@ -116,11 +117,11 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
         .stubAudit
-        .des().taxCalculation.doesNotExistFor(nino)
         .when()
         .get(s"/ni/$nino/calculations/abc")
         .thenAssertThat()
-        .statusIs(404)
+        .statusIs(410)
+        .bodyIsLike(Jsons.Errors.taxCalcGone)
     }
 
     "return code 500 when we receive a status code from DES that we do not handle" in {
@@ -132,8 +133,8 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
         .when()
         .get(s"/ni/$nino/calculations/abc")
         .thenAssertThat()
-        .statusIs(500)
-        .bodyIsLike(Jsons.Errors.internalServerError)
+        .statusIs(410)
+        .bodyIsLike(Jsons.Errors.taxCalcGone)
     }
   }
 }

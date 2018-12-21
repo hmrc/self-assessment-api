@@ -1,5 +1,6 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import play.api.http.HeaderNames
 import uk.gov.hmrc.selfassessmentapi.models.Errors._
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
@@ -9,19 +10,21 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
     "return 303 containing a Location header" in {
       given()
         .userIsSubscribedToMtdFor(nino)
+        .stubAudit
         .clientIsFullyAuthorisedForTheResource
         .des().crystallisation.intentToCrystallise(nino)
         .des().taxCalculation.isReadyFor(nino, calcId = "77427777")
         .when()
         .post(Jsons.Crystallisation.intentToCrystallise()).to(s"/ni/$nino/$taxYear/intent-to-crystallise")
         .thenAssertThat()
-        .statusIs(200)
-        .bodyIsLike(Jsons.TaxCalculation().toString)
+        .statusIs(303)
+        .responseContainsHeader(HeaderNames.LOCATION, s"/ni/$nino/calculations/77427777"r)
     }
 
     "return 400 when attempting to request calculation with invalid tax year" in {
       given()
         .userIsSubscribedToMtdFor(nino)
+        .stubAudit
         .clientIsFullyAuthorisedForTheResource
         .when()
         .post(Jsons.Crystallisation.intentToCrystallise()).to(s"/ni/$nino/2011-12/intent-to-crystallise")
@@ -33,6 +36,7 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
     "return 403 when Required End of Period Statement is not submitted" in {
       given()
         .userIsSubscribedToMtdFor(nino)
+        .stubAudit
         .clientIsFullyAuthorisedForTheResource
         .des().crystallisation.intentToCrystalliseRequiredEndOfPeriodStatement(nino, taxYear)
         .when()
@@ -46,6 +50,7 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
     "return code 500 when we receive a status code from DES that we do not handle" in {
       given()
         .userIsSubscribedToMtdFor(nino)
+        .stubAudit
         .clientIsFullyAuthorisedForTheResource
         .des().isATeapotFor(nino)
         .when()
@@ -57,7 +62,7 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
 
   }
 
-  "crystallise" should {
+  "crystallise" ignore {
 
     val calcId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
     val crystallisationRequest = Jsons.Crystallisation.crystallisationRequest(calcId)
@@ -65,6 +70,7 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
 
       given()
         .userIsSubscribedToMtdFor(nino)
+        .stubAudit
         .clientIsFullyAuthorisedForTheResource
         .des().crystallisation.crystallise(nino, taxYear, calcId)
         .when()
@@ -76,6 +82,7 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
     "return 500 when INVALID_IDTYPE is returned from DES" in {
       given()
         .userIsSubscribedToMtdFor(nino)
+        .stubAudit
         .clientIsFullyAuthorisedForTheResource
         .des().crystallisation.crystalliseError(nino, taxYear, calcId)(400, DesJsons.Errors.invalidIdType)
         .when()
@@ -87,6 +94,7 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
     "return 400 NINO_INVALID when INVALID_IDVALUE is returned from DES" in {
       given()
         .userIsSubscribedToMtdFor(nino)
+        .stubAudit
         .clientIsFullyAuthorisedForTheResource
         .des().crystallisation.crystalliseError(nino, taxYear, calcId)(400, DesJsons.Errors.invalidIdValue)
         .when()
@@ -99,6 +107,7 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
     "return 400 TAX_YEAR_INVALID when INVALID_TAXYEAR is returned from DES" in {
       given()
         .userIsSubscribedToMtdFor(nino)
+        .stubAudit
         .clientIsFullyAuthorisedForTheResource
         .des().crystallisation.crystalliseError(nino, taxYear, calcId)(400, DesJsons.Errors.invalidTaxYear)
         .when()
@@ -111,6 +120,7 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
     "return 403 INVALID_TAX_CALCULATION_ID when INVALID_CALCID is returned from DES" in {
       given()
         .userIsSubscribedToMtdFor(nino)
+        .stubAudit
         .clientIsFullyAuthorisedForTheResource
         .des().crystallisation.crystalliseError(nino, taxYear, calcId)(400, DesJsons.Errors.invalidCalcId)
         .when()
@@ -124,6 +134,7 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
     "return 404 when any 404 is returned from DES" in {
       given()
         .userIsSubscribedToMtdFor(nino)
+        .stubAudit
         .clientIsFullyAuthorisedForTheResource
         .des().crystallisation.crystalliseError(nino, taxYear, calcId)(404, "any body")
         .when()
@@ -135,6 +146,7 @@ class CrystallisationResourceFuncSpec extends BaseFunctionalSpec {
     "return 403 REQUIRED_INTENT_TO_CRYSTALLISE when any 409 is returned from DES" in {
       given()
         .userIsSubscribedToMtdFor(nino)
+        .stubAudit
         .clientIsFullyAuthorisedForTheResource
         .des().crystallisation.crystalliseError(nino, taxYear, calcId)(409, "any body")
         .when()

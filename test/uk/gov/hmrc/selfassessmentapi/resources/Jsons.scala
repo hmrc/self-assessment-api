@@ -80,6 +80,8 @@ object Jsons {
     val invalidTaxYear: String = businessErrorWithMessage(
       "TAX_YEAR_INVALID" -> "The provided tax year is not valid.")
 
+    val taxCalcGone: String = errorWithMessage("RESOURCE_GONE", "This resource is no longer available. Use v2.0")
+
     def invalidRequest(errors: (String, String)*): String = {
       s"""
          |{
