@@ -56,18 +56,6 @@ class AuditDetailSpec extends JsonSpec {
     }
   }
 
-  "TaxCalculationRequest" should {
-    "round trip" in {
-      roundTripJson(
-        TaxCalculationRequest(httpStatus = 200,
-                              nino = Nino("AA999999A"),
-                              calculationId = "abc",
-                              affinityGroup = "individual",
-                              agentCode = None,
-                              responsePayload = Some(Json.obj())))
-    }
-  }
-
   "RetrieveObligations" should {
     "round trip" in {
       roundTripJson(

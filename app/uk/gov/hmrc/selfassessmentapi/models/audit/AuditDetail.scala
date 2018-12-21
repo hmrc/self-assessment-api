@@ -79,19 +79,6 @@ object TaxCalculationTrigger {
   implicit val format: Format[TaxCalculationTrigger] = Json.format[TaxCalculationTrigger]
 }
 
-case class TaxCalculationRequest(override val auditType: String = "retrieveTaxCalculation",
-                                 override val httpStatus: Int,
-                                 nino: Nino,
-                                 calculationId: SourceId,
-                                 affinityGroup: String,
-                                 agentCode: Option[String],
-                                 override val responsePayload: Option[JsValue])
-    extends AuditDetail
-
-object TaxCalculationRequest {
-  implicit val format: Format[TaxCalculationRequest] = Json.format[TaxCalculationRequest]
-}
-
 case class RetrieveObligations(override val auditType: String = "retrieveObligations",
                                override val httpStatus: Int,
                                nino: Nino,

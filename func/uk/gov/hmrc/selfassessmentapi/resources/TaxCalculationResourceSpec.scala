@@ -74,7 +74,7 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
   }
 
   "retrieveCalculation" should {
-    "return 200 containing a calculation" in {
+    "return 410 when hitting the existing calculation endpoint" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
@@ -87,20 +87,7 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Errors.taxCalcGone)
     }
 
-    "return 204 when the calculation is not ready" in {
-      given()
-        .userIsSubscribedToMtdFor(nino)
-        .clientIsFullyAuthorisedForTheResource
-        .stubAudit
-        .des().taxCalculation.isNotReadyFor(nino)
-        .when()
-        .get(s"/ni/$nino/calculations/abc")
-        .thenAssertThat()
-        .statusIs(410)
-        .bodyIsLike(Jsons.Errors.taxCalcGone)
-    }
-
-    "return 404 when provided with an invalid calculation ID" in {
+    "return 410 when provided with an invalid calculation ID" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
@@ -112,29 +99,5 @@ class TaxCalculationResourceSpec extends BaseFunctionalSpec {
         .bodyIsLike(Jsons.Errors.taxCalcGone)
     }
 
-    "return 404 when attempting to retrieve a calculation using an invalid id" in {
-      given()
-        .userIsSubscribedToMtdFor(nino)
-        .clientIsFullyAuthorisedForTheResource
-        .stubAudit
-        .when()
-        .get(s"/ni/$nino/calculations/abc")
-        .thenAssertThat()
-        .statusIs(410)
-        .bodyIsLike(Jsons.Errors.taxCalcGone)
-    }
-
-    "return code 500 when we receive a status code from DES that we do not handle" in {
-      given()
-        .userIsSubscribedToMtdFor(nino)
-        .clientIsFullyAuthorisedForTheResource
-        .stubAudit
-        .des().isATeapotFor(nino)
-        .when()
-        .get(s"/ni/$nino/calculations/abc")
-        .thenAssertThat()
-        .statusIs(410)
-        .bodyIsLike(Jsons.Errors.taxCalcGone)
-    }
   }
 }
