@@ -27,22 +27,14 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class PropertyPeriodService @Inject()(val appConfig: AppConfig,
-                                      val selfAssessmentConnector: SelfAssessmentConnector) extends Service {
+class ReleaseTwoService @Inject()(val appConfig: AppConfig,
+                                  val selfAssessmentConnector: SelfAssessmentConnector) extends Service {
 
   def create(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
 
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.post(uri, body)
       case Some(VERSION_2) => selfAssessmentConnector.post(uri, body)(convertHeaderToVersion1, req)
-    }
-  }
-
-  def getAll()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
-
-    withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.get(uri)
-      case Some(VERSION_2) => selfAssessmentConnector.get(uri)(convertHeaderToVersion1, req)
     }
   }
 

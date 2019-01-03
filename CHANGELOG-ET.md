@@ -1,3 +1,38 @@
+## 21-Dec-2018
+<b>[self-assessment-api-router v1.95.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.95.0)</b> <br/>
+<b>[self-assessment-api v0.236.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.236.0)</b> <br/>
+<b>[mtd-tax-calculation v1.17.0](https://github.com/hmrc/mtd-tax-calculation/releases/tag/v1.17.0)</b>
+* Remove unused fields and add Trading Allowance to Self-employment annual endpoint
+* Added new field to Allowances model:
+   * tradingAllowance
+* Removed unused fields to Adjustments model:
+   * overlapProfitCarriedForward
+   * overlapProfitBroughtForward
+   * lossCarriedForwardTotal
+   * cisDeductionsTotal
+   * taxDeductionsFromTradingIncome
+   * class4NicProfitAdjustment
+* Removal of "Retrieve a tax calculation" endpoint for version 1.0 of Self Assessment API
+
+## 06-Dec-2018
+<b>[self-assessment-api-router v1.72.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.72.0)</b>
+<b>[self-assessment-api v0.227.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.227.0)</b>
+* Documentation change to include Welsh rate of income tax for Retrieve Tax Calculation.
+* Added new fields to FHL and non-FHL Property Annual Summary (Update, Amend)
+   * businessPremisesRenovationAllowance
+   * bpraBalancingCharges
+   * propertyIncomeAllowance
+   * nonResidentLandlord
+   * rarjointLet
+   
+## 04-Dec-2018
+<b>[self-assessment-api v0.216.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.216.0)<br>
+<b>[self-assessment-api-router v1.71.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.71.0)</b>
+* New optional fields added to UK Property FHL Periodic endpoints (Create, Amend, Retrieve) in Sandbox:
+    * rarRentReceived
+    * travelCosts
+    * rarReliefClaimed
+    
 ## 03-Dec-2018
 <b>[self-assessment-api v0.214.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.214.0)<br>
 <b>[self-assessment-api-router v1.64.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.64.0)</b>

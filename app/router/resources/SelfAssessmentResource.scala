@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 class SelfAssessmentResource @Inject()(service: SelfAssessmentService,
                                        val authConnector: AuthConnector) extends BaseResource {
 
-  def get(route: String): Action[AnyContent] = AuthAction.async {
+  def get(route: Any*): Action[AnyContent] = AuthAction.async {
     implicit request =>
       service.get().map{
         case Left(error) => buildErrorResponse(error)
@@ -34,7 +34,7 @@ class SelfAssessmentResource @Inject()(service: SelfAssessmentService,
       }
   }
 
-  def post(route: String): Action[JsValue] = AuthAction.async(parse.json) {
+  def post(route: Any*): Action[JsValue] = AuthAction.async(parse.json) {
     implicit request =>
       withJsonBody[JsValue]{
         service.post(_).map {
@@ -44,7 +44,7 @@ class SelfAssessmentResource @Inject()(service: SelfAssessmentService,
       }
   }
 
-  def put(route: String): Action[JsValue] = AuthAction.async(parse.json) {
+  def put(route: Any*): Action[JsValue] = AuthAction.async(parse.json) {
     implicit request =>
       withJsonBody[JsValue]{
         service.put(_).map {

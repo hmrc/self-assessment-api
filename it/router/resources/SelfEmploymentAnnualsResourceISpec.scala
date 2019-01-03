@@ -19,74 +19,19 @@ package router.resources
 import play.api.libs.json.{JsObject, Json}
 import support.IntegrationSpec
 
-class PropertyPeriodResourceISpec extends IntegrationSpec {
+class SelfEmploymentAnnualsResourceISpec extends IntegrationSpec {
 
   val jsonRequest: JsObject = Json.obj("test" -> "json request")
   val jsonResponse: JsObject = Json.obj("test" -> "json response")
 
-  val propertyTypes = Seq("other", "furnished-holiday-lettings")
+  val selfEmploymentId = "test-selfemployment-id"
 
+  "GET Self Employment annuals with release-2 disabled" should {
 
-  "Create Property periods with release-2 disabled" should {
-
-    for ( propertyType <- propertyTypes) {
-
-      s"return a 201 with no json response body for $propertyType properties" when {
-        "the downstream response from the self assessment api version 1.0 returns a 201 with a json response body" in {
-          val incomingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods"
-          val outgoingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods"
-
-          Given()
-            .theClientIsAuthorised
-            .And()
-            .post(outgoingUrl)
-            .returns(aResponse
-              .withStatus(CREATED))
-            .When()
-            .post(incomingUrl)
-            .withBody(jsonRequest)
-            .withHeaders(
-              ACCEPT -> "application/vnd.hmrc.1.0+json",
-              CONTENT_TYPE -> JSON)
-            .Then()
-            .statusIs(CREATED)
-            .verify(mockFor(outgoingUrl)
-              .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        }
-
-        "the downstream response from the self assessment api version 2.0 returns a 201 with a json response body" in {
-          val incomingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods"
-          val outgoingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods"
-
-          Given()
-            .theClientIsAuthorised
-            .And()
-            .post(outgoingUrl)
-            .returns(aResponse
-              .withStatus(CREATED))
-            .When()
-            .post(incomingUrl)
-            .withBody(jsonRequest)
-            .withHeaders(
-              ACCEPT -> "application/vnd.hmrc.2.0+json",
-              CONTENT_TYPE -> JSON)
-            .Then()
-            .statusIs(CREATED)
-            .verify(mockFor(outgoingUrl)
-              .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        }
-      }
-    }
-  }
-
-  "GET Property periods with release-2 disabled" should {
-
-    for ( propertyType <- propertyTypes) {
-
-      s"return a 200 with a json response body for $propertyType properties" when {
+      s"return a 200 with a json response body" when {
         "the downstream response from the self assessment api returns returns a 200 with a json response body" in {
-          val incomingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
-          val outgoingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
+          val incomingUrl = s"/ni/AA111111A/self-employments/$selfEmploymentId/2018-19"
+          val outgoingUrl = s"/ni/AA111111A/self-employments/$selfEmploymentId/2018-19"
           Given()
             .theClientIsAuthorised
             .And()
@@ -105,8 +50,8 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
         }
 
         "a version 2.0 header is provided and the downstream response from the self assessment api returns a 200 with a json response body" in {
-          val incomingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
-          val outgoingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
+          val incomingUrl = s"/ni/AA111111A/self-employments/$selfEmploymentId/2018-19"
+          val outgoingUrl = s"/ni/AA111111A/self-employments/$selfEmploymentId/2018-19"
 
           Given()
             .theClientIsAuthorised
@@ -125,17 +70,14 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
               .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
         }
       }
-    }
   }
 
-  "PUT Property periods with release-2 disabled" should {
+  "PUT Self Employment annuals with release-2 disabled" should {
 
-    for ( propertyType <- propertyTypes) {
-
-      s"return a 204 with no json response body for $propertyType properties" when {
-        "the downstream response from the self assessment api returns a 204 with a json response body" in {
-          val incomingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
-          val outgoingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
+      s"return a 204 with no json response body for $selfEmploymentId properties" when {
+        "a version 1.0 header is provided and the downstream response from the self assessment api returns a 204 with a json response body" in {
+          val incomingUrl = s"/ni/AA111111A/self-employments/$selfEmploymentId/2018-19"
+          val outgoingUrl = s"/ni/AA111111A/self-employments/$selfEmploymentId/2018-19"
 
           Given()
             .theClientIsAuthorised
@@ -157,9 +99,10 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
             .verify(mockFor(outgoingUrl)
               .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
         }
+
         "a version 2.0 header is provided and the downstream response from the self assessment api returns a 204 with a json response body" in {
-          val incomingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
-          val outgoingUrl = s"/ni/AA111111A/uk-properties/$propertyType/periods/periodId"
+          val incomingUrl = s"/ni/AA111111A/self-employments/$selfEmploymentId/2018-19"
+          val outgoingUrl = s"/ni/AA111111A/self-employments/$selfEmploymentId/2018-19"
 
           Given()
             .theClientIsAuthorised
@@ -182,6 +125,5 @@ class PropertyPeriodResourceISpec extends IntegrationSpec {
               .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
         }
       }
-    }
   }
 }

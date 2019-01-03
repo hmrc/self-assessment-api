@@ -38,7 +38,7 @@
     },
     "nationalRegime": {
       "title": "National Regime",
-      "description": "Defines which national tax rates and rules to apply to the calculation. Must be one of: UK, Scotland",
+      "description": "Defines which national tax rates and rules to apply to the calculation. Must be one of: UK, Scotland, Wales",
       "type": "string",
       "example": "UK"
     },
@@ -293,7 +293,7 @@
           "minimum": 0,
           "maximum": 99999999999.99
         },
-        "payPensionsProfit": {
+        "payAndPensionsProfit": {
           "type": "object",
           "properties": {
             "totalAmount": {
@@ -941,7 +941,7 @@
           "minimum": 0,
           "maximum": 99999999999.99
         },
-        "incomeTaxAndNicAmount": {
+        "incomeTaxNicAmount": {
           "title": "Income Tax And NIC Amount",
           "description": "The total estimated amount of Income Tax and National Insurance contributions. The value must be between 0 and 99999999999.99.",
           "type": "number",

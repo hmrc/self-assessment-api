@@ -1,26 +1,50 @@
 # microservice specific routes
 
 #Tax Calculation
-GET   /ni/*nino/calculations/*calculationId         router.resources.TaxCalcResource.get(nino, calculationId)
+GET         /ni/*nino/calculations/*calculationId                                              router.resources.TaxCalcResource.get(nino, calculationId)
 
 #Tax Calculation Messages
-GET   /ni/*nino/calculations/*calculationId/validation-messages      router.resources.TaxCalcResource.get(nino, calculationId)
+GET         /ni/*nino/calculations/*calculationId/validation-messages                          router.resources.TaxCalcResource.get(nino, calculationId)
 
 #Property EOPS Obligations
-GET /ni/*nino/uk-properties/end-of-period-statements/obligations     router.resources.PropertyEopsObligationsResource.get(nino, from: String ?="", to: String ?= "")
+GET         /ni/*nino/uk-properties/end-of-period-statements/obligations                       router.resources.PropertyEopsObligationsResource.get(nino, from: String ?="", to: String ?= "")
 
 #Property EOPS Declaration
-POST /ni/*nino/uk-properties/end-of-period-statements/from/*from/to/*to    router.resources.PropertyEopsDeclarationResource.post(nino, from, to)
+POST        /ni/*nino/uk-properties/end-of-period-statements/from/*from/to/*to                 router.resources.PropertyEopsDeclarationResource.post(nino, from, to)
 
 #Self Employments EOPS Declaration
-POST /ni/*nino/self-employments/*seId/end-of-period-statements/from/*from/to/*to  router.resources.SelfEmploymentEopsDeclarationResource.post(nino, seId, from, to)
+POST        /ni/*nino/self-employments/*seId/end-of-period-statements/from/*from/to/*to        router.resources.SelfEmploymentEopsDeclarationResource.post(nino, seId, from, to)
+
+# Self Employment Obligations
+GET       /ni/:nino/self-employments/:id/obligations                                           router.resources.SelfAssessmentResource.get(nino, id)
+GET       /ni/:nino/self-employments/:id/periods                                               router.resources.SelfAssessmentResource.get(nino, id)
+
+#### Version One - Release Two #####
+
+#Self Employment Annuals endpoints
+PUT         /ni/:nino/self-employments/:id/:taxYear                                            router.resources.ReleaseTwoResource.update(nino, id, taxYear)
+GET         /ni/:nino/self-employments/:id/:taxYear                                            router.resources.ReleaseTwoResource.get(nino, id, taxYear)
 
 #Property non-FHL Periodic endpoints
-POST /ni/:nino/uk-properties/other/periods                         router.resources.PropertyPeriodResource.createOtherPeriod(nino)
-GET  /ni/:nino/uk-properties/other/periods                         router.resources.PropertyPeriodResource.getAllOtherPeriods(nino)
-GET  /ni/:nino/uk-properties/other/periods/:periodId               router.resources.PropertyPeriodResource.getOtherPeriod(nino, periodId: String)
-PUT  /ni/:nino/uk-properties/other/periods/:periodId               router.resources.PropertyPeriodResource.updateOtherPeriod(nino, periodId: String)
+POST        /ni/:nino/uk-properties/other/periods                                              router.resources.ReleaseTwoResource.create(nino)
+GET         /ni/:nino/uk-properties/other/periods/:periodId                                    router.resources.ReleaseTwoResource.get(nino, periodId, p3?="")
+PUT         /ni/:nino/uk-properties/other/periods/:periodId                                    router.resources.ReleaseTwoResource.update(nino, periodId, p3?="")
 
-GET   /*route                                                       router.resources.SelfAssessmentResource.get(route)
-POST  /*route                                                       router.resources.SelfAssessmentResource.post(route)
-PUT   /*route                                                       router.resources.SelfAssessmentResource.put(route)
+#Property FHL Periodic endpoints
+POST        /ni/:nino/uk-properties/furnished-holiday-lettings/periods                         router.resources.ReleaseTwoResource.create(nino)
+GET         /ni/:nino/uk-properties/furnished-holiday-lettings/periods/:periodId               router.resources.ReleaseTwoResource.get(nino, periodId, p3?="")
+PUT         /ni/:nino/uk-properties/furnished-holiday-lettings/periods/:periodId               router.resources.ReleaseTwoResource.update(nino, periodId, p3?="")
+
+#Property non-FHL Annuals endpoints
+GET         /ni/:nino/uk-properties/other/:taxYear                                             router.resources.ReleaseTwoResource.get(nino, taxYear, p3?="")
+PUT         /ni/:nino/uk-properties/other/:taxYear                                             router.resources.ReleaseTwoResource.update(nino, taxYear, p3?="")
+
+#Property FHL Annuals endpoints
+GET         /ni/:nino/uk-properties/furnished-holiday-lettings/:taxYear                        router.resources.ReleaseTwoResource.get(nino, taxYear, p3?="")
+PUT         /ni/:nino/uk-properties/furnished-holiday-lettings/:taxYear                        router.resources.ReleaseTwoResource.update(nino, taxYear, p3?="")
+
+### Version One ####
+
+GET         /*route                                                                            router.resources.SelfAssessmentResource.get(route, p3?="")
+POST        /*route                                                                            router.resources.SelfAssessmentResource.post(route, p3?="")
+PUT         /*route                                                                            router.resources.SelfAssessmentResource.put(route, p3?="")
