@@ -7,32 +7,32 @@
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
-      "maximum": 99999999999999.98,
+      "maximum": 99999999999.99,
       "example": "10000.89",
-      "description": "Defines an amount value (to 2 decimal places), between 0 and 99999999999999.98"
+      "description": "Defines an amount value (to 2 decimal places), between 0 and 99999999999.99"
     }
   },
   "properties": {
     "giftAidPayments": {
       "type": "object",
-      "description": "Gift-aid payments made in the tax year.",
+      "description": "Gift Aid Payments.",
       "properties": {
-        "currentYear": {
-          "title": "Total value of gift-aid payments made in the current tax year.",
-          "description": "Total value of gift-aid payments made in the current tax year.",
+        "specifiedYear": {
+          "title": "Total Gift Aid Payments.",
+          "description": "The total amount of Gift Aid payments made within the specified tax year.",
           "$ref": "#/definitions/amount"
         },
-        "oneOffCurrentYear": {
+        "oneOffSpecifiedYear": {
           "title": "Total value of one-off gift-aid payments made in the current tax year.",
           "description": "Total value of one-off gift-aid payments made in the current tax year.",
           "$ref": "#/definitions/amount"
         },
-        "currentYearTreatedAsPreviousYear": {
+        "specifiedYearTreatedAsPreviousYear": {
           "title": "Total value of gift-aid payments made in the current tax year that were accounted for in the previous tax year.",
           "description": "Total value of gift-aid payments made in the current tax year that were accounted for in the previous tax year.",
           "$ref": "#/definitions/amount"
         },
-        "nextYearTreatedAsCurrentYear": {
+        "followingYearTreatedAsSpecifiedYear": {
           "title": "Total value of gift-aid payments brought forward from the next tax year.",
           "description": "Total value of gift-aid payments brought forward from the next tax year.",
           "$ref": "#/definitions/amount"

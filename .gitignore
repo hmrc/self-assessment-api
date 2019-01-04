@@ -18,6 +18,7 @@ lib
 lib_managed
 log
 logs
+*.log
 modules
 /out
 precompiled
