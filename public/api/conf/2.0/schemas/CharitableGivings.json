@@ -23,7 +23,7 @@
   "properties": {
     "giftAidPayments": {
       "type": "object",
-      "description": "Object to hold Gift Aid payment total amounts.",
+      "description": "Gift Aid Payments.",
       "properties": {
         "specifiedYear": {
           "title": "Total Gift Aid Payments.",
@@ -59,7 +59,7 @@
     },
     "gifts": {
       "type": "object",
-      "description": "Gifts made in the tax year.",
+      "description": "Gifts",
       "properties": {
         "sharesOrSecurities": {
           "title": "Value of qualifying shares or securities gifted to charity.",
