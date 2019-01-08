@@ -45,7 +45,7 @@ lazy val microservice = Project(appName, file("."))
       "-Ywarn-dead-code",
       "-Ywarn-value-discard",
       "-Ywarn-numeric-widen",
-      "-Ywarn-unused:imports"
+      "-Ywarn-unused"
     )
   )
   .configs(itTest)
