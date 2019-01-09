@@ -8,24 +8,8 @@
     </thead>
     <tbody>
         <tr>
-            <td><p>NINO_NOT_FOUND</p></td>
-            <td><p>Simulate no data being returned for the nino</p></td>
+            <td><p>N/A - Default</p></td>
+            <td><p>Simulate successful response</p></td>
         </tr>
-        <tr>
-            <td><p>TAX_YEAR_NOT_FOUND</p></td>
-            <td><p>Simulate no data being returned for the tax year</p></td>
-        </tr>
-        <tr>
-            <td><p>AGENT_NOT_SUBSCRIBED</p></td>
-            <td><p>Simulate agent subscription check failure</p></td>
-        </tr>
-        <tr>
-            <td><p>AGENT_NOT_AUTHORIZED</p></td>
-            <td><p>Simulate agent is not authorized by the client to act on their behalf</p></td>
-        </tr>
-        <tr>
-            <td><p>CLIENT_NOT_SUBSCRIBED</p></td>
-            <td><p>Simulate client subscription to MTD check failure</p></td>
-        </tr>
-    </tbody>
+      </tbody>
 </table>
