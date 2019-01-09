@@ -2213,7 +2213,7 @@ traits:
           displayName: Amend charitable giving tax relief [test only]
           description: Amend charitable giving tax relief for a tax year. This API is not available in production.
           (annotations.sandboxData): !include scenarios/charitable-giving-amend-scenarios.md
-          is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+          is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "write:self-assessment"
           securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
           body:
@@ -2231,31 +2231,41 @@ traits:
                 application/json:
                   type: types.errorResponse
                   examples:
-                    invalidNino:
-                      description: Invalid NINO
+                    formatNino:
+                      description: The provided NINO is invalid.
                       value:
-                        code: NINO_INVALID
-                    invalidTaxYear:
-                      description: Invalid taxYear
+                        code: FORMAT_NINO
+                    formatTaxYear:
+                      description: The provided tax year is invalid.
                       value:
-                        code: TAX_YEAR_INVALID
-                    invalidMonetaryAmount:
-                      description: Amounts should be a non-negative number less than 10000000000.00 with up to 2 decimal places
+                        code: FORMAT_TAX_YEAR
+                    ruleNonUkAmountWithoutNames:
+                      description: Non-UK charity gift aid amount supplied without the non-UK gift aid charity names.
                       value:
-                        code: INVALID_MONETARY_AMOUNT
+                        code: RULE_GIFT_AID_NONUK_AMOUNT_WITHOUT_NAMES
+                    ruleNonUkNamesWithoutAmount:
+                      description: Non-UK charity gift aid charity names supplied without an amount or the amount was zero.
+                      value:
+                        code: RULE_GIFT_AID_NONUK_NAMES_WITHOUT_AMOUNT
+                    ruleNonUkInvestmentsWithoutNames:
+                      description: Positive non-UK gift of investment amount supplied without non-UK gift of investment charity names.
+                      value:
+                        code: RULE_GIFTS_NONUK_INVESTMENTS_AMOUNT_WITHOUT_NAMES
+                    ruleNonUkInvestmentsWithoutAmount:
+                      description: Non-UK gift of investment charity names supplied without an amount or the amount was zero.
+                      value:
+                        code: RULE_GIFTS_NONUK_INVESTMENTS_NAMES_WITHOUT_AMOUNT
+
             404:
               body:
                 application/json:
                   type: types.errorResponse
                   examples:
-                    ninoNotFound:
-                      description: NINO not found
+                   matchingResourceNotFound:
+                      description: No submission data exists for the accounting period.
                       value:
-                        code: NINO_NOT_FOUND
-                    taxYearNotFound:
-                      description: Tax Year not found
-                      value:
-                        code: TAX_YEAR_NOT_FOUND
+                        code: MATCHING_RESOURCE_NOT_FOUND
+
         get:
           displayName: Get charitable giving tax relief [test only]
           description: Get charitable giving tax relief for a tax year. This API is not available in production.
