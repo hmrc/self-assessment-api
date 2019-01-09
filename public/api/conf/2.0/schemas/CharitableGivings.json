@@ -16,7 +16,7 @@
       "items": { 
         "type": "string", 
         "minLength": 1, 
-        "maxLength": 75 
+        "maxLength": 75
       }
     }
   },
@@ -52,7 +52,7 @@
         },
         "nonUKCharityNames": {
           "title": "Non-UK Charity Names.",
-          "description": "Names of all non-UK charities that received gift aid payments where the amounts have been included in giftAidPayments.nonUkCharities. If giftAidPayments.nonUkCharities is greater than zero then this field is required.",
+          "description": "Names of all non-UK charities that received gift aid payments where the amounts have been included in giftAidPayments.nonUkCharities. If giftAidPayments.nonUkCharities is greater than zero then this field is required. Each name should be between 1 and 75 characters; the pipe (|) character is not allowed.",
           "$ref": "#/definitions/charityNames"
          }
       }
@@ -78,7 +78,7 @@
         },
         "investmentsNonUKCharityNames": {
           "title": "Non-UK Investment Charity Names.",
-          "description": "Names of all non-UK charities that received investments where the amounts are included in gifts.investmentsNonUKCharities. If gifts.investmentsNonUKCharities is greater than zero, then this field is required.",
+          "description": "Names of all non-UK charities that received investments where the amounts are included in gifts.investmentsNonUKCharities. If gifts.investmentsNonUKCharities is greater than zero, then this field is required. Each name should be between 1 and 75 characters; the pipe (|) character is not allowed.",
           "$ref": "#/definitions/charityNames"
         }
       }

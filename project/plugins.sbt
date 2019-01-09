@@ -19,3 +19,5 @@ addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.3.5")
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.3.4")
 
 addSbtPlugin("net.vonbuchholtz" % "sbt-dependency-check" % "0.2.9")
+
+addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.2")
