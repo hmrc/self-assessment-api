@@ -73,7 +73,7 @@
         },
         "investmentsNonUKCharities": {
           "title": "Value of qualifying investments gifted to non-UK charities.",
-          "description": "The net amount of gifts of shartes or securities or land and buildings that was made to a charity outside the UK that has been included in gifts.sharesOrSecurities and gifts.landAndBuildings.",
+          "description": "The net amount of gifts of shares or securities or land and buildings that was made to a charity outside the UK that has been included in gifts.sharesOrSecurities and gifts.landAndBuildings.",
           "$ref": "#/definitions/amount"
         },
         "investmentsNonUKCharityNames": {
