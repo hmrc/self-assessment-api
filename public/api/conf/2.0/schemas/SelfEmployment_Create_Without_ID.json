@@ -27,11 +27,6 @@
       "minLength": 1,
       "maxLength": 105
     },
-    "businessDescription": {
-      "title": "Business description",
-      "description": "A description that conforms to the SIC 2007 standard trade classifications",
-      "type": "string"
-    },
     "businessAddressLineOne": {
       "title": "Business address line one",
       "description": "First line of the business address",
@@ -74,7 +69,6 @@
     "accountingType",
     "commencementDate",
     "tradingName",
-    "businessDescription",
     "businessAddressLineOne",
     "businessPostcode"
   ],
