@@ -2270,7 +2270,7 @@ traits:
           displayName: Retrieve charitable giving tax relief [test only]
           description: Retrieve charitable giving tax relief for a tax year. This API is not available in production.
           (annotations.sandboxData): !include scenarios/charitable-giving-view-scenarios.md
-          is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+          is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
           securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
           responses:
