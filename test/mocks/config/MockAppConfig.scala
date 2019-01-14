@@ -36,6 +36,7 @@ trait MockAppConfig extends Mock { _: Suite =>
 
     def serviceLocatorUrl: OngoingStubbing[String] = when(mockAppConfig.serviceLocatorUrl)
     def saApiUrl: OngoingStubbing[String] = when(mockAppConfig.saApiUrl)
+    def cgApiUrl: OngoingStubbing[String] = when(mockAppConfig.cgApiUrl)
     def taxCalcUrl: OngoingStubbing[String] = when(mockAppConfig.taxCalcUrl)
     def propertyUrl: OngoingStubbing[String] =  when(mockAppConfig.propertyUrl)
     def selfEmploymentUrl: OngoingStubbing[String] =  when(mockAppConfig.selfEmploymentUrl)

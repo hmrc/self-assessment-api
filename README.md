@@ -43,16 +43,26 @@ Start the app:
     [info]   uk.gov.hmrc:auth-client                              : 2.17.0-play-25 -> 2.17.0-play-26                   
     [success] Total time: 10 s, completed 29-Nov-2018 13:50:53
     
-
-    The sbt plugin dependencyCheck, will traverse your dependencies comparing validating them against several 
+    Using the command 
+    
+    sbt dependencyUpdatesReport 
+    
+    will write the same output to the file dependency-updates.txt in the <project>/target folder. 
+    
+    The sbt plugin dependencyCheck, will traverse your dependencies checking them against several 
     vulnerability databases.
     
     sbt dependencyCheck
     
-    will generate an html report in target/scala-2.??/dependency-check-report.html
+    will generate the html report in <project>/target/scala-2.??/dependency-check-report.html
 
     Note: the first time you try this, it may take seeral minutes to download all the databases.
     
+    Prior to creating a pull request, it is useful to run several commands against the project, and check 
+    the results, making any changes that might be necessary. E.g.
+
+    sbt clean test it:test coverage dependencyUpdatesReport dependencyCheck
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")

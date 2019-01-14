@@ -44,5 +44,9 @@ trait MockHttp extends Mock { _: Suite =>
     def POST[I, O](url: String, body: I): OngoingStubbing[Future[O]] = {
       when(mockHttp.POST[I, O](eqTo(url), eqTo(body), any())(any(), any(), any(), any()))
     }
+
+    def PUT[I, O](url: String, body: I): OngoingStubbing[Future[O]] = {
+      when(mockHttp.PUT[I, O](eqTo(url), eqTo(body))(any(), any(), any(), any()))
+    }
   }
 }
