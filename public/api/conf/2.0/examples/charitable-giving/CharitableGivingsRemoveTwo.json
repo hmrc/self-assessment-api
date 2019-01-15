@@ -1,0 +1,14 @@
+{
+  "giftAidPayments": {
+    "specifiedYear": 0.00,
+    "oneOffSpecifiedYear": 0.00,
+    "specifiedYearTreatedAsPreviousYear": 0.00,
+    "followingYearTreatedAsSpecifiedYear": 0.00,
+    "nonUKCharities": 0.00
+  },
+  "gifts": {
+    "landAndBuildings": 0.00,
+    "sharesOrSecurities": 0.00,
+    "investmentsNonUKCharities": 0.00
+  }
+}

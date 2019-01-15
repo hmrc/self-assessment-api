@@ -2219,7 +2219,19 @@ traits:
           body:
             application/json:
               type: !include schemas/CharitableGivings.json
-              example: !include examples/charitable-giving/CharitableGivings.json
+              examples:
+               example-1:
+                description: >
+                  Charitable giving with Non UK Charity donations
+                value: !include examples/charitable-giving/CharitableGivings.json
+               example-2:
+                description: >
+                  Example 1 of how to remove previously submitted values
+                value: !include examples/charitable-giving/CharitableGivingsRemoveOne.json
+               example-3:
+                description: >
+                  Example 2 of how to remove previously submitted values
+                value: !include examples/charitable-giving/CharitableGivingsRemoveTwo.json
           responses:
             204:
               headers:
