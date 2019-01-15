@@ -2206,7 +2206,7 @@ traits:
         displayName: Charitable giving payments for the tax year
         uriParameters:
           taxYear:
-            description: The tax year the data applies to, for example, 2018-19. <br>The start year and end year must not span two tax years. No gaps are allowed, for example, 2017-19 is not valid. 
+            description: The tax year the data applies to, for example, 2018-19. <br>The start year and end year must not span two tax years. No gaps are allowed, for example, 2017-19 is not valid. The minimum tax year is 2016-17.
             type: string
             example: 2018-19
         put:
@@ -2232,13 +2232,53 @@ traits:
                   type: types.errorResponse
                   examples:
                     formatNino:
-                      description: The provided NINO is invalid.
+                      description: The format of the supplied NINO field is not valid.
                       value:
                         code: FORMAT_NINO
                     formatTaxYear:
-                      description: The provided tax year is invalid.
+                      description: The format of the supplied tax year field is not valid.
                       value:
                         code: FORMAT_TAX_YEAR
+                    formatGiftAidSpecifiedYear:
+                      description: The format of the specified year field is not valid.
+                      value:
+                        code: FORMAT_GIFT_AID_SPECIFIED_YEAR
+                    formatGiftAidOneOffSpecifiedYear:
+                      description: The format of the one-off specified year field is not valid.
+                      value:
+                        code: FORMAT_GIFT_AID_ONE_OFF_SPECIFIED_YEAR
+                    formatGiftAidSpecifiedYearPreviousYear:
+                      description: The format of the gift aid specified year treated as previous year field is not valid.
+                      value:
+                        code: FORMAT_GIFT_AID_SPECIFIED_YEAR_PREVIOUS_YEAR
+                    formatGiftAidSpecifiedYearFollowingYear:
+                      description: The format of the gift aid following year treated as specified year field is not valid.
+                      value:
+                        code: FORMAT_GIFT_AID_FOLLOWING_YEAR_SPECIFIED_YEAR
+                    formatNonUkCharitiesAmount:
+                      description: The format of the gift aid Non-UK charities amount field is not valid.
+                      value:
+                        code: FORMAT_GIFT_AID_NONUK_CHARITY_AMOUNT
+                    formatNonUkCharityNames:
+                      description: The format of the gift aid non-UK charity names is not valid.
+                      value:
+                        code: FORMAT_GIFT_AID_NONUK_NAMES
+                    formatGiftsSharesSecurities:
+                      description: The format of the gifts of shares or securities field is not valid.
+                      value:
+                        code: FORMAT_GIFTS_SHARES_SECURITIES
+                    formatGiftsLandBuildings:
+                      description: The format of the gifts of lands and buildings field is not valid.
+                      value:
+                        code: FORMAT_GIFTS_LAND_BUILDINGS
+                    formatGiftsInvestmentsAmount:
+                      description: The format of the gifts of investments field is not valid.
+                      value:
+                        code: FORMAT_GIFTS_INVESTMENTS_AMOUNT
+                    formatGiftsNonUkInvestmentsNames:
+                      description: The list of charity names, for investments gifted to non-UK charities, is not valid.
+                      value:
+                        code: FORMAT_GIFTS_NONUK_INVESTMENTS_NAMES
                     ruleNonUkAmountWithoutNames:
                       description: Non-UK charity gift aid amount supplied without the non-UK gift aid charity names.
                       value:
@@ -2255,17 +2295,10 @@ traits:
                       description: Non-UK gift of investment charity names supplied without an amount or the amount was zero.
                       value:
                         code: RULE_GIFTS_NONUK_INVESTMENTS_NAMES_WITHOUT_AMOUNT
-
-            404:
-              body:
-                application/json:
-                  type: types.errorResponse
-                  examples:
-                   matchingResourceNotFound:
-                      description: No submission data exists for the accounting period.
+                    ruleTaxYearNotSupported:
+                      description: The specified tax year is not supported, i.e the tax year specified is before the minimum tax year value.
                       value:
-                        code: MATCHING_RESOURCE_NOT_FOUND
-
+                        code: RULE_TAX_YEAR_NOT_SUPPORTED
         get:
           displayName: Retrieve charitable giving tax relief [test only]
           description: Retrieve charitable giving tax relief for a tax year. This API is not available in production.
@@ -2306,6 +2339,6 @@ traits:
                   type: types.errorResponse
                   examples:
                     matchingResourceNotFound:
-                      description: Matching resource not found.
+                      description: No charitable giving data could be found.
                       value:
                         code: MATCHING_RESOURCE_NOT_FOUND

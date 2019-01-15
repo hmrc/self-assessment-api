@@ -27,27 +27,27 @@
       "properties": {
         "specifiedYear": {
           "title": "Total Gift Aid Payments.",
-          "description": "The total amount of Gift Aid payments made within the specified tax year.",
+          "description": "The total amount of Gift Aid payments made within the specified tax year. The value must be between 0 and 99999999999.99.",
           "$ref": "#/definitions/amount"
         },
         "oneOffSpecifiedYear": {
           "title": "Total One Off Gift Aid Payments.",
-          "description": "The amount of one-off Gift Aid payments made within the specified tax year that has been included in giftAidPayments.specifiedYear.",
+          "description": "The amount of one-off Gift Aid payments made within the specified tax year that has been included in giftAidPayments.specifiedYear. The value must be between 0 and 99999999999.99.",
           "$ref": "#/definitions/amount"
         },
         "specifiedYearTreatedAsPreviousYear": {
           "title": "Total Gift Aid payments made in the current tax year but treated as if they were mae in the previous tax year.",
-          "description": "The amount of Gift Aid payments made within the specified tax year that should be treated as if they were made in the previous tax year.",
+          "description": "The amount of Gift Aid payments made within the specified tax year that should be treated as if they were made in the previous tax year. The value must be between 0 and 99999999999.99.",
           "$ref": "#/definitions/amount"
         },
         "followingYearTreatedAsSpecifiedYear": {
           "title": "Total Gift Aid payments made in the next tax year but treated as if they were made in the current tax year.",
-          "description": "The amount of Gift Aid payments made in the following tax year that should be treated as if they were made in the specified tax year.",
+          "description": "The amount of Gift Aid payments made in the following tax year that should be treated as if they were made in the specified tax year. The value must be between 0 and 99999999999.99.",
           "$ref": "#/definitions/amount"
         },
         "nonUKCharities": {
           "title": "Value of Gift Aid payments to non-UK charities.",
-          "description": "The total amount of Gift Aid payments made within the specified tax year to a charity outside the UK that has been included in giftAidPayments.specifiedYear.",
+          "description": "The total amount of Gift Aid payments made within the specified tax year to a charity outside the UK that has been included in giftAidPayments.specifiedYear. The value must be between 0 and 99999999999.99.",
           "$ref": "#/definitions/amount"
         },
         "nonUKCharityNames": {
@@ -63,17 +63,17 @@
       "properties": {
         "sharesOrSecurities": {
           "title": "Value of qualifying shares or securities gifted to charity.",
-          "description": "The net benefit of shares and securities minus any amounts of benefits received from the charity.",
+          "description": "The net benefit of shares and securities minus any amounts of benefits received from the charity. The value must be between 0 and 99999999999.99.",
           "$ref": "#/definitions/amount"
         },
         "landAndBuildings": {
           "title": "Value of qualifying land and buildings gifted to charity.",
-          "description": "The net benefit of land and buildings minus any amounts or benefits received from the charity. This should include any costs of the gift or sale such as legal or valuer's fees.",
+          "description": "The net benefit of land and buildings minus any amounts or benefits received from the charity. This should include any costs of the gift or sale such as legal or valuer's fees. The value must be between 0 and 99999999999.99.",
           "$ref": "#/definitions/amount"
         },
         "investmentsNonUKCharities": {
           "title": "Value of qualifying investments gifted to non-UK charities.",
-          "description": "The net amount of gifts of shares or securities or land and buildings that was made to a charity outside the UK that has been included in gifts.sharesOrSecurities and gifts.landAndBuildings.",
+          "description": "The net amount of gifts of shares or securities or land and buildings that was made to a charity outside the UK that has been included in gifts.sharesOrSecurities and gifts.landAndBuildings. The value must be between 0 and 99999999999.99.",
           "$ref": "#/definitions/amount"
         },
         "investmentsNonUKCharityNames": {
