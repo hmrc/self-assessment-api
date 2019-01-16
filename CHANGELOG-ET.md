@@ -1,7 +1,7 @@
 ## 15-Jan-2019
 <b>[self-assessment-api-router v1.115.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.115.0)</b> <br/>
 <b>[mtd-charitable-giving v0.19.0](https://github.com/hmrc/mtd-charitable-giving/releases/tag/v0.19.0)</b>
-* NEW version 2.0 endpoint for Amend Charitable Giving in sandbox
+* NEW version 2.0 endpoint for Amend Charitable Giving in sandbox, ONLY happy path scenario is functional
 
 ## 21-Dec-2018
 <b>[self-assessment-api-router v1.95.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.95.0)</b> <br/>
