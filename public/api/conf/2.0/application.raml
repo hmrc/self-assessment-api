@@ -1716,20 +1716,32 @@ traits:
         displayName: Annual Summary
         uriParameters:
           taxYear:
-            description: The tax year the data applies to
+            description: The tax year the data applies to, for example, 2017-18. The start year and end year must not span two tax years. No gaps are allowed, for example, 2017-19 is not valid. The minimum tax year is 2016-17.
             type: string
             example: 2017-18
         put:
-          displayName: Update a dividends income annual summary [test only]
-          description: Update a dividends income annual summary for a tax year. This API is not available in production.
-          (annotations.sandboxData): !include scenarios/agent-scenarios.md
-          is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+          displayName: Amend a UK dividends income annual summary [test only]
+          description: Amend a UK dividends income annual summary for a tax year. This API is not available in production.
+          (annotations.sandboxData): !include scenarios/dividends-update-scenarios.md
+          is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "write:self-assessment"
           securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
           body:
             application/json:
               type: !include schemas/DIV_AnnualSummary.json
-              example: !include examples/dividends/AnnualSummary.json
+              examples:
+               example-1:
+                description: >
+                  Dividends with both fields populated
+                value: !include examples/dividends/AnnualSummary.json
+               example-2:
+                description: >
+                  Example 1 of how to remove previously submitted values
+                value: !include examples/dividends/AnnualSummaryZeros1.json
+               example-3:
+                description: >
+                  Example 2 of how to remove previously submitted values
+                value: !include examples/dividends/AnnualSummaryZeros2.json
           responses:
             204:
             400:
@@ -1737,18 +1749,31 @@ traits:
                 application/json:
                   type: types.errorResponse
                   examples:
-                    invalidNino:
-                      description: Invalid NINO
+                    formatNino:
+                      description: The format of the supplied NINO is not valid.
                       value:
-                        code: NINO_INVALID
-                    invalidTaxYear:
-                      description: Invalid taxYear
+                        code: FORMAT_NINO
+                    formatTaxYear:
+                      description: The format of the supplied tax year is not valid.
                       value:
-                        code: TAX_YEAR_INVALID
-                    invalidMonetaryAmount:
-                      description: ukDividends is not a non-negative amount or up to 2 decimal places
+                        code: FORMAT_TAX_YEAR
+                    formatUkDividends:
+                      description: The format of the UK Dividends total is not valid.
                       value:
-                        code: INVALID_MONETARY_AMOUNT
+                        code: FORMAT_UK_DIVIDENDS
+                    formatOtherDividends:
+                      description: The format of the Other UK Dividends total is not valid.
+                      value:
+                        code: FORMAT_OTHER_DIVIDENDS
+            403:
+              body:
+                application/json:
+                  type: types.errorResponse
+                  examples:
+                    ruleTaxYear:
+                      description: The specified tax year is not supported; that is, the tax year specified is before the minimum tax year value.
+                      value:
+                        code: RULE_TAX_YEAR_NOT_SUPPORTED
         get:
           displayName: Get dividends income annual summary [test only]
           description: Get dividends income for a tax year. This API is not available in production.
