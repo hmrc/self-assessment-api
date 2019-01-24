@@ -1,3 +1,12 @@
+## 24-Jan-2019
+<b>[self-assessment-api-router v1.122.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.122.0)</b> <br/>
+* Update to documentation - Amend charitable giving tax relief
+    * Invalid Request examples
+    * Errors Scenarios
+  
+<b>[mtd-charitable-giving v0.32.0](https://github.com/hmrc/mtd-charitable-giving/releases/tag/v0.32.0)</b>
+*  Unhappy path (error scenario) functionality added to version 2.0 Amend Charitable Giving
+
 ## 15-Jan-2019
 <b>[self-assessment-api-router v1.115.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.115.0)</b> <br/>
 * New documentation - ‘Retrieve charitable giving tax relief’
