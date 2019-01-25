@@ -651,12 +651,12 @@ object Jsons {
                       balancingChargeOther: BigDecimal = 500.25,
                       goodsAndServicesOwnUse: BigDecimal = 500.25,
                       capitalAllowanceSingleAssetPool: BigDecimal = 500.25,
-                      overlapProfitCarriedForward: BigDecimal = 500.25,
-                      overlapProfitBroughtForward: BigDecimal = 500.25,
-                      lossCarriedForwardTotal: BigDecimal = 500.25,
-                      cisDeductionsTotal: BigDecimal = 500.25,
-                      taxDeductionsFromTradingIncome: BigDecimal = 500.25,
-                      class4NicProfitAdjustment: BigDecimal = 500.25,
+//                      overlapProfitCarriedForward: BigDecimal = 500.25,
+//                      overlapProfitBroughtForward: BigDecimal = 500.25,
+//                      lossCarriedForwardTotal: BigDecimal = 500.25,
+//                      cisDeductionsTotal: BigDecimal = 500.25,
+//                      taxDeductionsFromTradingIncome: BigDecimal = 500.25,
+//                      class4NicProfitAdjustment: BigDecimal = 500.25,
                       businessDetailsChangedRecently: Boolean = true,
                       payVoluntaryClass2Nic: Boolean = false,
                       isExempt: Boolean = true,
@@ -683,13 +683,7 @@ object Jsons {
            |    "outstandingBusinessIncome": $outstandingBusinessIncome,
            |    "balancingChargeBPRA": $balancingChargeBPRA,
            |    "balancingChargeOther": $balancingChargeOther,
-           |    "goodsAndServicesOwnUse": $goodsAndServicesOwnUse,
-           |    "overlapProfitCarriedForward": $overlapProfitCarriedForward,
-           |    "overlapProfitBroughtForward": $overlapProfitBroughtForward,
-           |    "lossCarriedForwardTotal": $lossCarriedForwardTotal,
-           |    "cisDeductionsTotal": $cisDeductionsTotal,
-           |    "taxDeductionsFromTradingIncome": $taxDeductionsFromTradingIncome,
-           |    "class4NicProfitAdjustment": $class4NicProfitAdjustment
+           |    "goodsAndServicesOwnUse": $goodsAndServicesOwnUse
            |  },
            |  "nonFinancials": {
            |    "class4NicInfo": {
