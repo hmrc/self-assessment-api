@@ -31,13 +31,7 @@ object AnnualSummaryFixture {
       outstandingBusinessIncome = Some(500.25),
       balancingChargeBpra = Some(500.25),
       balancingChargeOther = Some(500.25),
-      goodsAndServicesOwnUse = Some(500.25),
-      overlapProfitCarriedForward = Some(500.25),
-      overlapProfitBroughtForward = Some(500.25),
-      lossCarriedForwardTotal = Some(500.25),
-      cisDeductionsTotal = Some(500.25),
-      taxDeductionsFromTradingIncome = Some(500.25),
-      class4NicProfitAdjustment = Some(500.25)
+      goodsAndServicesOwnUse = Some(500.25)
     )),
     Some(des.selfemployment.AnnualAllowances(
       annualInvestmentAllowance = Some(500.25),

@@ -69,7 +69,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
         Some(Allowances(businessPremisesRenovationAllowance = Some(0))),
         None, None)
 
-      assertValidationPasses(summary)
+        assertValidationPasses(summary)
     }
   }
 
@@ -87,13 +87,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
           outstandingBusinessIncome = Some(200.25),
           balancingChargeBpra = Some(200.25),
           balancingChargeOther = Some(200.25),
-          goodsAndServicesOwnUse = Some(200.25),
-          overlapProfitCarriedForward = Some(10),
-          overlapProfitBroughtForward = Some(10),
-          lossCarriedForwardTotal = Some(12.25),
-          cisDeductionsTotal = Some(10.05),
-          taxDeductionsFromTradingIncome = Some(12.25),
-          class4NicProfitAdjustment = Some(25.10)
+          goodsAndServicesOwnUse = Some(200.25)
         )),
         annualAllowances = Some(des.selfemployment.AnnualAllowances(
           annualInvestmentAllowance = Some(200.25),
@@ -126,11 +120,6 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
       adjustments.balancingChargeBPRA shouldBe Some(200.25)
       adjustments.balancingChargeOther shouldBe Some(200.25)
       adjustments.goodsAndServicesOwnUse shouldBe Some(200.25)
-      adjustments.overlapProfitCarriedForward shouldBe Some(10)
-      adjustments.lossCarriedForwardTotal shouldBe Some(12.25)
-      adjustments.cisDeductionsTotal shouldBe Some(10.05)
-      adjustments.taxDeductionsFromTradingIncome shouldBe Some(12.25)
-      adjustments.class4NicProfitAdjustment shouldBe Some(25.10)
 
       val allowances = apiSummary.allowances.get
 

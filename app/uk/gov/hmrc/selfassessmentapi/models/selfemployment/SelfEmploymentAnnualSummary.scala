@@ -45,13 +45,13 @@ object SelfEmploymentAnnualSummary {
         outstandingBusinessIncome = adj.outstandingBusinessIncome,
         balancingChargeBPRA = adj.balancingChargeBpra,
         balancingChargeOther = adj.balancingChargeOther,
-        goodsAndServicesOwnUse = adj.goodsAndServicesOwnUse,
-        overlapProfitCarriedForward = adj.overlapProfitCarriedForward,
-        overlapProfitBroughtForward = adj.overlapProfitBroughtForward,
-        lossCarriedForwardTotal = adj.lossCarriedForwardTotal,
-        cisDeductionsTotal = adj.cisDeductionsTotal,
-        taxDeductionsFromTradingIncome = adj.taxDeductionsFromTradingIncome,
-        class4NicProfitAdjustment = adj.class4NicProfitAdjustment
+        goodsAndServicesOwnUse = adj.goodsAndServicesOwnUse
+//        overlapProfitCarriedForward = adj.overlapProfitCarriedForward,
+//        overlapProfitBroughtForward = adj.overlapProfitBroughtForward,
+//        lossCarriedForwardTotal = adj.lossCarriedForwardTotal,
+//        cisDeductionsTotal = adj.cisDeductionsTotal,
+//        taxDeductionsFromTradingIncome = adj.taxDeductionsFromTradingIncome,
+//        class4NicProfitAdjustment = adj.class4NicProfitAdjustment
 
       )
     }

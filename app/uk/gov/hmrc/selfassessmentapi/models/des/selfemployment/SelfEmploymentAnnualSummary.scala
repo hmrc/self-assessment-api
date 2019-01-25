@@ -40,13 +40,7 @@ object SelfEmploymentAnnualSummary {
         outstandingBusinessIncome = adj.outstandingBusinessIncome,
         balancingChargeBpra = adj.balancingChargeBPRA,
         balancingChargeOther = adj.balancingChargeOther,
-        goodsAndServicesOwnUse = adj.goodsAndServicesOwnUse,
-        overlapProfitCarriedForward = adj.overlapProfitCarriedForward,
-        overlapProfitBroughtForward = adj.overlapProfitBroughtForward,
-        lossCarriedForwardTotal = adj.lossCarriedForwardTotal,
-        cisDeductionsTotal = adj.cisDeductionsTotal,
-        taxDeductionsFromTradingIncome = adj.taxDeductionsFromTradingIncome,
-        class4NicProfitAdjustment = adj.class4NicProfitAdjustment
+        goodsAndServicesOwnUse = adj.goodsAndServicesOwnUse
       )
     }
 
@@ -92,13 +86,8 @@ case class AnnualAdjustments(includedNonTaxableProfits: Option[BigDecimal],
                              outstandingBusinessIncome: Option[BigDecimal],
                              balancingChargeBpra: Option[BigDecimal],
                              balancingChargeOther: Option[BigDecimal],
-                             goodsAndServicesOwnUse: Option[BigDecimal],
-                             overlapProfitCarriedForward: Option[BigDecimal],
-                             overlapProfitBroughtForward: Option[BigDecimal],
-                             lossCarriedForwardTotal: Option[BigDecimal],
-                             cisDeductionsTotal: Option[BigDecimal],
-                             taxDeductionsFromTradingIncome: Option[BigDecimal],
-                             class4NicProfitAdjustment: Option[BigDecimal])
+                             goodsAndServicesOwnUse: Option[BigDecimal]
+                            )
 
 object AnnualAdjustments {
   implicit val reads: Reads[AnnualAdjustments] = Json.reads[AnnualAdjustments]
