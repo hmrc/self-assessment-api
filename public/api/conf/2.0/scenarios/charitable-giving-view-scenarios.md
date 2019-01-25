@@ -35,5 +35,9 @@
             <td><p>REMOVED_VALUES_EXAMPLE_2</p></td>
             <td><p>Simulate a successful response that contains only one zero value.</p></td>
         </tr>
+        <tr>
+            <td><p>MATCHING_RESOURCE_NOT_FOUND</p></td>
+            <td><p>Simulate the scenario where no charitable giving data could be found.</p></td>
+        </tr>
     </tbody>
 </table>
