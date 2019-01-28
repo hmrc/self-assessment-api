@@ -17,6 +17,8 @@
 package support
 
 import mocks.auth.MockAuthConnector
+import org.mockito.stubbing.OngoingStubbing
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
 
@@ -25,7 +27,12 @@ import scala.concurrent.Future
 trait ResourceSpec extends UnitSpec
   with MockAuthConnector {
 
-  def mockAuthAction = {
+  val requestJson: JsObject = Json.obj("test" -> "request json")
+  val responseJson: JsObject = Json.obj("test" -> "response json")
+  val testHeader = Map("test" -> "header",  "X-Content-Type-Options" -> "nosniff")
+  val testHeaderResponse = Map("test" -> Seq("header"))
+
+  def mockAuthAction: OngoingStubbing[Future[Unit]] = {
     MockAuthConnector.authorise(EmptyPredicate, EmptyRetrieval)
       .returns(Future.successful(()))
   }

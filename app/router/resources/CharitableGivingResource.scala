@@ -36,4 +36,13 @@ class CharitableGivingResource @Inject()(service: CharitableGivingService,
         }
       }
   }
+
+  def get(param:Any*): Action[AnyContent] =
+    AuthAction.async {
+      implicit request =>
+        service.get().map{
+          case Left(error) => buildErrorResponse(error)
+          case Right(apiResponse) => buildResponse(apiResponse)
+        }
+    }
 }

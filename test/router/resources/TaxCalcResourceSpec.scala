@@ -17,7 +17,7 @@
 package router.resources
 
 import mocks.services.MockTaxCalcService
-import play.api.libs.json.Json
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import router.errors.{ErrorCode, IncorrectAPIVersion, UnsupportedAPIVersion}
 import support.ResourceSpec
@@ -36,18 +36,13 @@ class TaxCalcResourceSpec extends ResourceSpec
     mockAuthAction
   }
 
-  val requestJson = Json.obj("test" -> "request json")
-  val responseJson = Json.obj("test" -> "response json")
-  val testHeader = Map("test" -> "header",  "X-Content-Type-Options" -> "nosniff")
-  val testHeaderResponse = Map("test" -> Seq("header"))
-
   "get" should {
     "return a 200 with the response headers" when {
       "the service returns a HttpResponse containing a 200 with no json response body" in new Setup {
         MockTaxCalcService.get()
           .returns(Future.successful(Right(HttpResponse(OK, None, testHeaderResponse))))
 
-        val result = resource.get("","")(FakeRequest())
+        val result: Future[Result] = resource.get("","")(FakeRequest())
         status(result) shouldBe OK
         headers(result) shouldBe testHeader
         contentType(result) shouldBe None
@@ -59,7 +54,7 @@ class TaxCalcResourceSpec extends ResourceSpec
         MockTaxCalcService.get()
           .returns(Future.successful(Right(HttpResponse(OK, Some(responseJson), testHeaderResponse))))
 
-        val result = resource.get("","")(FakeRequest())
+        val result: Future[Result] = resource.get("","")(FakeRequest())
         status(result) shouldBe OK
         headers(result) shouldBe testHeader
         contentType(result) shouldBe Some(JSON)
@@ -72,7 +67,7 @@ class TaxCalcResourceSpec extends ResourceSpec
         MockTaxCalcService.get()
           .returns(Future.successful(Left(IncorrectAPIVersion)))
 
-        val result = resource.get("","")(FakeRequest())
+        val result: Future[Result] = resource.get("","")(FakeRequest())
         status(result) shouldBe NOT_ACCEPTABLE
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
@@ -84,7 +79,7 @@ class TaxCalcResourceSpec extends ResourceSpec
         MockTaxCalcService.get()
           .returns(Future.successful(Left(UnsupportedAPIVersion)))
 
-        val result = resource.get("","")(FakeRequest())
+        val result: Future[Result] = resource.get("","")(FakeRequest())
         status(result) shouldBe NOT_FOUND
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.notFound.asJson

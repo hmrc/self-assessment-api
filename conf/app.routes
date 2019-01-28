@@ -44,7 +44,9 @@ GET         /ni/:nino/uk-properties/furnished-holiday-lettings/:taxYear         
 PUT         /ni/:nino/uk-properties/furnished-holiday-lettings/:taxYear                        router.resources.ReleaseTwoResource.update(nino, taxYear, p3?="")
 
 #Charitable Giving endpoints
-PUT         /ni/:nino/charitable-giving/:taxYear        									   router.resources.CharitableGivingResource.put(nino, taxYear)
+PUT         /ni/:nino/charitable-giving/:taxYear        									                     router.resources.CharitableGivingResource.put(nino, taxYear)
+
+GET         /ni/:nino/charitable-giving/:taxYear        									                     router.resources.CharitableGivingResource.get(nino, taxYear)
 
 ### Version One ####
 

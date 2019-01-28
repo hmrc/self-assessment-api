@@ -34,6 +34,10 @@ trait MockCharitableGivingService extends Mock { _: Suite =>
     def put(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
       when(mockCharitableGivingService.put(eqTo(body))(any(), any()))
     }
+
+    def get(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockCharitableGivingService.get()(any(), any()))
+    }
   }
 
   override protected def beforeEach(): Unit = {

@@ -17,7 +17,8 @@
 package router.resources
 
 import mocks.services.MockCharitableGivingService
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import router.errors.{ErrorCode, IncorrectAPIVersion, UnsupportedAPIVersion}
 import support.ResourceSpec
@@ -35,11 +36,6 @@ class CharitableGivingResourceSpec extends ResourceSpec
     )
     mockAuthAction
   }
-
-  val requestJson = Json.obj("test" -> "request json")
-  val responseJson = Json.obj("test" -> "response json")
-  val testHeader = Map("test" -> "header",  "X-Content-Type-Options" -> "nosniff")
-  val testHeaderResponse = Map("test" -> Seq("header"))
 
   "amend" should {
     "return a 204 with the response headers" when {
@@ -59,7 +55,7 @@ class CharitableGivingResourceSpec extends ResourceSpec
         MockCharitableGivingService.put(requestJson)
           .returns(Future.successful(Left(IncorrectAPIVersion)))
 
-        val result = resource.put("", "")(FakeRequest().withBody(requestJson))
+        val result: Future[Result] = resource.put("", "")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NOT_ACCEPTABLE
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
@@ -71,7 +67,7 @@ class CharitableGivingResourceSpec extends ResourceSpec
         MockCharitableGivingService.put(requestJson)
           .returns(Future.successful(Left(UnsupportedAPIVersion)))
 
-        val result = resource.put("", "")(FakeRequest().withBody(requestJson))
+        val result: Future[Result] = resource.put("", "")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NOT_FOUND
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.notFound.asJson
@@ -80,4 +76,40 @@ class CharitableGivingResourceSpec extends ResourceSpec
 
   }
 
+  "retrieve" should {
+    "return a 200 with the response body and headers" when {
+      "the service returns a HttpResponse containing a 200 and response body" in new Setup {
+
+        val body: JsValue = Json.parse(
+          s"""{
+             |  "giftAidPayments": {
+             |    "specifiedYear": 10000.00,
+             |    "oneOffSpecifiedYear": 1000.00,
+             |    "specifiedYearTreatedAsPreviousYear": 300.00,
+             |    "followingYearTreatedAsSpecifiedYear": 400.00,
+             |    "nonUKCharities": 2000.00,
+             |    "nonUKCharityNames": ["International Charity A","International Charity B"]
+             |  },
+             |  "gifts": {
+             |    "landAndBuildings": 700.00,
+             |    "sharesOrSecurities": 600.00,
+             |    "investmentsNonUKCharities": 300.00,
+             |    "investmentsNonUKCharityNames": ["International Charity C","International Charity D"]
+             |  }
+             |}""".stripMargin
+        )
+
+        val httpResponse = HttpResponse(OK, Some(body), testHeaderResponse)
+
+        MockCharitableGivingService.get()
+          .returns(Future.successful(Right(httpResponse)))
+
+        private val result = resource.get("")(FakeRequest())
+        status(result) shouldBe OK
+        headers(result) shouldBe testHeader
+        contentType(result) shouldBe Some(JSON)
+        contentAsJson(result) shouldBe body
+      }
+    }
+  }
 }

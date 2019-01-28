@@ -17,8 +17,7 @@
 package router.resources
 
 import mocks.services.MockReleaseTwoService
-import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.Action
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import router.errors.{ErrorCode, IncorrectAPIVersion, UnsupportedAPIVersion}
 import support.ResourceSpec
@@ -38,10 +37,6 @@ class ReleaseTwoResourceSpec extends ResourceSpec
   }
 
   val request = FakeRequest()
-  val requestJson: JsValue = Json.obj("test" -> "request json")
-  val responseJson: JsValue = Json.obj("test" -> "response json")
-  val testHeader = Map("test" -> "header",  "X-Content-Type-Options" -> "nosniff")
-  val testHeaderResponse = Map("test" -> Seq("header"))
 
   "create" should {
     "return a 201 with the response headers" when {
@@ -49,7 +44,7 @@ class ReleaseTwoResourceSpec extends ResourceSpec
         MockReleaseTwoService.create(requestJson)
           .returns(Future.successful(Right(HttpResponse(CREATED, None, testHeaderResponse))))
 
-        private val result = resource.create("")(FakeRequest().withBody(requestJson))
+        val result: Future[Result] = resource.create("")(FakeRequest().withBody(requestJson))
         status(result) shouldBe CREATED
         headers(result) shouldBe testHeader
         contentType(result) shouldBe None
@@ -60,7 +55,7 @@ class ReleaseTwoResourceSpec extends ResourceSpec
         MockReleaseTwoService.create(requestJson)
           .returns(Future.successful(Left(IncorrectAPIVersion)))
 
-        val result = resource.create("")(FakeRequest().withBody(requestJson))
+        val result: Future[Result] = resource.create("")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NOT_ACCEPTABLE
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
@@ -72,7 +67,7 @@ class ReleaseTwoResourceSpec extends ResourceSpec
         MockReleaseTwoService.create(requestJson)
           .returns(Future.successful(Left(UnsupportedAPIVersion)))
 
-        val result = resource.create("")(FakeRequest().withBody(requestJson))
+        val result: Future[Result] = resource.create("")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NOT_FOUND
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.notFound.asJson
@@ -86,7 +81,7 @@ class ReleaseTwoResourceSpec extends ResourceSpec
         MockReleaseTwoService.get()
           .returns(Future.successful(Right(HttpResponse(OK, None, testHeaderResponse))))
 
-        private val result = resource.get("", "")(FakeRequest())
+        val result: Future[Result] = resource.get("", "")(FakeRequest())
         status(result) shouldBe OK
         headers(result) shouldBe testHeader
         contentType(result) shouldBe None
@@ -98,7 +93,7 @@ class ReleaseTwoResourceSpec extends ResourceSpec
         MockReleaseTwoService.get()
           .returns(Future.successful(Left(IncorrectAPIVersion)))
 
-        val result = resource.get("","")(FakeRequest())
+        val result: Future[Result] = resource.get("","")(FakeRequest())
         status(result) shouldBe NOT_ACCEPTABLE
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
@@ -110,7 +105,7 @@ class ReleaseTwoResourceSpec extends ResourceSpec
         MockReleaseTwoService.get()
           .returns(Future.successful(Left(UnsupportedAPIVersion)))
 
-        val result = resource.get("","")(FakeRequest())
+        val result: Future[Result] = resource.get("","")(FakeRequest())
         status(result) shouldBe NOT_FOUND
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.notFound.asJson
@@ -124,7 +119,7 @@ class ReleaseTwoResourceSpec extends ResourceSpec
         MockReleaseTwoService.amend(requestJson)
           .returns(Future.successful(Right(HttpResponse(NO_CONTENT, None, testHeaderResponse))))
 
-        private val result = resource.update("", "")(FakeRequest().withBody(requestJson))
+        val result: Future[Result] = resource.update("", "")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NO_CONTENT
         headers(result) shouldBe testHeader
         contentType(result) shouldBe None
@@ -136,7 +131,7 @@ class ReleaseTwoResourceSpec extends ResourceSpec
         MockReleaseTwoService.amend(requestJson)
           .returns(Future.successful(Left(IncorrectAPIVersion)))
 
-        val result = resource.update("", "")(FakeRequest().withBody(requestJson))
+        val result: Future[Result] = resource.update("", "")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NOT_ACCEPTABLE
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
@@ -148,7 +143,7 @@ class ReleaseTwoResourceSpec extends ResourceSpec
         MockReleaseTwoService.amend(requestJson)
           .returns(Future.successful(Left(UnsupportedAPIVersion)))
 
-        val result = resource.update("", "")(FakeRequest().withBody(requestJson))
+        val result: Future[Result] = resource.update("", "")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NOT_FOUND
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.notFound.asJson
@@ -156,9 +151,5 @@ class ReleaseTwoResourceSpec extends ResourceSpec
     }
 
   }
-
-
-
-
 
 }

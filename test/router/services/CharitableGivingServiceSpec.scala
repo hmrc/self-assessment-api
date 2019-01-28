@@ -119,4 +119,40 @@ class CharitableGivingServiceSpec extends UnitSpec
     }
   }
 
+  "retrieve" should {
+    "return a HttpResponse" when {
+      "the request contains a version 2.0 header and charitable giving version 2 config is enabled" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+        val body = Json.parse(
+          s"""{
+             |  "giftAidPayments": {
+             |    "specifiedYear": 10000.00,
+             |    "oneOffSpecifiedYear": 1000.00,
+             |    "specifiedYearTreatedAsPreviousYear": 300.00,
+             |    "followingYearTreatedAsSpecifiedYear": 400.00,
+             |    "nonUKCharities": 2000.00,
+             |    "nonUKCharityNames": ["International Charity A","International Charity B"]
+             |  },
+             |  "gifts": {
+             |    "landAndBuildings": 700.00,
+             |    "sharesOrSecurities": 600.00,
+             |    "investmentsNonUKCharities": 300.00,
+             |    "investmentsNonUKCharityNames": ["International Charity C","International Charity D"]
+             |  }
+             |}""".stripMargin
+        )
+
+        val correlationId = "X-123"
+        val httpResponse = HttpResponse(OK, Some(body), Map("CorrelationId" -> Seq(correlationId)))
+        val charitableGivingVersionTwoConfig = Configuration("charitable-giving-version-2.enabled" -> true)
+
+        MockAppConfig.featureSwitch returns Some(charitableGivingVersionTwoConfig)
+        MockCharitableGivingConnector.get(s"/$VERSION_2${request.uri}")
+          .returns(Future.successful(Right(httpResponse)))
+
+        val result = await(service.get())
+        result shouldBe Right(httpResponse)
+      }
+    }
+  }
 }

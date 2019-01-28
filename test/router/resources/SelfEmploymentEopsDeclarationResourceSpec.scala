@@ -17,7 +17,7 @@
 package router.resources
 
 import mocks.services.MockSelfEmploymentEopsDeclarationService
-import play.api.libs.json.Json
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import router.errors.{ErrorCode, IncorrectAPIVersion, UnsupportedAPIVersion}
 import support.ResourceSpec
@@ -37,10 +37,6 @@ class SelfEmploymentEopsDeclarationResourceSpec extends ResourceSpec
   }
 
   val request = FakeRequest()
-  val requestJson = Json.obj("test" -> "request json")
-  val responseJson = Json.obj("test" -> "response json")
-  val testHeader = Map("test" -> "header",  "X-Content-Type-Options" -> "nosniff")
-  val testHeaderResponse = Map("test" -> Seq("header"))
 
   "post" should {
     "return a 204 with the response headers" when {
@@ -48,7 +44,7 @@ class SelfEmploymentEopsDeclarationResourceSpec extends ResourceSpec
         MockSelfEmploymentEopsDeclarationService.post()
           .returns(Future.successful(Right(HttpResponse(NO_CONTENT, None, testHeaderResponse))))
 
-        val result = resource.post("","","","")(FakeRequest().withBody(requestJson))
+        val result: Future[Result] = resource.post("","","","")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NO_CONTENT
         headers(result) shouldBe testHeader
         contentType(result) shouldBe None
@@ -60,7 +56,7 @@ class SelfEmploymentEopsDeclarationResourceSpec extends ResourceSpec
         MockSelfEmploymentEopsDeclarationService.post()
           .returns(Future.successful(Right(HttpResponse(OK, Some(responseJson), testHeaderResponse))))
 
-        val result = resource.post("","","","")(FakeRequest().withBody(requestJson))
+        val result: Future[Result] = resource.post("","","","")(FakeRequest().withBody(requestJson))
         status(result) shouldBe OK
         headers(result) shouldBe testHeader
         contentType(result) shouldBe Some(JSON)
@@ -73,7 +69,7 @@ class SelfEmploymentEopsDeclarationResourceSpec extends ResourceSpec
         MockSelfEmploymentEopsDeclarationService.post()
           .returns(Future.successful(Left(IncorrectAPIVersion)))
 
-        val result = resource.post("","","","")(FakeRequest().withBody(requestJson))
+        val result: Future[Result] = resource.post("","","","")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NOT_ACCEPTABLE
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
@@ -85,7 +81,7 @@ class SelfEmploymentEopsDeclarationResourceSpec extends ResourceSpec
         MockSelfEmploymentEopsDeclarationService.post()
           .returns(Future.successful(Left(UnsupportedAPIVersion)))
 
-        val result = resource.post("","","","")(FakeRequest().withBody(requestJson))
+        val result: Future[Result] = resource.post("","","","")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NOT_FOUND
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.notFound.asJson
