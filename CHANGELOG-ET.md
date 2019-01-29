@@ -1,3 +1,13 @@
+## 29-Jan-2019
+
+| Change    | Version  | Status              |  Endpoint                  
+| :------:  | :------: | ------------------- | -------------------------- 
+| Addition  | v2.0     | Testable in Sandbox | Retrieve Charitable Giving 
+| Addition  | v2.0     | Testable in Sandbox | Amend Charitable Giving 
+| Addition  | v2.0     | Documentation Only  | Amend UK Dividends
+| Addition  | v2.0     | Documentation Only  | Retrieve UK Dividends
+
+
 ## 24-Jan-2019
 <b>[self-assessment-api-router v1.122.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.122.0)</b> <br/>
 * Update to documentation - Amend charitable giving tax relief
