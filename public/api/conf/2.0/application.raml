@@ -1775,10 +1775,10 @@ traits:
                       value:
                         code: RULE_TAX_YEAR_NOT_SUPPORTED
         get:
-          displayName: Get dividends income annual summary [test only]
-          description: Get dividends income for a tax year. This API is not available in production.
-          (annotations.sandboxData): !include scenarios/agent-scenarios.md
-          is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+          displayName: Retrieve a UK dividends income annual summary [test only]
+          description: Retrieve a UK dividends income annual summary for a tax year. This API is not available in production.
+          (annotations.sandboxData): !include scenarios/dividends-retrieve-scenarios.md
+          is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
           securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
           responses:
@@ -1786,21 +1786,45 @@ traits:
               body:
                 application/json:
                   type: !include schemas/DIV_AnnualSummary.json
-                  example: !include examples/dividends/AnnualSummary.json
+                  examples:
+                   example-1:
+                    description: >
+                      Dividends with both fields populated
+                    value: !include examples/dividends/GetAnnualSummary.json
+                   example-2:
+                    description: >
+                      Example 1 of values previously removed
+                    value: !include examples/dividends/GetAnnualSummaryZeros1.json
+                   example-3:
+                    description: >
+                      Example 2 of values previously removed
+                    value: !include examples/dividends/GetAnnualSummaryZeros2.json
             400:
               body:
                 application/json:
                   type: types.errorResponse
                   examples:
-                    invalidNino:
-                      description: Invalid NINO
+                    formatNino:
+                      description: The format of the supplied NINO is not valid.
                       value:
-                        code: NINO_INVALID
-                    invalidTaxYear:
-                      description: Invalid taxYear
+                        code: FORMAT_NINO
+                    formatTaxYear:
+                      description: The format of the supplied tax year is not valid.
                       value:
-                        code: TAX_YEAR_INVALID
+                        code: FORMAT_TAX_YEAR
+                    ruleTaxYear:
+                      description: The specified tax year is not supported, i.e the tax year specified is before the minimum tax year value.
+                      value:
+                        code: RULE_TAX_YEAR_NOT_SUPPORTED
             404:
+              body:
+                application/json:
+                  type: types.errorResponse
+                  examples:
+                    notFound:
+                      description: The matching resource is not found.
+                      value:
+                        code: MATCHING_RESOURCE_NOT_FOUND
     /savings-accounts:
       (annotations.group):
         name: Savings accounts
