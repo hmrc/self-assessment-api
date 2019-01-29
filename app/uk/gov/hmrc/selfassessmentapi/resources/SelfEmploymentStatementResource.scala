@@ -106,7 +106,6 @@ object SelfEmploymentStatementResource extends BaseResource {
       statementConnector.get(nino, params).map { response =>
         response.filter {
           case 200 =>
-            logger.debug("Self-employment statements from DES = " + Json.stringify(response.json))
             response.retrieveEOPSObligation(id) match {
               case Right(obj) =>
                 obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)

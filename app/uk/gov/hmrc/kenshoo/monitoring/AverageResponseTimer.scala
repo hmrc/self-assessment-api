@@ -29,7 +29,7 @@ trait AverageResponseTimer extends KenshooMetric {
       case _ =>
         val duration = Duration(System.nanoTime() - start, NANOSECONDS)
         kenshooRegistry.getTimers.getOrDefault(timerName(serviceName), kenshooRegistry.timer(timerName(serviceName))).update(duration.length, duration.unit)
-        Logger.debug(s"kenshoo-event::timer::${timerName(serviceName)}::duration:{'length':${duration.length}, 'unit':${duration.unit}}")
+        Logger.warn(s"kenshoo-event::timer::${timerName(serviceName)}::duration:{'length':${duration.length}, 'unit':${duration.unit}}")
     }
   }
 

@@ -46,7 +46,6 @@ trait PropertiesObligationsResource extends BaseResource {
         audit(makeObligationsRetrievalAudit(nino, None, request.authContext, response, UkPropertiesRetrieveObligations))
         response.filter {
           case 200 =>
-            logger.debug("Properties obligations from DES = " + Json.stringify(response.json))
             response.obligations(incomeSourceType) match {
               case Right(obj) => obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
               case Left(ex) =>

@@ -40,7 +40,7 @@ trait MonitoringFilter extends Filter with HttpAPIMonitor {
 
     apiName(requestHeader.uri, requestHeader.method) match {
       case None =>
-        Logger.debug(s"API-Not-Monitored: ${requestHeader.method}-${requestHeader.uri}")
+        Logger.warn(s"API-Not-Monitored: ${requestHeader.method}-${requestHeader.uri}")
         nextFilter(requestHeader)
       case Some(name) =>
         monitor(name) {

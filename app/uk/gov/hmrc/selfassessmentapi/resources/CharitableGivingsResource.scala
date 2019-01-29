@@ -41,16 +41,13 @@ trait CharitableGivingsResource extends BaseResource {
 
   def updatePayments(nino: Nino, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.CharitableGivings).async(parse.json) { implicit request =>
-      Logger.debug(s"[CharitableGivingsResource][updatePayments] Update gift aid payments for nino: $nino and tax year: $taxYear")
       validate[CharitableGivings, EmptyResponse](request.body) { charitableGivings =>
         charitableGivingsConnector.update(nino, taxYear, des.charitablegiving.CharitableGivings.from(charitableGivings))
       } map {
         case Left(errorResult) => handleErrors(errorResult)
         case Right(response) =>
           response.filter {
-            case 204 => Logger.debug(s"[CharitableGivingsResource][updatePayments] Update gift aid payments " +
-              s" is successful for nino: $nino and tax year: $taxYear")
-              NoContent
+            case 204 => NoContent
             case 400 => Logger.warn(s"[CharitableGivingsResource][updatePayments] Update gift aid payments " +
               s" is unsuccessful for nino: $nino and tax year: $taxYear due to ${Errors.desErrorToApiError(response.json)}")
               BadRequest(Errors.desErrorToApiError(response.json))
@@ -66,13 +63,11 @@ trait CharitableGivingsResource extends BaseResource {
 
   def retrievePayments(nino: Nino, taxYear: TaxYear): Action[AnyContent] =
     APIAction(nino, SourceType.CharitableGivings).async { implicit request =>
-      Logger.debug(s"[CharitableGivingsResource][retrievePayments] Retrieve gift aid payments for nino: $nino and tax year: $taxYear")
       charitableGivingsConnector.get(nino, taxYear).map { response =>
         response.filter {
           case 200 =>
             response.payments match {
               case Some(payments) =>
-                Logger.debug(s"[CharitableGivingsResource][retrievePayments] Retrieve gift aid payments is successful for nino: $nino and tax year: $taxYear")
                 Ok(Json.toJson(payments))
               case None => NotFound
             }

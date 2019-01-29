@@ -45,7 +45,6 @@ trait SelfEmploymentObligationsResource extends BaseResource {
           makeObligationsRetrievalAudit(nino, Some(id), request.authContext, response, SelfEmploymentRetrieveObligations))
         response.filter {
           case 200 =>
-            logger.debug("Self-employment obligations from DES = " + Json.stringify(response.json))
             response.obligations(incomeSourceType, Some(id)) match {
               case Right(obj) => obj.map(x => Ok(Json.toJson(x))).getOrElse(NotFound)
               case Left(ex) =>

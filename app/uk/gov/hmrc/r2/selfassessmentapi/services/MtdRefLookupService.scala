@@ -33,10 +33,10 @@ trait MtdRefLookupService {
   def mtdReferenceFor(nino: Nino)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Int, MtdId]] = {
     repository.retrieve(nino).flatMap {
       case Some(mtdId) =>
-        logger.debug("NINO to MTD Ref lookup cache hit.")
+        logger.warn("NINO to MTD Ref lookup cache hit.")
         Future.successful(Right(mtdId))
       case None =>
-        logger.debug("NINO to MTD Ref lookup cache miss.")
+        logger.warn("NINO to MTD Ref lookup cache miss.")
         cacheReferenceFor(nino)
     }
   }
@@ -45,7 +45,7 @@ trait MtdRefLookupService {
     businessConnector.get(nino).map { response =>
       response.status match {
         case 200 =>
-          logger.debug(s"NINO to MTD reference lookup successful. Status code: [${response.status}]")
+          logger.warn(s"NINO to MTD reference lookup successful. Status code: [${response.status}]")
           response.mtdId match {
             case Some(id) =>
               repository.store(nino, id)
@@ -54,10 +54,10 @@ trait MtdRefLookupService {
               Left(500)
           }
         case 400 =>
-          logger.debug(s"NINO to MTD reference lookup was invalid. Status code: [${response.status}]")
+          logger.warn(s"NINO to MTD reference lookup was invalid. Status code: [${response.status}]")
           Left(400)
         case 404 =>
-          logger.debug(s"NINO to MTD reference lookup was not found. Status code: [${response.status}]")
+          logger.warn(s"NINO to MTD reference lookup was not found. Status code: [${response.status}]")
           Left(403)
         case 500 =>
           logger.warn(s"NINO to MTD reference lookup failed with server error. Is there an issue with DES? Status code: [${response.status}]")

@@ -52,7 +52,7 @@ trait BaseConnector {
   private def withAdditionalHeaders[R <: Response](url: String)(f: HeaderCarrier => Future[R])(
       implicit hc: HeaderCarrier): Future[R] = {
     val newHc = withDesHeaders(hc)
-    logger.debug(s"URL:[$url] Headers:[${newHc.headers}]")
+    //logger.warn(s"URL:[$url] Headers:[${newHc.headers}]")
     f(newHc)
   }
 

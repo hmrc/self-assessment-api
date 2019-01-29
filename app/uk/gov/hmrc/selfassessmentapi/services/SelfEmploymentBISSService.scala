@@ -41,8 +41,6 @@ trait SelfEmploymentBISSService {
                 (implicit hc: HeaderCarrier,
                  ec: ExecutionContext): Future[SelfEmploymentBISSOutcome] = {
 
-    logger.debug(s"[SelfEmploymentBISSService][getSummary] Get BISS for NI number: $nino with selfEmploymentId: $selfEmploymentId")
-
     val selfEmploymentPattern = "^X[A-Z0-9]{1}IS[0-9]{11}$"
 
     if (selfEmploymentId.matches(selfEmploymentPattern)) {
