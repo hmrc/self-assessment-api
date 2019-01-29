@@ -1,19 +1,19 @@
 {
   "giftAidPayments": {
-    "specifiedYear": 10000.50,
-    "oneOffSpecifiedYear": 1000.00,
-    "specifiedYearTreatedAsPreviousYear": 300.00,
-    "followingYearTreatedAsSpecifiedYear": 400.00,
-    "nonUKCharities": 2000.00,
+    "specifiedYear": 10000.5,
+    "oneOffSpecifiedYear": 1000,
+    "specifiedYearTreatedAsPreviousYear": 300,
+    "followingYearTreatedAsSpecifiedYear": 400,
+    "nonUKCharities": 2000,
     "nonUKCharityNames": [
       "International Charity A",
       "International Charity B"
     ]
   },
   "gifts": {
-    "sharesOrSecurities": 600.00,
+    "sharesOrSecurities": 600,
     "landAndBuildings": 700.35,
-    "investmentsNonUKCharities": 300.00,
+    "investmentsNonUKCharities": 300,
     "investmentsNonUKCharityNames": [
       "International Charity C",
       "International Charity D"
