@@ -1,3 +1,9 @@
+## 01-Feb-2019
+| Change    | Version  | Status                               | Endpoint                  
+| :------:  | :------: | :-----------------------------------:| -------------------------------------------------------
+| Addition  | v2.0     | Documentation / Testable in Sandbox  | Amend/Retrieve Charitable Giving: monetary amounts - added 2 decimal place detail
+| Addition  | v2.0     | Documentation Only                   | Retrieve tax calculation: monetary amounts - added 2 decimal place detail
+
 ## 29-Jan-2019
 
 | Change    | Version  | Status              |  Endpoint                  
