@@ -216,7 +216,7 @@
             },
             "finalised": {
               "title": "Finalised",
-              "description": "Shows whether the self-employment income has been finalised.",
+              "description": "Shows whether the UK property income has been finalised.",
               "type": "boolean",
               "example": "false"
             }
