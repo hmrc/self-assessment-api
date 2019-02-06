@@ -68,7 +68,10 @@ case class FeatureSwitch(value: Option[Configuration]) {
     case None => false
   }
 
-
+  def isDividendsV2Enabled: Boolean = value match {
+    case Some(config) => config.getBoolean("dividends-income-version-2.enabled").getOrElse(false)
+    case None => false
+  }
 }
 
 sealed case class FeatureConfig(config: Configuration) {
