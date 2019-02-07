@@ -2340,6 +2340,14 @@ traits:
                       description: The list of charity names, for investments gifted to non-UK charities, is not valid.
                       value:
                         code: FORMAT_GIFTS_NONUK_INVESTMENTS_NAMES
+                    ruleEmptyBodySubmitted:
+                      description: An empty or non-matching body was submitted
+                      value:
+                        code: RULE_EMPTY_BODY_SUBMITTED
+                    ruleEmptyGiftsOrGiftAidPayments:
+                      description: A non-empty gifts or gift aid object must be supplied
+                      value:
+                        code: RULE_EMPTY_GIFTS_OR_GIFT_AID
                     ruleNonUkAmountWithoutNames:
                       description: Non-UK charity gift aid amount supplied without the non-UK gift aid charity names.
                       value:
