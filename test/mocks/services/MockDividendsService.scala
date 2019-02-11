@@ -34,6 +34,10 @@ trait MockDividendsService extends Mock { _: Suite =>
     def put(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
       when(mockDividendsService.put(eqTo(body))(any(), any()))
     }
+
+    def get(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockDividendsService.get()(any(), any()))
+    }
   }
 
   override protected def beforeEach(): Unit = {

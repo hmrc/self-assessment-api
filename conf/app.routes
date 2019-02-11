@@ -51,6 +51,8 @@ GET         /ni/:nino/charitable-giving/:taxYear        									               
 #Dividends endpoints
 PUT         /ni/:nino/dividends/:taxYear        									                             router.resources.DividendsResource.put(nino, taxYear)
 
+GET         /ni/:nino/dividends/:taxYear        									                             router.resources.DividendsResource.get(nino, taxYear)
+
 ### Version One ####
 
 GET         /*route                                                                            router.resources.SelfAssessmentResource.get(route, p3?="")

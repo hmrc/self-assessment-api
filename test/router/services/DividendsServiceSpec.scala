@@ -49,7 +49,7 @@ class DividendsServiceSpec extends UnitSpec
     "return a HttpResponse" when {
       "the request contains a version 1.0 header and dividends version 2 config is disabled" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(204)
         val dividendsVersionTwoConfig = Configuration("dividends-income-version-2.enabled" -> false)
 
         MockAppConfig.featureSwitch returns Some(dividendsVersionTwoConfig)
@@ -62,7 +62,7 @@ class DividendsServiceSpec extends UnitSpec
 
       "the request contains a version 1.0 header and dividends version 2 config is enabled" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(204)
         val dividendsVersionTwoConfig = Configuration("dividends-income-version-2.enabled" -> true)
 
         MockAppConfig.featureSwitch returns Some(dividendsVersionTwoConfig)
@@ -75,7 +75,7 @@ class DividendsServiceSpec extends UnitSpec
 
       "the request contains a version 2.0 header and dividends version 2 config is disabled" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(204)
         val dividendsVersionTwoConfig = Configuration("dividends-income-version-2.enabled" -> false)
         MockAppConfig.featureSwitch returns Some(dividendsVersionTwoConfig)
 
@@ -88,7 +88,7 @@ class DividendsServiceSpec extends UnitSpec
 
       "the request contains a version 2.0 header and dividends version 2 config is enabled" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(204)
         val dividendsVersionTwoConfig = Configuration("dividends-income-version-2.enabled" -> true)
         MockAppConfig.featureSwitch returns Some(dividendsVersionTwoConfig)
 
@@ -115,6 +115,89 @@ class DividendsServiceSpec extends UnitSpec
 
         val result = await(service.put(requestBody))
         result shouldBe Left(IncorrectAPIVersion)
+      }
+    }
+  }
+
+  "retrieve" should {
+    val body = Json.parse(
+      s"""{
+         |  "ukDividends": 1000.00,
+         |  "otherUkDividends": 2000.00
+         |}""".stripMargin
+    )
+    "return a HttpResponse" when {
+      "the request contains a version 2.0 header and dividends-income version 2 config is enabled" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+
+
+        val correlationId = "X-123"
+        val httpResponse = HttpResponse(OK, Some(body), Map("CorrelationId" -> Seq(correlationId)))
+        val dividendsVersionTwoConfig = Configuration("dividends-income-version-2.enabled" -> true)
+
+        MockAppConfig.featureSwitch returns Some(dividendsVersionTwoConfig)
+        MockDividendsConnector.get(s"/$VERSION_2${request.uri}")
+          .returns(Future.successful(Right(httpResponse)))
+
+        val result = await(service.get())
+        result shouldBe Right(httpResponse)
+      }
+
+      "the request contains a version 1.0 header and dividends version 2 config is disabled" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+        val response = HttpResponse(200)
+        val dividendsVersionTwoConfig = Configuration("dividends-income-version-2.enabled" -> false)
+
+        MockAppConfig.featureSwitch returns Some(dividendsVersionTwoConfig)
+        MockSelfAssessmentConnector.get(request.uri)
+          .returns(Future.successful(Right(response)))
+
+        val result = await(service.get())
+        result shouldBe Right(response)
+      }
+
+      "the request contains a version 1.0 header and dividends version 2 config is enabled" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+        val response = HttpResponse(200)
+        val dividendsVersionTwoConfig = Configuration("dividends-income-version-2.enabled" -> true)
+
+        MockAppConfig.featureSwitch returns Some(dividendsVersionTwoConfig)
+        MockSelfAssessmentConnector.get(request.uri)
+          .returns(Future.successful(Right(response)))
+
+        val result = await(service.get())
+        result shouldBe Right(response)
+      }
+
+      "the request contains a version 2.0 header and dividends version 2 config is disabled" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+        val response = HttpResponse(200)
+        val dividendsVersionTwoConfig = Configuration("dividends-income-version-2.enabled" -> false)
+        MockAppConfig.featureSwitch returns Some(dividendsVersionTwoConfig)
+
+        MockSelfAssessmentConnector.get(request.uri)
+          .returns(Future.successful(Right(response)))
+
+        val result = await(service.get())
+        result shouldBe Right(response)
+      }
+
+      "return an UnsupportedAPIVersion error" when {
+        "the Accept header contains an unsupported API version" in new Setup {
+          implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.5.0+json"))
+
+          val result = await(service.get())
+          result shouldBe Left(UnsupportedAPIVersion)
+        }
+      }
+
+      "return an IncorrectAPIVersion" when {
+        "the Accept header contains an incorrect value" in new Setup {
+          implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "incorrect value"))
+
+          val result = await(service.get())
+          result shouldBe Left(IncorrectAPIVersion)
+        }
       }
     }
   }

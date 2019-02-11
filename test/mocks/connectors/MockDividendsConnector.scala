@@ -33,6 +33,10 @@ trait MockDividendsConnector extends Mock { _: Suite =>
     def put(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
       when(mockDividendsConnector.put(eqTo(uri), eqTo(body))(any(), any()))
     }
+
+    def get(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockDividendsConnector.get(eqTo(uri))(any(), any()))
+    }
   }
 
   override protected def beforeEach(): Unit = {

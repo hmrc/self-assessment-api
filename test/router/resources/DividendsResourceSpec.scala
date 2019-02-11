@@ -17,6 +17,7 @@
 package router.resources
 
 import mocks.services.MockDividendsService
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import router.errors.{ErrorCode, IncorrectAPIVersion, UnsupportedAPIVersion}
@@ -72,6 +73,54 @@ class DividendsResourceSpec extends ResourceSpec
         contentAsJson(result) shouldBe ErrorCode.notFound.asJson
       }
     }
+  }
 
+  "retrieve" should {
+    "return response with status 200, headers and body contains dividends income" when {
+      "the service returns a HttpResponse containing a 200 and response body" in new Setup {
+
+        val body: JsValue = Json.parse(
+          s"""{
+             |   "ukDividends": 1000.00,
+             |   "otherUkDividends": 2000.00
+             |}""".stripMargin
+        )
+
+        val httpResponse = HttpResponse(OK, Some(body), testHeaderResponse)
+
+        MockDividendsService.get()
+          .returns(Future.successful(Right(httpResponse)))
+
+        private val result = resource.get("")(FakeRequest())
+        status(result) shouldBe OK
+        headers(result) shouldBe testHeader
+        contentType(result) shouldBe Some(JSON)
+        contentAsJson(result) shouldBe body
+      }
+    }
+
+    "return a 406 with a json response body representing the error" when {
+      "the service returns an IncorrectAPIVersion response" in new Setup {
+        MockDividendsService.get()
+          .returns(Future.successful(Left(IncorrectAPIVersion)))
+
+        val result: Future[Result] = resource.get("")(FakeRequest())
+        status(result) shouldBe NOT_ACCEPTABLE
+        contentType(result) shouldBe Some(JSON)
+        contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
+      }
+    }
+
+    "return a 404 with a json response body representing the error" when {
+      "the service returns an UnsupportedAPIVersion response" in new Setup {
+        MockDividendsService.get()
+          .returns(Future.successful(Left(UnsupportedAPIVersion)))
+
+        val result: Future[Result] = resource.get("")(FakeRequest())
+        status(result) shouldBe NOT_FOUND
+        contentType(result) shouldBe Some(JSON)
+        contentAsJson(result) shouldBe ErrorCode.notFound.asJson
+      }
+    }
   }
 }

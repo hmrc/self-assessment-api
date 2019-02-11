@@ -52,7 +52,7 @@ class CharitableGivingResourceISpec extends IntegrationSpec {
  "GET Charitable Giving annuals with release-2 enabled" should {
 
       s"return status 200 with a json response body" when {
-        "the downstream response from the Charitable Giving api version 2 returns returns a 200 with a json response body" in {
+        "the downstream response from the Charitable Giving api version 2 returns status 200 with a json response body" in {
           val incomingUrl = s"/ni/AA111111A/charitable-giving/2018-19"
           val outgoingUrl = s"/2.0/ni/AA111111A/charitable-giving/2018-19"
 

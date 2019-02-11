@@ -18,7 +18,7 @@ package router.resources
 
 import javax.inject.Inject
 import play.api.libs.json.JsValue
-import play.api.mvc.Action
+import play.api.mvc.{Action, AnyContent}
 import router.services.DividendsService
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
@@ -36,4 +36,13 @@ class DividendsResource @Inject()(service: DividendsService,
         }
       }
   }
+
+  def get(param:Any*): Action[AnyContent] =
+    AuthAction.async {
+      implicit request =>
+        service.get().map{
+          case Left(error) => buildErrorResponse(error)
+          case Right(apiResponse) => buildResponse(apiResponse)
+        }
+    }
 }
