@@ -1765,6 +1765,10 @@ traits:
                       description: The format of the Other UK Dividends total is not valid.
                       value:
                         code: FORMAT_OTHER_DIVIDENDS
+                    ruleEmptyBodySubmitted:
+                      description: An empty or non-matching body was submitted
+                      value:
+                        code: RULE_INCORRECT_OR_EMPTY_BODY_SUMBITTED
             403:
               body:
                 application/json:
@@ -2343,7 +2347,7 @@ traits:
                     ruleEmptyBodySubmitted:
                       description: An empty or non-matching body was submitted
                       value:
-                        code: RULE_EMPTY_BODY_SUBMITTED
+                        code: RULE_INCORRECT_OR_EMPTY_BODY_SUMBITTED
                     ruleEmptyGiftsOrGiftAidPayments:
                       description: A non-empty gifts or gift aid object must be supplied
                       value:
