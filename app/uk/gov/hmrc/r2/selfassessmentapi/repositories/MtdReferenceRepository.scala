@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.r2.selfassessmentapi.repositories
 
-import play.modules.reactivemongo.MongoDbConnection
+import javax.inject.Inject
+import play.modules.reactivemongo.{MongoDbConnection, ReactiveMongoComponent}
 import reactivemongo.api.DB
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
@@ -27,12 +28,14 @@ import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.r2.selfassessmentapi.domain.MtdRefEntry
 import uk.gov.hmrc.r2.selfassessmentapi.models.MtdId
+import uk.gov.hmrc.r2.selfassessmentapi.domain.MtdRefEntry
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MtdReferenceRepository(implicit mongo: () => DB) extends ReactiveRepository[MtdRefEntry, BSONObjectID](
+
+class MtdReferenceRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent)(implicit val ec: ExecutionContext) extends ReactiveRepository[MtdRefEntry, BSONObjectID](
   "mtdRef",
-  mongo,
+  reactiveMongoComponent.mongoConnector.db,
   domainFormat = MtdRefEntry.format,
   idFormat = ReactiveMongoFormats.objectIdFormats) {
 
@@ -55,8 +58,8 @@ class MtdReferenceRepository(implicit mongo: () => DB) extends ReactiveRepositor
       .map(_.headOption.map(entry => MtdId(entry.mtdRef)))
 }
 
-object MtdReferenceRepository extends MongoDbConnection {
-  private lazy val repository = new MtdReferenceRepository()
-
-  def apply(): MtdReferenceRepository = repository
-}
+//object MtdReferenceRepository extends MongoDbConnection {
+//  private lazy val repository = new MtdReferenceRepository()
+//
+//  def apply(): MtdReferenceRepository = repository
+//}

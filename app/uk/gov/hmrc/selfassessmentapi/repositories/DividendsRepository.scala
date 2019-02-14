@@ -16,27 +16,26 @@
 
 package uk.gov.hmrc.selfassessmentapi.repositories
 
+import javax.inject.Inject
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json.JsObject
-import play.modules.reactivemongo.MongoDbConnection
-import reactivemongo.api.DB
+import play.modules.reactivemongo.{MongoDbConnection, ReactiveMongoComponent}
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.play.json.ImplicitBSONHandlers._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.mongo.ReactiveRepository
-import reactivemongo.play.json.ImplicitBSONHandlers._
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.selfassessmentapi.domain.Dividends
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DividendsRepository(implicit mongo: () => DB)
-  extends ReactiveRepository[Dividends, BSONObjectID](
-    "dividends",
-    mongo,
-    Dividends.mongoFormats,
-    idFormat = ReactiveMongoFormats.objectIdFormats)  {
+class DividendsRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent)(implicit val ec: ExecutionContext) extends ReactiveRepository[Dividends, BSONObjectID](
+  "dividends",
+  reactiveMongoComponent.mongoConnector.db,
+  Dividends.mongoFormats,
+  idFormat = ReactiveMongoFormats.objectIdFormats) {
 
   override def indexes: Seq[Index] = Seq(
     Index(Seq(("nino", Ascending)), name = Some("dividends_nino"), unique = true),
@@ -49,7 +48,7 @@ class DividendsRepository(implicit mongo: () => DB)
 
   def update(nino: Nino, dividends: Dividends)(implicit ec: ExecutionContext): Future[Boolean] = {
     domainFormatImplicit.writes(dividends.copy(lastModifiedDateTime = DateTime.now(DateTimeZone.UTC))) match {
-      case d @ JsObject(_) =>
+      case d@JsObject(_) =>
         collection.update(
           BSONDocument("nino" -> nino.nino),
           d
@@ -69,8 +68,8 @@ class DividendsRepository(implicit mongo: () => DB)
   }
 }
 
-object DividendsRepository extends MongoDbConnection {
-  private lazy val repository = new DividendsRepository
-
-  def apply(): DividendsRepository = repository
-}
+//object DividendsRepository extends MongoDbConnection {
+//  private lazy val repository = new DividendsRepository
+//
+//  def apply(): DividendsRepository = repository
+//}

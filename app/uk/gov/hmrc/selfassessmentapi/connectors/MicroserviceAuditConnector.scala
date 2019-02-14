@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.config.LoadAuditingConfig
 
 @Singleton
 class MicroserviceAuditConnector @Inject()(configuration: Configuration, env: Environment) extends AuditConnector {
-  override lazy val auditingConfig = LoadAuditingConfig(configuration, mode, s"$env.auditing")
+  override lazy val auditingConfig = LoadAuditingConfig(configuration, mode, s"$mode.auditing")
   val mode = env.mode
 }
 

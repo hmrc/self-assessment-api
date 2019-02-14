@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.services
 
+import javax.inject.Inject
 import org.joda.time.{DateTime, DateTimeZone}
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.domain.Nino
@@ -26,13 +27,15 @@ import uk.gov.hmrc.selfassessmentapi.models.banks.Bank
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object BanksService extends BanksService {
-  override val mongoRepository = BanksRepository()
-}
+//object BanksService extends BanksService {
+//  override val mongoRepository = BanksRepository()
+//}
 
-trait BanksService {
+class BanksService @Inject()(
+                              mongoRepository: BanksRepository
+                            ) {
 
-  val mongoRepository: BanksRepository
+//  val mongoRepository: BanksRepository
 
   def create(nino: Nino, bank: Bank)(implicit ec: ExecutionContext): Future[Option[SourceId]] = {
     val id = BSONObjectID.generate

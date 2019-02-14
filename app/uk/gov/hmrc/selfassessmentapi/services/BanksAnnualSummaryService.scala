@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.services
 
+import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.repositories.BanksRepository
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, TaxYear}
@@ -23,8 +24,10 @@ import uk.gov.hmrc.selfassessmentapi.models.banks.BankAnnualSummary
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait BanksAnnualSummaryService {
-  val repository: BanksRepository
+class BanksAnnualSummaryService @Inject()(
+                                           repository: BanksRepository
+                                         ) {
+//  val repository: BanksRepository
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear, newBankSummary: BankAnnualSummary)(implicit ec: ExecutionContext): Future[Boolean] = {
     repository.retrieve(id, nino).flatMap {
@@ -42,6 +45,6 @@ trait BanksAnnualSummaryService {
   }
 }
 
-object BanksAnnualSummaryService extends BanksAnnualSummaryService {
-  override val repository: BanksRepository = BanksRepository()
-}
+//object BanksAnnualSummaryService extends BanksAnnualSummaryService {
+//  override val repository: BanksRepository = BanksRepository()
+//}

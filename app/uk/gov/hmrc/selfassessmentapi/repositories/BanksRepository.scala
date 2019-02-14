@@ -16,25 +16,25 @@
 
 package uk.gov.hmrc.selfassessmentapi.repositories
 
+import javax.inject.Inject
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json.JsObject
-import play.modules.reactivemongo.MongoDbConnection
-import reactivemongo.api.DB
+import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.play.json.ImplicitBSONHandlers._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.selfassessmentapi.domain.Bank
 import uk.gov.hmrc.selfassessmentapi.models.SourceId
-import reactivemongo.play.json.ImplicitBSONHandlers._
-import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BanksRepository(implicit mongo: () => DB) extends ReactiveRepository[Bank, BSONObjectID](
+class BanksRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent)(implicit val ec: ExecutionContext) extends ReactiveRepository[Bank, BSONObjectID](
   "banks",
-  mongo,
+  reactiveMongoComponent.mongoConnector.db,
   Bank.mongoFormats,
   idFormat = ReactiveMongoFormats.objectIdFormats) {
 
@@ -60,7 +60,7 @@ class BanksRepository(implicit mongo: () => DB) extends ReactiveRepository[Bank,
 
   def update(id: SourceId, nino: Nino, newBank: Bank)(implicit ec: ExecutionContext): Future[Boolean] = {
     domainFormatImplicit.writes(newBank.copy(lastModifiedDateTime = DateTime.now(DateTimeZone.UTC))) match {
-      case d @ JsObject(_) => collection.update(
+      case d@JsObject(_) => collection.update(
         BSONDocument("nino" -> nino.nino, "sourceId" -> id),
         d
       ).map { res =>
@@ -79,7 +79,7 @@ class BanksRepository(implicit mongo: () => DB) extends ReactiveRepository[Bank,
   }
 }
 
-object BanksRepository extends MongoDbConnection {
-  private lazy val repository = new BanksRepository()
-  def apply(): BanksRepository = repository
-}
+//object BanksRepository extends MongoDbConnection {
+//  private lazy val repository = new BanksRepository()
+//  def apply(): BanksRepository = repository
+//}
