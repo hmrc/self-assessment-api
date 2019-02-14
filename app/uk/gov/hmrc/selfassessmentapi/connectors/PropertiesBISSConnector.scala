@@ -16,26 +16,31 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
+import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
-import uk.gov.hmrc.selfassessmentapi.config.{AppContext, WSHttp}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.ws.WSHttp
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.httpparsers.PropertiesBISSHttpParser
 import uk.gov.hmrc.selfassessmentapi.httpparsers.PropertiesBISSHttpParser.PropertiesBISSOutcome
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object PropertiesBISSConnector extends PropertiesBISSConnector {
-  lazy val appContext = AppContext
-  lazy val baseUrl: String = appContext.desUrl
+//object PropertiesBISSConnector extends PropertiesBISSConnector {
+//  lazy val appContext = AppContext
+//  lazy val baseUrl: String = appContext.desUrl
+//
+//  val http: WSHttp = WSHttp
+//}
+// TODO Change the WsHttp when upgrading bootstrap
+class PropertiesBISSConnector @Inject()(
+                                         override val appContext: AppContext,
+                                         http: WSHttp
+                                       ) extends PropertiesBISSHttpParser with BaseConnector {
 
-  val http: WSHttp = WSHttp
-}
-
-trait PropertiesBISSConnector extends PropertiesBISSHttpParser with BaseConnector {
-
-  val baseUrl: String
-  val http: HttpGet
+  val baseUrl: String = appContext.desUrl
+  //  val http: HttpGet
 
   def getSummary(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier, ex: ExecutionContext): Future[PropertiesBISSOutcome] = {
     http.GET[PropertiesBISSOutcome](s"$baseUrl/income-tax/income-sources/nino/$nino/uk-property/${taxYear.toDesTaxYear}/biss")(

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import javax.inject.Inject
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
@@ -27,16 +28,20 @@ import uk.gov.hmrc.selfassessmentapi.resources.Audit.makeObligationsRetrievalAud
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
-object PropertiesObligationsResource extends PropertiesObligationsResource {
-  override val appContext = AppContext
-  override val authService = AuthorisationService
-  override val connector = ObligationsConnector
-}
+//object PropertiesObligationsResource extends PropertiesObligationsResource {
+//  override val appContext = AppContext
+//  override val authService = AuthorisationService
+//  override val connector = ObligationsConnector
+//}
 
-trait PropertiesObligationsResource extends BaseResource {
-  val appContext: AppContext
-  val authService: AuthorisationService
-  val connector: ObligationsConnector
+class PropertiesObligationsResource @Inject()(
+                                               override val appContext: AppContext,
+                                               override val authService: AuthorisationService,
+                                               connector: ObligationsConnector
+                                             ) extends BaseResource {
+  //  val appContext: AppContext
+  //  val authService: AuthorisationService
+  //  val connector: ObligationsConnector
 
   private val incomeSourceType = "ITSP"
 

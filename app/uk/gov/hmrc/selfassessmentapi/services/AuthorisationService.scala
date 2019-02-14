@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.services
 
+import javax.inject.Inject
 import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.Results._
@@ -32,19 +33,21 @@ import uk.gov.hmrc.selfassessmentapi.models.{Errors, MtdId}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 import scala.util.matching.Regex
-import uk.gov.hmrc.http.{ HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse }
+import uk.gov.hmrc.http.{HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse}
 
 
-object AuthorisationService extends AuthorisationService
+//object AuthorisationService extends AuthorisationService
 
-trait AuthorisationService extends AuthorisedFunctions {
+class AuthorisationService @Inject()(
+                                      lookupService: MtdRefLookupService
+                                    ) extends AuthorisedFunctions {
   type AuthResult = Either[Result, AuthContext]
 
-  private val lookupService = MtdRefLookupService
+//  private val lookupService = MtdRefLookupService
 
   override def authConnector: AuthConnector = MicroserviceAuthConnector
 
-  private val logger = Logger(AuthorisationService.getClass)
+  private val logger = Logger(this.getClass)
 
   def authCheck(nino: Nino)(implicit hc: HeaderCarrier, reqHeader: RequestHeader, ec: ExecutionContext): Future[AuthResult] =
     lookupService.mtdReferenceFor(nino).flatMap {

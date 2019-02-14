@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
+import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.des.{FHLPropertiesAnnualSummary, OtherPropertiesAnnualSummary}
@@ -23,17 +24,20 @@ import uk.gov.hmrc.selfassessmentapi.models.properties.PropertiesAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.{TaxYear, des, properties}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
-
 import uk.gov.hmrc.http.HeaderCarrier
+
 import scala.concurrent.{ExecutionContext, Future}
 
-object PropertiesAnnualSummaryConnector extends PropertiesAnnualSummaryConnector {
-  lazy val appContext = AppContext
-  lazy val baseUrl: String = appContext.desUrl
-}
+//object PropertiesAnnualSummaryConnector extends PropertiesAnnualSummaryConnector {
+//  lazy val appContext = AppContext
+//  lazy val baseUrl: String = appContext.desUrl
+//}
 
-trait PropertiesAnnualSummaryConnector extends BaseConnector{
-  val baseUrl: String
+class PropertiesAnnualSummaryConnector @Inject()(
+                                                  override val appContext: AppContext
+                                                ) extends BaseConnector{
+
+  val baseUrl: String = appContext.desUrl
 
   def update(nino: Nino, propertyType: PropertyType, taxYear: TaxYear, update: PropertiesAnnualSummary)(
       implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesAnnualSummaryResponse] = {

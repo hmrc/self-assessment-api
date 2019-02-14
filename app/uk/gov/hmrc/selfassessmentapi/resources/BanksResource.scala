@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import javax.inject.Inject
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
@@ -27,16 +28,21 @@ import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, BanksServic
 
 import scala.concurrent.ExecutionContext.Implicits._
 
-object BanksResource extends BanksResource {
-  override val appContext = AppContext
-  override val banksService = BanksService
-  override val authService = AuthorisationService
-}
+//object BanksResource extends BanksResource {
+//  override val appContext = AppContext
+//  override val banksService = BanksService
+//  override val authService = AuthorisationService
+//}
 
-trait BanksResource extends BaseResource {
-  val appContext: AppContext
-  val banksService: BanksService
-  val authService: AuthorisationService
+//trait BanksResource extends BaseResource {
+class BanksResource @Inject()(
+                               override val appContext: AppContext,
+                               val banksService: BanksService,
+                               override val authService: AuthorisationService
+                             ) extends BaseResource {
+//  val appContext: AppContext
+//  val banksService: BanksService
+//  val authService: AuthorisationService
 
   def create(nino: Nino): Action[JsValue] =
     APIAction(nino, SourceType.Banks).async(parse.json) { implicit request =>

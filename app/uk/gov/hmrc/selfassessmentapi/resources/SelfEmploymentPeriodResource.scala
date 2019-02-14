@@ -16,32 +16,37 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import javax.inject.Inject
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, Request}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.config.AppContext._
+//import uk.gov.hmrc.selfassessmentapi.config.AppContext._
+import play.api.libs.concurrent.Execution.Implicits._
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentPeriodResponse
-import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
-import play.api.libs.concurrent.Execution.Implicits._
+import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.selfassessmentapi.config.AppContext
 
-object SelfEmploymentPeriodResource extends SelfEmploymentPeriodResource {
-  val appContext = AppContext
-  val authService = AuthorisationService
-  val connector = SelfEmploymentPeriodConnector
-}
+//object SelfEmploymentPeriodResource extends SelfEmploymentPeriodResource {
+//  val appContext = AppContext
+//  val authService = AuthorisationService
+//  val connector = SelfEmploymentPeriodConnector
+//}
 
-trait SelfEmploymentPeriodResource extends BaseResource {
-  val connector: SelfEmploymentPeriodConnector
+class SelfEmploymentPeriodResource @Inject()(
+                                              override val appContext: AppContext,
+                                              override val authService: AuthorisationService,
+                                              connector: SelfEmploymentPeriodConnector
+                                            ) extends BaseResource {
+  //  val connector: SelfEmploymentPeriodConnector
 
   def createPeriod(nino: Nino, sourceId: SourceId): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments, Some("periods")).async(parse.json) { implicit request =>
@@ -102,11 +107,11 @@ trait SelfEmploymentPeriodResource extends BaseResource {
     }
 
   private def makePeriodCreateAudit(
-      nino: Nino,
-      id: SourceId,
-      authCtx: AuthContext,
-      response: SelfEmploymentPeriodResponse,
-      periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): AuditData[PeriodicUpdate] =
+                                     nino: Nino,
+                                     id: SourceId,
+                                     authCtx: AuthContext,
+                                     response: SelfEmploymentPeriodResponse,
+                                     periodId: PeriodId)(implicit hc: HeaderCarrier, request: Request[JsValue]): AuditData[PeriodicUpdate] =
     AuditData(
       detail = PeriodicUpdate(
         auditType = "submitPeriodicUpdate",
@@ -123,7 +128,7 @@ trait SelfEmploymentPeriodResource extends BaseResource {
         requestPayload = request.body,
         responsePayload = response.status match {
           case 200 | 400 => Some(response.json)
-          case _         => None
+          case _ => None
         }
       ),
       transactionName = "self-employment-periodic-create"
@@ -134,8 +139,8 @@ trait SelfEmploymentPeriodResource extends BaseResource {
                                     periodId: PeriodId,
                                     authCtx: AuthContext,
                                     response: SelfEmploymentPeriodResponse)(
-      implicit hc: HeaderCarrier,
-      request: Request[JsValue]): AuditData[PeriodicUpdate] =
+                                     implicit hc: HeaderCarrier,
+                                     request: Request[JsValue]): AuditData[PeriodicUpdate] =
     AuditData(
       detail = PeriodicUpdate(
         auditType = "amendPeriodicUpdate",
@@ -149,7 +154,7 @@ trait SelfEmploymentPeriodResource extends BaseResource {
         requestPayload = request.body,
         responsePayload = response.status match {
           case 400 => Some(response.json)
-          case _   => None
+          case _ => None
         }
       ),
       transactionName = "self-employment-periodic-update"

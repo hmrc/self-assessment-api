@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.services
 
+import javax.inject.Inject
 import play.api.Logger
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
@@ -26,13 +27,15 @@ import uk.gov.hmrc.selfassessmentapi.models.{Errors, TaxYear}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object SelfEmploymentBISSService extends SelfEmploymentBISSService {
-  override val connector = SelfEmploymentBISSConnector
-}
+//object SelfEmploymentBISSService extends SelfEmploymentBISSService {
+//  override val connector = SelfEmploymentBISSConnector
+//}
 
-trait SelfEmploymentBISSService {
+class SelfEmploymentBISSService @Inject()(
+                                           connector: SelfEmploymentBISSConnector
+                                         ) {
 
-  val connector: SelfEmploymentBISSConnector
+  //  val connector: SelfEmploymentBISSConnector
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
   def getSummary(nino: Nino,

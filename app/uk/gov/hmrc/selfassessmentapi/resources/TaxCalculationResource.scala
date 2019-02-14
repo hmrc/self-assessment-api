@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import javax.inject.Inject
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, Request}
@@ -33,10 +34,14 @@ import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 
 import scala.concurrent.Future
 
-object TaxCalculationResource extends BaseResource {
-  val appContext = AppContext
-  val authService = AuthorisationService
-  private val connector = TaxCalculationConnector
+class TaxCalculationResource @Inject()(
+                                        override val appContext: AppContext,
+                                        override val authService: AuthorisationService,
+                                        connector: TaxCalculationConnector
+                                      ) extends BaseResource {
+  //  val appContext = AppContext
+  //  val authService = AuthorisationService
+  //  private val connector = TaxCalculationConnector
 
   private val cannedEtaResponse =
     s"""
@@ -51,7 +56,7 @@ object TaxCalculationResource extends BaseResource {
         connector.requestCalculation(nino, req.taxYear)
       } map {
         case Left(errorResult) => handleErrors(errorResult)
-        case Right(response)   =>
+        case Right(response) =>
           audit(makeTaxCalcTriggerAudit(nino, request.authContext, response))
           response.filter {
             case 200 =>
@@ -65,7 +70,7 @@ object TaxCalculationResource extends BaseResource {
               logger.warn("[TaxCalculationResource] [requestCalculation] DES returned INVALID_REQUEST. This could be due to;" +
                 "\n1. No valid income sources at backend\n2. No income submissions exist at backend")
               unhandledResponse(response.status, logger)
-            case _                             => unhandledResponse(response.status, logger)
+            case _ => unhandledResponse(response.status, logger)
           }
       } recoverWith exceptionHandling
     }
@@ -76,8 +81,8 @@ object TaxCalculationResource extends BaseResource {
     }
 
   private def makeTaxCalcTriggerAudit(nino: Nino, authCtx: AuthContext, response: TaxCalculationResponse)(
-      implicit hc: HeaderCarrier,
-      request: Request[JsValue]): AuditData[TaxCalculationTrigger] =
+    implicit hc: HeaderCarrier,
+    request: Request[JsValue]): AuditData[TaxCalculationTrigger] =
     AuditData(
       detail = TaxCalculationTrigger(
         httpStatus = response.status,
@@ -91,7 +96,7 @@ object TaxCalculationResource extends BaseResource {
         },
         responsePayload = response.status match {
           case 202 | 400 => Some(response.json)
-          case _         => None
+          case _ => None
         }
       ),
       transactionName = "trigger-tax-calculation"

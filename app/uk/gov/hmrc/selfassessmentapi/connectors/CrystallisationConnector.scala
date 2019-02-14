@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
+import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
@@ -27,13 +28,16 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CrystObligationsRespons
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-object CrystallisationConnector extends CrystallisationConnector {
-  lazy val appContext = AppContext
-  val baseUrl: String = appContext.desUrl
-}
+//object CrystallisationConnector extends CrystallisationConnector {
+//  lazy val appContext = AppContext
+//  val baseUrl: String = appContext.desUrl
+//}
 
-trait CrystallisationConnector extends BaseConnector {
-  protected val baseUrl: String
+class CrystallisationConnector @Inject()(
+                                          override val appContext: AppContext
+                                        ) extends BaseConnector {
+
+  protected val baseUrl: String =  appContext.desUrl
 
   def intentToCrystallise(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CrystallisationIntentResponse] =
     httpEmptyPost[CrystallisationIntentResponse](

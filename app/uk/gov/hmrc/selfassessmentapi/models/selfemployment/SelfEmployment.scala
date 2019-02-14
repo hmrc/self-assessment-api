@@ -21,7 +21,7 @@ import play.api.data.Mapping
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
+//import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
 import uk.gov.hmrc.selfassessmentapi.models.AccountingType._
 import uk.gov.hmrc.selfassessmentapi.models._
 

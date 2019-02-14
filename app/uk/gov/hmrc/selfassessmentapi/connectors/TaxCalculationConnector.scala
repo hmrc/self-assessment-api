@@ -16,21 +16,23 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
-import play.api.libs.json.{JsValue, Json}
+import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.models.{SourceId, TaxYear}
+import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.TaxCalculationResponse
 
-import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
-object TaxCalculationConnector extends BaseConnector{
-  override val appContext = AppContext
-  private lazy val baseUrl: String = AppContext.desUrl
+class TaxCalculationConnector @Inject()(
+                                         override val appContext: AppContext
+                                       ) extends BaseConnector {
+  //  override val appContext = AppContext
+  private lazy val baseUrl: String = appContext.desUrl
 
   def requestCalculation(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaxCalculationResponse] =
     httpEmptyPost[TaxCalculationResponse](
-    baseUrl + s"/income-tax/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation",
-    TaxCalculationResponse)
+      baseUrl + s"/income-tax/nino/$nino/taxYear/${taxYear.toDesTaxYear}/tax-calculation",
+      TaxCalculationResponse)
 }

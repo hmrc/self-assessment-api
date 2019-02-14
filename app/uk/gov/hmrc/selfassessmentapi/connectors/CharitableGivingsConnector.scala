@@ -16,30 +16,32 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
+import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
-import uk.gov.hmrc.selfassessmentapi.models.{TaxYear, des}
 import uk.gov.hmrc.selfassessmentapi.models.des.charitablegiving.CharitableGivings
+import uk.gov.hmrc.selfassessmentapi.models.{TaxYear, des}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CharitableGivingsResponse, EmptyResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object CharitableGivingsConnector extends CharitableGivingsConnector with ServicesConfig {
-  override val baseUrl: String = AppContext.desUrl
-  override val appContext = AppContext
-}
+//object CharitableGivingsConnector extends CharitableGivingsConnector with ServicesConfig {
+//  override val baseUrl: String = AppContext.desUrl
+//  override val appContext = AppContext
+//}
 
-trait CharitableGivingsConnector extends BaseConnector{
+class CharitableGivingsConnector @Inject()(
+                                            override val appContext: AppContext
+                                          ) extends BaseConnector {
 
-  val baseUrl: String
+  val baseUrl: String = appContext.desUrl
 
-  def update(nino: Nino, taxYear: TaxYear, charitableGivings: CharitableGivings)(implicit hc:HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] = {
+  def update(nino: Nino, taxYear: TaxYear, charitableGivings: CharitableGivings)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] = {
     httpPost[des.charitablegiving.CharitableGivings, EmptyResponse](s"$baseUrl/income-store/nino/$nino/charitable-giving/${taxYear.toDesTaxYear}", charitableGivings, EmptyResponse)
   }
 
-  def get(nino: Nino, taxYear: TaxYear)(implicit hc:HeaderCarrier, ec: ExecutionContext): Future[CharitableGivingsResponse] = {
+  def get(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CharitableGivingsResponse] = {
     httpGet[CharitableGivingsResponse](s"$baseUrl/income-store/nino/$nino/charitable-giving/${taxYear.toDesTaxYear}", CharitableGivingsResponse)
   }
 }
