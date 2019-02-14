@@ -21,11 +21,11 @@ import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result}
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.{Retrievals, ~}
+import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments, _}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuthConnector
+import uk.gov.hmrc.http.{HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse}
+import uk.gov.hmrc.selfassessmentapi.connectors.MicroserviceAuthConnector
 import uk.gov.hmrc.selfassessmentapi.contexts.{Agent, AuthContext, FilingOnlyAgent, Individual}
 import uk.gov.hmrc.selfassessmentapi.models.Errors.{ClientNotSubscribed, NinoInvalid}
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, MtdId}
@@ -33,19 +33,19 @@ import uk.gov.hmrc.selfassessmentapi.models.{Errors, MtdId}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 import scala.util.matching.Regex
-import uk.gov.hmrc.http.{HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse}
 
 
 //object AuthorisationService extends AuthorisationService
 
 class AuthorisationService @Inject()(
-                                      lookupService: MtdRefLookupService
+                                      lookupService: MtdRefLookupService,
+                                      override val authConnector: MicroserviceAuthConnector
                                     ) extends AuthorisedFunctions {
   type AuthResult = Either[Result, AuthContext]
 
-//  private val lookupService = MtdRefLookupService
+  //  private val lookupService = MtdRefLookupService
 
-  override def authConnector: AuthConnector = MicroserviceAuthConnector
+  //  override def authConnector: AuthConnector = MicroserviceAuthConnector
 
   private val logger = Logger(this.getClass)
 
@@ -127,7 +127,7 @@ class AuthorisationService @Inject()(
       Left(InternalServerError(toJson(Errors.InternalServerError("An internal server error occurred")))))
 
     locally { // http://www.scala-lang.org/old/node/3594
-      case e @ (_: AuthorisationException | Upstream5xxResponse(regex(_*), _, _)) =>
+      case e@(_: AuthorisationException | Upstream5xxResponse(regex(_*), _, _)) =>
         logger.warn(s"Authorisation failed with unexpected exception. Bad token? Exception: [$e]")
         Future.successful(Left(Forbidden(toJson(Errors.BadToken))))
       case e: Upstream4xxResponse =>

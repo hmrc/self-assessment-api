@@ -25,7 +25,7 @@ import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.ObligationsConnector
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.Audit.makeObligationsRetrievalAudit
-import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
+import uk.gov.hmrc.selfassessmentapi.services.AuditService
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
 //object SelfEmploymentObligationsResource extends SelfEmploymentObligationsResource {
@@ -37,7 +37,8 @@ import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 class SelfEmploymentObligationsResource @Inject()(
                                                    override val appContext: AppContext,
                                                    override val authService: AuthorisationService,
-                                                   obligationsConnector: ObligationsConnector
+                                                   obligationsConnector: ObligationsConnector,
+                                                   auditService: AuditService
                                                  ) extends BaseResource {
   //  val obligationsConnector: ObligationsConnector
 
@@ -46,7 +47,7 @@ class SelfEmploymentObligationsResource @Inject()(
   def retrieveObligations(nino: Nino, id: SourceId): Action[Unit] =
     APIAction(nino, SourceType.SelfEmployments, Some("obligations")).async(parse.empty) { implicit request =>
       obligationsConnector.get(nino, incomeSourceType).map { response =>
-        audit(
+        auditService.audit(
           makeObligationsRetrievalAudit(nino, Some(id), request.authContext, response, SelfEmploymentRetrieveObligations))
         response.filter {
           case 200 =>

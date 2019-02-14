@@ -35,7 +35,7 @@ import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode
 import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{PeriodMapper, PropertiesPeriodResponse, ResponseMapper}
-import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
+import uk.gov.hmrc.selfassessmentapi.services.AuditService
 import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 
 import scala.concurrent.Future
@@ -44,7 +44,8 @@ import scala.concurrent.Future
 class PropertiesPeriodResource @Inject()(
                                           override val appContext: AppContext,
                                           override val authService: AuthorisationService,
-                                          connector: PropertiesPeriodConnector
+                                          connector: PropertiesPeriodConnector,
+                                          auditService: AuditService
                                         ) extends BaseResource {
   //  val appContext = AppContext
   //  val authService = AuthorisationService
@@ -55,7 +56,7 @@ class PropertiesPeriodResource @Inject()(
       validateCreateRequest(id, nino, request) map {
         case Left(errorResult) => handleErrors(errorResult)
         case Right((periodId, response)) =>
-          audit(makePeriodCreateAudit(nino, id, request.authContext, response, periodId))
+          auditService.audit(makePeriodCreateAudit(nino, id, request.authContext, response, periodId))
           response.filter {
             case 200 =>
               Created.withHeaders(LOCATION -> response.createLocationHeader(nino, id, periodId))
@@ -82,7 +83,7 @@ class PropertiesPeriodResource @Inject()(
           validateUpdateRequest(id, nino, Period(from, to), request) map {
             case Left(errorResult) => handleErrors(errorResult)
             case Right(response) =>
-              audit(makePeriodUpdateAudit(nino, id, periodId, request.authContext, response))
+              auditService.audit(makePeriodUpdateAudit(nino, id, periodId, request.authContext, response))
               response.filter {
                 case 200 => NoContent
                 case 400 if response.errorCodeIs(DesErrorCode.INVALID_PERIOD) =>

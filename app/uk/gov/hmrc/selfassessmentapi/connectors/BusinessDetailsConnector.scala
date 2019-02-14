@@ -21,10 +21,12 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.BusinessDetailsResponse
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessDetailsConnector @Inject()(
+                                          override val http: DefaultHttpClient,
                                           override val appContext: AppContext
                                         ) extends BaseConnector{
   private lazy val baseUrl: String = appContext.desUrl

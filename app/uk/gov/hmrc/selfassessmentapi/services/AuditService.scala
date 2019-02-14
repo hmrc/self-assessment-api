@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.services
 
+import javax.inject.Inject
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
@@ -24,21 +25,23 @@ import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Failure
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuditConnector
+//import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuditConnector
 import uk.gov.hmrc.selfassessmentapi.models.audit.{AuditDetail, ExtendedAuditDetail}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.selfassessmentapi.connectors.MicroserviceAuditConnector
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait AuditService {
+class AuditService @Inject()(auditConnector: MicroserviceAuditConnector) {
+
   val logger: Logger = Logger(this.getClass)
 
   def audit[T <: AuditDetail](
       auditData: AuditData[T])(implicit hc: HeaderCarrier, fmt: Format[T], request: Request[_], ec: ExecutionContext): Future[AuditResult] =
-    sendEvent(makeEvent(auditData.detail, auditData.transactionName), MicroserviceAuditConnector)
+    sendEvent(makeEvent(auditData.detail, auditData.transactionName), auditConnector)
 
   def makeEvent[T <: AuditDetail](detail: T, transactionName: String)(implicit hc: HeaderCarrier,
                                                                       fmt: Format[T],
@@ -75,11 +78,11 @@ trait AuditService {
       generatedAt = DateTime.now(DateTimeZone.UTC)
     )
 
-    MicroserviceAuditConnector.sendExtendedEvent(event)
+    auditConnector.sendExtendedEvent(event)
   }
 }
 
-object AuditService extends AuditService
+//object AuditService extends AuditService
 
 case class AuditData[T <: AuditDetail](detail: T, transactionName: String)
 

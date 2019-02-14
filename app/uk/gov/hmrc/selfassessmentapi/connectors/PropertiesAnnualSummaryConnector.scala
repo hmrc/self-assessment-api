@@ -25,6 +25,7 @@ import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.{TaxYear, des, properties}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 //}
 
 class PropertiesAnnualSummaryConnector @Inject()(
+                                                  override val http: DefaultHttpClient,
                                                   override val appContext: AppContext
                                                 ) extends BaseConnector{
 

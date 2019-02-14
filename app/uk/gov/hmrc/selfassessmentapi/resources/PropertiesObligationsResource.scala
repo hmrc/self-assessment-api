@@ -25,7 +25,7 @@ import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.ObligationsConnector
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType}
 import uk.gov.hmrc.selfassessmentapi.resources.Audit.makeObligationsRetrievalAudit
-import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
+import uk.gov.hmrc.selfassessmentapi.services.AuditService
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
 //object PropertiesObligationsResource extends PropertiesObligationsResource {
@@ -37,7 +37,8 @@ import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 class PropertiesObligationsResource @Inject()(
                                                override val appContext: AppContext,
                                                override val authService: AuthorisationService,
-                                               connector: ObligationsConnector
+                                               connector: ObligationsConnector,
+                                               auditService: AuditService
                                              ) extends BaseResource {
   //  val appContext: AppContext
   //  val authService: AuthorisationService
@@ -48,7 +49,7 @@ class PropertiesObligationsResource @Inject()(
   def retrieveObligations(nino: Nino): Action[AnyContent] =
     APIAction(nino, SourceType.Properties, Some("obligations")).async { implicit request =>
       connector.get(nino, incomeSourceType).map { response =>
-        audit(makeObligationsRetrievalAudit(nino, None, request.authContext, response, UkPropertiesRetrieveObligations))
+        auditService.audit(makeObligationsRetrievalAudit(nino, None, request.authContext, response, UkPropertiesRetrieveObligations))
         response.filter {
           case 200 =>
             logger.debug("Properties obligations from DES = " + Json.stringify(response.json))

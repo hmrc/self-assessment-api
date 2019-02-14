@@ -20,13 +20,15 @@ import play.api.Logger
 import play.api.libs.json.Writes
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
-import uk.gov.hmrc.r2.selfassessmentapi.config.{AppContext, WSHttp}
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
+import uk.gov.hmrc.r2.selfassessmentapi.config.{AppContext}
 import uk.gov.hmrc.r2.selfassessmentapi.resources.GovTestScenarioHeader
 import uk.gov.hmrc.r2.selfassessmentapi.resources.wrappers.Response
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait BaseConnector {
+  val http: DefaultHttpClient
   val appContext: AppContext
   private val logger = Logger("connectors")
 
@@ -64,23 +66,23 @@ trait BaseConnector {
 
   def httpGet[R <: Response](url: String, toResponse: HttpResponse => R)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[R] =
     withAdditionalHeaders[R](url) { hcWithAdditionalHeaders =>
-      WSHttp.GET(url)(NoExceptReads, hcWithAdditionalHeaders, ec) map toResponse
+      http.GET(url)(NoExceptReads, hcWithAdditionalHeaders, ec) map toResponse
     }
 
   def httpPost[T: Writes, R <: Response](url: String, elem: T, toResponse: HttpResponse => R)(
       implicit hc: HeaderCarrier, ec: ExecutionContext): Future[R] =
     withAdditionalHeaders[R](url) { hcWithAdditionalHeaders =>
-      WSHttp.POST(url, elem)(implicitly[Writes[T]], NoExceptReads, hcWithAdditionalHeaders, ec) map toResponse
+      http.POST(url, elem)(implicitly[Writes[T]], NoExceptReads, hcWithAdditionalHeaders, ec) map toResponse
     }
 
   def httpEmptyPost[R <: Response](url: String, toResponse: HttpResponse => R)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[R] =
     withAdditionalHeaders[R](url) { hcWithAdditionalHeaders =>
-      WSHttp.POSTEmpty(url)(NoExceptReads, hcWithAdditionalHeaders, ec) map toResponse
+      http.POSTEmpty(url)(NoExceptReads, hcWithAdditionalHeaders, ec) map toResponse
     }
 
   def httpPut[T: Writes, R <: Response](url: String, elem: T, toResponse: HttpResponse => R)(
       implicit hc: HeaderCarrier, ec: ExecutionContext): Future[R] =
     withAdditionalHeaders[R](url) { hcWithAdditionalHeaders =>
-      WSHttp.PUT(url, elem)(implicitly[Writes[T]], NoExceptReads, hcWithAdditionalHeaders, ec) map toResponse
+      http.PUT(url, elem)(implicitly[Writes[T]], NoExceptReads, hcWithAdditionalHeaders, ec) map toResponse
     }
 }

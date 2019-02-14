@@ -22,7 +22,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.{ActionBuilder, _}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.microservice.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.r2.selfassessmentapi.config.FeatureSwitch
 import uk.gov.hmrc.r2.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.r2.selfassessmentapi.contexts.{AuthContext, Individual}
@@ -37,7 +37,7 @@ trait BaseResource extends BaseController {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
   private lazy val authIsEnabled = appContext.authEnabled
-  private lazy val featureSwitch = FeatureSwitch(appContext.featureSwitch)
+  private lazy val featureSwitch = FeatureSwitch(appContext.featureSwitch, appContext.env)
 
   def AuthAction(nino: Nino) = new ActionRefiner[Request, AuthRequest] {
     override protected def refine[A](request: Request[A]): Future[Either[Result, AuthRequest[A]]] =

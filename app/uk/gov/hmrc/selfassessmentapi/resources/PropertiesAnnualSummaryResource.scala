@@ -31,8 +31,7 @@ import uk.gov.hmrc.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.selfassessmentapi.models.properties.{FHLPropertiesAnnualSummary, OtherPropertiesAnnualSummary, PropertiesAnnualSummary, PropertyType}
 import uk.gov.hmrc.selfassessmentapi.models.{ErrorResult, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesAnnualSummaryResponse
-import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
-import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
+import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuditService, AuthorisationService}
 
 import scala.concurrent.Future
 
@@ -45,7 +44,8 @@ import scala.concurrent.Future
 class PropertiesAnnualSummaryResource @Inject()(
                                                  override val appContext: AppContext,
                                                  override val authService: AuthorisationService,
-                                                 connector: PropertiesAnnualSummaryConnector
+                                                 connector: PropertiesAnnualSummaryConnector,
+                                                 auditService: AuditService
                                                ) extends BaseResource {
   //  val appContext: AppContext
   //  val connector: PropertiesAnnualSummaryConnector
@@ -56,7 +56,7 @@ class PropertiesAnnualSummaryResource @Inject()(
       validateProperty(propertyId, request.body, connector.update(nino, propertyId, taxYear, _)) map {
         case Left(errorResult) => handleErrors(errorResult)
         case Right(response) =>
-          audit(makeAnnualSummaryUpdateAudit(nino, propertyId, taxYear, request.authContext, response))
+          auditService.audit(makeAnnualSummaryUpdateAudit(nino, propertyId, taxYear, request.authContext, response))
           response.filter {
             case 200 => NoContent
             case 404 if response.errorCodeIs(DesErrorCode.NOT_FOUND_PROPERTY) =>

@@ -17,13 +17,14 @@
 package uk.gov.hmrc.selfassessmentapi.config
 
 import javax.inject.{Inject, Singleton}
-import play.api.Configuration
+import play.api.Mode.Mode
+import play.api.{Configuration, Environment}
 import play.api.Play._
 import uk.gov.hmrc.play.config.ServicesConfig
 
 
 @Singleton
-class AppContext @Inject()(config: Configuration) extends ServicesConfig {
+class AppContext @Inject()(config: Configuration, environment: Environment) extends ServicesConfig {
 
   lazy val selfAssessmentContextRoute: String = config.getString(s"$env.contextPrefix").getOrElse("")
   lazy val desEnv: String = config.getString(s"$env.microservice.services.des.env").getOrElse(throw new RuntimeException("desEnv is not configured"))
@@ -41,4 +42,7 @@ class AppContext @Inject()(config: Configuration) extends ServicesConfig {
   lazy val sandboxMode: Boolean = config.getBoolean(s"sandbox-mode").getOrElse(false)
   lazy val mtdDate: String = config.getString(s"$env.mtd-date").getOrElse(throw new RuntimeException("mtd-date is not configured"))
 
+  override protected def mode: Mode = environment.mode
+
+  override protected def runModeConfiguration: Configuration = config
 }

@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.ws.WSHttp
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.httpparsers.PropertiesBISSHttpParser
 import uk.gov.hmrc.selfassessmentapi.httpparsers.PropertiesBISSHttpParser.PropertiesBISSOutcome
@@ -33,10 +33,10 @@ import scala.concurrent.{ExecutionContext, Future}
 //
 //  val http: WSHttp = WSHttp
 //}
-// TODO Change the WsHttp when upgrading bootstrap
+
 class PropertiesBISSConnector @Inject()(
-                                         override val appContext: AppContext,
-                                         http: WSHttp
+                                         override val http: DefaultHttpClient,
+                                         override val appContext: AppContext
                                        ) extends PropertiesBISSHttpParser with BaseConnector {
 
   val baseUrl: String = appContext.desUrl

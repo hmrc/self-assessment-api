@@ -30,7 +30,7 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.PeriodicUpdate
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodUpdate}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentPeriodResponse
-import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
+import uk.gov.hmrc.selfassessmentapi.services.AuditService
 import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 
 import scala.concurrent.Future
@@ -44,7 +44,8 @@ import scala.concurrent.Future
 class SelfEmploymentPeriodResource @Inject()(
                                               override val appContext: AppContext,
                                               override val authService: AuthorisationService,
-                                              connector: SelfEmploymentPeriodConnector
+                                              connector: SelfEmploymentPeriodConnector,
+                                              auditService: AuditService
                                             ) extends BaseResource {
   //  val connector: SelfEmploymentPeriodConnector
 
@@ -57,7 +58,7 @@ class SelfEmploymentPeriodResource @Inject()(
       } map {
         case Left(errorResult) => handleErrors(errorResult)
         case Right((periodId, response)) =>
-          audit(makePeriodCreateAudit(nino, sourceId, request.authContext, response, periodId))
+          auditService.audit(makePeriodCreateAudit(nino, sourceId, request.authContext, response, periodId))
           response.filter {
             case 200 =>
               Created.withHeaders(LOCATION -> response.createLocationHeader(nino, sourceId, periodId))
@@ -74,7 +75,7 @@ class SelfEmploymentPeriodResource @Inject()(
           } map {
             case Left(errorResult) => handleErrors(errorResult)
             case Right(response) =>
-              audit(makePeriodUpdateAudit(nino, id, periodId, request.authContext, response))
+              auditService.audit(makePeriodUpdateAudit(nino, id, periodId, request.authContext, response))
               response.filter {
                 case 200 => NoContent
               }

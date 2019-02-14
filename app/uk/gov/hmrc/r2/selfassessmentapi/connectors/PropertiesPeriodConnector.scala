@@ -20,6 +20,7 @@ import javax.inject.Inject
 import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.r2.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties._
@@ -36,6 +37,7 @@ trait PropertiesPeriodConnectorT[P <: Period, F <: Financials] {
 }
 
 class PropertiesPeriodConnector @Inject()(
+                                           override val http: DefaultHttpClient,
                                            override val appContext: AppContext
                                          ) extends BaseConnector {
   //  override val appContext = AppContext
@@ -43,7 +45,7 @@ class PropertiesPeriodConnector @Inject()(
   def apply[P <: Period, F <: Financials](
                                            implicit p: PropertiesPeriodConnectorT[P, F]): PropertiesPeriodConnectorT[P, F] = implicitly
 
-  private lazy val baseUrl: String = AppContext.desUrl
+  private lazy val baseUrl: String = appContext.desUrl
 
   implicit object OtherPropertiesPeriodConnector
     extends PropertiesPeriodConnectorT[Other.Properties, Other.Financials] {

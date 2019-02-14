@@ -31,8 +31,7 @@ import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode._
 import uk.gov.hmrc.selfassessmentapi.models.{Declaration, Errors, Period, SourceId, SourceType}
 import uk.gov.hmrc.selfassessmentapi.resources.utils.EopsObligationQueryParams
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{EmptyResponse, Response}
-import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
-import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
+import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuditService, AuthorisationService}
 
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
@@ -40,7 +39,8 @@ import scala.concurrent.Future
 class SelfEmploymentStatementResource @Inject()(
                                                  override val appContext: AppContext,
                                                  override val authService: AuthorisationService,
-                                                 statementConnector: SelfEmploymentStatementConnector
+                                                 statementConnector: SelfEmploymentStatementConnector,
+                                                 auditService: AuditService
                                                ) extends BaseResource {
   //  val appContext = AppContext
   //  val authService = AuthorisationService
@@ -71,7 +71,7 @@ class SelfEmploymentStatementResource @Inject()(
 
         def businessJsonError(error: Errors.Error) = Json.toJson(Errors.businessError(error))
 
-        audit(buildAuditEvent(nino, id, accountingPeriod, request.authContext, desResponse))
+        auditService.audit(buildAuditEvent(nino, id, accountingPeriod, request.authContext, desResponse))
         desResponse.filter {
           case 204 => NoContent
           case 400 if desResponse.errorCodeIs(EARLY_SUBMISSION) => Forbidden(Json.toJson(Errors.EarlySubmission))

@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.Period
 import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.RequestDateTime
@@ -32,6 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 //}
 
 class PropertiesPeriodStatementConnector @Inject()(
+                                                    override val http: DefaultHttpClient,
                                                     override val appContext: AppContext
                                                   ) extends BaseConnector {
 

@@ -29,7 +29,7 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.audit.AnnualSummaryUpdate
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentAnnualSummaryResponse
-import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
+import uk.gov.hmrc.selfassessmentapi.services.AuditService
 import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 
 //object SelfEmploymentAnnualSummaryResource extends SelfEmploymentAnnualSummaryResource {
@@ -41,7 +41,8 @@ import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 class SelfEmploymentAnnualSummaryResource @Inject()(
                                                      override val appContext: AppContext,
                                                      override val authService: AuthorisationService,
-                                                     connector: SelfEmploymentAnnualSummaryConnector
+                                                     connector: SelfEmploymentAnnualSummaryConnector,
+                                                     auditService: AuditService
                                                    ) extends BaseResource {
   //  val connector: SelfEmploymentAnnualSummaryConnector
 
@@ -52,7 +53,7 @@ class SelfEmploymentAnnualSummaryResource @Inject()(
       } map {
         case Left(errorResult) => handleErrors(errorResult)
         case Right(response) =>
-          audit(makeAnnualSummaryUpdateAudit(nino, id, taxYear, request.authContext, response))
+          auditService.audit(makeAnnualSummaryUpdateAudit(nino, id, taxYear, request.authContext, response))
           response.filter {
             case 200 =>
               NoContent

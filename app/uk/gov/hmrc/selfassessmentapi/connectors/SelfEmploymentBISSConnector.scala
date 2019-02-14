@@ -19,8 +19,9 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 import javax.inject.Inject
 import play.api.Logger
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet}
-import uk.gov.hmrc.selfassessmentapi.config.{AppContext, WSHttp}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.httpparsers.SelfEmploymentBISSHttpParser
 import uk.gov.hmrc.selfassessmentapi.httpparsers.SelfEmploymentBISSHttpParser.SelfEmploymentBISSOutcome
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear
@@ -35,12 +36,12 @@ import scala.concurrent.{ExecutionContext, Future}
 //}
 
 class SelfEmploymentBISSConnector @Inject()(
-                                           override val appContext : AppContext,
-                                           http: HttpGet
+                                             override val http: DefaultHttpClient,
+                                             override val appContext: AppContext
                                            ) extends SelfEmploymentBISSHttpParser with BaseConnector {
 
   val baseUrl: String = appContext.desUrl
-//  val http: HttpGet
+  //  val http: HttpGet
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
   def getSummary(nino: Nino, taxYear: TaxYear, selfEmploymentId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentBISSOutcome] = {

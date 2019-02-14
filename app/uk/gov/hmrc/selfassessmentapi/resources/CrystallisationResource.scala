@@ -32,7 +32,7 @@ import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode._
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CrystallisationIntentResponse, EmptyResponse}
-import uk.gov.hmrc.selfassessmentapi.services.AuditService.extendedAudit
+import uk.gov.hmrc.selfassessmentapi.services.AuditService
 import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, ExtendedAuditData}
 
 //object CrystallisationResource extends CrystallisationResource {
@@ -44,7 +44,8 @@ import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, ExtendedAud
 class CrystallisationResource @Inject()(
                                          crystallisationConnector: CrystallisationConnector,
                                          override val appContext: AppContext,
-                                         override val authService: AuthorisationService
+                                         override val authService: AuthorisationService,
+                                         auditService: AuditService
                                        ) extends BaseResource {
 //  val appContext: AppContext
 //  val authService: AuthorisationService
@@ -55,7 +56,7 @@ class CrystallisationResource @Inject()(
       crystallisationConnector.intentToCrystallise(nino, taxYear) map { response =>
         response.filter {
           case 200 =>
-            extendedAudit(makeIntentToCrystalliseAudit(nino, taxYear, request.authContext, response))
+            auditService.extendedAudit(makeIntentToCrystalliseAudit(nino, taxYear, request.authContext, response))
             val contextPrefix = appContext.selfAssessmentContextRoute
             val url = response.calculationId.map(id => s"$contextPrefix/ni/$nino/calculations/$id").getOrElse("")
             SeeOther(url).withHeaders(LOCATION -> url)
@@ -75,7 +76,7 @@ class CrystallisationResource @Inject()(
         case Left(error) => handleErrors(error)
         case Right(response) => response.filter {
           case 204 =>
-            extendedAudit(makeSubmitCrystallisationAudit(nino, taxYear, request.authContext, response))
+            auditService.extendedAudit(makeSubmitCrystallisationAudit(nino, taxYear, request.authContext, response))
             Created
           case 400 if response.errorCodeIsOneOf(INVALID_TAXYEAR) =>
             BadRequest(Json.toJson(Errors.TaxYearInvalid))

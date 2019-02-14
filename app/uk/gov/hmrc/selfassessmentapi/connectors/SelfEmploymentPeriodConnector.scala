@@ -20,6 +20,7 @@ import javax.inject.Inject
 import org.joda.time.LocalDate
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.{SelfEmploymentPeriod, SelfEmploymentPeriodUpdate}
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, des}
@@ -33,6 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 //}
 
 class SelfEmploymentPeriodConnector @Inject()(
+                                               override val http: DefaultHttpClient,
                                                override val appContext: AppContext
                                              ) extends BaseConnector {
 

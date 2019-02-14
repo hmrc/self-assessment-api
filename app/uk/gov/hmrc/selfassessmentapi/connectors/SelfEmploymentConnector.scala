@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.SourceId
 import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.{Business, SelfEmploymentUpdate}
@@ -27,6 +28,7 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentResponse
 import scala.concurrent.{ExecutionContext, Future}
 
 class SelfEmploymentConnector @Inject()(
+                                         override val http: DefaultHttpClient,
                                          override val appContext: AppContext
                                        ) extends BaseConnector {
   //  override val appContext = AppContext

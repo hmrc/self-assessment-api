@@ -16,15 +16,16 @@
 
 package uk.gov.hmrc.r2.selfassessmentapi.services
 
+import javax.inject.Inject
 import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result}
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.{Retrievals, ~}
+import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments, _}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.r2.selfassessmentapi.config.MicroserviceAuthConnector
+import uk.gov.hmrc.http.{HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse}
+import uk.gov.hmrc.r2.selfassessmentapi.connectors.MicroserviceAuthConnector
 import uk.gov.hmrc.r2.selfassessmentapi.contexts.{Agent, AuthContext, FilingOnlyAgent, Individual}
 import uk.gov.hmrc.r2.selfassessmentapi.models.Errors.{ClientNotSubscribed, NinoInvalid}
 import uk.gov.hmrc.r2.selfassessmentapi.models.{Errors, MtdId}
@@ -32,19 +33,21 @@ import uk.gov.hmrc.r2.selfassessmentapi.models.{Errors, MtdId}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 import scala.util.matching.Regex
-import uk.gov.hmrc.http.{ HeaderCarrier, Upstream4xxResponse, Upstream5xxResponse }
 
 
-object AuthorisationService extends AuthorisationService
+//object AuthorisationService extends AuthorisationService
 
-trait AuthorisationService extends AuthorisedFunctions {
+class AuthorisationService @Inject()(
+                                      lookupService: MtdRefLookupService,
+                                      override val authConnector: MicroserviceAuthConnector
+                                    ) extends AuthorisedFunctions {
   type AuthResult = Either[Result, AuthContext]
 
-  private val lookupService = MtdRefLookupService
+  //  private val lookupService = MtdRefLookupService
 
-  override def authConnector: AuthConnector = MicroserviceAuthConnector
+  //  override def authConnector: AuthConnector = MicroserviceAuthConnector
 
-  private val logger = Logger(AuthorisationService.getClass)
+  private val logger = Logger(this.getClass)
 
   def authCheck(nino: Nino)(implicit hc: HeaderCarrier, reqHeader: RequestHeader, ec: ExecutionContext): Future[AuthResult] =
     lookupService.mtdReferenceFor(nino).flatMap {
@@ -124,7 +127,7 @@ trait AuthorisationService extends AuthorisedFunctions {
       Left(InternalServerError(toJson(Errors.InternalServerError("An internal server error occurred")))))
 
     locally { // http://www.scala-lang.org/old/node/3594
-      case e @ (_: AuthorisationException | Upstream5xxResponse(regex(_*), _, _)) =>
+      case e@(_: AuthorisationException | Upstream5xxResponse(regex(_*), _, _)) =>
         logger.warn(s"Authorisation failed with unexpected exception. Bad token? Exception: [$e]")
         Future.successful(Left(Forbidden(toJson(Errors.BadToken))))
       case e: Upstream4xxResponse =>
