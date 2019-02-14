@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Self-employment source of income",
+  "type": "object",
+  "properties": {
+    "accountName": {
+      "title": "Account name",
+      "description": "Friendly account name. Each account name added must be unique for that National Insurance number. The account name must be between 1 and 32 characters in length but cannot include the following characters: *<>[]{}\/:;?#`\"%'^~|$¬",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

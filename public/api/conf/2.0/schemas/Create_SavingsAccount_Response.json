@@ -3,14 +3,15 @@
   "title": "Self-employment source of income",
   "type": "object",
   "properties": {
-    "accountName": {
-      "title": "Account name",
-      "description": "Friendly account name",
+    "id": {
+      "title": "ID",
+      "description": "The unique identifier of the savings account. For example, SAVKB2UVwUTBQGJ",
       "type": "string",
-      "pattern": "^([a-zA-Z0-9]+\\s?)+$",
-      "minLength": 1,
-      "maxLength": 32
+      "pattern": "^[A-Za-z0-9]{15}$"
     }
   },
+  "required": [
+    "id"
+  ],
   "additionalProperties": false
 }

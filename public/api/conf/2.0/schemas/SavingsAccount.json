@@ -5,16 +5,14 @@
   "properties": {
     "id": {
       "title": "ID",
-      "description": "Unique identifier",
-      "type": "string"
+      "description": "The unique identifier of the savings account. For example SAVKB2UVwUTBQGJ",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9]{15}$"
     },
     "accountName": {
       "title": "Account name",
       "description": "Friendly account name",
-      "type": "string",
-      "pattern": "^([a-zA-Z0-9]+\\s?)+$",
-      "minLength": 1,
-      "maxLength": 32
+      "type": "string"
     }
   },
   "required": [

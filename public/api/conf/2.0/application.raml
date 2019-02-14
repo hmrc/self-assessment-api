@@ -1826,39 +1826,46 @@ traits:
         name: Savings accounts
         description: !include docs/savings-accounts.md
       post:
-        displayName: Add a savings account [test only]
-        description: Add a savings account. This API is not available in production.
-        (annotations.sandboxData): !include scenarios/agent-scenarios.md
-        is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+        displayName: Add a UK savings account [test only]
+        description: The "Add a UK savings account" endpoint allows details of a UK savings account, linked to the supplied NINO, to be stored. Interest income data can then be recorded against that savings account using the "Amend a UK annual savings account annual summary" endpoint. This API is not available in production.
+        (annotations.sandboxData): !include scenarios/savings-account-create-scenarios.md
+        is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
         (annotations.scope): "write:self-assessment"
         securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
         body:
           application/json:
-            type: !include schemas/SavingsAccount_Without_ID.json
-            example: !include examples/savings-accounts/SavingsAccount.json
+            type: !include schemas/CreateSavingsAccount_Request.json
+            example: !include examples/savings-accounts/CreateSavingsAccount_Request.json
         responses:
           201:
             headers:
               Location:
-                example: /self-assessment/ni/{nino}/savings-accounts/{savingsAccountId}
-                description: Location of the resource created
+                example: /self-assessment/ni/AA123456A/savings-accounts/SAVKB2UVwUTBQGJ
+                description: Contains the location of the newly added savings account.
+            body:
+             application/json:
+               type: !include schemas/Create_SavingsAccount_Response.json
+               examples:
+                example-1:
+                 description: >
+                 value: !include examples/savings-accounts/CreateSavingsAccount_Response.json
           400:
             body:
               application/json:
                 type: types.errorResponse
                 examples:
-                  invalidNino:
-                    description: Invalid NINO
+                  formatNino:
+                    description: The format of the supplied NINO is not valid.
                     value:
-                      code: NINO_INVALID
-                  invalidLength:
-                    description: accountName length is invalid
+                      code: FORMAT_NINO
+                  formatAccountName:
+                    description: The format of the supplied account name field is not valid.
                     value:
-                      code: INVALID_FIELD_LENGTH
-                  invalidValue:
-                    description: accountName is not alphanumeric
+                      code: FORMAT_ACCOUNT_NAME
+                  missingAccountName:
+                    description: The account name field is missing.
                     value:
-                      code: INVALID_VALUE
+                      code: MISSING_ACCOUNT_NAME
       get:
         displayName: List all savings accounts [test only]
         description: List all savings accounts. This API is not available in production.
@@ -1891,8 +1898,8 @@ traits:
           securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
           body:
             application/json:
-              type: !include schemas/SavingsAccount_Without_ID.json
-              example: !include examples/savings-accounts/SavingsAccount.json
+              type: !include schemas/CreateSavingsAccount_Request.json
+              example: !include examples/savings-accounts/CreateSavingsAccount_Request.json
           responses:
             204:
             400:
@@ -1924,8 +1931,8 @@ traits:
             200:
               body:
                 application/json:
-                  type: !include schemas/SavingsAccount_Without_ID.json
-                  example: !include examples/savings-accounts/SavingsAccount.json
+                  type: !include schemas/CreateSavingsAccount_Request.json
+                  example: !include examples/savings-accounts/CreateSavingsAccount_Request.json
             400:
               body:
                 application/json:
