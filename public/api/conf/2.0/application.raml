@@ -1827,7 +1827,7 @@ traits:
         description: !include docs/savings-accounts.md
       post:
         displayName: Add a UK savings account [test only]
-        description: The "Add a UK savings account" endpoint allows details of a UK savings account, linked to the supplied NINO, to be stored. Interest income data can then be recorded against that savings account using the "Amend a UK annual savings account annual summary" endpoint. This API is not available in production.
+        description: The "Add a UK savings account" endpoint allows details of a UK savings account, linked to the supplied NINO, to be stored. Interest income data can then be recorded against that savings account using the "Amend a UK savings account annual summary" endpoint. This API is not available in production.
         (annotations.sandboxData): !include scenarios/savings-account-create-scenarios.md
         is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
         (annotations.scope): "write:self-assessment"
@@ -1866,6 +1866,19 @@ traits:
                     description: The account name field is missing.
                     value:
                       code: MISSING_ACCOUNT_NAME
+          403:
+            body:
+              application/json:
+                type: types.errorResponse
+                examples:
+                  ruleMaximumSavingsAccountLimit:
+                    description: The maximum number of 1000 savings accounts exceeded.
+                    value:
+                      code: RULE_MAXIMUM_SAVINGS_ACCOUNTS_LIMIT
+                  ruleDuplicateAccountName:
+                    description: A duplicate account name was supplied for the NINO.
+                    value:
+                      code: RULE_DUPLICATE_ACCOUNT_NAME
       get:
         displayName: List all savings accounts [test only]
         description: List all savings accounts. This API is not available in production.
