@@ -606,7 +606,7 @@ traits:
           /income-summary:
              get:
                 displayName:  Get Self-Employment Business Income Source Summary (BISS)
-                description: Get the summary of self-employment income for a given tax year. This API is not available in production.
+                description: Get the summary of self-employment income for a given tax year.
                 (annotations.sandboxData): !include scenarios/self-employment-biss.md
                 is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
                 (annotations.scope): "read:self-assessment"
@@ -1663,7 +1663,7 @@ traits:
             example: 2017-18
         get:
           displayName:  Get UK property Business Income Source Summary (BISS)
-          description: Get the summary of property income for a given tax year. This API is not available in production.
+          description: Get the summary of property income for a given tax year.
           (annotations.sandboxData): !include scenarios/uk-properties-biss.md
           is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
