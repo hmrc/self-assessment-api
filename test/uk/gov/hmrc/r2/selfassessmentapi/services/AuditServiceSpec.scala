@@ -27,12 +27,13 @@ import uk.gov.hmrc.r2.selfassessmentapi.AsyncUnitSpec
 import uk.gov.hmrc.r2.selfassessmentapi.mocks.connectors.MockMicroserviceAuditConnector
 import uk.gov.hmrc.r2.selfassessmentapi.models.audit.PeriodicUpdate
 
+import scala.concurrent.Future
+
 class AuditServiceSpec extends AsyncUnitSpec with MockMicroserviceAuditConnector {
 
   private implicit val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization("abcd")))
 
   val testAuditService = new AuditService(
-    // TODO -> Set up mock calls later
     mockMicroserviceAuditConnector
   )
 
@@ -61,32 +62,22 @@ class AuditServiceSpec extends AsyncUnitSpec with MockMicroserviceAuditConnector
   "sendEvent" should {
 
     "return Success if the audit was successful" in {
-      //      val testService = new TestAuditService
-      //      val connector = new AuditConnector {
-      //        override def auditingConfig: AuditingConfig = ???
-      //
-      //        override def sendExtendedEvent(event: ExtendedDataEvent)(implicit hc: HeaderCarrier,
-      //                                                  ec: ExecutionContext): Future[AuditResult] =
-      //          Future.successful(Success)
-      //      }
       // TODO check if this can be refactored to use injected connector?
+
+      MockMicroserviceAuditConnector.sendExtendedEvent(event).thenReturn(Future.successful(Success))
+
       testAuditService.sendEvent(event, mockMicroserviceAuditConnector) map { auditResult =>
         assert(auditResult == Success)
       }
     }
 
     "return Failure if an exception occurred when sending the audit event" in {
-      //      val testService = new TestAuditService
-      val ex = new RuntimeException("some non-fatal exception")
-      //      val connector = new AuditConnector {
-      //        override def auditingConfig: AuditingConfig = ???
-      //
-      //        override def sendExtendedEvent(event: ExtendedDataEvent)(implicit hc: HeaderCarrier,
-      //                                                  ec: ExecutionContext): Future[AuditResult] =
-      //          throw ex
-      //      }
 
-      // TODO -> Set up mock later
+      val ex = new RuntimeException("some non-fatal exception")
+
+      MockMicroserviceAuditConnector.sendExtendedEvent(event).thenThrow(ex)
+
+      // TODO check if this can be refactored to use injected connector?
       testAuditService.sendEvent(event, mockMicroserviceAuditConnector) map { auditResult =>
         assert(auditResult.asInstanceOf[Failure].nested.contains(ex))
       }

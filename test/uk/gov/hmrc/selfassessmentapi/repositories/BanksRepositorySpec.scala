@@ -20,6 +20,7 @@ import org.joda.time.{DateTime, DateTimeZone}
 import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.mongo.MongoConnector
 import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
 import uk.gov.hmrc.selfassessmentapi.domain.Bank
 import uk.gov.hmrc.selfassessmentapi.mocks.Mock
@@ -29,8 +30,15 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class BanksRepositorySpec extends MongoEmbeddedDatabase with Mock {
 
+
   val mockReactiveMongoComponent = mock[ReactiveMongoComponent]
+  val mockMongoConnector = mock[MongoConnector]
+  when(mockReactiveMongoComponent.mongoConnector).thenReturn(mockMongoConnector)
+  when(mockMongoConnector.db).thenReturn(mongo)
+
   private lazy val repo = new BanksRepository(mockReactiveMongoComponent)
+
+  //  val mockReactiveMongoComponent = mock[ReactiveMongoComponent]
   //  private lazy val repo = new BanksRepository()(mongo)
   private val nino = generateNino
 

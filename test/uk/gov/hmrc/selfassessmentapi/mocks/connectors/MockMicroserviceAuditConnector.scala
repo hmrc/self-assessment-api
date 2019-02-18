@@ -33,7 +33,7 @@ trait MockMicroserviceAuditConnector extends Mock {
   object MockMicroserviceAuditConnector {
 
     def sendExtendedEvent(event: ExtendedDataEvent)(implicit hc: HeaderCarrier = HeaderCarrier(), ec : ExecutionContext) = {
-      when(microserviceAuditConnector.sendExtendedEvent(event)(any(), any()))
+      when(microserviceAuditConnector.sendExtendedEvent(eqTo(event))(any(), any()))
     }
 
   }

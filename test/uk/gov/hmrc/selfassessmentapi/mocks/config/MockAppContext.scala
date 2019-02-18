@@ -29,6 +29,8 @@ trait MockAppContext extends Mock { _: Suite =>
     def authEnabled = when(mockAppContext.authEnabled)
     def desToken = when(mockAppContext.desToken)
     def desEnv = when(mockAppContext.desEnv)
+    def desUrl = when(mockAppContext.desUrl)
+    def mtdDate = when(mockAppContext.mtdDate)
   }
 
   override protected def beforeEach(): Unit = {

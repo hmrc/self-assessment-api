@@ -17,15 +17,25 @@
 package uk.gov.hmrc.r2.selfassessmentapi.mocks.connectors
 
 import org.scalatest.Suite
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.r2.selfassessmentapi.connectors.MicroserviceAuditConnector
 import uk.gov.hmrc.r2.selfassessmentapi.mocks.Mock
+
+import scala.concurrent.ExecutionContext
 
 trait MockMicroserviceAuditConnector extends Mock {
   _: Suite =>
 
   val mockMicroserviceAuditConnector = mock[MicroserviceAuditConnector]
 
-  object MockPropertiesConnector {
+  object MockMicroserviceAuditConnector {
+
+    def sendExtendedEvent(event: ExtendedDataEvent)(implicit hc: HeaderCarrier, ec: ExecutionContext) = {
+      when(mockMicroserviceAuditConnector.sendExtendedEvent(eqTo(event))(any(),any()))
+    }
+
+
     //    def create(nino: Nino, newProperties: NewProperties) = {
     //      when(mockPropertiesConnector.create(eqTo(nino), eqTo(newProperties))(any(), any()))
     //    }

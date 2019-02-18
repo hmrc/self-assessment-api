@@ -19,17 +19,21 @@ package uk.gov.hmrc.r2.selfassessmentapi.repositories
 import org.scalatest.BeforeAndAfterEach
 import play.modules.reactivemongo.ReactiveMongoComponent
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.mongo.MongoConnector
 import uk.gov.hmrc.r2.selfassessmentapi.mocks.Mock
-import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
 import uk.gov.hmrc.r2.selfassessmentapi.models.MtdId
+import uk.gov.hmrc.selfassessmentapi.MongoEmbeddedDatabase
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class MtdReferenceRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach with Mock {
 
-//  private lazy val repo = new MtdReferenceRepository()(mongo)
+  //  private lazy val repo = new MtdReferenceRepository()(mongo)
   val mockReactiveMongoComponent = mock[ReactiveMongoComponent]
-  when(mockReactiveMongoComponent.mongoConnector.db).thenReturn(mongo)
+  val mockMongoConnector = mock[MongoConnector]
+  when(mockReactiveMongoComponent.mongoConnector).thenReturn(mockMongoConnector)
+  when(mockMongoConnector.db).thenReturn(mongo)
+
   private lazy val repo = new MtdReferenceRepository(mockReactiveMongoComponent)
 
   override def beforeEach(): Unit = {

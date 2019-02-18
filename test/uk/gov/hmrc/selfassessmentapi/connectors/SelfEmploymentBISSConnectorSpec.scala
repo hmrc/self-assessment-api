@@ -18,6 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.connectors
 
 import uk.gov.hmrc.http.HttpGet
 import uk.gov.hmrc.selfassessmentapi.fixtures.selfemployment.SelfEmploymentBISSFixture
+import uk.gov.hmrc.selfassessmentapi.httpparsers.SelfEmploymentBISSHttpParser.SelfEmploymentBISSOutcome
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentBISS
 
 import scala.concurrent.Future
@@ -25,6 +26,12 @@ import scala.concurrent.Future
 class SelfEmploymentBISSConnectorSpec extends ConnectorSpec {
 
   class Setup {
+
+    MockAppContext.desToken returns desToken
+    MockAppContext.desEnv returns desEnv
+    MockAppContext.desUrl returns desBaseUrl
+
+
     val connector = new SelfEmploymentBISSConnector (
       mockHttp,
       mockAppContext
@@ -33,8 +40,6 @@ class SelfEmploymentBISSConnectorSpec extends ConnectorSpec {
 //      override val http: HttpGet = mockHttp
 //      override val appContext = mockAppContext
 //    }
-    MockAppContext.desToken returns desToken
-    MockAppContext.desEnv returns desEnv
   }
 
   lazy val desBaseUrl = "test-des-url"
@@ -48,8 +53,7 @@ class SelfEmploymentBISSConnectorSpec extends ConnectorSpec {
 
     "return a SelfEmploymentBISS model" when {
       "des returns a 200 with a correct SelfEmploymentBISS response body" in new Setup {
-        MockHttp.GET[Either[Error, SelfEmploymentBISS]](url)
-          .returns(Future.successful(Right(selfEmploymentBISS)))
+        MockHttp.GET[Either[Error, SelfEmploymentBISS]](url).returns(Future.successful(Right(selfEmploymentBISS)))
 
         val result = await(connector.getSummary(nino, taxYear, selfEmploymentId))
         result shouldBe Right(selfEmploymentBISS)
