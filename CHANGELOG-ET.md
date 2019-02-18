@@ -1,29 +1,29 @@
 ## 11-Feb-2019
-| Change    | Version  | Status                               | Endpoint                  
-| :------:  | :------: | :-----------------------------------:| -------------------------------------------------------
-| Addition  | v2.0     | Testable in Sandbox                  | Retrieve Dividends Income
+| Change    | Version  | Status                               | Endpoint                    |    Detail
+| :------:  | :------: | :-----------------------------------:| :-------------------------: | :---------
+| Addition  | v2.0     | Testable in Sandbox                  | Retrieve Dividends Income   |  Added new version 2.0 Retrieve Dividends Income with the following: <ul> <li> `ukDividends` data field </li> <li> `otherUkDividends` data field </li> <li>   Error scenarios </li> <li> Gov-Test-Scenario headers</ul>
 
 
 ## 07-Feb-2019
-| Change    | Version  | Status                               | Endpoint                  
-| :------:  | :------: | :-----------------------------------:| -------------------------------------------------------
-| Addition  | v2.0     | Testable in Sandbox                  | Amend Dividends Income
+| Change    | Version  | Status                               | Endpoint                |  Detail  
+| :------:  | :------: | :-----------------------------------:| :----------------------:|:---------------
+| Addition  | v2.0     | Testable in Sandbox                  | Amend Dividends Income  | Added new version 2.0 Retrieve Dividends Income with the following: <ul> <li> `ukDividends` data field </li> <li> `otherUkDividends` data field </li> <li> Additional example request </li> <li>   Error scenarios </li> <li> Gov-Test-Scenario headers</ul>
 
 
 ## 01-Feb-2019
-| Change    | Version  | Status                               | Endpoint                  
-| :------:  | :------: | :-----------------------------------:| -------------------------------------------------------
-| Addition  | v2.0     | Documentation / Testable in Sandbox  | Amend/Retrieve Charitable Giving: monetary amounts - added 2 decimal place detail
-| Addition  | v2.0     | Documentation Only                   | Retrieve tax calculation: monetary amounts - added 2 decimal place detail
+| Change    | Version  | Status                               | Endpoint                         | Detail
+| :------:  | :------: | :-----------------------------------:| :-------------------------------:|:---------------------
+| Addition  | v2.0     | Documentation / Testable in Sandbox  | Amend/Retrieve Charitable Giving |  Added 2 decimal place detail
+| Addition  | v2.0     | Documentation Only                   | Retrieve Tax Calculation         |  Added 2 decimal place detail
 
 ## 29-Jan-2019
 
-| Change    | Version  | Status              |  Endpoint                  
-| :------:  | :------: | ------------------- | -------------------------- 
-| Addition  | v2.0     | Testable in Sandbox | Retrieve Charitable Giving 
-| Addition  | v2.0     | Testable in Sandbox | Amend Charitable Giving 
-| Addition  | v2.0     | Documentation Only  | Amend UK Dividends
-| Addition  | v2.0     | Documentation Only  | Retrieve UK Dividends
+| Change    | Version  | Status              |  Endpoint                   |  Detail
+| :------:  | :------: | :-----------------: | :-------------------------: | :-----
+| Addition  | v2.0     | Testable in Sandbox | Retrieve Charitable Giving  | New response body with multiple fields.  See API Documentation
+| Addition  | v2.0     | Testable in Sandbox | Amend Charitable Giving     | New request body with multiple fields.  See API Documentation
+| Addition  | v2.0     | Documentation Only  | Amend UK Dividends          | Documentation only - see API Documentation
+| Addition  | v2.0     | Documentation Only  | Retrieve UK Dividends       | Documentation only - see API Documentation
 
 
 ## 24-Jan-2019
