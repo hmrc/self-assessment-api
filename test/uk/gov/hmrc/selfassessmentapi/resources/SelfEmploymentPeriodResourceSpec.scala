@@ -21,19 +21,27 @@ import play.api.libs.json.JsValue
 import play.api.test.FakeRequest
 import uk.gov.hmrc.selfassessmentapi.fixtures.selfemployment.SelfEmploymentPeriodFixture
 import uk.gov.hmrc.selfassessmentapi.mocks.connectors.MockSelfEmploymentPeriodConnector
+import uk.gov.hmrc.selfassessmentapi.mocks.services.MockAuditService
 import uk.gov.hmrc.selfassessmentapi.models.SourceType
 
 import scala.concurrent.Future
 
 class SelfEmploymentPeriodResourceSpec extends ResourceSpec
-  with MockSelfEmploymentPeriodConnector {
+  with MockSelfEmploymentPeriodConnector
+  with MockAuditService {
 
   class Setup {
-    val resource = new SelfEmploymentPeriodResource {
-      override val appContext = mockAppContext
-      override val authService = mockAuthorisationService
-      override val connector = mockSelfEmploymentPeriodConnector
-    }
+    val resource = new SelfEmploymentPeriodResource(
+      mockAppContext,
+      mockAuthorisationService,
+      mockSelfEmploymentPeriodConnector,
+      // TODO Check if needs mocking with values
+      mockAuditService
+    )
+    //      override val appContext = mockAppContext
+    //      override val authService = mockAuthorisationService
+    //      override val connector = mockSelfEmploymentPeriodConnector
+    //    }
     mockAPIAction(SourceType.SelfEmployments)
   }
 

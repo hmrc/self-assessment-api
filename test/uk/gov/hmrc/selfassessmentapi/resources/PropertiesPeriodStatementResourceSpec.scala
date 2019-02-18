@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import uk.gov.hmrc.selfassessmentapi.connectors.PropertiesPeriodStatementConnector
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, Period, SourceType}
 import uk.gov.hmrc.selfassessmentapi.models.audit.EndOfPeriodStatementDeclaration
+import uk.gov.hmrc.selfassessmentapi.resources.utils.ResourceHelper
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.EmptyResponse
 import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuditService}
 
@@ -37,11 +38,17 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class PropertiesPeriodStatementResourceSpec extends BaseResourceSpec {
 
-  object TestResource extends PropertiesPeriodStatementResource {
-    override lazy val statementConnector = mock[PropertiesPeriodStatementConnector]
-    override lazy val auditService = mock[AuditService]
-    override val appContext = mockAppContext
-    override val authService = mockAuthorisationService
+  lazy val statementConnector = mock[PropertiesPeriodStatementConnector]
+  lazy val auditService = mock[AuditService]
+  val appContext = mockAppContext
+  val authService = mockAuthorisationService
+  // TODO What needs to be returned for this mock
+  val mockResourceHelper = mock[ResourceHelper]
+
+
+  object TestResource extends PropertiesPeriodStatementResource (
+    appContext, mockAuthorisationService, statementConnector, auditService,  mockResourceHelper
+  ) {
     mockAPIAction(SourceType.Properties)
   }
 
@@ -71,7 +78,7 @@ class PropertiesPeriodStatementResourceSpec extends BaseResourceSpec {
   implicit val materializer: Materializer = ActorMaterializer()
 
   def setUp() {
-    when(TestResource.auditService.audit(Matchers.anyObject[AuditData[EndOfPeriodStatementDeclaration]]())
+    when(auditService.audit(Matchers.anyObject[AuditData[EndOfPeriodStatementDeclaration]]())
     (Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(AuditResult.Success))
   }
 
@@ -80,7 +87,7 @@ class PropertiesPeriodStatementResourceSpec extends BaseResourceSpec {
     "PropertiesPeriodStatementResource.finaliseEndOfPeriodStatement is called" should {
       "return successful submission response with no content" in {
         setUp()
-        when(TestResource.statementConnector.create(Matchers.anyObject[Nino](), Matchers.anyObject[Period](), Matchers.anyObject[String]())
+        when(statementConnector.create(Matchers.anyObject[Nino](), Matchers.anyObject[Period](), Matchers.anyObject[String]())
         (Matchers.any(), Matchers.any())).thenReturn(Future.successful(EmptyResponse(HttpResponse(NO_CONTENT))))
         submitWithSessionAndAuth(TestResource.finaliseEndOfPeriodStatement(validNino,
           DateTime.now().minusDays(1).toLocalDate, DateTime.now().toLocalDate),requestJson){
@@ -150,7 +157,7 @@ class PropertiesPeriodStatementResourceSpec extends BaseResourceSpec {
 
     "PropertiesPeriodStatementResource.finaliseEndOfPeriodStatement is called" should {
       "return missing periodic updates error response" in {
-        when(TestResource.statementConnector.create(Matchers.anyObject[Nino](), Matchers.anyObject[Period](), Matchers.anyObject[String]())
+        when(statementConnector.create(Matchers.anyObject[Nino](), Matchers.anyObject[Period](), Matchers.anyObject[String]())
         (Matchers.any(), Matchers.any())).thenReturn(Future.successful(EmptyResponse(HttpResponse(FORBIDDEN))))
         submitWithSessionAndAuth(TestResource.finaliseEndOfPeriodStatement(validNino,
           DateTime.now().minusDays(1).toLocalDate, DateTime.now().toLocalDate), invalidRequestJson) {

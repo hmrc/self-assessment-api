@@ -28,11 +28,15 @@ class PropertiesResourceSpec extends ResourceSpec
   with MockPropertiesConnector {
 
   class Setup {
-    val resource = new PropertiesResource {
-      override val appContext = mockAppContext
-      override val authService = mockAuthorisationService
-      override val propertiesConnector = mockPropertiesConnector
-    }
+    val resource = new PropertiesResource(
+      mockAppContext,
+      mockAuthorisationService,
+      mockPropertiesConnector
+    )
+    //      override val appContext = mockAppContext
+    //      override val authService = mockAuthorisationService
+    //      override val propertiesConnector = mockPropertiesConnector
+    //    }
     mockAPIAction(SourceType.Properties)
   }
 

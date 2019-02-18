@@ -15,7 +15,7 @@
  */
 
 package uk.gov.hmrc.selfassessmentapi.resources
-import org.omg.CosNaming.NamingContextPackage.NotFound
+
 import play.api.libs.json.Json.toJson
 import play.api.test.FakeRequest
 import uk.gov.hmrc.selfassessmentapi.fixtures.selfemployment.SelfEmploymentBISSFixture
@@ -29,11 +29,15 @@ class SelfEmploymentBISSResourceSpec extends ResourceSpec
   with MockSelfEmploymentBISSService {
 
   class Setup {
-    val resource = new SelfEmploymentBISSResource {
-      override val appContext = mockAppContext
-      override val authService = mockAuthorisationService
-      override val service = mockSelfEmploymentBISSService
-    }
+    val resource = new SelfEmploymentBISSResource(
+      mockAppContext,
+      mockAuthorisationService,
+      mockSelfEmploymentBISSService
+    )
+    //      override val appContext = mockAppContext
+    //      override val authService = mockAuthorisationService
+    //      override val service = mockSelfEmploymentBISSService
+    //    }
     mockAPIAction(SourceType.SelfEmployments)
   }
 
@@ -65,7 +69,7 @@ class SelfEmploymentBISSResourceSpec extends ResourceSpec
 
       s"return a status ($responseCode)" when {
         s"a ${errorCode.code} error is returned from the connector" in new Setup {
-          MockSelfEmploymentBISSService.getSummary(nino,taxYear, selfEmploymentId)
+          MockSelfEmploymentBISSService.getSummary(nino, taxYear, selfEmploymentId)
             .returns(Future.successful(Left(ErrorWrapper(errorCode, None))))
 
           val result = resource.getSummary(nino, taxYear, selfEmploymentId)(FakeRequest())

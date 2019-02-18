@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.r2.selfassessmentapi.mocks
+package uk.gov.hmrc.selfassessmentapi.mocks.services
 
 import org.scalatest.Suite
-import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
+import uk.gov.hmrc.selfassessmentapi.mocks.Mock
+import uk.gov.hmrc.selfassessmentapi.services.AuditService
 
-trait MockHttp extends Mock { _: Suite =>
+// TODO CHECK IF THIS IS NEEDED ANY MORE
+trait MockAuditService extends Mock { _: Suite =>
 
-  val mockHttp = mock[DefaultHttpClient]
+  val mockAuditService = mock[AuditService]
 
-  object MockHttp {
-    def GET[T](url: String) = {
-      when(mockHttp.GET[T](eqTo(url))(any(), any(), any()))
-    }
+  object MockAuditService {
+//    def authCheck(nino: Nino) = {
+//      when(mockAuthorisationService.authCheck(eqTo(nino))(any(), any(), any()))
+//    }
   }
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockHttp)
+    reset(mockAuditService)
   }
 }

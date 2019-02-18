@@ -17,17 +17,23 @@
 package uk.gov.hmrc.selfassessmentapi.repositories
 
 import org.joda.time.{DateTime, DateTimeUtils, DateTimeZone}
+import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.selfassessmentapi.{MongoEmbeddedDatabase, NinoGenerator}
 import uk.gov.hmrc.selfassessmentapi.domain.Dividends
-import uk.gov.hmrc.selfassessmentapi.models
+import uk.gov.hmrc.selfassessmentapi.mocks.Mock
 import uk.gov.hmrc.selfassessmentapi.models.TaxYear
+import uk.gov.hmrc.selfassessmentapi.{MongoEmbeddedDatabase, NinoGenerator, models}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class DividendsRepositorySpec extends MongoEmbeddedDatabase {
-  private lazy val repo = new DividendsRepository()(mongo)
+class DividendsRepositorySpec extends MongoEmbeddedDatabase with Mock {
+
+
+  val mockReactiveMongoComponent = mock[ReactiveMongoComponent]
+  private lazy val repo = new DividendsRepository(mockReactiveMongoComponent)
+
+  //  private lazy val repo = new DividendsRepository()(mongo)
 
   private val nino = NinoGenerator().nextNino()
 

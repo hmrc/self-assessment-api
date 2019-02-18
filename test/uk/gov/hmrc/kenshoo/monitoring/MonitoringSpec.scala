@@ -33,7 +33,7 @@ trait MonitoringSpec extends UnitSpec {
 
     def is[T](matcher: Matcher[T]) = {
       log.debug(s"Metrics URL: ${RestAssured.baseURI}:${RestAssured.port}")
-      log.debug(RestAssured.get("/admin/metrics").then().assertThat().extract().body().asString())
+      log.debug(RestAssured.get("/admin/metrics").`then`().assertThat().extract().body().asString())
 
       try {
         metrics.body(fieldName, matcher)
@@ -108,7 +108,7 @@ trait MonitoringSpec extends UnitSpec {
   }
 
   private def metrics = {
-    RestAssured.get("/admin/metrics").then().assertThat()
+    RestAssured.get("/admin/metrics").`then`().assertThat()
   }
 
 

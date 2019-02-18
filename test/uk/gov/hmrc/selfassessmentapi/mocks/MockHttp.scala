@@ -17,11 +17,11 @@
 package uk.gov.hmrc.selfassessmentapi.mocks
 
 import org.scalatest.Suite
-import uk.gov.hmrc.selfassessmentapi.config.WSHttp
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 trait MockHttp extends Mock { _: Suite =>
 
-  val mockHttp = mock[WSHttp]
+  val mockHttp = mock[DefaultHttpClient]
 
   object MockHttp {
     def GET[T](url: String) = {

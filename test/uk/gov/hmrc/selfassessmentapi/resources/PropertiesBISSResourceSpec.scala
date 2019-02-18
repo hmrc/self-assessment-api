@@ -18,35 +18,38 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.libs.json.Json.toJson
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.fixtures.properties.PropertiesBISSFixture
 import uk.gov.hmrc.selfassessmentapi.mocks.connectors.MockPropertiesBISSConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.{ErrorWrapper, NinoInvalid, NinoNotFound, NoSubmissionDataExists, ServerError, ServiceUnavailable, TaxYearInvalid, TaxYearNotFound}
 import uk.gov.hmrc.selfassessmentapi.models.SourceType
-import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
 import scala.concurrent.Future
 
 class PropertiesBISSResourceSpec extends BaseResourceSpec
   with MockPropertiesBISSConnector {
 
-  val readJson = """{
-                    |    "totalIncome": 100.00,
-                    |    "totalExpenses": 50.00,
-                    |    "totalAdditions": 5.00,
-                    |    "totalDeductions": 60.00,
-                    |    "netProfit": 50.00,
-                    |    "netLoss": 0.00,
-                    |    "taxableProfit": 0.00,
-                    |    "taxableLoss": 5.00
-                    |}"""
+  val readJson =
+    """{
+      |    "totalIncome": 100.00,
+      |    "totalExpenses": 50.00,
+      |    "totalAdditions": 5.00,
+      |    "totalDeductions": 60.00,
+      |    "netProfit": 50.00,
+      |    "netLoss": 0.00,
+      |    "taxableProfit": 0.00,
+      |    "taxableLoss": 5.00
+      |}"""
 
   class SetUp {
-    val resource = new PropertiesBISSResource {
-      override val authService: AuthorisationService = mockAuthorisationService
-      override val propertiesBISSConnector = mockPropertiesBISSConnector
-      override val appContext: AppContext = mockAppContext
-    }
+    val resource = new PropertiesBISSResource(
+      mockAppContext,
+      mockAuthorisationService,
+      mockPropertiesBISSConnector
+    )
+    //      override val authService: AuthorisationService = mockAuthorisationService
+    //      override val propertiesBISSConnector = mockPropertiesBISSConnector
+    //      override val appContext: AppContext = mockAppContext
+    //    }
     mockAPIAction(SourceType.Properties)
   }
 
@@ -58,8 +61,9 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec
         MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Right(PropertiesBISSFixture.propertiesBISS())))
 
-        showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
-          result => status(result) shouldBe OK
+        showWithSessionAndAuth(resource.getSummary(nino, taxYear)) {
+          result =>
+            status(result) shouldBe OK
             contentAsJson(result) shouldBe toJson(PropertiesBISSFixture.propertiesBISS())
         }
       }
@@ -72,8 +76,9 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec
         MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Left(expected)))
 
-        showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
-          result => status(result) shouldBe BAD_REQUEST
+        showWithSessionAndAuth(resource.getSummary(nino, taxYear)) {
+          result =>
+            status(result) shouldBe BAD_REQUEST
             contentAsJson(result) shouldBe toJson(expected)
         }
       }
@@ -86,8 +91,9 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec
         MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Left(expected)))
 
-        showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
-          result => status(result) shouldBe BAD_REQUEST
+        showWithSessionAndAuth(resource.getSummary(nino, taxYear)) {
+          result =>
+            status(result) shouldBe BAD_REQUEST
             contentAsJson(result) shouldBe toJson(expected)
         }
       }
@@ -101,8 +107,9 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec
         MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Left(expected)))
 
-        showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
-          result => status(result) shouldBe NOT_FOUND
+        showWithSessionAndAuth(resource.getSummary(nino, taxYear)) {
+          result =>
+            status(result) shouldBe NOT_FOUND
             contentAsJson(result) shouldBe toJson(expected)
         }
       }
@@ -115,8 +122,9 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec
         MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Left(expected)))
 
-        showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
-          result => status(result) shouldBe NOT_FOUND
+        showWithSessionAndAuth(resource.getSummary(nino, taxYear)) {
+          result =>
+            status(result) shouldBe NOT_FOUND
             contentAsJson(result) shouldBe toJson(expected)
         }
       }
@@ -129,8 +137,9 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec
         MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Left(expected)))
 
-        showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
-          result => status(result) shouldBe NOT_FOUND
+        showWithSessionAndAuth(resource.getSummary(nino, taxYear)) {
+          result =>
+            status(result) shouldBe NOT_FOUND
             contentAsJson(result) shouldBe toJson(expected)
         }
       }
@@ -143,8 +152,9 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec
         MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Left(expected)))
 
-        showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
-          result => status(result) shouldBe INTERNAL_SERVER_ERROR
+        showWithSessionAndAuth(resource.getSummary(nino, taxYear)) {
+          result =>
+            status(result) shouldBe INTERNAL_SERVER_ERROR
             contentAsJson(result) shouldBe toJson(expected)
         }
       }
@@ -157,8 +167,9 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec
         MockPropertiesBISSConnector.get(nino, taxYear).
           returns(Future.successful(Left(expected)))
 
-        showWithSessionAndAuth(resource.getSummary(nino, taxYear)){
-          result => status(result) shouldBe SERVICE_UNAVAILABLE
+        showWithSessionAndAuth(resource.getSummary(nino, taxYear)) {
+          result =>
+            status(result) shouldBe SERVICE_UNAVAILABLE
             contentAsJson(result) shouldBe toJson(expected)
         }
       }

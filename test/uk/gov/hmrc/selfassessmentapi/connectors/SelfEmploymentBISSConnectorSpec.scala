@@ -25,11 +25,14 @@ import scala.concurrent.Future
 class SelfEmploymentBISSConnectorSpec extends ConnectorSpec {
 
   class Setup {
-    val connector = new SelfEmploymentBISSConnector {
-      override val baseUrl: String = desBaseUrl
-      override val http: HttpGet = mockHttp
-      override val appContext = mockAppContext
-    }
+    val connector = new SelfEmploymentBISSConnector (
+      mockHttp,
+      mockAppContext
+    )
+//      override val baseUrl: String = desBaseUrl
+//      override val http: HttpGet = mockHttp
+//      override val appContext = mockAppContext
+//    }
     MockAppContext.desToken returns desToken
     MockAppContext.desEnv returns desEnv
   }

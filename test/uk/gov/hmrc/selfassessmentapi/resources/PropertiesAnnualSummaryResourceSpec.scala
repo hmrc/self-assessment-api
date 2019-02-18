@@ -19,6 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.JsValue
 import play.api.test.FakeRequest
 import uk.gov.hmrc.selfassessmentapi.mocks.connectors.MockPropertiesAnnualSummaryConnector
+import uk.gov.hmrc.selfassessmentapi.mocks.services.MockAuditService
 import uk.gov.hmrc.selfassessmentapi.models.SourceType
 import uk.gov.hmrc.selfassessmentapi.models.properties._
 
@@ -26,14 +27,20 @@ import scala.concurrent.Future
 
 
 class PropertiesAnnualSummaryResourceSpec extends ResourceSpec
-  with MockPropertiesAnnualSummaryConnector {
+  with MockPropertiesAnnualSummaryConnector with MockAuditService {
 
   class Setup {
-    val resource = new PropertiesAnnualSummaryResource {
-      override val appContext = mockAppContext
-      override val authService = mockAuthorisationService
-      override val connector = mockPropertiesAnnualSummaryConnector
-    }
+    val resource = new PropertiesAnnualSummaryResource(
+      mockAppContext,
+      mockAuthorisationService,
+      mockPropertiesAnnualSummaryConnector,
+      // TODO What needs to be mocked for the connector?
+      mockAuditService
+    )
+    //      override val appContext = mockAppContext
+    //      override val authService = mockAuthorisationService
+    //      override val connector = mockPropertiesAnnualSummaryConnector
+    //    }
     mockAPIAction(SourceType.Properties)
   }
 
@@ -60,7 +67,7 @@ class PropertiesAnnualSummaryResourceSpec extends ResourceSpec
         val request = FakeRequest().withBody[JsValue](otherPropertiesAnnualSummaryJson)
 
         MockPropertiesAnnualSummaryConnector.update(nino, PropertyType.OTHER, taxYear, otherPropertiesAnnualSummary)
-            .returns(Future.failed(new RuntimeException("something went wrong")))
+          .returns(Future.failed(new RuntimeException("something went wrong")))
 
         val result = resource.updateAnnualSummary(nino, PropertyType.OTHER, taxYear)(request)
         status(result) shouldBe INTERNAL_SERVER_ERROR

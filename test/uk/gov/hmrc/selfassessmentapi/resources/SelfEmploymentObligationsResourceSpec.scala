@@ -18,19 +18,27 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.test.FakeRequest
 import uk.gov.hmrc.selfassessmentapi.mocks.connectors.MockObligationsConnector
+import uk.gov.hmrc.selfassessmentapi.mocks.services.MockAuditService
 import uk.gov.hmrc.selfassessmentapi.models.SourceType
 
 import scala.concurrent.Future
 
 class SelfEmploymentObligationsResourceSpec extends ResourceSpec
-  with MockObligationsConnector {
+  with MockObligationsConnector with MockAuditService {
 
   class Setup {
-    val resource = new SelfEmploymentObligationsResource {
-      override val appContext = mockAppContext
-      override val authService = mockAuthorisationService
-      override val obligationsConnector = mockObligationsConnector
-    }
+    val resource = new SelfEmploymentObligationsResource(
+      mockAppContext,
+      mockAuthorisationService,
+      mockObligationsConnector,
+      // TODO Check if anything needs mocking
+      mockAuditService
+    )
+    //      {
+    //      override val appContext = mockAppContext
+    //      override val authService = mockAuthorisationService
+    //      override val obligationsConnector = mockObligationsConnector
+    //    }
     mockAPIAction(SourceType.SelfEmployments)
   }
 

@@ -19,6 +19,7 @@ package uk.gov.hmrc.r2.selfassessmentapi.resources
 import play.api.libs.json.JsValue
 import play.api.test.FakeRequest
 import uk.gov.hmrc.r2.selfassessmentapi.mocks.connectors.MockPropertiesAnnualSummaryConnector
+import uk.gov.hmrc.r2.selfassessmentapi.mocks.services.MockAuditService
 import uk.gov.hmrc.r2.selfassessmentapi.models.SourceType
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties._
 
@@ -26,14 +27,17 @@ import scala.concurrent.Future
 
 
 class PropertiesAnnualSummaryResourceSpec extends ResourceSpec
-  with MockPropertiesAnnualSummaryConnector {
+  with MockPropertiesAnnualSummaryConnector
+  with MockAuditService {
 
   class Setup {
-    val resource = new PropertiesAnnualSummaryResource {
-      override val appContext = mockAppContext
-      override val authService = mockAuthorisationService
-      override val connector = mockPropertiesAnnualSummaryConnector
-    }
+    val resource = new PropertiesAnnualSummaryResource(
+      mockAppContext,
+      mockAuthorisationService,
+      mockPropertiesAnnualSummaryConnector,
+      // TODO -> Set up AuditServiceMocks later
+      mockAuditService
+    )
     mockAPIAction(SourceType.Properties)
   }
 

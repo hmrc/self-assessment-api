@@ -20,6 +20,7 @@ import play.api.libs.json.JsValue
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.selfassessmentapi.mocks.connectors.MockCrystallisationConnector
+import uk.gov.hmrc.selfassessmentapi.mocks.services.MockAuditService
 import uk.gov.hmrc.selfassessmentapi.models.SourceType
 import uk.gov.hmrc.selfassessmentapi.models.crystallisation.CrystallisationRequest
 import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
@@ -28,14 +29,20 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.CrystallisationIntentRes
 import scala.concurrent.Future
 
 class CrystallisationResourceSpec extends ResourceSpec
-  with MockCrystallisationConnector {
+  with MockCrystallisationConnector with MockAuditService {
 
   class Setup {
-    val resource = new CrystallisationResource {
-      override val appContext = mockAppContext
-      override val authService = mockAuthorisationService
-      override val crystallisationConnector = mockCrystallisationConnector
-    }
+    val resource = new CrystallisationResource(
+      mockCrystallisationConnector,
+      mockAppContext,
+      mockAuthorisationService,
+      // TODO What needs mocking on this?
+      mockAuditService
+    )
+    //      override val appContext = mockAppContext
+    //      override val authService = mockAuthorisationService
+    //      override val crystallisationConnector = mockCrystallisationConnector
+    //    }
     mockAPIAction(SourceType.Crystallisation)
   }
 

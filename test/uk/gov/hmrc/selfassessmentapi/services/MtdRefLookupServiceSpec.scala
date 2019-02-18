@@ -18,84 +18,83 @@ package uk.gov.hmrc.selfassessmentapi.services
 
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
 import uk.gov.hmrc.selfassessmentapi.connectors.BusinessDetailsConnector
 import uk.gov.hmrc.selfassessmentapi.models.MtdId
 import uk.gov.hmrc.selfassessmentapi.repositories.MtdReferenceRepository
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.BusinessDetailsResponse
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import uk.gov.hmrc.http.HeaderCarrier
+import scala.concurrent.Future
 
 class MtdRefLookupServiceSpec extends UnitSpec with MockitoSugar {
+
   implicit val hc: HeaderCarrier = HeaderCarrier()
+  val businessConnector = mock[BusinessDetailsConnector]
+  val repository = mock[MtdReferenceRepository]
+
 
   "mtdReferenceFor" should {
     "skip the caching process if the NINO to MTD reference mapping exists in the cache" in {
       val nino = generateNino
-      val unitUnderTest = new TestLookupService
+      val unitUnderTest = new MtdRefLookupService(businessConnector, repository)
 
-      when(unitUnderTest.repository.retrieve(nino)).thenReturn(Future.successful(Some(MtdId("abc"))))
+      when(repository.retrieve(nino)).thenReturn(Future.successful(Some(MtdId("abc"))))
 
       await(unitUnderTest.mtdReferenceFor(nino)) shouldBe Right(MtdId("abc"))
-      verify(unitUnderTest.repository, times(1)).retrieve(nino)
-      verifyNoMoreInteractions(unitUnderTest.repository)
-      verifyZeroInteractions(unitUnderTest.businessConnector)
+      verify(repository, times(1)).retrieve(nino)
+      verifyNoMoreInteractions(repository)
+      verifyZeroInteractions(businessConnector)
     }
 
     "retrieve and cache the NINO to MTD reference mapping if it does not already exist, and the user is subscribed" in {
       val nino = generateNino
       val mtdId = MtdId("abc")
-      val unitUnderTest = new TestLookupService
+      val unitUnderTest = new MtdRefLookupService(businessConnector, repository)
       val mockResponse = mock[BusinessDetailsResponse]
 
       when(mockResponse.status).thenReturn(200)
       when(mockResponse.mtdId).thenReturn(Some(mtdId))
-      when(unitUnderTest.repository.retrieve(nino)).thenReturn(Future.successful(None))
-      when(unitUnderTest.repository.store(nino, mtdId)).thenReturn(Future.successful(true))
-      when(unitUnderTest.businessConnector.get(nino)).thenReturn(Future.successful(mockResponse))
+      when(repository.retrieve(nino)).thenReturn(Future.successful(None))
+      when(repository.store(nino, mtdId)).thenReturn(Future.successful(true))
+      when(businessConnector.get(nino)).thenReturn(Future.successful(mockResponse))
 
       await(unitUnderTest.mtdReferenceFor(nino)) shouldBe Right(mtdId)
-      verify(unitUnderTest.businessConnector, times(1)).get(nino)
-      verify(unitUnderTest.repository, times(1)).retrieve(nino)
-      verify(unitUnderTest.repository, times(1)).store(nino, mtdId)
+      verify(businessConnector, times(1)).get(nino)
+      verify(repository, times(1)).retrieve(nino)
+      verify(repository, times(1)).store(nino, mtdId)
     }
 
     "return None if the NINO to MTD reference mapping does not already exist, and the user is not subscribed" in {
       val nino = generateNino
-      val unitUnderTest = new TestLookupService
+      val unitUnderTest = new MtdRefLookupService(businessConnector, repository)
       val mockResponse = mock[BusinessDetailsResponse]
 
       when(mockResponse.status).thenReturn(404)
-      when(unitUnderTest.repository.retrieve(nino)).thenReturn(Future.successful(None))
-      when(unitUnderTest.businessConnector.get(nino)).thenReturn(Future.successful(mockResponse))
+      when(repository.retrieve(nino)).thenReturn(Future.successful(None))
+      when(businessConnector.get(nino)).thenReturn(Future.successful(mockResponse))
 
       await(unitUnderTest.mtdReferenceFor(nino)) shouldBe Left(403)
-      verify(unitUnderTest.businessConnector, times(1)).get(nino)
-      verify(unitUnderTest.repository, times(1)).retrieve(nino)
-      verifyNoMoreInteractions(unitUnderTest.repository)
+      verify(businessConnector, times(1)).get(nino)
+      verify(repository, times(1)).retrieve(nino)
+      verifyNoMoreInteractions(repository)
     }
 
     "return None if the NINO to MTD reference mapping does not already exist, and DES is experiencing issues" in {
       val nino = generateNino
-      val unitUnderTest = new TestLookupService
+      val unitUnderTest = new MtdRefLookupService(businessConnector, repository)
       val mockResponse = mock[BusinessDetailsResponse]
 
       when(mockResponse.status).thenReturn(500)
-      when(unitUnderTest.repository.retrieve(nino)).thenReturn(Future.successful(None))
-      when(unitUnderTest.businessConnector.get(nino)).thenReturn(Future.successful(mockResponse))
+      when(repository.retrieve(nino)).thenReturn(Future.successful(None))
+      when(businessConnector.get(nino)).thenReturn(Future.successful(mockResponse))
 
       await(unitUnderTest.mtdReferenceFor(nino)) shouldBe Left(500)
-      verify(unitUnderTest.businessConnector, times(1)).get(nino)
-      verify(unitUnderTest.repository, times(1)).retrieve(nino)
-      verifyNoMoreInteractions(unitUnderTest.repository)
+      verify(businessConnector, times(1)).get(nino)
+      verify(repository, times(1)).retrieve(nino)
+      verifyNoMoreInteractions(repository)
     }
-  }
-
-  class TestLookupService extends MtdRefLookupService {
-    override val businessConnector = mock[BusinessDetailsConnector]
-    override val repository = mock[MtdReferenceRepository]
   }
 
 }

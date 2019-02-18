@@ -27,11 +27,14 @@ import scala.concurrent.Future
 class PropertiesBISSConnectorSpec extends ConnectorSpec {
 
   class Setup {
-    val connector = new PropertiesBISSConnector {
-      override val baseUrl: String = desBaseUrl
-      override val http: HttpGet = mockHttp
-      override val appContext = mockAppContext
-    }
+    val connector = new PropertiesBISSConnector (
+      mockHttp,
+      mockAppContext
+    )
+//      override val baseUrl: String = desBaseUrl
+//      override val http: HttpGet = mockHttp
+//      override val appContext = mockAppContext
+//    }
     MockAppContext.desToken returns desToken
     MockAppContext.desEnv returns desEnv
   }

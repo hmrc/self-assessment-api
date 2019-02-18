@@ -27,7 +27,7 @@ import uk.gov.hmrc.selfassessmentapi.repositories.MtdReferenceRepository
 import scala.concurrent.{ExecutionContext, Future}
 
 class MtdRefLookupService @Inject()(
-                                     val businessConnector: BusinessDetailsConnector,
+                                     businessConnector: BusinessDetailsConnector,
                                      repository: MtdReferenceRepository
                                    ) {
   private val logger = Logger(this.getClass)

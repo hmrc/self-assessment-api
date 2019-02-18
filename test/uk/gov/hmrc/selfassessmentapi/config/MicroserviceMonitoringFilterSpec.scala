@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+/*
+
 package uk.gov.hmrc.selfassessmentapi.config
 
 import com.kenshoo.play.metrics.Metrics
@@ -66,3 +68,6 @@ class MicroserviceMonitoringFilterSpec extends UnitSpec with MockitoSugar{
     }
   }
 }
+ */
+
+// TODO Can this just be deleted now?

@@ -33,9 +33,7 @@ class SelfEmploymentBISSServiceSpec extends UnitSpec with MockitoSugar with Mock
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val target = new SelfEmploymentBISSService {
-    override val connector: SelfEmploymentBISSConnector = mockSelfEmploymentBISSConnector
-  }
+  val target = new SelfEmploymentBISSService (mockSelfEmploymentBISSConnector)
 
   "Calling .getSummary" when {
 
