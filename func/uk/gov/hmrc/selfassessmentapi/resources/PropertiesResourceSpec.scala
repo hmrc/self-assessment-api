@@ -31,10 +31,6 @@ class PropertiesResourceSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(201)
         .responseContainsHeader("Location", s"/self-assessment/ni/$nino/uk-properties".r)
-      //        .when()
-      //        .get("/admin/metrics")
-      //        .thenAssertThat()
-      //        .body(_ \ "timers" \ "Timer-API-Properties-POST" \ "count").is(1)
     }
 
     "return code 409 when attempting to create the same property business more than once" in {
@@ -121,10 +117,6 @@ class PropertiesResourceSpec extends BaseFunctionalSpec {
         .get(s"/ni/$nino/uk-properties")
         .thenAssertThat()
         .statusIs(200)
-      //        .when()
-      //        .get("/admin/metrics")
-      //        .thenAssertThat()
-      //        .body(_ \ "timers" \ "Timer-API-Properties-GET" \ "count").is(1)
     }
 
     "return code 404 when DES does not return property business" in {

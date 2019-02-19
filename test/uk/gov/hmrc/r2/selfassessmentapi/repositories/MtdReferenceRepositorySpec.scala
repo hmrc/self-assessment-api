@@ -28,7 +28,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class MtdReferenceRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAfterEach with Mock {
 
-  //  private lazy val repo = new MtdReferenceRepository()(mongo)
   val mockReactiveMongoComponent = mock[ReactiveMongoComponent]
   val mockMongoConnector = mock[MongoConnector]
   when(mockReactiveMongoComponent.mongoConnector).thenReturn(mockMongoConnector)

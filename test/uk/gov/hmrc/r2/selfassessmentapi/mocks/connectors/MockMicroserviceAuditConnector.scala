@@ -32,17 +32,9 @@ trait MockMicroserviceAuditConnector extends Mock {
   object MockMicroserviceAuditConnector {
 
     def sendExtendedEvent(event: ExtendedDataEvent)(implicit hc: HeaderCarrier, ec: ExecutionContext) = {
-      when(mockMicroserviceAuditConnector.sendExtendedEvent(eqTo(event))(any(),any()))
+      when(mockMicroserviceAuditConnector.sendExtendedEvent(eqTo(event))(any(), any()))
     }
 
-
-    //    def create(nino: Nino, newProperties: NewProperties) = {
-    //      when(mockPropertiesConnector.create(eqTo(nino), eqTo(newProperties))(any(), any()))
-    //    }
-    //
-    //    def retrieve(nino: Nino) = {
-    //      when(mockPropertiesConnector.retrieve(eqTo(nino))(any(), any()))
-    //    }
   }
 
   override protected def beforeEach(): Unit = {

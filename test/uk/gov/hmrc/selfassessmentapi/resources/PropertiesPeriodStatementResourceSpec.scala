@@ -90,8 +90,6 @@ class PropertiesPeriodStatementResourceSpec extends BaseResourceSpec {
         val to = DateTime.now().toLocalDate
         val period = Period(from, to)
 
-        //        when(mockResourceHelper.validatePeriodDates(eqTo(period))).thenReturn(BusinessResult.success[Period](period))
-
         when(statementConnector.create(Matchers.anyObject[Nino](), Matchers.anyObject[Period](), Matchers.anyObject[String]())
         (Matchers.any(), Matchers.any())).thenReturn(Future.successful(EmptyResponse(HttpResponse(NO_CONTENT))))
         submitWithSessionAndAuth(TestResource.finaliseEndOfPeriodStatement(validNino,

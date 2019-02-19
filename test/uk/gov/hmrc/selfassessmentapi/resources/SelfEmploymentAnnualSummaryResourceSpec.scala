@@ -34,13 +34,8 @@ class SelfEmploymentAnnualSummaryResourceSpec extends ResourceSpec
       mockAppContext,
       mockAuthorisationService,
       mockSelfEmploymentAnnualSummaryConnector,
-      // TODO Check what audit events/responses need to be mocked
       mockAuditService
     )
-    //      override val appContext = mockAppContext
-    //      override val authService = mockAuthorisationService
-    //      override val connector = mockSelfEmploymentAnnualSummaryConnector
-    //    }
     mockAPIAction(SourceType.SelfEmployments)
   }
 

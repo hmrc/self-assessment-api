@@ -38,8 +38,6 @@ class BanksRepositorySpec extends MongoEmbeddedDatabase with Mock {
 
   private lazy val repo = new BanksRepository(mockReactiveMongoComponent)
 
-  //  val mockReactiveMongoComponent = mock[ReactiveMongoComponent]
-  //  private lazy val repo = new BanksRepository()(mongo)
   private val nino = generateNino
 
   private def createBank(nino: Nino, lastModifiedDateTime: DateTime, id: BSONObjectID = BSONObjectID.generate): Bank = {

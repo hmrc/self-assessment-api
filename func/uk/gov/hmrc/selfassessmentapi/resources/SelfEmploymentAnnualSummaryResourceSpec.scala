@@ -30,10 +30,6 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         .put(Jsons.SelfEmployment.annualSummary()).at(s"/ni/$nino/self-employments/abc/$taxYear")
         .thenAssertThat()
         .statusIs(204)
-      //        .when()
-      //        .get("/admin/metrics")
-      //        .thenAssertThat()
-      //        .body(_ \ "timers" \ "Timer-API-SelfEmployments-annuals-PUT" \ "count").is(1)
     }
 
     "return code 404 when updating an annual summary for an invalid self-employment source" in {
@@ -165,10 +161,6 @@ class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
         .statusIs(200)
         .contentTypeIsJson()
         .bodyIsLike(expectedJson)
-      //        .when()
-      //        .get("/admin/metrics")
-      //        .thenAssertThat()
-      //        .body(_ \ "timers" \ "Timer-API-SelfEmployments-annuals-GET" \ "count").is(1)
     }
 
     "return code 200 containing an empty object when retrieving a non-existent annual summary" in {

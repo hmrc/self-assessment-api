@@ -60,14 +60,6 @@ class MicroserviceAuditServiceSpec extends AsyncUnitSpec with MockMicroserviceAu
     "return Success if the audit was successful" in {
       val testService = new AuditService(microserviceAuditConnector)
 
-      //      val connector = new AuditConnector {
-      //        override def auditingConfig: AuditingConfig = ???
-      //
-      //        override def sendExtendedEvent(event: ExtendedDataEvent)(implicit hc: HeaderCarrier,
-      //                                                  ec: ExecutionContext): Future[AuditResult] =
-      //          Future.successful(Success)
-      //      }
-
       MockMicroserviceAuditConnector.sendExtendedEvent(event).thenReturn(Future.successful(Success))
 
       testService.sendEvent(event, microserviceAuditConnector) map { auditResult =>
@@ -78,13 +70,6 @@ class MicroserviceAuditServiceSpec extends AsyncUnitSpec with MockMicroserviceAu
     "return Failure if an exception occurred when sending the audit event" in {
       val testService = new AuditService(microserviceAuditConnector)
       val ex = new RuntimeException("some non-fatal exception")
-      //      val connector = new AuditConnector {
-      //        override def auditingConfig: AuditingConfig = ???
-      //
-      //        override def sendExtendedEvent(event: ExtendedDataEvent)(implicit hc: HeaderCarrier,
-      //                                                  ec: ExecutionContext): Future[AuditResult] =
-      //          throw ex
-      //      }
       MockMicroserviceAuditConnector.sendExtendedEvent(event).thenThrow(ex)
 
       testService.sendEvent(event, microserviceAuditConnector) map { auditResult =>

@@ -19,7 +19,8 @@ package uk.gov.hmrc.r2.selfassessmentapi.mocks
 import org.scalatest.Suite
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
-trait MockHttp extends Mock { _: Suite =>
+trait MockHttp extends Mock {
+  _: Suite =>
 
   val mockHttp = mock[DefaultHttpClient]
 

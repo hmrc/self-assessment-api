@@ -31,14 +31,8 @@ class SelfEmploymentObligationsResourceSpec extends ResourceSpec
       mockAppContext,
       mockAuthorisationService,
       mockObligationsConnector,
-      // TODO Check if anything needs mocking
       mockAuditService
     )
-    //      {
-    //      override val appContext = mockAppContext
-    //      override val authService = mockAuthorisationService
-    //      override val obligationsConnector = mockObligationsConnector
-    //    }
     mockAPIAction(SourceType.SelfEmployments)
   }
 

@@ -62,7 +62,6 @@ class AuditServiceSpec extends AsyncUnitSpec with MockMicroserviceAuditConnector
   "sendEvent" should {
 
     "return Success if the audit was successful" in {
-      // TODO check if this can be refactored to use injected connector?
 
       MockMicroserviceAuditConnector.sendExtendedEvent(event).thenReturn(Future.successful(Success))
 
@@ -77,7 +76,6 @@ class AuditServiceSpec extends AsyncUnitSpec with MockMicroserviceAuditConnector
 
       MockMicroserviceAuditConnector.sendExtendedEvent(event).thenThrow(ex)
 
-      // TODO check if this can be refactored to use injected connector?
       testAuditService.sendEvent(event, mockMicroserviceAuditConnector) map { auditResult =>
         assert(auditResult.asInstanceOf[Failure].nested.contains(ex))
       }

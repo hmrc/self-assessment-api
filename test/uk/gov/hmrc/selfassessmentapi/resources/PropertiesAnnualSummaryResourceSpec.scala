@@ -34,13 +34,8 @@ class PropertiesAnnualSummaryResourceSpec extends ResourceSpec
       mockAppContext,
       mockAuthorisationService,
       mockPropertiesAnnualSummaryConnector,
-      // TODO What needs to be mocked for the connector?
       mockAuditService
     )
-    //      override val appContext = mockAppContext
-    //      override val authService = mockAuthorisationService
-    //      override val connector = mockPropertiesAnnualSummaryConnector
-    //    }
     mockAPIAction(SourceType.Properties)
   }
 

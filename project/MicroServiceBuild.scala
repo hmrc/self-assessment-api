@@ -28,7 +28,6 @@ private object AppDependencies {
     "uk.gov.hmrc" %% "auth-client" % "2.17.0-play-25",
     "uk.gov.hmrc" %% "domain" % "5.2.0",
     "uk.gov.hmrc" %% "play-hmrc-api" % "3.2.0",
-    "uk.gov.hmrc" %% "play-scheduling" % "5.3.0", // TODO CHECK IF WE CAN JUST DELETE THIS
     "ai.x" %% "play-json-extensions" % "0.8.0",
     "org.typelevel" %% "cats-core" % "1.0.0-RC1"
   )

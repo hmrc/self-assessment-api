@@ -34,7 +34,6 @@ class MtdReferenceRepositorySpec extends MongoEmbeddedDatabase with BeforeAndAft
   when(mockReactiveMongoComponent.mongoConnector).thenReturn(mockMongoConnector)
   when(mockMongoConnector.db).thenReturn(mongo)
 
-  //  val mockReactiveMongoComponent = mock[ReactiveMongoComponent]
   private lazy val repo = new MtdReferenceRepository(mockReactiveMongoComponent)
 
   override def beforeEach(): Unit = {

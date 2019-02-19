@@ -55,7 +55,6 @@ class AuditService @Inject()(auditConnector: MicroserviceAuditConnector) {
 
   def sendEvent(event: ExtendedDataEvent, connector: AuditConnector)(implicit ec: ExecutionContext): Future[AuditResult] =
     try {
-      // TODO Should this not be the injected auditConnector??
       connector.sendExtendedEvent(event)
     } catch {
       case NonFatal(ex) =>

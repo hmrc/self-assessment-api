@@ -33,10 +33,6 @@ class BanksResourceSpec extends ResourceSpec
       mockBanksService,
       mockAuthorisationService
     )
-    //      override val appContext = mockAppContext
-    //      override val authService = mockAuthorisationService
-    //      override val banksService = mockBanksService
-    //    }
     mockAPIAction(SourceType.Banks)
   }
 

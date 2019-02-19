@@ -20,15 +20,11 @@ import org.scalatest.Suite
 import uk.gov.hmrc.selfassessmentapi.mocks.Mock
 import uk.gov.hmrc.selfassessmentapi.services.AuditService
 
-// TODO CHECK IF THIS IS NEEDED ANY MORE
 trait MockAuditService extends Mock { _: Suite =>
 
   val mockAuditService = mock[AuditService]
 
   object MockAuditService {
-//    def authCheck(nino: Nino) = {
-//      when(mockAuthorisationService.authCheck(eqTo(nino))(any(), any(), any()))
-//    }
   }
 
   override protected def beforeEach(): Unit = {

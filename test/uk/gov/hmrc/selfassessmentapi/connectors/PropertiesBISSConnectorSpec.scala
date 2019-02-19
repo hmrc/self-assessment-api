@@ -35,10 +35,7 @@ class PropertiesBISSConnectorSpec extends ConnectorSpec {
       mockHttp,
       mockAppContext
     )
-    //      override val baseUrl: String = desBaseUrl
-    //      override val http: HttpGet = mockHttp
-    //      override val appContext = mockAppContext
-    //    }
+
   }
 
   lazy val desBaseUrl = "test-des-url"

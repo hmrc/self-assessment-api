@@ -35,10 +35,6 @@ class CharitableGivingsResourceSpec extends BaseResourceSpec
       mockAppContext,
       mockAuthorisationService
     )
-    //      override val charitableGivingsConnector = mockCharitableGivingsConnector
-    //      override val appContext = mockAppContext
-    //      override val authService = mockAuthorisationService
-    //    }
     mockAPIAction(SourceType.CharitableGivings)
   }
 

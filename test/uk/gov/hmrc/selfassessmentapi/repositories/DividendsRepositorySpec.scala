@@ -37,8 +37,6 @@ class DividendsRepositorySpec extends MongoEmbeddedDatabase with Mock {
 
   private lazy val repo = new DividendsRepository(mockReactiveMongoComponent)
 
-  //  private lazy val repo = new DividendsRepository()(mongo)
-
   private val nino = NinoGenerator().nextNino()
 
   def createDividend(nino: Nino, id: BSONObjectID = BSONObjectID.generate): Dividends = {

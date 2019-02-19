@@ -36,13 +36,8 @@ class CrystallisationResourceSpec extends ResourceSpec
       mockCrystallisationConnector,
       mockAppContext,
       mockAuthorisationService,
-      // TODO What needs mocking on this?
       mockAuditService
     )
-    //      override val appContext = mockAppContext
-    //      override val authService = mockAuthorisationService
-    //      override val crystallisationConnector = mockCrystallisationConnector
-    //    }
     mockAPIAction(SourceType.Crystallisation)
   }
 

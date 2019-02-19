@@ -20,7 +20,6 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.UnitSpec
-import uk.gov.hmrc.selfassessmentapi.connectors.SelfEmploymentBISSConnector
 import uk.gov.hmrc.selfassessmentapi.fixtures.selfemployment.SelfEmploymentBISSFixture
 import uk.gov.hmrc.selfassessmentapi.mocks.connectors.MockSelfEmploymentBISSConnector
 import uk.gov.hmrc.selfassessmentapi.models.Errors.ErrorWrapper

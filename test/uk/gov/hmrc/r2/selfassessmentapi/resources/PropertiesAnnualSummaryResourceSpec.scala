@@ -35,7 +35,6 @@ class PropertiesAnnualSummaryResourceSpec extends ResourceSpec
       mockAppContext,
       mockAuthorisationService,
       mockPropertiesAnnualSummaryConnector,
-      // TODO -> Set up AuditServiceMocks later
       mockAuditService
     )
     mockAPIAction(SourceType.Properties)
@@ -73,7 +72,7 @@ class PropertiesAnnualSummaryResourceSpec extends ResourceSpec
         val request = FakeRequest().withBody[JsValue](otherPropertiesAnnualSummaryJson)
 
         MockPropertiesAnnualSummaryConnector.update(nino, PropertyType.OTHER, taxYear, otherPropertiesAnnualSummary)
-            .returns(Future.failed(new RuntimeException("something went wrong")))
+          .returns(Future.failed(new RuntimeException("something went wrong")))
 
         val result = resource.updateAnnualSummary(nino, PropertyType.OTHER, taxYear)(request)
         status(result) shouldBe INTERNAL_SERVER_ERROR

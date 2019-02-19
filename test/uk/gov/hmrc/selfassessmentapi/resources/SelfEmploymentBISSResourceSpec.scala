@@ -34,10 +34,6 @@ class SelfEmploymentBISSResourceSpec extends ResourceSpec
       mockAuthorisationService,
       mockSelfEmploymentBISSService
     )
-    //      override val appContext = mockAppContext
-    //      override val authService = mockAuthorisationService
-    //      override val service = mockSelfEmploymentBISSService
-    //    }
     mockAPIAction(SourceType.SelfEmployments)
   }
 

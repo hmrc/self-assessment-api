@@ -16,9 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
-import uk.gov.hmrc.http.HttpGet
 import uk.gov.hmrc.selfassessmentapi.fixtures.selfemployment.SelfEmploymentBISSFixture
-import uk.gov.hmrc.selfassessmentapi.httpparsers.SelfEmploymentBISSHttpParser.SelfEmploymentBISSOutcome
 import uk.gov.hmrc.selfassessmentapi.models.selfemployment.SelfEmploymentBISS
 
 import scala.concurrent.Future
@@ -31,15 +29,11 @@ class SelfEmploymentBISSConnectorSpec extends ConnectorSpec {
     MockAppContext.desEnv returns desEnv
     MockAppContext.desUrl returns desBaseUrl
 
-
     val connector = new SelfEmploymentBISSConnector (
       mockHttp,
       mockAppContext
     )
-//      override val baseUrl: String = desBaseUrl
-//      override val http: HttpGet = mockHttp
-//      override val appContext = mockAppContext
-//    }
+
   }
 
   lazy val desBaseUrl = "test-des-url"

@@ -34,10 +34,6 @@ class BanksAnnualSummaryResourceSpec extends ResourceSpec
       mockAuthorisationService,
       mockBanksAnnualSummaryService
     )
-    //      val annualSummaryService = mockBanksAnnualSummaryService
-    //      val appContext = mockAppContext
-    //      val authService = mockAuthorisationService
-    //    }
     mockAPIAction(SourceType.Banks)
   }
 

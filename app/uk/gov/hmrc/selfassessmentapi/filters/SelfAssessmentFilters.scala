@@ -21,13 +21,11 @@ import play.api.http.DefaultHttpFilters
 import uk.gov.hmrc.play.bootstrap.filters._
 
 
-// TODO CHECK WHAT NEEDS TO HAPPEN WITH MONITORING FILTER
 case class SelfAssessmentFilters @Inject()(
                                     agentSimulationFilter: AgentSimulationFilter,
                                     emptyResponseFilter: EmptyResponseFilter,
                                     headerValidatorFilter: HeaderValidatorFilter,
                                     controllerLoggingFilter: ControllerLoggingFilter,
-                                    // monitoringFilter: MonitoringFilter,
                                     setContentTypeFilter: SetContentTypeFilter,
                                     setXContentTypeOptionsFilter: SetXContentTypeOptionsFilter,
                                     defaultFilters: MicroserviceFilters
@@ -38,5 +36,4 @@ case class SelfAssessmentFilters @Inject()(
     emptyResponseFilter :+
     headerValidatorFilter :+
     controllerLoggingFilter :+
-    // monitoringFilter :+
     setContentTypeFilter : _*)

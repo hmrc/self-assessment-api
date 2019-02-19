@@ -31,13 +31,8 @@ class PropertiesObligationsResourceSpec extends ResourceSpec
       mockAppContext,
       mockAuthorisationService,
       mockObligationsConnector,
-      // TODO What needs mocking for this call?
       mockAuditService
     )
-    //      override val appContext = mockAppContext
-    //      override val authService = mockAuthorisationService
-    //      override val connector = mockObligationsConnector
-    //    }
     mockAPIAction(SourceType.Properties)
   }
 

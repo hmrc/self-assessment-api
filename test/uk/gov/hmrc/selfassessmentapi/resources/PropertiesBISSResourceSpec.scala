@@ -46,10 +46,6 @@ class PropertiesBISSResourceSpec extends BaseResourceSpec
       mockAuthorisationService,
       mockPropertiesBISSConnector
     )
-    //      override val authService: AuthorisationService = mockAuthorisationService
-    //      override val propertiesBISSConnector = mockPropertiesBISSConnector
-    //      override val appContext: AppContext = mockAppContext
-    //    }
     mockAPIAction(SourceType.Properties)
   }
 

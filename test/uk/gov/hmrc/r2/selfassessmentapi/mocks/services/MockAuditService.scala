@@ -25,9 +25,6 @@ trait MockAuditService extends Mock { _: Suite =>
   val mockAuditService = mock[AuditService]
 
   object MockAuditService {
-//    def authCheck(nino: Nino) = {
-//      when(mockAuthorisationService.authCheck(eqTo(nino))(any(), any(), any()))
-//    }
   }
 
   override protected def beforeEach(): Unit = {

@@ -35,13 +35,8 @@ class SelfEmploymentPeriodResourceSpec extends ResourceSpec
       mockAppContext,
       mockAuthorisationService,
       mockSelfEmploymentPeriodConnector,
-      // TODO Check if needs mocking with values
       mockAuditService
     )
-    //      override val appContext = mockAppContext
-    //      override val authService = mockAuthorisationService
-    //      override val connector = mockSelfEmploymentPeriodConnector
-    //    }
     mockAPIAction(SourceType.SelfEmployments)
   }
 
