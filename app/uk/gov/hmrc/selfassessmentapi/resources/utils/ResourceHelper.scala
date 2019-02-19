@@ -58,8 +58,6 @@ class ResourceHelper @Inject()(
 
   def validatePeriodDates(accountingPeriod: Period) = {
 
-    println(s"AppCONTEXT: appContext.mtdDate: ${appContext.mtdDate}")
-
     val fromDateCutOff: LocalDate = LocalDate.parse(appContext.mtdDate, ISODateTimeFormat.date())
     val now = new LocalDate()
 
