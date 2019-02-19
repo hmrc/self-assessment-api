@@ -26,7 +26,7 @@ import scala.concurrent.Future
 
 class EmptyResponseFilter @Inject()(implicit val mat: Materializer) extends Filter {
 
-  val emptyHeader = "Gov-Empty-Response"
+  import EmptyResponseFilter._
 
   def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] =
     f(rh) map { res =>
@@ -38,4 +38,8 @@ class EmptyResponseFilter @Inject()(implicit val mat: Materializer) extends Filt
       } else res
     }
 
+}
+
+object EmptyResponseFilter {
+  val emptyHeader = "Gov-Empty-Response"
 }

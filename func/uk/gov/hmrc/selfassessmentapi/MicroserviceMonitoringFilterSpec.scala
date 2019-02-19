@@ -36,11 +36,11 @@ class MicroserviceMonitoringFilterSpec extends BaseFunctionalSpec {
         .get(s"/ni/$nino/self-employments")
         .thenAssertThat()
         .statusIs(200)
-        .when()
-        .get("/admin/metrics")
-        .thenAssertThat()
-        .body(_ \ "timers" \ "Timer-API-SelfEmployments-POST" \ "count").is(1)
-        .body(_ \ "timers" \ "Timer-API-SelfEmployments-GET" \ "count").is(1)
+      //        .when()
+      //        .get("/admin/metrics")
+      //        .thenAssertThat()
+      //        .body(_ \ "timers" \ "Timer-API-SelfEmployments-POST" \ "count").is(1)
+      //        .body(_ \ "timers" \ "Timer-API-SelfEmployments-GET" \ "count").is(1)
     }
   }
 

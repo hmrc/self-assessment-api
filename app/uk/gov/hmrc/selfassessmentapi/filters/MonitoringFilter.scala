@@ -61,4 +61,4 @@ import scala.concurrent.Future
 //
 //  override def kenshooRegistry = metrics.defaultRegistry
 //}
-//
+

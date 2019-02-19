@@ -19,21 +19,32 @@ package uk.gov.hmrc.selfassessmentapi.filters
 import akka.stream.Materializer
 import javax.inject.Inject
 import play.api.mvc._
-import uk.gov.hmrc.selfassessmentapi.config.simulation.ClientSubscriptionSimulation
+import uk.gov.hmrc.selfassessmentapi.config.simulation.{AgentAuthorizationSimulation, AgentSubscriptionSimulation, ClientSubscriptionSimulation}
+import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
 import uk.gov.hmrc.selfassessmentapi.resources.GovTestScenarioHeader
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AgentSimulationFilter @Inject()(implicit val mat: Materializer) extends Filter {
+class AgentSimulationFilter @Inject()(implicit val mat: Materializer, appContext: AppContext) extends Filter {
 
   def apply(f: (RequestHeader) => Future[Result])(rh: RequestHeader): Future[Result] = {
+
     val method = rh.method
 
-    rh.headers.get(GovTestScenarioHeader) match {
-      case Some("CLIENT_OR_AGENT_NOT_AUTHORISED") => ClientSubscriptionSimulation(f, rh, method)
-      case _ => f(rh)
+    val featureSwitch = FeatureSwitch(appContext.featureSwitch, appContext.env)
+
+    if (featureSwitch.isAgentSimulationFilterEnabled) {
+      rh.headers.get(GovTestScenarioHeader) match {
+        case Some("AGENT_NOT_SUBSCRIBED") => AgentSubscriptionSimulation(f, rh, method)
+        case Some("AGENT_NOT_AUTHORIZED") => AgentAuthorizationSimulation(f, rh, method)
+        case Some("CLIENT_NOT_SUBSCRIBED") => ClientSubscriptionSimulation(f, rh, method)
+        case _ => f(rh)
+      }
+    } else {
+      f(rh)
     }
+
   }
 
 }

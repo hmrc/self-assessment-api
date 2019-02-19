@@ -34,9 +34,9 @@ case class SelfAssessmentFilters @Inject()(
                                   ) extends DefaultHttpFilters(
   defaultFilters.filters :+
     agentSimulationFilter :+
+    setXContentTypeOptionsFilter :+
     emptyResponseFilter :+
     headerValidatorFilter :+
     controllerLoggingFilter :+
 //    monitoringFilter :+
-    setContentTypeFilter :+
-    setXContentTypeOptionsFilter: _*)
+    setContentTypeFilter : _*)

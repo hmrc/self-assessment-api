@@ -48,13 +48,13 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .statusIs(201)
         .responseContainsHeader("Location",
           s"/self-assessment/ni/$nino/self-employments/\\w+/periods/2017-04-06_2017-07-04".r)
-        .when()
-        .get("/admin/metrics")
-        .thenAssertThat()
-        .body(_ \ "timers" \ "Timer-API-SelfEmployments-POST" \ "count")
-        .is(1)
-        .body(_ \ "timers" \ "Timer-API-SelfEmployments-periods-POST" \ "count")
-        .is(1)
+      //        .when()
+      //        .get("/admin/metrics")
+      //        .thenAssertThat()
+      //        .body(_ \ "timers" \ "Timer-API-SelfEmployments-POST" \ "count")
+      //        .is(1)
+      //        .body(_ \ "timers" \ "Timer-API-SelfEmployments-periods-POST" \ "count")
+      //        .is(1)
     }
 
     "return code 201 containing a location header containing from date and to date when creating a period with consolidated expenses" in {
@@ -360,11 +360,11 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
 
     "return code 400 when attempting to amend a period where the payload contains both the 'expenses' and 'consolidatedExpenses'" in {
 
-      val updatePeriod = Jsons.SelfEmployment.period( turnover = 200.25,
-                                                      otherIncome = 100.25,
-                                                      costOfGoodsBought = (200.25, 50.25),
-                                                      cisPaymentsToSubcontractors = (100.25, 55.25),
-                                                      consolidatedExpenses = Some(12345))
+      val updatePeriod = Jsons.SelfEmployment.period(turnover = 200.25,
+        otherIncome = 100.25,
+        costOfGoodsBought = (200.25, 50.25),
+        cisPaymentsToSubcontractors = (100.25, 55.25),
+        consolidatedExpenses = Some(12345))
 
       val expectedBody = Jsons.Errors.invalidRequest(("BOTH_EXPENSES_SUPPLIED", ""))
 
@@ -374,11 +374,11 @@ class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
         .des()
         .selfEmployment
         .periodWillBeUpdatedFor(nino, from = "2017-04-05", to = "2018-04-04")
-//        .when()
-//        .post(Jsons.SelfEmployment())
-//        .to(s"/ni/$nino/self-employments")
-//        .thenAssertThat()
-//        .statusIs(201)
+        //        .when()
+        //        .post(Jsons.SelfEmployment())
+        //        .to(s"/ni/$nino/self-employments")
+        //        .thenAssertThat()
+        //        .statusIs(201)
         .when()
         .put(updatePeriod)
         .at(s"/ni/$nino/self-employments/abc/periods/2017-04-05_2018-04-04")
