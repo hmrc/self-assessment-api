@@ -17,7 +17,7 @@
       "type": "number",
       "minimum": 0,
       "maximum": 99999999999.99,
-      "example": "3000.55"
+      "example": "3000.6"
     }
   },
   "additionalProperties": false

@@ -1,6 +1,12 @@
-[
-  {
-    "id": "SAVKB2UVwUTBQGJ",
-    "accountName": "Main account name"
-  }
-]
+{
+  "savingsAccounts": [
+    {
+      "id": "SAVKB2UVwUTBQGJ",
+      "accountName": "Main account name"
+    },
+    {
+      "id": "SAVKB2UVwUTBQGK",
+      "accountName": "Shares savings account"
+    }
+  ]
+}

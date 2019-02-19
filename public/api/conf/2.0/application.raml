@@ -1880,10 +1880,10 @@ traits:
                     value:
                       code: RULE_DUPLICATE_ACCOUNT_NAME
       get:
-        displayName: List all savings accounts [test only]
-        description: List all savings accounts. This API is not available in production.
-        (annotations.sandboxData): !include scenarios/agent-scenarios.md
-        is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+        displayName: List all UK savings accounts [test only]
+        description: The "List all UK savings accounts" endpoint returns a list of all UK savings accounts, linked to the supplied NINO, that have been previously added. This API is not available in production.
+        (annotations.sandboxData): !include scenarios/savings-account-list-all-scenarios.md
+        is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
         (annotations.scope): "read:self-assessment"
         securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
         responses:
@@ -1897,10 +1897,19 @@ traits:
               application/json:
                 type: types.errorResponse
                 examples:
-                  invalidNino:
-                    description: Invalid NINO
+                  formatNino:
+                    description: The format of the supplied NINO is not valid.
                     value:
-                      code: NINO_INVALID
+                      code: FORMAT_NINO
+          404:
+            body:
+              application/json:
+                type: types.errorResponse
+                examples:
+                  notFound:
+                    description: The matching resource is not found.
+                    value:
+                      code: MATCHING_RESOURCE_NOT_FOUND
       /{savingsAccountId}:
         put:
           displayName: Update a savings account [test only]

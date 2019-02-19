@@ -1,9 +1,19 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Savings Accounts list",
-  "type": "array",
-  "items": {
-    "$ref": "SavingsAccount.json"
+  "title": "Array of savings accounts",
+  "type": "object",
+  "properties": {
+    "savingsAccounts": {
+      "title": "Savings Accounts",
+      "description": "Array of savings accounts. An empty array will never be returned. In the instance that no savings accounts exist for the supplied NINO, a MATCHING_RESOURCE_NOT_FOUND error will be returned.",
+      "type": "array",
+      "items": {
+        "$ref": "SavingsAccount.json"
+      }
+    }
   },
+  "required": [
+    "savingsAccounts"
+  ],
   "additionalProperties": false
 }
