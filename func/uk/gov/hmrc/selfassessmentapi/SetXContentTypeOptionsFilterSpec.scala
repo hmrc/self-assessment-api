@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi
 
-import uk.gov.hmrc.selfassessmentapi.config.SetXContentTypeOptionsFilter
+import uk.gov.hmrc.selfassessmentapi.filters.SetXContentTypeOptionsFilter
 import uk.gov.hmrc.selfassessmentapi.resources.Jsons
 import uk.gov.hmrc.support.BaseFunctionalSpec
 

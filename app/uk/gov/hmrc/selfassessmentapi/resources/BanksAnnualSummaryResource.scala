@@ -16,25 +16,23 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import javax.inject.Inject
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
 import uk.gov.hmrc.selfassessmentapi.models.banks.BankAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, BanksAnnualSummaryService}
-import play.api.libs.concurrent.Execution.Implicits._
-import uk.gov.hmrc.selfassessmentapi.config.AppContext
 
 
-object BanksAnnualSummaryResource extends BanksAnnualSummaryResource {
-  val annualSummaryService = BanksAnnualSummaryService
-  val appContext = AppContext
-  val authService = AuthorisationService
-}
-
-trait BanksAnnualSummaryResource extends BaseResource {
-  val annualSummaryService: BanksAnnualSummaryService
+class BanksAnnualSummaryResource @Inject()(
+                                            override val appContext: AppContext,
+                                            override val authService: AuthorisationService,
+                                            annualSummaryService: BanksAnnualSummaryService
+                                          ) extends BaseResource {
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.Banks, Some("annual")).async(parse.json) { implicit request =>
@@ -56,4 +54,5 @@ trait BanksAnnualSummaryResource extends BaseResource {
         case None => NotFound
       } recoverWith exceptionHandling
     }
+
 }

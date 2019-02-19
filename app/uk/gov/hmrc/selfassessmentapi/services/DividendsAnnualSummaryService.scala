@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.services
 
+import javax.inject.Inject
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.domain.Dividends
@@ -25,12 +26,10 @@ import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object DividendsAnnualSummaryService extends DividendsAnnualSummaryService {
-  override val repository: DividendsRepository = DividendsRepository()
-}
 
-trait DividendsAnnualSummaryService {
-  val repository: DividendsRepository
+class DividendsAnnualSummaryService @Inject()(
+                                               repository: DividendsRepository
+                                             ){
 
   def updateAnnualSummary(nino: Nino, taxYear: TaxYear, newDividends: models.dividends.Dividends)(implicit ec: ExecutionContext): Future[Boolean] = {
     repository.retrieve(nino).flatMap {

@@ -28,11 +28,11 @@ class BanksResourceSpec extends ResourceSpec
   with MockBanksService {
 
   class Setup {
-    val resource = new BanksResource {
-      override val appContext = mockAppContext
-      override val authService = mockAuthorisationService
-      override val banksService = mockBanksService
-    }
+    val resource = new BanksResource(
+      mockAppContext,
+      mockBanksService,
+      mockAuthorisationService
+    )
     mockAPIAction(SourceType.Banks)
   }
 
@@ -47,7 +47,7 @@ class BanksResourceSpec extends ResourceSpec
         val request = FakeRequest().withBody[JsValue](bankJson)
 
         MockBanksService.create(nino, bank)
-            .returns(Future.failed(new RuntimeException("something went wrong")))
+          .returns(Future.failed(new RuntimeException("something went wrong")))
 
         val result = resource.create(nino)(request)
         status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -62,7 +62,7 @@ class BanksResourceSpec extends ResourceSpec
         val request = FakeRequest().withBody[JsValue](bankJson)
 
         MockBanksService.update(nino, bank, sourceId)
-            .returns(Future.failed(new RuntimeException("something went wrong")))
+          .returns(Future.failed(new RuntimeException("something went wrong")))
 
         val result = resource.update(nino, sourceId)(request)
         status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -75,7 +75,7 @@ class BanksResourceSpec extends ResourceSpec
     "return a 500" when {
       "the future has failed" in new Setup {
         MockBanksService.retrieve(nino, sourceId)
-            .returns(Future.failed(new RuntimeException("something went wrong")))
+          .returns(Future.failed(new RuntimeException("something went wrong")))
 
         val result = resource.retrieve(nino, sourceId)(FakeRequest())
         status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -88,7 +88,7 @@ class BanksResourceSpec extends ResourceSpec
     "return a 500" when {
       "the future has failed" in new Setup {
         MockBanksService.retrieveAll(nino)
-            .returns(Future.failed(new RuntimeException("something went wrong")))
+          .returns(Future.failed(new RuntimeException("something went wrong")))
 
         val result = resource.retrieveAll(nino)(FakeRequest())
         status(result) shouldBe INTERNAL_SERVER_ERROR

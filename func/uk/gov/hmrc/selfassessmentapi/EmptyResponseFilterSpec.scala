@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi
 
 import uk.gov.hmrc.selfassessmentapi.resources.Jsons
 import uk.gov.hmrc.support.BaseFunctionalSpec
-import uk.gov.hmrc.selfassessmentapi.config.EmptyResponseFilter
+import uk.gov.hmrc.selfassessmentapi.filters.EmptyResponseFilter
 
 class EmptyResponseFilterSpec extends BaseFunctionalSpec {
 

@@ -17,6 +17,7 @@
 package uk.gov.hmrc.selfassessmentapi.resources
 
 import cats.implicits._
+import javax.inject.Inject
 import org.joda.time.LocalDate
 import play.api.libs.json._
 import play.api.mvc._
@@ -31,17 +32,15 @@ import uk.gov.hmrc.selfassessmentapi.services.{AuditService, AuthorisationServic
 
 import scala.concurrent.ExecutionContext.Implicits._
 
-object PropertiesPeriodStatementResource extends PropertiesPeriodStatementResource{
-  val appContext = AppContext
-  val authService = AuthorisationService
-  override lazy val statementConnector = PropertiesPeriodStatementConnector
-  override lazy val auditService = AuditService
-}
 
-trait PropertiesPeriodStatementResource extends BaseResource {
+class PropertiesPeriodStatementResource @Inject()(
+                                                   override val appContext: AppContext,
+                                                   override val authService: AuthorisationService,
+                                                   statementConnector: PropertiesPeriodStatementConnector,
+                                                   auditService: AuditService,
+                                                   resourceHelper: ResourceHelper
+                                                 ) extends BaseResource {
 
-  val statementConnector: PropertiesPeriodStatementConnector
-  val auditService: AuditService
 
   def finaliseEndOfPeriodStatement(nino: Nino, start: LocalDate, end: LocalDate): Action[JsValue] =
     APIAction(nino, SourceType.Properties).async(parse.json) { implicit request =>
@@ -50,20 +49,20 @@ trait PropertiesPeriodStatementResource extends BaseResource {
 
       {
         for {
-          _ <- ResourceHelper.validatePeriodDates(accountingPeriod)
+          _ <- resourceHelper.validatePeriodDates(accountingPeriod)
           declaration <- validateJson[Declaration](request.body)
           _ <- authorise(declaration) { case _ if (!declaration.finalised) => Errors.NotFinalisedDeclaration }
 
           desResponse <- execute[EmptyResponse] { _ => statementConnector.create(nino, accountingPeriod, getRequestDateTimestamp) }
         } yield desResponse
       } onDesSuccess { desResponse =>
-        auditService.audit(ResourceHelper.buildAuditEvent(nino, "", accountingPeriod, request.authContext, desResponse))
+        auditService.audit(resourceHelper.buildAuditEvent(nino, "", accountingPeriod, request.authContext, desResponse))
         desResponse.filter {
-          case 204                                                     => NoContent
-          case 400 if desResponse.errorCodeIs(EARLY_SUBMISSION)        => Forbidden(Errors.businessJsonError(Errors.EarlySubmission))
+          case 204 => NoContent
+          case 400 if desResponse.errorCodeIs(EARLY_SUBMISSION) => Forbidden(Errors.businessJsonError(Errors.EarlySubmission))
           case 403 if desResponse.errorCodeIs(PERIODIC_UPDATE_MISSING) => Forbidden(Errors.businessJsonError(Errors.PeriodicUpdateMissing))
-          case 403 if desResponse.errorCodeIs(NON_MATCHING_PERIOD)     => Forbidden(Errors.businessJsonError(Errors.NonMatchingPeriod))
-          case 403 if desResponse.errorCodeIs(ALREADY_SUBMITTED)       => Forbidden(Errors.businessJsonError(Errors.AlreadySubmitted))
+          case 403 if desResponse.errorCodeIs(NON_MATCHING_PERIOD) => Forbidden(Errors.businessJsonError(Errors.NonMatchingPeriod))
+          case 403 if desResponse.errorCodeIs(ALREADY_SUBMITTED) => Forbidden(Errors.businessJsonError(Errors.AlreadySubmitted))
         }
       } recoverWith exceptionHandling
     }

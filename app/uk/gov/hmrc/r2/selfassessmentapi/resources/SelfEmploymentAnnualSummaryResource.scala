@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.r2.selfassessmentapi.resources
 
+import javax.inject.Inject
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.domain.Nino
@@ -25,20 +26,19 @@ import uk.gov.hmrc.r2.selfassessmentapi.models._
 import uk.gov.hmrc.r2.selfassessmentapi.models.audit.AnnualSummaryUpdate
 import uk.gov.hmrc.r2.selfassessmentapi.models.selfemployment.SelfEmploymentAnnualSummary
 import uk.gov.hmrc.r2.selfassessmentapi.resources.wrappers.SelfEmploymentAnnualSummaryResponse
-import uk.gov.hmrc.r2.selfassessmentapi.services.{AuditData, AuthorisationService}
-import uk.gov.hmrc.r2.selfassessmentapi.services.AuditService.audit
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.r2.selfassessmentapi.services.{AuditData, AuditService, AuthorisationService}
+//import uk.gov.hmrc.r2.selfassessmentapi.services.AuditService.audit
 import play.api.libs.concurrent.Execution.Implicits._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.r2.selfassessmentapi.config.AppContext
 
-object SelfEmploymentAnnualSummaryResource extends SelfEmploymentAnnualSummaryResource {
-  override val appContext = AppContext
-  override val authService = AuthorisationService
-  override val connector = SelfEmploymentAnnualSummaryConnector
-}
 
-trait SelfEmploymentAnnualSummaryResource extends BaseResource {
-  val connector: SelfEmploymentAnnualSummaryConnector
+class SelfEmploymentAnnualSummaryResource @Inject()(
+                                                     override val appContext: AppContext,
+                                                     override val authService: AuthorisationService,
+                                                     connector: SelfEmploymentAnnualSummaryConnector,
+                                                     auditService: AuditService
+                                                   ) extends BaseResource {
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments, Some("annual")).async(parse.json) { implicit request =>
@@ -47,7 +47,7 @@ trait SelfEmploymentAnnualSummaryResource extends BaseResource {
       } map {
         case Left(errorResult) => handleErrors(errorResult)
         case Right(response) =>
-          audit(makeAnnualSummaryUpdateAudit(nino, id, taxYear, request.authContext, response))
+          auditService.audit(makeAnnualSummaryUpdateAudit(nino, id, taxYear, request.authContext, response))
           response.filter {
             case 200 =>
               NoContent
@@ -69,8 +69,8 @@ trait SelfEmploymentAnnualSummaryResource extends BaseResource {
                                            taxYear: TaxYear,
                                            authCtx: AuthContext,
                                            response: SelfEmploymentAnnualSummaryResponse)(
-      implicit hc: HeaderCarrier,
-      request: Request[JsValue]): AuditData[AnnualSummaryUpdate] =
+                                            implicit hc: HeaderCarrier,
+                                            request: Request[JsValue]): AuditData[AnnualSummaryUpdate] =
     AuditData(
       detail = AnnualSummaryUpdate(
         httpStatus = response.status,
@@ -86,7 +86,7 @@ trait SelfEmploymentAnnualSummaryResource extends BaseResource {
         requestPayload = request.body,
         responsePayload = response.status match {
           case 400 => Some(response.json)
-          case _   => None
+          case _ => None
         }
       ),
       transactionName = "self-employment-annual-summary-update"

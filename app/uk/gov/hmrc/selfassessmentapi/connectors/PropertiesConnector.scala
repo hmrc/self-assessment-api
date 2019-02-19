@@ -16,22 +16,23 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
+import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.properties.NewProperties
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
 
-import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
-object PropertiesConnector extends PropertiesConnector {
-  lazy val appContext = AppContext
-  lazy val baseUrl: String = appContext.desUrl
-}
 
-trait PropertiesConnector extends BaseConnector{
+class PropertiesConnector @Inject()(
+                                     override val http: DefaultHttpClient,
+                                     override val appContext: AppContext
+                                   ) extends BaseConnector {
 
-  val baseUrl: String
+  val baseUrl: String = appContext.desUrl
 
   def create(nino: Nino, properties: NewProperties)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesResponse] = {
     httpPost[NewProperties, PropertiesResponse](

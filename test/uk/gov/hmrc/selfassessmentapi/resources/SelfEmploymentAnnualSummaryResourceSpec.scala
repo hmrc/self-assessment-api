@@ -21,19 +21,21 @@ import play.api.libs.json.JsValue
 import play.api.test.FakeRequest
 import uk.gov.hmrc.selfassessmentapi.fixtures.selfemployment
 import uk.gov.hmrc.selfassessmentapi.mocks.connectors.MockSelfEmploymentAnnualSummaryConnector
+import uk.gov.hmrc.selfassessmentapi.mocks.services.MockAuditService
 import uk.gov.hmrc.selfassessmentapi.models.SourceType
 
 import scala.concurrent.Future
 
 class SelfEmploymentAnnualSummaryResourceSpec extends ResourceSpec
-  with MockSelfEmploymentAnnualSummaryConnector {
+  with MockSelfEmploymentAnnualSummaryConnector with MockAuditService {
 
   class Setup {
-    val resource = new SelfEmploymentAnnualSummaryResource {
-      override val appContext = mockAppContext
-      override val authService = mockAuthorisationService
-      override val connector = mockSelfEmploymentAnnualSummaryConnector
-    }
+    val resource = new SelfEmploymentAnnualSummaryResource(
+      mockAppContext,
+      mockAuthorisationService,
+      mockSelfEmploymentAnnualSummaryConnector,
+      mockAuditService
+    )
     mockAPIAction(SourceType.SelfEmployments)
   }
 

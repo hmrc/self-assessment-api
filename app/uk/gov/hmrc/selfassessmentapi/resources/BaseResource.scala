@@ -21,7 +21,7 @@ import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.{ActionBuilder, _}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.microservice.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.selfassessmentapi.config.{AppContext, FeatureSwitch}
 import uk.gov.hmrc.selfassessmentapi.contexts.{AuthContext, Individual}
 import uk.gov.hmrc.selfassessmentapi.models.SourceType.SourceType
@@ -30,15 +30,16 @@ import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 import scala.concurrent.Future
 
 trait BaseResource extends BaseController {
+
   val appContext: AppContext
   val authService: AuthorisationService
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
   private lazy val authIsEnabled = appContext.authEnabled
-  private lazy val featureSwitch = FeatureSwitch(appContext.featureSwitch)
+  private lazy val featureSwitch = FeatureSwitch(appContext.featureSwitch, appContext.env)
 
   def AuthAction(nino: Nino) = new ActionRefiner[Request, AuthRequest] {
-    override protected def refine[A](request: Request[A]): Future[Either[Result, AuthRequest[A]]] =
+    override protected def refine[A](request: Request[A]): Future[Either[Result, AuthRequest[A]]] = {
       if (authIsEnabled) {
         implicit val ev: Request[A] = request
         authService.authCheck(nino) map {
@@ -46,6 +47,7 @@ trait BaseResource extends BaseController {
           case Left(authError) => Left(authError)
         }
       } else Future.successful(Right(new AuthRequest(Individual, request)))
+    }
   }
 
   def FeatureSwitchAction(source: SourceType, summary: Option[String] = None) =

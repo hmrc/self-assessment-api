@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import javax.inject.Inject
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.{JsValue, Json}
@@ -31,27 +32,25 @@ import uk.gov.hmrc.selfassessmentapi.models.des.DesErrorCode._
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.utils.ObligationQueryParams
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CrystallisationIntentResponse, EmptyResponse}
-import uk.gov.hmrc.selfassessmentapi.services.AuditService.extendedAudit
+import uk.gov.hmrc.selfassessmentapi.services.AuditService
 import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, ExtendedAuditData}
 
-object CrystallisationResource extends CrystallisationResource {
-  override val appContext = AppContext
-  override val authService = AuthorisationService
-  override val crystallisationConnector = CrystallisationConnector
-}
 
-trait CrystallisationResource extends BaseResource {
-  val appContext: AppContext
-  val authService: AuthorisationService
-  val crystallisationConnector: CrystallisationConnector
+class CrystallisationResource @Inject()(
+                                         crystallisationConnector: CrystallisationConnector,
+                                         override val appContext: AppContext,
+                                         override val authService: AuthorisationService,
+                                         auditService: AuditService
+                                       ) extends BaseResource {
+
 
   def intentToCrystallise(nino: Nino, taxYear: TaxYear): Action[AnyContent] =
     APIAction(nino, SourceType.Crystallisation).async { implicit request =>
       crystallisationConnector.intentToCrystallise(nino, taxYear) map { response =>
         response.filter {
           case 200 =>
-            extendedAudit(makeIntentToCrystalliseAudit(nino, taxYear, request.authContext, response))
-            val contextPrefix = AppContext.selfAssessmentContextRoute
+            auditService.extendedAudit(makeIntentToCrystalliseAudit(nino, taxYear, request.authContext, response))
+            val contextPrefix = appContext.selfAssessmentContextRoute
             val url = response.calculationId.map(id => s"$contextPrefix/ni/$nino/calculations/$id").getOrElse("")
             SeeOther(url).withHeaders(LOCATION -> url)
           case 400 if response.errorCodeIs(INVALID_TAX_CRYSTALLISE) =>
@@ -70,7 +69,7 @@ trait CrystallisationResource extends BaseResource {
         case Left(error) => handleErrors(error)
         case Right(response) => response.filter {
           case 204 =>
-            extendedAudit(makeSubmitCrystallisationAudit(nino, taxYear, request.authContext, response))
+            auditService.extendedAudit(makeSubmitCrystallisationAudit(nino, taxYear, request.authContext, response))
             Created
           case 400 if response.errorCodeIsOneOf(INVALID_TAXYEAR) =>
             BadRequest(Json.toJson(Errors.TaxYearInvalid))

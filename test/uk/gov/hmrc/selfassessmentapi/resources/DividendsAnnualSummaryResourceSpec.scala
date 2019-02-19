@@ -28,11 +28,11 @@ class DividendsAnnualSummaryResourceSpec extends ResourceSpec
   with MockDividendsAnnualSummaryService {
 
   class Setup {
-    val resource = new DividendsAnnualSummaryResource {
-      override val appContext = mockAppContext
-      override val dividendsService = mockDividendsAnnualSummaryService
-      override val authService = mockAuthorisationService
-    }
+    val resource = new DividendsAnnualSummaryResource (
+      mockAppContext,
+      mockAuthorisationService,
+      mockDividendsAnnualSummaryService
+    )
     mockAPIAction(SourceType.Dividends)
   }
 

@@ -16,21 +16,22 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
+import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.BusinessDetailsResponse
-
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
+
 import scala.concurrent.{ExecutionContext, Future}
 
-trait BusinessDetailsConnector extends BaseConnector{
-  private lazy val baseUrl: String = AppContext.desUrl
+class BusinessDetailsConnector @Inject()(
+                                          override val http: DefaultHttpClient,
+                                          override val appContext: AppContext
+                                        ) extends BaseConnector{
+  private lazy val baseUrl: String = appContext.desUrl
 
   def get(nino: Nino)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[BusinessDetailsResponse] =
     httpGet[BusinessDetailsResponse](baseUrl + s"/registration/business-details/nino/$nino",
                                      BusinessDetailsResponse)
-}
-
-object BusinessDetailsConnector extends BusinessDetailsConnector {
-  override val appContext = AppContext
 }

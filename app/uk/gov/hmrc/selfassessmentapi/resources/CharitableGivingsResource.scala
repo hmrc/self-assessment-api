@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import javax.inject.Inject
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
@@ -29,15 +30,13 @@ import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
 import scala.concurrent.ExecutionContext.Implicits._
 
-object CharitableGivingsResource extends CharitableGivingsResource {
-  val charitableGivingsConnector = CharitableGivingsConnector
-  val appContext = AppContext
-  val authService = AuthorisationService
-}
 
-trait CharitableGivingsResource extends BaseResource {
+class CharitableGivingsResource @Inject()(
+                                           charitableGivingsConnector: CharitableGivingsConnector,
+                                           override val appContext: AppContext,
+                                           override val authService: AuthorisationService
+                                         ) extends BaseResource {
 
-  val charitableGivingsConnector: CharitableGivingsConnector
 
   def updatePayments(nino: Nino, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.CharitableGivings).async(parse.json) { implicit request =>

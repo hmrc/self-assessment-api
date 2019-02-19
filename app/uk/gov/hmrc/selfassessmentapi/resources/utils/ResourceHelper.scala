@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources.utils
 
+import javax.inject.Inject
 import org.joda.time.LocalDate
 import org.joda.time.format.ISODateTimeFormat
 import play.api.libs.json.JsValue
@@ -30,13 +31,15 @@ import uk.gov.hmrc.selfassessmentapi.resources.validate
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.Response
 import uk.gov.hmrc.selfassessmentapi.services.AuditData
 
-object ResourceHelper {
+class ResourceHelper @Inject()(
+                                appContext: AppContext
+                              ) {
 
   def buildAuditEvent(nino: Nino,
-                       id: SourceId,
-                       accountingPeriod: Period,
-                       authCtx: AuthContext,
-                       response: Response
+                      id: SourceId,
+                      accountingPeriod: Period,
+                      authCtx: AuthContext,
+                      response: Response
                      )(
                        implicit hc: HeaderCarrier,
                        request: Request[JsValue]
@@ -55,13 +58,13 @@ object ResourceHelper {
 
   def validatePeriodDates(accountingPeriod: Period) = {
 
-    val fromDateCutOff: LocalDate = LocalDate.parse(AppContext.mtdDate, ISODateTimeFormat.date())
+    val fromDateCutOff: LocalDate = LocalDate.parse(appContext.mtdDate, ISODateTimeFormat.date())
     val now = new LocalDate()
 
     validate(accountingPeriod) {
-      case _ if accountingPeriod.from.isBefore(fromDateCutOff)              => Errors.InvalidStartDate
-      case _ if !accountingPeriod.valid                                     => Errors.InvalidDateRange
-      case _ if !AppContext.sandboxMode & accountingPeriod.to.isAfter(now)  => Errors.EarlySubmission
+      case _ if accountingPeriod.from.isBefore(fromDateCutOff) => Errors.InvalidStartDate
+      case _ if !accountingPeriod.valid => Errors.InvalidDateRange
+      case _ if !appContext.sandboxMode & accountingPeriod.to.isAfter(now) => Errors.EarlySubmission
     }
   }
 }

@@ -16,26 +16,23 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import javax.inject.Inject
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.contexts.FilingOnlyAgent
 import uk.gov.hmrc.selfassessmentapi.models.dividends.Dividends
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceType, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, DividendsAnnualSummaryService}
-import play.api.libs.concurrent.Execution.Implicits._
-import uk.gov.hmrc.selfassessmentapi.config.AppContext
 
-object DividendsAnnualSummaryResource extends DividendsAnnualSummaryResource {
-  val appContext = AppContext
-  val authService = AuthorisationService
-  val dividendsService = DividendsAnnualSummaryService
-}
 
-trait DividendsAnnualSummaryResource extends BaseResource {
-  val appContext: AppContext
-  val authService: AuthorisationService
-  val dividendsService: DividendsAnnualSummaryService
+class DividendsAnnualSummaryResource @Inject()(
+                                                override val appContext: AppContext,
+                                                override val authService: AuthorisationService,
+                                                dividendsService: DividendsAnnualSummaryService
+                                              ) extends BaseResource {
 
   def updateAnnualSummary(nino: Nino, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.Dividends, Some("annual")).async(parse.json) { implicit request =>

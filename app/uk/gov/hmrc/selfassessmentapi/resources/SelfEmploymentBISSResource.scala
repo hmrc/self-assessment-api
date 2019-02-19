@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import javax.inject.Inject
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.domain.Nino
@@ -26,29 +27,25 @@ import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, SelfEmploym
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object SelfEmploymentBISSResource extends SelfEmploymentBISSResource {
-  override val service: SelfEmploymentBISSService = SelfEmploymentBISSService
-  override val appContext = AppContext
-  override val authService = AuthorisationService
-}
 
-trait SelfEmploymentBISSResource extends BaseResource {
-  val appContext: AppContext
-  val authService: AuthorisationService
-  val service : SelfEmploymentBISSService
+class SelfEmploymentBISSResource @Inject()(
+                                            override val appContext: AppContext,
+                                            override val authService: AuthorisationService,
+                                            service: SelfEmploymentBISSService
+                                          ) extends BaseResource {
 
   def getSummary(nino: Nino, taxYear: TaxYear, selfEmploymentId: String): Action[AnyContent] =
-  APIAction(nino, SourceType.SelfEmployments, Some("BISS")).async {
-    implicit request =>
-      logger.debug(s"[SelfEmploymentBISSResource][getSummary] Get BISS for NI number : $nino with selfEmploymentId: $selfEmploymentId")
-      service.getSummary(nino, taxYear, selfEmploymentId).map{
-        case Left(error) => error.error match {
-          case NinoInvalid | TaxYearInvalid | SelfEmploymentIDInvalid => BadRequest(toJson(error))
-          case NinoNotFound | TaxYearNotFound | NoSubmissionDataExists | SelfEmploymentIDNotFound => NotFound(toJson(error))
-          case ServerError | Errors.ServiceUnavailable => InternalServerError(toJson(error))
-          case InvalidRequest => BadRequest(toJson(error))
+    APIAction(nino, SourceType.SelfEmployments, Some("BISS")).async {
+      implicit request =>
+        logger.debug(s"[SelfEmploymentBISSResource][getSummary] Get BISS for NI number : $nino with selfEmploymentId: $selfEmploymentId")
+        service.getSummary(nino, taxYear, selfEmploymentId).map {
+          case Left(error) => error.error match {
+            case NinoInvalid | TaxYearInvalid | SelfEmploymentIDInvalid => BadRequest(toJson(error))
+            case NinoNotFound | TaxYearNotFound | NoSubmissionDataExists | SelfEmploymentIDNotFound => NotFound(toJson(error))
+            case ServerError | Errors.ServiceUnavailable => InternalServerError(toJson(error))
+            case InvalidRequest => BadRequest(toJson(error))
+          }
+          case Right(response) => Ok(toJson(response))
         }
-        case Right(response) => Ok(toJson(response))
-      }
-  }
+    }
 }

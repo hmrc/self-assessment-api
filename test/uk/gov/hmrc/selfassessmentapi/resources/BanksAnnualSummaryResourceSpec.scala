@@ -29,11 +29,11 @@ class BanksAnnualSummaryResourceSpec extends ResourceSpec
   with MockBanksAnnualSummaryService {
 
   class Setup {
-    val resource = new BanksAnnualSummaryResource {
-      val annualSummaryService = mockBanksAnnualSummaryService
-      val appContext = mockAppContext
-      val authService = mockAuthorisationService
-    }
+    val resource = new BanksAnnualSummaryResource(
+      mockAppContext,
+      mockAuthorisationService,
+      mockBanksAnnualSummaryService
+    )
     mockAPIAction(SourceType.Banks)
   }
 

@@ -18,12 +18,12 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import play.api.mvc.Request
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
 import uk.gov.hmrc.selfassessmentapi.models.SourceId
 import uk.gov.hmrc.selfassessmentapi.models.audit.RetrieveObligations
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.ObligationsResponse
 import uk.gov.hmrc.selfassessmentapi.services.AuditData
-import uk.gov.hmrc.http.HeaderCarrier
 
 sealed trait RetrieveObligationTransaction
 
@@ -41,8 +41,8 @@ object Audit {
                                     authCtx: AuthContext,
                                     response: ObligationsResponse,
                                     transaction: RetrieveObligationTransaction)(
-      implicit hc: HeaderCarrier,
-      request: Request[_]): AuditData[RetrieveObligations] =
+                                     implicit hc: HeaderCarrier,
+                                     request: Request[_]): AuditData[RetrieveObligations] =
     AuditData(
       detail = RetrieveObligations(
         httpStatus = response.status,
@@ -52,7 +52,7 @@ object Audit {
         agentCode = authCtx.agentCode,
         responsePayload = response.status match {
           case 200 | 400 => Some(response.json)
-          case _         => None
+          case _ => None
         }
       ),
       transactionName = transaction.toString

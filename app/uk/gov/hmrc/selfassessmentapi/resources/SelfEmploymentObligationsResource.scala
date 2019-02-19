@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import javax.inject.Inject
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc.Action
@@ -24,24 +25,23 @@ import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.ObligationsConnector
 import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.resources.Audit.makeObligationsRetrievalAudit
-import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
+import uk.gov.hmrc.selfassessmentapi.services.AuditService
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
-object SelfEmploymentObligationsResource extends SelfEmploymentObligationsResource {
-  override val appContext = AppContext
-  override val authService = AuthorisationService
-  override val obligationsConnector = ObligationsConnector
-}
 
-trait SelfEmploymentObligationsResource extends BaseResource {
-  val obligationsConnector: ObligationsConnector
+class SelfEmploymentObligationsResource @Inject()(
+                                                   override val appContext: AppContext,
+                                                   override val authService: AuthorisationService,
+                                                   obligationsConnector: ObligationsConnector,
+                                                   auditService: AuditService
+                                                 ) extends BaseResource {
 
   private val incomeSourceType = "ITSB"
 
   def retrieveObligations(nino: Nino, id: SourceId): Action[Unit] =
     APIAction(nino, SourceType.SelfEmployments, Some("obligations")).async(parse.empty) { implicit request =>
       obligationsConnector.get(nino, incomeSourceType).map { response =>
-        audit(
+        auditService.audit(
           makeObligationsRetrievalAudit(nino, Some(id), request.authContext, response, SelfEmploymentRetrieveObligations))
         response.filter {
           case 200 =>

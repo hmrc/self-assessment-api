@@ -16,33 +16,34 @@
 
 package uk.gov.hmrc.selfassessmentapi.connectors
 
+import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.models.des.selfemployment.SelfEmploymentAnnualSummary
 import uk.gov.hmrc.selfassessmentapi.models.{SourceId, TaxYear}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentAnnualSummaryResponse
 
-import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
-object SelfEmploymentAnnualSummaryConnector extends SelfEmploymentAnnualSummaryConnector {
-  lazy val appContext = AppContext
-  lazy val baseUrl: String = appContext.desUrl
-}
 
-trait SelfEmploymentAnnualSummaryConnector extends BaseConnector{
+class SelfEmploymentAnnualSummaryConnector @Inject()(
+                                                      override val http: DefaultHttpClient,
+                                                      override val appContext: AppContext
+                                                    ) extends BaseConnector {
 
-  val baseUrl: String
+  val baseUrl: String = appContext.desUrl
 
   def update(nino: Nino, id: SourceId, taxYear: TaxYear, update: SelfEmploymentAnnualSummary)(
-      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentAnnualSummaryResponse] =
+    implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentAnnualSummaryResponse] =
     httpPut[SelfEmploymentAnnualSummary, SelfEmploymentAnnualSummaryResponse](
       baseUrl + s"/income-store/nino/$nino/self-employments/$id/annual-summaries/${taxYear.toDesTaxYear}",
       update,
       SelfEmploymentAnnualSummaryResponse)
 
   def get(nino: Nino, id: SourceId, taxYear: TaxYear)(
-      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentAnnualSummaryResponse] =
+    implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SelfEmploymentAnnualSummaryResponse] =
     httpGet[SelfEmploymentAnnualSummaryResponse](
       baseUrl + s"/income-store/nino/$nino/self-employments/$id/annual-summaries/${taxYear.toDesTaxYear}",
       SelfEmploymentAnnualSummaryResponse)

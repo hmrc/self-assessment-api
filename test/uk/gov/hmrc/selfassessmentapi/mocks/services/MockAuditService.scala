@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.selfassessmentapi
+package uk.gov.hmrc.selfassessmentapi.mocks.services
 
-import uk.gov.hmrc.support.BaseFunctionalSpec
+import org.scalatest.Suite
+import uk.gov.hmrc.selfassessmentapi.mocks.Mock
+import uk.gov.hmrc.selfassessmentapi.services.AuditService
 
-class MetricsSpec extends BaseFunctionalSpec {
+trait MockAuditService extends Mock { _: Suite =>
 
-  "Request to /admin/metrics" should {
-    "return 200" in {
-      given()
-        .when()
-        .get("/admin/metrics").withoutAcceptHeader()
-        .thenAssertThat()
-        .statusIs(200)
-    }
+  val mockAuditService = mock[AuditService]
+
+  object MockAuditService {
   }
 
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockAuditService)
+  }
 }

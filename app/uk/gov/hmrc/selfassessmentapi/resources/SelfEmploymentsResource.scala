@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.selfassessmentapi.resources
 
+import javax.inject.Inject
 import play.api.libs.json.{JsArray, JsValue, Json, Writes}
 import play.api.mvc.{Action, Result}
 import uk.gov.hmrc.domain.Nino
@@ -30,10 +31,11 @@ import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
 import scala.concurrent.ExecutionContext.Implicits._
 
-object SelfEmploymentsResource extends BaseResource {
-  val appContext = AppContext
-  val authService = AuthorisationService
-  private val connector = SelfEmploymentConnector
+class SelfEmploymentsResource @Inject()(
+                                         override val appContext: AppContext,
+                                         override val authService: AuthorisationService,
+                                         connector: SelfEmploymentConnector
+                                       ) extends BaseResource {
 
   def create(nino: Nino): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments).async(parse.json) { implicit request =>
@@ -88,13 +90,13 @@ object SelfEmploymentsResource extends BaseResource {
   private def handleRetrieve[T](selfEmployments: Either[DesTransformError, T], resultOnEmptyData: Result)(
     implicit w: Writes[T]): Result =
     selfEmployments match {
-      case error @ Left(EmptyBusinessData(_) | EmptySelfEmployments(_)) =>
+      case error@Left(EmptyBusinessData(_) | EmptySelfEmployments(_)) =>
         logger.warn(error.left.get.msg)
         resultOnEmptyData
       case Left(UnmatchedIncomeId(msg)) =>
         logger.warn(msg)
         NotFound
-      case error @ Left(DesTransformError(msg)) =>
+      case error@Left(DesTransformError(msg)) =>
         error match {
           case Left(ParseError(_)) => logger.warn(msg)
           case _ => logger.warn(msg)

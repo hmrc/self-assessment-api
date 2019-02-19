@@ -30,11 +30,11 @@ class CharitableGivingsResourceSpec extends BaseResourceSpec
   with MockCharitableGivingsConnector {
 
   class Setup {
-    val resource = new CharitableGivingsResource {
-      override val charitableGivingsConnector = mockCharitableGivingsConnector
-      override val appContext = mockAppContext
-      override val authService = mockAuthorisationService
-    }
+    val resource = new CharitableGivingsResource(
+      mockCharitableGivingsConnector,
+      mockAppContext,
+      mockAuthorisationService
+    )
     mockAPIAction(SourceType.CharitableGivings)
   }
 
