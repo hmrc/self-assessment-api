@@ -81,8 +81,6 @@ class AuditService @Inject()(auditConnector: MicroserviceAuditConnector) {
   }
 }
 
-//object AuditService extends AuditService
-
 case class AuditData[T <: AuditDetail](detail: T, transactionName: String)
 
 case class ExtendedAuditData[T <: ExtendedAuditDetail](detail: T, transactionName: String, auditType: String)

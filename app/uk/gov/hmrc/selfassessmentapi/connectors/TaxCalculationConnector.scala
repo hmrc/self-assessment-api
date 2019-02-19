@@ -30,7 +30,6 @@ class TaxCalculationConnector @Inject()(
                                          override val http: DefaultHttpClient,
                                          override val appContext: AppContext
                                        ) extends BaseConnector {
-  //  override val appContext = AppContext
   private lazy val baseUrl: String = appContext.desUrl
 
   def requestCalculation(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[TaxCalculationResponse] =

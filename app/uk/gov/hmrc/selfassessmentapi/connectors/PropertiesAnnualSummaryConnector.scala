@@ -29,10 +29,6 @@ import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//object PropertiesAnnualSummaryConnector extends PropertiesAnnualSummaryConnector {
-//  lazy val appContext = AppContext
-//  lazy val baseUrl: String = appContext.desUrl
-//}
 
 class PropertiesAnnualSummaryConnector @Inject()(
                                                   override val http: DefaultHttpClient,

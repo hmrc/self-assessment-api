@@ -28,18 +28,11 @@ import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType, TaxYe
 import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, BanksAnnualSummaryService}
 
 
-//object BanksAnnualSummaryResource extends BanksAnnualSummaryResource {
-//  val annualSummaryService = BanksAnnualSummaryService
-//  val authService = AuthorisationService
-//}
-
 class BanksAnnualSummaryResource @Inject()(
                                             override val appContext: AppContext,
                                             override val authService: AuthorisationService,
                                             annualSummaryService: BanksAnnualSummaryService
                                           ) extends BaseResource {
-
-  //  val annualSummaryService: BanksAnnualSummaryService
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.Banks, Some("annual")).async(parse.json) { implicit request =>
@@ -61,4 +54,5 @@ class BanksAnnualSummaryResource @Inject()(
         case None => NotFound
       } recoverWith exceptionHandling
     }
+
 }

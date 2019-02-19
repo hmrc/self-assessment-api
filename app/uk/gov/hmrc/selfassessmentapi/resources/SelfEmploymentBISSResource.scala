@@ -27,20 +27,12 @@ import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, SelfEmploym
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-//object SelfEmploymentBISSResource extends SelfEmploymentBISSResource {
-//  override val service: SelfEmploymentBISSService = SelfEmploymentBISSService
-//  override val appContext = AppContext
-//  override val authService = AuthorisationService
-//}
 
 class SelfEmploymentBISSResource @Inject()(
                                             override val appContext: AppContext,
                                             override val authService: AuthorisationService,
                                             service: SelfEmploymentBISSService
                                           ) extends BaseResource {
-  //  val appContext: AppContext
-  //  val authService: AuthorisationService
-  //  val service : SelfEmploymentBISSService
 
   def getSummary(nino: Nino, taxYear: TaxYear, selfEmploymentId: String): Action[AnyContent] =
     APIAction(nino, SourceType.SelfEmployments, Some("BISS")).async {

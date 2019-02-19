@@ -27,10 +27,6 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.EmptyResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//object PropertiesPeriodStatementConnector extends PropertiesPeriodStatementConnector with ServicesConfig{
-//  val baseUrl = AppContext.desUrl
-//  override val appContext = AppContext
-//}
 
 class PropertiesPeriodStatementConnector @Inject()(
                                                     override val http: DefaultHttpClient,

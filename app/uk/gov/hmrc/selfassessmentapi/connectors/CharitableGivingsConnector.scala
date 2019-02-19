@@ -27,10 +27,6 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CharitableGivingsRespon
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//object CharitableGivingsConnector extends CharitableGivingsConnector with ServicesConfig {
-//  override val baseUrl: String = AppContext.desUrl
-//  override val appContext = AppContext
-//}
 
 class CharitableGivingsConnector @Inject()(
                                             override val http: DefaultHttpClient,

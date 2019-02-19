@@ -26,10 +26,6 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.PropertiesResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//object PropertiesConnector extends PropertiesConnector {
-//  lazy val appContext = AppContext
-//  lazy val baseUrl: String = appContext.desUrl
-//}
 
 class PropertiesConnector @Inject()(
                                      override val http: DefaultHttpClient,

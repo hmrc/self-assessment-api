@@ -31,8 +31,6 @@ class MtdRefLookupService @Inject()(
                                      repository: MtdReferenceRepository
                                    ) {
   private val logger = Logger(this.getClass)
-  //  val businessConnector: BusinessDetailsConnector
-  //  val repository: MtdReferenceRepository
 
   def mtdReferenceFor(nino: Nino)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Int, MtdId]] = {
     repository.retrieve(nino).flatMap {
@@ -73,9 +71,3 @@ class MtdRefLookupService @Inject()(
     }
   }
 }
-
-// TODO CHECK THIS IS ACTUALLY HOW WE WANT TO USE FOR THE MtdReferenceRepository()
-//object MtdRefLookupService extends MtdRefLookupService {
-//  override val businessConnector: BusinessDetailsConnector = BusinessDetailsConnector
-//  override lazy val repository: MtdReferenceRepository = MtdReferenceRepository()
-//}

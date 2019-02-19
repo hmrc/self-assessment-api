@@ -38,15 +38,13 @@ import uk.gov.hmrc.r2.selfassessmentapi.services.{AuditData, AuditService, Autho
 
 import scala.concurrent.Future
 
+
 class PropertiesPeriodResource @Inject()(
                                           override val appContext: AppContext,
                                           override val authService: AuthorisationService,
                                           connector: PropertiesPeriodConnector,
                                           auditService: AuditService
                                         ) extends BaseResource {
-  //  val appContext = AppContext
-  //  val authService = AuthorisationService
-  //  private val connector = PropertiesPeriodConnector
 
   def createPeriod(nino: Nino, id: PropertyType): Action[JsValue] =
     APIAction(nino, SourceType.Properties, Some("periods")).async(parse.json) { implicit request =>

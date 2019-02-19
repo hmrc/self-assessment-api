@@ -24,7 +24,6 @@ import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
-//import uk.gov.hmrc.r2.selfassessmentapi.connectors.PropertiesPeriodConnector
 import uk.gov.hmrc.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.selfassessmentapi.connectors.{PropertiesPeriodConnector, PropertiesPeriodConnectorT}
 import uk.gov.hmrc.selfassessmentapi.contexts.AuthContext
@@ -40,7 +39,6 @@ import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 
 import scala.concurrent.Future
 
-//object PropertiesPeriodResource extends BaseResource {
 class PropertiesPeriodResource @Inject()(
                                           override val appContext: AppContext,
                                           override val authService: AuthorisationService,

@@ -32,11 +32,12 @@ import uk.gov.hmrc.selfassessmentapi.models.SourceId
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BanksRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent)(implicit val ec: ExecutionContext) extends ReactiveRepository[Bank, BSONObjectID](
-  "banks",
-  reactiveMongoComponent.mongoConnector.db,
-  Bank.mongoFormats,
-  idFormat = ReactiveMongoFormats.objectIdFormats) {
+class BanksRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent)(implicit val ec: ExecutionContext)
+  extends ReactiveRepository[Bank, BSONObjectID](
+    "banks",
+    reactiveMongoComponent.mongoConnector.db,
+    Bank.mongoFormats,
+    idFormat = ReactiveMongoFormats.objectIdFormats) {
 
   override def indexes: Seq[Index] = Seq(
     Index(Seq(("nino", Ascending)), name = Some("ba_nino"), unique = false),
@@ -79,7 +80,3 @@ class BanksRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent)(
   }
 }
 
-//object BanksRepository extends MongoDbConnection {
-//  private lazy val repository = new BanksRepository()
-//  def apply(): BanksRepository = repository
-//}

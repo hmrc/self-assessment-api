@@ -53,7 +53,7 @@ class ErrorHandler @Inject()(
         case "ERROR_INVALID_DATE_RANGE" => BadRequest(toJson(ErrorBadRequest(INVALID_DATE_RANGE, "The date range in the query string is invalid")))
         case "ERROR_EOPS_INVALID_DATE_RANGE" => BadRequest(toJson(Errors.InvalidDateRange_2))
         case "ERROR_INVALID_PROPERTY_TYPE" => NotFound(toJson(ErrorNotFound))
-        case _ => result // TODO CHECK IF THIS BREAKS THINGS AGAIN
+        case _ => result
       }
     }
   }

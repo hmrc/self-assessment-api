@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.repositories
 import javax.inject.Inject
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json.JsObject
-import play.modules.reactivemongo.{MongoDbConnection, ReactiveMongoComponent}
+import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
@@ -31,11 +31,12 @@ import uk.gov.hmrc.selfassessmentapi.domain.Dividends
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DividendsRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent)(implicit val ec: ExecutionContext) extends ReactiveRepository[Dividends, BSONObjectID](
-  "dividends",
-  reactiveMongoComponent.mongoConnector.db,
-  Dividends.mongoFormats,
-  idFormat = ReactiveMongoFormats.objectIdFormats) {
+class DividendsRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent)(implicit val ec: ExecutionContext)
+  extends ReactiveRepository[Dividends, BSONObjectID](
+    "dividends",
+    reactiveMongoComponent.mongoConnector.db,
+    Dividends.mongoFormats,
+    idFormat = ReactiveMongoFormats.objectIdFormats) {
 
   override def indexes: Seq[Index] = Seq(
     Index(Seq(("nino", Ascending)), name = Some("dividends_nino"), unique = true),
@@ -68,8 +69,3 @@ class DividendsRepository @Inject()(reactiveMongoComponent: ReactiveMongoCompone
   }
 }
 
-//object DividendsRepository extends MongoDbConnection {
-//  private lazy val repository = new DividendsRepository
-//
-//  def apply(): DividendsRepository = repository
-//}

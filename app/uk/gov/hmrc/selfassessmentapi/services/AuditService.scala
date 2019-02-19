@@ -25,7 +25,6 @@ import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Failure
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-//import uk.gov.hmrc.selfassessmentapi.config.MicroserviceAuditConnector
 import uk.gov.hmrc.selfassessmentapi.models.audit.{AuditDetail, ExtendedAuditDetail}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -83,7 +82,6 @@ class AuditService @Inject()(auditConnector: MicroserviceAuditConnector) {
   }
 }
 
-//object AuditService extends AuditService
 
 case class AuditData[T <: AuditDetail](detail: T, transactionName: String)
 

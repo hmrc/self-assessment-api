@@ -29,10 +29,6 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CrystObligationsRespons
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-//object CrystallisationConnector extends CrystallisationConnector {
-//  lazy val appContext = AppContext
-//  val baseUrl: String = appContext.desUrl
-//}
 
 class CrystallisationConnector @Inject()(
                                           override val http: DefaultHttpClient,

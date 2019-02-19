@@ -22,6 +22,7 @@ import uk.gov.hmrc.auth.core.{AuthConnector, PlayAuthConnector}
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.config.ServicesConfig
 
+
 class MicroserviceAuthConnector @Inject()(
                                            configuration: Configuration,
                                            env: Environment,

@@ -32,5 +32,4 @@ class MicroserviceAuthConnector @Inject()(
   override val serviceUrl: String = baseUrl("auth")
   val authBaseUrl: String = baseUrl("auth")
 
-  println(s"MicroserviceAuthConnector\nenv.mode: ${env.mode}\nserviceUrl: ${serviceUrl}\nauthBaseUrl: ${authBaseUrl}")
 }

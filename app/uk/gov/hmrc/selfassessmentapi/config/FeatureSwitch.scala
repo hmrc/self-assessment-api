@@ -20,7 +20,6 @@ import play.api.Configuration
 //import uk.gov.hmrc.selfassessmentapi.config.AppContext._
 import uk.gov.hmrc.selfassessmentapi.models.SourceType.SourceType
 
-// TODO Check if we need to inject the config here or not?
 case class FeatureSwitch(value: Option[Configuration], env: String) {
   val DEFAULT_VALUE = true
 

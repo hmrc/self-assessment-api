@@ -28,11 +28,6 @@ import uk.gov.hmrc.selfassessmentapi.resources.Audit.makeObligationsRetrievalAud
 import uk.gov.hmrc.selfassessmentapi.services.AuditService
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
-//object PropertiesObligationsResource extends PropertiesObligationsResource {
-//  override val appContext = AppContext
-//  override val authService = AuthorisationService
-//  override val connector = ObligationsConnector
-//}
 
 class PropertiesObligationsResource @Inject()(
                                                override val appContext: AppContext,
@@ -40,9 +35,6 @@ class PropertiesObligationsResource @Inject()(
                                                connector: ObligationsConnector,
                                                auditService: AuditService
                                              ) extends BaseResource {
-  //  val appContext: AppContext
-  //  val authService: AuthorisationService
-  //  val connector: ObligationsConnector
 
   private val incomeSourceType = "ITSP"
 

@@ -35,17 +35,11 @@ import scala.util.control.NonFatal
 import scala.util.matching.Regex
 
 
-//object AuthorisationService extends AuthorisationService
-
 class AuthorisationService @Inject()(
                                       lookupService: MtdRefLookupService,
                                       override val authConnector: MicroserviceAuthConnector
                                     ) extends AuthorisedFunctions {
   type AuthResult = Either[Result, AuthContext]
-
-  //  private val lookupService = MtdRefLookupService
-
-  //  override def authConnector: AuthConnector = MicroserviceAuthConnector
 
   private val logger = Logger(this.getClass)
 

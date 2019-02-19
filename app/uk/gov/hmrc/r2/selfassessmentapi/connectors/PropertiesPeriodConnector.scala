@@ -29,6 +29,7 @@ import uk.gov.hmrc.r2.selfassessmentapi.resources.wrappers.PropertiesPeriodRespo
 
 import scala.concurrent.{ExecutionContext, Future}
 
+
 trait PropertiesPeriodConnectorT[P <: Period, F <: Financials] {
   def create(nino: Nino, properties: P)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesPeriodResponse]
 
@@ -40,7 +41,6 @@ class PropertiesPeriodConnector @Inject()(
                                            override val http: DefaultHttpClient,
                                            override val appContext: AppContext
                                          ) extends BaseConnector {
-  //  override val appContext = AppContext
 
   def apply[P <: Period, F <: Financials](
                                            implicit p: PropertiesPeriodConnectorT[P, F]): PropertiesPeriodConnectorT[P, F] = implicitly

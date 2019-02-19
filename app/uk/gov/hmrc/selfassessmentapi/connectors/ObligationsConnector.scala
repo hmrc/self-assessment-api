@@ -26,10 +26,6 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.ObligationsResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//object ObligationsConnector extends ObligationsConnector {
-//  lazy val appContext = AppContext
-//  lazy val baseUrl: String = appContext.desUrl
-//}
 
 class ObligationsConnector @Inject()(
                                       override val http: DefaultHttpClient,

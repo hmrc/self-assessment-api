@@ -27,10 +27,6 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentAnnualSumm
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//object SelfEmploymentAnnualSummaryConnector extends SelfEmploymentAnnualSummaryConnector {
-//  lazy val appContext = AppContext
-//  lazy val baseUrl: String = appContext.desUrl
-//}
 
 class SelfEmploymentAnnualSummaryConnector @Inject()(
                                                       override val http: DefaultHttpClient,

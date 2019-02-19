@@ -28,12 +28,6 @@ import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//object SelfEmploymentBISSConnector extends SelfEmploymentBISSConnector {
-//  lazy val appContext : AppContext
-//  lazy val baseUrl: String = appContext.desUrl
-//
-//  val http: WSHttp = WSHttp
-//}
 
 class SelfEmploymentBISSConnector @Inject()(
                                              override val http: DefaultHttpClient,

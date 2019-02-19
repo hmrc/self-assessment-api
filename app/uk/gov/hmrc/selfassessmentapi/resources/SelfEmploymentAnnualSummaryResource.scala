@@ -32,11 +32,6 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentAnnualSumm
 import uk.gov.hmrc.selfassessmentapi.services.AuditService
 import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 
-//object SelfEmploymentAnnualSummaryResource extends SelfEmploymentAnnualSummaryResource {
-//  override val appContext = AppContext
-//  override val authService = AuthorisationService
-//  override val connector = SelfEmploymentAnnualSummaryConnector
-//}
 
 class SelfEmploymentAnnualSummaryResource @Inject()(
                                                      override val appContext: AppContext,
@@ -44,7 +39,6 @@ class SelfEmploymentAnnualSummaryResource @Inject()(
                                                      connector: SelfEmploymentAnnualSummaryConnector,
                                                      auditService: AuditService
                                                    ) extends BaseResource {
-  //  val connector: SelfEmploymentAnnualSummaryConnector
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments, Some("annual")).async(parse.json) { implicit request =>

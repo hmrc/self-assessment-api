@@ -27,7 +27,7 @@ case class SelfAssessmentFilters @Inject()(
                                     emptyResponseFilter: EmptyResponseFilter,
                                     headerValidatorFilter: HeaderValidatorFilter,
                                     controllerLoggingFilter: ControllerLoggingFilter,
-//                                    monitoringFilter: MonitoringFilter,
+                                    // monitoringFilter: MonitoringFilter,
                                     setContentTypeFilter: SetContentTypeFilter,
                                     setXContentTypeOptionsFilter: SetXContentTypeOptionsFilter,
                                     defaultFilters: MicroserviceFilters
@@ -38,5 +38,5 @@ case class SelfAssessmentFilters @Inject()(
     emptyResponseFilter :+
     headerValidatorFilter :+
     controllerLoggingFilter :+
-//    monitoringFilter :+
+    // monitoringFilter :+
     setContentTypeFilter : _*)

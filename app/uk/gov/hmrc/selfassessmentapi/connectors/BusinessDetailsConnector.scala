@@ -35,7 +35,3 @@ class BusinessDetailsConnector @Inject()(
     httpGet[BusinessDetailsResponse](baseUrl + s"/registration/business-details/nino/$nino",
                                      BusinessDetailsResponse)
 }
-
-//object BusinessDetailsConnector extends BusinessDetailsConnector {
-//  override val appContext = AppContext
-//}

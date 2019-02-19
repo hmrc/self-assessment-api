@@ -30,11 +30,6 @@ import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
 import scala.concurrent.ExecutionContext.Implicits._
 
-//object CharitableGivingsResource extends CharitableGivingsResource {
-//  val charitableGivingsConnector = CharitableGivingsConnector
-//  val  = AppContext
-//  val authService = AuthorisationService
-//}
 
 class CharitableGivingsResource @Inject()(
                                            charitableGivingsConnector: CharitableGivingsConnector,
@@ -42,7 +37,6 @@ class CharitableGivingsResource @Inject()(
                                            override val authService: AuthorisationService
                                          ) extends BaseResource {
 
-//  val charitableGivingsConnector: CharitableGivingsConnector
 
   def updatePayments(nino: Nino, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.CharitableGivings).async(parse.json) { implicit request =>

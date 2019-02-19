@@ -28,20 +28,12 @@ import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-//object PropertiesBISSResource extends PropertiesBISSResource {
-//  override val appContext: AppContext = AppContext
-//  override val authService: AuthorisationService = AuthorisationService
-//  override val propertiesBISSConnector = PropertiesBISSConnector
-//}
 
 class PropertiesBISSResource @Inject()(
                                         override val appContext: AppContext,
                                         override val authService: AuthorisationService,
                                         val propertiesBISSConnector: PropertiesBISSConnector
                                       ) extends BaseResource {
-  //  val appContext: AppContext
-  //  val authService: AuthorisationService
-  //  val propertiesBISSConnector: PropertiesBISSConnector
 
   def getSummary(nino: Nino, taxYear: TaxYear): Action[AnyContent] =
     APIAction(nino, SourceType.Properties, Some("BISS")).async {

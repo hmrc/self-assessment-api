@@ -30,7 +30,6 @@ import uk.gov.hmrc.selfassessmentapi.models.audit.TaxCalculationTrigger
 import uk.gov.hmrc.selfassessmentapi.models.calculation.CalculationRequest
 import uk.gov.hmrc.selfassessmentapi.models.{Errors, SourceId, SourceType}
 import uk.gov.hmrc.selfassessmentapi.resources.wrappers.TaxCalculationResponse
-//import uk.gov.hmrc.selfassessmentapi.services.AuditService.audit
 import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 
 import scala.concurrent.Future
@@ -41,9 +40,6 @@ class TaxCalculationResource @Inject()(
                                         connector: TaxCalculationConnector,
                                         auditService: AuditService
                                       ) extends BaseResource {
-  //  val appContext = AppContext
-  //  val authService = AuthorisationService
-  //  private val connector = TaxCalculationConnector
 
   private val cannedEtaResponse =
     s"""

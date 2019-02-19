@@ -36,11 +36,6 @@ import uk.gov.hmrc.r2.selfassessmentapi.services.{AuditData, AuditService, Autho
 
 import scala.concurrent.Future
 
-//object PropertiesAnnualSummaryResource extends PropertiesAnnualSummaryResource {
-//  override val appContext = AppContext
-//  override val authService = AuthorisationService
-//  override val connector = PropertiesAnnualSummaryConnector
-//}
 
 class PropertiesAnnualSummaryResource @Inject()(
                                                  override val appContext: AppContext,
@@ -48,9 +43,6 @@ class PropertiesAnnualSummaryResource @Inject()(
                                                  connector: PropertiesAnnualSummaryConnector,
                                                  auditService: AuditService
                                                ) extends BaseResource {
-  //  val appContext: AppContext
-  //  val authService: AuthorisationService
-  //  val connector: PropertiesAnnualSummaryConnector
 
   def updateFHLAnnualSummary(nino: Nino, taxYear: TaxYear): Action[JsValue] = updateAnnualSummary(nino, PropertyType.FHL, taxYear)
 

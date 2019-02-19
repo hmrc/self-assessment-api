@@ -19,7 +19,6 @@ package uk.gov.hmrc.selfassessmentapi.config
 import javax.inject.{Inject, Singleton}
 import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
-import play.api.Play._
 import uk.gov.hmrc.play.config.ServicesConfig
 
 

@@ -28,10 +28,6 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.SelfEmploymentPeriodResp
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//object SelfEmploymentPeriodConnector extends SelfEmploymentPeriodConnector {
-//  lazy val appContext = AppContext
-//  lazy val baseUrl: String = appContext.desUrl
-//}
 
 class SelfEmploymentPeriodConnector @Inject()(
                                                override val http: DefaultHttpClient,

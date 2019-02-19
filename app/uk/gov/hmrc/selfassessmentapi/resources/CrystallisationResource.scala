@@ -35,11 +35,6 @@ import uk.gov.hmrc.selfassessmentapi.resources.wrappers.{CrystallisationIntentRe
 import uk.gov.hmrc.selfassessmentapi.services.AuditService
 import uk.gov.hmrc.selfassessmentapi.services.{AuthorisationService, ExtendedAuditData}
 
-//object CrystallisationResource extends CrystallisationResource {
-//  override val appContext = AppContext
-//  override val authService = AuthorisationService
-//  override val crystallisationConnector = CrystallisationConnector
-//}
 
 class CrystallisationResource @Inject()(
                                          crystallisationConnector: CrystallisationConnector,
@@ -47,9 +42,7 @@ class CrystallisationResource @Inject()(
                                          override val authService: AuthorisationService,
                                          auditService: AuditService
                                        ) extends BaseResource {
-//  val appContext: AppContext
-//  val authService: AuthorisationService
-//  val crystallisationConnector: CrystallisationConnector
+
 
   def intentToCrystallise(nino: Nino, taxYear: TaxYear): Action[AnyContent] =
     APIAction(nino, SourceType.Crystallisation).async { implicit request =>

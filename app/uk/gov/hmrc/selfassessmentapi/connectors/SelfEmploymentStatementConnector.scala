@@ -33,7 +33,6 @@ class SelfEmploymentStatementConnector @Inject()(
                                                   override val http: DefaultHttpClient,
                                                   override val appContext: AppContext
                                                 ) extends BaseConnector {
-  //  override val appContext = AppContext
   private lazy val baseUrl = appContext.desUrl
 
   def create(nino: Nino, id: SourceId, accountingPeriod: Period, requestTimestamp: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmptyResponse] =

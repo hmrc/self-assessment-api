@@ -35,19 +35,12 @@ import uk.gov.hmrc.selfassessmentapi.services.{AuditData, AuthorisationService}
 
 import scala.concurrent.Future
 
-//object SelfEmploymentPeriodResource extends SelfEmploymentPeriodResource {
-//  val appContext = AppContext
-//  val authService = AuthorisationService
-//  val connector = SelfEmploymentPeriodConnector
-//}
-
 class SelfEmploymentPeriodResource @Inject()(
                                               override val appContext: AppContext,
                                               override val authService: AuthorisationService,
                                               connector: SelfEmploymentPeriodConnector,
                                               auditService: AuditService
                                             ) extends BaseResource {
-  //  val connector: SelfEmploymentPeriodConnector
 
   def createPeriod(nino: Nino, sourceId: SourceId): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments, Some("periods")).async(parse.json) { implicit request =>

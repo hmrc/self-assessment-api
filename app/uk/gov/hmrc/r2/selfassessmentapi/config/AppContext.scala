@@ -21,11 +21,6 @@ import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
 
-
-//object AppContext extends AppContext {
-//  lazy val config = current.configuration
-//}
-
 class AppContext @Inject()(
                             config: Configuration,
                             environment: Environment

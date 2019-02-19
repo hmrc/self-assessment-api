@@ -40,7 +40,6 @@ trait BaseResource extends BaseController {
 
   def AuthAction(nino: Nino) = new ActionRefiner[Request, AuthRequest] {
     override protected def refine[A](request: Request[A]): Future[Either[Result, AuthRequest[A]]] = {
-      println(s"IS AUTH ENABLED: ${authIsEnabled}")
       if (authIsEnabled) {
         implicit val ev: Request[A] = request
         authService.authCheck(nino) map {

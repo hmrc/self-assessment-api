@@ -27,11 +27,3 @@ class MicroserviceAuditConnector @Inject()(configuration: Configuration, env: En
   override lazy val auditingConfig = LoadAuditingConfig(configuration, mode, s"$env.auditing")
   val mode = env.mode
 }
-
-/*
-
-//object MicroserviceAuditConnector extends AuditConnector with RunMode {
-//  override lazy val auditingConfig = LoadAuditingConfig(s"$env.auditing")
-//}
-
- */

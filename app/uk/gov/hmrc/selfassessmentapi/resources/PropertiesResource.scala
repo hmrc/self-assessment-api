@@ -28,18 +28,12 @@ import uk.gov.hmrc.selfassessmentapi.models._
 import uk.gov.hmrc.selfassessmentapi.models.properties.NewProperties
 import uk.gov.hmrc.selfassessmentapi.services.AuthorisationService
 
-//object PropertiesResource extends PropertiesResource {
-//  override val appContext = AppContext
-//  override val authService = AuthorisationService
-//  override val propertiesConnector = PropertiesConnector
-//}
 
 class PropertiesResource @Inject()(
                                     override val appContext: AppContext,
                                     override val authService: AuthorisationService,
                                     val propertiesConnector: PropertiesConnector
                                   ) extends BaseResource {
-  //  val propertiesConnector: PropertiesConnector
 
   def create(nino: Nino): Action[JsValue] =
     APIAction(nino, SourceType.Properties).async(parse.json) { implicit request => {

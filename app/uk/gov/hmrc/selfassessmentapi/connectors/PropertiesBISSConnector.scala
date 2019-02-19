@@ -27,12 +27,6 @@ import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//object PropertiesBISSConnector extends PropertiesBISSConnector {
-//  lazy val appContext = AppContext
-//  lazy val baseUrl: String = appContext.desUrl
-//
-//  val http: WSHttp = WSHttp
-//}
 
 class PropertiesBISSConnector @Inject()(
                                          override val http: DefaultHttpClient,
@@ -40,11 +34,11 @@ class PropertiesBISSConnector @Inject()(
                                        ) extends PropertiesBISSHttpParser with BaseConnector {
 
   val baseUrl: String = appContext.desUrl
-  //  val http: HttpGet
 
   def getSummary(nino: Nino, taxYear: TaxYear)(implicit hc: HeaderCarrier, ex: ExecutionContext): Future[PropertiesBISSOutcome] = {
     http.GET[PropertiesBISSOutcome](s"$baseUrl/income-tax/income-sources/nino/$nino/uk-property/${taxYear.toDesTaxYear}/biss")(
       propertiesBISSHttpParser, withDesHeaders(hc), ex
     )
   }
+
 }

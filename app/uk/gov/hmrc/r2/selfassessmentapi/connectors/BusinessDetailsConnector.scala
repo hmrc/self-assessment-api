@@ -25,6 +25,7 @@ import uk.gov.hmrc.r2.selfassessmentapi.resources.wrappers.BusinessDetailsRespon
 
 import scala.concurrent.{ExecutionContext, Future}
 
+
 class BusinessDetailsConnector @Inject()(
                                           override val appContext: AppContext,
                                           override val http: DefaultHttpClient
@@ -36,7 +37,3 @@ class BusinessDetailsConnector @Inject()(
     httpGet[BusinessDetailsResponse](baseUrl + s"/registration/business-details/nino/$nino",
       BusinessDetailsResponse)
 }
-
-//object BusinessDetailsConnector extends BusinessDetailsConnector {
-//  override val appContext = AppContext
-//}

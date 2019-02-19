@@ -42,9 +42,6 @@ class SelfEmploymentStatementResource @Inject()(
                                                  statementConnector: SelfEmploymentStatementConnector,
                                                  auditService: AuditService
                                                ) extends BaseResource {
-  //  val appContext = AppContext
-  //  val authService = AuthorisationService
-  //  private val statementConnector = SelfEmploymentStatementConnector
 
   def finaliseEndOfPeriodStatement(nino: Nino, id: SourceId, start: LocalDate, end: LocalDate): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments).async(parse.json) { implicit request =>

@@ -27,15 +27,10 @@ import uk.gov.hmrc.selfassessmentapi.models.banks.Bank
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//object BanksService extends BanksService {
-//  override val mongoRepository = BanksRepository()
-//}
 
 class BanksService @Inject()(
                               mongoRepository: BanksRepository
                             ) {
-
-//  val mongoRepository: BanksRepository
 
   def create(nino: Nino, bank: Bank)(implicit ec: ExecutionContext): Future[Option[SourceId]] = {
     val id = BSONObjectID.generate

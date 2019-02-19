@@ -32,11 +32,6 @@ import play.api.libs.concurrent.Execution.Implicits._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.r2.selfassessmentapi.config.AppContext
 
-//object SelfEmploymentAnnualSummaryResource extends SelfEmploymentAnnualSummaryResource {
-//  override val appContext = AppContext
-//  override val authService = AuthorisationService
-//  override val connector = SelfEmploymentAnnualSummaryConnector
-//}
 
 class SelfEmploymentAnnualSummaryResource @Inject()(
                                                      override val appContext: AppContext,
@@ -44,8 +39,6 @@ class SelfEmploymentAnnualSummaryResource @Inject()(
                                                      connector: SelfEmploymentAnnualSummaryConnector,
                                                      auditService: AuditService
                                                    ) extends BaseResource {
-
-  //  val connector: SelfEmploymentAnnualSummaryConnector
 
   def updateAnnualSummary(nino: Nino, id: SourceId, taxYear: TaxYear): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments, Some("annual")).async(parse.json) { implicit request =>

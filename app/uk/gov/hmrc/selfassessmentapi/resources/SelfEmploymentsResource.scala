@@ -36,9 +36,6 @@ class SelfEmploymentsResource @Inject()(
                                          override val authService: AuthorisationService,
                                          connector: SelfEmploymentConnector
                                        ) extends BaseResource {
-  //  val appContext = AppContext
-  //  val authService = AuthorisationService
-  //  private val connector = SelfEmploymentConnector
 
   def create(nino: Nino): Action[JsValue] =
     APIAction(nino, SourceType.SelfEmployments).async(parse.json) { implicit request =>

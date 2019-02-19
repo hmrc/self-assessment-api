@@ -26,15 +26,10 @@ import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 
 import scala.concurrent.{ExecutionContext, Future}
 
-//object DividendsAnnualSummaryService extends DividendsAnnualSummaryService {
-//  override val repository: DividendsRepository = DividendsRepository()
-//}
 
 class DividendsAnnualSummaryService @Inject()(
                                                repository: DividendsRepository
                                              ){
-
-//  val repository: DividendsRepository
 
   def updateAnnualSummary(nino: Nino, taxYear: TaxYear, newDividends: models.dividends.Dividends)(implicit ec: ExecutionContext): Future[Boolean] = {
     repository.retrieve(nino).flatMap {

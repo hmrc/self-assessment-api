@@ -32,12 +32,6 @@ import uk.gov.hmrc.selfassessmentapi.services.{AuditService, AuthorisationServic
 
 import scala.concurrent.ExecutionContext.Implicits._
 
-//object PropertiesPeriodStatementResource extends PropertiesPeriodStatementResource{
-//  val appContext = AppContext
-//  val authService = AuthorisationService
-//  override lazy val statementConnector = PropertiesPeriodStatementConnector
-//  override lazy val auditService = AuditService
-//}
 
 class PropertiesPeriodStatementResource @Inject()(
                                                    override val appContext: AppContext,
@@ -47,8 +41,6 @@ class PropertiesPeriodStatementResource @Inject()(
                                                    resourceHelper: ResourceHelper
                                                  ) extends BaseResource {
 
-  //  val statementConnector: PropertiesPeriodStatementConnector
-  //  val auditService: AuditService
 
   def finaliseEndOfPeriodStatement(nino: Nino, start: LocalDate, end: LocalDate): Action[JsValue] =
     APIAction(nino, SourceType.Properties).async(parse.json) { implicit request =>

@@ -21,11 +21,12 @@ import play.api.libs.json.Writes
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
-import uk.gov.hmrc.r2.selfassessmentapi.config.{AppContext}
+import uk.gov.hmrc.r2.selfassessmentapi.config.AppContext
 import uk.gov.hmrc.r2.selfassessmentapi.resources.GovTestScenarioHeader
 import uk.gov.hmrc.r2.selfassessmentapi.resources.wrappers.Response
 
 import scala.concurrent.{ExecutionContext, Future}
+
 
 trait BaseConnector {
   val http: DefaultHttpClient
@@ -52,7 +53,7 @@ trait BaseConnector {
   }
 
   private def withAdditionalHeaders[R <: Response](url: String)(f: HeaderCarrier => Future[R])(
-      implicit hc: HeaderCarrier): Future[R] = {
+    implicit hc: HeaderCarrier): Future[R] = {
     val newHc = withDesHeaders(hc)
     logger.debug(s"URL:[$url] Headers:[${newHc.headers}]")
     f(newHc)
@@ -70,7 +71,7 @@ trait BaseConnector {
     }
 
   def httpPost[T: Writes, R <: Response](url: String, elem: T, toResponse: HttpResponse => R)(
-      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[R] =
+    implicit hc: HeaderCarrier, ec: ExecutionContext): Future[R] =
     withAdditionalHeaders[R](url) { hcWithAdditionalHeaders =>
       http.POST(url, elem)(implicitly[Writes[T]], NoExceptReads, hcWithAdditionalHeaders, ec) map toResponse
     }
@@ -81,7 +82,7 @@ trait BaseConnector {
     }
 
   def httpPut[T: Writes, R <: Response](url: String, elem: T, toResponse: HttpResponse => R)(
-      implicit hc: HeaderCarrier, ec: ExecutionContext): Future[R] =
+    implicit hc: HeaderCarrier, ec: ExecutionContext): Future[R] =
     withAdditionalHeaders[R](url) { hcWithAdditionalHeaders =>
       http.PUT(url, elem)(implicitly[Writes[T]], NoExceptReads, hcWithAdditionalHeaders, ec) map toResponse
     }
