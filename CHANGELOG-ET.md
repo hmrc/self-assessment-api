@@ -1,3 +1,10 @@
+## 20-Feb-2019
+| Change    | Version  | Status                               | Endpoint                    |    Detail
+| :------:  | :------: | :-----------------------------------:| :-------------------------: | :---------
+| Addition  | v2.0     | Testable in Sandbox                  | Add a UK savings account    |  Added new version 2.0 'Add a UK savings account' with the following: <ul> <li> Updated endpoint and field descriptions </li> <li> A new response body containing the `id`</li> <li> Updated error scenarios </li> <li> Updated Gov-Test-Scenario headers</ul>
+
+**Please Note**: Other savings accounts endpoints (retrieve, list all, annual summaries) will not work in version 2.0 until they have been versioned. They are currently using version 1.0 code, but will soon be updated. Update a savings account will not be available in version 2.0.
+
 ## 11-Feb-2019
 | Change    | Version  | Status                               | Endpoint                    |    Detail
 | :------:  | :------: | :-----------------------------------:| :-------------------------: | :---------
