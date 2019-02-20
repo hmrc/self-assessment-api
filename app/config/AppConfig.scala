@@ -46,5 +46,6 @@ class AppConfig @Inject()(val environment: Environment,
   def selfEmploymentUrl: String = baseUrl("mtd-self-employment")
   def release2Enabled: Boolean = getBoolean("release-2.enabled")
   def dividendsApiUrl: String = baseUrl("mtd-dividends-income")
+  def savingsAccountApiUrl: String = baseUrl("mtd-savings-accounts")
 
 }

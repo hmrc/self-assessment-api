@@ -53,6 +53,9 @@ PUT         /ni/:nino/dividends/:taxYear        									                       
 
 GET         /ni/:nino/dividends/:taxYear        									                             router.resources.DividendsResource.get(nino, taxYear)
 
+#Savings Accounts endpoints
+POST        /ni/:nino/savings-accounts       									                                 router.resources.SavingsAccountResource.post(nino)
+
 ### Version One ####
 
 GET         /*route                                                                            router.resources.SelfAssessmentResource.get(route, p3?="")
