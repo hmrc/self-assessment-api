@@ -116,7 +116,7 @@ traits:
       nino:
         description: National Insurance number, in the format AA999999A.
         type: string
-        example: AA999999A
+        example: TC663795B
     /self-employments:
       (annotations.group):
           name: Self-employment business
@@ -1834,8 +1834,8 @@ traits:
         securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
         body:
           application/json:
-            type: !include schemas/CreateSavingsAccount_Request.json
-            example: !include examples/savings-accounts/CreateSavingsAccount_Request.json
+            type: !include schemas/savings-accounts/AddSavingsAccount_Request.json
+            example: !include examples/savings-accounts/AddSavingsAccount_Request.json
         responses:
           201:
             headers:
@@ -1844,11 +1844,11 @@ traits:
                 description: Contains the location of the newly added savings account.
             body:
              application/json:
-               type: !include schemas/Create_SavingsAccount_Response.json
+               type: !include schemas/savings-accounts/AddSavingsAccount_Response.json
                examples:
                 example-1:
                  description: >
-                 value: !include examples/savings-accounts/CreateSavingsAccount_Response.json
+                 value: !include examples/savings-accounts/AddSavingsAccount_Response.json
           400:
             body:
               application/json:
@@ -1890,8 +1890,8 @@ traits:
           200:
             body:
               application/json:
-                type: !include schemas/SavingsAccounts.json
-                example: !include examples/savings-accounts/SavingsAccounts.json
+                type: !include schemas/savings-accounts/ListSavingsAccounts.json
+                example: !include examples/savings-accounts/ListSavingsAccounts.json
           400:
             body:
               application/json:
@@ -1911,6 +1911,11 @@ traits:
                     value:
                       code: MATCHING_RESOURCE_NOT_FOUND
       /{savingsAccountId}:
+        uriParameters:
+          savingsAccountId:
+            description: "The unique identifier of the savings account. <br>Format: `^[A-Za-z0-9]{15}$`"
+            type: string
+            example: SAVKB2UVwUTBQGJ
         put:
           displayName: Update a savings account [test only]
           description: Update a savings account. This API is not available in production.
@@ -1920,8 +1925,8 @@ traits:
           securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
           body:
             application/json:
-              type: !include schemas/CreateSavingsAccount_Request.json
-              example: !include examples/savings-accounts/CreateSavingsAccount_Request.json
+              type: !include schemas/savings-accounts/AddSavingsAccount_Request.json
+              example: !include examples/savings-accounts/AddSavingsAccount_Request.json
           responses:
             204:
             400:
@@ -1943,29 +1948,48 @@ traits:
                         code: INVALID_VALUE
             404:
         get:
-          displayName: Get a savings account [test only]
-          description: Get a savings account. This API is not available in production.
-          (annotations.sandboxData): !include scenarios/agent-scenarios.md
-          is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+          displayName: Retrieve a UK savings account [test only]
+          description: The "Retrieve a UK savings account" endpoint returns account details for a given savings account ID. This API is not available in production.
+          (annotations.sandboxData): !include scenarios/savings-account-retrieve-scenarios.md
+          is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
           securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
           responses:
             200:
               body:
                 application/json:
-                  type: !include schemas/CreateSavingsAccount_Request.json
-                  example: !include examples/savings-accounts/CreateSavingsAccount_Request.json
+                  type: !include schemas/savings-accounts/RetrieveSavingsAccount.json
+                  example: !include examples/savings-accounts/RetrieveSavingsAccount.json
             400:
               body:
                 application/json:
                   type: types.errorResponse
                   examples:
-                    invalidNino:
-                      description: Invalid NINO
+                    formatNino:
+                      description: The format of the supplied NINO field is not valid.
                       value:
-                        code: NINO_INVALID
+                        code: FORMAT_NINO
+                    formatId:
+                      description: The format of the supplied savings account ID is not valid.
+                      value:
+                        code: FORMAT_SAVINGS_ACCOUNT_ID
             404:
+              body:
+                application/json:
+                  type: types.errorResponse
+                  examples:
+                    notFound:
+                      description: The matching resource is not found.
+                      value:
+                        code: MATCHING_RESOURCE_NOT_FOUND
         /{taxYear}:
+          uriParameters:
+            taxYear:
+              description: "The tax year the data applies to, for example, 2018-19.<br><br>
+                            The start year and end year must not span two tax years. No gaps are allowed, for example, 2017-19 is not valid.<br><br>
+                            The minimum tax year is 2017-18."
+              type: string
+              example: 2018-19
           put:
             displayName: Update a savings account annual summary [test only]
             description: Update a savings account annual summary for a given tax year. This API is not available in production.
@@ -1975,8 +1999,8 @@ traits:
             securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
             body:
               application/json:
-                type: !include schemas/SavingsAccount_AnnualSummary.json
-                example: !include examples/savings-accounts/AnnualSummary.json
+                type: !include schemas/savings-accounts/SavingsAccountAnnualSummary.json
+                example: !include examples/savings-accounts/SavingsAccountAnnualSummary.json
             responses:
               204:
               400:
@@ -2008,8 +2032,8 @@ traits:
               200:
                 body:
                   application/json:
-                    type: !include schemas/SavingsAccount_AnnualSummary.json
-                    example: !include examples/savings-accounts/AnnualSummary.json
+                    type: !include schemas/savings-accounts/SavingsAccountAnnualSummary.json
+                    example: !include examples/savings-accounts/SavingsAccountAnnualSummary.json
               400:
                 body:
                   application/json:
