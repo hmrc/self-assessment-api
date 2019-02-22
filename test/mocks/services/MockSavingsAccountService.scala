@@ -34,6 +34,10 @@ trait MockSavingsAccountService extends Mock { _: Suite =>
     def post(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
       when(mockSavingsAccountService.post(eqTo(body))(any(), any()))
     }
+
+    def get(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockSavingsAccountService.get()(any(), any()))
+    }
   }
 
   override protected def beforeEach(): Unit = {

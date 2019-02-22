@@ -111,5 +111,29 @@ class CharitableGivingResourceSpec extends ResourceSpec
         contentAsJson(result) shouldBe body
       }
     }
+
+    "return a 406 with a json response body representing the error" when {
+      "the service returns an IncorrectAPIVersion response" in new Setup {
+        MockCharitableGivingService.get()
+          .returns(Future.successful(Left(IncorrectAPIVersion)))
+
+        val result: Future[Result] = resource.get("")(FakeRequest())
+        status(result) shouldBe NOT_ACCEPTABLE
+        contentType(result) shouldBe Some(JSON)
+        contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
+      }
+    }
+
+    "return a 404 with a json response body representing the error" when {
+      "the service returns an UnsupportedAPIVersion response" in new Setup {
+        MockCharitableGivingService.get()
+          .returns(Future.successful(Left(UnsupportedAPIVersion)))
+
+        val result: Future[Result] = resource.get("")(FakeRequest())
+        status(result) shouldBe NOT_FOUND
+        contentType(result) shouldBe Some(JSON)
+        contentAsJson(result) shouldBe ErrorCode.notFound.asJson
+      }
+    }
   }
 }

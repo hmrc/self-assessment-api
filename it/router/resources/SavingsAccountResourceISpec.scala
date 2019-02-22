@@ -1,6 +1,6 @@
 package router.resources
 
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import support.IntegrationSpec
 
 class SavingsAccountResourceISpec extends IntegrationSpec{
@@ -9,6 +9,21 @@ class SavingsAccountResourceISpec extends IntegrationSpec{
   val jsonResponse: JsObject = Json.obj("id" -> "SAVKB2UVwUTBQGJ")
 
   val correlationId = "X-123"
+
+  val body: JsValue = Json.parse(
+    s"""{
+       |    "savingsAccounts": [
+       |        {
+       |            "id": "SAVKB2UVwUTBQGJ",
+       |            "accountName": "Main account name"
+       |        },
+       |        {
+       |            "id": "SAVKB2UVwUTBQGK",
+       |            "accountName": "Shares savings account"
+       |        }
+       |    ]
+       |}""".stripMargin
+  )
 
   "create savings account with Version 2 enabled" should {
 
@@ -63,6 +78,33 @@ class SavingsAccountResourceISpec extends IntegrationSpec{
           .containsHeaders(("X-CorrelationId", correlationId))
           .verify(mockFor(outgoingUrl)
             .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+      }
+    }
+  }
+
+  "retrieveAll" should {
+    "return response with status 200 and body contains savings accounts" when {
+      "version 2.0 header is provided in the request" in {
+        val incomingUrl = "/ni/AA111111A/savings-accounts"
+        val outgoingUrl = "/2.0/ni/AA111111A/savings-accounts"
+
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .get(outgoingUrl)
+          .returns(aResponse.withBody(body))
+          .When()
+          .get(incomingUrl)
+          .withHeaders(
+            ACCEPT -> "application/vnd.hmrc.2.0+json",
+            CONTENT_TYPE -> JSON
+          )
+          .Then()
+          .statusIs(OK)
+          .bodyIs(body)
+          .verify(mockFor(outgoingUrl)
+            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+
       }
     }
   }

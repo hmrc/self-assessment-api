@@ -181,7 +181,7 @@ class CharitableGivingServiceSpec extends UnitSpec
 
       "the request contains a version 2.0 header and charitable giving version 2 config is disabled" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(204)
+        val response = HttpResponse(200)
         val charitableGivingVersionTwoConfig = Configuration("charitable-giving-version-2.enabled" -> false)
         MockAppConfig.featureSwitch returns Some(charitableGivingVersionTwoConfig)
 
