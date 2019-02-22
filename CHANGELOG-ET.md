@@ -1,3 +1,9 @@
+## 22-Feb-2019
+| Change    | Version  | Status                               | Endpoint                            |    Detail
+| :------:  | :------: | :-----------------------------------:| :---------------------------------: | :---------
+| Addition  | v2.0     | Testable in Sandbox                  | List all UK savings accounts        |  Added new version 2.0 'List all UK savings accounts' with the following: <ul> <li> Updated endpoint and field descriptions </li> <li> A new response body containing the savings accounts</li> <li> Updated error scenarios </li> <li> Updated Gov-Test-Scenario headers</ul>
+
+
 ## 20-Feb-2019
 | Change    | Version  | Status                               | Endpoint                    |    Detail
 | :------:  | :------: | :-----------------------------------:| :-------------------------: | :---------
