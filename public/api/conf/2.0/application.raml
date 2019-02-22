@@ -1916,37 +1916,6 @@ traits:
             description: "The unique identifier of the savings account. <br>Format: `^[A-Za-z0-9]{15}$`"
             type: string
             example: SAVKB2UVwUTBQGJ
-        put:
-          displayName: Update a savings account [test only]
-          description: Update a savings account. This API is not available in production.
-          (annotations.sandboxData): !include scenarios/agent-scenarios.md
-          is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
-          (annotations.scope): "write:self-assessment"
-          securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
-          body:
-            application/json:
-              type: !include schemas/savings-accounts/AddSavingsAccount_Request.json
-              example: !include examples/savings-accounts/AddSavingsAccount_Request.json
-          responses:
-            204:
-            400:
-              body:
-                application/json:
-                  type: types.errorResponse
-                  examples:
-                    invalidNino:
-                      description: Invalid NINO
-                      value:
-                        code: NINO_INVALID
-                    invalidLength:
-                      description: accountName length is invalid
-                      value:
-                        code: INVALID_FIELD_LENGTH
-                    invalidValue:
-                      description: accountName is not alphanumeric
-                      value:
-                        code: INVALID_VALUE
-            404:
         get:
           displayName: Retrieve a UK savings account [test only]
           description: The "Retrieve a UK savings account" endpoint returns account details for a given savings account ID. This API is not available in production.
