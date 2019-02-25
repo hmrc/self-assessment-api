@@ -1,7 +1,5 @@
-## 25-Feb-2019
-| Change    | Version  | Status                               | Endpoint                            |    Detail
-| :------:  | :------: | :-----------------------------------:| :---------------------------------: | :---------
-| Addition  | v2.0     | Testable in Sandbox                  | Retrieve a UK savings account       |  Added new version 2.0 'Retrieve a UK savings account' with the following: <ul> <li> Updated endpoint and field descriptions </li> <li> Updated error scenarios </li> <li> Updated Gov-Test-Scenario headers</ul>
+## Newer Changes
+All changes after 22<sup>nd</sup> Feb can be found within the Wiki page located [here](https://github.com/hmrc/self-assessment-api-router/wiki/Change-Log).
 
 ## 22-Feb-2019
 | Change    | Version  | Status                               | Endpoint                            |    Detail
