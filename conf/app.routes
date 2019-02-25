@@ -16,8 +16,8 @@ POST        /ni/*nino/uk-properties/end-of-period-statements/from/*from/to/*to  
 POST        /ni/*nino/self-employments/*seId/end-of-period-statements/from/*from/to/*to        router.resources.SelfEmploymentEopsDeclarationResource.post(nino, seId, from, to)
 
 # Self Employment Obligations
-GET       /ni/:nino/self-employments/:id/obligations                                           router.resources.SelfAssessmentResource.get(nino, id)
-GET       /ni/:nino/self-employments/:id/periods                                               router.resources.SelfAssessmentResource.get(nino, id)
+GET         /ni/:nino/self-employments/:id/obligations                                         router.resources.SelfAssessmentResource.get(nino, id)
+GET         /ni/:nino/self-employments/:id/periods                                             router.resources.SelfAssessmentResource.get(nino, id)
 
 #### Version One - Release Two #####
 
@@ -44,19 +44,20 @@ GET         /ni/:nino/uk-properties/furnished-holiday-lettings/:taxYear         
 PUT         /ni/:nino/uk-properties/furnished-holiday-lettings/:taxYear                        router.resources.ReleaseTwoResource.update(nino, taxYear, p3?="")
 
 #Charitable Giving endpoints
-PUT         /ni/:nino/charitable-giving/:taxYear        									                     router.resources.CharitableGivingResource.put(nino, taxYear)
+PUT         /ni/:nino/charitable-giving/:taxYear                                               router.resources.CharitableGivingResource.put(nino, taxYear)
 
-GET         /ni/:nino/charitable-giving/:taxYear        									                     router.resources.CharitableGivingResource.get(nino, taxYear)
+GET         /ni/:nino/charitable-giving/:taxYear                                               router.resources.CharitableGivingResource.get(nino, taxYear)
 
 #Dividends endpoints
-PUT         /ni/:nino/dividends/:taxYear        									                             router.resources.DividendsResource.put(nino, taxYear)
+PUT         /ni/:nino/dividends/:taxYear                                                       router.resources.DividendsResource.put(nino, taxYear)
 
-GET         /ni/:nino/dividends/:taxYear        									                             router.resources.DividendsResource.get(nino, taxYear)
+GET         /ni/:nino/dividends/:taxYear                                                       router.resources.DividendsResource.get(nino, taxYear)
 
 #Savings Accounts endpoints
-POST        /ni/:nino/savings-accounts       									                                 router.resources.SavingsAccountResource.post(nino)
+POST        /ni/:nino/savings-accounts                                                         router.resources.SavingsAccountResource.post(nino)
 
-GET         /ni/:nino/savings-accounts       									                                 router.resources.SavingsAccountResource.get(nino)
+GET         /ni/:nino/savings-accounts/:id                                                     router.resources.SavingsAccountResource.get(nino, id)
+GET         /ni/:nino/savings-accounts                                                         router.resources.SavingsAccountResource.get(nino, p3?="")
 
 ### Version One ####
 
