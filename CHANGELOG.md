@@ -1,5 +1,8 @@
+<hr>
 
-### Please refer to [CHANGELOG-ET.md](https://github.com/hmrc/self-assessment-api-router/blob/master/CHANGELOG-ET.md) file for any delta changes deployed to Sandbox Test Environment.
+## All changes after 22<sup>nd</sup> Feb can be found within the Wiki page located [here](https://github.com/hmrc/self-assessment-api-router/wiki/Change-Log).
+
+<hr>
 
 ## 6-Nov-2018
 <b>[self-assessment-api v0.207.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.207.0)<br>
