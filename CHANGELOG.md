@@ -1,6 +1,6 @@
 <hr>
 
-## All changes after 22<sup>nd</sup> Feb can be found within the Wiki page located [here](https://github.com/hmrc/self-assessment-api-router/wiki/Changelog).
+## All changes after 22<sup>nd</sup> Feb 2019 can be found within the Wiki page located [here](https://github.com/hmrc/self-assessment-api-router/wiki/Changelog).
 
 <hr>
 
