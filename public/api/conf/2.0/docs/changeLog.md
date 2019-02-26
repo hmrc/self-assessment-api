@@ -1,1 +1,1 @@
-You can find the changelog in the [self-assessment-api-router](https://github.com/hmrc/self-assessment-api-router/blob/master/CHANGELOG.md) GitHub repository.
+You can find the changelog in the [self-assessment-api-router](https://github.com/hmrc/self-assessment-api-router/wiki/Changelog) GitHub wiki.
