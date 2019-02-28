@@ -13,7 +13,7 @@
         </tr>
         <tr>
             <td><p>NOT_FOUND</p></td>
-            <td><p>Simulate the scenario where no savings account data could be found.</p></td>
+            <td><p>Simulate the scenario where the savings account is not found.</p></td>
         </tr>
     </tbody>
 </table>
