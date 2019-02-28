@@ -1972,6 +1972,10 @@ traits:
                 example: !include examples/savings-accounts/SavingsAccountAnnualSummary.json
             responses:
               204:
+                headers:
+                 X-CorrelationId:
+                   example: c75f40a6-a3df-4429-a697-471eeec46435
+                   description: Unique id for operation tracking <br> String, 36 characters.
               400:
                 body:
                   application/json:
