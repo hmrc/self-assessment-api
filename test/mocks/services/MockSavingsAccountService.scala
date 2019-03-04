@@ -38,6 +38,11 @@ trait MockSavingsAccountService extends Mock { _: Suite =>
     def get(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
       when(mockSavingsAccountService.get()(any(), any()))
     }
+
+    def put(body: JsValue) = {
+      when(mockSavingsAccountService.put(eqTo(body))(any(), any()))
+    }
+
   }
 
   override protected def beforeEach(): Unit = {

@@ -136,4 +136,41 @@ class SavingsAccountResourceSpec extends ResourceSpec
       }
     }
   }
+
+  "amend" should {
+    "return a 204 with the response headers" when {
+      "the service returns a HttpResponse containing a 204 with no json response body" in new Setup {
+        MockSavingsAccountService.put(requestJson)
+          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, None, testHeaderResponse))))
+
+        private val result = resource.put("", "")(FakeRequest().withBody(requestJson))
+        status(result) shouldBe NO_CONTENT
+        headers(result) shouldBe testHeader
+        contentType(result) shouldBe None
+      }
+    }
+
+    "return a 406 with a json response body representing the error" when {
+      "the service returns an IncorrectAPIVersion response" in new Setup {
+        MockSavingsAccountService.put(requestJson).returns(Future.successful(Left(IncorrectAPIVersion)))
+
+        val result = resource.put("", "")(FakeRequest().withBody(requestJson))
+        status(result) shouldBe NOT_ACCEPTABLE
+        contentType(result) shouldBe Some(JSON)
+        contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
+      }
+    }
+
+    "return a 404 with a json response body representing the error" when {
+      "the service returns an UnsupportedAPIVersion response" in new Setup {
+        MockSavingsAccountService.put(requestJson).returns(Future.successful(Left(UnsupportedAPIVersion)))
+
+        val result = resource.put("", "")(FakeRequest().withBody(requestJson))
+        status(result) shouldBe NOT_FOUND
+        contentType(result) shouldBe Some(JSON)
+        contentAsJson(result) shouldBe ErrorCode.notFound.asJson
+      }
+    }
+  }
+
 }

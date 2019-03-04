@@ -27,22 +27,29 @@ class SavingsAccountResource @Inject()(service: SavingsAccountService,
                                        val authConnector: AuthConnector) extends BaseResource {
 
 
-  def post(param:Any*): Action[JsValue] = AuthAction.async(parse.json) {
-    implicit request =>
-      withJsonBody[JsValue]{
-        service.post(_).map {
-          case Left(error) => buildErrorResponse(error)
-          case Right(apiResponse) => buildResponse(apiResponse)
-        }
+  def post(param: Any*): Action[JsValue] = AuthAction.async(parse.json) { implicit request =>
+    withJsonBody[JsValue] {
+      service.post(_).map {
+        case Left(error) => buildErrorResponse(error)
+        case Right(apiResponse) => buildResponse(apiResponse)
       }
+    }
   }
 
-  def get(param:Any*): Action[AnyContent] =
-    AuthAction.async {
-      implicit request =>
-        service.get().map{
-          case Left(error) => buildErrorResponse(error)
-          case Right(apiResponse) => buildResponse(apiResponse)
-        }
+  def get(param: Any*): Action[AnyContent] = AuthAction.async { implicit request =>
+    service.get().map {
+      case Left(error) => buildErrorResponse(error)
+      case Right(apiResponse) => buildResponse(apiResponse)
     }
+  }
+
+  def put(param: Any*): Action[JsValue] = AuthAction.async(parse.json) { implicit request =>
+    withJsonBody[JsValue] {
+      service.put(_).map {
+        case Left(error) => buildErrorResponse(error)
+        case Right(apiResponse) => buildResponse(apiResponse)
+      }
+    }
+  }
+
 }

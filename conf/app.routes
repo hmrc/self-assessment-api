@@ -59,6 +59,8 @@ POST        /ni/:nino/savings-accounts                                          
 GET         /ni/:nino/savings-accounts/:id                                                     router.resources.SavingsAccountResource.get(nino, id)
 GET         /ni/:nino/savings-accounts                                                         router.resources.SavingsAccountResource.get(nino, p3?="")
 
+PUT         /ni/:nino/savings-accounts/:id/:taxYear                                            router.resources.SavingsAccountResource.put(nino, id, taxYear)
+
 ### Version One ####
 
 GET         /*route                                                                            router.resources.SelfAssessmentResource.get(route, p3?="")

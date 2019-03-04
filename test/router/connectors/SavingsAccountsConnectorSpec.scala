@@ -72,4 +72,19 @@ class SavingsAccountsConnectorSpec extends UnitSpec
       }
     }
   }
+
+  "amend" should {
+    "return a HttpResponse" when {
+      "a successful HttpResponse is returned" in new Setup {
+        val request = FakeRequest("PUT", path)
+        val response  = HttpResponse(Status.NO_CONTENT)
+        val requestJson = Json.obj("test" -> "request json")
+
+        MockSelfAssessmentHttpParser.read.returns(Right(response))
+        MockHttp.PUT[JsValue, SelfAssessmentOutcome](s"$savingsAccountsApiUrl$path", requestJson).returns(Future.successful(Right(response)))
+        await(TestConnector.put(path, requestJson)(hc, request)) shouldBe Right(response)
+      }
+    }
+  }
+
 }

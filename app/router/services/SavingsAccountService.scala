@@ -55,4 +55,17 @@ class SavingsAccountService @Inject()(val appConfig: AppConfig,
         }
     }
   }
+
+   def put(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
+    withApiVersion {
+      case Some(VERSION_1) => selfAssessmentConnector.put(req.uri, body)
+      case Some(VERSION_2) => {
+        if (FeatureSwitch(appConfig.featureSwitch).isSavingsAccountsV2Enabled) {
+          savingsAccountConnector.put(s"/$VERSION_2${req.uri}", body)
+        } else {
+          selfAssessmentConnector.put(req.uri, body)(convertHeaderToVersion1, req)
+        }
+      }
+    }
+  }
 }

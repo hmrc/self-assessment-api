@@ -6,6 +6,7 @@ import support.IntegrationSpec
 class SavingsAccountResourceISpec extends IntegrationSpec {
 
   val id = "SAVKB2UVwUTBQGJ"
+  val taxYear = "2017-18"
 
   val jsonRequest: JsObject = Json.obj("accountName" -> "Main account name")
   val jsonResponse: JsObject = Json.obj("id" -> id)
@@ -143,4 +144,61 @@ class SavingsAccountResourceISpec extends IntegrationSpec {
       }
     }
   }
+
+  "amend" should {
+    "return a 204 with no json response" when {
+      "a version 1.0 header is provided and the response from the savings accounts API is a 204" in {
+
+        val incomingUrl = s"/ni/AA111111A/savings-accounts/$id/$taxYear"
+        val outgoingUrl = s"/ni/AA111111A/savings-accounts/$id/$taxYear"
+
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .put(outgoingUrl)
+          .returns(aResponse
+            .withStatus(NO_CONTENT)
+            .withBody(""))
+          .When()
+          .put(incomingUrl)
+          .withBody(jsonRequest)
+          .withHeaders(
+            ACCEPT -> "application/vnd.hmrc.1.0+json",
+            CONTENT_TYPE -> JSON
+          )
+          .Then()
+          .statusIs(NO_CONTENT)
+          .bodyIs("")
+          .verify(mockFor(outgoingUrl)
+            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+
+      }
+
+      "a version 2.0 header is provided and the response from the savings accounts API is a 204" in {
+        val incomingUrl = s"/ni/AA111111A/savings-accounts/$id/$taxYear"
+        val outgoingUrl = s"/2.0/ni/AA111111A/savings-accounts/$id/$taxYear"
+
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .put(outgoingUrl)
+          .returns(aResponse
+            .withStatus(NO_CONTENT)
+            .withBody(""))
+          .When()
+          .put(incomingUrl)
+          .withBody(jsonRequest)
+          .withHeaders(
+            ACCEPT -> "application/vnd.hmrc.2.0+json",
+            CONTENT_TYPE -> JSON
+          )
+          .Then()
+          .statusIs(NO_CONTENT)
+          .bodyIs("")
+          .verify(mockFor(outgoingUrl)
+            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+      }
+    }
+  }
+
 }
