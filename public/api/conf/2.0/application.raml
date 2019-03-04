@@ -2019,10 +2019,10 @@ traits:
                         value:
                           code: MATCHING_RESOURCE_NOT_FOUND
           get:
-            displayName: Get a savings account annual summary [test only]
-            description: Get a savings account annual summary for a given tax year. This API is not available in production.
-            (annotations.sandboxData): !include scenarios/agent-scenarios.md
-            is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+            displayName: Retrieve a UK savings account annual summary [test only]
+            description: The "Retrieve a UK savings account annual summary" endpoint enables you to view your annual savings interest for a previously added savings account.
+            (annotations.sandboxData): !include scenarios/savings-account-get-annual-summary-scenarios.md
+            is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
             (annotations.scope): "read:self-assessment"
             securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
             responses:
@@ -2037,14 +2037,30 @@ traits:
                     type: types.errorResponse
                     examples:
                       invalidNino:
-                        description: Invalid NINO
+                        description: The format of the supplied NINO field is not valid
                         value:
-                          code: NINO_INVALID
+                          code: FORMAT_NINO
                       invalidTaxYear:
-                        description: Invalid taxYear
+                        description: The format of the supplied tax year field is not valid
                         value:
-                          code: TAX_YEAR_INVALID
+                          code: FORMAT_TAX_YEAR
+                      ruleTaxYearNotSupported:
+                        description: The specified tax year is not supported, that is, the tax year specified is before the minimum tax year value
+                        value:
+                          code: RULE_TAX_YEAR_NOT_SUPPORTED
+                      formatId:
+                        description: The format of the supplied savings account ID is not valid
+                        value:
+                          code: FORMAT_SAVINGS_ACCOUNT_ID
               404:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notFound:
+                        description: The supplied savings account ID could not be found
+                        value:
+                          code: MATCHING_RESOURCE_NOT_FOUND
     /calculations:
       (annotations.group):
         name: Tax calculations
