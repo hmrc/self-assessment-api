@@ -1969,7 +1969,19 @@ traits:
             body:
               application/json:
                 type: !include schemas/savings-accounts/SavingsAccountAnnualSummary.json
-                example: !include examples/savings-accounts/SavingsAccountAnnualSummary.json
+                examples:
+                  example-1:
+                    description: >
+                      Savings account annual summary with both fields populated
+                    value: !include examples/savings-accounts/SavingsAccountAnnualSummary.json
+                  example-2:
+                    description: >
+                      Example 1 of how to remove previously submitted values
+                    value: !include examples/savings-accounts/AnnualSummaryZeros1.json
+                  example-3:
+                    description: >
+                      Example 2 of how to remove previously submitted values
+                    value: !include examples/savings-accounts/AnnualSummaryZeros2.json
             responses:
               204:
                 headers:
