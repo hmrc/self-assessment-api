@@ -54,12 +54,12 @@ Prior to raising a pull request, perform the following actions, taking any remed
 
 Task | Description | Command
 :-------|:------------|:-----
-clean | remove all previously built artefacts | ```$ sbt clean```
-test | Runs the standard unit tests | ```$ sbt test```
-func:test  | Runs the functional tests | ```$ sbt func:test ```
-dependencyCheck | Runs dependency-check against the current project. It aggregates dependencies and generates a report | ```$ sbt dependencyCheck```
-dependencyUpdates |  Shows a list of project dependencies that can be updated | ```$ sbt dependencyUpdates```
-dependencyUpdatesReport | Writes a list of project dependencies to a file | ```$ sbt dependencyUpdatesReport```
+clean | remove all previously built artefacts | ```> sbt clean```
+test | Runs the standard unit tests | ```> sbt test```
+func:test  | Runs the functional tests | ```> sbt func:test ```
+dependencyCheck | Runs dependency-check against the current project. It aggregates dependencies and generates a report | ```> sbt dependencyCheck```
+dependencyUpdates |  Shows a list of project dependencies that can be updated | ```> sbt dependencyUpdates```
+dependencyUpdatesReport | Writes a list of project dependencies to a file | ```> sbt dependencyUpdatesReport```
 
 ## License
 
