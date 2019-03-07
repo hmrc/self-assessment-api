@@ -201,4 +201,31 @@ class SavingsAccountResourceISpec extends IntegrationSpec {
     }
   }
 
+  "retrieveAnnual" should {
+    "return response with status 200 and body contains a savings account" when {
+      "version 2.0 header is provided in the request" in {
+        val incomingUrl = s"/ni/AA111111A/savings-accounts/$id/$taxYear"
+        val outgoingUrl = s"/2.0/ni/AA111111A/savings-accounts/$id/$taxYear"
+
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .get(outgoingUrl)
+          .returns(aResponse.withBody(singleBody))
+          .When()
+          .get(incomingUrl)
+          .withHeaders(
+            ACCEPT -> "application/vnd.hmrc.2.0+json",
+            CONTENT_TYPE -> JSON
+          )
+          .Then()
+          .statusIs(OK)
+          .bodyIs(singleBody)
+          .verify(mockFor(outgoingUrl)
+            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+
+      }
+    }
+  }
+
 }

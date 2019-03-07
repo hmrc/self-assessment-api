@@ -56,8 +56,9 @@ GET         /ni/:nino/dividends/:taxYear                                        
 #Savings Accounts endpoints
 POST        /ni/:nino/savings-accounts                                                         router.resources.SavingsAccountResource.post(nino)
 
-GET         /ni/:nino/savings-accounts/:id                                                     router.resources.SavingsAccountResource.get(nino, id)
-GET         /ni/:nino/savings-accounts                                                         router.resources.SavingsAccountResource.get(nino, p3?="")
+GET         /ni/:nino/savings-accounts/:id                                                     router.resources.SavingsAccountResource.get(nino, id, p3?="")
+GET         /ni/:nino/savings-accounts                                                         router.resources.SavingsAccountResource.get(nino, p3?="", p4?="")
+GET         /ni/:nino/savings-accounts/:id/:taxYear                                            router.resources.SavingsAccountResource.get(nino, id, taxYear)
 
 PUT         /ni/:nino/savings-accounts/:id/:taxYear                                            router.resources.SavingsAccountResource.put(nino, id, taxYear)
 
