@@ -42,7 +42,7 @@ object AnnualSummaryFixture {
       allowanceOnSales = Some(500.25),
       zeroEmissionGoodsVehicleAllowance = Some(500.25),
       capitalAllowanceSingleAssetPool = Some(500.25),
-      tradingAllowance = Some(500.25)
+      tradingIncomeAllowance = Some(500.25)
     )),
     Some(des.selfemployment.AnnualNonFinancials(
       businessDetailsChangedRecently = None,

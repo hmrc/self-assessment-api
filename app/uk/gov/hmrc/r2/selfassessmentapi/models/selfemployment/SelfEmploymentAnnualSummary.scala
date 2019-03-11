@@ -59,7 +59,7 @@ object SelfEmploymentAnnualSummary {
         allowanceOnSales = allow.allowanceOnSales,
         zeroEmissionGoodsVehicleAllowance = allow.zeroEmissionGoodsVehicleAllowance,
         capitalAllowanceSingleAssetPool = allow.capitalAllowanceSingleAssetPool,
-        tradingAllowance = allow.tradingAllowance
+        tradingAllowance = allow.tradingIncomeAllowance
       )
     }
 

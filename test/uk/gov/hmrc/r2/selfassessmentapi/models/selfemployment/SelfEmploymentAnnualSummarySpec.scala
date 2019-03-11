@@ -100,7 +100,7 @@ class SelfEmploymentAnnualSummarySpec extends JsonSpec {
           allowanceOnSales = Some(200.25),
           zeroEmissionGoodsVehicleAllowance = Some(200.25),
           capitalAllowanceSingleAssetPool = Some(123.23),
-          tradingAllowance = Some(200.25)
+          tradingIncomeAllowance = Some(200.25)
         )),
         annualNonFinancials = Some(des.selfemployment.AnnualNonFinancials(
           businessDetailsChangedRecently = None,
