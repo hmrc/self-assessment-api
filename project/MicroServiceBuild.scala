@@ -22,7 +22,7 @@ private object AppDependencies {
   private val hmrcTestVersion = "3.2.0"
 
   val compile = Seq(
-    "uk.gov.hmrc" %% "play-reactivemongo" % "6.2.0",
+    "uk.gov.hmrc" %% "play-reactivemongo" % "6.4.0",
     ws exclude("org.apache.httpcomponents", "httpclient") exclude("org.apache.httpcomponents", "httpcore"),
     "uk.gov.hmrc" %% "bootstrap-play-25" % "4.8.0",
     "uk.gov.hmrc" %% "auth-client" % "2.17.0-play-25",
