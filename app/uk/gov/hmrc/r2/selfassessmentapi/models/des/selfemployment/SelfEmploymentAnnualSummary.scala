@@ -54,7 +54,7 @@ object SelfEmploymentAnnualSummary {
         enhanceCapitalAllowance = allow.enhancedCapitalAllowance,
         allowanceOnSales = allow.allowanceOnSales,
         capitalAllowanceSingleAssetPool = allow.capitalAllowanceSingleAssetPool,
-        tradingAllowance = allow.tradingAllowance
+        tradingIncomeAllowance = allow.tradingAllowance
       )
     }
 
@@ -102,7 +102,7 @@ case class AnnualAllowances(annualInvestmentAllowance: Option[BigDecimal],
                             enhanceCapitalAllowance: Option[BigDecimal],
                             allowanceOnSales: Option[BigDecimal],
                             capitalAllowanceSingleAssetPool: Option[BigDecimal],
-                            tradingAllowance: Option[BigDecimal])
+                            tradingIncomeAllowance: Option[BigDecimal])
 
 object AnnualAllowances {
   implicit val reads: Reads[AnnualAllowances] = Json.reads[AnnualAllowances]

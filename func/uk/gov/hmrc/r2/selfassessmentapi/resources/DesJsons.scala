@@ -329,7 +329,7 @@ object DesJsons {
            |      "enhanceCapitalAllowance": 200.00,
            |      "allowanceOnSales": 200.00,
            |      "capitalAllowanceSingleAssetPool": 500.25,
-           |      "tradingAllowance": 200.00
+           |      "tradingIncomeAllowance": 200.00
            |   },
            |   "annualNonFinancials": {
            |      "businessDetailsChangedRecently": true,
