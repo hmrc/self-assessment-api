@@ -59,7 +59,7 @@ object OtherPropertiesAnnualSummary {
       adj <- summary.annualAdjustments
     } yield OtherPropertiesOther(
       nonResidentLandlord = Option(adj.nonResidentLandlord),
-      rarJointLet = adj.ukOtherRentARoom.map(_.jointlyLet)
+      rarJointLet = adj.ukRentARoom.map(_.jointlyLet)
     )
 
     OtherPropertiesAnnualSummary(allowances, adjustments, other)
@@ -102,7 +102,7 @@ object FHLPropertiesAnnualSummary {
       other <- summary.annualAdjustments
     } yield FHLPropertiesOther(
       Option(other.nonResidentLandlord),
-      other.ukFhlRentARoom.map(_.jointlyLet))
+      other.ukRentARoom.map(_.jointlyLet))
       
     FHLPropertiesAnnualSummary(allowances, adjustments, other)
   }

@@ -84,7 +84,7 @@ case class OtherPropertiesAdjustments(lossBroughtForward: Option[BigDecimal] = N
                                       balancingCharge: Option[BigDecimal] = None,
                                       businessPremisesRenovationAllowanceBalancingCharges: Option[BigDecimal] = None,
                                       nonResidentLandlord: Boolean = false,
-                                      ukOtherRentARoom: Option[OtherPropertiesUkOtherRentARoom] = None
+                                      ukRentARoom: Option[OtherPropertiesUkOtherRentARoom] = None
                                      )
 
 case class OtherPropertiesUkOtherRentARoom(jointlyLet: Boolean)
@@ -128,7 +128,7 @@ object FHLPropertiesAnnualSummary {
         adj.bpraBalancingCharge,
         adj.periodOfGraceAdjustment,
         fhl.other.flatMap(_.nonResidentLandlord).getOrElse(false),
-        ukFhlRentARoom = fhl.other.flatMap(_.rarJointLet.map(FHLPropertiesUkFhlRentARoom(_)))
+        ukRentARoom = fhl.other.flatMap(_.rarJointLet.map(FHLPropertiesUkFhlRentARoom(_)))
       )
     }
     FHLPropertiesAnnualSummary(allowances, adjustments)
@@ -158,7 +158,7 @@ case class FHLPropertiesAdjustments(lossBroughtForward: Option[BigDecimal] = Non
                                     businessPremisesRenovationAllowanceBalancingCharges: Option[BigDecimal] = None,
                                     periodOfGraceAdjustment: Option[Boolean] = None,
                                     nonResidentLandlord: Boolean = false,
-                                    ukFhlRentARoom: Option[FHLPropertiesUkFhlRentARoom] = None)
+                                    ukRentARoom: Option[FHLPropertiesUkFhlRentARoom] = None)
 
 object FHLPropertiesAdjustments {
   implicit val reads: Reads[FHLPropertiesAdjustments] = Json.reads[FHLPropertiesAdjustments]
