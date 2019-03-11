@@ -356,15 +356,15 @@ object DesJsons {
     object AnnualSummary {
       def other: String = {
         s"""
-         {
+           |{
            |   "annualAdjustments": {
            |      "lossBroughtForward": 0.0,
            |      "balancingCharge": 0.0,
            |      "privateUseAdjustment": 0.0,
            |      "businessPremisesRenovationAllowanceBalancingCharges" : 0.0,
            |      "nonResidentLandlord": false,
-           |      "ukOtherRentARoom" : {
-           |      "jointlyLet": false
+           |      "ukRentARoom" : {
+           |          "jointlyLet": false
            |      }
            |   },
            |   "annualAllowances": {
@@ -390,7 +390,7 @@ object DesJsons {
            |      "bpraBalancingCharge": 0.0,
            |      "periodOfGraceAdjustment": false,
            |      "nonResidentLandlord": false,
-           |      "ukFhlRentARoom": {
+           |      "ukRentARoom": {
            |        "jointlyLet": false
            |      }
            |   },

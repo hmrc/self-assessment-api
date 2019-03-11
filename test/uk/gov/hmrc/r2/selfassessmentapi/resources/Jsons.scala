@@ -475,6 +475,9 @@ object Jsons {
            |   "privateUseAdjustment": $privateUseAdjustment,
            |   "balancingCharge": $balancingCharge,
            |   "periodOfGraceAdjustment": $periodOfGraceAdjustment
+           |  },
+           |  "other": {
+           |    "rarJointLet": false
            |  }
            |}
     """.stripMargin)

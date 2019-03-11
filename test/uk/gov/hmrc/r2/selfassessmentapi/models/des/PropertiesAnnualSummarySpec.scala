@@ -44,7 +44,7 @@ class PropertiesAnnualSummarySpec extends JsonSpec {
             periodOfGraceAdjustment = Some(false),
             businessPremisesRenovationAllowanceBalancingCharges = Some(200.00),
             nonResidentLandlord = true,
-            ukFhlRentARoom = Some(FHLPropertiesUkFhlRentARoom(jointlyLet = false)))
+            ukRentARoom = Some(FHLPropertiesUkFhlRentARoom(jointlyLet = false)))
           )))
     }
   }
