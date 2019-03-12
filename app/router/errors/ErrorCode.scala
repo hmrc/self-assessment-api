@@ -16,6 +16,7 @@
 
 package router.errors
 
+import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json, OWrites}
 
 case class ErrorCode(code: String, message: String){
@@ -30,4 +31,7 @@ object ErrorCode {
   val notFound = ErrorCode("NOT_FOUND", "The requested resource could not be found.")
   val internalServerError = ErrorCode("INTERNAL_SERVER_ERROR", "An internal server error occurred")
   val unauthorisedError = ErrorCode("CLIENT_OR_AGENT_NOT_AUTHORISED", "The client and/or agent is not authorised.")
+  val invalidRequest = ErrorCode("INVALID_REQUEST", "Invalid request")
+  val invalidBodyType = ErrorCode("INVALID_BODY_TYPE", "Expecting text/json or application/json body")
+  val matchingResourceNotFound = ErrorCode("MATCHING_RESOURCE_NOT_FOUND", "The requested resource could not be found.")
 }

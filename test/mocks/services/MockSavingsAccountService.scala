@@ -27,7 +27,7 @@ import scala.concurrent.Future
 
 trait MockSavingsAccountService extends Mock { _: Suite =>
 
-  val mockSavingsAccountService: SavingsAccountService = mock[SavingsAccountService]
+  lazy val mockSavingsAccountService: SavingsAccountService = mock[SavingsAccountService]
 
   object MockSavingsAccountService {
 
