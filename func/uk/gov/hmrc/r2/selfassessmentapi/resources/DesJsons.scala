@@ -18,7 +18,6 @@ package uk.gov.hmrc.r2.selfassessmentapi.resources
 
 import play.api.libs.json._
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.r2.selfassessmentapi.models.des.properties.FHL.UkRentARoom
 import uk.gov.hmrc.r2.selfassessmentapi.models.des.properties.{Common, FHL, Other}
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType
 import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyType
@@ -486,7 +485,6 @@ object DesJsons {
               rentIncome: BigDecimal = 0,
               amountClaimed: Option[BigDecimal] = Some(0),
               rentsReceived: Option[BigDecimal] = Some(0),
-              rarRentReceived: BigDecimal = 0,
               rentIncomeTaxDeducted: Option[BigDecimal] = Some(0),
               premisesRunningCosts: BigDecimal = 0,
               repairsAndMaintenance: BigDecimal = 0,
@@ -505,7 +503,7 @@ object DesJsons {
                 .Financials(
                   incomes = Some(FHL.Incomes(
                     Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
-                    Some(UkRentARoom(amountClaimed, rentsReceived))
+                    Some(FHL.UkRentARoom(amountClaimed, rentsReceived))
                   )),
                   deductions = Some(FHL.Deductions(
                     premisesRunningCosts = Some(premisesRunningCosts),
@@ -534,6 +532,8 @@ object DesJsons {
                 costOfServices: Option[BigDecimal] = Some(0),
                 residentialFinancialCost: Option[BigDecimal] = Some(0),
                 consolidatedExpenses: Option[BigDecimal] = Some(0),
+                amountClaimed: Option[BigDecimal] = Some(0),
+                rentsReceived: Option[BigDecimal] = Some(0),
                 other: Option[BigDecimal] = Some(0)): JsValue =
         Json.toJson(
           Other
@@ -545,7 +545,8 @@ object DesJsons {
                 incomes = Some(Other.Incomes(rentIncome = Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
                   premiumsOfLeaseGrant = premiumsOfLeaseGrant,
                   reversePremiums = reversePremiums,
-                  otherIncome = otherPropertyIncome)),
+                  otherIncome = otherPropertyIncome,
+                  ukRentARoom = Some(Other.UkRentARoom(amountClaimed, rentsReceived)))),
                 deductions = Some(Other.Deductions(
                   premisesRunningCosts = premisesRunningCosts,
                   repairsAndMaintenance = repairsAndMaintenance,

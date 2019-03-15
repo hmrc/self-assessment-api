@@ -281,7 +281,7 @@ object Other {
         premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(Income(_, None)),
         reversePremiums = o.reversePremiums.map(Income(_, None)),
         otherPropertyIncome = o.otherIncome.map(Income(_, None)),
-        rarRentReceived = o.rarRentReceived.map(Income(_, None))
+        rarRentReceived = o.ukRentARoom.map(income => Income(amount = income.rentsReceived.getOrElse(0.00), None))
       )
   }
 
