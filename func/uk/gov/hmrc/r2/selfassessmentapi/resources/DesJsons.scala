@@ -502,8 +502,8 @@ object DesJsons {
               FHL
                 .Financials(
                   incomes = Some(FHL.Incomes(
-                    Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
-                    Some(FHL.UkRentARoom(amountClaimed, rentsReceived))
+                    rentIncome = Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
+                    ukRentARoom = Some(FHL.UkRentARoom(amountClaimed, rentsReceived))
                   )),
                   deductions = Some(FHL.Deductions(
                     premisesRunningCosts = Some(premisesRunningCosts),
@@ -542,7 +542,8 @@ object DesJsons {
               from = from,
               to = to,
               financials = Some(Other.Financials(
-                incomes = Some(Other.Incomes(rentIncome = Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
+                incomes = Some(Other.Incomes(
+                  rentIncome = Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
                   premiumsOfLeaseGrant = premiumsOfLeaseGrant,
                   reversePremiums = reversePremiums,
                   otherIncome = otherPropertyIncome,
