@@ -503,7 +503,7 @@ object DesJsons {
                 .Financials(
                   incomes = Some(FHL.Incomes(
                     rentIncome = Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
-                    ukRentARoom = Some(FHL.UkRentARoom(amountClaimed, rentsReceived))
+                    ukRentARoom = Some(FHL.UkRentARoom(rentsReceived = rentsReceived))
                   )),
                   deductions = Some(FHL.Deductions(
                     premisesRunningCosts = Some(premisesRunningCosts),
@@ -512,7 +512,8 @@ object DesJsons {
                     professionalFees = Some(professionalFees),
                     costOfServices = Some(costOfServices),
                     consolidatedExpenses = Some(consolidatedExpenses),
-                    other = Some(other)
+                    other = Some(other),
+                    ukRentARoom = Some(FHL.UkRentARoom(amountClaimed = amountClaimed))
                   ))
                 ))
           ))
@@ -547,7 +548,7 @@ object DesJsons {
                   premiumsOfLeaseGrant = premiumsOfLeaseGrant,
                   reversePremiums = reversePremiums,
                   otherIncome = otherPropertyIncome,
-                  ukRentARoom = Some(Other.UkRentARoom(amountClaimed, rentsReceived)))),
+                  ukRentARoom = Some(Other.UkRentARoom(rentsReceived = rentsReceived)))),
                 deductions = Some(Other.Deductions(
                   premisesRunningCosts = premisesRunningCosts,
                   repairsAndMaintenance = repairsAndMaintenance,
@@ -556,7 +557,8 @@ object DesJsons {
                   costOfServices = costOfServices,
                   residentialFinancialCost = residentialFinancialCost,
                   consolidatedExpenses = consolidatedExpenses,
-                  other = other
+                  other = other,
+                  ukRentARoom = Some(Other.UkRentARoom(amountClaimed = amountClaimed))
                 ))
               ))
             ))

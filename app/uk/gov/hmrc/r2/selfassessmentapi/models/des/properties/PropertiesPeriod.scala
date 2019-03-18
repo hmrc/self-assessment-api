@@ -43,7 +43,7 @@ object FHL {
 
     def from(o: properties.FHL.Incomes): Incomes =
       Incomes(rentIncome = o.rentIncome.map(Income.fromIncome),
-        ukRentARoom = Some(UkRentARoom(rentsReceived = o.rarRentReceived.map(_.amount))))
+        ukRentARoom = o.rarRentReceived.map(rar => UkRentARoom(rentsReceived = Some(rar.amount))))
   }
 
   case class UkRentARoom(amountClaimed: Option[BigDecimal] = None,
@@ -75,7 +75,7 @@ object FHL {
                  consolidatedExpenses = o.consolidatedExpenses.map(_.amount),
                  other = o.other.map(_.amount),
                  travelCosts = o.travelCosts.map(_.amount),
-                 ukRentARoom = Some(UkRentARoom(rentsReceived = o.rarReliefClaimed.map(_.amount))))
+                 ukRentARoom = o.rarReliefClaimed.map(rar => UkRentARoom(amountClaimed = Some(rar.amount))))
   }
 
   case class Financials(incomes: Option[Incomes] = None, deductions: Option[Deductions] = None)
@@ -121,7 +121,7 @@ object Other {
               premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(_.amount),
               reversePremiums = o.reversePremiums.map(_.amount),
               otherIncome = o.otherPropertyIncome.map(_.amount),
-              ukRentARoom = Some(UkRentARoom(rentsReceived = o.rarRentReceived.map(_.amount))))
+              ukRentARoom = o.rarRentReceived.map(rar => UkRentARoom(rentsReceived = Some(rar.amount))))
   }
 
   case class Deductions(premisesRunningCosts: Option[BigDecimal] = None,
@@ -150,7 +150,7 @@ object Other {
                  other = o.other.map(_.amount),
                  travelCosts = o.travelCosts.map(_.amount),
                  residentialFinancialCostsCarriedForward = o.broughtFwdResidentialFinancialCost.map(_.amount),
-                 ukRentARoom = Some(UkRentARoom(rentsReceived = o.rarReliefClaimed.map(_.amount))))
+                 ukRentARoom = o.rarReliefClaimed.map(rar => UkRentARoom(amountClaimed = Some(rar.amount))))
   }
 
   case class UkRentARoom(amountClaimed: Option[BigDecimal] = None,
