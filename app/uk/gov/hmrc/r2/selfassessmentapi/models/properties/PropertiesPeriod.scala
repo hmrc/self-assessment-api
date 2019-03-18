@@ -99,7 +99,7 @@ object FHL {
 
     def from(o: des.properties.FHL.Incomes): Incomes =
       Incomes(rentIncome = o.rentIncome.map(income => Income(amount = income.amount, taxDeducted = income.taxDeducted)),
-        rarRentReceived = o.ukRentARoom.map(income => Income(amount = income.rentsReceived.getOrElse(0.00), None)) )
+        rarRentReceived = o.ukRentARoom.flatMap(_.rentsReceived.map(Income(_, None))))
   }
 
   case class Expense(amount: BigDecimal)
@@ -281,7 +281,7 @@ object Other {
         premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(Income(_, None)),
         reversePremiums = o.reversePremiums.map(Income(_, None)),
         otherPropertyIncome = o.otherIncome.map(Income(_, None)),
-        rarRentReceived = o.ukRentARoom.map(income => Income(amount = income.rentsReceived.getOrElse(0.00), None))
+        rarRentReceived = o.ukRentARoom.flatMap(_.rentsReceived.map(Income(_, None)))
       )
   }
 
