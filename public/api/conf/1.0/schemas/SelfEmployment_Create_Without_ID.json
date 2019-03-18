@@ -74,7 +74,6 @@
     "accountingType",
     "commencementDate",
     "tradingName",
-    "businessDescription",
     "businessAddressLineOne",
     "businessPostcode"
   ],
