@@ -26,28 +26,28 @@ class SelfEmploymentSpec extends JsonSpec {
   "SelfEmployment JSON" should {
     "round ignore the id if it is provided by the user" in {
       val input = SelfEmployment(Some("myid"), AccountingPeriod(LocalDate.parse("2017-04-01"), LocalDate.parse("2017-04-02")),
-        AccountingType.CASH, LocalDate.now.minusDays(1), None, "Acme Ltd.", "Accountancy services", "Acme Rd.", None, None, None, "A9 9AA")
+        AccountingType.CASH, LocalDate.now.minusDays(1), None, "Acme Ltd.", Some("Accountancy services"), "Acme Rd.", None, None, None, "A9 9AA")
       val expectedOutput = input.copy(id = None)
       assertJsonIs(input, expectedOutput)
     }
 
     "return a COMMENCEMENT_DATE_NOT_IN_THE_PAST error when using a commencement date in the future" in {
       val input = SelfEmployment(Some("myid"), AccountingPeriod(LocalDate.parse("2017-04-01"), LocalDate.parse("2017-04-02")),
-        AccountingType.CASH, LocalDate.now.plusDays(1), None, "Acme Ltd.", "Accountancy services", "Acme Rd.", None, None, None, "A9 9AA")
+        AccountingType.CASH, LocalDate.now.plusDays(1), None, "Acme Ltd.", Some("Accountancy services"), "Acme Rd.", None, None, None, "A9 9AA")
       assertValidationErrorWithCode(input,
         "/commencementDate", ErrorCode.DATE_NOT_IN_THE_PAST)
     }
 
     "return a INVALID_ACCOUNTING_PERIOD error when startDate < endDate" in {
       val input = SelfEmployment(Some("myid"), AccountingPeriod(LocalDate.parse("2017-04-02"), LocalDate.parse("2017-04-01")),
-        AccountingType.CASH, LocalDate.now.minusDays(1), None, "Acme Ltd.", "Accountancy services", "Acme Rd.", None, None, None, "A9 9AA")
+        AccountingType.CASH, LocalDate.now.minusDays(1), None, "Acme Ltd.", Some("Accountancy services"), "Acme Rd.", None, None, None, "A9 9AA")
       assertValidationErrorWithCode(input,
         "/accountingPeriod", ErrorCode.INVALID_ACCOUNTING_PERIOD)
     }
 
     "return a DATE_NOT_IN_THE_PAST error when proving an accounting period with a start date that is before 2017-04-01" in {
       val input = SelfEmployment(Some("myid"), AccountingPeriod(LocalDate.parse("2017-03-01"), LocalDate.parse("2017-03-03")),
-        AccountingType.CASH, LocalDate.now.minusDays(1), None, "Acme Ltd.", "Accountancy services", "Acme Rd.", None, None, None, "A9 9AA")
+        AccountingType.CASH, LocalDate.now.minusDays(1), None, "Acme Ltd.", Some("Accountancy services"), "Acme Rd.", None, None, None, "A9 9AA")
       assertValidationErrorWithCode(input,
         "/accountingPeriod/start", ErrorCode.START_DATE_INVALID)
     }
@@ -86,7 +86,6 @@ class SelfEmploymentSpec extends JsonSpec {
           "/accountingType" -> Seq("error.path.missing"),
           "/commencementDate" -> Seq("error.path.missing"),
           "/tradingName" -> Seq("error.path.missing"),
-          "/businessDescription" -> Seq("error.path.missing"),
           "/businessAddressLineOne" -> Seq("error.path.missing"),
           "/businessPostcode" -> Seq("error.path.missing")))
     }
