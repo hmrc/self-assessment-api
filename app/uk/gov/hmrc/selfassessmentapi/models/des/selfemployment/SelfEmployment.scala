@@ -39,7 +39,7 @@ object Business {
               addressLine3 = apiSelfEmployment.businessAddressLineThree,
               addressLine4 = apiSelfEmployment.businessAddressLineFour,
               postalCode = Some(apiSelfEmployment.businessPostcode))),
-          typeOfBusiness = Some(apiSelfEmployment.businessDescription),
+          typeOfBusiness = None,
           tradingStartDate = Some(apiSelfEmployment.commencementDate.toString),
           cashOrAccruals = AccountingType.toDes(apiSelfEmployment.accountingType))))
   }
@@ -80,7 +80,7 @@ object SelfEmployment {
           addressLine3 = apiSelfEmployment.businessAddressLineThree,
           addressLine4 = apiSelfEmployment.businessAddressLineFour,
           postalCode = Some(apiSelfEmployment.businessPostcode))),
-      typeOfBusiness = Some(apiSelfEmployment.businessDescription),
+      typeOfBusiness = None,
       tradingStartDate = Some(apiSelfEmployment.commencementDate.toString),
       cashOrAccruals = AccountingType.toDes(apiSelfEmployment.accountingType))
   }
