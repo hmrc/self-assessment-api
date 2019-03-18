@@ -36,14 +36,21 @@ object Common {
 object FHL {
 
   case class Incomes(rentIncome: Option[Income] = None,
-                     rarRentReceived: Option[Income] = None)
+                     ukRentARoom: Option[UkRentARoom] = None)
 
   object Incomes {
     implicit val format: OFormat[Incomes] = Json.format[Incomes]
 
     def from(o: properties.FHL.Incomes): Incomes =
       Incomes(rentIncome = o.rentIncome.map(Income.fromIncome),
-              rarRentReceived = o.rarRentReceived.map(Income.fromIncome))
+        ukRentARoom = o.rarRentReceived.map(rar => UkRentARoom(rentsReceived = Some(rar.amount))))
+  }
+
+  case class UkRentARoom(amountClaimed: Option[BigDecimal] = None,
+                         rentsReceived: Option[BigDecimal] = None)
+
+  object UkRentARoom {
+    implicit val format: OFormat[UkRentARoom] = Json.format[UkRentARoom]
   }
 
   case class Deductions(premisesRunningCosts: Option[BigDecimal] = None,
@@ -54,7 +61,7 @@ object FHL {
                         other: Option[BigDecimal] = None,
                         consolidatedExpenses: Option[BigDecimal] = None,
                         travelCosts: Option[BigDecimal] = None,
-                        rarReliefClaimed: Option[BigDecimal] = None)
+                        ukRentARoom: Option[UkRentARoom] = None)
 
   object Deductions {
     implicit val format: OFormat[Deductions] = Json.format[Deductions]
@@ -68,7 +75,7 @@ object FHL {
                  consolidatedExpenses = o.consolidatedExpenses.map(_.amount),
                  other = o.other.map(_.amount),
                  travelCosts = o.travelCosts.map(_.amount),
-                 rarReliefClaimed = o.rarReliefClaimed.map(_.amount))
+                 ukRentARoom = o.rarReliefClaimed.map(rar => UkRentARoom(amountClaimed = Some(rar.amount))))
   }
 
   case class Financials(incomes: Option[Incomes] = None, deductions: Option[Deductions] = None)
@@ -104,7 +111,7 @@ object Other {
                      premiumsOfLeaseGrant: Option[BigDecimal] = None,
                      reversePremiums: Option[BigDecimal] = None,
                      otherIncome: Option[BigDecimal] = None,
-                     rarRentReceived: Option[BigDecimal] = None)
+                     ukRentARoom: Option[UkRentARoom] = None)
 
   object Incomes {
     implicit val format: OFormat[Incomes] = Json.format[Incomes]
@@ -114,7 +121,7 @@ object Other {
               premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(_.amount),
               reversePremiums = o.reversePremiums.map(_.amount),
               otherIncome = o.otherPropertyIncome.map(_.amount),
-              rarRentReceived = o.rarRentReceived.map(_.amount))
+              ukRentARoom = o.rarRentReceived.map(rar => UkRentARoom(rentsReceived = Some(rar.amount))))
   }
 
   case class Deductions(premisesRunningCosts: Option[BigDecimal] = None,
@@ -126,8 +133,8 @@ object Other {
                         consolidatedExpenses: Option[BigDecimal] = None,
                         residentialFinancialCost: Option[BigDecimal] = None,
                         travelCosts: Option[BigDecimal] = None,
-                        broughtFwdResidentialFinancialCost: Option[BigDecimal] = None,
-                        rarReliefClaimed: Option[BigDecimal] = None)
+                        residentialFinancialCostsCarriedForward: Option[BigDecimal] = None,
+                        ukRentARoom: Option[UkRentARoom] = None)
 
   object Deductions {
     implicit val format: OFormat[Deductions] = Json.format[Deductions]
@@ -142,8 +149,15 @@ object Other {
                  residentialFinancialCost = o.residentialFinancialCost.map(_.amount),
                  other = o.other.map(_.amount),
                  travelCosts = o.travelCosts.map(_.amount),
-                 broughtFwdResidentialFinancialCost = o.broughtFwdResidentialFinancialCost.map(_.amount),
-                 rarReliefClaimed = o.rarReliefClaimed.map(_.amount))
+                 residentialFinancialCostsCarriedForward = o.broughtFwdResidentialFinancialCost.map(_.amount),
+                 ukRentARoom = o.rarReliefClaimed.map(rar => UkRentARoom(amountClaimed = Some(rar.amount))))
+  }
+
+  case class UkRentARoom(amountClaimed: Option[BigDecimal] = None,
+                         rentsReceived: Option[BigDecimal] = None)
+
+  object UkRentARoom {
+    implicit val format: OFormat[UkRentARoom] = Json.format[UkRentARoom]
   }
 
   case class Financials(incomes: Option[Incomes] = None, deductions: Option[Deductions] = None)

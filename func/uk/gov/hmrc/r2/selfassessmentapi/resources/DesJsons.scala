@@ -483,7 +483,8 @@ object DesJsons {
               from: String = "",
               to: String = "",
               rentIncome: BigDecimal = 0,
-              rarRentReceived: BigDecimal = 0,
+              amountClaimed: Option[BigDecimal] = Some(0),
+              rentsReceived: Option[BigDecimal] = Some(0),
               rentIncomeTaxDeducted: Option[BigDecimal] = Some(0),
               premisesRunningCosts: BigDecimal = 0,
               repairsAndMaintenance: BigDecimal = 0,
@@ -500,8 +501,10 @@ object DesJsons {
             financials = Some(
               FHL
                 .Financials(
-                  incomes = Some(FHL.Incomes(rentIncome = Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
-                    rarRentReceived = Some(Common.Income(rarRentReceived)))),
+                  incomes = Some(FHL.Incomes(
+                    rentIncome = Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
+                    ukRentARoom = Some(FHL.UkRentARoom(rentsReceived = rentsReceived))
+                  )),
                   deductions = Some(FHL.Deductions(
                     premisesRunningCosts = Some(premisesRunningCosts),
                     repairsAndMaintenance = Some(repairsAndMaintenance),
@@ -509,7 +512,8 @@ object DesJsons {
                     professionalFees = Some(professionalFees),
                     costOfServices = Some(costOfServices),
                     consolidatedExpenses = Some(consolidatedExpenses),
-                    other = Some(other)
+                    other = Some(other),
+                    ukRentARoom = Some(FHL.UkRentARoom(amountClaimed = amountClaimed))
                   ))
                 ))
           ))
@@ -529,6 +533,8 @@ object DesJsons {
                 costOfServices: Option[BigDecimal] = Some(0),
                 residentialFinancialCost: Option[BigDecimal] = Some(0),
                 consolidatedExpenses: Option[BigDecimal] = Some(0),
+                amountClaimed: Option[BigDecimal] = Some(0),
+                rentsReceived: Option[BigDecimal] = Some(0),
                 other: Option[BigDecimal] = Some(0)): JsValue =
         Json.toJson(
           Other
@@ -537,10 +543,12 @@ object DesJsons {
               from = from,
               to = to,
               financials = Some(Other.Financials(
-                incomes = Some(Other.Incomes(rentIncome = Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
+                incomes = Some(Other.Incomes(
+                  rentIncome = Some(Common.Income(rentIncome, rentIncomeTaxDeducted)),
                   premiumsOfLeaseGrant = premiumsOfLeaseGrant,
                   reversePremiums = reversePremiums,
-                  otherIncome = otherPropertyIncome)),
+                  otherIncome = otherPropertyIncome,
+                  ukRentARoom = Some(Other.UkRentARoom(rentsReceived = rentsReceived)))),
                 deductions = Some(Other.Deductions(
                   premisesRunningCosts = premisesRunningCosts,
                   repairsAndMaintenance = repairsAndMaintenance,
@@ -549,7 +557,8 @@ object DesJsons {
                   costOfServices = costOfServices,
                   residentialFinancialCost = residentialFinancialCost,
                   consolidatedExpenses = consolidatedExpenses,
-                  other = other
+                  other = other,
+                  ukRentARoom = Some(Other.UkRentARoom(amountClaimed = amountClaimed))
                 ))
               ))
             ))

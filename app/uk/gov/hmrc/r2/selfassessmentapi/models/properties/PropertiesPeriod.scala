@@ -99,7 +99,7 @@ object FHL {
 
     def from(o: des.properties.FHL.Incomes): Incomes =
       Incomes(rentIncome = o.rentIncome.map(income => Income(amount = income.amount, taxDeducted = income.taxDeducted)),
-        rarRentReceived = o.rarRentReceived.map(income => Income(amount = income.amount, None)) )
+        rarRentReceived = o.ukRentARoom.flatMap(_.rentsReceived.map(Income(_, None))))
   }
 
   case class Expense(amount: BigDecimal)
@@ -143,7 +143,7 @@ object FHL {
         consolidatedExpenses = o.consolidatedExpenses.map(Expense(_)),
         other = o.other.map(Expense(_)),
         travelCosts = o.travelCosts.map(Expense(_)),
-        rarReliefClaimed = o.rarReliefClaimed.map(Expense(_))
+        rarReliefClaimed = o.ukRentARoom.flatMap(_.amountClaimed.map(Expense(_)))
       )
   }
 
@@ -281,7 +281,7 @@ object Other {
         premiumsOfLeaseGrant = o.premiumsOfLeaseGrant.map(Income(_, None)),
         reversePremiums = o.reversePremiums.map(Income(_, None)),
         otherPropertyIncome = o.otherIncome.map(Income(_, None)),
-        rarRentReceived = o.rarRentReceived.map(Income(_, None))
+        rarRentReceived = o.ukRentARoom.flatMap(_.rentsReceived.map(Income(_, None)))
       )
   }
 
@@ -330,8 +330,8 @@ object Other {
         residentialFinancialCost = o.residentialFinancialCost.map(Expense(_)),
         other = o.other.map(Expense(_)),
         travelCosts = o.travelCosts.map(Expense(_)),
-        broughtFwdResidentialFinancialCost = o.broughtFwdResidentialFinancialCost.map(Expense(_)),
-        rarReliefClaimed = o.rarReliefClaimed.map(Expense(_))
+        broughtFwdResidentialFinancialCost = o.residentialFinancialCostsCarriedForward.map(Expense(_)),
+        rarReliefClaimed = o.ukRentARoom.flatMap(_.amountClaimed.map(Expense(_)))
       )
   }
 
