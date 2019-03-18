@@ -31,7 +31,7 @@ class SelfEmploymentSpec extends JsonSpec {
       commencementDate = LocalDate.parse("2017-04-01"),
       cessationDate = None,
       tradingName = "Acme Ltd.",
-      businessDescription = "Accountancy services",
+      businessDescription = Some("Accountancy services"),
       businessAddressLineOne = "Acme Rd.",
       businessAddressLineTwo = Some("London"),
       businessAddressLineThree = Some("Greater London"),
@@ -53,7 +53,7 @@ class SelfEmploymentSpec extends JsonSpec {
       desSelfEmployment.addressDetails.get.addressLine4 shouldBe Some("United Kingdom")
       desSelfEmployment.addressDetails.get.countryCode shouldBe "GB"
       desSelfEmployment.addressDetails.get.postalCode shouldBe Some("A9 9AA")
-      desSelfEmployment.typeOfBusiness shouldBe Some("Accountancy services")
+      desSelfEmployment.typeOfBusiness shouldBe None
       desSelfEmployment.cashOrAccruals shouldBe "cash"
       desSelfEmployment.tradingStartDate shouldBe Some("2017-04-01")
     }

@@ -31,7 +31,7 @@ case class SelfEmployment(id: Option[SourceId] = None,
                           commencementDate: LocalDate,
                           cessationDate: Option[LocalDate],
                           tradingName: String,
-                          businessDescription: String,
+                          businessDescription: Option[String],
                           businessAddressLineOne: String,
                           businessAddressLineTwo: Option[String],
                           businessAddressLineThree: Option[String],
@@ -54,7 +54,7 @@ object SelfEmployment {
         commencementDate = LocalDate.parse(commencementDate),
         cessationDate = None,
         tradingName = desSelfEmployment.tradingName,
-        businessDescription = desSelfEmployment.typeOfBusiness.getOrElse(""), // API#5 doesn't return typeOfBusiness...
+        businessDescription = None, // API#5 doesn't return typeOfBusiness...
         businessAddressLineOne = address.addressLine1,
         businessAddressLineTwo = address.addressLine2,
         businessAddressLineThree = address.addressLine3,
@@ -71,7 +71,7 @@ object SelfEmployment {
       (__ \ "commencementDate").read[LocalDate](commencementDateValidator) and
       Reads.pure[Option[LocalDate]](None) and
       (__ \ "tradingName").read[String](lengthIsBetween(1, 105)) and
-      (__ \ "businessDescription").read[String] and
+      (__ \ "businessDescription").readNullable[String] and
       (__ \ "businessAddressLineOne").read[String](lengthIsBetween(1, 35)) and
       (__ \ "businessAddressLineTwo").readNullable[String](lengthIsBetween(1, 35)) and
       (__ \ "businessAddressLineThree").readNullable[String](lengthIsBetween(1, 35)) and

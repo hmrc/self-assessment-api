@@ -580,7 +580,7 @@ object Jsons {
         LocalDate.parse(commencementDate.get),
         Some(LocalDate.parse(cessationDate.get)),
         tradingName,
-        businessDescription.get,
+        businessDescription,
         businessAddressLineOne.get,
         businessAddressLineTwo,
         businessAddressLineThree,
