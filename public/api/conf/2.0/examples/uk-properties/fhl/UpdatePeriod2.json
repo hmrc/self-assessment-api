@@ -3,7 +3,8 @@
     "rentIncome": {
       "amount": 100.25,
       "taxDeducted": 100.25
-    }
+    },
+    "rarRentReceived" : { "amount" : 100.25 }
   },
   "expenses": {
     "consolidatedExpenses": { "amount": 100.25 }

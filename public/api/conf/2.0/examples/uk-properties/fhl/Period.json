@@ -1,21 +1,21 @@
 {
-  "from": "2017-04-06",
-  "to": "2017-07-04",
+  "from": "2018-04-06",
+  "to": "2018-07-05",
   "incomes": {
     "rentIncome": {
       "amount": 100.25,
       "taxDeducted": 100.25
     },
-    "rarRentReceived" : { "amount" : 100.44}
+    "rarRentReceived" : { "amount" : 100.25 }
   },
   "expenses": {
     "premisesRunningCosts": { "amount": 100.25 },
     "repairsAndMaintenance": { "amount": 100.25 },
     "financialCosts": { "amount": 100.25 },
     "professionalFees": { "amount": 100.25 },
-    "costOfServices": { "amount": 100.25},
-    "travelCosts": { "amount": 100.25},
+    "costOfServices": { "amount": 100.25 },
+    "travelCosts": { "amount": 100.25 },
     "other": { "amount": 100.25 },
-    "rarReliefClaimed" : { "amount" : 100.44 }
+    "rarReliefClaimed" : { "amount" : 100.25 }
   }
 }

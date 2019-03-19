@@ -1,6 +1,6 @@
 {
-  "from": "2017-04-06",
-  "to": "2017-07-04",
+  "from": "2018-04-06",
+  "to": "2018-07-05",
   "incomes": {
     "rentIncome": {
       "amount": 100.25,
@@ -8,8 +8,8 @@
     },
     "premiumsOfLeaseGrant": { "amount": 100.25 },
     "reversePremiums": { "amount": 100.25 },
-    "otherPropertyIncome": {"amount": 100.25},
-    "rarRentReceived": {"amount": 100.25}
+    "otherPropertyIncome": { "amount": 100.25 },
+    "rarRentReceived": { "amount": 100.25 }
   },
   "expenses": {
     "premisesRunningCosts": { "amount": 100.25 },

@@ -6,8 +6,8 @@
     },
     "premiumsOfLeaseGrant": { "amount": 100.25 },
     "reversePremiums": { "amount": 100.25 },
-    "otherPropertyIncome": {"amount": 100.25},
-    "rarRentReceived": {"amount": 100.25}
+    "otherPropertyIncome": { "amount": 100.25 },
+    "rarRentReceived": { "amount": 100.25 }
   },
   "expenses": {
     "premisesRunningCosts": { "amount": 100.25 },
@@ -16,7 +16,7 @@
     "professionalFees": { "amount": 100.25 },
     "travelCosts": { "amount": 100.25 },
     "costOfServices": { "amount": 100.25 },
-    "residentialFinancialCost": { "amount": 200.25 },
+    "residentialFinancialCost": { "amount": 100.25 },
     "broughtFwdResidentialFinancialCost": { "amount": 100.25 },
     "other": { "amount": 100.25 },
     "rarReliefClaimed": { "amount": 100.25 }
