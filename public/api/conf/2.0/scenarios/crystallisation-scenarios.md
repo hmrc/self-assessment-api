@@ -8,28 +8,24 @@
     </thead>
     <tbody>
         <tr>
-            <td><p>AGENT_NOT_SUBSCRIBED</p></td>
-            <td><p>Simulate an agent subscription check failure</p></td>
-        </tr>
-        <tr>
-            <td><p>AGENT_NOT_AUTHORIZED</p></td>
-            <td><p>Simulate an agent is not authorized by the client to act on their behalf</p></td>
-        </tr>
-        <tr>
-            <td><p>CLIENT_NOT_SUBSCRIBED</p></td>
-            <td><p>Simulate a client subscription to MTD check failure</p></td>
-        </tr>
-        <tr>
-            <td><p>INVALID_TAX_CALCULATION_ID</p></td>
-            <td><p>Simulate invalid taxCalculationId</p></td>
-        </tr>
-        <tr>
-            <td><p>REQUIRED_INTENT_TO_CRYSTALLISE</p></td>
-            <td><p>Simulates the scenario where changes have been made, or a more recent submission exists, and resubmission of Intent to Crystallise is required</p></td>
-        </tr>
-        <tr>
              <td><p>NOT_FOUND</p></td>
-             <td><p>Simulates the scenario where no data can be found, either because no calculation exists for this calculation ID, or it does not relate to an intent-to-crystallise calculation</p></td>
+             <td><p>Simulates the scenario where no calculation exists for the calculation ID</p></td>
+        </tr>
+        <tr>
+            <td><p>INCOME_SOURCES_CHANGED</p></td>
+            <td><p>Simulates the scenario where income sources have changed since intent to crystallise was submitted</p></td>
+        </tr>
+        <tr>
+            <td><p>RECENT_SUBMISSIONS_EXIST</p></td>
+            <td><p>Simulates the scenario where more recent submissions have been made since intent to crystallise was submitted</p></td>
+        </tr>
+        <tr>
+            <td><p>RESIDENCY_CHANGED</p></td>
+            <td><p>Simulates the scenario where residency has changed since intent to crystallise was submitted</p></td>
+        </tr>
+        <tr>
+            <td><p>FINAL_DECLARATION_RECEIVED</p></td>
+            <td><p>Simulates the scenario where the final declaration has already been received</p></td>
         </tr>
     </tbody>
 </table>

@@ -2275,10 +2275,10 @@ traits:
                         code: REQUIRED_END_OF_PERIOD_STATEMENT
       /crystallisation:
         post:
-          displayName: Crystallisation
+          displayName: Crystallisation [test only]
           description: !include docs/crystallisation-endpoint.md
           (annotations.sandboxData): !include scenarios/crystallisation-scenarios.md
-          is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+          is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "write:self-assessment"
           securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
           body:
@@ -2286,7 +2286,7 @@ traits:
               type: !include schemas/Crystallisation.json
               example: !include examples/crystallisation/crystallisation.json
           responses:
-            201:
+            204:
               headers:
                 X-CorrelationId:
                   example: 5968c22d620000620096db10
@@ -2297,30 +2297,55 @@ traits:
                   type: types.errorResponse
                   examples:
                     invalidNino:
-                      description: Invalid NINO
+                      description: The format of the supplied NINO field is not valid.
                       value:
-                        code: NINO_INVALID
+                        code: FORMAT_NINO
                     invalidTaxYear:
-                      description: Invalid taxYear
+                      description: The format of the supplied tax year is not valid.
                       value:
-                        code: TAX_YEAR_INVALID
-                    mandatoryField:
-                      description: Calculation ID is not provided
+                        code: FORMAT_TAX_YEAR
+                    ruleTaxYearNotSupported:
+                      description: The specified tax year is not supported, that is, the tax year specified is before the minimum tax year value.
                       value:
-                        code: MANDATORY_FIELD_MISSING
+                        code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    invalidCalculationId:
+                      description: Invalid Calculation ID.
+                      value:
+                        code: FORMAT_CALCID
+                    emptyOrNonMatchingBody:
+                      description: An empty or non-matching body was submitted.
+                      value:
+                        code: RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED
             403:
               body:
                 application/json:
                   type: types.errorResponse
                   examples:
-                    invalidCalcId:
-                      description: Invalid Calculation ID
+                    ruleIncomeSourcesChanged:
+                      description: Information relating to your income sources changed. You will need to intent to crystallise again before crystallising.
                       value:
-                        code: INVALID_TAX_CALCULATION_ID
-                    resubmitIntentToCrystallise:
-                      description: Changes have been made, or a more recent submission exists.  Please resubmit Intent to Crystallise
+                        code: RULE_INCOME_SOURCES_CHANGED
+                    ruleRecentSubmissionsExist:
+                      description: More recent submissions exist. You will need to intent to crystallise again before crystallising.
                       value:
-                        code: REQUIRED_INTENT_TO_CRYSTALLISE
+                        code: RULE_RECENT_SUBMISSIONS_EXIST
+                    ruleResidencyChanged:
+                      description: Your residency has changed. You will need to intent to crystallise again before crystallising.
+                      value:
+                        code: RULE_RESIDENCY_CHANGED
+                    ruleFinalDeclarationReceived:
+                      description: Crystallisation declaration has already been received.
+                      value:
+                        code: RULE_FINAL_DECLARATION_RECEIVED
+            404:
+              body:
+                application/json:
+                  type: types.errorResponse
+                  examples:
+                    calcIdNotFound:
+                      description: No intent-to-crystallise calculation exists for the calculationId.
+                      value:
+                        code: MATCHING_RESOURCE_NOT_FOUND
     /charitable-giving:
       (annotations.group):
         name: Charitable giving
