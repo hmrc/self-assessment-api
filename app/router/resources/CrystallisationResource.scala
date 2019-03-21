@@ -18,31 +18,24 @@ package router.resources
 
 import javax.inject.Inject
 import play.api.libs.json.JsValue
-import play.api.mvc.{Action, AnyContent}
-import router.services.CharitableGivingService
+import play.api.mvc.Action
+import router.services.CrystallisationService
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 
-class CharitableGivingResource @Inject()(service: CharitableGivingService,
-                                         val authConnector: AuthConnector) extends BaseResource {
+
+class CrystallisationResource @Inject()(service: CrystallisationService,
+                                        val authConnector: AuthConnector) extends BaseResource {
 
 
-  def put(param:Any*): Action[JsValue] = AuthAction.async(parse.json) {
+  def post(param: Any*): Action[JsValue] = AuthAction.async(parse.json) {
     implicit request =>
-      withJsonBody[JsValue]{
-        service.put(_).map {
+      withJsonBody[JsValue] {
+        service.post(_).map {
           case Left(error) => buildErrorResponse(error)
           case Right(apiResponse) => buildResponse(apiResponse)
         }
       }
   }
 
-  def get(param:Any*): Action[AnyContent] =
-    AuthAction.async {
-      implicit request =>
-        service.get().map{
-          case Left(error) => buildErrorResponse(error)
-          case Right(apiResponse) => buildResponse(apiResponse)
-        }
-    }
 }

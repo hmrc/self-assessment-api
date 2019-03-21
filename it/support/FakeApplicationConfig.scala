@@ -42,6 +42,8 @@ trait FakeApplicationConfig { _: WireMockConfig =>
     "microservice.services.mtd-dividends-income.port" -> wiremockPort,
     "microservice.services.mtd-savings-accounts.host" -> wiremockHost,
     "microservice.services.mtd-savings-accounts.port" -> wiremockPort,
+    "microservice.services.mtd-crystallisation.host" -> wiremockHost,
+    "microservice.services.mtd-crystallisation.port" -> wiremockPort,
     "feature-switch.release-2.enabled" -> false
   )
 }

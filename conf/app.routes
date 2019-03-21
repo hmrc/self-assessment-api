@@ -62,6 +62,9 @@ GET         /ni/:nino/savings-accounts/:id/:taxYear                             
 
 PUT         /ni/:nino/savings-accounts/:id/:taxYear                                            router.resources.SavingsAccountResource.put(nino, id, taxYear)
 
+#Crystallisation endpoints
+POST         /ni/:nino/:taxYear/crystallisation                                                router.resources.CrystallisationResource.post(nino, taxYear)
+
 ### Version One ####
 
 GET         /*route                                                                            router.resources.SelfAssessmentResource.get(route, p3?="")

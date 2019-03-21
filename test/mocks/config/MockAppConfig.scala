@@ -42,6 +42,7 @@ trait MockAppConfig extends Mock { _: Suite =>
     def selfEmploymentUrl: OngoingStubbing[String] =  when(mockAppConfig.selfEmploymentUrl)
     def dividendsApiUrl: OngoingStubbing[String] = when(mockAppConfig.dividendsApiUrl)
     def savingsAccountsApiUrl: OngoingStubbing[String] = when(mockAppConfig.savingsAccountApiUrl)
+    def crystallisationApiUrl: OngoingStubbing[String] = when(mockAppConfig.crystallisationApiUrl)
   }
 
   override protected def beforeEach(): Unit = {
