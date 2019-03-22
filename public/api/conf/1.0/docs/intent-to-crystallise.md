@@ -2,6 +2,7 @@ On success, a HTTP status code of 303 is returned along with a `Location` header
 
 For more information on handling `Retrieve a tax calculation` response, please refer to our `Tax calculations` API documentation. 
 
+Please note that `Retrieve a tax calculation` `v1.0` is no longer available. Please use `v2.0` on the redirect.
+
 Please note that the software package should be able to handle the HTTP re-directs as per the HTTP specification.
 
-This API is not available in production.
