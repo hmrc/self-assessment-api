@@ -2231,17 +2231,16 @@ traits:
         description: !include docs/crystallisation.md
       /intent-to-crystallise:
         post:
-          displayName: Intent to crystallise
+          displayName: Intent to crystallise [test only]
           description: !include docs/intent-to-crystallise.md
           (annotations.sandboxData): !include scenarios/intent-to-crystallise-scenarios.md
-          is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
+          is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "write:self-assessment"
           securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
           headers:
           body:
             application/json:
-              type: !include schemas/IntentToCrystallise.json
-              example: !include examples/crystallisation/intentToCrystallise.json
+              example: "N/A"
           responses:
             303:
               headers:
@@ -2257,22 +2256,30 @@ traits:
                   type: types.errorResponse
                   examples:
                     invalidNino:
-                      description: Invalid NINO
+                      description: The format of the supplied NINO field is not valid
                       value:
-                        code: NINO_INVALID
+                        code: FORMAT_NINO
                     invalidTaxYear:
-                      description: Invalid taxYear
+                      description: The format of the supplied tax year is not valid
                       value:
-                        code: TAX_YEAR_INVALID
+                        code: FORMAT_TAX_YEAR
+                    notSupportedTaxYear:
+                      description: The specified tax year is not supported, that is, the tax year specified is before the minimum tax year value
+                      value:
+                        code: RULE_TAX_YEAR_NOT_SUPPORTED
             403:
               body:
                 application/json:
                   type: types.errorResponse
                   examples:
-                    eopsNotCompleted:
-                      description: End of Period Statement is Not Completed
+                    noSubmissionsExist:
+                      description: No periodic or annual income data has been submitted
                       value:
-                        code: REQUIRED_END_OF_PERIOD_STATEMENT
+                        code: RULE_NO_SUBMISSIONS_EXIST
+                    finalDeclarationReceived:
+                      description: Crystallisation declaration has already been received
+                      value:
+                        code: RULE_FINAL_DECLARATION_RECEIVED
       /crystallisation:
         post:
           displayName: Crystallisation [test only]
