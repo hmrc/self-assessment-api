@@ -32,8 +32,6 @@ class CrystallisationService @Inject() (val appConfig: AppConfig,
                                         val selfAssessmentConnector: SelfAssessmentConnector
                                        ) extends Service {
 
-
-
   def post(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
 
     withApiVersion {
@@ -45,13 +43,20 @@ class CrystallisationService @Inject() (val appConfig: AppConfig,
           selfAssessmentConnector.post(req.uri, body)(convertHeaderToVersion1, req)
         }
       }
-
     }
-
-
   }
 
+  def postEmpty(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
 
-
-
+    withApiVersion {
+      case Some(VERSION_1) => selfAssessmentConnector.postEmpty(req.uri)
+      case Some(VERSION_2) =>  {
+        if (FeatureSwitch(appConfig.featureSwitch).isCrystallisationV2Enabled) {
+          crystallisationConnector.postEmpty(s"/$VERSION_2${req.uri}")}
+        else {
+          selfAssessmentConnector.postEmpty(req.uri)(convertHeaderToVersion1, req)
+        }
+      }
+    }
+  }
 }

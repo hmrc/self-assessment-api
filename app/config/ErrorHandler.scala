@@ -17,12 +17,12 @@
 package config
 
 import javax.inject.Inject
-import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result}
 import play.api.{Configuration, Logger}
+import router.constants.Versions
 import router.constants.Versions.VERSION_2
 import router.errors.ErrorCode
 import router.errors.ErrorCode._
@@ -39,8 +39,6 @@ class ErrorHandler @Inject()(
                               config: Configuration,
                               auditConnector: AuditConnector
                             ) extends JsonErrorHandler(config, auditConnector) {
-
-  private val versionRegex = """application\/vnd.hmrc.(\d.\d)\+json""".r
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
 
@@ -111,7 +109,6 @@ class ErrorHandler @Inject()(
     }
   }
 
-  private def getAPIVersionFromRequest(implicit hc: HeaderCarrier): Option[String] = {
-    hc.headers.collectFirst { case (ACCEPT, versionRegex(ver)) => ver }
-  }
+  private def getAPIVersionFromRequest(implicit hc: HeaderCarrier): Option[String] =
+    Versions.getFromRequest
 }

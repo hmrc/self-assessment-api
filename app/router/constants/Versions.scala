@@ -16,7 +16,22 @@
 
 package router.constants
 
+import play.api.http.HeaderNames.ACCEPT
+import play.api.mvc.RequestHeader
+import uk.gov.hmrc.http.HeaderCarrier
+
 object Versions {
   val VERSION_1 = "1.0"
   val VERSION_2 = "2.0"
+
+  private val versionRegex = """application\/vnd.hmrc.(\d.\d)\+json""".r
+
+  def getFromRequest(implicit hc: HeaderCarrier): Option[String] =
+    getFrom(hc.headers)
+
+  def getFromRequest(request: RequestHeader): Option[String] =
+    getFrom(request.headers.headers)
+
+  private def getFrom(headers: Seq[(String, String)]) =
+    headers.collectFirst { case (ACCEPT, versionRegex(ver)) => ver }
 }

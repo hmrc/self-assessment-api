@@ -33,6 +33,10 @@ trait MockCrystallisationService extends Mock { _: Suite =>
     def post(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
       when(mockCrystallisationService.post(eqTo(body))(any(), any()))
     }
+
+    def postEmpty: OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockCrystallisationService.postEmpty(any(), any()))
+    }
   }
 
   override protected def beforeEach(): Unit = {

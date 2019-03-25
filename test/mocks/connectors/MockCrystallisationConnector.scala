@@ -34,6 +34,10 @@ trait MockCrystallisationConnector extends Mock {_: Suite =>
       when(mockCrystallisationConnector.post(eqTo(uri), eqTo(body))(any(), any()))
     }
 
+    def postEmpty(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockCrystallisationConnector.postEmpty(eqTo(uri))(any(), any()))
+    }
+
     def get(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
       when(mockCrystallisationConnector.get(eqTo(uri))(any(), any()))
     }

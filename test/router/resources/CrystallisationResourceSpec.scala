@@ -17,6 +17,7 @@
 package router.resources
 
 import mocks.services.MockCrystallisationService
+import play.api.libs.json.JsNull
 import play.api.test.FakeRequest
 import router.errors.{ErrorCode, IncorrectAPIVersion, UnsupportedAPIVersion}
 import support.ResourceSpec
@@ -27,7 +28,6 @@ import scala.concurrent.Future
 class CrystallisationResourceSpec extends ResourceSpec
   with MockCrystallisationService {
 
-
   class Setup {
     val resource = new CrystallisationResource(
       service = mockCrystallisationService,
@@ -36,7 +36,7 @@ class CrystallisationResourceSpec extends ResourceSpec
     mockAuthAction
   }
 
-  "Create Crystallisation" should {
+  "post" should {
     "return a 204 with response headers" when {
       "the service returns a HttpResponse containing a 204 with no json response body" in new Setup {
         MockCrystallisationService.post(requestJson)
@@ -71,6 +71,118 @@ class CrystallisationResourceSpec extends ResourceSpec
         status(result) shouldBe NOT_FOUND
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.notFound.asJson
+      }
+    }
+  }
+
+  "intent" when {
+    "version 1 header present" when {
+      "the service returns a HttpResponse containing a 303 with no json response body" must {
+        "return a 303 with response headers" in new Setup {
+          MockCrystallisationService.post(requestJson)
+            .returns(Future.successful(Right(HttpResponse(SEE_OTHER, None, testHeaderResponse))))
+
+          val result = resource.intent("", "")(
+            FakeRequest().withBody(requestJson).withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+          status(result) shouldBe SEE_OTHER
+          headers(result) shouldBe testHeader
+          contentType(result) shouldBe None
+        }
+      }
+
+
+      "return a 406 with a json response body representing the error" when {
+        "the service returns an IncorrectAPIVersion response" in new Setup {
+          MockCrystallisationService.post(requestJson)
+            .returns(Future.successful(Left(IncorrectAPIVersion)))
+
+          val result = resource.intent("", "")(
+            FakeRequest().withBody(requestJson).withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+          status(result) shouldBe NOT_ACCEPTABLE
+          contentType(result) shouldBe Some(JSON)
+          contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
+        }
+      }
+
+      "return a 404 with a json response body representing the error" when {
+        "the service returns an UnsupportedAPIVersion response" in new Setup {
+          MockCrystallisationService.post(requestJson)
+            .returns(Future.successful(Left(UnsupportedAPIVersion)))
+
+          val result = resource.intent("", "")(
+            FakeRequest().withBody(requestJson).withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+          status(result) shouldBe NOT_FOUND
+          contentType(result) shouldBe Some(JSON)
+          contentAsJson(result) shouldBe ErrorCode.notFound.asJson
+        }
+      }
+    }
+
+    "version 2 header present" when {
+      "the service returns a HttpResponse containing a 303 with no json response body" must {
+        "return a 303 with response headers" in new Setup {
+          MockCrystallisationService.postEmpty
+            .returns(Future.successful(Right(HttpResponse(SEE_OTHER, None, testHeaderResponse))))
+
+          val result = resource.intent("", "")()(
+            FakeRequest().withBody(JsNull).withHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+          status(result) shouldBe SEE_OTHER
+          headers(result) shouldBe testHeader
+          contentType(result) shouldBe None
+        }
+      }
+
+
+      "return a 406 with a json response body representing the error" when {
+        "the service returns an IncorrectAPIVersion response" in new Setup {
+          MockCrystallisationService.postEmpty
+            .returns(Future.successful(Left(IncorrectAPIVersion)))
+
+          val result = resource.intent("", "")()(
+            FakeRequest().withBody(JsNull).withHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+          status(result) shouldBe NOT_ACCEPTABLE
+          contentType(result) shouldBe Some(JSON)
+          contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
+        }
+      }
+
+      "return a 404 with a json response body representing the error" when {
+        "the service returns an UnsupportedAPIVersion response" in new Setup {
+          MockCrystallisationService.postEmpty
+            .returns(Future.successful(Left(UnsupportedAPIVersion)))
+
+          val result = resource.intent("", "")()(
+            FakeRequest().withBody(JsNull).withHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+          status(result) shouldBe NOT_FOUND
+          contentType(result) shouldBe Some(JSON)
+          contentAsJson(result) shouldBe ErrorCode.notFound.asJson
+        }
+      }
+    }
+
+    "no version header present" when {
+      "return a 406 with a json response body representing the error" when {
+        "the service returns an IncorrectAPIVersion response" in new Setup {
+          MockCrystallisationService.post(requestJson)
+            .returns(Future.successful(Left(IncorrectAPIVersion)))
+
+          val result = resource.intent("", "")(FakeRequest().withBody(requestJson))
+          status(result) shouldBe NOT_ACCEPTABLE
+          contentType(result) shouldBe Some(JSON)
+          contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
+        }
+      }
+
+      "return a 404 with a json response body representing the error" when {
+        "the service returns an UnsupportedAPIVersion response" in new Setup {
+          MockCrystallisationService.post(requestJson)
+            .returns(Future.successful(Left(UnsupportedAPIVersion)))
+
+          val result = resource.intent("", "")(FakeRequest().withBody(requestJson))
+          status(result) shouldBe NOT_FOUND
+          contentType(result) shouldBe Some(JSON)
+          contentAsJson(result) shouldBe ErrorCode.notFound.asJson
+        }
       }
     }
   }

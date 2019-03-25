@@ -43,6 +43,10 @@ trait BaseConnector {
     http.POST[JsValue, SelfAssessmentOutcome](s"$serviceUrl$uri", body)(implicitly, httpParser, hc, implicitly)
   }
 
+  def postEmpty(uri: String)(implicit hc: HeaderCarrier, request: Request[_]): Future[SelfAssessmentOutcome] = {
+    http.POSTEmpty[SelfAssessmentOutcome](s"$serviceUrl$uri")(httpParser, hc, implicitly)
+  }
+
   def put(uri: String, body: JsValue)(implicit hc: HeaderCarrier, request: Request[_]): Future[SelfAssessmentOutcome] = {
     http.PUT[JsValue, SelfAssessmentOutcome](s"$serviceUrl$uri", body)(implicitly, httpParser, hc, implicitly)
   }

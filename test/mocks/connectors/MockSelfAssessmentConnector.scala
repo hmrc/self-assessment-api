@@ -38,6 +38,10 @@ trait MockSelfAssessmentConnector extends Mock { _: Suite =>
       when(mockSelfAssessmentConnector.post(eqTo(uri), eqTo(body))(any(), any()))
     }
 
+    def postEmpty(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockSelfAssessmentConnector.postEmpty(eqTo(uri))(any(), any()))
+    }
+
     def put(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
       when(mockSelfAssessmentConnector.put(eqTo(uri), eqTo(body))(any(), any()))
     }

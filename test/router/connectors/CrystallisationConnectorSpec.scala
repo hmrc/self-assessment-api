@@ -36,18 +36,20 @@ class CrystallisationConnectorSpec extends UnitSpec
 
 
   class Setup {
-    object TestConnector extends CrystallisationConnector (
+
+    object TestConnector extends CrystallisationConnector(
       mockHttp,
       mockSelfAssessmentHttpParser,
       mockAppConfig
     )
+
     MockAppConfig.crystallisationApiUrl returns crystallisationApiUrl
   }
 
   lazy val crystallisationApiUrl = "test-di-api-url"
   val path = "/2.0/test-path"
 
-  "Create Crystallisation" should {
+  "post" should {
     "return a HttpResponse" when {
       "a successful HttpResponse is returned" in new Setup {
         val request = FakeRequest("POST", path)
@@ -58,11 +60,21 @@ class CrystallisationConnectorSpec extends UnitSpec
         MockHttp.POST[JsValue, SelfAssessmentOutcome](s"$crystallisationApiUrl$path", requestJson)
           .returns(Future.successful(Right(response)))
         await(TestConnector.post(path, requestJson)(hc, request)) shouldBe Right(response)
-
       }
     }
   }
 
+  "postEmpty" should {
+    "return a HttpResponse" when {
+      "a successful HttpResponse is returned" in new Setup {
+        val request = FakeRequest("POST", path)
+        val response = HttpResponse(Status.NO_CONTENT)
 
-
+        MockSelfAssessmentHttpParser.read.returns(Right(response))
+        MockHttp.POSTEmpty[SelfAssessmentOutcome](s"$crystallisationApiUrl$path")
+          .returns(Future.successful(Right(response)))
+        await(TestConnector.postEmpty(path)(hc, request)) shouldBe Right(response)
+      }
+    }
+  }
 }

@@ -23,7 +23,8 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import scala.concurrent.Future
 
 
-trait MockHttp extends Mock { _: Suite =>
+trait MockHttp extends Mock {
+  _: Suite =>
 
   val mockHttp: HttpClient = mock[HttpClient]
 
@@ -41,6 +42,10 @@ trait MockHttp extends Mock { _: Suite =>
       when(mockHttp.POST[I, O](eqTo(url), eqTo(body), eqTo(headers))(any(), any(), any(), any()))
     }
 
+    def POSTEmpty[O](url: String, headers: (String, String)*): OngoingStubbing[Future[O]] = {
+      when(mockHttp.POSTEmpty[O](eqTo(url))(any(), any(), any()))
+    }
+
     def POST[I, O](url: String, body: I): OngoingStubbing[Future[O]] = {
       when(mockHttp.POST[I, O](eqTo(url), eqTo(body), any())(any(), any(), any(), any()))
     }
@@ -49,4 +54,5 @@ trait MockHttp extends Mock { _: Suite =>
       when(mockHttp.PUT[I, O](eqTo(url), eqTo(body))(any(), any(), any(), any()))
     }
   }
+
 }

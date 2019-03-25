@@ -17,16 +17,16 @@
 package router.resources
 
 import javax.inject.Inject
-import play.api.libs.json.JsValue
-import play.api.mvc.Action
-import router.services.CrystallisationService
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.json.{JsNull, JsValue}
+import play.api.mvc.{Action, BodyParser}
+import router.constants.Versions
+import router.constants.Versions._
+import router.services.{CrystallisationService, Service}
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-
 
 class CrystallisationResource @Inject()(service: CrystallisationService,
-                                        val authConnector: AuthConnector) extends BaseResource {
-
+                                        val authConnector: AuthConnector) extends BaseResource with Service {
 
   def post(param: Any*): Action[JsValue] = AuthAction.async(parse.json) {
     implicit request =>
@@ -38,4 +38,28 @@ class CrystallisationResource @Inject()(service: CrystallisationService,
       }
   }
 
+  // Note that intent V1 requires empty JSON (i.e. {}) whereas V2 requires completely empty body. So we need to parse
+  // accordingly these with the empty body parsed to JsNull
+  private val jsonOrEmptyParser: BodyParser[JsValue] = parse.using { request =>
+
+    if (Versions.getFromRequest(request).contains(VERSION_1))
+      parse.json
+    else
+      parse.empty.map(_ => JsNull)
+  }
+
+  def intent(param: Any*): Action[JsValue] = AuthAction.async(jsonOrEmptyParser) { implicit request =>
+    withJsonBody[JsValue] { body =>
+      val serviceOutcome = body match {
+        case JsNull => service.postEmpty
+        case json => service.post(json)
+      }
+
+      serviceOutcome.map {
+        case Left(error) => buildErrorResponse(error)
+        case Right(apiResponse) => buildResponse(apiResponse)
+      }
+    }
+  }
 }
+
