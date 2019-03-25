@@ -984,15 +984,6 @@ traits:
                         description: Both expenses and consolidatedExpenses can not be present at the same time
                         value:
                           code: BOTH_EXPENSES_SUPPLIED
-              403:
-                body:
-                  application/json:
-                    type: types.errorResponse
-                    examples:
-                      notAllowedConsolidatedExpenses:
-                        description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
-                        value:
-                          code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
           get:
             displayName: List all non-FHL UK property update periods
             description: List all non-FHL UK property update periods.
@@ -1106,15 +1097,6 @@ traits:
                           description: Both expenses and consolidatedExpenses can not be present at the same time
                           value:
                             code: BOTH_EXPENSES_SUPPLIED
-                403:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notAllowedConsolidatedExpenses:
-                          description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
-                          value:
-                            code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
                 404:
         /{taxYear}:
             displayName: Annual Summary
@@ -1253,15 +1235,6 @@ traits:
                         description: Both expenses and consolidatedExpenses can not be present at the same time
                         value:
                           code: BOTH_EXPENSES_SUPPLIED
-              403:
-                body:
-                  application/json:
-                    type: types.errorResponse
-                    examples:
-                      notAllowedConsolidatedExpenses:
-                        description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
-                        value:
-                          code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
           get:
             displayName: List all FHL UK property update periods
             description: List all FHL UK property update periods.
@@ -1379,16 +1352,6 @@ traits:
                           description: Both expenses and consolidatedExpenses can not be present at the same time
                           value:
                             code: BOTH_EXPENSES_SUPPLIED
-                403:
-                  body:
-                    application/json:
-                      type: types.errorResponse
-                      examples:
-                        notAllowedConsolidatedExpenses:
-                          description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
-                          value:
-                            code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
-                404:
         /{taxYear}:
             displayName: Annual Summary
             uriParameters:
