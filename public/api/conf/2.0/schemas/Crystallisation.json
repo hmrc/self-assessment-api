@@ -4,9 +4,10 @@
   "type": "object",
   "properties": {
     "calculationId": {
-      "title": "Calculation id",
-      "description": "Tax calculation id that was returned by intent to crystallise end-point",
-      "type": "string"
+      "title": "Calculation ID",
+      "description": "The calculation ID that was returned by intent to crystallise endpoint.",
+      "type": "string",
+      "example": "041f7e4d-87d9-4d4a-a296-3cfbdf92f7e2"
     }
   },
   "required": [
