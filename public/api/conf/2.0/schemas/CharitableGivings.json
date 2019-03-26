@@ -13,10 +13,11 @@
     },
     "charityNames": {
       "type": "array",
-      "items": { 
-        "type": "string", 
-        "minLength": 1, 
-        "maxLength": 75
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 75,
+        "pattern": "^[A-Za-z0-9 &'\\(\\)\\*,\\-\\./@£]{1,75}$"
       }
     }
   },
@@ -52,9 +53,9 @@
         },
         "nonUKCharityNames": {
           "title": "Non-UK Charity Names.",
-          "description": "Names of all non-UK charities that received gift aid payments where the amounts have been included in giftAidPayments.nonUkCharities. If giftAidPayments.nonUkCharities is greater than zero then this field is required. Each name should be between 1 and 75 characters; the pipe (|) character is not allowed.",
+          "description": "Names of all non-UK charities that received gift aid payments where the amounts have been included in giftAidPayments.nonUkCharities. If giftAidPayments.nonUkCharities is greater than zero then this field is required. Each name should be between 1 and 75 characters in length. Allowed characters, including spaces are: mixed case alphanumeric characters and the characters: &'()*,-./@£",
           "$ref": "#/definitions/charityNames"
-         }
+        }
       }
     },
     "gifts": {
@@ -78,7 +79,7 @@
         },
         "investmentsNonUKCharityNames": {
           "title": "Non-UK Investment Charity Names.",
-          "description": "Names of all non-UK charities that received investments where the amounts are included in gifts.investmentsNonUKCharities. If gifts.investmentsNonUKCharities is greater than zero, then this field is required. Each name should be between 1 and 75 characters; the pipe (|) character is not allowed.",
+          "description": "Names of all non-UK charities that received investments where the amounts are included in gifts.investmentsNonUKCharities. If gifts.investmentsNonUKCharities is greater than zero, then this field is required. Each name should be between 1 and 75 characters in length. Allowed characters, including spaces are: mixed case alphanumeric characters and the characters: &'()*,-./@£",
           "$ref": "#/definitions/charityNames"
         }
       }
