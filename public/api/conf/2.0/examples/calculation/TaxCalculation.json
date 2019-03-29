@@ -1,183 +1,227 @@
 {
   "year": 2018,
-  "intentToCrystallise": false,
-  "crystallised": false,
-  "validationMessageCount": 0,
-  "incomeTaxAndNicYTD": 765.39,
+  "intentToCrystallise": true,
+  "crystallised": true,
+  "validationMessageCount": 1,
+  "incomeTaxAndNicYTD": 1000.25,
+  "totalBeforeTaxDeducted": 1000.25,
   "nationalRegime": "UK",
   "taxableIncome": {
     "employments": {
-      "totalIncome": 7523.01,
-      "totalPay": 6524.65,
-      "totalBenefitsAndExpenses": 545.23,
-      "totalAllowableExpenses": 75.33,
+      "totalIncome": 1000.25,
+      "totalPay": 1000.25,
+      "totalBenefitsAndExpenses": 1000.25,
+      "totalAllowableExpenses": 1000.25,
       "employment": [
         {
-          "employmentId": "XKIS00000000968",
-          "netPay": 6524.65,
-          "benefitsAndExpenses": 545.23,
-          "allowableExpenses": 75.33
+          "employmentId": "ABIS10000000001",
+          "netPay": 1000.25,
+          "benefitsAndExpenses": 1000.25,
+          "allowableExpenses": 1000.25
         }
       ]
     },
     "selfEmployments": {
-      "totalIncome": 5197.01,
+      "totalIncome": 1000.25,
       "selfEmployment": [
         {
           "selfEmploymentId": "XKIS00000000988",
-          "taxableIncome": 521.94,
-          "finalised": false,
-          "losses": 1460.21
+          "taxableIncome": 1000.25,
+          "finalised": true,
+          "losses": 1000.25
         }
       ]
     },
     "ukProperty": {
-      "totalIncome": 1536.31,
-      "nonFurnishedHolidayLettingsTaxableProfit": 873.29,
-      "nonFurnishedHolidayLettingsLoss": 475.85,
-      "furnishedHolidayLettingsTaxableProfit": 477.88,
-      "furnishedHolidayLettingsLoss": 312.99,
-      "finalised": false
+      "totalIncome": 1000.25,
+      "nonFurnishedHolidayLettingsTaxableProfit": 1000.25,
+      "furnishedHolidayLettingsTaxableProfit": 1000.25,
+      "finalised": true,
+      "nonFurnishedHolidayLettingsLoss": 1000.25,
+      "furnishedHolidayLettingsLoss": 1000.25
+    },
+    "savings": {
+      "totalIncome": 1000.25,
+      "taxedAccounts": [
+        {
+          "savingsAccountId": "SAVKB2UVwUTBQGJ",
+          "gross": 1000.25,
+          "name": "current account",
+          "net": 800.25,
+          "taxDeducted": 200.25
+        }
+      ],
+      "totalTaxedInterestIncome": 1000.25,
+      "totalUntaxedInterestIncome": 1000.25,
+      "untaxedAccounts": [
+        {
+          "gross": 1000.25,
+          "savingsAccountId": "SAVKB2UVwUTBQGK",
+          "name": "personal savings account"
+        }
+      ]
     },
     "ukDividends": {
-      "totalIncome": 765.22
+      "totalIncome": 1000.25,
+      "otherUkDividends": 1000.25,
+      "ukDividends": 1000.25
     },
-    "totalIncomeReceived": 5197.00,
+    "totalIncomeReceived": 1000.25,
     "allowancesAndDeductions": {
-      "totalAllowancesAndDeductions": 2923.02,
-      "giftOfInvestmentsAndPropertyToCharity": 2502.25,
-      "apportionedPersonalAllowance": 1842.42
+      "totalAllowancesAndDeductions": 1000.25,
+      "giftOfInvestmentsAndPropertyToCharity": 1000.25,
+      "apportionedPersonalAllowance": 1000.25
     },
-    "totalTaxableIncome": 2242.09
+    "totalTaxableIncome": 10000.25
   },
   "incomeTax": {
-    "taxableIncome": 20142.00,
+    "taxableIncome": 1000.25,
     "payAndPensionsProfit": {
-      "totalAmount": 238.71,
+      "totalAmount": 1000.25,
       "band": [
         {
-          "name": "BRT",
-          "rate": 20.00,
-          "threshold": 40000,
-          "apportionedThreshold": 20000,
-          "income": 2242.12,
-          "amount": 448.40
+          "name": "SRT",
+          "rate": 99.99,
+          "threshold": 99999999,
+          "apportionedThreshold": 99999999,
+          "apportionedBandLimit": 99999999,
+          "bandLimit": 99999999,
+          "income": 1000.25,
+          "amount": 1000.25
         }
       ],
-      "personalAllowanceUsed": 2955,
-      "taxableIncome": 5197
+      "personalAllowanceUsed": 1000.25,
+      "taxableIncome": 1000.25
     },
     "savingsAndGains": {
-      "totalAmount": 448.40,
+      "totalAmount": 1000.25,
       "band": [
         {
           "name": "BRT",
-          "rate": 20.00,
-          "threshold": 45000,
-          "apportionedThreshold": 30000,
-          "income": 2242.25,
-          "amount": 528.47
+          "rate": 99.99,
+          "threshold": 99999999,
+          "apportionedThreshold": 99999999,
+          "apportionedBandLimit": 99999999,
+          "bandLimit": 99999999,
+          "income": 1000.25,
+          "amount": 1000.25
         }
       ],
-      "personalAllowanceUsed": 2925.05,
-      "taxableIncome": 5197.00
+      "personalAllowanceUsed": 1000.25,
+      "taxableIncome": 1000.25
     },
     "dividends": {
-      "totalAmount": 448.4,
+      "totalAmount": 1000.25,
       "band": [
         {
-          "name": "BRT",
-          "rate": 20.00,
-          "threshold": 50000,
-          "apportionedThreshold": 20000,
-          "income": 2142.53,
-          "amount": 248.45
+          "name": "HRT",
+          "rate": 99.99,
+          "threshold": 99999999,
+          "apportionedThreshold": 99999999,
+          "apportionedBandLimit": 99999999,
+          "bandLimit": 99999999,
+          "income": 1000.25,
+          "amount": 1000.25
         }
       ],
-      "personalAllowanceUsed": 2955.64,
-      "taxableIncome": 5197.04
+      "personalAllowanceUsed": 1000.25,
+      "taxableIncome": 1000.25
     },
-    "totalBeforeReliefs": 498.40,
+    "totalBeforeReliefs": 1000.25,
     "allowancesAndReliefs": {
-      "propertyFinanceRelief": 1235.00,
-      "totalAllowancesAndReliefs": 90.12
+      "propertyFinanceRelief": 1000.25,
+      "totalAllowancesAndReliefs": 1000.25
     },
-    "totalAfterReliefs": 135.23,
-    "giftAid": {
-      "paymentsMade": 504.25,
-      "rate": 40.00,
-      "taxableAmount": 50.22
-    },
-    "totalAfterGiftAid": 19304.28,
-    "totalIncomeTax": 24469.42
+    "totalAfterReliefs": 1000.25,
+    "totalIncomeTax": 1000.25,
+    "residentialFinanceCosts": {
+      "amountClaimed": 1000.25,
+      "allowableAmount": 1000.25,
+      "rate": 10.25
+    }
   },
   "nic": {
-    "totalNic": 316.99,
+    "totalNic": 1000.25,
     "class2": {
-      "amount": 38.35,
-      "weekRate": 2.96,
-      "weeks": 13,
-      "limit": 6205,
-      "apportionedLimit": 1547
+      "amount": 1000.25,
+      "weekRate": 1000.25,
+      "weeks": 1,
+      "limit": 99999999,
+      "apportionedLimit": 2
     },
     "class4": {
-      "totalAmount": 278.64,
+      "totalAmount": 1000.25,
       "band": [
         {
-          "name": "ZRT",
-          "rate": 5.00,
-          "threshold": 8424,
-          "apportionedThreshold": 2101,
-          "income": 2101.23,
-          "amount": 0.50
+          "name": "HRT",
+          "rate": 99.99,
+          "threshold": 99999999,
+          "apportionedThreshold": 99999999,
+          "income": 1000.25,
+          "amount": 1000.25
         }
       ]
     }
   },
-  "totalBeforeTaxDeducted": 1570.25,
   "taxDeducted": {
-    "ukLandAndProperty": 1840.25,
-    "totalTaxDeducted": 1095.25
+    "totalTaxDeducted": 1000.25,
+    "savings": 1000.25,
+    "ukLandAndProperty": 1000.25
   },
   "eoyEstimate": {
     "employments": [
       {
-        "employmentId": "XKIS00000000968",
-        "taxableIncome": 1860.25,
-        "supplied": true,
+        "employmentId": "XKIS00000000988",
+        "taxableIncome": 99999999.99,
+        "supplied": false,
         "finalised": false
       }
     ],
     "selfEmployments": [
       {
         "selfEmploymentId": "XKIS00000000988",
-        "taxableIncome": 11615.42,
+        "taxableIncome": 99999999.99,
         "supplied": true,
-        "finalised": false
+        "finalised": true
       }
     ],
     "ukProperty": {
-      "taxableIncome": 14570.85,
+      "taxableIncome": 99999999.99,
       "supplied": true,
-      "finalised": false
+      "finalised": true
     },
     "ukDividends": {
-      "taxableIncome": 12350.25,
+      "taxableIncome": 99999999.99,
       "supplied": true,
-      "finalised": false
+      "finalised": true
     },
-    "totalTaxableIncome": 31615.02,
-    "incomeTaxAmount": 3953.59,
-    "nic2": 153.4,
-    "nic4": 2087.19,
-    "totalNicAmount": 2240.59,
-    "incomeTaxNicAmount": 6193.59
+    "charitableGiving": {
+      "taxableIncome": 1000.25,
+      "supplied": true
+    },
+    "savings": {
+      "savingsAccountId": "SAVKB2UVwUTBQGJ",
+      "taxableIncome": 1000.25,
+      "supplied": true
+    },
+    "totalTaxableIncome": 99999999.99,
+    "incomeTaxAmount": 99999999.99,
+    "nic2": 99999999,
+    "nic4": 99999999,
+    "totalNicAmount": 99999999.99,
+    "incomeTaxNicAmount": 99999999.99
   },
-  "calculationMessageCount": 0,
+  "calculationMessageCount": 1,
+  "calculationMessages": [
+    {
+      "type": "warning",
+      "text": "You have entered a large amount in total Gift Aid payments. Please check."
+    }
+  ],
   "annualAllowances": {
-    "personalAllowance": 11850,
-    "personalAllowanceThreshold": 12000,
-    "reducedPersonalAllowance": 100000,
-    "giftAidExtender": 540
+    "personalAllowance": 99999999,
+    "reducedPersonalAllowanceThreshold": 99999999,
+    "reducedPersonalAllowance": 99999999,
+    "giftAidExtender": 99999999
   }
 }
