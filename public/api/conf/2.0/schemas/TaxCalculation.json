@@ -1186,27 +1186,30 @@
           }
         },
         "savings": {
-          "type": "object",
-          "description": "This object defines the estimated annual forecast income from UK banks, building societies and securities",
-          "properties": {
-            "savingsAccountId": {
-              "title": "Savings Account ID",
-              "type": "string",
-              "description": "The unique identifier of the savings account",
-              "example": "SAVKB2UVwUTBQGJ"
-            },
-            "taxableIncome": {
-              "title": "Taxable Income",
-              "type": "number",
-              "description": "The estimated annual income from UK banks, building societies and securities. The value must be between 0 and 99999999999.99 up to 2 decimal places.",
-              "minimum": 0,
-              "maximum": 99999999999.99
-            },
-            "supplied": {
-              "title": "Supplied",
-              "type": "boolean",
-              "description": "Shows whether the interest from UK banks, building societies and securities has been supplied or calculated.  If true, the amount has been supplied. If false, the amount has been calculated",
-              "example": "false"
+          "type": "array",
+          "description": "An array of annualised estimated income  from UK banks, building societies and securities",
+          "items": {
+            "type": "object",
+            "properties": {
+              "savingsAccountId": {
+                "title": "Savings Account ID",
+                "type": "string",
+                "description": "The unique identifier of the savings account",
+                "example": "SAVKB2UVwUTBQGJ"
+              },
+              "taxableIncome": {
+                "title": "Taxable Income",
+                "type": "number",
+                "description": "The estimated annual income from UK banks, building societies and securities. The value must be between 0 and 99999999999.99 up to 2 decimal places.",
+                "minimum": 0,
+                "maximum": 99999999999.99
+              },
+              "supplied": {
+                "title": "Supplied",
+                "type": "boolean",
+                "description": "Shows whether the interest from UK banks, building societies and securities has been supplied or calculated.  If true, the amount has been supplied. If false, the amount has been calculated",
+                "example": "false"
+              }
             }
           }
         },

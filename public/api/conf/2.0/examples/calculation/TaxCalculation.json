@@ -199,11 +199,13 @@
       "taxableIncome": 1000.25,
       "supplied": true
     },
-    "savings": {
-      "savingsAccountId": "SAVKB2UVwUTBQGJ",
-      "taxableIncome": 1000.25,
-      "supplied": true
-    },
+    "savings": [
+      {
+        "savingsAccountId": "SAVKB2UVwUTBQGJ",
+        "taxableIncome": 1000.25,
+        "supplied": true
+      }
+    ],
     "totalTaxableIncome": 99999999.99,
     "incomeTaxAmount": 99999999.99,
     "nic2": 99999999,
