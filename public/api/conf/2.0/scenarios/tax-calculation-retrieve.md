@@ -20,7 +20,11 @@
         <tr>
             <td><p>SELF_EMPLOYMENT</p></td>
             <td><p>Simulates a calculation with self-employment income</p></td>
-        </tr>      
+        </tr>
+        <tr>
+            <td><p>ALL_FIELDS_TEST_ONLY</p></td>
+            <td><p>Simulates a calculation with all available data fields<br><br>Please note the values do not represent a realistic tax calculation and is intended to show all fields being populated</p></td>
+        </tr>     
         <tr>
             <td><p>ERRORS_AND_WARNINGS</p></td>
             <td><p>Simulates a calculation with four BVR errors and one BVR warning</p></td>
