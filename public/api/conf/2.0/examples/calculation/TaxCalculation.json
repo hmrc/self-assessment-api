@@ -4,7 +4,6 @@
   "crystallised": true,
   "validationMessageCount": 1,
   "incomeTaxAndNicYTD": 1000.25,
-  "totalBeforeTaxDeducted": 1000.25,
   "nationalRegime": "UK",
   "taxableIncome": {
     "employments": {
@@ -75,6 +74,9 @@
     "totalTaxableIncome": 10000.25
   },
   "incomeTax": {
+    "totalIncomeTax": 1000.25,
+    "totalBeforeReliefs": 1000.25,
+    "totalAfterReliefs": 1000.25,
     "taxableIncome": 1000.25,
     "payAndPensionsProfit": {
       "totalAmount": 1000.25,
@@ -127,13 +129,16 @@
       "personalAllowanceUsed": 1000.25,
       "taxableIncome": 1000.25
     },
-    "totalBeforeReliefs": 1000.25,
     "allowancesAndReliefs": {
       "propertyFinanceRelief": 1000.25,
       "totalAllowancesAndReliefs": 1000.25
     },
-    "totalAfterReliefs": 1000.25,
-    "totalIncomeTax": 1000.25,
+    "giftAid": {
+      "paymentsMade": 1000.25,
+      "rate": 10.25,
+      "taxableAmount": 1000.25
+    },
+    "totalAfterGiftAid": 1000.25,
     "residentialFinanceCosts": {
       "amountClaimed": 1000.25,
       "allowableAmount": 1000.25,
@@ -163,6 +168,7 @@
       ]
     }
   },
+  "totalBeforeTaxDeducted": 1000.25,
   "taxDeducted": {
     "totalTaxDeducted": 1000.25,
     "savings": 1000.25,

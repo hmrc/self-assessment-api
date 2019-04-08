@@ -539,6 +539,22 @@
                     "example": "1000.25",
                     "minimum": 0,
                     "maximum": 99999999999.99
+                  },
+                  "apportionedBandLimit": {
+                    "title": "Apportioned Band Limit",
+                    "description": "The apportioned threshold for the tax band, excluding personal allowance. The value must be between 0 and 99999999999.",
+                    "type": "number",
+                    "example": "1025",
+                    "minimum": 0,
+                    "maximum": 99999999999
+                  },
+                  "bandLimit": {
+                    "title": "Band Limit",
+                    "description": "The upper threshold for the tax band excluding personal allowance. The value must be between 0 and 99999999999.",
+                    "type": "number",
+                    "example": "1025",
+                    "minimum": 0,
+                    "maximum": 99999999999
                   }
                 }
               }
@@ -581,13 +597,9 @@
                 "properties": {
                   "name": {
                     "title": "Name",
-                    "description": "The name of the tax band. Must be one of the following: SSR, BRT, HRT, ART, ZRT",
+                    "description": "The name of the tax band. Must be one of the following: SSR,BRT,HRT,ART, ZRTBR, ZRTHR",
                     "type": "string",
                     "oneOf": [
-                      {
-                        "enum": ["ZRT"],
-                        "description": "zero rate threshold"
-                      },
                       {
                         "enum": ["SSR"],
                         "description": "savings starter rate threshold"
@@ -603,6 +615,14 @@
                       {
                         "enum": ["ART"],
                         "description": "additional rate threshold"
+                      },
+                      {
+                        "enum": ["ZRTBR"],
+                        "description": "personal savings allowance awarded at basic rate"
+                      },
+                      {
+                        "enum": ["ZRTHR"],
+                        "description": "personal savings allowance awarded at higher rate"
                       }
                     ]
                   },
@@ -645,6 +665,22 @@
                     "example": "1000.25",
                     "minimum": 0,
                     "maximum": 99999999999.99
+                  },
+                  "apportionedBandLimit": {
+                    "title": "Apportioned Band Limit",
+                    "description": "The apportioned threshold for the tax band, excluding personal allowance. The value must be between 0 and 99999999999.",
+                    "type": "number",
+                    "example": "1025",
+                    "minimum": 0,
+                    "maximum": 99999999999
+                  },
+                  "bandLimit": {
+                    "title": "Band Limit",
+                    "description": "The upper threshold for the tax band excluding personal allowance. The value must be between 0 and 99999999999.",
+                    "type": "number",
+                    "example": "1025",
+                    "minimum": 0,
+                    "maximum": 99999999999
                   }
                 }
               }
@@ -687,13 +723,9 @@
                 "properties": {
                   "name": {
                     "title": "Name",
-                    "description": "The name of the tax band. Must be one of: ART, BRT, HRT, ZRT",
+                    "description": "The name of the tax band. Must be one of the following: BRT, HRT, ART, ZRTBR, ZRTHR, ZRTAR",
                     "type": "string",
                     "oneOf": [
-                      {
-                        "enum": ["ZRT"],
-                        "description": "zero rate threshold"
-                      },
                       {
                         "enum": ["BRT"],
                         "description": "basic rate threshold"
@@ -705,6 +737,18 @@
                       {
                         "enum": ["ART"],
                         "description": "additional rate threshold"
+                      },
+                      {
+                        "enum": ["ZRTBR"],
+                        "description": "dividend allowance awarded at basic rate"
+                      },
+                      {
+                        "enum": ["ZRTHR"],
+                        "description": "dividend allowance awarded at higher rate"
+                      },
+                      {
+                        "enum": ["ZRTAR"],
+                        "description": "dividend allowance awarded at additional rate"
                       }
                     ]
                   },
@@ -747,6 +791,22 @@
                     "example": "1000.25",
                     "minimum": 0,
                     "maximum": 99999999999.99
+                  },
+                  "apportionedBandLimit": {
+                    "title": "Apportioned Band Limit",
+                    "description": "The apportioned threshold for the tax band, excluding personal allowance. The value must be between 0 and 99999999999.",
+                    "type": "number",
+                    "example": "1025",
+                    "minimum": 0,
+                    "maximum": 99999999999
+                  },
+                  "bandLimit": {
+                    "title": "Band Limit",
+                    "description": "The upper threshold for the tax band excluding personal allowance. The value must be between 0 and 99999999999.",
+                    "type": "number",
+                    "example": "1025",
+                    "minimum": 0,
+                    "maximum": 99999999999
                   }
                 }
               }
