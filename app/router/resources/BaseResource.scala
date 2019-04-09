@@ -45,7 +45,11 @@ trait BaseResource extends BaseController with AuthorisedActions {
     }
   }
 
-  private def toSimpleHeaders(headers: Map[String, Seq[String]]): Seq[(String, String)] = {
-    (headers ++ Map("X-Content-Type-Options" -> Seq("nosniff"))).flatMap{ case (name, values) => values.map(name -> _)}.toSeq
+  def toSimpleHeaders(headers: Map[String, Seq[String]]): Seq[(String, String)] = {
+    (headers ++ Map(
+      "X-Content-Type-Options" -> Seq("nosniff"),
+      "Content-Type" -> Seq("application/json")
+    )).flatMap { case (name, values) => values.map(name -> _) }.toSeq
   }
+
 }
