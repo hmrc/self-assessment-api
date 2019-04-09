@@ -29,7 +29,7 @@ trait ResourceSpec extends UnitSpec
 
   val requestJson: JsObject = Json.obj("test" -> "request json")
   val responseJson: JsObject = Json.obj("test" -> "response json")
-  val testHeader = Map("test" -> "header",  "X-Content-Type-Options" -> "nosniff")
+  val testHeader = Map("test" -> "header",  "X-Content-Type-Options" -> "nosniff", "Content-Type" -> "application/json")
   val testHeaderResponse = Map("test" -> Seq("header"))
 
   def mockAuthAction: OngoingStubbing[Future[Unit]] = {
