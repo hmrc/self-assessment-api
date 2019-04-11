@@ -18,7 +18,8 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, Materializer}
-import org.joda.time.DateTime
+import org.joda.time.format.ISODateTimeFormat
+import org.joda.time.{DateTime, LocalDate}
 import org.mockito.Matchers
 import play.api.libs.json.JsObject
 import uk.gov.hmrc.domain.Nino
@@ -88,7 +89,6 @@ class PropertiesPeriodStatementResourceSpec extends BaseResourceSpec {
         setUp()
         val from = DateTime.now().minusDays(1).toLocalDate
         val to = DateTime.now().toLocalDate
-        val period = Period(from, to)
 
         when(statementConnector.create(Matchers.anyObject[Nino](), Matchers.anyObject[Period](), Matchers.anyObject[String]())
         (Matchers.any(), Matchers.any())).thenReturn(Future.successful(EmptyResponse(HttpResponse(NO_CONTENT))))
@@ -120,7 +120,7 @@ class PropertiesPeriodStatementResourceSpec extends BaseResourceSpec {
       "return invalid start date error response" in {
         setUp()
         submitWithSessionAndAuth(TestResource.finaliseEndOfPeriodStatement(validNino,
-          DateTime.now().minusYears(2).toLocalDate, DateTime.now().toLocalDate), requestJson) {
+          LocalDate.parse("2017-04-05", ISODateTimeFormat.date()), DateTime.now().toLocalDate), requestJson) {
           result =>
             status(result) shouldBe BAD_REQUEST
             result.onComplete(x => assert(Errors.InvalidStartDate.code === (contentAsJson(result) \ "code").as[String]))
