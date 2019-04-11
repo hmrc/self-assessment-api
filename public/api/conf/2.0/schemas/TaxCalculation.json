@@ -1225,26 +1225,6 @@
             }
           }
         },
-        "charitableGiving": {
-          "type": "object",
-          "description": "This object defines the estimated annual forecast for Charitable Giving tax relief",
-          "properties": {
-            "taxableIncome": {
-              "title": "Taxable Income",
-              "type": "number",
-              "description": "The estimated annual amount of Charitable Giving tax relief. The value must be between 0 and 99999999999.99 up to 2 decimal places.",
-              "example": "1000.25",
-              "minimum": 0,
-              "maximum": 99999999999.99
-            },
-            "supplied": {
-              "title": "Supplied",
-              "type": "boolean",
-              "description": "Shows whether the Charitable Giving tax relief has been supplied or calculated. If true, Charitable Giving tax relief has been supplied. If false, the Charitable Giving tax relief has been calculated.",
-              "example": "false"
-            }
-          }
-        },
         "savings": {
           "type": "array",
           "description": "An array of annualised estimated income  from UK banks, building societies and securities",

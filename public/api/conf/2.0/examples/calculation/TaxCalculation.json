@@ -201,10 +201,6 @@
       "supplied": true,
       "finalised": true
     },
-    "charitableGiving": {
-      "taxableIncome": 1000.25,
-      "supplied": true
-    },
     "savings": [
       {
         "savingsAccountId": "SAVKB2UVwUTBQGJ",
