@@ -19,14 +19,14 @@ private object AppDependencies {
   import play.sbt.PlayImport._
   import play.core.PlayVersion
 
-  private val hmrcTestVersion = "3.2.0"
+  private val hmrcTestVersion = "3.8.0-play-25"
 
   val compile = Seq(
-    "uk.gov.hmrc" %% "play-reactivemongo" % "6.4.0",
+    "uk.gov.hmrc" %% "play-reactivemongo" % "6.7.0",
     ws exclude("org.apache.httpcomponents", "httpclient") exclude("org.apache.httpcomponents", "httpcore"),
-    "uk.gov.hmrc" %% "bootstrap-play-25" % "4.8.0",
-    "uk.gov.hmrc" %% "auth-client" % "2.17.0-play-25",
-    "uk.gov.hmrc" %% "domain" % "5.2.0",
+    "uk.gov.hmrc" %% "bootstrap-play-25" % "4.11.0",
+    "uk.gov.hmrc" %% "auth-client" % "2.20.0-play-25",
+    "uk.gov.hmrc" %% "domain" % "5.6.0-play-25",
     "uk.gov.hmrc" %% "play-hmrc-api" % "3.2.0",
     "ai.x" %% "play-json-extensions" % "0.8.0",
     "org.typelevel" %% "cats-core" % "1.0.0-RC1"
