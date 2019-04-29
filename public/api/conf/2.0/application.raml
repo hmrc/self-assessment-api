@@ -1732,15 +1732,14 @@ traits:
                       description: An empty or non-matching body was submitted
                       value:
                         code: RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED
-            403:
-              body:
-                application/json:
-                  type: types.errorResponse
-                  examples:
                     ruleTaxYear:
                       description: The specified tax year is not supported; that is, the tax year specified is before the minimum tax year value.
                       value:
                         code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    ruleTaxYearRange:
+                      description: Tax year range exceeded. A tax year range of one year is required.
+                      value:
+                        code: RULE_TAX_YEAR_RANGE_EXCEEDED
         get:
           displayName: Retrieve a UK dividends income annual summary [test only]
           description: Retrieve a UK dividends income annual summary for a tax year. This API is not available in production.
@@ -1775,6 +1774,10 @@ traits:
                       description: The specified tax year is not supported, i.e the tax year specified is before the minimum tax year value.
                       value:
                         code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    ruleTaxYearRange:
+                      description: Tax year range exceeded. A tax year range of one year is required.
+                      value:
+                        code: RULE_TAX_YEAR_RANGE_EXCEEDED
             404:
               body:
                 application/json:
@@ -1968,6 +1971,10 @@ traits:
                         description: The specified tax year is not supported, that is, the tax year specified is before the minimum tax year value
                         value:
                           code: RULE_TAX_YEAR_NOT_SUPPORTED
+                      ruleTaxYearRange:
+                        description: Tax year range exceeded. A tax year range of one year is required.
+                        value:
+                          code: RULE_TAX_YEAR_RANGE_EXCEEDED
                       formatId:
                         description: The format of the supplied savings account ID is not valid
                         value:
@@ -2023,6 +2030,10 @@ traits:
                         description: The specified tax year is not supported, that is, the tax year specified is before the minimum tax year value
                         value:
                           code: RULE_TAX_YEAR_NOT_SUPPORTED
+                      ruleTaxYearRange:
+                        description: Tax year range exceeded. A tax year range of one year is required.
+                        value:
+                          code: RULE_TAX_YEAR_RANGE_EXCEEDED
                       formatId:
                         description: The format of the supplied savings account ID is not valid
                         value:
@@ -2230,6 +2241,10 @@ traits:
                       description: The specified tax year is not supported, that is, the tax year specified is before the minimum tax year value
                       value:
                         code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    ruleTaxYearRange:
+                      description: Tax year range exceeded. A tax year range of one year is required.
+                      value:
+                        code: RULE_TAX_YEAR_RANGE_EXCEEDED
             403:
               body:
                 application/json:
@@ -2278,6 +2293,10 @@ traits:
                       description: The specified tax year is not supported, that is, the tax year specified is before the minimum tax year value.
                       value:
                         code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    ruleTaxYearRange:
+                      description: Tax year range exceeded. A tax year range of one year is required.
+                      value:
+                        code: RULE_TAX_YEAR_RANGE_EXCEEDED
                     invalidCalculationId:
                       description: Invalid Calculation ID.
                       value:
@@ -2445,6 +2464,10 @@ traits:
                       description: The specified tax year is not supported, i.e the tax year specified is before the minimum tax year value.
                       value:
                         code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    ruleTaxYearRange:
+                      description: Tax year range exceeded. A tax year range of one year is required.
+                      value:
+                        code: RULE_TAX_YEAR_RANGE_EXCEEDED
         get:
           displayName: Retrieve charitable giving tax relief [test only]
           description: Retrieve charitable giving tax relief for a tax year. This API is not available in production.
@@ -2479,6 +2502,10 @@ traits:
                       description: The specified tax year is not supported, i.e the tax year specified is before the minimum tax year value.
                       value:
                         code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    ruleTaxYearRange:
+                      description: Tax year range exceeded. A tax year range of one year is required.
+                      value:
+                        code: RULE_TAX_YEAR_RANGE_EXCEEDED
             404:
               body:
                 application/json:
