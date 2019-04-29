@@ -33,6 +33,6 @@ object OtherPropertiesAdjustments {
     (__ \ "lossBroughtForward").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "privateUseAdjustment").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "balancingCharge").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "bpraBalancingCharge").readNullable[BigDecimal](nonNegativeAmountValidator)
+      (__ \ "bpraBalancingCharge").readNullable[BigDecimal](nonNegativeAmountValidatorR2)
   ) (OtherPropertiesAdjustments.apply _)
 }

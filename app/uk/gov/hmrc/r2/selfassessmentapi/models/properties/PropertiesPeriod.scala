@@ -95,7 +95,12 @@ object FHL {
   }
 
   object Incomes {
-    implicit val format: Format[Incomes] = Json.format[Incomes]
+    implicit val writes: Writes[Incomes] = Json.writes[Incomes]
+
+    implicit val reads: Reads[Incomes] = (
+      (__ \ "rentIncome").readNullable[BigDecimal] and
+        (__ \ "rarRentReceived").readNullable[BigDecimal](nonNegativeAmountValidatorR2)
+    )(Incomes.apply _)
 
     def from(o: des.properties.FHL.Incomes): Incomes =
       Incomes(rentIncome = o.rentIncome.map(income => Income(amount = income.amount, taxDeducted = income.taxDeducted)),
@@ -131,7 +136,19 @@ object FHL {
   }
 
   object Expenses {
-    implicit val format: Format[Expenses] = Json.format[Expenses]
+    implicit val writes: Writes[Expenses] = Json.writes[Expenses]
+
+    implicit val reads: Reads[Expenses] = (
+      (__ \ "premisesRunningCosts").readNullable[BigDecimal] and
+        (__ \ "repairsAndMaintenance").readNullable[BigDecimal] and
+        (__ \ "financialCosts").readNullable[BigDecimal] and
+        (__ \ "professionalFees").readNullable[BigDecimal] and
+        (__ \ "costOfServices").readNullable[BigDecimal] and
+        (__ \ "consolidatedExpenses").readNullable[BigDecimal] and
+        (__ \ "other").readNullable[BigDecimal] and
+        (__ \ "travelCosts").readNullable[BigDecimal] and
+        (__ \ "rarReliefClaimed").readNullable[BigDecimal](nonNegativeAmountValidatorR2)
+    )(Expenses.apply _)
 
     def from(o: des.properties.FHL.Deductions): Expenses =
       Expenses(
@@ -272,8 +289,15 @@ object Other {
 
   object Incomes {
 
-    implicit val format: Format[Incomes] =
-      Json.format[Incomes]
+    implicit val writes: Writes[Incomes] = Json.writes[Incomes]
+
+    implicit val reads: Reads[Incomes] = (
+      (__ \ "rentIncome").readNullable[BigDecimal] and
+        (__ \ "premiumsOfLeaseGrant").readNullable[BigDecimal] and
+        (__ \ "reversePremiums").readNullable[BigDecimal] and
+        (__ \ "otherPropertyIncome").readNullable[BigDecimal] and
+        (__ \ "rarRentReceived").readNullable[BigDecimal](nonNegativeAmountValidatorR2)
+    )(Incomes.apply() _)
 
     def from(o: des.properties.Other.Incomes): Incomes =
       Incomes(
@@ -317,7 +341,21 @@ object Other {
   }
 
   object Expenses {
-    implicit val format: Format[Expenses] = Json.format[Expenses]
+    implicit val writes: Writes[Expenses] = Json.writes[Expenses]
+
+    implicit val reads: Reads[Expenses] = (
+      (__ \ "premisesRunningCosts").readNullable[BigDecimal] and
+        (__ \ "repairsAndMaintenance").readNullable[BigDecimal] and
+        (__ \ "financialCosts").readNullable[BigDecimal] and
+        (__ \ "professionalFees").readNullable[BigDecimal] and
+        (__ \ "costOfServices").readNullable[BigDecimal] and
+        (__ \ "consolidatedExpenses").readNullable[BigDecimal] and
+        (__ \ "residentialFinancialCost").readNullable[BigDecimal] and
+        (__ \ "other").readNullable[BigDecimal] and
+        (__ \ "travelCosts").readNullable[BigDecimal](nonNegativeAmountValidatorR2) and
+        (__ \ "broughtFwdResidentialFinancialCost").readNullable[BigDecimal](nonNegativeAmountValidatorR2) and
+        (__ \ "rarReliefClaimed").readNullable[BigDecimal](nonNegativeAmountValidatorR2)
+    )(OtherPropertiesAllowances.apply _)
 
     def from(o: des.properties.Other.Deductions): Expenses =
       Expenses(

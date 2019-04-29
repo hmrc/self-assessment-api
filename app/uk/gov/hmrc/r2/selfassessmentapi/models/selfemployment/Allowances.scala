@@ -19,7 +19,7 @@ package uk.gov.hmrc.r2.selfassessmentapi.models.selfemployment
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
-import uk.gov.hmrc.r2.selfassessmentapi.models.nonNegativeAmountValidator
+import uk.gov.hmrc.r2.selfassessmentapi.models.{nonNegativeAmountValidator, nonNegativeAmountValidatorR2}
 
 case class Allowances(annualInvestmentAllowance: Option[BigDecimal] = None,
                       businessPremisesRenovationAllowance: Option[BigDecimal] = None,
@@ -44,7 +44,7 @@ object Allowances {
       (__ \ "allowanceOnSales").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "zeroEmissionGoodsVehicleAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "capitalAllowanceSingleAssetPool").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "tradingAllowance").readNullable[BigDecimal](nonNegativeAmountValidator)
+      (__ \ "tradingAllowance").readNullable[BigDecimal](nonNegativeAmountValidatorR2)
 
     )(Allowances.apply _)
 }

@@ -35,6 +35,9 @@ package object models {
 
   private val MAX_AMOUNT = BigDecimal("99999999999999.98")
 
+  //added to correct the max amounts for R2 fields
+  private val MAX_AMOUNT_R2 = BigDecimal("99999999999.99")
+
   /**
     * Asserts that amounts must have a maximum of two decimal places
     */
@@ -52,6 +55,15 @@ package object models {
     .filter(ValidationError("amounts should be a non-negative number less than 99999999999999.98 with up to 2 decimal places",
       ErrorCode.INVALID_MONETARY_AMOUNT))(
       amount => amount >= 0 && amount.scale < 3 && amount <= MAX_AMOUNT)
+
+  /**
+    * Asserts that amounts must be non-negative and have a maximum of two decimal places for release 2
+    */
+  val nonNegativeAmountValidatorR2: Reads[BigDecimal] = Reads
+    .of[BigDecimal]
+    .filter(ValidationError("amounts should be a non-negative number less than 99999999999.99 with up to 2 decimal places",
+      ErrorCode.INVALID_MONETARY_AMOUNT))(
+      amount => amount >= 0 && amount.scale < 3 && amount <= MAX_AMOUNT_R2)
 
   /**
     * Asserts that amounts must have a maximum of two decimal places
