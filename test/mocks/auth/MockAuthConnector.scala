@@ -22,8 +22,9 @@ import org.scalatest.Suite
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
 import uk.gov.hmrc.auth.core.retrieve.{EmptyRetrieval, Retrieval}
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait MockAuthConnector extends Mock { _: Suite =>
 
@@ -31,7 +32,7 @@ trait MockAuthConnector extends Mock { _: Suite =>
 
   object MockAuthConnector {
     def authorise[T](predicate: Predicate, retrieval: Retrieval[T]): OngoingStubbing[Future[T]] = {
-      when(mockAuthConnector.authorise[T](eqTo(predicate), eqTo(retrieval))(any(), any()))
+      when(mockAuthConnector.authorise[T](eqTo(predicate), eqTo(retrieval))(any[HeaderCarrier](), any[ExecutionContext]()))
     }
 
     def authorise(): OngoingStubbing[Future[Unit]] = authorise(EmptyPredicate, EmptyRetrieval)

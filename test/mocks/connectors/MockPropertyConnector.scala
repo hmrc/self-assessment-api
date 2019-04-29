@@ -20,8 +20,10 @@ import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
 import play.api.libs.json.JsValue
+import play.api.mvc.Request
 import router.connectors.PropertyConnector
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -31,10 +33,10 @@ trait MockPropertyConnector extends Mock { _: Suite =>
 
   object MockPropertyConnector {
     def get(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockPropertyConnector.get(eqTo(uri))(any(), any()))
+      when(mockPropertyConnector.get(eqTo(uri))(any[HeaderCarrier](), any[Request[_]]()))
     }
     def post(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockPropertyConnector.post(eqTo(uri), eqTo(body))(any(), any()))
+      when(mockPropertyConnector.post(eqTo(uri), eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
     }
   }
 

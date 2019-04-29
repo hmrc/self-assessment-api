@@ -19,8 +19,10 @@ package mocks.services
 import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
+import play.api.mvc.Request
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import router.services.TaxCalcService
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -30,7 +32,7 @@ trait MockTaxCalcService extends Mock { _: Suite =>
 
   object MockTaxCalcService {
     def get(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockTaxCalcService.get()(any(), any()))
+      when(mockTaxCalcService.get()(any[HeaderCarrier](), any[Request[_]]()))
     }
   }
 

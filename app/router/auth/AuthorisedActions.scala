@@ -21,7 +21,7 @@ import play.api.mvc.{ActionBuilder, Request, Result}
 import router.errors.ErrorCode
 import uk.gov.hmrc.auth.core.{AuthorisationException, AuthorisedFunctions, InvalidBearerToken}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
 

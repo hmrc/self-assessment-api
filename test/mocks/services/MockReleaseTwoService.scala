@@ -20,8 +20,10 @@ import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
 import play.api.libs.json.JsValue
+import play.api.mvc.Request
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import router.services.ReleaseTwoService
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -31,15 +33,15 @@ trait MockReleaseTwoService extends Mock { _: Suite =>
 
   object MockReleaseTwoService {
     def create(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockReleaseTwoService.create(eqTo(body))(any(), any()))
+      when(mockReleaseTwoService.create(eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
     }
 
     def get(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockReleaseTwoService.get()(any(), any()))
+      when(mockReleaseTwoService.get()(any[HeaderCarrier](), any[Request[_]]()))
     }
 
     def amend(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockReleaseTwoService.amend(eqTo(body))(any(), any()))
+      when(mockReleaseTwoService.amend(eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
     }
   }
 

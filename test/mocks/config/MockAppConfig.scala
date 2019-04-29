@@ -30,7 +30,7 @@ trait MockAppConfig extends Mock { _: Suite =>
     def appName: OngoingStubbing[String] = when(mockAppConfig.appName)
     def appNameForServiceLocator: OngoingStubbing[String] = when(mockAppConfig.appNameForServiceLocator)
     def appUrl: OngoingStubbing[String] = when(mockAppConfig.appUrl)
-    def apiStatus(version: String): OngoingStubbing[String] = when(mockAppConfig.apiStatus(any()))
+    def apiStatus(version: String): OngoingStubbing[String] = when(mockAppConfig.apiStatus(any[String]()))
     def featureSwitch: OngoingStubbing[Option[Configuration]] = when(mockAppConfig.featureSwitch)
     def registrationEnabled: OngoingStubbing[Boolean] = when(mockAppConfig.registrationEnabled)
 

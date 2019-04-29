@@ -19,8 +19,11 @@ package mocks.services
 import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
+import play.api.libs.json.JsValue
+import play.api.mvc.Request
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import router.services.PropertyEopsDeclarationService
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -30,7 +33,7 @@ trait MockPropertyEopsDeclarationService extends Mock { _: Suite =>
 
   object MockPropertyEopsDeclarationService {
     def post(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockPropertyEopsDeclarationService.post(any())(any(), any()))
+      when(mockPropertyEopsDeclarationService.post(any[JsValue]())(any[HeaderCarrier](), any[Request[_]]()))
     }
   }
 

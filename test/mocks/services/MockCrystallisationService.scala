@@ -20,8 +20,10 @@ import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
 import play.api.libs.json.JsValue
+import play.api.mvc.Request
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import router.services.CrystallisationService
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -31,11 +33,11 @@ trait MockCrystallisationService extends Mock { _: Suite =>
   object MockCrystallisationService {
 
     def post(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockCrystallisationService.post(eqTo(body))(any(), any()))
+      when(mockCrystallisationService.post(eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
     }
 
     def postEmpty: OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockCrystallisationService.postEmpty(any(), any()))
+      when(mockCrystallisationService.postEmpty(any[HeaderCarrier](), any[Request[_]]()))
     }
   }
 

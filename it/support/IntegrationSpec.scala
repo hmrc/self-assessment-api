@@ -22,11 +22,11 @@ import play.api.Application
 import play.api.http.{HeaderNames, MimeTypes, Status}
 import play.api.inject.guice.GuiceApplicationBuilder
 import support.functional.FunctionalSyntax
-import support.wiremock.WireMock
+import support.wiremock.WireMockSupport
 
 trait IntegrationSpec extends WordSpec
   with OneServerPerSuite
-  with WireMock
+  with WireMockSupport
   with Matchers
   with Status
   with HeaderNames

@@ -20,8 +20,10 @@ import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
 import play.api.libs.json.JsValue
+import play.api.mvc.Request
 import router.connectors.DividendsConnector
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -31,11 +33,11 @@ trait MockDividendsConnector extends Mock { _: Suite =>
 
   object MockDividendsConnector {
     def put(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockDividendsConnector.put(eqTo(uri), eqTo(body))(any(), any()))
+      when(mockDividendsConnector.put(eqTo(uri), eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
     }
 
     def get(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockDividendsConnector.get(eqTo(uri))(any(), any()))
+      when(mockDividendsConnector.get(eqTo(uri))(any[HeaderCarrier](), any[Request[_]]()))
     }
   }
 

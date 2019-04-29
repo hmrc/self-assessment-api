@@ -18,9 +18,11 @@ package mocks
 
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
+import play.api.libs.json.Writes
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 trait MockHttp extends Mock {
@@ -35,23 +37,26 @@ trait MockHttp extends Mock {
 
   object MockHttp {
     def GET[T](url: String): OngoingStubbing[Future[T]] = {
-      when(mockHttp.GET[T](eqTo(url))(any(), any(), any()))
+      when(mockHttp.GET[T](eqTo(url))(any[HttpReads[T]](), any[HeaderCarrier](), any[ExecutionContext]()))
     }
 
     def POST[I, O](url: String, body: I, headers: (String, String)*): OngoingStubbing[Future[O]] = {
-      when(mockHttp.POST[I, O](eqTo(url), eqTo(body), eqTo(headers))(any(), any(), any(), any()))
+      when(mockHttp.POST[I, O](eqTo(url), eqTo(body), eqTo(headers))(any[Writes[I]](),
+        any[HttpReads[O]](), any[HeaderCarrier](), any[ExecutionContext]()))
     }
 
     def POSTEmpty[O](url: String, headers: (String, String)*): OngoingStubbing[Future[O]] = {
-      when(mockHttp.POSTEmpty[O](eqTo(url))(any(), any(), any()))
+      when(mockHttp.POSTEmpty[O](eqTo(url))(any[HttpReads[O]](), any[HeaderCarrier](), any[ExecutionContext]()))
     }
 
     def POST[I, O](url: String, body: I): OngoingStubbing[Future[O]] = {
-      when(mockHttp.POST[I, O](eqTo(url), eqTo(body), any())(any(), any(), any(), any()))
+      when(mockHttp.POST[I, O](eqTo(url), eqTo(body), any[Seq[(String,String)]]())(any[Writes[I]](),
+        any[HttpReads[O]](), any[HeaderCarrier](), any[ExecutionContext]()))
     }
 
     def PUT[I, O](url: String, body: I): OngoingStubbing[Future[O]] = {
-      when(mockHttp.PUT[I, O](eqTo(url), eqTo(body))(any(), any(), any(), any()))
+      when(mockHttp.PUT[I, O](eqTo(url), eqTo(body))(any[Writes[I]](),
+        any[HttpReads[O]](), any[HeaderCarrier](), any[ExecutionContext]()))
     }
   }
 

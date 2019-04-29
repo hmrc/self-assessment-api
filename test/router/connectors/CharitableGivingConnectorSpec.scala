@@ -64,7 +64,7 @@ class CharitableGivingConnectorSpec extends UnitSpec
       "a successful HttpResponse is returned" in new Setup {
         val request = FakeRequest("GET", path)
         val response  = HttpResponse(Status.OK, Some(Json.obj()))
-        val requestJson = Json.obj("test" -> "request json")
+
 
         MockSelfAssessmentHttpParser.read.returns(Right(response))
         MockHttp.GET[SelfAssessmentOutcome](s"$cgApiUrl$path").returns(Future.successful(Right(response)))

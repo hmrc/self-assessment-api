@@ -20,8 +20,10 @@ import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
 import play.api.libs.json.JsValue
+import play.api.mvc.Request
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import router.services.CharitableGivingService
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -32,11 +34,11 @@ trait MockCharitableGivingService extends Mock { _: Suite =>
   object MockCharitableGivingService {
 
     def put(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockCharitableGivingService.put(eqTo(body))(any(), any()))
+      when(mockCharitableGivingService.put(eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
     }
 
     def get(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockCharitableGivingService.get()(any(), any()))
+      when(mockCharitableGivingService.get()(any[HeaderCarrier](), any[Request[_]]()))
     }
   }
 

@@ -21,7 +21,7 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
 import router.services.SelfAssessmentService
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class SelfAssessmentResource @Inject()(service: SelfAssessmentService,
                                        val authConnector: AuthConnector) extends BaseResource {

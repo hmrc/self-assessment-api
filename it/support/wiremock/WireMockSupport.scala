@@ -27,7 +27,7 @@ trait WireMockConfig {
   val wiremockUrl = s"http://$wiremockHost:$wiremockPort"
 }
 
-trait WireMock extends WireMockConfig
+trait WireMockSupport extends WireMockConfig
   with BeforeAndAfterAll
   with BeforeAndAfterEach { _: Suite =>
 

@@ -20,6 +20,7 @@ import config.locator.ServiceLocatorConnector
 import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -29,7 +30,7 @@ trait MockServiceLocatorConnector extends Mock { _: Suite =>
 
   object MockServiceLocatorConnector {
     def register(): OngoingStubbing[Future[Boolean]] = {
-      when(mockServiceLocatorConnector.register(any()))
+      when(mockServiceLocatorConnector.register(any[HeaderCarrier]()))
     }
   }
 

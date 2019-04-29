@@ -21,7 +21,7 @@ import play.api.libs.json.JsValue
 import play.api.mvc.Action
 import router.services.SelfEmploymentEopsDeclarationService
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class SelfEmploymentEopsDeclarationResource @Inject()(service: SelfEmploymentEopsDeclarationService,
                                                       val authConnector: AuthConnector) extends BaseResource {

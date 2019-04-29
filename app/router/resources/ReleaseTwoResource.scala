@@ -21,7 +21,7 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
 import router.services.ReleaseTwoService
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ReleaseTwoResource @Inject()(service: ReleaseTwoService,
                                    val authConnector: AuthConnector) extends BaseResource {

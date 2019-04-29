@@ -19,6 +19,7 @@ package mocks.httpParser
 import mocks.Mock
 import org.scalatest.Suite
 import router.httpParsers.SelfAssessmentHttpParser
+import uk.gov.hmrc.http.HttpResponse
 
 trait MockSelfAssessmentHttpParser extends Mock { _: Suite =>
 
@@ -26,7 +27,7 @@ trait MockSelfAssessmentHttpParser extends Mock { _: Suite =>
 
   object MockSelfAssessmentHttpParser {
     def read = {
-      when(mockSelfAssessmentHttpParser.read(any(), any(), any()))
+      when(mockSelfAssessmentHttpParser.read(any[String](), any[String](), any[HttpResponse]()))
     }
   }
 

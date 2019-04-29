@@ -20,8 +20,10 @@ import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
 import play.api.libs.json.JsValue
+import play.api.mvc.Request
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import router.services.SavingsAccountService
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -32,15 +34,15 @@ trait MockSavingsAccountService extends Mock { _: Suite =>
   object MockSavingsAccountService {
 
     def post(body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSavingsAccountService.post(eqTo(body))(any(), any()))
+      when(mockSavingsAccountService.post(eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
     }
 
     def get(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSavingsAccountService.get()(any(), any()))
+      when(mockSavingsAccountService.get()(any[HeaderCarrier](), any[Request[_]]()))
     }
 
     def put(body: JsValue) = {
-      when(mockSavingsAccountService.put(eqTo(body))(any(), any()))
+      when(mockSavingsAccountService.put(eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
     }
 
   }

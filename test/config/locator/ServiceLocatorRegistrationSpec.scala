@@ -19,6 +19,7 @@ package config.locator
 import mocks.config.MockAppConfig
 import mocks.config.locator.MockServiceLocatorConnector
 import support.UnitSpec
+import uk.gov.hmrc.http.HeaderCarrier
 
 class ServiceLocatorRegistrationSpec extends UnitSpec
   with MockServiceLocatorConnector
@@ -39,7 +40,7 @@ class ServiceLocatorRegistrationSpec extends UnitSpec
 
         run()
 
-        verify(mockServiceLocatorConnector, times(1)).register(any())
+        verify(mockServiceLocatorConnector, times(1)).register(any[HeaderCarrier]())
       }
     }
 
@@ -50,7 +51,7 @@ class ServiceLocatorRegistrationSpec extends UnitSpec
 
         run()
 
-        verify(mockServiceLocatorConnector, times(0)).register(any())
+        verify(mockServiceLocatorConnector, times(0)).register(any[HeaderCarrier]())
       }
     }
   }

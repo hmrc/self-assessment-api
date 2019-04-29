@@ -22,7 +22,7 @@ import play.api.mvc.{Action, AnyContent}
 import router.services.PropertyEopsDeclarationService
 import uk.gov.hmrc.auth.core.AuthConnector
 
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class PropertyEopsDeclarationResource @Inject()(service: PropertyEopsDeclarationService,
                                                 val authConnector: AuthConnector) extends BaseResource {

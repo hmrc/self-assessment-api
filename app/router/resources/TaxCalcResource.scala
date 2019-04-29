@@ -20,7 +20,7 @@ import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent}
 import router.services.TaxCalcService
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class TaxCalcResource @Inject()(service: TaxCalcService,
                                 val authConnector: AuthConnector) extends BaseResource {
