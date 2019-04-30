@@ -82,6 +82,8 @@ object FHL {
         ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))
     ))
 
+    implicit lazy val format : Format[Properties] = Format(reads, writes)
+
     def from(o: des.properties.FHL.Properties): Properties =
       Properties(id = o.transactionReference,
         from = LocalDate.parse(o.from),
@@ -98,9 +100,11 @@ object FHL {
     implicit val writes: Writes[Incomes] = Json.writes[Incomes]
 
     implicit val reads: Reads[Incomes] = (
-      (__ \ "rentIncome").readNullable[BigDecimal] and
-        (__ \ "rarRentReceived").readNullable[BigDecimal](nonNegativeAmountValidatorR2)
+      (__ \ "rentIncome").readNullable[Income] and
+        (__ \ "rarRentReceived").readNullable[Income](nonNegativeIncomeValidatorR2)
     )(Incomes.apply _)
+
+    implicit lazy val format : Format[Incomes] = Format(reads, writes)
 
     def from(o: des.properties.FHL.Incomes): Incomes =
       Incomes(rentIncome = o.rentIncome.map(income => Income(amount = income.amount, taxDeducted = income.taxDeducted)),
@@ -112,7 +116,9 @@ object FHL {
   object Expense {
     implicit val reads: Reads[Expense] = (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator).map(Expense(_))
 
-    implicit val writes: Writes[Expense] = Json.writes[Expense]
+    implicit lazy val writes: Writes[Expense] = Json.writes[Expense]
+
+    implicit lazy val format : Format[Expense] = Format(reads, writes)
   }
 
   case class Expenses(premisesRunningCosts: Option[Expense] = None,
@@ -136,19 +142,21 @@ object FHL {
   }
 
   object Expenses {
-    implicit val writes: Writes[Expenses] = Json.writes[Expenses]
+    implicit lazy val writes: Writes[Expenses] = Json.writes[Expenses]
 
-    implicit val reads: Reads[Expenses] = (
-      (__ \ "premisesRunningCosts").readNullable[BigDecimal] and
-        (__ \ "repairsAndMaintenance").readNullable[BigDecimal] and
-        (__ \ "financialCosts").readNullable[BigDecimal] and
-        (__ \ "professionalFees").readNullable[BigDecimal] and
-        (__ \ "costOfServices").readNullable[BigDecimal] and
-        (__ \ "consolidatedExpenses").readNullable[BigDecimal] and
-        (__ \ "other").readNullable[BigDecimal] and
-        (__ \ "travelCosts").readNullable[BigDecimal] and
-        (__ \ "rarReliefClaimed").readNullable[BigDecimal](nonNegativeAmountValidatorR2)
+    implicit lazy val reads: Reads[Expenses] = (
+      (__ \ "premisesRunningCosts").readNullable[Expense] and
+        (__ \ "repairsAndMaintenance").readNullable[Expense] and
+        (__ \ "financialCosts").readNullable[Expense] and
+        (__ \ "professionalFees").readNullable[Expense] and
+        (__ \ "costOfServices").readNullable[Expense] and
+        (__ \ "consolidatedExpenses").readNullable[Expense] and
+        (__ \ "other").readNullable[Expense] and
+        (__ \ "travelCosts").readNullable[Expense] and
+        (__ \ "rarReliefClaimed").readNullable[Expense](nonNegativeFhlExpenseValidatorR2)
     )(Expenses.apply _)
+
+    implicit lazy val format : Format[Expenses] = Format(reads, writes)
 
     def from(o: des.properties.FHL.Deductions): Expenses =
       Expenses(
@@ -196,6 +204,8 @@ object FHL {
             ErrorCode.BOTH_EXPENSES_SUPPLIED)
         )
       ))
+
+    implicit lazy val format : Format[Financials] = Format(reads, writes)
 
     def from(o: Option[des.properties.FHL.Financials]): Option[Financials] =
       o.flatMap { f =>
@@ -267,6 +277,8 @@ object Other {
         ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))
     ))
 
+    implicit lazy val format = Format(reads, writes)
+
     def from(o: des.properties.Other.Properties): Properties =
       Properties(id = o.transactionReference,
         from = LocalDate.parse(o.from),
@@ -292,12 +304,14 @@ object Other {
     implicit val writes: Writes[Incomes] = Json.writes[Incomes]
 
     implicit val reads: Reads[Incomes] = (
-      (__ \ "rentIncome").readNullable[BigDecimal] and
-        (__ \ "premiumsOfLeaseGrant").readNullable[BigDecimal] and
-        (__ \ "reversePremiums").readNullable[BigDecimal] and
-        (__ \ "otherPropertyIncome").readNullable[BigDecimal] and
-        (__ \ "rarRentReceived").readNullable[BigDecimal](nonNegativeAmountValidatorR2)
-    )(Incomes.apply() _)
+      (__ \ "rentIncome").readNullable[Income] and
+        (__ \ "premiumsOfLeaseGrant").readNullable[Income] and
+        (__ \ "reversePremiums").readNullable[Income] and
+        (__ \ "otherPropertyIncome").readNullable[Income] and
+        (__ \ "rarRentReceived").readNullable[Income](nonNegativeIncomeValidatorR2)
+    )(Incomes.apply _)
+
+    implicit lazy val format = Format(reads, writes)
 
     def from(o: des.properties.Other.Incomes): Incomes =
       Incomes(
@@ -315,6 +329,8 @@ object Other {
     implicit val reads: Reads[Expense] = (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator).map(Expense(_))
 
     implicit val writes: Writes[Expense] = Json.writes[Expense]
+
+    implicit lazy val format = Format(reads, writes)
   }
 
   case class Expenses(premisesRunningCosts: Option[Expense] = None,
@@ -344,18 +360,20 @@ object Other {
     implicit val writes: Writes[Expenses] = Json.writes[Expenses]
 
     implicit val reads: Reads[Expenses] = (
-      (__ \ "premisesRunningCosts").readNullable[BigDecimal] and
-        (__ \ "repairsAndMaintenance").readNullable[BigDecimal] and
-        (__ \ "financialCosts").readNullable[BigDecimal] and
-        (__ \ "professionalFees").readNullable[BigDecimal] and
-        (__ \ "costOfServices").readNullable[BigDecimal] and
-        (__ \ "consolidatedExpenses").readNullable[BigDecimal] and
-        (__ \ "residentialFinancialCost").readNullable[BigDecimal] and
-        (__ \ "other").readNullable[BigDecimal] and
-        (__ \ "travelCosts").readNullable[BigDecimal](nonNegativeAmountValidatorR2) and
-        (__ \ "broughtFwdResidentialFinancialCost").readNullable[BigDecimal](nonNegativeAmountValidatorR2) and
-        (__ \ "rarReliefClaimed").readNullable[BigDecimal](nonNegativeAmountValidatorR2)
-    )(OtherPropertiesAllowances.apply _)
+      (__ \ "premisesRunningCosts").readNullable[Expense] and
+        (__ \ "repairsAndMaintenance").readNullable[Expense] and
+        (__ \ "financialCosts").readNullable[Expense] and
+        (__ \ "professionalFees").readNullable[Expense] and
+        (__ \ "costOfServices").readNullable[Expense] and
+        (__ \ "consolidatedExpenses").readNullable[Expense] and
+        (__ \ "residentialFinancialCost").readNullable[Expense] and
+        (__ \ "other").readNullable[Expense] and
+        (__ \ "travelCosts").readNullable[Expense](nonNegativeOtherExpenseValidatorR2) and
+        (__ \ "broughtFwdResidentialFinancialCost").readNullable[Expense](nonNegativeOtherExpenseValidatorR2) and
+        (__ \ "rarReliefClaimed").readNullable[Expense](nonNegativeOtherExpenseValidatorR2)
+    )(Expenses.apply _)
+
+    implicit lazy val format = Format(reads, writes)
 
     def from(o: des.properties.Other.Deductions): Expenses =
       Expenses(
@@ -408,6 +426,8 @@ object Other {
             ErrorCode.BOTH_EXPENSES_SUPPLIED)
         )
       ))
+
+    implicit lazy val format = Format(reads, writes)
 
     def from(o: Option[des.properties.Other.Financials]): Option[Financials] =
       o.flatMap { f =>

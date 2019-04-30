@@ -20,11 +20,11 @@ import org.joda.time.LocalDate
 import org.scalacheck.Gen
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import play.api.libs.json.Json
-
 import uk.gov.hmrc.r2.selfassessmentapi.models._
 import uk.gov.hmrc.r2.selfassessmentapi.resources.JsonSpec
 
 class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
+
 
   "PropertiesPeriod" should {
     "round trip FHL properties" in forAll(FHLGen.genPropertiesPeriod())(roundTripJson(_))
@@ -41,31 +41,31 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
     "reject Other properties where the `to` date comes before the `from` date" in
       forAll(OtherGen.genPropertiesPeriod(invalidPeriod = true)) { otherProps =>
         assertValidationErrorsWithCode[Other.Properties](Json.toJson(otherProps),
-                                                         Map("" -> Seq(ErrorCode.INVALID_PERIOD)))
+          Map("" -> Seq(ErrorCode.INVALID_PERIOD)))
       }
 
     "reject FHL properties that has null financials" in
       forAll(FHLGen.genPropertiesPeriod(nullFinancials = true)) { fhlProps =>
         assertValidationErrorsWithCode[FHL.Properties](Json.toJson(fhlProps),
-                                                       Map("" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES)))
+          Map("" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES)))
       }
 
     "reject Other properties that has null financials" in
       forAll(OtherGen.genPropertiesPeriod(nullFinancials = true)) { otherProps =>
         assertValidationErrorsWithCode[Other.Properties](Json.toJson(otherProps),
-                                                         Map("" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES)))
+          Map("" -> Seq(ErrorCode.NO_INCOMES_AND_EXPENSES)))
       }
 
     "reject FHL properties that has both expenses" in
       forAll(FHLGen.genPropertiesPeriod(bothExpenses = true)) { fhlProps =>
         assertValidationErrorsWithCode[FHL.Properties](Json.toJson(fhlProps),
-                                                       Map("" -> Seq(ErrorCode.BOTH_EXPENSES_SUPPLIED)))
+          Map("" -> Seq(ErrorCode.BOTH_EXPENSES_SUPPLIED)))
       }
 
     "reject Other properties that has both expenses" in
       forAll(OtherGen.genPropertiesPeriod(bothExpenses = true)) { otherProps =>
         assertValidationErrorsWithCode[Other.Properties](Json.toJson(otherProps),
-                                                         Map("" -> Seq(ErrorCode.BOTH_EXPENSES_SUPPLIED)))
+          Map("" -> Seq(ErrorCode.BOTH_EXPENSES_SUPPLIED)))
       }
 
     "reject FHL properties where the `to` date comes before the `from` date and has null financials" in
@@ -170,7 +170,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
           travelCosts = travelCosts,
           rarReliefClaimed = rarReliefClaimed,
           costOfServices = costOfServices
-    )
+        )
 
     val genConsolidatedExpenses: Gen[FHL.Expenses] =
       for {
@@ -287,16 +287,16 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
       } yield
         Other
           .Expenses(premisesRunningCosts,
-                    repairsAndMaintenance,
-                    financialCosts,
-                    professionalFees,
-                    costOfServices,
-                    consolidatedExpenses,
-                    residentialFinancialCost,
-                    other,
-                    travelCosts,
-                    broughtFwdResidentialFinancialCost,
-                    rarReliefClaimed)
+            repairsAndMaintenance,
+            financialCosts,
+            professionalFees,
+            costOfServices,
+            consolidatedExpenses,
+            residentialFinancialCost,
+            other,
+            travelCosts,
+            broughtFwdResidentialFinancialCost,
+            rarReliefClaimed)
 
     val genConsolidatedExpenses: Gen[Other.Expenses] =
       for {

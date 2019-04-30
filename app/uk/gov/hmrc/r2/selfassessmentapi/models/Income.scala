@@ -22,11 +22,13 @@ import play.api.libs.json._
 case class Income(amount: BigDecimal, taxDeducted: Option[BigDecimal])
 
 object Income {
-  implicit val reads: Reads[Income] = (
+  implicit lazy val reads: Reads[Income] = (
     (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "taxDeducted").readNullable[BigDecimal](nonNegativeAmountValidator)
     ) (Income.apply _)
 
 
-  implicit val writes: Writes[Income] = Json.writes[Income]
+  implicit lazy val writes: Writes[Income] = Json.writes[Income]
+
+  implicit lazy val format = Format(reads, writes)
 }
