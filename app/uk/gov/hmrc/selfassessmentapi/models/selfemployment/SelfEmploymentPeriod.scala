@@ -109,7 +109,7 @@ object SelfEmploymentPeriod extends PeriodValidator[SelfEmploymentPeriod] {
     .validate(
       Seq(Validation(JsPath(),
                      periodDateValidator,
-                     ValidationError("the period 'from' date should come before the 'to' date", INVALID_PERIOD)),
+                     ValidationError("The period 'to' date is before the period 'from' date or the submission period already exists.", INVALID_PERIOD)),
           Validation(JsPath(),
                      financialsValidator,
                      ValidationError("No incomes and expenses are supplied", NO_INCOMES_AND_EXPENSES))))

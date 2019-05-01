@@ -72,7 +72,7 @@ object FHL {
     }).validate(Seq(
       Validation(JsPath(),
         periodDateValidator,
-        ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD)),
+        ValidationError("The period 'to' date is before the period 'from' date or the submission period already exists.", ErrorCode.INVALID_PERIOD)),
       Validation(
         JsPath(),
         bothExpensesValidator,
@@ -267,7 +267,7 @@ object Other {
     }).validate(Seq(
       Validation(JsPath(),
         periodDateValidator,
-        ValidationError("the period 'from' date should come before the 'to' date", ErrorCode.INVALID_PERIOD)),
+        ValidationError("The period 'to' date is before the period 'from' date or the submission period already exists.", ErrorCode.INVALID_PERIOD)),
       Validation(
         JsPath(),
         bothExpensesValidator,
