@@ -173,8 +173,8 @@ class AllowancesSpec extends JsonSpec {
       validateAmount(se, "/tradingAllowance")
     }
 
-    "reject tradingAllowance more than 99999999999999.98" in {
-      val se = Allowances(tradingAllowance = Some(BigDecimal("99999999999999.99")))
+    "reject tradingAllowance more than 99999999999.99" in {
+      val se = Allowances(tradingAllowance = Some(BigDecimal("100000000000.00")))
       validateAmount(se, "/tradingAllowance")
     }
 

@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.r2.selfassessmentapi.models.properties
 
+
+
 import org.joda.time.LocalDate
 import org.scalacheck.Gen
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
@@ -29,8 +31,11 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
   "PropertiesPeriod" should {
     "round trip FHL properties" in forAll(FHLGen.genPropertiesPeriod())(roundTripJson(_))
 
+
     "round trip Other properties" in forAll(OtherGen.genPropertiesPeriod())(roundTripJson(_))
   }
+
+
 
   "validate" should {
     "reject FHL properties where the `to` date comes before the `from` date" in
@@ -100,7 +105,154 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         assertJsonValidationPasses[Other.Properties](
           Json.toJson(otherProps))
       }
+
+    "accept max boundary R2 amounts for FHL" in
+    forAll(fhlR2TestData()) { fhlProps =>
+      assertJsonValidationPasses[FHL.Properties](
+        Json.toJson(fhlProps)
+      )
+    }
+
+    "reject over max boundary for rarRentReceived for FHL" in
+      forAll(fhlR2TestData(rarRentReceived = 100000000000.00)) { fhlProps =>
+        assertValidationErrorsWithCode[FHL.Properties](
+          Json.toJson(fhlProps),
+          Map("/incomes/rarRentReceived" ->  Seq(ErrorCode.INVALID_MONETARY_AMOUNT))
+        )
+      }
+
+    "reject over max boundary for travelCosts for FHL" in
+      forAll(fhlR2TestData(travelCosts = 100000000000.00)) { fhlProps =>
+      assertValidationErrorsWithCode[FHL.Properties](
+        Json.toJson(fhlProps),
+        Map("/expenses/travelCosts/amount" ->  Seq(ErrorCode.INVALID_MONETARY_AMOUNT))
+      )
+    }
+
+    "reject over max boundary for rarReliefClaimed for FHL" in
+    forAll(fhlR2TestData(rarReliefClaimed = 100000000000.00)) { fhlProps =>
+      assertValidationErrorsWithCode[FHL.Properties](
+        Json.toJson(fhlProps),
+        Map("/expenses/rarReliefClaimed/amount" ->  Seq(ErrorCode.INVALID_MONETARY_AMOUNT))
+      )
+    }
+
+    "reject over max boundary for other for FHL (R1 boundary test)" in
+      forAll(fhlR2TestData(other = BigDecimal("99999999999999.99"))) { fhlProps =>
+        assertValidationErrorsWithCode[FHL.Properties](
+          Json.toJson(fhlProps),
+          Map("/expenses/other/amount" ->  Seq(ErrorCode.INVALID_MONETARY_AMOUNT))
+        )
+      }
   }
+
+  "accept max boundary R2 amounts for Other" in
+    forAll(otherR2TestData()) { otherProps =>
+      assertJsonValidationPasses[FHL.Properties](
+        Json.toJson(otherProps)
+      )
+    }
+
+
+  "reject over max boundary for rarRentReceived for Other" in
+      forAll(otherR2TestData(rarRentReceived = 100000000000.00)) { otherProps =>
+        assertValidationErrorsWithCode[Other.Properties](
+          Json.toJson(otherProps),
+          Map("/incomes/rarRentReceived" ->  Seq(ErrorCode.INVALID_MONETARY_AMOUNT))
+        )
+      }
+
+    "reject over max boundary for travelCosts for Other" in
+      forAll(otherR2TestData(travelCosts = 100000000000.00)) { otherProps =>
+        assertValidationErrorsWithCode[Other.Properties](
+          Json.toJson(otherProps),
+          Map("/expenses/travelCosts/amount" ->  Seq(ErrorCode.INVALID_MONETARY_AMOUNT))
+        )
+      }
+
+    "reject over max boundary for broughtFwdResidentialFinancialCost for Other" in
+      forAll(otherR2TestData(broughtFwdResidentialFinancialCost = 100000000000.00)) { otherProps =>
+        assertValidationErrorsWithCode[Other.Properties](
+          Json.toJson(otherProps),
+          Map("/expenses/broughtFwdResidentialFinancialCost/amount" ->  Seq(ErrorCode.INVALID_MONETARY_AMOUNT))
+        )
+      }
+
+
+  "reject over max boundary for rarReliefClaimed for Other" in
+    forAll(otherR2TestData(rarReliefClaimed = 100000000000.00)) { otherProps =>
+      assertValidationErrorsWithCode[Other.Properties](
+        Json.toJson(otherProps),
+        Map("/expenses/rarReliefClaimed/amount" ->  Seq(ErrorCode.INVALID_MONETARY_AMOUNT))
+      )
+    }
+
+
+
+
+
+
+
+  def fhlR2TestData(rarRentReceived: BigDecimal = 99999999999.99, travelCosts: BigDecimal = 99999999999.99, rarReliefClaimed: BigDecimal = 99999999999.99, other: BigDecimal = 99999999999999.98) = FHL.Properties(
+    id = None,
+    from = LocalDate.parse("2019-04-30"),
+    to = LocalDate.parse("2019-05-01"),
+    financials = Some(
+      FHL.Financials(
+        incomes = Some(
+          FHL.Incomes(
+            rentIncome = Some(Income(2891, Some(754))),
+            rarRentReceived = Some(Income(rarRentReceived, Some(0)))
+          )
+        ),
+        expenses = Some(
+          FHL.Expenses(
+            premisesRunningCosts = Some(FHL.Expense(amount = 123)),
+            repairsAndMaintenance = Some(FHL.Expense(amount = 123)),
+            financialCosts = Some(FHL.Expense(amount = 123)),
+            professionalFees = Some(FHL.Expense(amount = 123)),
+            costOfServices = Some(FHL.Expense(amount = 123)),
+            other = Some(FHL.Expense(other)),
+            travelCosts = Some(FHL.Expense(travelCosts)),
+            rarReliefClaimed = Some(FHL.Expense(rarReliefClaimed))
+          )
+        )
+      )
+    )
+  )
+
+  def otherR2TestData(rarRentReceived: BigDecimal = 99999999999.99, travelCosts: BigDecimal = 99999999999.99, broughtFwdResidentialFinancialCost: BigDecimal = 99999999999.99, rarReliefClaimed: BigDecimal = 99999999999.99) = Other.Properties(
+    id = None,
+    from = LocalDate.parse("2019-04-30"),
+    to = LocalDate.parse("2019-05-01"),
+    financials = Some(
+      Other.Financials(
+        incomes = Some(
+          Other.Incomes(
+            rentIncome = Some(Income(2891, Some(754))),
+            premiumsOfLeaseGrant = Some(Income(323, Some(123))),
+            reversePremiums = Some(Income(5466, Some(123))),
+            otherPropertyIncome = Some(Income(64664, Some(123))),
+            rarRentReceived = Some(Income(rarRentReceived, Some(0)))
+          )
+        ),
+        expenses = Some(
+          Other.Expenses(
+            premisesRunningCosts = Some(Other.Expense(amount = 123)),
+            repairsAndMaintenance = Some(Other.Expense(amount = 123)),
+            financialCosts = Some(Other.Expense(amount = 123)),
+            professionalFees = Some(Other.Expense(amount = 123)),
+            costOfServices = Some(Other.Expense(amount = 123)),
+            residentialFinancialCost = Some(Other.Expense(amount = 123)),
+            other = Some(Other.Expense(amount = 123)),
+            travelCosts = Some(Other.Expense(travelCosts)),
+            broughtFwdResidentialFinancialCost = Some(Other.Expense(broughtFwdResidentialFinancialCost)),
+            rarReliefClaimed = Some(Other.Expense(rarReliefClaimed))
+          )
+        )
+      )
+    )
+  )
 
   val amount: Gen[BigDecimal] = amountGen(0, 5000)
 

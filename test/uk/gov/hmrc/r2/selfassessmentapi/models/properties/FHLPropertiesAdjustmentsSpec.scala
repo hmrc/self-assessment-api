@@ -76,5 +76,20 @@ class FHLPropertiesAdjustmentsSpec extends JsonSpec {
         "/balancingCharge", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
+    "reject bpraBalancingCharge with a negative value" in {
+      assertValidationErrorWithCode(FHLPropertiesAdjustments(bpraBalancingCharge = Some(-50)),
+        "/bpraBalancingCharge", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject bpraBalancingCharge more than 99999999999.99" in {
+      assertValidationErrorWithCode(FHLPropertiesAdjustments(bpraBalancingCharge = Some(BigDecimal("100000000000.00"))),
+        "/bpraBalancingCharge", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject bpraBalancingCharge with more than 2 decimal places" in {
+      assertValidationErrorWithCode(FHLPropertiesAdjustments(bpraBalancingCharge = Some(50.123)),
+        "/bpraBalancingCharge", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
   }
 }

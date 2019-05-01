@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.r2.selfassessmentapi.models.properties
 
+
+
 import org.joda.time.LocalDate
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
@@ -152,7 +154,7 @@ object FHL {
         (__ \ "costOfServices").readNullable[Expense] and
         (__ \ "consolidatedExpenses").readNullable[Expense] and
         (__ \ "other").readNullable[Expense] and
-        (__ \ "travelCosts").readNullable[Expense] and
+        (__ \ "travelCosts").readNullable[Expense](nonNegativeFhlExpenseValidatorR2) and
         (__ \ "rarReliefClaimed").readNullable[Expense](nonNegativeFhlExpenseValidatorR2)
     )(Expenses.apply _)
 
