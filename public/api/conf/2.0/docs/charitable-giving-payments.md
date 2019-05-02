@@ -1,7 +1,5 @@
 These resources allow accounting software to provide data relating to the customer’s charitable giving.
 
-This API is not available in production.
-
 Here, the developer can provide:
 
 * Total Gift Aid payments for a tax year

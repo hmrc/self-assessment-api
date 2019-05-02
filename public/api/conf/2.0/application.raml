@@ -122,8 +122,8 @@ traits:
           name: Self-employment business
           description: !include docs/self-employment.md
       post:
-        displayName: Add a self-employment business [test only]
-        description: Add a self-employment business. This API is not available in production.
+        displayName: Add a self-employment business [test support]
+        description: Add a self-employment business. This API is available to facilitate testing in the sandbox environment.
         (annotations.sandboxData): !include scenarios/agent-scenarios.md
         is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
         (annotations.scope): "write:self-assessment"
@@ -810,8 +810,8 @@ traits:
         name: UK property business
         description: !include docs/uk-property.md
       post:
-        displayName: Add a UK property business [test only]
-        description: Add a UK property business. This API is not available in production.
+        displayName: Add a UK property business [test support]
+        description: Add a UK property business. This API is available to facilitate testing in the sandbox environment.
         is: [headers.acceptHeader, contentType, clientSubscriptionToMTD, agentSubscription]
         (annotations.scope): "write:self-assessment"
         securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
@@ -1667,8 +1667,8 @@ traits:
             type: string
             example: 2017-18
         put:
-          displayName: Amend a UK dividends income annual summary [test only]
-          description: Amend a UK dividends income annual summary for a tax year. This API is not available in production.
+          displayName: Amend a UK dividends income annual summary
+          description: Amend a UK dividends income annual summary for a tax year.
           (annotations.sandboxData): !include scenarios/dividends-update-scenarios.md
           is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "write:self-assessment"
@@ -1725,8 +1725,8 @@ traits:
                       value:
                         code: RULE_TAX_YEAR_RANGE_EXCEEDED
         get:
-          displayName: Retrieve a UK dividends income annual summary [test only]
-          description: Retrieve a UK dividends income annual summary for a tax year. This API is not available in production.
+          displayName: Retrieve a UK dividends income annual summary
+          description: Retrieve a UK dividends income annual summary for a tax year.
           (annotations.sandboxData): !include scenarios/dividends-retrieve-scenarios.md
           is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
@@ -1776,8 +1776,8 @@ traits:
         name: Savings accounts
         description: !include docs/savings-accounts.md
       post:
-        displayName: Add a UK savings account [test only]
-        description: The "Add a UK savings account" endpoint allows details of a UK savings account, linked to the supplied NINO, to be stored. Interest income data can then be recorded against that savings account using the "Amend a UK savings account annual summary" endpoint. This API is not available in production.
+        displayName: Add a UK savings account
+        description: The "Add a UK savings account" endpoint allows details of a UK savings account, linked to the supplied NINO, to be stored. Interest income data can then be recorded against that savings account using the "Amend a UK savings account annual summary" endpoint.
         (annotations.sandboxData): !include scenarios/savings-account-create-scenarios.md
         is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
         (annotations.scope): "write:self-assessment"
@@ -1830,8 +1830,8 @@ traits:
                     value:
                       code: RULE_DUPLICATE_ACCOUNT_NAME
       get:
-        displayName: List all UK savings accounts [test only]
-        description: The "List all UK savings accounts" endpoint returns a list of all UK savings accounts, linked to the supplied NINO, that have been previously added. This API is not available in production.
+        displayName: List all UK savings accounts
+        description: The "List all UK savings accounts" endpoint returns a list of all UK savings accounts, linked to the supplied NINO, that have been previously added.
         (annotations.sandboxData): !include scenarios/savings-account-list-all-scenarios.md
         is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
         (annotations.scope): "read:self-assessment"
@@ -1867,8 +1867,8 @@ traits:
             type: string
             example: SAVKB2UVwUTBQGJ
         get:
-          displayName: Retrieve a UK savings account [test only]
-          description: The "Retrieve a UK savings account" endpoint returns account details for a given savings account ID. This API is not available in production.
+          displayName: Retrieve a UK savings account
+          description: The "Retrieve a UK savings account" endpoint returns account details for a given savings account ID.
           (annotations.sandboxData): !include scenarios/savings-account-retrieve-scenarios.md
           is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
@@ -1910,8 +1910,8 @@ traits:
               type: string
               example: 2018-19
           put:
-            displayName: Amend a UK savings account annual summary [test only]
-            description: The "Amend a UK savings account annual summary" endpoint enables you to supply your savings interest for a previously added savings account. This API is not available in production.
+            displayName: Amend a UK savings account annual summary
+            description: The "Amend a UK savings account annual summary" endpoint enables you to supply your savings interest for a previously added savings account.
             (annotations.sandboxData): !include scenarios/savings-account-amend-annual-summary.md
             is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
             (annotations.scope): "write:self-assessment"
@@ -1985,7 +1985,7 @@ traits:
                         value:
                           code: MATCHING_RESOURCE_NOT_FOUND
           get:
-            displayName: Retrieve a UK savings account annual summary [test only]
+            displayName: Retrieve a UK savings account annual summary
             description: The "Retrieve a UK savings account annual summary" endpoint enables you to view your annual savings interest for a previously added savings account.
             (annotations.sandboxData): !include scenarios/savings-account-get-annual-summary-scenarios.md
             is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
@@ -2189,7 +2189,7 @@ traits:
         description: !include docs/crystallisation.md
       /intent-to-crystallise:
         post:
-          displayName: Intent to crystallise [test only]
+          displayName: Intent to crystallise
           description: !include docs/intent-to-crystallise.md
           (annotations.sandboxData): !include scenarios/intent-to-crystallise-scenarios.md
           is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
@@ -2244,7 +2244,7 @@ traits:
                         code: RULE_FINAL_DECLARATION_RECEIVED
       /crystallisation:
         post:
-          displayName: Crystallisation [test only]
+          displayName: Crystallisation
           description: !include docs/crystallisation-endpoint.md
           (annotations.sandboxData): !include scenarios/crystallisation-scenarios.md
           is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
@@ -2331,8 +2331,8 @@ traits:
             type: string
             example: 2018-19
         put:
-          displayName: Amend charitable giving tax relief [test only]
-          description: Amend charitable giving tax relief for a tax year. This API is not available in production.
+          displayName: Amend charitable giving tax relief
+          description: Amend charitable giving tax relief for a tax year.
           (annotations.sandboxData): !include scenarios/charitable-giving-amend-scenarios.md
           is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "write:self-assessment"
@@ -2453,8 +2453,8 @@ traits:
                       value:
                         code: RULE_TAX_YEAR_RANGE_EXCEEDED
         get:
-          displayName: Retrieve charitable giving tax relief [test only]
-          description: Retrieve charitable giving tax relief for a tax year. This API is not available in production.
+          displayName: Retrieve charitable giving tax relief
+          description: Retrieve charitable giving tax relief for a tax year.
           (annotations.sandboxData): !include scenarios/charitable-giving-view-scenarios.md
           is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
