@@ -27,7 +27,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
 
   "creating a period" should {
 
-    for (propertyType <- Seq(PropertyType.OTHER, PropertyType.FHL)) {
+    for (propertyType <- Seq(PropertyType.OTHER)){//, PropertyType.FHL)) {
 
       s"return code 201 containing a location header containing from date and to date pointing to the newly created property period for $propertyType" in {
         given()
@@ -406,384 +406,384 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
     }
   }
 
-  "retrieving all periods" should {
-
-    for (propertyType <- Seq(PropertyType.OTHER, PropertyType.FHL)) {
-
-      s"return code 200 with a JSON array of all $propertyType periods belonging to the property business" in {
-        val expectedJson = Jsons.Properties.periodSummary(
-          ("2017-07-05", "2017-08-04"),
-          ("2017-04-06", "2017-07-04")
-        )
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .periodsWillBeReturnedFor(nino, propertyType)
-          .when()
-          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
-          .thenAssertThat()
-          .statusIs(200)
-          .contentTypeIsJson()
-          .bodyIsLike(expectedJson.toString)
-          .selectFields(_ \\ "id")
-          .isLength(2)
-          .matches(Period.periodPattern)
-      }
-
-      s"return a 200 response with an empty array when an empty $propertyType periods list is returned" in {
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .emptyPeriodsWillBeReturnedFor(nino, propertyType)
-          .when()
-          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
-          .thenAssertThat()
-          .statusIs(200)
-          .contentTypeIsJson()
-          .jsonBodyIsEmptyArray
-      }
-
-      s"return code 404 for an $propertyType property business containing no periods" in {
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .noPeriodsFor(nino, propertyType)
-          .when()
-          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
-          .thenAssertThat()
-          .statusIs(404)
-      }
-
-      s"return code 404 for an $propertyType property business that does not exist" in {
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .doesNotExistPeriodFor(nino, propertyType)
-          .when()
-          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
-          .thenAssertThat()
-          .statusIs(404)
-      }
-
-      s"return code 500 when we receive an unexpected JSON from DES for $propertyType" in {
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .invalidPeriodsJsonFor(nino, propertyType)
-          .when()
-          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
-          .thenAssertThat()
-          .statusIs(500)
-      }
-
-      s"return code 500 when we receive a status code from DES that we do not handle for $propertyType" in {
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .isATeapotFor(nino)
-          .when()
-          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
-          .thenAssertThat()
-          .statusIs(500)
-      }
-
-    }
-  }
-
-  "retrieving a single period" should {
-    for (propertyType <- Seq(PropertyType.OTHER, PropertyType.FHL)) {
-      s"return code 200 containing $propertyType period information for a period that exists" in {
-        val expected = expectedBody(propertyType)
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .periodWillBeReturnedFor(nino, propertyType)
-          .when()
-          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
-          .thenAssertThat()
-          .statusIs(200)
-          .contentTypeIsJson()
-          .bodyIsLike(expected)
-          .bodyDoesNotHavePath[PeriodId]("id")
-      }
-
-      s"return code 404 for a $propertyType period that does not exist" in {
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .noPeriodFor(nino, propertyType)
-          .when()
-          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
-          .thenAssertThat()
-          .statusIs(404)
-      }
-
-      s"return code 500 when we receive a status code from DES that we do not handle for $propertyType" in {
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .isATeapotFor(nino)
-          .when()
-          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
-          .thenAssertThat()
-          .statusIs(500)
-      }
-
-      s"return code 500 when we receive a status code INVALID_DATE_FROM from DES for $propertyType" in {
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .invalidDateFrom(nino, propertyType)
-          .when()
-          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
-          .thenAssertThat()
-          .statusIs(500)
-      }
-
-      s"return code 500 when we receive a status code INVALID_DATE_TO from DES for $propertyType" in {
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .invalidDateTo(nino, propertyType)
-          .when()
-          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
-          .thenAssertThat()
-          .statusIs(500)
-      }
-    }
-  }
-
-  "amending a single period" should {
-
-    for (propertyType <- Seq(PropertyType.OTHER, PropertyType.FHL)) {
-
-      s"return code 204 when updating an $propertyType period" in {
-        val updatedPeriod = period(propertyType)
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .periodWillBeUpdatedFor(nino, propertyType)
-          .when()
-          .put(updatedPeriod)
-          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
-          .thenAssertThat()
-          .statusIs(204)
-      }
-
-      s"return code 204 when updating an $propertyType period where the paylod contains only 'consolidatedExpenses'" in {
-        val updatedPeriod = period(propertyType, onlyConsolidated = true)
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .periodWillBeUpdatedFor(nino, propertyType)
-          .when()
-          .put(updatedPeriod)
-          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
-          .thenAssertThat()
-          .statusIs(204)
-      }
-
-      s"return code 204 when updating an $propertyType period where the paylod contains no expenses" in {
-        val updatedPeriod = period(propertyType, noExpenses = true)
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .periodWillBeUpdatedFor(nino, propertyType)
-          .when()
-          .put(updatedPeriod)
-          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
-          .thenAssertThat()
-          .statusIs(204)
-      }
-
-      s"return code 204 when updating an $propertyType period where the paylod contains only 'residentialFinancialCost' expenses" in {
-        val updatedPeriod = period(propertyType, onlyResidential = true)
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .periodWillBeUpdatedFor(nino, propertyType)
-          .when()
-          .put(updatedPeriod)
-          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
-          .thenAssertThat()
-          .statusIs(204)
-      }
-
-      s"return code 400 when updating an $propertyType period with invalid data" in {
-        val property = Jsons.Properties()
-
-        val invalidPeriod = Jsons.Properties.fhlPeriod(rentIncome = -500, rarRentReceived = 100, financialCosts = Some(400.234))
-
-        val expectedJson = Jsons.Errors.invalidRequest("INVALID_MONETARY_AMOUNT" -> "/incomes/rentIncome/amount",
-                                                       "INVALID_MONETARY_AMOUNT" -> "/expenses/financialCosts/amount")
-
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .willBeCreatedFor(nino)
-          .des()
-          .properties
-          .periodWillBeCreatedFor(nino, propertyType)
-          .des()
-          .properties
-          .invalidPeriodUpdateFor(nino, propertyType)
-          .when()
-          .post(property)
-          .to(s"/r2/ni/$nino/uk-properties")
-          .thenAssertThat()
-          .statusIs(201)
-          .when()
-          .post(period(propertyType))
-          .to(s"%sourceLocation%/$propertyType/periods")
-          .thenAssertThat()
-          .statusIs(201)
-          .when()
-          .put(invalidPeriod)
-          .at("%periodLocation%")
-          .thenAssertThat()
-          .statusIs(400)
-          .contentTypeIsJson()
-          .bodyIsLike(expectedJson.toString)
-      }
-
-      s"return code 400 when attempting to update a period for a property with an invalid 'costOfServices' field for $propertyType" in {
-
-        val expectedJson = Jsons.Errors.invalidRequest("INVALID_MONETARY_AMOUNT" -> "/expenses/costOfServices/amount")
-
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .when()
-          .put(period(propertyType, costOfServices = Some(1234.567)))
-          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
-          .thenAssertThat()
-          .statusIs(400)
-          .bodyIsLike(expectedJson)
-      }
-
-      s"return code 400 when updating an $propertyType period where the paylod contains both the 'expenses' and 'consolidatedExpenses'" in {
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .willBeCreatedFor(nino)
-          .des()
-          .properties
-          .periodWillBeCreatedFor(nino, propertyType)
-          .when()
-          .post(Jsons.Properties())
-          .to(s"/r2/ni/$nino/uk-properties")
-          .thenAssertThat()
-          .statusIs(201)
-          .when()
-          .post(period(propertyType))
-          .to(s"%sourceLocation%/$propertyType/periods")
-          .thenAssertThat()
-          .statusIs(201)
-          .when()
-          .put(bothExpensesUpdate(propertyType))
-          .at("%periodLocation%")
-          .thenAssertThat()
-          .statusIs(400)
-          .contentTypeIsJson()
-          .bodyIsLike(Jsons.Errors.invalidRequest("BOTH_EXPENSES_SUPPLIED" -> ""))
-      }
-
-      s"return code 403 when updating an $propertyType period where the paylod contains over 'consolidatedExpenses'" in {
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .willBeCreatedFor(nino)
-          .des()
-          .properties
-          .periodWillBeCreatedFor(nino, propertyType)
-          .des()
-          .properties
-          .updateWithNotAllowedConsolidatedExpenses(nino, propertyType)
-          .when()
-          .post(Jsons.Properties())
-          .to(s"/r2/ni/$nino/uk-properties")
-          .thenAssertThat()
-          .statusIs(201)
-          .when()
-          .post(period(propertyType))
-          .to(s"%sourceLocation%/$propertyType/periods")
-          .thenAssertThat()
-          .statusIs(201)
-          .when()
-          .put(period(propertyType, overConsolidatedExpenses = true))
-          .at("%periodLocation%")
-          .thenAssertThat()
-          .statusIs(403)
-          .contentTypeIsJson()
-          .bodyIsLike(Jsons.Errors.notAllowedConsolidatedExpenses)
-      }
-
-      s"return code 404 when updating an $propertyType period that does not exist" in {
-        val period = Jsons.Properties.fhlPeriod(fromDate = Some("2017-04-06"), toDate = Some("2018-04-05"))
-
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .amendPropertyUpdateError(nino, propertyType)(404, DesJsons.Errors.notFoundProperty)
-          .when()
-          .put(period)
-          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
-          .thenAssertThat()
-          .statusIs(404)
-      }
-
-      s"return InternalServerError (500) when updating an $propertyType and a 400 INVALID_PERIOD response is returned" in {
-        val period = Jsons.Properties.fhlPeriod(fromDate = Some("2017-04-06"), toDate = Some("2018-04-05"))
-        given()
-          .userIsSubscribedToMtdFor(nino)
-          .clientIsFullyAuthorisedForTheResource
-          .des()
-          .properties
-          .amendPropertyUpdateError(nino, propertyType)(400, DesJsons.Errors.invalidPeriod)
-          .when()
-          .put(period)
-          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
-          .thenAssertThat()
-          .statusIs(500)
-      }
-    }
-  }
+//  "retrieving all periods" should {
+//
+//    for (propertyType <- Seq(PropertyType.OTHER, PropertyType.FHL)) {
+//
+//      s"return code 200 with a JSON array of all $propertyType periods belonging to the property business" in {
+//        val expectedJson = Jsons.Properties.periodSummary(
+//          ("2017-07-05", "2017-08-04"),
+//          ("2017-04-06", "2017-07-04")
+//        )
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .periodsWillBeReturnedFor(nino, propertyType)
+//          .when()
+//          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
+//          .thenAssertThat()
+//          .statusIs(200)
+//          .contentTypeIsJson()
+//          .bodyIsLike(expectedJson.toString)
+//          .selectFields(_ \\ "id")
+//          .isLength(2)
+//          .matches(Period.periodPattern)
+//      }
+//
+//      s"return a 200 response with an empty array when an empty $propertyType periods list is returned" in {
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .emptyPeriodsWillBeReturnedFor(nino, propertyType)
+//          .when()
+//          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
+//          .thenAssertThat()
+//          .statusIs(200)
+//          .contentTypeIsJson()
+//          .jsonBodyIsEmptyArray
+//      }
+//
+//      s"return code 404 for an $propertyType property business containing no periods" in {
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .noPeriodsFor(nino, propertyType)
+//          .when()
+//          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
+//          .thenAssertThat()
+//          .statusIs(404)
+//      }
+//
+//      s"return code 404 for an $propertyType property business that does not exist" in {
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .doesNotExistPeriodFor(nino, propertyType)
+//          .when()
+//          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
+//          .thenAssertThat()
+//          .statusIs(404)
+//      }
+//
+//      s"return code 500 when we receive an unexpected JSON from DES for $propertyType" in {
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .invalidPeriodsJsonFor(nino, propertyType)
+//          .when()
+//          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
+//          .thenAssertThat()
+//          .statusIs(500)
+//      }
+//
+//      s"return code 500 when we receive a status code from DES that we do not handle for $propertyType" in {
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .isATeapotFor(nino)
+//          .when()
+//          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods")
+//          .thenAssertThat()
+//          .statusIs(500)
+//      }
+//
+//    }
+//  }
+//
+//  "retrieving a single period" should {
+//    for (propertyType <- Seq(PropertyType.OTHER, PropertyType.FHL)) {
+//      s"return code 200 containing $propertyType period information for a period that exists" in {
+//        val expected = expectedBody(propertyType)
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .periodWillBeReturnedFor(nino, propertyType)
+//          .when()
+//          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+//          .thenAssertThat()
+//          .statusIs(200)
+//          .contentTypeIsJson()
+//          .bodyIsLike(expected)
+//          .bodyDoesNotHavePath[PeriodId]("id")
+//      }
+//
+//      s"return code 404 for a $propertyType period that does not exist" in {
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .noPeriodFor(nino, propertyType)
+//          .when()
+//          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+//          .thenAssertThat()
+//          .statusIs(404)
+//      }
+//
+//      s"return code 500 when we receive a status code from DES that we do not handle for $propertyType" in {
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .isATeapotFor(nino)
+//          .when()
+//          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+//          .thenAssertThat()
+//          .statusIs(500)
+//      }
+//
+//      s"return code 500 when we receive a status code INVALID_DATE_FROM from DES for $propertyType" in {
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .invalidDateFrom(nino, propertyType)
+//          .when()
+//          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+//          .thenAssertThat()
+//          .statusIs(500)
+//      }
+//
+//      s"return code 500 when we receive a status code INVALID_DATE_TO from DES for $propertyType" in {
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .invalidDateTo(nino, propertyType)
+//          .when()
+//          .get(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+//          .thenAssertThat()
+//          .statusIs(500)
+//      }
+//    }
+//  }
+//
+//  "amending a single period" should {
+//
+//    for (propertyType <- Seq(PropertyType.OTHER, PropertyType.FHL)) {
+//
+//      s"return code 204 when updating an $propertyType period" in {
+//        val updatedPeriod = period(propertyType)
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .periodWillBeUpdatedFor(nino, propertyType)
+//          .when()
+//          .put(updatedPeriod)
+//          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+//          .thenAssertThat()
+//          .statusIs(204)
+//      }
+//
+//      s"return code 204 when updating an $propertyType period where the paylod contains only 'consolidatedExpenses'" in {
+//        val updatedPeriod = period(propertyType, onlyConsolidated = true)
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .periodWillBeUpdatedFor(nino, propertyType)
+//          .when()
+//          .put(updatedPeriod)
+//          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+//          .thenAssertThat()
+//          .statusIs(204)
+//      }
+//
+//      s"return code 204 when updating an $propertyType period where the paylod contains no expenses" in {
+//        val updatedPeriod = period(propertyType, noExpenses = true)
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .periodWillBeUpdatedFor(nino, propertyType)
+//          .when()
+//          .put(updatedPeriod)
+//          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+//          .thenAssertThat()
+//          .statusIs(204)
+//      }
+//
+//      s"return code 204 when updating an $propertyType period where the paylod contains only 'residentialFinancialCost' expenses" in {
+//        val updatedPeriod = period(propertyType, onlyResidential = true)
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .periodWillBeUpdatedFor(nino, propertyType)
+//          .when()
+//          .put(updatedPeriod)
+//          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+//          .thenAssertThat()
+//          .statusIs(204)
+//      }
+//
+//      s"return code 400 when updating an $propertyType period with invalid data" in {
+//        val property = Jsons.Properties()
+//
+//        val invalidPeriod = Jsons.Properties.fhlPeriod(rentIncome = -500, rarRentReceived = 100, financialCosts = Some(400.234))
+//
+//        val expectedJson = Jsons.Errors.invalidRequest("INVALID_MONETARY_AMOUNT" -> "/incomes/rentIncome/amount",
+//                                                       "INVALID_MONETARY_AMOUNT" -> "/expenses/financialCosts/amount")
+//
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .willBeCreatedFor(nino)
+//          .des()
+//          .properties
+//          .periodWillBeCreatedFor(nino, propertyType)
+//          .des()
+//          .properties
+//          .invalidPeriodUpdateFor(nino, propertyType)
+//          .when()
+//          .post(property)
+//          .to(s"/r2/ni/$nino/uk-properties")
+//          .thenAssertThat()
+//          .statusIs(201)
+//          .when()
+//          .post(period(propertyType))
+//          .to(s"%sourceLocation%/$propertyType/periods")
+//          .thenAssertThat()
+//          .statusIs(201)
+//          .when()
+//          .put(invalidPeriod)
+//          .at("%periodLocation%")
+//          .thenAssertThat()
+//          .statusIs(400)
+//          .contentTypeIsJson()
+//          .bodyIsLike(expectedJson.toString)
+//      }
+//
+//      s"return code 400 when attempting to update a period for a property with an invalid 'costOfServices' field for $propertyType" in {
+//
+//        val expectedJson = Jsons.Errors.invalidRequest("INVALID_MONETARY_AMOUNT" -> "/expenses/costOfServices/amount")
+//
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .when()
+//          .put(period(propertyType, costOfServices = Some(1234.567)))
+//          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+//          .thenAssertThat()
+//          .statusIs(400)
+//          .bodyIsLike(expectedJson)
+//      }
+//
+//      s"return code 400 when updating an $propertyType period where the paylod contains both the 'expenses' and 'consolidatedExpenses'" in {
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .willBeCreatedFor(nino)
+//          .des()
+//          .properties
+//          .periodWillBeCreatedFor(nino, propertyType)
+//          .when()
+//          .post(Jsons.Properties())
+//          .to(s"/r2/ni/$nino/uk-properties")
+//          .thenAssertThat()
+//          .statusIs(201)
+//          .when()
+//          .post(period(propertyType))
+//          .to(s"%sourceLocation%/$propertyType/periods")
+//          .thenAssertThat()
+//          .statusIs(201)
+//          .when()
+//          .put(bothExpensesUpdate(propertyType))
+//          .at("%periodLocation%")
+//          .thenAssertThat()
+//          .statusIs(400)
+//          .contentTypeIsJson()
+//          .bodyIsLike(Jsons.Errors.invalidRequest("BOTH_EXPENSES_SUPPLIED" -> ""))
+//      }
+//
+//      s"return code 403 when updating an $propertyType period where the paylod contains over 'consolidatedExpenses'" in {
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .willBeCreatedFor(nino)
+//          .des()
+//          .properties
+//          .periodWillBeCreatedFor(nino, propertyType)
+//          .des()
+//          .properties
+//          .updateWithNotAllowedConsolidatedExpenses(nino, propertyType)
+//          .when()
+//          .post(Jsons.Properties())
+//          .to(s"/r2/ni/$nino/uk-properties")
+//          .thenAssertThat()
+//          .statusIs(201)
+//          .when()
+//          .post(period(propertyType))
+//          .to(s"%sourceLocation%/$propertyType/periods")
+//          .thenAssertThat()
+//          .statusIs(201)
+//          .when()
+//          .put(period(propertyType, overConsolidatedExpenses = true))
+//          .at("%periodLocation%")
+//          .thenAssertThat()
+//          .statusIs(403)
+//          .contentTypeIsJson()
+//          .bodyIsLike(Jsons.Errors.notAllowedConsolidatedExpenses)
+//      }
+//
+//      s"return code 404 when updating an $propertyType period that does not exist" in {
+//        val period = Jsons.Properties.fhlPeriod(fromDate = Some("2017-04-06"), toDate = Some("2018-04-05"))
+//
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .amendPropertyUpdateError(nino, propertyType)(404, DesJsons.Errors.notFoundProperty)
+//          .when()
+//          .put(period)
+//          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+//          .thenAssertThat()
+//          .statusIs(404)
+//      }
+//
+//      s"return InternalServerError (500) when updating an $propertyType and a 400 INVALID_PERIOD response is returned" in {
+//        val period = Jsons.Properties.fhlPeriod(fromDate = Some("2017-04-06"), toDate = Some("2018-04-05"))
+//        given()
+//          .userIsSubscribedToMtdFor(nino)
+//          .clientIsFullyAuthorisedForTheResource
+//          .des()
+//          .properties
+//          .amendPropertyUpdateError(nino, propertyType)(400, DesJsons.Errors.invalidPeriod)
+//          .when()
+//          .put(period)
+//          .at(s"/r2/ni/$nino/uk-properties/$propertyType/periods/2017-04-06_2018-04-05")
+//          .thenAssertThat()
+//          .statusIs(500)
+//      }
+//    }
+//  }
 
   def misalignedAndOverlappingPeriod(propertyType: PropertyType) =
     period(propertyType, from = Some("2017-08-04"), to = Some("2017-09-04"))
@@ -832,6 +832,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         consolidatedExpenses = consolidatedExpenses
       )
     case PropertyType.OTHER if noExpenses =>
+      println(s">>>>>>>noExpenses")
       Jsons.Properties.consolidationPeriod(
         fromDate = from,
         toDate = to,
@@ -842,6 +843,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         otherPropertyIncome = Some(13.10)
       )
     case PropertyType.OTHER if onlyConsolidated =>
+      println(s">>>>>>>onlyConsolidated")
       Jsons.Properties.consolidationPeriod(
         fromDate = from,
         toDate = to,
@@ -854,6 +856,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         broughtFwdResidentialFinancialCost = Some(13.10)
       )
     case PropertyType.OTHER if onlyResidential =>
+      println(s">>>>>>>onlyResidential")
       Jsons.Properties.residentialPeriod(
         fromDate = from,
         toDate = to,
@@ -865,6 +868,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         residentialFinancialCost = Some(100.55)
       )
     case PropertyType.OTHER if overConsolidatedExpenses =>
+      println(s">>>>>>>overConsolidated")
       Jsons.Properties.otherPeriod(
         fromDate = from,
         toDate = to,
@@ -876,6 +880,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
         consolidatedExpenses = Some(99999999999999.50)
       )
     case PropertyType.OTHER =>
+      println(s">>>>>>>BLAAAH")
       Jsons.Properties.otherPeriod(
         fromDate = from,
         toDate = to,

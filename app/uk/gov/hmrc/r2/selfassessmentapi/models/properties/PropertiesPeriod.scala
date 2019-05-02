@@ -330,7 +330,7 @@ object Other {
   object Expense {
     implicit val reads: Reads[Expense] = (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator).map(Expense(_))
 
-    implicit val writes: Writes[Expense] = Json.writes[Expense]
+    implicit lazy val writes: Writes[Expense] = Json.writes[Expense]
 
     implicit lazy val format = Format(reads, writes)
   }
@@ -359,9 +359,8 @@ object Other {
   }
 
   object Expenses {
-    implicit val writes: Writes[Expenses] = Json.writes[Expenses]
 
-    implicit val reads: Reads[Expenses] = (
+    implicit lazy val reads: Reads[Expenses] = (
       (__ \ "premisesRunningCosts").readNullable[Expense] and
         (__ \ "repairsAndMaintenance").readNullable[Expense] and
         (__ \ "financialCosts").readNullable[Expense] and
@@ -374,6 +373,8 @@ object Other {
         (__ \ "broughtFwdResidentialFinancialCost").readNullable[Expense](nonNegativeOtherExpenseValidatorR2) and
         (__ \ "rarReliefClaimed").readNullable[Expense](nonNegativeOtherExpenseValidatorR2)
     )(Expenses.apply _)
+
+    implicit lazy val writes: Writes[Expenses] = Json.writes[Expenses]
 
     implicit lazy val format = Format(reads, writes)
 
