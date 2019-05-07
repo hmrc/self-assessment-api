@@ -102,9 +102,18 @@ package object resources {
     }
 
   def validate[T, R](jsValue: JsValue)(f: T => Future[R])(implicit reads: Reads[T]): Future[Either[ErrorResult, R]] =
-    jsValue.validate[T] match {
-      case JsSuccess(payload, _) => f(payload).map(Right(_))
-      case JsError(errors) => Future.successful(Left(ValidationErrorResult(errors)))
+    {
+      println(s"\n\n")
+      println(s"\nREADS: ${reads}\n")
+      val thing = jsValue.validate[T] match {
+        case JsSuccess(payload, _) => println(s"\nJSSUCCESS\n");f(payload).map(Right(_))
+        case JsError(errors) => println(s"\nJSFAILZBRO\n");Future.successful(Left(ValidationErrorResult(errors)))
+      }
+      thing.map { t =>
+        println(s"\nting: $t\n")
+      }
+
+      thing
     }
 
   def correlationId(resp: Response): String = resp.underlying.header("CorrelationId").getOrElse("No CorrelationId returned")

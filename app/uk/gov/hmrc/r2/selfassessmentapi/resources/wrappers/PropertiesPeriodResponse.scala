@@ -24,6 +24,10 @@ import uk.gov.hmrc.r2.selfassessmentapi.models.{Period, PeriodId, PeriodSummary,
 import uk.gov.hmrc.http.HttpResponse
 
 case class PropertiesPeriodResponse(underlying: HttpResponse) extends Response {
+
+  println(s"\nRESPONSE: ${underlying.json}\n")
+
+
   def createLocationHeader(nino: Nino, id: PropertyType, periodId: PeriodId): String =
     s"/self-assessment/ni/$nino/uk-properties/$id/periods/$periodId"
 

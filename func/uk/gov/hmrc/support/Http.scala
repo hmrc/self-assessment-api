@@ -43,6 +43,7 @@ object Http {
   def postJson(url: String, body: JsValue, headers: Seq[(String, String)] = Seq.empty)(
       implicit hc: HeaderCarrier,
       timeout: FiniteDuration): HttpResponse = perform(url) { request =>
+    println(s"\n;sdjfhlksdjhfldkhgf\n")
     request.withFollowRedirects(false).post(body)
   }
 

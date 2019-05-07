@@ -153,7 +153,6 @@ trait BaseFunctionalSpec extends TestApplication {
     }
 
     def bodyIsLike(expectedBody: String) = {
-      println(s"\nEXPECTED: ${Json.prettyPrint(Json.toJson(expectedBody))}\nRETURNED: ${Json.prettyPrint(response.json)}\n")
       response.json match {
         case JsArray(_) => assertEquals(expectedBody, new JSONArray(response.body), LENIENT)
         case _ => assertEquals(expectedBody, new JSONObject(response.body), LENIENT)
@@ -343,12 +342,8 @@ trait BaseFunctionalSpec extends TestApplication {
           case "DELETE" => new Assertions(s"DELETE@$url", Http.delete(url))
           case "POST" =>
             body match {
-              case Some(jsonBody) =>
-                println(s"\nASSERT:new Assertions(POST@$url, ${Http.postJson(url, jsonBody)}\n")
-                new Assertions(s"POST@$url", Http.postJson(url, jsonBody)(implicitly, FiniteDuration(3, TimeUnit.SECONDS)))
-              case None =>
-                println(s"\n!!!!!!!!EMPTY!!!!!!!\n")
-                new Assertions(s"POST@$url", Http.postEmpty(url)(implicitly, FiniteDuration(3, TimeUnit.SECONDS)))
+              case Some(jsonBody) => new Assertions(s"POST@$url", Http.postJson(url, jsonBody)(implicitly, FiniteDuration(3, TimeUnit.SECONDS)))
+              case None => new Assertions(s"POST@$url", Http.postEmpty(url)(implicitly, FiniteDuration(3, TimeUnit.SECONDS)))
             }
           case "PUT" =>
             val jsonBody = body.getOrElse(throw new RuntimeException("Body for PUT must be provided"))
@@ -374,10 +369,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
   class HttpPostBodyWrapper(method: String, body: Option[JsValue])(
     implicit urlPathVariables: mutable.Map[String, String]) {
-    def to(url: String) = {
-      println(s"\nrequest: ($method, $url, __body)\n")
-      new HttpRequest(method, url, body)
-    }
+    def to(url: String) = new HttpRequest(method, url, body)
   }
 
   class HttpPutBodyWrapper(method: String, body: Option[JsValue])(
@@ -388,7 +380,6 @@ trait BaseFunctionalSpec extends TestApplication {
   class HttpVerbs()(implicit urlPathVariables: mutable.Map[String, String] = mutable.Map()) {
 
     def post(body: JsValue) = {
-      println(s"\nBODY: $body\n")
       new HttpPostBodyWrapper("POST", Some(body))
     }
 
