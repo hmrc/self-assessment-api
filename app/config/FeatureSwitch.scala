@@ -58,11 +58,6 @@ case class FeatureSwitch(value: Option[Configuration]) {
     }
   }
 
-  def isRelease2Enabled: Boolean = value match {
-    case Some(config) => config.getBoolean("release-2.enabled").getOrElse(false)
-    case None => false
-  }
-
   def isCharitableGivingV2Enabled: Boolean = value match {
     case Some(config) => config.getBoolean("charitable-giving-version-2.enabled").getOrElse(false)
     case None => false

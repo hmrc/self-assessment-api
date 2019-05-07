@@ -16,7 +16,7 @@
 
 package router.services
 
-import config.{AppConfig, FeatureSwitch}
+import config.AppConfig
 import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.Request
@@ -30,37 +30,31 @@ import scala.concurrent.Future
 class ReleaseTwoService @Inject()(val appConfig: AppConfig,
                                   val selfAssessmentConnector: SelfAssessmentConnector) extends Service {
 
+  val r2 = "/r2"
+
   def create(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
 
+
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.post(uri, body)
-      case Some(VERSION_2) => selfAssessmentConnector.post(uri, body)(convertHeaderToVersion1, req)
+      case Some(VERSION_1) => selfAssessmentConnector.post(r2+req.uri, body)
+      case Some(VERSION_2) => selfAssessmentConnector.post(r2+req.uri, body)(convertHeaderToVersion1, req)
     }
   }
 
   def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
 
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.get(uri)
-      case Some(VERSION_2) => selfAssessmentConnector.get(uri)(convertHeaderToVersion1, req)
+      case Some(VERSION_1) => selfAssessmentConnector.get(r2+req.uri)
+      case Some(VERSION_2) => selfAssessmentConnector.get(r2+req.uri)(convertHeaderToVersion1, req)
     }
   }
 
   def amend(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
 
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.put(uri, body)
-      case Some(VERSION_2) => selfAssessmentConnector.put(uri, body)(convertHeaderToVersion1, req)
+      case Some(VERSION_1) => selfAssessmentConnector.put(r2+req.uri, body)
+      case Some(VERSION_2) => selfAssessmentConnector.put(r2+req.uri, body)(convertHeaderToVersion1, req)
     }
   }
 
-  def uri (implicit hc: HeaderCarrier, req: Request[_]) = {
-    val featureSwitch = FeatureSwitch(appConfig.featureSwitch)
-    if (featureSwitch.isRelease2Enabled) {
-      s"/r2${req.uri}"
-    }
-    else {
-      s"${req.uri}"
-    }
-  }
 }

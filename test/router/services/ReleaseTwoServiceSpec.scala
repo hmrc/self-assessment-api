@@ -18,7 +18,6 @@ package router.services
 
 import mocks.config.MockAppConfig
 import mocks.connectors.MockSelfAssessmentConnector
-import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import router.errors.{IncorrectAPIVersion, UnsupportedAPIVersion}
@@ -44,24 +43,10 @@ class ReleaseTwoServiceSpec extends UnitSpec
     val requestBody = Json.obj("test" -> "body")
 
     "return a HttpResponse" when {
-      "the request contains a version 1.0 header and release-2 config is disabled" in new Setup {
+
+      "the request contains a version 1.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
         val response = HttpResponse(200)
-        val release2EnabledConfig = Configuration("release-2.enabled" -> false)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
-
-        MockSelfAssessmentConnector.post(request.uri, requestBody)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.create(requestBody))
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 1.0 header and release-2 config is enabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
-        val release2EnabledConfig = Configuration("release-2.enabled" -> true)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
 
         MockSelfAssessmentConnector.post(s"/r2${request.uri}", requestBody)
           .returns(Future.successful(Right(response)))
@@ -70,26 +55,10 @@ class ReleaseTwoServiceSpec extends UnitSpec
         result shouldBe Right(response)
       }
 
-      "the request contains a version 2.0 header and release-2 config is disabled" in new Setup {
+      "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
         val response = HttpResponse(200)
 
-        val release2EnabledConfig = Configuration("release-2.enabled" -> false)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
-
-        MockSelfAssessmentConnector.post(request.uri, requestBody)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.create(requestBody))
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 2.0 header and release-2 config is enabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
-
-        val release2EnabledConfig = Configuration("release-2.enabled" -> true)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
 
         MockSelfAssessmentConnector.post(s"/r2${request.uri}", requestBody)
           .returns(Future.successful(Right(response)))
@@ -97,25 +66,26 @@ class ReleaseTwoServiceSpec extends UnitSpec
         val result = await(service.create(requestBody))
         result shouldBe Right(response)
       }
-    }
 
-    "return an UnsupportedAPIVersion error" when {
 
-      "the Accept header contains an unsupported API version" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.5.0+json"))
+      "return an UnsupportedAPIVersion error" when {
 
-        val result = await(service.create(requestBody))
-        result shouldBe Left(UnsupportedAPIVersion)
+        "the Accept header contains an unsupported API version" in new Setup {
+          implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.5.0+json"))
+
+          val result = await(service.create(requestBody))
+          result shouldBe Left(UnsupportedAPIVersion)
+        }
       }
-    }
 
-    "return an IncorrectAPIVersion" when {
+      "return an IncorrectAPIVersion" when {
 
-      "the Accept header contains an incorrect value" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "incorrect value"))
+        "the Accept header contains an incorrect value" in new Setup {
+          implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "incorrect value"))
 
-        val result = await(service.create(requestBody))
-        result shouldBe Left(IncorrectAPIVersion)
+          val result = await(service.create(requestBody))
+          result shouldBe Left(IncorrectAPIVersion)
+        }
       }
     }
   }
@@ -123,24 +93,10 @@ class ReleaseTwoServiceSpec extends UnitSpec
   "get" should {
 
     "return a HttpResponse" when {
-      "the request contains a version 1.0 header and release-2 config is disabled" in new Setup {
+
+      "the request contains a version 1.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
         val response = HttpResponse(200)
-        val release2EnabledConfig = Configuration("release-2.enabled" -> false)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
-
-        MockSelfAssessmentConnector.get(request.uri)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.get())
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 1.0 header and release-2 config is enabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
-        val release2EnabledConfig = Configuration("release-2.enabled" -> true)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
 
         MockSelfAssessmentConnector.get(s"/r2${request.uri}")
           .returns(Future.successful(Right(response)))
@@ -149,26 +105,9 @@ class ReleaseTwoServiceSpec extends UnitSpec
         result shouldBe Right(response)
       }
 
-      "the request contains a version 2.0 header and release-2 config is disabled" in new Setup {
+      "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
         val response = HttpResponse(200)
-
-        val release2EnabledConfig = Configuration("release-2.enabled" -> false)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
-
-        MockSelfAssessmentConnector.get(request.uri)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.get())
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 2.0 header and release-2 config is enabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
-
-        val release2EnabledConfig = Configuration("release-2.enabled" -> true)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
 
         MockSelfAssessmentConnector.get(s"/r2${request.uri}")
           .returns(Future.successful(Right(response)))
@@ -203,24 +142,10 @@ class ReleaseTwoServiceSpec extends UnitSpec
     val requestBody = Json.obj("test" -> "body")
 
     "return a HttpResponse" when {
-      "the request contains a version 1.0 header and release-2 config is disabled" in new Setup {
+
+      "the request contains a version 1.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
         val response = HttpResponse(200)
-        val release2EnabledConfig = Configuration("release-2.enabled" -> false)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
-
-        MockSelfAssessmentConnector.put(request.uri, requestBody)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.amend(requestBody))
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 1.0 header and release-2 config is enabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
-        val release2EnabledConfig = Configuration("release-2.enabled" -> true)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
 
         MockSelfAssessmentConnector.put(s"/r2${request.uri}", requestBody)
           .returns(Future.successful(Right(response)))
@@ -229,26 +154,9 @@ class ReleaseTwoServiceSpec extends UnitSpec
         result shouldBe Right(response)
       }
 
-      "the request contains a version 2.0 header and release-2 config is disabled" in new Setup {
+      "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
         val response = HttpResponse(200)
-
-        val release2EnabledConfig = Configuration("release-2.enabled" -> false)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
-
-        MockSelfAssessmentConnector.put(request.uri, requestBody)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.amend(requestBody))
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 2.0 header and release-2 config is enabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
-
-        val release2EnabledConfig = Configuration("release-2.enabled" -> true)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
 
         MockSelfAssessmentConnector.put(s"/r2${request.uri}", requestBody)
           .returns(Future.successful(Right(response)))
@@ -282,24 +190,10 @@ class ReleaseTwoServiceSpec extends UnitSpec
   "getAll" should {
 
     "return a HttpResponse" when {
-      "the request contains a version 1.0 header and release-2 config is disabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
-        val release2EnabledConfig = Configuration("release-2.enabled" -> false)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
-
-        MockSelfAssessmentConnector.get(request.uri)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.get())
-        result shouldBe Right(response)
-      }
 
       "the request contains a version 1.0 header and release-2 config is enabled" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
         val response = HttpResponse(200)
-        val release2EnabledConfig = Configuration("release-2.enabled" -> true)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
 
         MockSelfAssessmentConnector.get(s"/r2${request.uri}")
           .returns(Future.successful(Right(response)))
@@ -308,26 +202,10 @@ class ReleaseTwoServiceSpec extends UnitSpec
         result shouldBe Right(response)
       }
 
-      "the request contains a version 2.0 header and release-2 config is disabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
-
-        val release2EnabledConfig = Configuration("release-2.enabled" -> false)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
-
-        MockSelfAssessmentConnector.get(request.uri)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.get())
-        result shouldBe Right(response)
-      }
 
       "the request contains a version 2.0 header and release-2 config is enabled" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
         val response = HttpResponse(200)
-
-        val release2EnabledConfig = Configuration("release-2.enabled" -> true)
-        MockAppConfig.featureSwitch returns Some(release2EnabledConfig)
 
         MockSelfAssessmentConnector.get(s"/r2${request.uri}")
           .returns(Future.successful(Right(response)))
@@ -357,4 +235,5 @@ class ReleaseTwoServiceSpec extends UnitSpec
       }
     }
   }
+
 }
