@@ -1665,7 +1665,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def noPeriodsFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
-            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            get(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
                   .withStatus(404)
@@ -1707,7 +1707,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def doesNotExistPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
-            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            get(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
                   .withStatus(404)
