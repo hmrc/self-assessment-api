@@ -1071,7 +1071,6 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def annualSummaryWillBeReturnedFor(nino: Nino, id: String = "abc", taxYear: TaxYear = TaxYear("2017-18")): Givens = {
-          println(s"\nDES RETURNED: ${DesJsons.SelfEmployment.AnnualSummary()}\n")
           stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/annual-summaries/${taxYear.toDesTaxYear}"))
             .willReturn(
               aResponse()

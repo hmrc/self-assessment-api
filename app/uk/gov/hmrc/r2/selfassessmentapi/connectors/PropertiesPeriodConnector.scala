@@ -52,7 +52,6 @@ class PropertiesPeriodConnector @Inject()(
     override def create(nino: Nino, properties: Other.Properties)(
       implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PropertiesPeriodResponse] =
       {
-        println(s"\nURL CALLED: $baseUrl" + s"/income-store/nino/$nino/uk-properties/other/periodic-summaries"+"\n")
         httpPost[des.properties.Other.Properties, PropertiesPeriodResponse](
           baseUrl + s"/income-store/nino/$nino/uk-properties/other/periodic-summaries",
           des.properties.Other.Properties.from(properties),

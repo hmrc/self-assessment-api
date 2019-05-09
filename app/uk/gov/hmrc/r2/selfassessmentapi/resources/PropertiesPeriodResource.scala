@@ -48,7 +48,6 @@ class PropertiesPeriodResource @Inject()(
 
   def createPeriod(nino: Nino, id: PropertyType): Action[JsValue] =
     APIAction(nino, SourceType.Properties, Some("periods")).async(parse.json) { implicit request =>
-      println(s"\nR2 CREATE\n")
       validateCreateRequest(id, nino, request) map {
         case Left(errorResult) => handleErrors(errorResult)
         case Right((periodId, response)) =>
@@ -109,7 +108,8 @@ class PropertiesPeriodResource @Inject()(
     APIAction(nino, SourceType.Properties, Some("periods")).async { implicit request =>
       periodId match {
         case Period(from, to) =>
-          connector.retrieve(nino, from, to, id).map { response => response.filter {
+          connector.retrieve(nino, from, to, id).map { response =>
+            response.filter {
               case 200 =>
                 id match {
                   case PropertyType.FHL => toResult[FHL.Properties, des.properties.FHL.Properties](response)
@@ -147,7 +147,6 @@ class PropertiesPeriodResource @Inject()(
     p: PropertiesPeriodConnectorT[P, F],
     r: Reads[P]): Future[Either[ErrorResult, (PeriodId, PropertiesPeriodResponse)]] =
     validate[P, (PeriodId, PropertiesPeriodResponse)](request.body) { period =>
-      println(s"\np.create\n")
       p.create(nino, period).map((period.periodId, _))
     }
 
@@ -156,7 +155,7 @@ class PropertiesPeriodResource @Inject()(
     implicit val a = connector.FHLPropertiesPeriodConnector
     implicit val b = connector.OtherPropertiesPeriodConnector
     id match {
-      case PropertyType.OTHER => println(s"\nvalidate and create\n");validateAndCreate[Other.Properties, Other.Financials](nino, request)
+      case PropertyType.OTHER => validateAndCreate[Other.Properties, Other.Financials](nino, request)
       case PropertyType.FHL => validateAndCreate[FHL.Properties, FHL.Financials](nino, request)
     }
   }
