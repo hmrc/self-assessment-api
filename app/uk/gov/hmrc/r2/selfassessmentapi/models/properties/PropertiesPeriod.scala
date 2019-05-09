@@ -328,7 +328,7 @@ object Other {
   case class Expense(amount: BigDecimal)
 
   object Expense {
-    implicit val reads: Reads[Expense] = (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator).map(Expense(_))
+    implicit lazy val reads: Reads[Expense] = (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator).map(Expense(_))
 
     implicit lazy val writes: Writes[Expense] = Json.writes[Expense]
 
