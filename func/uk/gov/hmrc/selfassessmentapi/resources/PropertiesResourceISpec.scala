@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.r2.selfassessmentapi.resources
+package uk.gov.hmrc.selfassessmentapi.resources
 
-import uk.gov.hmrc.r2.selfassessmentapi.support.BaseFunctionalSpec
+import uk.gov.hmrc.support.BaseFunctionalSpec
 
-class PropertiesResourceSpec extends BaseFunctionalSpec {
+class PropertiesResourceISpec extends BaseFunctionalSpec {
 
   "creating a property business" should {
     "return code 201 containing a location header when creating a property business" in {
@@ -31,7 +31,6 @@ class PropertiesResourceSpec extends BaseFunctionalSpec {
         .thenAssertThat()
         .statusIs(201)
         .responseContainsHeader("Location", s"/self-assessment/ni/$nino/uk-properties".r)
-        .when()
     }
 
     "return code 409 when attempting to create the same property business more than once" in {

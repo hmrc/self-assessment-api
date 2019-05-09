@@ -18,25 +18,33 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
-class SelfEmploymentObligationsResourceSpec extends BaseFunctionalSpec {
-
-  val regime = "ITSB"
+class PropertiesObligationsResourceISpec extends BaseFunctionalSpec {
   "retrieveObligations" should {
-
-    "return code 200 with a set of obligations" in {
+    "return code 200 containing a set of canned obligations" in {
       given()
         .userIsSubscribedToMtdFor(nino)
         .clientIsFullyAuthorisedForTheResource
+        .des().properties.willBeCreatedFor(nino)
         .des().obligations.returnObligationsFor(nino)
         .when()
-        .get(s"/ni/$nino/self-employments/abc/obligations")
+        .post(Jsons.Properties()).to(s"/ni/$nino/uk-properties")
+        .thenAssertThat()
+        .statusIs(201)
+        .when()
+        .get(s"/ni/$nino/uk-properties/obligations")
         .thenAssertThat()
         .statusIs(200)
         .bodyIsLike(Jsons.Obligations().toString)
-      //        .when()
-      //        .get("/admin/metrics")
-      //        .thenAssertThat()
-      //        .body(_ \ "timers" \ "Timer-API-SelfEmployments-obligations-GET" \ "count").is(1)
+    }
+
+    "return code 404 when attempting to retrieve obligations for a properties business that does not exist" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .when()
+        .get(s"/ni/$nino/uk-properties/obligations")
+        .thenAssertThat()
+        .statusIs(404)
     }
 
     "forward the GovTestScenario header to DES" in {
@@ -45,21 +53,10 @@ class SelfEmploymentObligationsResourceSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().obligations.receivesObligationsTestHeader(nino, "ALL_MET")
         .when()
-        .get(s"/ni/$nino/self-employments/abc/obligations").withHeaders(GovTestScenarioHeader, "ALL_MET")
+        .get(s"/ni/$nino/uk-properties/obligations").withHeaders(GovTestScenarioHeader, "ALL_MET")
         .thenAssertThat()
         .statusIs(200)
         .bodyIsLike(Jsons.Obligations().toString)
-    }
-
-    "return code 404 when self employment id does not exist" in {
-      given()
-        .userIsSubscribedToMtdFor(nino)
-        .clientIsFullyAuthorisedForTheResource
-        .des().obligations.obligationNotFoundFor(nino)
-        .when()
-        .get(s"/ni/$nino/self-employments/abc/obligations")
-        .thenAssertThat()
-        .statusIs(404)
     }
 
     "return code 404 when obligations with no 'identification' data is returned" in {
@@ -68,7 +65,18 @@ class SelfEmploymentObligationsResourceSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().obligations.returnObligationsWithNoIdentificationFor(nino)
         .when()
-        .get(s"/ni/$nino/self-employments/abc/obligations")
+        .get(s"/ni/$nino/uk-properties/obligations")
+        .thenAssertThat()
+        .statusIs(404)
+    }
+
+    "return code 404 when property id does not exist" in {
+      given()
+        .userIsSubscribedToMtdFor(nino)
+        .clientIsFullyAuthorisedForTheResource
+        .des().obligations.obligationNotFoundFor(nino)
+        .when()
+        .get(s"/ni/$nino/uk-properties/obligations")
         .thenAssertThat()
         .statusIs(404)
     }
@@ -79,7 +87,7 @@ class SelfEmploymentObligationsResourceSpec extends BaseFunctionalSpec {
         .clientIsFullyAuthorisedForTheResource
         .des().invalidNinoFor(nino)
         .when()
-        .get("/ni/abcd1234/self-employments/abc/obligations")
+        .get(s"/ni/abc1234/uk-properties/obligations")
         .thenAssertThat()
         .statusIs(400)
     }

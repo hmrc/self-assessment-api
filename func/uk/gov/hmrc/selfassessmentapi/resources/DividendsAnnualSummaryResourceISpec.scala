@@ -19,7 +19,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 import play.api.libs.json.Json
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
-class DividendsAnnualSummaryResourceSpec extends BaseFunctionalSpec {
+class DividendsAnnualSummaryResourceISpec extends BaseFunctionalSpec {
   "update annual summary" should {
     "return code 204 when updating dividends" in {
       given()

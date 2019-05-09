@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
-class BanksResourceSpec extends BaseFunctionalSpec {
+class BanksResourceISpec extends BaseFunctionalSpec {
 
   "creating a bank interest source" should {
 
