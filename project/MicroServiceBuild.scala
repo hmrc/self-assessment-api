@@ -25,7 +25,7 @@ private object AppDependencies {
     "uk.gov.hmrc" %% "play-reactivemongo" % "6.7.0",
     ws exclude("org.apache.httpcomponents", "httpclient") exclude("org.apache.httpcomponents", "httpcore"),
     "uk.gov.hmrc" %% "bootstrap-play-25" % "4.11.0",
-    "uk.gov.hmrc" %% "auth-client" % "2.20.0-play-25",
+    "uk.gov.hmrc" %% "auth-client" % "2.21.0-play-25",
     "uk.gov.hmrc" %% "domain" % "5.6.0-play-25",
     "uk.gov.hmrc" %% "play-hmrc-api" % "3.2.0",
     "ai.x" %% "play-json-extensions" % "0.8.0",
