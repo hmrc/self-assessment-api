@@ -2319,6 +2319,88 @@ traits:
                       description: No intent-to-crystallise calculation exists for the calculationId.
                       value:
                         code: MATCHING_RESOURCE_NOT_FOUND
+    /crystallisation:
+      /obligations:
+        get:
+          displayName: Retrieve Crystallisation Obligations [test only]
+          description: The "Retrieve Crystallisation Obligations" endpoint returns the crystallisation obligations for a specific National Insurance Number
+          (annotations.sandboxData): !include scenarios/crystalllisation-retrieve-scenarios.md
+          is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
+          (annotations.scope): "read:self-assessment"
+          securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
+          queryParameters:
+            from:
+              description: Start of date range to filter obligations. The minimum ‘from’ date is `2018-04-06`
+              type: string
+              example: 2018-04-06
+              required: true
+            to:
+              description: End of date range to filter obligations
+              type: string
+              example: 2019-04-05
+              required: true
+          responses:
+            200:
+              headers:
+                X-CorrelationId:
+                  example: c75f40a6-a3df-4429-a697-471eeec46435
+                  description: Unique id for operation tracking <br> String, 36 characters.
+              body:
+                application/json:
+                  type: !include schemas/CrystObligation.json
+                  examples:
+                    example-1:
+                      description: Open
+                      value: !include examples/crystallisation/retrieveCrystallisationOpen.json
+                    example-2:
+                      description: Fulfilled
+                      value: !include examples/crystallisation/retrieveCrystallisationFulfilled.json
+            400:
+              body:
+                application/json:
+                  type: types.errorResponse
+                  examples:
+                    formatNino:
+                      description: The format of the supplied NINO field is not valid.
+                      value:
+                        code: FORMAT_NINO
+                    formatFromDate:
+                      description: The From date is not a valid ISO format date.
+                      value:
+                        code: FORMAT_FROM_DATE
+                    formatToDate:
+                      description: The To date is not a valid ISO format date.
+                      value:
+                        code: FORMAT_TO_DATE
+                    missingFromDate:
+                      description: The From date parameter is missing.
+                      value:
+                        code: MISSING_FROM_DATE
+                    missingToDate:
+                      description: The to date parameter is missing.
+                      value:
+                        code: MISSING_TO_DATE
+                    rangeToDateBeforeFromDate:
+                      description: The To date is before the From date.
+                      value:
+                        code: RANGE_TO_DATE_BEFORE_FROM_DATE
+                    rangeDateTooLong:
+                      description: The date range is longer than 366 days.
+                      value:
+                        code: RANGE_DATE_TOO_LONG
+                    fromDateNotSupported:
+                      description: The from date specified is before 2018-04-06.
+                      value:
+                        code: RULE_FROM_DATE_NOT_SUPPORTED
+            404:
+              body:
+                application/json:
+                  type: types.errorResponse
+                  examples:
+                    resourceNotFound:
+                      description: Resource not found.
+                      value:
+                        code: MATCHING_RESOURCE_NOT_FOUND
     /charitable-giving:
       (annotations.group):
         name: Charitable giving

@@ -1,0 +1,11 @@
+{
+  "obligations": [
+    {
+      "start": "2018-04-06",
+      "end": "2019-04-05",
+      "due": "2020-01-31",
+      "status": "Fulfilled",
+      "processed": "2020-01-25"
+    }
+  ]
+}
