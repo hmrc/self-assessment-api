@@ -101,11 +101,12 @@ package object resources {
       } yield Right(result)
     }
 
-  def validate[T, R](jsValue: JsValue)(f: T => Future[R])(implicit reads: Reads[T]): Future[Either[ErrorResult, R]] =
+  def validate[T, R](jsValue: JsValue)(f: T => Future[R])(implicit reads: Reads[T]): Future[Either[ErrorResult, R]] = {
     jsValue.validate[T] match {
       case JsSuccess(payload, _) => f(payload).map(Right(_))
       case JsError(errors) => Future.successful(Left(ValidationErrorResult(errors)))
     }
+  }
 
   def correlationId(resp: Response): String = resp.underlying.header("CorrelationId").getOrElse("No CorrelationId returned")
 }

@@ -108,7 +108,8 @@ class PropertiesPeriodResource @Inject()(
     APIAction(nino, SourceType.Properties, Some("periods")).async { implicit request =>
       periodId match {
         case Period(from, to) =>
-          connector.retrieve(nino, from, to, id).map { response => response.filter {
+          connector.retrieve(nino, from, to, id).map { response =>
+            response.filter {
               case 200 =>
                 id match {
                   case PropertyType.FHL => toResult[FHL.Properties, des.properties.FHL.Properties](response)

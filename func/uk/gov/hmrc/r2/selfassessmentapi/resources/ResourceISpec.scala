@@ -27,7 +27,7 @@ import uk.gov.hmrc.r2.selfassessmentapi.mocks.auth.MockAuthorisationService
 import uk.gov.hmrc.r2.selfassessmentapi.mocks.config.MockAppContext
 import uk.gov.hmrc.r2.selfassessmentapi.models.SourceType.SourceType
 
-trait ResourceSpec extends WordSpec
+trait ResourceISpec extends WordSpec
   with Matchers
   with MockitoSugar
   with OptionValues

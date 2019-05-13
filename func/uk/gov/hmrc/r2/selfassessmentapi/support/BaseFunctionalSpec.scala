@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.r2.selfassessmentapi.support
 
+import java.util.concurrent.TimeUnit
+
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import org.joda.time.LocalDate
@@ -37,6 +39,7 @@ import uk.gov.hmrc.selfassessmentapi.models.TaxYear
 import uk.gov.hmrc.support.{Http, UrlInterpolation}
 
 import scala.collection.mutable
+import scala.concurrent.duration.FiniteDuration
 import scala.util.matching.Regex
 
 trait BaseFunctionalSpec extends TestApplication {
@@ -150,7 +153,6 @@ trait BaseFunctionalSpec extends TestApplication {
     }
 
     def bodyIsLike(expectedBody: String) = {
-      println(s"\nEXPECTED: ${Json.prettyPrint(Json.toJson(expectedBody))}\nRETURNED: ${Json.prettyPrint(response.json)}\n")
       response.json match {
         case JsArray(_) => assertEquals(expectedBody, new JSONArray(response.body), LENIENT)
         case _ => assertEquals(expectedBody, new JSONObject(response.body), LENIENT)
@@ -340,8 +342,8 @@ trait BaseFunctionalSpec extends TestApplication {
           case "DELETE" => new Assertions(s"DELETE@$url", Http.delete(url))
           case "POST" =>
             body match {
-              case Some(jsonBody) => new Assertions(s"POST@$url", Http.postJson(url, jsonBody))
-              case None => new Assertions(s"POST@$url", Http.postEmpty(url))
+              case Some(jsonBody) => new Assertions(s"POST@$url", Http.postJson(url, jsonBody)(implicitly, FiniteDuration(3, TimeUnit.SECONDS)))
+              case None => new Assertions(s"POST@$url", Http.postEmpty(url)(implicitly, FiniteDuration(3, TimeUnit.SECONDS)))
             }
           case "PUT" =>
             val jsonBody = body.getOrElse(throw new RuntimeException("Body for PUT must be provided"))
@@ -1069,7 +1071,6 @@ trait BaseFunctionalSpec extends TestApplication {
         }
 
         def annualSummaryWillBeReturnedFor(nino: Nino, id: String = "abc", taxYear: TaxYear = TaxYear("2017-18")): Givens = {
-          println(s"\nDES RETURNED: ${DesJsons.SelfEmployment.AnnualSummary()}\n")
           stubFor(get(urlEqualTo(s"/income-store/nino/$nino/self-employments/$id/annual-summaries/${taxYear.toDesTaxYear}"))
             .willReturn(
               aResponse()
@@ -1663,7 +1664,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def noPeriodsFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
-            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            get(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
                   .withStatus(404)
@@ -1705,7 +1706,7 @@ trait BaseFunctionalSpec extends TestApplication {
 
         def doesNotExistPeriodFor(nino: Nino, propertyType: PropertyType): Givens = {
           stubFor(
-            get(urlEqualTo(s"/income-store/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
+            get(urlEqualTo(s"/income-tax/nino/$nino/uk-properties/$propertyType/periodic-summaries"))
               .willReturn(
                 aResponse()
                   .withStatus(404)

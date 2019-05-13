@@ -20,7 +20,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.selfassessmentapi.models.{Period, PeriodId}
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
-class SelfEmploymentPeriodResourceSpec extends BaseFunctionalSpec {
+class SelfEmploymentPeriodResourceISpec extends BaseFunctionalSpec {
 
   "createPeriod" should {
 

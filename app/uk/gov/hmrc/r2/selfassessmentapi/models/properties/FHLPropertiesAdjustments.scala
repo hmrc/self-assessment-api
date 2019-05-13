@@ -33,7 +33,7 @@ object FHLPropertiesAdjustments {
     (__ \ "lossBroughtForward").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "privateUseAdjustment").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "balancingCharge").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "bpraBalancingCharge").readNullable[BigDecimal](nonNegativeAmountValidator) and
+      (__ \ "bpraBalancingCharge").readNullable[BigDecimal](nonNegativeAmountValidatorR2) and
       (__ \ "periodOfGraceAdjustment").readNullable[Boolean]
     ) (FHLPropertiesAdjustments.apply _)
 }

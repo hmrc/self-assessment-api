@@ -96,8 +96,8 @@ class OtherPropertiesAllowancesSpec extends JsonSpec {
         "/businessPremisesRenovationAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
-    "reject businessPremisesRenovationAllowance more than 99999999999999.98" in {
-      assertValidationErrorWithCode(OtherPropertiesAllowances(businessPremisesRenovationAllowance = Some(BigDecimal("99999999999999.99"))),
+    "reject businessPremisesRenovationAllowance more than 99999999999.99" in {
+      assertValidationErrorWithCode(OtherPropertiesAllowances(businessPremisesRenovationAllowance = Some(BigDecimal("100000000000.00"))),
         "/businessPremisesRenovationAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
@@ -111,8 +111,8 @@ class OtherPropertiesAllowancesSpec extends JsonSpec {
         "/propertyAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 
-    "reject propertyAllowance more than 99999999999999.98" in {
-      assertValidationErrorWithCode(OtherPropertiesAllowances(propertyAllowance = Some(BigDecimal("99999999999999.99"))),
+    "reject propertyAllowance more than 99999999999.99" in {
+      assertValidationErrorWithCode(OtherPropertiesAllowances(propertyAllowance = Some(BigDecimal("100000000000.00"))),
         "/propertyAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
 

@@ -22,7 +22,7 @@ import uk.gov.hmrc.r2.selfassessmentapi.resources.JsonSpec
 class FHLPropertiesAllowancesSpec extends JsonSpec {
   "FHLPropertiesAllowancesSpec" should {
     "round trip" in {
-      roundTripJson(FHLPropertiesAllowances(Some(50.50), Some(12.12)))
+      roundTripJson(FHLPropertiesAllowances(Some(50.50), Some(12.12), Some(44.44), Some(98.98)))
     }
 
     "round trip empty json" in {
@@ -59,6 +59,37 @@ class FHLPropertiesAllowancesSpec extends JsonSpec {
     "reject otherCapitalAllowance with more than 2 decimal places" in {
       assertValidationErrorWithCode(FHLPropertiesAllowances(otherCapitalAllowance = Some(50.123)),
         "/otherCapitalAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+
+    "reject businessPremisesRenovationAllowance with a negative value" in {
+      assertValidationErrorWithCode(FHLPropertiesAllowances(businessPremisesRenovationAllowance = Some(-50)),
+        "/businessPremisesRenovationAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject businessPremisesRenovationAllowance more than 99999999999.99" in {
+      assertValidationErrorWithCode(FHLPropertiesAllowances(businessPremisesRenovationAllowance = Some(BigDecimal("100000000000.00"))),
+        "/businessPremisesRenovationAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject businessPremisesRenovationAllowance with more than 2 decimal places" in {
+      assertValidationErrorWithCode(FHLPropertiesAllowances(businessPremisesRenovationAllowance = Some(50.123)),
+        "/businessPremisesRenovationAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject propertyAllowance with a negative value" in {
+      assertValidationErrorWithCode(FHLPropertiesAllowances(propertyAllowance = Some(-50)),
+        "/propertyAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject propertyAllowance more than 99999999999.99" in {
+      assertValidationErrorWithCode(FHLPropertiesAllowances(propertyAllowance = Some(BigDecimal("100000000000.00"))),
+        "/propertyAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
+    }
+
+    "reject propertyAllowance with more than 2 decimal places" in {
+      assertValidationErrorWithCode(FHLPropertiesAllowances(propertyAllowance = Some(50.123)),
+        "/propertyAllowance", ErrorCode.INVALID_MONETARY_AMOUNT)
     }
   }
 }

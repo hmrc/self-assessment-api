@@ -23,7 +23,7 @@ import uk.gov.hmrc.r2.selfassessmentapi.models.properties.PropertyType.PropertyT
 import uk.gov.hmrc.r2.selfassessmentapi.models.{Period, PeriodId}
 import uk.gov.hmrc.r2.selfassessmentapi.support.BaseFunctionalSpec
 
-class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
+class R2PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
 
   "creating a period" should {
 
@@ -46,7 +46,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(201)
           .when()
           .post(period(propertyType))
-          .to(s"%sourceLocation%/$propertyType/periods")
+          .to(s"/r2%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(201)
           .responseContainsHeader(
@@ -71,7 +71,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(201)
           .when()
           .post(period(propertyType, onlyConsolidated = true))
-          .to(s"%sourceLocation%/$propertyType/periods")
+          .to(s"/r2%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(201)
           .responseContainsHeader(
@@ -96,7 +96,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(201)
           .when()
           .post(period(propertyType, noExpenses = true))
-          .to(s"%sourceLocation%/$propertyType/periods")
+          .to(s"/r2%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(201)
           .responseContainsHeader(
@@ -121,7 +121,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(201)
           .when()
           .post(period(propertyType, onlyResidential = true))
-          .to(s"%sourceLocation%/$propertyType/periods")
+          .to(s"/r2%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(201)
           .responseContainsHeader(
@@ -143,7 +143,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(201)
           .when()
           .post(invalidPeriod(propertyType))
-          .to(s"%sourceLocation%/$propertyType/periods")
+          .to(s"/r2%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(400)
           .contentTypeIsJson()
@@ -172,7 +172,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(201)
           .when()
           .post(Json.parse(period))
-          .to(s"%sourceLocation%/$propertyType/periods")
+          .to(s"/r2%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(400)
           .contentTypeIsJson()
@@ -196,7 +196,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(201)
           .when()
           .post(period(propertyType))
-          .to(s"%sourceLocation%/$propertyType/periods")
+          .to(s"/r2%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(403)
           .bodyIsLike(Jsons.Errors.overlappingPeriod)
@@ -219,7 +219,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(201)
           .when()
           .post(period(propertyType, overConsolidatedExpenses = true))
-          .to(s"%sourceLocation%/$propertyType/periods")
+          .to(s"/r2%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(403)
           .bodyIsLike(Jsons.Errors.notAllowedConsolidatedExpenses)
@@ -243,7 +243,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(201)
           .when()
           .post(misalignedPeriod(propertyType))
-          .to(s"%sourceLocation%/$propertyType/periods")
+          .to(s"/r2%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(403)
           .bodyIsLike(Jsons.Errors.misalignedPeriod)
@@ -264,7 +264,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(201)
           .when()
           .post(bothExpenses(propertyType))
-          .to(s"%sourceLocation%/$propertyType/periods")
+          .to(s"/r2%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(400)
           .contentTypeIsJson()
@@ -664,7 +664,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(201)
           .when()
           .post(period(propertyType))
-          .to(s"%sourceLocation%/$propertyType/periods")
+          .to(s"/r2%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -708,7 +708,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(201)
           .when()
           .post(period(propertyType))
-          .to(s"%sourceLocation%/$propertyType/periods")
+          .to(s"/r2%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(201)
           .when()
@@ -740,7 +740,7 @@ class PropertiesPeriodResourceSpec extends BaseFunctionalSpec {
           .statusIs(201)
           .when()
           .post(period(propertyType))
-          .to(s"%sourceLocation%/$propertyType/periods")
+          .to(s"/r2%sourceLocation%/$propertyType/periods")
           .thenAssertThat()
           .statusIs(201)
           .when()

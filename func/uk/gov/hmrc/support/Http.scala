@@ -34,21 +34,21 @@ object Http {
   }
 
   def post[A](url: String, body: A, headers: Seq[(String, String)] = Seq.empty)(
-      implicit writes: Writes[A],
-      hc: HeaderCarrier,
-      timeout: FiniteDuration): HttpResponse = perform(url) { request =>
+    implicit writes: Writes[A],
+    hc: HeaderCarrier,
+    timeout: FiniteDuration): HttpResponse = perform(url) { request =>
     request.withFollowRedirects(false).post(Json.toJson(body))
   }
 
   def postJson(url: String, body: JsValue, headers: Seq[(String, String)] = Seq.empty)(
-      implicit hc: HeaderCarrier,
-      timeout: FiniteDuration): HttpResponse = perform(url) { request =>
+    implicit hc: HeaderCarrier,
+    timeout: FiniteDuration): HttpResponse = perform(url) { request =>
     request.withFollowRedirects(false).post(body)
   }
 
   def putJson(url: String, body: JsValue, headers: Seq[(String, String)] = Seq.empty)(
-      implicit hc: HeaderCarrier,
-      timeout: FiniteDuration): HttpResponse = perform(url) { request =>
+    implicit hc: HeaderCarrier,
+    timeout: FiniteDuration): HttpResponse = perform(url) { request =>
     request.put(body)
   }
 

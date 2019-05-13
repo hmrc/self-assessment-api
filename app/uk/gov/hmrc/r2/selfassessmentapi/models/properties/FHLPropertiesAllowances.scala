@@ -31,7 +31,7 @@ object FHLPropertiesAllowances {
   implicit val reads: Reads[FHLPropertiesAllowances] = (
     (__ \ "annualInvestmentAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "otherCapitalAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "businessPremisesRenovationAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "propertyAllowance").readNullable[BigDecimal](nonNegativeAmountValidator)
+      (__ \ "businessPremisesRenovationAllowance").readNullable[BigDecimal](nonNegativeAmountValidatorR2) and
+      (__ \ "propertyAllowance").readNullable[BigDecimal](nonNegativeAmountValidatorR2)
     ) (FHLPropertiesAllowances.apply _)
 }

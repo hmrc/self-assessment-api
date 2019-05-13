@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.r2.selfassessmentapi.models.properties
 
+
+
 import org.joda.time.LocalDate
 import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
@@ -82,6 +84,8 @@ object FHL {
         ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))
     ))
 
+    implicit lazy val format : Format[Properties] = Format(reads, writes)
+
     def from(o: des.properties.FHL.Properties): Properties =
       Properties(id = o.transactionReference,
         from = LocalDate.parse(o.from),
@@ -95,7 +99,14 @@ object FHL {
   }
 
   object Incomes {
-    implicit val format: Format[Incomes] = Json.format[Incomes]
+    implicit val writes: Writes[Incomes] = Json.writes[Incomes]
+
+    implicit val reads: Reads[Incomes] = (
+      (__ \ "rentIncome").readNullable[Income] and
+        (__ \ "rarRentReceived").readNullable[Income](nonNegativeIncomeValidatorR2)
+    )(Incomes.apply _)
+
+    implicit lazy val format : Format[Incomes] = Format(reads, writes)
 
     def from(o: des.properties.FHL.Incomes): Incomes =
       Incomes(rentIncome = o.rentIncome.map(income => Income(amount = income.amount, taxDeducted = income.taxDeducted)),
@@ -107,7 +118,9 @@ object FHL {
   object Expense {
     implicit val reads: Reads[Expense] = (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator).map(Expense(_))
 
-    implicit val writes: Writes[Expense] = Json.writes[Expense]
+    implicit lazy val writes: Writes[Expense] = Json.writes[Expense]
+
+    implicit lazy val format : Format[Expense] = Format(reads, writes)
   }
 
   case class Expenses(premisesRunningCosts: Option[Expense] = None,
@@ -131,7 +144,21 @@ object FHL {
   }
 
   object Expenses {
-    implicit val format: Format[Expenses] = Json.format[Expenses]
+    implicit lazy val writes: Writes[Expenses] = Json.writes[Expenses]
+
+    implicit lazy val reads: Reads[Expenses] = (
+      (__ \ "premisesRunningCosts").readNullable[Expense] and
+        (__ \ "repairsAndMaintenance").readNullable[Expense] and
+        (__ \ "financialCosts").readNullable[Expense] and
+        (__ \ "professionalFees").readNullable[Expense] and
+        (__ \ "costOfServices").readNullable[Expense] and
+        (__ \ "consolidatedExpenses").readNullable[Expense] and
+        (__ \ "other").readNullable[Expense] and
+        (__ \ "travelCosts").readNullable[Expense](nonNegativeFhlExpenseValidatorR2) and
+        (__ \ "rarReliefClaimed").readNullable[Expense](nonNegativeFhlExpenseValidatorR2)
+    )(Expenses.apply _)
+
+    implicit lazy val format : Format[Expenses] = Format(reads, writes)
 
     def from(o: des.properties.FHL.Deductions): Expenses =
       Expenses(
@@ -179,6 +206,8 @@ object FHL {
             ErrorCode.BOTH_EXPENSES_SUPPLIED)
         )
       ))
+
+    implicit lazy val format : Format[Financials] = Format(reads, writes)
 
     def from(o: Option[des.properties.FHL.Financials]): Option[Financials] =
       o.flatMap { f =>
@@ -250,6 +279,8 @@ object Other {
         ValidationError("No incomes and expenses are supplied", ErrorCode.NO_INCOMES_AND_EXPENSES))
     ))
 
+    implicit lazy val format = Format(reads, writes)
+
     def from(o: des.properties.Other.Properties): Properties =
       Properties(id = o.transactionReference,
         from = LocalDate.parse(o.from),
@@ -272,8 +303,17 @@ object Other {
 
   object Incomes {
 
-    implicit val format: Format[Incomes] =
-      Json.format[Incomes]
+    implicit val writes: Writes[Incomes] = Json.writes[Incomes]
+
+    implicit val reads: Reads[Incomes] = (
+      (__ \ "rentIncome").readNullable[Income] and
+        (__ \ "premiumsOfLeaseGrant").readNullable[Income] and
+        (__ \ "reversePremiums").readNullable[Income] and
+        (__ \ "otherPropertyIncome").readNullable[Income] and
+        (__ \ "rarRentReceived").readNullable[Income](nonNegativeIncomeValidatorR2)
+    )(Incomes.apply _)
+
+    implicit lazy val format = Format(reads, writes)
 
     def from(o: des.properties.Other.Incomes): Incomes =
       Incomes(
@@ -288,9 +328,11 @@ object Other {
   case class Expense(amount: BigDecimal)
 
   object Expense {
-    implicit val reads: Reads[Expense] = (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator).map(Expense(_))
+    implicit lazy val reads: Reads[Expense] = (__ \ "amount").read[BigDecimal](nonNegativeAmountValidator).map(Expense(_))
 
-    implicit val writes: Writes[Expense] = Json.writes[Expense]
+    implicit lazy val writes: Writes[Expense] = Json.writes[Expense]
+
+    implicit lazy val format = Format(reads, writes)
   }
 
   case class Expenses(premisesRunningCosts: Option[Expense] = None,
@@ -317,7 +359,24 @@ object Other {
   }
 
   object Expenses {
-    implicit val format: Format[Expenses] = Json.format[Expenses]
+
+    implicit lazy val reads: Reads[Expenses] = (
+      (__ \ "premisesRunningCosts").readNullable[Expense] and
+        (__ \ "repairsAndMaintenance").readNullable[Expense] and
+        (__ \ "financialCosts").readNullable[Expense] and
+        (__ \ "professionalFees").readNullable[Expense] and
+        (__ \ "costOfServices").readNullable[Expense] and
+        (__ \ "consolidatedExpenses").readNullable[Expense] and
+        (__ \ "residentialFinancialCost").readNullable[Expense] and
+        (__ \ "other").readNullable[Expense] and
+        (__ \ "travelCosts").readNullable[Expense](nonNegativeOtherExpenseValidatorR2) and
+        (__ \ "broughtFwdResidentialFinancialCost").readNullable[Expense](nonNegativeOtherExpenseValidatorR2) and
+        (__ \ "rarReliefClaimed").readNullable[Expense](nonNegativeOtherExpenseValidatorR2)
+    )(Expenses.apply _)
+
+    implicit lazy val writes: Writes[Expenses] = Json.writes[Expenses]
+
+    implicit lazy val format = Format(reads, writes)
 
     def from(o: des.properties.Other.Deductions): Expenses =
       Expenses(
@@ -370,6 +429,8 @@ object Other {
             ErrorCode.BOTH_EXPENSES_SUPPLIED)
         )
       ))
+
+    implicit lazy val format = Format(reads, writes)
 
     def from(o: Option[des.properties.Other.Financials]): Option[Financials] =
       o.flatMap { f =>

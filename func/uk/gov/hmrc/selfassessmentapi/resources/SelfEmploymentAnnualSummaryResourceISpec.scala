@@ -18,7 +18,7 @@ package uk.gov.hmrc.selfassessmentapi.resources
 
 import uk.gov.hmrc.support.BaseFunctionalSpec
 
-class SelfEmploymentAnnualSummaryResourceSpec extends BaseFunctionalSpec {
+class SelfEmploymentAnnualSummaryResourceISpec extends BaseFunctionalSpec {
 
   "updateAnnualSummary" should {
     "return code 204 when updating an annual summary for a valid self-employment source" in {

@@ -37,7 +37,7 @@ object OtherPropertiesAllowances {
       (__ \ "otherCapitalAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "costOfReplacingDomesticItems").readNullable[BigDecimal](nonNegativeAmountValidator) and
       (__ \ "zeroEmissionsGoodsVehicleAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "businessPremisesRenovationAllowance").readNullable[BigDecimal](nonNegativeAmountValidator) and
-      (__ \ "propertyAllowance").readNullable[BigDecimal](nonNegativeAmountValidator)
+      (__ \ "businessPremisesRenovationAllowance").readNullable[BigDecimal](nonNegativeAmountValidatorR2) and
+      (__ \ "propertyAllowance").readNullable[BigDecimal](nonNegativeAmountValidatorR2)
   )(OtherPropertiesAllowances.apply _)
 }

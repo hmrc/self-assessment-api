@@ -20,6 +20,7 @@ import org.joda.time.LocalDate
 import play.api.Logger
 import play.api.data.validation.ValidationError
 import play.api.libs.json.{JsPath, Reads}
+import uk.gov.hmrc.r2.selfassessmentapi.models.properties.{FHL, Other}
 
 import scala.io.{Codec, Source}
 import scala.util.Try
@@ -33,7 +34,10 @@ package object models {
   type SummaryId = String
   type ValidationErrors = Seq[(JsPath, Seq[ValidationError])]
 
-  private val MAX_AMOUNT = BigDecimal("99999999999999.98")
+  private val MAX_AMOUNT =    BigDecimal("99999999999999.98")
+
+  //added to correct the max amounts for R2 fields
+  private val MAX_AMOUNT_R2 = BigDecimal("99999999999.99")
 
   /**
     * Asserts that amounts must have a maximum of two decimal places
@@ -52,6 +56,46 @@ package object models {
     .filter(ValidationError("amounts should be a non-negative number less than 99999999999999.98 with up to 2 decimal places",
       ErrorCode.INVALID_MONETARY_AMOUNT))(
       amount => amount >= 0 && amount.scale < 3 && amount <= MAX_AMOUNT)
+
+  /**
+    * Asserts that amounts must be non-negative and have a maximum of two decimal places for release 2
+    */
+  val nonNegativeAmountValidatorR2: Reads[BigDecimal] = Reads
+    .of[BigDecimal]
+    .filter(ValidationError("amounts should be a non-negative number less than 99999999999.99 with up to 2 decimal places",
+      ErrorCode.INVALID_MONETARY_AMOUNT))(
+      amount => amount >= 0 && amount.scale < 3 && amount <= MAX_AMOUNT_R2)
+
+  /**
+    * Asserts that amounts must be non-negative and have a maximum of two decimal places for release 2
+    */
+  val nonNegativeIncomeValidatorR2: Reads[Income] = Reads
+    .of[Income]
+    .filter(
+      ValidationError("amounts should be a non-negative number less than 99999999999.99 with up to 2 decimal places",
+      ErrorCode.INVALID_MONETARY_AMOUNT)
+    )(income => income.amount >= 0 && income.amount.scale < 3 && income.amount <= MAX_AMOUNT_R2)
+
+  /**
+    * Asserts that amounts must be non-negative and have a maximum of two decimal places for release 2
+    */
+  val nonNegativeFhlExpenseValidatorR2: Reads[FHL.Expense] = Reads
+    .of[FHL.Expense]
+    .filter(
+      ValidationError("Income amounts should be a non-negative number less than 99999999999.99 with up to 2 decimal places",
+        ErrorCode.INVALID_MONETARY_AMOUNT)
+    )(expense => expense.amount >= 0 && expense.amount.scale < 3 && expense.amount <= MAX_AMOUNT_R2)
+
+  /**
+    * Asserts that amounts must be non-negative and have a maximum of two decimal places for release 2
+    */
+  val nonNegativeOtherExpenseValidatorR2: Reads[Other.Expense] = Reads
+    .of[Other.Expense]
+    .filter(
+      ValidationError("Income amounts should be a non-negative number less than 99999999999.99 with up to 2 decimal places",
+        ErrorCode.INVALID_MONETARY_AMOUNT)
+    )(expense => expense.amount >= 0 && expense.amount.scale < 3 && expense.amount <= MAX_AMOUNT_R2)
+
 
   /**
     * Asserts that amounts must have a maximum of two decimal places
