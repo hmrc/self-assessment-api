@@ -45,7 +45,7 @@ package object models {
   val amountValidator: Reads[BigDecimal] = Reads
     .of[BigDecimal]
     .filter(
-      ValidationError("amount should be a number less than 99999999999999.98 with up to 2 decimal places", ErrorCode.INVALID_MONETARY_AMOUNT))(
+      ValidationError("Amount should be a number less than 99999999999999.98 with up to 2 decimal places", ErrorCode.INVALID_MONETARY_AMOUNT))(
       amount => amount.scale < 3 && amount <= MAX_AMOUNT)
 
   /**
@@ -53,7 +53,7 @@ package object models {
     */
   val nonNegativeAmountValidator: Reads[BigDecimal] = Reads
     .of[BigDecimal]
-    .filter(ValidationError("amounts should be a non-negative number less than 99999999999999.98 with up to 2 decimal places",
+    .filter(ValidationError("Amount should be a non-negative number less than 99999999999999.98 with up to 2 decimal places",
       ErrorCode.INVALID_MONETARY_AMOUNT))(
       amount => amount >= 0 && amount.scale < 3 && amount <= MAX_AMOUNT)
 
@@ -62,40 +62,9 @@ package object models {
     */
   val nonNegativeAmountValidatorR2: Reads[BigDecimal] = Reads
     .of[BigDecimal]
-    .filter(ValidationError("amounts should be a non-negative number less than 99999999999.99 with up to 2 decimal places",
+    .filter(ValidationError("Amount should be a non-negative number less than 99999999999.99 with up to 2 decimal places",
       ErrorCode.INVALID_MONETARY_AMOUNT))(
       amount => amount >= 0 && amount.scale < 3 && amount <= MAX_AMOUNT_R2)
-
-  /**
-    * Asserts that amounts must be non-negative and have a maximum of two decimal places for release 2
-    */
-  val nonNegativeIncomeValidatorR2: Reads[Income] = Reads
-    .of[Income]
-    .filter(
-      ValidationError("amounts should be a non-negative number less than 99999999999.99 with up to 2 decimal places",
-      ErrorCode.INVALID_MONETARY_AMOUNT)
-    )(income => income.amount >= 0 && income.amount.scale < 3 && income.amount <= MAX_AMOUNT_R2)
-
-  /**
-    * Asserts that amounts must be non-negative and have a maximum of two decimal places for release 2
-    */
-  val nonNegativeFhlExpenseValidatorR2: Reads[FHL.Expense] = Reads
-    .of[FHL.Expense]
-    .filter(
-      ValidationError("Income amounts should be a non-negative number less than 99999999999.99 with up to 2 decimal places",
-        ErrorCode.INVALID_MONETARY_AMOUNT)
-    )(expense => expense.amount >= 0 && expense.amount.scale < 3 && expense.amount <= MAX_AMOUNT_R2)
-
-  /**
-    * Asserts that amounts must be non-negative and have a maximum of two decimal places for release 2
-    */
-  val nonNegativeOtherExpenseValidatorR2: Reads[Other.Expense] = Reads
-    .of[Other.Expense]
-    .filter(
-      ValidationError("Income amounts should be a non-negative number less than 99999999999.99 with up to 2 decimal places",
-        ErrorCode.INVALID_MONETARY_AMOUNT)
-    )(expense => expense.amount >= 0 && expense.amount.scale < 3 && expense.amount <= MAX_AMOUNT_R2)
-
 
   /**
     * Asserts that amounts must have a maximum of two decimal places
@@ -103,7 +72,7 @@ package object models {
   val positiveOrNegativeAmountValidator: Reads[BigDecimal] = Reads
     .of[BigDecimal]
     .filter(
-      ValidationError("amount should be a number between -99999999999.99 and 99999999999.99 with up to 2 decimal places",
+      ValidationError("Amount should be a number between -99999999999.99 and 99999999999.99 with up to 2 decimal places",
         ErrorCode.INVALID_MONETARY_AMOUNT))(
         amount => amount >= -99999999999.99 && amount.scale < 3 && amount <= 99999999999.99)
 

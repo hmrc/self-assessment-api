@@ -117,7 +117,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
       forAll(fhlR2TestData(rarRentReceived = 100000000000.00)) { fhlProps =>
         assertValidationErrorsWithCode[FHL.Properties](
           Json.toJson(fhlProps),
-          Map("/incomes/rarRentReceived" ->  Seq(ErrorCode.INVALID_MONETARY_AMOUNT))
+          Map("/incomes/rarRentReceived/amount" ->  Seq(ErrorCode.INVALID_MONETARY_AMOUNT))
         )
       }
 
@@ -158,7 +158,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
       forAll(otherR2TestData(rarRentReceived = 100000000000.00)) { otherProps =>
         assertValidationErrorsWithCode[Other.Properties](
           Json.toJson(otherProps),
-          Map("/incomes/rarRentReceived" ->  Seq(ErrorCode.INVALID_MONETARY_AMOUNT))
+          Map("/incomes/rarRentReceived/amount" ->  Seq(ErrorCode.INVALID_MONETARY_AMOUNT))
         )
       }
 
@@ -202,7 +202,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         incomes = Some(
           FHL.Incomes(
             rentIncome = Some(Income(2891, Some(754))),
-            rarRentReceived = Some(Income(rarRentReceived, Some(0)))
+            rarRentReceived = Some(IncomeR2(rarRentReceived, Some(0)))
           )
         ),
         expenses = Some(
@@ -213,8 +213,8 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
             professionalFees = Some(FHL.Expense(amount = 123)),
             costOfServices = Some(FHL.Expense(amount = 123)),
             other = Some(FHL.Expense(other)),
-            travelCosts = Some(FHL.Expense(travelCosts)),
-            rarReliefClaimed = Some(FHL.Expense(rarReliefClaimed))
+            travelCosts = Some(FHL.ExpenseR2(travelCosts)),
+            rarReliefClaimed = Some(FHL.ExpenseR2(rarReliefClaimed))
           )
         )
       )
@@ -233,7 +233,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
             premiumsOfLeaseGrant = Some(Income(323, Some(123))),
             reversePremiums = Some(Income(5466, Some(123))),
             otherPropertyIncome = Some(Income(64664, Some(123))),
-            rarRentReceived = Some(Income(rarRentReceived, Some(0)))
+            rarRentReceived = Some(IncomeR2(rarRentReceived, Some(0)))
           )
         ),
         expenses = Some(
@@ -245,9 +245,9 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
             costOfServices = Some(Other.Expense(amount = 123)),
             residentialFinancialCost = Some(Other.Expense(amount = 123)),
             other = Some(Other.Expense(amount = 123)),
-            travelCosts = Some(Other.Expense(travelCosts)),
-            broughtFwdResidentialFinancialCost = Some(Other.Expense(broughtFwdResidentialFinancialCost)),
-            rarReliefClaimed = Some(Other.Expense(rarReliefClaimed))
+            travelCosts = Some(Other.ExpenseR2(travelCosts)),
+            broughtFwdResidentialFinancialCost = Some(Other.ExpenseR2(broughtFwdResidentialFinancialCost)),
+            rarReliefClaimed = Some(Other.ExpenseR2(rarReliefClaimed))
           )
         )
       )
@@ -264,6 +264,13 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
 
       } yield Income(amount, taxDeducted)
 
+    val genIncomeR2: Gen[IncomeR2] =
+      for {
+        amount <- amount
+        taxDeducted <- Gen.option(amountGen(0, amount))
+
+      } yield IncomeR2(amount, taxDeducted)
+
     val genRentIncome: Gen[Income] =
       for {
         amount <- amount
@@ -272,10 +279,12 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
     val genIncomes: Gen[FHL.Incomes] =
       for {
         rentIncome <- Gen.option(genIncome)
-        rarRentReceived <- Gen.option(genRentIncome)
+        rarRentReceived <- Gen.option(genIncomeR2)
       } yield FHL.Incomes(rentIncome = rentIncome, rarRentReceived = rarRentReceived)
 
     val genExpense: Gen[FHL.Expense] = for (amount <- amount) yield FHL.Expense(amount)
+
+    val genExpenseR2: Gen[FHL.ExpenseR2] = for (amount <- amount) yield FHL.ExpenseR2(amount)
 
     val genExpenses: Gen[FHL.Expenses] =
       for {
@@ -285,8 +294,8 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         professionalFees <- Gen.option(genExpense)
         costOfServices <- Gen.option(genExpense)
         other <- Gen.option(genExpense)
-        travelCosts <- Gen.option(genExpense)
-        rarReliefClaimed <- Gen.option(genExpense)
+        travelCosts <- Gen.option(genExpenseR2)
+        rarReliefClaimed <- Gen.option(genExpenseR2)
 
       } yield
         FHL.Expenses(
@@ -309,8 +318,8 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         costOfServices <- Gen.option(genExpense)
         consolidatedExpenses <- Gen.option(genExpense)
         other <- Gen.option(genExpense)
-        travelCosts <- Gen.option(genExpense)
-        rarReliefClaimed <- Gen.option(genExpense)
+        travelCosts <- Gen.option(genExpenseR2)
+        rarReliefClaimed <- Gen.option(genExpenseR2)
       } yield
         FHL.Expenses(
           premisesRunningCosts = premisesRunningCosts,
@@ -387,16 +396,24 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         taxDeducted <- Gen.option(amountGen(0, amount))
       } yield Income(amount, taxDeducted)
 
+    val genIncomeR2 : Gen[IncomeR2] =
+      for {
+        amount <- amount
+        taxDeducted <- Gen.option(amountGen(0, amount))
+      } yield IncomeR2(amount, taxDeducted)
+
     val genIncomes: Gen[Other.Incomes] =
       for {
         rentIncome <- Gen.option(genIncome)
         premiumsOfLeaseGrant <- Gen.option(genIncome)
         reversePremiums <- Gen.option(genIncome)
         otherPropertyIncome <- Gen.option(genIncome)
-        rarRentReceived <- Gen.option(genIncome)
+        rarRentReceived <- Gen.option(genIncomeR2)
       } yield Other.Incomes(rentIncome, premiumsOfLeaseGrant, reversePremiums, otherPropertyIncome, rarRentReceived)
 
     val genExpense: Gen[Other.Expense] = for (amount <- amount) yield Other.Expense(amount)
+
+    val genExpenseR2: Gen[Other.ExpenseR2] = for (amount <- amount) yield Other.ExpenseR2(amount)
 
     val genExpenses: Gen[Other.Expenses] =
       for {
@@ -407,9 +424,9 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         costOfServices <- Gen.option(genExpense)
         residentialFinancialCost <- Gen.option(genExpense)
         other <- Gen.option(genExpense)
-        travelCosts <- Gen.option(genExpense)
-        broughtFwdResidentialFinancialCost <- Gen.option(genExpense)
-        rarReliefClaimed <- Gen.option(genExpense)
+        travelCosts <- Gen.option(genExpenseR2)
+        broughtFwdResidentialFinancialCost <- Gen.option(genExpenseR2)
+        rarReliefClaimed <- Gen.option(genExpenseR2)
       } yield
         Other
           .Expenses(premisesRunningCosts = premisesRunningCosts,
@@ -433,9 +450,9 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
         consolidatedExpenses <- Gen.option(genExpense)
         residentialFinancialCost <- Gen.option(genExpense)
         other <- Gen.option(genExpense)
-        travelCosts <- Gen.option(genExpense)
-        broughtFwdResidentialFinancialCost <- Gen.option(genExpense)
-        rarReliefClaimed <- Gen.option(genExpense)
+        travelCosts <- Gen.option(genExpenseR2)
+        broughtFwdResidentialFinancialCost <- Gen.option(genExpenseR2)
+        rarReliefClaimed <- Gen.option(genExpenseR2)
       } yield
         Other
           .Expenses(premisesRunningCosts,
@@ -454,7 +471,7 @@ class PropertiesPeriodSpec extends JsonSpec with GeneratorDrivenPropertyChecks {
       for {
         consolidatedExpenses <- Gen.option(genExpense)
         residentialFinancialCost <- Gen.option(genExpense)
-        broughtFwdResidentialFinancialCost <- Gen.option(genExpense)
+        broughtFwdResidentialFinancialCost <- Gen.option(genExpenseR2)
       } yield Other.Expenses(consolidatedExpenses = consolidatedExpenses, residentialFinancialCost = residentialFinancialCost,
         broughtFwdResidentialFinancialCost = broughtFwdResidentialFinancialCost)
 
