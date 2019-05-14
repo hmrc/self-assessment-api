@@ -205,8 +205,8 @@ object Jsons {
             costOfServices.map(FHL.Expense(_)),
             consolidatedExpenses.map(FHL.Expense(_)),
             otherCost.map(FHL.Expense(_)),
-            travelCosts.map(FHL.Expense(_)),
-            rarReliefClaimed.map(FHL.Expense(_))
+            travelCosts.map(FHL.ExpenseR2(_)),
+            rarReliefClaimed.map(FHL.ExpenseR2(_))
           ))
         .toString
     }
@@ -297,9 +297,9 @@ object Jsons {
             consolidatedExpenses.map(Other.Expense(_)),
             residentialFinancialCost.map(Other.Expense(_)),
             otherCost.map(Other.Expense(_)),
-            travelCosts.map(Other.Expense(_)),
-            broughtFwdResidentialFinancialCost.map(Other.Expense(_)),
-            rarReliefClaimed.map(Other.Expense(_))
+            travelCosts.map(Other.ExpenseR2(_)),
+            broughtFwdResidentialFinancialCost.map(Other.ExpenseR2(_)),
+            rarReliefClaimed.map(Other.ExpenseR2(_))
           ))
         .toString
     }
