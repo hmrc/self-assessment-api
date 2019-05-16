@@ -3,7 +3,7 @@ import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
-val appName = "self-assessment-api-router"
+val appName = "self-assessment-api"
 
 lazy val scoverageSettings: Seq[Def.Setting[_]] = Seq(
   coverageExcludedPackages := "<empty>;.*(Reverse|BuildInfo|Routes).*",

@@ -5,10 +5,10 @@
 <hr>
 
 ## 6-Nov-2018
-<b>[self-assessment-api v0.207.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.207.0)<br>
-[self-assessment-api-router v1.45.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.45.0)<br>
-[mtd-self-employment v0.21.0](https://github.com/hmrc/mtd-self-employment/releases/tag/v0.21.0)<br>
-[mtd-property-api v0.38.0](https://github.com/hmrc/mtd-self-employment/releases/tag/v0.38.0)</b>
+<b>Self Assessment - v0.207.0<br>
+Router - v1.45.0<br>
+Self Employment - v0.21.0<br>
+Proeprty - v0.38.0</b>
 <br>Version 1.0 endpoints released into Production
   * Get Self-Employment Business Income Source Summary (BISS)
     * /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}/{taxYear}/income-summary
@@ -26,9 +26,9 @@ Version 2.0 endpoints released into Production
 Please note v1.0 'Submit Self-employment End-of-Period Statement' and 'Submit UK Property End-of-Period Statement' will not be released into Production.
         
 ## 22-Oct-2018
-<b>[self-assessment-api v0.198.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.198.0)<br>
-[self-assessment-api-router v1.37.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.37.0)<br>
-[mtd-tax-calculation v1.9.0](https://github.com/hmrc/mtd-tax-calculation/releases/tag/v1.9.0)</b>
+<b>Self Assessment - v0.198.0<br>
+Router - v1.37.0<br>
+Tax Calc - v1.9.0</b>
 <br>Version 1.0 endpoints released into Production
   * Retrieve End of Period Statement Obligations for a Self-Employment Business
     * /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}/end-of-period-statements/obligations
@@ -38,17 +38,17 @@ Please note v1.0 'Submit Self-employment End-of-Period Statement' and 'Submit UK
     * /self-assessment/ni/{nino}/{taxYear}/crystallisation
   
 ## 17-Jul-2018
-<b>[self-assessment-api v0.141.13](https://github.com/hmrc/self-assessment-api/releases/tag/v0.141.13)<br>
-[self-assessment-api-router v1.8.0](https://github.com/hmrc/self-assessment-api-router/releases/tag/v1.8.0)<br>
-[mtd-tax-calculation v0.11.0](https://github.com/hmrc/mtd-tax-calculation/releases/tag/v0.11.0)</b>
+<b>Self Assessment - v0.141.13<br>
+Router - v1.8.0<br>
+Tax Calc - v0.11.0</b>
 * Moved API documentation to self-assessment-api-router
 * Includes versioning for self-assessment-api
 * NEW endpoint Retrieve Tax Calculation (2.0)
 
-## [0.141.4](https://github.com/hmrc/self-assessment-api/releases/tag/v0.141.4) 21-Dec-2017
+## 0.141.4 - 21-Dec-2017
 * Documentation updated to say, In production it can take up to an hour for the obligation to be updated
 
-## [0.141.3](https://github.com/hmrc/self-assessment-api/releases/tag/v0.141.3) 12-Dec-2017
+## 0.141.3 - 12-Dec-2017
 * 3LA - Taxpayer can submit/amend consolidated expenses for Self employment
   * Impacted API's
     * Create a Self Employment Update Period
@@ -72,11 +72,11 @@ Please note v1.0 'Submit Self-employment End-of-Period Statement' and 'Submit UK
   * Fixed issue: Made id field as mandatory for List all self-employment update periods, List all non-FHL UK property update periods, List all FHL UK property update periods. It was wrongly documented as optional
   * All dates and taxYear fields are updated with format and example
 
-## [0.136.2](https://github.com/hmrc/self-assessment-api/releases/tag/v0.136.2) 21-Sep-2017
+## 0.136.2 - 21-Sep-2017
 
 Fix application.raml to include the correct error scenarios for update period BVR's 
 
-## [0.136.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.136.0) 20-Sep-2017
+## 0.136.0 - 20-Sep-2017
 
 * New errors responses are being returned after implementation of BVR's
   * MISALIGNED_PERIOD - period being submitted/created is not within the accounting period
@@ -87,7 +87,7 @@ Fix application.raml to include the correct error scenarios for update period BV
   * Create a non-FHL UK property update period
   * Create a FHL UK property update period
      
-## [0.132.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.132.0) 27-Jul-2017
+## 0.132.0 - 27-Jul-2017
 
 * Enable the following APIs in production:
   * Self-employment business
@@ -96,7 +96,7 @@ Fix application.raml to include the correct error scenarios for update period BV
      * Update a non-FHL UK property update period
      * Update a FHL UK property update period
 
-## [0.129.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.129.0) 13-Jul-2017
+## 0.129.0 - 13-Jul-2017
 
 * Enable the following APIs in production:
   * Self-employment business
@@ -108,7 +108,7 @@ Fix application.raml to include the correct error scenarios for update period BV
 * Improve logging
 * Fix issue with parsing list periods Json received from backend
 
-## [0.126.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.126.0) 03-Jul-2017
+## 0.126.0 - 03-Jul-2017
 
 * Enable the following APIs in production:
   * Self-employment business
@@ -123,24 +123,24 @@ Fix application.raml to include the correct error scenarios for update period BV
      * Update a non-FHL UK property business annual summary
 * Tax Calculation: Changes to tax calculation result response to include missing fields (like NI and some proportional values)
 
-## [0.121.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.121.0) 14-Jun-2017
+## 0.121.0 - 14-Jun-2017
 
 * No functional changes
 * Enable UK-Property create 'update period' end-points for LIVE and update documentation accordingly
 * Auditing improvements - identify the type of caller (Individual/Organisation or Agent)
 
-## [0.117.3](https://github.com/hmrc/self-assessment-api/releases/tag/v0.117.3) 01-Jun-2017
+## 0.117.3 - 01-Jun-2017
 
 * No functional changes
 * Enable Obligations end-points for LIVE and update documentation accordingly
 
-## [0.117.2](https://github.com/hmrc/self-assessment-api/releases/tag/v0.117.2) 31-May-2017
+## 0.117.2 - 31-May-2017
 
 * Sandbox section added to documentation.
 * Documentation updated for LIVE release. 
 * Validation of monetary values changed to max=99999999999999.98
 
-## [0.112.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.112.0) 05-May-2017 (Only on Sandbox)
+## 0.112.0 - 05-May-2017 (Only on Sandbox)
 
 * Documentation updates:
   * Added a Technical Issues section explaining how to raise technical issues. Also includes link to GitHub issues and ChangeLog.
@@ -158,12 +158,12 @@ Fix application.raml to include the correct error scenarios for update period BV
   * Fully Authorised Agent
   * Filing-Only Agent or UnAuthorised can only submit
 
-## [0.100.1](https://github.com/hmrc/self-assessment-api/releases/tag/v0.100.1) 06-Mar-2017
+## 0.100.1 - 06-Mar-2017
 
 * Use UTF8 for reading SICs.txt file
 
 
-## [0.99.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.99.0) 02-Mar-2017
+## 0.99.0 - 02-Mar-2017
 
 * Rename Liability end-points as Tax calculation
 * Remove field 'accountingType' from UK Properties API's
@@ -177,11 +177,11 @@ Fix application.raml to include the correct error scenarios for update period BV
   * an Agent who is subscribed to Agent Services but has not been authorised by the client on act on their behalf
     
 
-## [0.85.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.85.0) 24-Jan-2017
+## 0.85.0 - 24-Jan-2017
 
 * Ability to provide UK interest received
 
-## [0.82.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.82.0) 19-Jan-2017
+## 0.82.0 - 19-Jan-2017
 
 * API re-design
 * Ability to provide HMRC periodic and annual information
@@ -192,7 +192,7 @@ Fix application.raml to include the correct error scenarios for update period BV
 * Removed Liability end-point (only temporarily)
 * Removed Employment, UnEarned Income Source end-points (Not part of MVP)
 
-## [0.61.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.61.0) 10-Oct-2016
+## 0.61.0 - 10-Oct-2016
 
 * Liability endpoints have been updated to support a single liability per tax year.
 * Data Collection: Live implementation for sources
@@ -211,7 +211,7 @@ Fix application.raml to include the correct error scenarios for update period BV
     * UK Property
 * Documentation updated to include sub groups
 
-## [0.38.0](https://github.com/hmrc/self-assessment-api/releases/tag/v0.38.0) 29-June-2016
+## 0.38.0 - 29-June-2016
 
 Sandbox implementation (all CRUD operations unless specified)
 
@@ -237,7 +237,7 @@ Sandbox implementation (all CRUD operations unless specified)
 * Remove name field from all sources to avoid identifiable information being provided
 * Return full object representations in list responses
 
-## [0.26.0] (https://github.com/hmrc/self-assessment-api/releases/tag/v0.26.0) 02-June-2016
+## 0.26.0 - 02-June-2016
 
 Sandbox implementation (all CRUD operations unless specified)
 
@@ -264,7 +264,7 @@ Sandbox implementation (all CRUD operations unless specified)
     * expenses
     * uk-taxes-paid
 
-## [0.23.0] (https://github.com/hmrc/self-assessment-api/releases/tag/v0.23.0) 25-May-2016
+## 0.23.0 - 25-May-2016
 
 Sandbox implementation to Collect Self Employment (includes all CRUD operations)
 
@@ -272,11 +272,11 @@ Sandbox implementation to Collect Self Employment (includes all CRUD operations)
 * Balancing Charges (all CRUD operations)
 * Goods and Services for own use (all CRUD operations)
 
-## [0.21.0] (https://github.com/hmrc/self-assessment-api/releases/tag/v0.21.0) 19-May-2016
+## 0.21.0 - 19-May-2016
 
 Simplified API Documentation
 
-## [0.18.0] (https://github.com/hmrc/self-assessment-api/releases/tag/v0.18.0) 17-May-2016
+## 0.18.0 - 17-May-2016
 
 Sandbox and Live implementation for end-points
 
