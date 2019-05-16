@@ -59,4 +59,19 @@ class CrystallisationService @Inject() (val appConfig: AppConfig,
       }
     }
   }
+
+  def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
+    withApiVersion {
+      case Some(VERSION_1) => selfAssessmentConnector.get(req.uri)
+      case Some(VERSION_2) => {
+        if (FeatureSwitch(appConfig.featureSwitch).isCrystallisationV2Enabled) {
+          crystallisationConnector.get(s"/$VERSION_2${req.uri}")}
+        else {
+          selfAssessmentConnector.get(req.uri)(convertHeaderToVersion1, req)
+        }
+      }
+
+    }
+  }
+
 }

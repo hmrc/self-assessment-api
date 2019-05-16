@@ -65,6 +65,7 @@ PUT         /ni/:nino/savings-accounts/:id/:taxYear                             
 #Crystallisation endpoints
 POST         /ni/:nino/:taxYear/crystallisation                                                router.resources.CrystallisationResource.post(nino, taxYear)
 POST         /ni/:nino/:taxYear/intent-to-crystallise                                          router.resources.CrystallisationResource.intent(nino, taxYear)
+GET          /ni/:nino/crystallisation/obligations                                             router.resources.CrystallisationResource.get(nino, p3?="", p4?="")
 
 
 ### Version One ####

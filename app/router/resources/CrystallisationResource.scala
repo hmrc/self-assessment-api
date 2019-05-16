@@ -19,7 +19,7 @@ package router.resources
 import javax.inject.Inject
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.{JsNull, JsValue}
-import play.api.mvc.{Action, BodyParser}
+import play.api.mvc.{Action, AnyContent, BodyParser}
 import router.constants.Versions
 import router.constants.Versions._
 import router.services.{CrystallisationService, Service}
@@ -59,6 +59,16 @@ class CrystallisationResource @Inject()(service: CrystallisationService,
         case Left(error) => buildErrorResponse(error)
         case Right(apiResponse) => buildResponse(apiResponse)
       }
+    }
+  }
+
+  def get(param: Any*): Action[AnyContent] = {
+    AuthAction.async {
+      implicit request =>
+        service.get().map{
+          case Left(error) => buildErrorResponse(error)
+          case Right(apiResponse) => buildResponse(apiResponse)
+        }
     }
   }
 }

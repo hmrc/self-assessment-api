@@ -39,6 +39,10 @@ trait MockCrystallisationService extends Mock { _: Suite =>
     def postEmpty: OngoingStubbing[Future[SelfAssessmentOutcome]] = {
       when(mockCrystallisationService.postEmpty(any[HeaderCarrier](), any[Request[_]]()))
     }
+
+    def get(): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockCrystallisationService.get()(any[HeaderCarrier](), any[Request[_]]()))
+    }
   }
 
   override protected def beforeEach(): Unit = {

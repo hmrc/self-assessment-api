@@ -133,4 +133,55 @@ class CrystallisationResourceISpec extends IntegrationSpec {
           .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
     }
   }
+
+  "Retrieve obligations" should {
+
+    val body: String =
+      """
+        |{
+        |  "obligations": [
+        |    {
+        |    	"identification": {
+        |				"incomeSourceType": "ITSA",
+        |				"referenceNumber": "AB123456A",
+        |				"referenceType": "NINO"
+        |			},
+        |    "obligationDetails": [
+        |      {
+        |        "status": "O",
+        |        "inboundCorrespondenceFromDate": "2018-02-01",
+        |        "inboundCorrespondenceToDate": "2018-02-28",
+        |        "inboundCorrespondenceDateReceived": "2018-04-01",
+        |        "inboundCorrespondenceDueDate": "2018-05-28"
+        |      }
+        |    ]
+        |    }
+        |  ]
+        |}
+      """.stripMargin
+
+    "return a status 200 and a body containing an obligation" when {
+      "a version 2 header is provided in the request" in {
+        val incomingUrl = s"/ni/$nino/crystallisation/obligations"
+        val outgoingUrl = s"/2.0/ni/$nino/crystallisation/obligations"
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .get(outgoingUrl)
+          .returns(aResponse.withBody(Json.parse(body)))
+          .When()
+          .get(incomingUrl)
+          .withHeaders(
+            ACCEPT -> "application/vnd.hmrc.2.0+json",
+            CONTENT_TYPE -> JSON
+          )
+          .Then()
+          .statusIs(OK)
+          .bodyIs(Json.parse(body))
+          .verify(mockFor(outgoingUrl)
+            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+      }
+    }
+  }
+
 }

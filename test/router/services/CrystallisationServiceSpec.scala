@@ -19,7 +19,7 @@ package router.services
 import mocks.config.MockAppConfig
 import mocks.connectors.{MockCrystallisationConnector, MockSelfAssessmentConnector}
 import play.api.Configuration
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import router.constants.Versions.VERSION_2
 import router.errors.{IncorrectAPIVersion, UnsupportedAPIVersion}
@@ -44,7 +44,6 @@ class CrystallisationServiceSpec extends UnitSpec
   }
 
   implicit val request = FakeRequest()
-
 
   val version2ConfigEnabled =  Configuration("crystallisation-version-2.enabled" -> true)
   val version2ConfigDisabled = Configuration("crystallisation-version-2.enabled" -> false)
@@ -189,6 +188,87 @@ class CrystallisationServiceSpec extends UnitSpec
 
         val result = await(service.postEmpty)
         result shouldBe Left(IncorrectAPIVersion)
+      }
+    }
+  }
+
+  "retrieve" should {
+
+    "return a HttpResponse" when {
+
+      val body: JsValue = Json.parse(
+        """
+          |{
+          |  "obligations": [
+          |    {
+          |    	"identification": {
+          |				"incomeSourceType": "ITSA",
+          |				"referenceNumber": "AB123456A",
+          |				"referenceType": "NINO"
+          |			},
+          |    "obligationDetails": [
+          |      {
+          |        "status": "O",
+          |        "inboundCorrespondenceFromDate": "2018-02-01",
+          |        "inboundCorrespondenceToDate": "2018-02-28",
+          |        "inboundCorrespondenceDateReceived": "2018-04-01",
+          |        "inboundCorrespondenceDueDate": "2018-05-28"
+          |      }
+          |    ]
+          |    }
+          |  ]
+          |}
+        """.stripMargin)
+
+      "the request contains a version 1.0 header and crystallisation version 2 config is disabled" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+        val response = HttpResponse(200)
+
+        MockAppConfig.featureSwitch returns Some(version2ConfigDisabled)
+        MockSelfAssessmentConnector.get(request.uri)
+          .returns(Future.successful(Right(response)))
+
+        val result = await(service.get())
+        result shouldBe Right(response)
+      }
+
+      "the request contains a version 1.0 header and crystallisation version 2 config is enabled" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
+        val response = HttpResponse(200)
+
+        MockAppConfig.featureSwitch returns Some(version2ConfigEnabled)
+        MockSelfAssessmentConnector.get(request.uri)
+          .returns(Future.successful(Right(response)))
+
+        val result = await(service.get())
+        result shouldBe Right(response)
+      }
+
+      "the request contains a version 2.0 header and crystallisation version 2 config is disabled" in new Setup {
+
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+        val response = HttpResponse(200)
+
+        MockAppConfig.featureSwitch returns Some(version2ConfigDisabled)
+        MockSelfAssessmentConnector.get(request.uri)
+          .returns(Future.successful(Right(response)))
+
+        val result = await(service.get())
+        result shouldBe Right(response)
+      }
+
+      "the request contains a version 2.0 header and crystallisation version 2 config is enabled" in new Setup {
+
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+
+        val httpResponse = HttpResponse(OK, Some(body))
+
+        MockAppConfig.featureSwitch returns Some(version2ConfigEnabled)
+        MockCrystallisationConnector.get(s"/$VERSION_2${request.uri}")
+          .returns(Future.successful(Right(httpResponse)))
+
+        val result = await(service.get())
+        result shouldBe Right(httpResponse)
       }
     }
   }

@@ -17,7 +17,8 @@
 package router.resources
 
 import mocks.services.MockCrystallisationService
-import play.api.libs.json.JsNull
+import play.api.libs.json.{JsNull, JsValue, Json}
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import router.errors.{ErrorCode, IncorrectAPIVersion, UnsupportedAPIVersion}
 import support.ResourceSpec
@@ -184,6 +185,74 @@ class CrystallisationResourceSpec extends ResourceSpec
           contentAsJson(result) shouldBe ErrorCode.notFound.asJson
         }
       }
+    }
+  }
+
+  "retrieve" should {
+
+    val body: JsValue = Json.parse(
+      """
+        |{
+        |  "obligations": [
+        |    {
+        |    	"identification": {
+        |				"incomeSourceType": "ITSA",
+        |				"referenceNumber": "AB123456A",
+        |				"referenceType": "NINO"
+        |			},
+        |    "obligationDetails": [
+        |      {
+        |        "status": "O",
+        |        "inboundCorrespondenceFromDate": "2018-02-01",
+        |        "inboundCorrespondenceToDate": "2018-02-28",
+        |        "inboundCorrespondenceDateReceived": "2018-04-01",
+        |        "inboundCorrespondenceDueDate": "2018-05-28"
+        |      }
+        |    ]
+        |    }
+        |  ]
+        |}
+      """.stripMargin)
+
+
+    "return a response with status 200, with a header body containing an obligations" when {
+      "the service returns a 200 HttpResponse containing a 200 and a response body" in new Setup {
+
+        val httpResponse = HttpResponse(OK, Some(body), testHeaderResponse)
+        MockCrystallisationService.get()
+          .returns(Future.successful(Right(httpResponse)))
+
+        private val result = resource.get()(FakeRequest())
+        status(result) shouldBe OK
+        headers(result) shouldBe testHeader
+        contentType(result) shouldBe Some(JSON)
+        contentAsJson(result) shouldBe body
+      }
+
+      "return a 406 with a json response body representing the error" when {
+        "the service returns an IncorrectAPIVersion response" in new Setup {
+          MockCrystallisationService.get()
+            .returns(Future.successful(Left(IncorrectAPIVersion)))
+
+          val result: Future[Result] = resource.get("")(FakeRequest())
+          status(result) shouldBe NOT_ACCEPTABLE
+          contentType(result) shouldBe Some(JSON)
+          contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
+        }
+      }
+
+      "return a 404 with a json response body representing the error" when {
+        "the service returns an UnsupportedAPIVersion response" in new Setup {
+          MockCrystallisationService.get()
+            .returns(Future.successful(Left(UnsupportedAPIVersion)))
+
+          val result: Future[Result] = resource.get("")(FakeRequest())
+          status(result) shouldBe NOT_FOUND
+          contentType(result) shouldBe Some(JSON)
+          contentAsJson(result) shouldBe ErrorCode.notFound.asJson
+        }
+      }
+
     }
   }
 

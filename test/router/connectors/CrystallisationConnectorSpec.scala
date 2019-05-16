@@ -77,4 +77,19 @@ class CrystallisationConnectorSpec extends UnitSpec
       }
     }
   }
+
+  "retrieve" should {
+    "return a HttpResponse" when {
+      "a successful HttpResponse is returned" in new Setup {
+        val request = FakeRequest("GET", path)
+        val response  = HttpResponse(Status.OK, Some(Json.obj()))
+
+        MockSelfAssessmentHttpParser.read.returns(Right(response))
+        MockHttp.GET[SelfAssessmentOutcome](s"$crystallisationApiUrl$path")
+          .returns(Future.successful(Right(response)))
+        await(TestConnector.get(path)(hc, request)) shouldBe Right(response)
+      }
+    }
+  }
 }
+

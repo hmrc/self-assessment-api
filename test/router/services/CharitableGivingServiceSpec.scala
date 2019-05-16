@@ -191,23 +191,22 @@ class CharitableGivingServiceSpec extends UnitSpec
         val result = await(service.get())
         result shouldBe Right(response)
       }
+    }
+    "return an UnsupportedAPIVersion error" when {
+      "the Accept header contains an unsupported API version" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.5.0+json"))
 
-      "return an UnsupportedAPIVersion error" when {
-        "the Accept header contains an unsupported API version" in new Setup {
-          implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.5.0+json"))
-
-          val result = await(service.get())
-          result shouldBe Left(UnsupportedAPIVersion)
-        }
+        val result = await(service.get())
+        result shouldBe Left(UnsupportedAPIVersion)
       }
+    }
 
-      "return an IncorrectAPIVersion" when {
-        "the Accept header contains an incorrect value" in new Setup {
-          implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "incorrect value"))
+    "return an IncorrectAPIVersion" when {
+      "the Accept header contains an incorrect value" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "incorrect value"))
 
-          val result = await(service.get())
-          result shouldBe Left(IncorrectAPIVersion)
-        }
+        val result = await(service.get())
+        result shouldBe Left(IncorrectAPIVersion)
       }
     }
   }
