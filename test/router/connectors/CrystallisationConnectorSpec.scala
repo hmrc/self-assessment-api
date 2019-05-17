@@ -27,6 +27,7 @@ import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import support.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class CrystallisationConnectorSpec extends UnitSpec

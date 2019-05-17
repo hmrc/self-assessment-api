@@ -33,6 +33,7 @@ import uk.gov.hmrc.play.audit.model.DataEvent
 import uk.gov.hmrc.play.bootstrap.http.ErrorResponse
 import uk.gov.hmrc.play.test.UnitSpec
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NoStackTrace
 

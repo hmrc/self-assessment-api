@@ -20,10 +20,12 @@ import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent}
 import router.services.TaxCalcService
 import uk.gov.hmrc.auth.core.AuthConnector
-import scala.concurrent.ExecutionContext.Implicits.global
+
+import scala.concurrent.ExecutionContext
 
 class TaxCalcResource @Inject()(service: TaxCalcService,
-                                val authConnector: AuthConnector) extends BaseResource {
+                                val authConnector: AuthConnector)
+                               (implicit ec: ExecutionContext) extends BaseResource {
 
   def get(nino: String, calculationId: String): Action[AnyContent] = AuthAction.async {
     implicit request =>

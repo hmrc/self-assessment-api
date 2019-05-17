@@ -23,12 +23,12 @@ import uk.gov.hmrc.api.domain.Registration
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ServiceLocatorConnector @Inject()(config: AppConfig,
-                                        http: HttpClient) {
+                                        http: HttpClient)
+                                       (implicit ec: ExecutionContext) {
 
   val metadata: Option[Map[String, String]] = Some(Map("third-party-api" -> "true"))
 

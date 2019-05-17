@@ -23,15 +23,15 @@ import router.httpParsers.SelfAssessmentHttpParser
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import scala.concurrent.ExecutionContext.Implicits.global
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait BaseConnector {
 
   val http: HttpClient
   val httpParser: SelfAssessmentHttpParser
   val appConfig: AppConfig
+  implicit val ec : ExecutionContext
 
   val serviceUrl: String
 

@@ -21,10 +21,12 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
 import router.services.DividendsService
 import uk.gov.hmrc.auth.core.AuthConnector
-import scala.concurrent.ExecutionContext.Implicits.global
+
+import scala.concurrent.ExecutionContext
 
 class DividendsResource @Inject()(service: DividendsService,
-                                  val authConnector: AuthConnector) extends BaseResource {
+                                  val authConnector: AuthConnector)
+                                 (implicit ec: ExecutionContext) extends BaseResource {
 
 
   def put(param:Any*): Action[JsValue] = AuthAction.async(parse.json) {

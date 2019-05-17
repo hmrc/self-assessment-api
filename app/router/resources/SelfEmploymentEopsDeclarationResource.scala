@@ -21,14 +21,16 @@ import play.api.libs.json.JsValue
 import play.api.mvc.Action
 import router.services.SelfEmploymentEopsDeclarationService
 import uk.gov.hmrc.auth.core.AuthConnector
-import scala.concurrent.ExecutionContext.Implicits.global
+
+import scala.concurrent.ExecutionContext
 
 class SelfEmploymentEopsDeclarationResource @Inject()(service: SelfEmploymentEopsDeclarationService,
-                                                      val authConnector: AuthConnector) extends BaseResource {
+                                                      val authConnector: AuthConnector)
+                                                     (implicit ec: ExecutionContext) extends BaseResource {
 
   def post(seId: String, nino: String, from: String, to: String): Action[JsValue] = AuthAction.async(parse.json) {
     implicit request =>
-      withJsonBody[JsValue]{
+      withJsonBody[JsValue] {
         service.post(_).map {
           case Left(error) => buildErrorResponse(error)
           case Right(apiResponse) => buildResponse(apiResponse)
