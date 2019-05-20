@@ -1,2 +1,2 @@
 * Raise non-technical or platform-related issues with the [Software Development Support Team (SDST)](https://developer.service.hmrc.gov.uk/developer/support).
-* Raise technical issues on the [self-assessment-api-router](https://github.com/hmrc/self-assessment-api-router/issues) GitHub page. (Find old technical issues on the [self-assessment-api](https://github.com/hmrc/self-assessment-api/issues) GitHub page.)
+* Raise technical issues on the [self-assessment-api](https://github.com/hmrc/self-assessment-api/issues) GitHub page.
