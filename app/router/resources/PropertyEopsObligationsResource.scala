@@ -20,10 +20,12 @@ import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent}
 import router.services.PropertyEopsObligationsService
 import uk.gov.hmrc.auth.core.AuthConnector
-import scala.concurrent.ExecutionContext.Implicits.global
+
+import scala.concurrent.ExecutionContext
 
 class PropertyEopsObligationsResource @Inject()(service: PropertyEopsObligationsService,
-                                                val authConnector: AuthConnector) extends BaseResource {
+                                                val authConnector: AuthConnector)
+                                               (implicit ec: ExecutionContext) extends BaseResource {
 
   def get(nino: String, from: String, to: String): Action[AnyContent] = AuthAction.async {
     implicit request =>

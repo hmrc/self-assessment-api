@@ -21,10 +21,13 @@ import javax.inject.{Inject, Singleton}
 import router.httpParsers.SelfAssessmentHttpParser
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
+import scala.concurrent.ExecutionContext
+
 @Singleton
 class CrystallisationConnector @Inject()(val http: HttpClient,
                                          val httpParser: SelfAssessmentHttpParser,
-                                         val appConfig: AppConfig) extends BaseConnector {
+                                         val appConfig: AppConfig)
+                                        (implicit val ec: ExecutionContext) extends BaseConnector {
 
   override val serviceUrl: String = appConfig.crystallisationApiUrl
 }

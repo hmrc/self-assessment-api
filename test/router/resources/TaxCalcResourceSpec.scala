@@ -23,6 +23,7 @@ import router.errors.{ErrorCode, IncorrectAPIVersion, UnsupportedAPIVersion}
 import support.ResourceSpec
 import uk.gov.hmrc.http.HttpResponse
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class TaxCalcResourceSpec extends ResourceSpec

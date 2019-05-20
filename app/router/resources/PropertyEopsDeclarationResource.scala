@@ -18,14 +18,15 @@ package router.resources
 
 import javax.inject.Inject
 import play.api.libs.json.JsValue
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.Action
 import router.services.PropertyEopsDeclarationService
 import uk.gov.hmrc.auth.core.AuthConnector
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
 class PropertyEopsDeclarationResource @Inject()(service: PropertyEopsDeclarationService,
-                                                val authConnector: AuthConnector) extends BaseResource {
+                                                val authConnector: AuthConnector)
+                                               (implicit ec: ExecutionContext) extends BaseResource {
 
   def post(nino: String, from: String, to: String): Action[JsValue] = AuthAction.async(parse.json) {
     implicit request =>

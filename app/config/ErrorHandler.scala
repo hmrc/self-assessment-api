@@ -32,13 +32,13 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.http.JsonErrorHandler
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class ErrorHandler @Inject()(
                               config: Configuration,
                               auditConnector: AuditConnector
-                            ) extends JsonErrorHandler(config, auditConnector) {
+                            )
+                            (implicit ec: ExecutionContext) extends JsonErrorHandler(config, auditConnector) {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
 

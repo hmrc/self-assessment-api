@@ -16,6 +16,7 @@
 
 package router.connectors
 
+
 import mocks.MockHttp
 import mocks.config.MockAppConfig
 import mocks.httpParser.MockSelfAssessmentHttpParser
@@ -26,6 +27,7 @@ import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import support.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class PropertyConnectorSpec extends UnitSpec
