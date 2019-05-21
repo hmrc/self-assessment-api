@@ -64,7 +64,9 @@ class CrystallisationService @Inject() (val appConfig: AppConfig,
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.get(req.uri)
       case Some(VERSION_2) => {
-        if (FeatureSwitch(appConfig.featureSwitch).isCrystallisationV2Enabled) {
+        // Retrieve obligations is the only GET method in the crystallisation, if we add another
+        // GET endpoint we need to change this feature switch logic
+        if (FeatureSwitch(appConfig.featureSwitch).isCrystallisationObligationsV2Enabled) {
           crystallisationConnector.get(s"/$VERSION_2${req.uri}")}
         else {
           selfAssessmentConnector.get(req.uri)(convertHeaderToVersion1, req)
