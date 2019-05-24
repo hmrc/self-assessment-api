@@ -29,7 +29,6 @@ class AppConfig @Inject()(val environment: Environment,
   override protected def runModeConfiguration: Configuration = config
 
   def appName: String = getString("appName")
-  def appNameForServiceLocator: String = getString("appNameForServiceLocator")
   def appUrl: String = getString("appUrl")
   def registrationEnabled: Boolean = getBoolean("microservice.services.service-locator.enabled")
 
@@ -38,7 +37,6 @@ class AppConfig @Inject()(val environment: Environment,
   def apiGatewayContext: String = getString("api.gateway.context")
 
   //Services
-  def serviceLocatorUrl: String = baseUrl("service-locator")
   def saApiUrl: String = baseUrl("self-assessment-api")
   def cgApiUrl: String = baseUrl("mtd-charitable-giving")
   def taxCalcUrl: String = baseUrl("mtd-tax-calculation")
