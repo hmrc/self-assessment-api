@@ -38,7 +38,7 @@ class PropertyEopsObligationsServiceSpec extends UnitSpec
 
   "get" should {
     "return a HttpResponse" when {
-      "the request contains a version 2.0 header and the connector preforms a successful get" in new Setup {
+      "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
         val response = HttpResponse(200)
 

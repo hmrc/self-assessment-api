@@ -26,14 +26,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class SelfEmploymentEopsDeclarationService @Inject()(val selfAssessmentConnector: SelfAssessmentConnector,
-                                                     val selfEmploymentConnector: SelfEmploymentConnector) extends Service {
+class SelfEmploymentEopsDeclarationService @Inject()(val selfEmploymentConnector: SelfEmploymentConnector) extends Service {
 
   def post(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.post(req.uri, body)
-      case Some(VERSION_2) =>
-        selfEmploymentConnector.post(s"/$VERSION_2${req.uri}", body)
+      case Some(VERSION_2) => selfEmploymentConnector.post(s"/$VERSION_2${req.uri}", body)
     }
   }
 }

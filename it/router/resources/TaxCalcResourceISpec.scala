@@ -26,25 +26,6 @@ class TaxCalcResourceISpec extends IntegrationSpec {
 
   "GET Tax Calculation" should {
     "return a 200 with a json response body" when {
-      "the downstream response from the self assessment api version 1.0 returns a 200 with a json response body" in {
-        val url = "/ni/AA111111A/calculations/041f7e4d-87d9-4d4a-a296-3cfbdf92f7e2"
-
-        Given()
-          .theClientIsAuthorised
-        .And()
-          .get(url)
-            .returns(aResponse
-              .withStatus(OK)
-              .withBody(jsonResponse))
-        .When()
-          .get(url)
-          .withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json")
-        .Then()
-          .statusIs(OK)
-          .bodyIs(jsonResponse)
-          .verify(mockFor(url)
-            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-      }
       "the downstream response from the self assessment api version 2.0 returns a 200 with a json response body" in {
         val incomingUrl = "/ni/AA111111A/calculations/041f7e4d-87d9-4d4a-a296-3cfbdf92f7e2"
         val outgoingUrl = "/2.0" + incomingUrl
@@ -69,25 +50,6 @@ class TaxCalcResourceISpec extends IntegrationSpec {
   }
 
   "GET Tax Calculation Messages" should {
-    "return a 404" when {
-      "the downstream response from the self assessment api version 1.0 returns a 404" in {
-        val url = "/ni/AA111111A/calculations/041f7e4d-87d9-4d4a-a296-3cfbdf92f7e2/validation-messages"
-
-        Given()
-          .theClientIsAuthorised
-          .And()
-          .get(url)
-          .returns(aResponse
-            .withStatus(NOT_FOUND))
-          .When()
-          .get(url)
-          .withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json")
-          .Then()
-          .statusIs(NOT_FOUND)
-          .verify(mockFor(url)
-            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-      }
-    }
     "return a 200 with json response body" when {
       "the downstream response from the self assessment api version 2.0 returns a 200 with a json response body" in {
         val incomingUrl = "/ni/AA111111A/calculations/041f7e4d-87d9-4d4a-a296-3cfbdf92f7e2/validation-messages"

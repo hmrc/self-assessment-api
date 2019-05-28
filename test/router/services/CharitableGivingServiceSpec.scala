@@ -34,8 +34,7 @@ class CharitableGivingServiceSpec extends UnitSpec
 
     object service extends CharitableGivingService(
       mockAppConfig,
-      mockCharitableGivingConnector,
-      mockSelfAssessmentConnector
+      mockCharitableGivingConnector
     )
     
   }
@@ -46,50 +45,9 @@ class CharitableGivingServiceSpec extends UnitSpec
     val requestBody = Json.obj("test" -> "body")
 
     "return a HttpResponse" when {
-      "the request contains a version 1.0 header and charitable giving version 2 config is disabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(204)
-        val charitableGivingVersionTwoConfig = Configuration("charitable-giving-version-2.enabled" -> false)
-
-        MockAppConfig.featureSwitch returns Some(charitableGivingVersionTwoConfig)
-        MockSelfAssessmentConnector.put(request.uri, requestBody)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.put(requestBody))
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 1.0 header and charitable giving version 2 config is enabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(204)
-        val charitableGivingVersionTwoConfig = Configuration("charitable-giving-version-2.enabled" -> true)
-
-        MockAppConfig.featureSwitch returns Some(charitableGivingVersionTwoConfig)
-        MockSelfAssessmentConnector.put(request.uri, requestBody)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.put(requestBody))
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 2.0 header and charitable giving version 2 config is disabled" in new Setup {
+      "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
         val response = HttpResponse(204)
-        val charitableGivingVersionTwoConfig = Configuration("charitable-giving-version-2.enabled" -> false)
-        MockAppConfig.featureSwitch returns Some(charitableGivingVersionTwoConfig)
-
-        MockSelfAssessmentConnector.put(request.uri, requestBody)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.put(requestBody))
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 2.0 header and charitable giving version 2 config is enabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(204)
-        val charitableGivingVersionTwoConfig = Configuration("charitable-giving-version-2.enabled" -> true)
-        MockAppConfig.featureSwitch returns Some(charitableGivingVersionTwoConfig)
 
         MockCharitableGivingConnector.put(s"/$VERSION_2${request.uri}", requestBody)
           .returns(Future.successful(Right(response)))
@@ -102,6 +60,13 @@ class CharitableGivingServiceSpec extends UnitSpec
     "return an UnsupportedAPIVersion error" when {
       "the Accept header contains an unsupported API version" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.5.0+json"))
+
+        val result = await(service.put(requestBody))
+        result shouldBe Left(UnsupportedAPIVersion)
+      }
+
+      "the request contains a version 1.0 header" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
 
         val result = await(service.put(requestBody))
         result shouldBe Left(UnsupportedAPIVersion)
@@ -120,7 +85,7 @@ class CharitableGivingServiceSpec extends UnitSpec
 
   "retrieve" should {
     "return a HttpResponse" when {
-      "the request contains a version 2.0 header and charitable giving version 2 config is enabled" in new Setup {
+      "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
         val body = Json.parse(
           s"""{
@@ -143,58 +108,24 @@ class CharitableGivingServiceSpec extends UnitSpec
 
         val correlationId = "X-123"
         val httpResponse = HttpResponse(OK, Some(body), Map("CorrelationId" -> Seq(correlationId)))
-        val charitableGivingVersionTwoConfig = Configuration("charitable-giving-version-2.enabled" -> true)
 
-        MockAppConfig.featureSwitch returns Some(charitableGivingVersionTwoConfig)
         MockCharitableGivingConnector.get(s"/$VERSION_2${request.uri}")
           .returns(Future.successful(Right(httpResponse)))
 
         val result = await(service.get())
         result shouldBe Right(httpResponse)
       }
-
-      "the request contains a version 1.0 header and charitable giving version 2 config is disabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
-        val charitableGivingVersionTwoConfig = Configuration("charitable-giving-version-2.enabled" -> false)
-
-        MockAppConfig.featureSwitch returns Some(charitableGivingVersionTwoConfig)
-        MockSelfAssessmentConnector.get(request.uri)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.get())
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 1.0 header and charitable giving version 2 config is enabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
-        val charitableGivingVersionTwoConfig = Configuration("charitable-giving-version-2.enabled" -> true)
-
-        MockAppConfig.featureSwitch returns Some(charitableGivingVersionTwoConfig)
-        MockSelfAssessmentConnector.get(request.uri)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.get())
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 2.0 header and charitable giving version 2 config is disabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
-        val charitableGivingVersionTwoConfig = Configuration("charitable-giving-version-2.enabled" -> false)
-        MockAppConfig.featureSwitch returns Some(charitableGivingVersionTwoConfig)
-
-        MockSelfAssessmentConnector.get(request.uri)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.get())
-        result shouldBe Right(response)
-      }
     }
     "return an UnsupportedAPIVersion error" when {
       "the Accept header contains an unsupported API version" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.5.0+json"))
+
+        val result = await(service.get())
+        result shouldBe Left(UnsupportedAPIVersion)
+      }
+
+      "the request contains a version 1.0 header" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
 
         val result = await(service.get())
         result shouldBe Left(UnsupportedAPIVersion)

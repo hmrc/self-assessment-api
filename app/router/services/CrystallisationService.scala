@@ -35,35 +35,21 @@ class CrystallisationService @Inject() (val appConfig: AppConfig,
   def post(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
 
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.post(req.uri, body)
-      case Some(VERSION_2) =>  {
-        if (FeatureSwitch(appConfig.featureSwitch).isCrystallisationV2Enabled) {
-          crystallisationConnector.post(s"/$VERSION_2${req.uri}", body)}
-        else {
-          selfAssessmentConnector.post(req.uri, body)(convertHeaderToVersion1, req)
-        }
-      }
+      case Some(VERSION_2) => crystallisationConnector.post(s"/$VERSION_2${req.uri}", body)
     }
   }
 
   def postEmpty(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
 
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.postEmpty(req.uri)
-      case Some(VERSION_2) =>  {
-        if (FeatureSwitch(appConfig.featureSwitch).isCrystallisationV2Enabled) {
-          crystallisationConnector.postEmpty(s"/$VERSION_2${req.uri}")}
-        else {
-          selfAssessmentConnector.postEmpty(req.uri)(convertHeaderToVersion1, req)
-        }
-      }
+      case Some(VERSION_2) => crystallisationConnector.postEmpty(s"/$VERSION_2${req.uri}")
     }
   }
 
   def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.get(req.uri)
-      case Some(VERSION_2) => {
+      case Some(VERSION_2) =>
         // Retrieve obligations is the only GET method in the crystallisation, if we add another
         // GET endpoint we need to change this feature switch logic
         if (FeatureSwitch(appConfig.featureSwitch).isCrystallisationObligationsV2Enabled) {
@@ -71,7 +57,6 @@ class CrystallisationService @Inject() (val appConfig: AppConfig,
         else {
           selfAssessmentConnector.get(req.uri)(convertHeaderToVersion1, req)
         }
-      }
 
     }
   }

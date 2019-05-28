@@ -31,7 +31,6 @@ class PropertyEopsDeclarationServiceSpec extends UnitSpec
   class Setup {
 
     object service extends PropertyEopsDeclarationService(
-      mockSelfAssessmentConnector,
       mockPropertyConnector
     )
   }
@@ -42,18 +41,7 @@ class PropertyEopsDeclarationServiceSpec extends UnitSpec
     val requestBody = Json.obj("test" -> "body")
 
     "return a HttpResponse" when {
-      "the request contains a version 1.0 header and the connector preforms a successful get" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
-
-        MockSelfAssessmentConnector.post(request.uri, requestBody)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.post(requestBody))
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 2.0 header and the connector preforms a successful get" in new Setup {
+      "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
         val response = HttpResponse(200)
 
@@ -66,9 +54,15 @@ class PropertyEopsDeclarationServiceSpec extends UnitSpec
     }
 
     "return an UnsupportedAPIVersion error" when {
-
       "the Accept header contains an unsupported API version" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.5.0+json"))
+
+        val result = await(service.post(requestBody))
+        result shouldBe Left(UnsupportedAPIVersion)
+      }
+
+      "the request contains a version 1.0 header" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
 
         val result = await(service.post(requestBody))
         result shouldBe Left(UnsupportedAPIVersion)

@@ -39,6 +39,10 @@ trait MockSavingsAccountConnector extends Mock { _: Suite =>
     def get(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
       when(mockSavingsAccountConnector.get(eqTo(uri))(any[HeaderCarrier](), any[Request[_]]()))
     }
+
+    def put(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
+      when(mockSavingsAccountConnector.put(eqTo(uri), eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
+    }
   }
 
   override protected def beforeEach(): Unit = {

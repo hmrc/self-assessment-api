@@ -28,44 +28,24 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.Future
 
 class SavingsAccountService @Inject()(val appConfig: AppConfig,
-                                      val savingsAccountConnector: SavingsAccountConnector,
-                                      val selfAssessmentConnector: SelfAssessmentConnector) extends Service {
+                                      val savingsAccountConnector: SavingsAccountConnector) extends Service {
 
 
   def post(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.post(req.uri, body)
-      case Some(VERSION_2) =>
-        if (FeatureSwitch(appConfig.featureSwitch).isSavingsAccountsV2Enabled) {
-          savingsAccountConnector.post(s"/$VERSION_2${req.uri}", body)
-        } else {
-          selfAssessmentConnector.post(req.uri, body)(convertHeaderToVersion1, req)
-        }
+      case Some(VERSION_2) => savingsAccountConnector.post(s"/$VERSION_2${req.uri}", body)
     }
   }
 
   def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.get(req.uri)
-      case Some(VERSION_2) =>
-        if (FeatureSwitch(appConfig.featureSwitch).isSavingsAccountsV2Enabled) {
-          savingsAccountConnector.get(s"/$VERSION_2${req.uri}")
-        } else {
-          selfAssessmentConnector.get(req.uri)(convertHeaderToVersion1, req)
-        }
+      case Some(VERSION_2) => savingsAccountConnector.get(s"/$VERSION_2${req.uri}")
     }
   }
 
-   def put(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
+  def put(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.put(req.uri, body)
-      case Some(VERSION_2) => {
-        if (FeatureSwitch(appConfig.featureSwitch).isSavingsAccountsV2Enabled) {
-          savingsAccountConnector.put(s"/$VERSION_2${req.uri}", body)
-        } else {
-          selfAssessmentConnector.put(req.uri, body)(convertHeaderToVersion1, req)
-        }
-      }
+      case Some(VERSION_2) => savingsAccountConnector.put(s"/$VERSION_2${req.uri}", body)
     }
   }
 }
