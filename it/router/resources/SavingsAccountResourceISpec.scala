@@ -37,31 +37,6 @@ class SavingsAccountResourceISpec extends IntegrationSpec {
   "create savings account with Version 2 enabled" should {
 
     "return a 201 with no json response body" when {
-      "a version 1.0 header is provided and the response from the savings accounts API is a 201" in {
-        val incomingUrl = "/ni/AA111111A/savings-accounts"
-        val outgoingUrl = "/ni/AA111111A/savings-accounts"
-
-        Given()
-          .theClientIsAuthorised
-          .And()
-          .post(outgoingUrl)
-          .returns(aResponse
-            .withStatus(CREATED)
-            .withBody(jsonResponse))
-          .When()
-          .post(incomingUrl)
-          .withBody(jsonRequest)
-          .withHeaders(
-            ACCEPT -> "application/vnd.hmrc.1.0+json",
-            CONTENT_TYPE -> JSON
-          )
-          .Then()
-          .statusIs(CREATED)
-          .bodyIs(jsonResponse)
-          .verify(mockFor(outgoingUrl)
-            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-      }
-
       "a version 2.0 header is provided and the response from the savings accounts API is a 201" in {
         val incomingUrl = "/ni/AA111111A/savings-accounts"
         val outgoingUrl = "/2.0/ni/AA111111A/savings-accounts"
@@ -147,33 +122,6 @@ class SavingsAccountResourceISpec extends IntegrationSpec {
 
   "amend" should {
     "return a 204 with no json response" when {
-      "a version 1.0 header is provided and the response from the savings accounts API is a 204" in {
-
-        val incomingUrl = s"/ni/AA111111A/savings-accounts/$id/$taxYear"
-        val outgoingUrl = s"/ni/AA111111A/savings-accounts/$id/$taxYear"
-
-        Given()
-          .theClientIsAuthorised
-          .And()
-          .put(outgoingUrl)
-          .returns(aResponse
-            .withStatus(NO_CONTENT)
-            .withBody(""))
-          .When()
-          .put(incomingUrl)
-          .withBody(jsonRequest)
-          .withHeaders(
-            ACCEPT -> "application/vnd.hmrc.1.0+json",
-            CONTENT_TYPE -> JSON
-          )
-          .Then()
-          .statusIs(NO_CONTENT)
-          .bodyIs("")
-          .verify(mockFor(outgoingUrl)
-            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-
-      }
-
       "a version 2.0 header is provided and the response from the savings accounts API is a 204" in {
         val incomingUrl = s"/ni/AA111111A/savings-accounts/$id/$taxYear"
         val outgoingUrl = s"/2.0/ni/AA111111A/savings-accounts/$id/$taxYear"

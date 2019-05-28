@@ -25,15 +25,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class TaxCalcService @Inject()(val selfAssessmentConnector: SelfAssessmentConnector,
-                               val taxCalcConnector: TaxCalcConnector) extends Service {
+class TaxCalcService @Inject()(val taxCalcConnector: TaxCalcConnector) extends Service {
 
   def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
-      case Some(VERSION_1) =>
-        selfAssessmentConnector.get(req.uri)
-      case Some(VERSION_2) =>
-        taxCalcConnector.get(s"/$VERSION_2${req.uri}")
+      case Some(VERSION_2) => taxCalcConnector.get(s"/$VERSION_2${req.uri}")
     }
   }
 }

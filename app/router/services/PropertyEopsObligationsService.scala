@@ -29,8 +29,7 @@ class PropertyEopsObligationsService @Inject()(val connector: PropertyConnector)
 
   def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
-      case Some(VERSION_2) =>
-        connector.get(s"/$VERSION_2${req.uri}")
+      case Some(VERSION_2) => connector.get(s"/$VERSION_2${req.uri}")
     }
   }
 }

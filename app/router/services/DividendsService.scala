@@ -28,34 +28,19 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.Future
 
 class DividendsService @Inject()(val appConfig: AppConfig,
-                                 val dividendsConnector: DividendsConnector,
-                                 val selfAssessmentConnector: SelfAssessmentConnector) extends Service {
+                                 val dividendsConnector: DividendsConnector) extends Service {
 
 
   def put(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
 
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.put(req.uri, body) 
-      case Some(VERSION_2) => {
-        if (FeatureSwitch(appConfig.featureSwitch).isDividendsV2Enabled) { 
-          dividendsConnector.put(s"/$VERSION_2${req.uri}", body)
-        } else { 
-          selfAssessmentConnector.put(req.uri, body)(convertHeaderToVersion1, req)
-        }
-      }
+      case Some(VERSION_2) => dividendsConnector.put(s"/$VERSION_2${req.uri}", body)
     }
   }
 
   def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.get(req.uri)
-      case Some(VERSION_2) => {
-        if (FeatureSwitch(appConfig.featureSwitch).isDividendsV2Enabled) {
-          dividendsConnector.get(s"/$VERSION_2${req.uri}")
-        } else {
-          selfAssessmentConnector.get(req.uri)(convertHeaderToVersion1, req)
-        }
-      }
+      case Some(VERSION_2) => dividendsConnector.get(s"/$VERSION_2${req.uri}")
     }
   }
 }

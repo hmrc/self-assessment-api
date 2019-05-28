@@ -35,8 +35,7 @@ class SavingsAccountServiceSpec extends UnitSpec
 
     object service extends SavingsAccountService(
       mockAppConfig,
-      mockSavingsAccountConnector,
-      mockSelfAssessmentConnector
+      mockSavingsAccountConnector
     )
 
   }
@@ -50,46 +49,8 @@ class SavingsAccountServiceSpec extends UnitSpec
     val httpResponse = HttpResponse(CREATED, Some(responseBody))
 
     "return a HttpResponse" when {
-      "the request contains a version 1.0 header and savings accounts version 2 config is disabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val savingsAccountsVersionTwoConfig = Configuration("savings-accounts-version-2.enabled" -> false)
-
-        MockAppConfig.featureSwitch returns Some(savingsAccountsVersionTwoConfig)
-        MockSelfAssessmentConnector.post(request.uri, requestBody)
-          .returns(Future.successful(Right(httpResponse)))
-
-        val result = await(service.post(requestBody))
-        result shouldBe Right(httpResponse)
-      }
-
-      "the request contains a version 1.0 header and savings accounts version 2 config is enabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val savingsAccountsVersionTwoConfig = Configuration("savings-accounts-version-2.enabled" -> true)
-
-        MockAppConfig.featureSwitch returns Some(savingsAccountsVersionTwoConfig)
-        MockSelfAssessmentConnector.post(request.uri, requestBody)
-          .returns(Future.successful(Right(httpResponse)))
-
-        val result = await(service.post(requestBody))
-        result shouldBe Right(httpResponse)
-      }
-
-      "the request contains a version 2.0 header and savings accounts version 2 config is disabled" in new Setup {
+      "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val savingsAccountsVersionTwoConfig = Configuration("savings-accounts-version-2.enabled" -> false)
-        MockAppConfig.featureSwitch returns Some(savingsAccountsVersionTwoConfig)
-
-        MockSelfAssessmentConnector.post(request.uri, requestBody)
-          .returns(Future.successful(Right(httpResponse)))
-
-        val result = await(service.post(requestBody))
-        result shouldBe Right(httpResponse)
-      }
-
-      "the request contains a version 2.0 header and savings accounts version 2 config is enabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val savingsAccountsVersionTwoConfig = Configuration("savings-accounts-version-2.enabled" -> true)
-        MockAppConfig.featureSwitch returns Some(savingsAccountsVersionTwoConfig)
 
         MockSavingsAccountConnector.post(s"/$VERSION_2${request.uri}", requestBody)
           .returns(Future.successful(Right(httpResponse)))
@@ -102,6 +63,13 @@ class SavingsAccountServiceSpec extends UnitSpec
     "return an UnsupportedAPIVersion error" when {
       "the Accept header contains an unsupported API version" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.5.0+json"))
+
+        val result = await(service.post(requestBody))
+        result shouldBe Left(UnsupportedAPIVersion)
+      }
+
+      "the request contains a version 1.0 header" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
 
         val result = await(service.post(requestBody))
         result shouldBe Left(UnsupportedAPIVersion)
@@ -120,7 +88,7 @@ class SavingsAccountServiceSpec extends UnitSpec
 
   "retrieve" should {
     "return a HttpResponse" when {
-      "the request contains a version 2.0 header and savings accounts version 2 config is enabled" in new Setup {
+      "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
         val body: JsValue = Json.parse(
           s"""{
@@ -139,9 +107,7 @@ class SavingsAccountServiceSpec extends UnitSpec
 
         val correlationId = "X-123"
         val httpResponse = HttpResponse(OK, Some(body), Map("CorrelationId" -> Seq(correlationId)))
-        val savingsAccountsVersionTwoConfig = Configuration("savings-accounts-version-2.enabled" -> true)
 
-        MockAppConfig.featureSwitch returns Some(savingsAccountsVersionTwoConfig)
         MockSavingsAccountConnector.get(s"/$VERSION_2${request.uri}")
           .returns(Future.successful(Right(httpResponse)))
 
@@ -149,48 +115,16 @@ class SavingsAccountServiceSpec extends UnitSpec
         result shouldBe Right(httpResponse)
       }
 
-      "the request contains a version 1.0 header and savings accounts version 2 config is disabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
-        val savingsAccountsVersionTwoConfig = Configuration("savings-accounts-version-2.enabled" -> false)
-
-        MockAppConfig.featureSwitch returns Some(savingsAccountsVersionTwoConfig)
-        MockSelfAssessmentConnector.get(request.uri)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.get())
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 1.0 header and savings accounts version 2 config is enabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
-        val savingsAccountsVersionTwoConfig = Configuration("savings-accounts-version-2.enabled" -> true)
-
-        MockAppConfig.featureSwitch returns Some(savingsAccountsVersionTwoConfig)
-        MockSelfAssessmentConnector.get(request.uri)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.get())
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 2.0 header and savings accounts version 2 config is disabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
-        val savingsAccountsVersionTwoConfig = Configuration("savings-accounts-version-2.enabled" -> false)
-        MockAppConfig.featureSwitch returns Some(savingsAccountsVersionTwoConfig)
-
-        MockSelfAssessmentConnector.get(request.uri)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.get())
-        result shouldBe Right(response)
-      }
-
       "return an UnsupportedAPIVersion error" when {
         "the Accept header contains an unsupported API version" in new Setup {
           implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.5.0+json"))
+
+          val result = await(service.get())
+          result shouldBe Left(UnsupportedAPIVersion)
+        }
+
+        "the request contains a version 1.0 header" in new Setup {
+          implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
 
           val result = await(service.get())
           result shouldBe Left(UnsupportedAPIVersion)
@@ -212,37 +146,11 @@ class SavingsAccountServiceSpec extends UnitSpec
     val requestBody = Json.obj("test" -> "body")
 
     "return a HttpResponse" when {
-      "the request contains a version 1.0 header and savings accounts version 2 config is disabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(204)
-        val savingsAccountsVersionTwoConfig = Configuration("savings-accounts-version-2.enabled" -> false)
-
-        MockAppConfig.featureSwitch returns Some(savingsAccountsVersionTwoConfig)
-        MockSelfAssessmentConnector.put(request.uri, requestBody).returns(Future.successful(Right(response)))
-
-        val result = await(service.put(requestBody))
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 1.0 header and savings accounts version 2 config is enabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(204)
-        val savingsAccountsVersionTwoConfig = Configuration("savings-accounts-version-2.enabled" -> true)
-
-        MockAppConfig.featureSwitch returns Some(savingsAccountsVersionTwoConfig)
-        MockSelfAssessmentConnector.put(request.uri, requestBody).returns(Future.successful(Right(response)))
-
-        val result = await(service.put(requestBody))
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 2.0 header and savings accounts version 2 config is disabled" in new Setup {
+      "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
         val response = HttpResponse(204)
-        val savingsAccountsVersionTwoConfig = Configuration("savings-accounts-version-2.enabled" -> false)
-        MockAppConfig.featureSwitch returns Some(savingsAccountsVersionTwoConfig)
 
-        MockSelfAssessmentConnector.put(request.uri, requestBody).returns(Future.successful(Right(response)))
+        MockSavingsAccountConnector.put(s"/$VERSION_2${request.uri}", requestBody).returns(Future.successful(Right(response)))
 
         val result = await(service.put(requestBody))
         result shouldBe Right(response)
@@ -253,6 +161,13 @@ class SavingsAccountServiceSpec extends UnitSpec
     "return an UnsupportedAPIVersion error" when {
       "the Accept header contains an unsupported API version" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.5.0+json"))
+
+        val result = await(service.put(requestBody))
+        result shouldBe Left(UnsupportedAPIVersion)
+      }
+
+      "the request contains a version 1.0 header" in new Setup {
+        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
 
         val result = await(service.put(requestBody))
         result shouldBe Left(UnsupportedAPIVersion)

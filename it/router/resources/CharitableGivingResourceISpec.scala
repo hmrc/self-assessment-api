@@ -49,86 +49,61 @@ class CharitableGivingResourceISpec extends IntegrationSpec {
 
   val httpResponse = HttpResponse(OK, Some(body), testHeader)
 
- "GET Charitable Giving annuals with release-2 enabled" should {
+  "GET Charitable Giving annuals with release-2 enabled" should {
 
-      s"return status 200 with a json response body" when {
-        "the downstream response from the Charitable Giving api version 2 returns status 200 with a json response body" in {
-          val incomingUrl = s"/ni/AA111111A/charitable-giving/2018-19"
-          val outgoingUrl = s"/2.0/ni/AA111111A/charitable-giving/2018-19"
+    s"return status 200 with a json response body" when {
+      "the downstream response from the Charitable Giving api version 2 returns status 200 with a json response body" in {
+        val incomingUrl = s"/ni/AA111111A/charitable-giving/2018-19"
+        val outgoingUrl = s"/2.0/ni/AA111111A/charitable-giving/2018-19"
 
-          Given()
-            .theClientIsAuthorised
-            .And()
-            .get(outgoingUrl)
-            .returns(aResponse
-              .withStatus(OK)
-              .withBody(body)
-              .withHeader("X-CorrelationId", correlationId))
-            .When()
-            .get(incomingUrl)
-            .withHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json")
-            .Then()
-            .statusIs(OK)
-            .bodyIs(body)
-            .containsHeaders(("X-CorrelationId", correlationId))
-            .verify(mockFor(outgoingUrl)
-              .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        }
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .get(outgoingUrl)
+          .returns(aResponse
+            .withStatus(OK)
+            .withBody(body)
+            .withHeader("X-CorrelationId", correlationId))
+          .When()
+          .get(incomingUrl)
+          .withHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json")
+          .Then()
+          .statusIs(OK)
+          .bodyIs(body)
+          .containsHeaders(("X-CorrelationId", correlationId))
+          .verify(mockFor(outgoingUrl)
+            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
       }
+    }
   }
 
   "Amend Charitable Giving with Version 2 enabled" should {
 
-      "return a 204 with no json response body" when {
-        "a version 1.0 header is provided and the response from the Charitable Giving API is a 204" in {
-          val incomingUrl = s"/ni/AA111111A/charitable-giving/2018-19"
-          val outgoingUrl = s"/ni/AA111111A/charitable-giving/2018-19"
+    "return a 204 with no json response body" when {
+      "a version 2.0 header is provided and the response from the Charitable Giving API is a 204" in {
+        val incomingUrl = s"/ni/AA111111A/charitable-giving/2018-19"
+        val outgoingUrl = s"/2.0/ni/AA111111A/charitable-giving/2018-19"
 
-          Given()
-            .theClientIsAuthorised
-            .And()
-            .put(outgoingUrl)
-            .returns(aResponse
-              .withStatus(NO_CONTENT)
-              .withBody(jsonResponse))
-            .When()
-            .put(incomingUrl)
-            .withBody(jsonRequest)
-            .withHeaders(
-              ACCEPT -> "application/vnd.hmrc.1.0+json",
-              CONTENT_TYPE -> JSON
-            )
-            .Then()
-            .statusIs(NO_CONTENT)
-            .bodyIs("")
-            .verify(mockFor(outgoingUrl)
-              .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        }
-
-        "a version 2.0 header is provided and the response from the Charitable Giving API is a 204" in {
-          val incomingUrl = s"/ni/AA111111A/charitable-giving/2018-19"
-          val outgoingUrl = s"/2.0/ni/AA111111A/charitable-giving/2018-19"
-
-          Given()
-            .theClientIsAuthorised
-            .And()
-            .put(outgoingUrl)
-            .returns(aResponse
-              .withStatus(NO_CONTENT)
-              .withBody(jsonResponse))
-            .When()
-            .put(incomingUrl)
-            .withBody(jsonRequest)
-            .withHeaders(
-              ACCEPT -> "application/vnd.hmrc.2.0+json",
-              CONTENT_TYPE -> JSON
-            )
-            .Then()
-            .statusIs(NO_CONTENT)
-            .bodyIs("")
-            .verify(mockFor(outgoingUrl)
-              .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        }
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .put(outgoingUrl)
+          .returns(aResponse
+            .withStatus(NO_CONTENT)
+            .withBody(jsonResponse))
+          .When()
+          .put(incomingUrl)
+          .withBody(jsonRequest)
+          .withHeaders(
+            ACCEPT -> "application/vnd.hmrc.2.0+json",
+            CONTENT_TYPE -> JSON
+          )
+          .Then()
+          .statusIs(NO_CONTENT)
+          .bodyIs("")
+          .verify(mockFor(outgoingUrl)
+            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
       }
+    }
   }
 }

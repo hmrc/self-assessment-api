@@ -26,26 +26,6 @@ class SelfEmploymentEopsDeclarationResourceISpec extends IntegrationSpec {
 
   "Post Self Employment EOPS declaration" should {
     "return a 204 with no json response body" when {
-      "the downstream response from the self assessment api version 1.0 returns a 204 with no json response body" in {
-        val url = "/ni/AA111111A/self-employments/123456789012345/end-of-period-statements/from/2018-01-01/to/2018-12-12"
-
-        Given()
-          .theClientIsAuthorised
-          .And()
-          .post(url)
-          .returns(aResponse
-            .withStatus(NO_CONTENT))
-          .When()
-          .post(url)
-            .withBody(jsonRequest)
-          .withHeaders(
-            ACCEPT -> "application/vnd.hmrc.1.0+json",
-            CONTENT_TYPE -> JSON)
-          .Then()
-          .statusIs(NO_CONTENT)
-          .verify(mockFor(url)
-            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-      }
       "the downstream response from the self employment version 2.0 returns a 204 with no json response body" in {
         val incomingUrl = "/ni/AA111111A/self-employments/123456789012345/end-of-period-statements/from/2018-01-01/to/2018-12-12"
         val outgoingUrl = "/2.0" + incomingUrl
