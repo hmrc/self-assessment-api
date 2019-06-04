@@ -20,6 +20,10 @@
             <td><p>Simulates the scenario where the client has a net loss.</p></td>
         </tr>
         <tr>
+            <td><p>NOT_FOUND</p></td>
+            <td><p>Simulates the scenario where no data is found.</p></td>
+        </tr>
+        <tr>
             <td><p>AGENT_NOT_SUBSCRIBED</p></td>
             <td><p>Simulate agent subscription check failure.</p></td>
         </tr>
