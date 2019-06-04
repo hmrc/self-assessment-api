@@ -255,6 +255,14 @@ traits:
                         value:
                           code: NINO_INVALID
             404:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notFound:
+                        description: Not found. This error returns no response body.
+                        value:
+                          code:  
         /obligations:
           get:
             displayName: Retrieve self-employment business obligations
@@ -283,6 +291,14 @@ traits:
                         value:
                           code: NINO_INVALID
               404:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notFound:
+                        description: Not found. This error returns no response body.
+                        value:
+                          code:  
         /periods:
           post:
             displayName: Create a self-employment periodic update
@@ -355,6 +371,15 @@ traits:
                         description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
                         value:
                           code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
+              404:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notFound:
+                        description: Not found. This error returns no response body.
+                        value:
+                          code:  
           get:
             displayName: List all self-employment update periods
             description: List all self-employment update periods.
@@ -382,6 +407,14 @@ traits:
                         value:
                           code: NINO_INVALID
               404:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notFound:
+                        description: Not found. This error returns no response body.
+                        value:
+                          code:  
           /{periodId}:
             uriParameters:
               periodId:
@@ -420,6 +453,14 @@ traits:
                           value:
                             code: NINO_INVALID
                 404:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notFound:
+                          description: Not found. This error returns no response body.
+                          value:
+                            code:  
             put:
               displayName: Amend a self-employment periodic update
               description: Amend a self-employment periodic update.
@@ -476,8 +517,15 @@ traits:
                           description: Consolidated expenses are not allowed if the accumulative turnover amount exceeds the threshold
                           value:
                             code: NOT_ALLOWED_CONSOLIDATED_EXPENSES
-
                 404:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notFound:
+                          description: Not found. This error returns no response body.
+                          value:
+                            code:  
         /{taxYear}:
           uriParameters:
             taxYear:
@@ -556,6 +604,14 @@ traits:
                         value:
                           code: NOT_OVER_STATE_PENSION
               404:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notFound:
+                        description: Not found. This error returns no response body.
+                        value:
+                          code:  
           get:
             displayName: Get a self-employment annual summary
             description: Get a self-employment annual summary for a tax year.
@@ -587,6 +643,14 @@ traits:
                         value:
                           code: TAX_YEAR_INVALID
               404:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notFound:
+                        description: Not found. This error returns no response body.
+                        value:
+                          code:  
           /income-summary:
              get:
                 displayName:  Get Self-Employment Business Income Source Summary (BISS)
@@ -876,6 +940,14 @@ traits:
                     value:
                       code: NINO_INVALID
           404:
+            body:
+              application/json:
+                type: types.errorResponse
+                examples:
+                  notFound:
+                    description: Not found. This error returns no response body.
+                    value:
+                      code:  
       /obligations:
         get:
           displayName: Retrieve all UK property business obligations
@@ -904,6 +976,14 @@ traits:
                       value:
                         code: NINO_INVALID
             404:
+              body:
+                application/json:
+                  type: types.errorResponse
+                  examples:
+                    notFound:
+                      description: Not found. This error returns no response body.
+                      value:
+                        code:  
       /other:
         /periods:
           post:
@@ -968,6 +1048,15 @@ traits:
                         description: Both expenses and consolidatedExpenses can not be present at the same time
                         value:
                           code: BOTH_EXPENSES_SUPPLIED
+              404:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notFound:
+                        description: Not found. This error returns no response body.
+                        value:
+                          code:  
           get:
             displayName: List all non-FHL UK property update periods
             description: List all non-FHL UK property update periods.
@@ -995,6 +1084,14 @@ traits:
                         value:
                           code: NINO_INVALID
               404:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notFound:
+                        description: Not found. This error returns no response body.
+                        value:
+                          code:  
           /{periodId}:
             uriParameters:
               periodId:
@@ -1034,6 +1131,14 @@ traits:
                           value:
                             code: NINO_INVALID
                 404:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notFound:
+                          description: Not found. This error returns no response body.
+                          value:
+                            code:  
             put:
               displayName: Amend a non-FHL UK property periodic update
               description: Amend a non-FHL UK property periodic update.
@@ -1082,6 +1187,14 @@ traits:
                           value:
                             code: BOTH_EXPENSES_SUPPLIED
                 404:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notFound:
+                          description: Not found. This error returns no response body.
+                          value:
+                            code:  
         /{taxYear}:
             displayName: Annual Summary
             uriParameters:
@@ -1124,6 +1237,14 @@ traits:
                           value:
                             code: INVALID_MONETARY_AMOUNT
                 404:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notFound:
+                          description: Not found. This error returns no response body.
+                          value:
+                            code:  
             get:
               displayName: Get a non-FHL UK property business annual summary
               description: Get a non-FHL UK property business annual summary for a tax year.
@@ -1155,6 +1276,14 @@ traits:
                           value:
                             code: TAX_YEAR_INVALID
                 404:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notFound:
+                          description: Not found. This error returns no response body.
+                          value:
+                            code:  
       /furnished-holiday-lettings:
         /periods:
           post:
@@ -1219,6 +1348,15 @@ traits:
                         description: Both expenses and consolidatedExpenses can not be present at the same time
                         value:
                           code: BOTH_EXPENSES_SUPPLIED
+              404:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notFound:
+                        description: Not found. This error returns no response body.
+                        value:
+                          code:  
           get:
             displayName: List all FHL UK property update periods
             description: List all FHL UK property update periods.
@@ -1246,6 +1384,14 @@ traits:
                         value:
                           code: NINO_INVALID
               404:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      notFound:
+                        description: Not found. This error returns no response body.
+                        value:
+                          code:  
           /{periodId}:
             uriParameters:
               periodId:
@@ -1285,6 +1431,14 @@ traits:
                           value:
                             code: NINO_INVALID
                 404:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notFound:
+                          description: Not found. This error returns no response body.
+                          value:
+                            code:  
             put:
               displayName: Amend a FHL UK property periodic update
               description: Amend a FHL UK property periodic update.
@@ -1336,6 +1490,15 @@ traits:
                           description: Both expenses and consolidatedExpenses can not be present at the same time
                           value:
                             code: BOTH_EXPENSES_SUPPLIED
+                404:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notFound:
+                          description: Not found. This error returns no response body.
+                          value:
+                            code:  
         /{taxYear}:
             displayName: Annual Summary
             uriParameters:
@@ -1382,6 +1545,14 @@ traits:
                           value:
                             code: INVALID_BOOLEAN_VALUE
                 404:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notFound:
+                          description: Not found. This error returns no response body.
+                          value:
+                            code:  
             get:
               displayName: Get a FHL UK property business annual summary
               description: Get a FHL UK property business annual summary for a tax year.
@@ -1413,6 +1584,14 @@ traits:
                           value:
                             code: TAX_YEAR_INVALID
                 404:
+                  body:
+                    application/json:
+                      type: types.errorResponse
+                      examples:
+                        notFound:
+                          description: Not found. This error returns no response body.
+                          value:
+                            code:  
       /end-of-period-statements:
         /from:
           /{start}:
