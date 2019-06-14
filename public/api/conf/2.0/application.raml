@@ -1221,7 +1221,13 @@ traits:
               body:
                 application/json:
                   type: !include schemas/UK_PROP_OTHER_AnnualSummary.json
-                  example: !include examples/uk-properties/other/AnnualSummary.json
+                  examples:
+                    example-1:
+                      description: Annual summary
+                      value: !include examples/uk-properties/other/AnnualSummary.json
+                    example-2:
+                      description: To delete an existing annual summary, a user can submit
+                      value: !include examples/uk-properties/other/AnnualSummary_Delete.json
               responses:
                 204:
                   headers:
@@ -1525,7 +1531,13 @@ traits:
               body:
                 application/json:
                   type: !include schemas/UK_PROP_FHL_AnnualSummary.json
-                  example: !include examples/uk-properties/fhl/AnnualSummary.json
+                  examples:
+                    example-1:
+                      description: Annual summary
+                      value: !include examples/uk-properties/fhl/AnnualSummary.json
+                    example-2:
+                      description: To delete an existing annual summary, a user can submit
+                      value: !include examples/uk-properties/fhl/AnnualSummary_Delete.json
               responses:
                 204:
                   headers:
