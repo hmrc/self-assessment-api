@@ -468,6 +468,7 @@ traits:
                            You should submit zero values if you do not have incomes or expenses.
                            Valid payload may contain either expenses or consolidatedExpenses elements.
                            <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
+              (annotations.sandboxData): !include scenarios/stateful-se-submit.md
               is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
               (annotations.scope): "write:self-assessment"
               securedBy: [ sec.oauth_2_0: { scopes: [ "write:self-assessment" ] } ]
