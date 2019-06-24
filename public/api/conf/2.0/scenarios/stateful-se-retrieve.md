@@ -1,4 +1,5 @@
-<p>Scenario simulations using Gov-Test-Scenario headers is only available in sandbox environment</p>
+<p>Scenario simulations using Gov-Test-Scenario headers is only available in sandbox environment.</p>
+<p>You will need to add a self-employment business in the sandbox environment before making a request. This endpoint will return the previously submitted data.</p>
 <table>
     <thead>
         <tr>
@@ -7,15 +8,6 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td><p>Default (No header value)</p></td>
-            <td><p>Returns a Crystallisation obligation for 2017-18 taxyear as not met</p></td>
-        </tr>
-        <tr>
-            <td><p>MET</p></td>
-            <td><p>Returns a Crystallisation obligation for 2017-18 taxyear as met</p></td>
-        </tr>
-        <tr>
         <tr>
             <td><p>AGENT_NOT_SUBSCRIBED</p></td>
             <td><p>Simulate agent subscription check failure</p></td>

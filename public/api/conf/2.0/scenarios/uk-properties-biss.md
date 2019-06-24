@@ -1,4 +1,5 @@
 <p>You can simulate scenarios using Gov-Test-Scenario headers in the sandbox environment.</p>
+<p>You will need to add a UK property business before making a request. This endpoint returns static responses.</p>
 <table>
     <thead>
         <tr>
