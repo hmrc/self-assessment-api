@@ -1,5 +1,5 @@
 <p>Scenario simulations using Gov-Test-Scenario headers is only available in sandbox environment.</p>
-<p>You will need to add a self-employment business in the sandbox environment before making a request. This endpoint will return the previously submitted data.</p>
+<p>You will need to add a self-employment business in the sandbox environment before making a request. This endpoint will store the data submitted.</p>
 <table>
     <thead>
         <tr>
