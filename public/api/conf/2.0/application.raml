@@ -123,7 +123,7 @@ traits:
           description: !include docs/self-employment.md
       post:
         displayName: Add a self-employment business [test support]
-        description: Add a self-employment business. This API is available to facilitate testing in the sandbox environment.
+        description: Add a self-employment business. This API is available to facilitate testing in the sandbox environment and is not for use in production.
         (annotations.sandboxData): !include scenarios/agent-scenarios.md
         is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
         (annotations.scope): "write:self-assessment"
