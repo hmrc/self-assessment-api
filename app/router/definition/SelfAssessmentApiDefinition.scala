@@ -33,12 +33,12 @@ class SelfAssessmentApiDefinition @Inject()(appConfig: AppConfig) {
       scopes = Seq(
         Scope(
           key = readScope,
-          name = "View your Self-Assessment information",
+          name = "View your Self Assessment information",
           description = "Allow read access to self assessment data"
         ),
         Scope(
           key = writeScope,
-          name = "Change your Self-Assessment information",
+          name = "Change your Self Assessment information",
           description = "Allow write access to self assessment data"
         )
       ),
