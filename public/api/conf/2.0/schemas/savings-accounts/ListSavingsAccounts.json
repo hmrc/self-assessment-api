@@ -21,7 +21,7 @@
             "title": "Account name",
             "description": "Friendly account name. Each account name added must be unique for that National Insurance number. The account name must be between 1 and 32 characters in length. Allowed characters, including spaces are: mixed case alphanumeric characters and the characters; &'()*,-./@£",
             "type": "string",
-            "pattern": "^[A-Za-z0-9 &'\\(\\)\\*,\\-\\./@£]{1,32}$"
+            "pattern": "^[A-Za-z0-9 &'()*,-./@£]{1,32}$"
           }
         },
         "required": [
