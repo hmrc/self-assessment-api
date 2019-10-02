@@ -10,5 +10,6 @@
       "pattern": "^[A-Za-z0-9 &'\\(\\)\\*,\\-\\./@£]{1,32}$"
     }
   },
+  "required": ["accountName"],
   "additionalProperties": false
 }
