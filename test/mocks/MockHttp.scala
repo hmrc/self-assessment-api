@@ -46,7 +46,7 @@ trait MockHttp extends Mock {
     }
 
     def POSTEmpty[O](url: String, headers: (String, String)*): OngoingStubbing[Future[O]] = {
-      when(mockHttp.POSTEmpty[O](eqTo(url))(any[HttpReads[O]](), any[HeaderCarrier](), any[ExecutionContext]()))
+      when(mockHttp.POSTEmpty[O](eqTo(url), any[Seq[(String,String)]])(any[HttpReads[O]](), any[HeaderCarrier](), any[ExecutionContext]()))
     }
 
     def POST[I, O](url: String, body: I): OngoingStubbing[Future[O]] = {
@@ -55,7 +55,7 @@ trait MockHttp extends Mock {
     }
 
     def PUT[I, O](url: String, body: I): OngoingStubbing[Future[O]] = {
-      when(mockHttp.PUT[I, O](eqTo(url), eqTo(body))(any[Writes[I]](),
+      when(mockHttp.PUT[I, O](eqTo(url), eqTo(body), any[Seq[(String,String)]])(any[Writes[I]](),
         any[HttpReads[O]](), any[HeaderCarrier](), any[ExecutionContext]()))
     }
   }
