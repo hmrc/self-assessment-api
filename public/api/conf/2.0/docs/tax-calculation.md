@@ -1,4 +1,4 @@
-At a future date, the following endpoints will no longer be available:
+From the end of July 2020, the following endpoints will no longer be available:
 
 * trigger a tax calculation
 * retrieve a tax calculation
