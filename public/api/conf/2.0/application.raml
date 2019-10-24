@@ -271,6 +271,17 @@ traits:
             is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
             (annotations.scope): "read:self-assessment"
             securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
+            queryParameters:
+              from:
+                description: The start date of the range by which to filter obligations. Format YYYY-MM-DD. Mandatory if the "to" query parameter is supplied.
+                type: string
+                example: 2018-04-06
+                required: false
+              to:
+                description: The end date of the range by which to filter obligations, in the format YYYY-MM-DD. Mandatory if the from query parameter is supplied
+                type: string
+                example: 2019-04-05
+                required: false
             responses:
               200:
                 headers:
@@ -290,6 +301,26 @@ traits:
                         description: Invalid NINO
                         value:
                           code: NINO_INVALID
+                      invalidFromDate:
+                        description: The provided 'from' date is invalid.
+                        value:
+                          code: FORMAT_FROM_DATE
+                      invalidToDate:
+                        description: The provided 'to' date is invalid.
+                        value:
+                          code: FORMAT_TO_DATE
+                      rangeToDateBeforeFromDate:
+                        description: The 'to' date cannot be before the 'from' date.
+                        value:
+                          code: RANGE_TO_DATE_BEFORE_FROM_DATE
+                      rangeDateToLong:
+                        description: The date range exceeds 366 days.
+                        value:
+                          code: RANGE_DATE_TOO_LONG
+                      invalidDateParameter:
+                        description: "'from' query parameter supplied without a 'to' query parameter or vice-versa."
+                        value:
+                          code: RULE_DATE_PARAMETER
               404:
                 body:
                   application/json:
