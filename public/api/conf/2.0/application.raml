@@ -302,23 +302,23 @@ traits:
                         value:
                           code: NINO_INVALID
                       invalidFromDate:
-                        description: The provided 'from' date is invalid.
+                        description: The From date is not a valid ISO format date.
                         value:
                           code: FORMAT_FROM_DATE
                       invalidToDate:
-                        description: The provided 'to' date is invalid.
+                        description: The To date is not a valid ISO format date.
                         value:
                           code: FORMAT_TO_DATE
                       rangeToDateBeforeFromDate:
-                        description: The 'to' date cannot be before the 'from' date.
+                        description: The To date is less than the From date.
                         value:
                           code: RANGE_TO_DATE_BEFORE_FROM_DATE
                       rangeDateToLong:
-                        description: The date range exceeds 366 days.
+                        description: The date range is longer than 366 days.
                         value:
                           code: RANGE_DATE_TOO_LONG
                       invalidDateParameter:
-                        description: "'from' query parameter supplied without a 'to' query parameter or vice-versa."
+                        description: From query parameter supplied without the To query parameter or vice-versa
                         value:
                           code: RULE_DATE_PARAMETER
               404:
@@ -999,12 +999,12 @@ traits:
           securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
           queryParameters:
             from:
-              description: Start of date range to filter obligations. The minimum ‘from’ date is `2018-04-06`
+              description: The start date of the range to filter obligations, in the format YYYY-MM-DD. Mandatory if the 'to' query parameter is supplied.
               type: string
               example: 2018-04-06
               required: false
             to:
-              description: End of date range to filter obligations
+              description: The end date of the range to filter obligations, in the format YYYY-MM-DD. Mandatory if the 'from' query parameter is supplied
               type: string
               example: 2019-04-05
               required: false
@@ -1028,23 +1028,23 @@ traits:
                       value:
                         code: NINO_INVALID
                     invalidFromDate:
-                      description: The provided 'from' date is invalid.
+                      description: The From date is not a valid ISO format date.
                       value:
                         code: FORMAT_FROM_DATE
                     invalidToDate:
-                      description: The provided 'to' date is invalid.
+                      description: The To date is not a valid ISO format date.
                       value:
                         code: FORMAT_TO_DATE
                     rangeToDateBeforeFromDate:
-                      description: The 'to' date cannot be before the 'from' date.
+                      description: The To date is less than the From date.
                       value:
                         code: RANGE_TO_DATE_BEFORE_FROM_DATE
                     rangeDateToLong:
-                      description: The date range exceeds 366 days.
+                      description: The date range is longer than 366 days.
                       value:
                         code: RANGE_DATE_TOO_LONG
                     invalidDateParameter:
-                      description: "'from' query parameter supplied without a 'to' query parameter or vice-versa."
+                      description: From query parameter supplied without the To query parameter or vice-versa
                       value:
                         code: RULE_DATE_PARAMETER
             404:
