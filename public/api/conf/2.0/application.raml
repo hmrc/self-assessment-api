@@ -273,12 +273,12 @@ traits:
             securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
             queryParameters:
               from:
-                description: The start date of the range by which to filter obligations. Format YYYY-MM-DD. Mandatory if the "to" query parameter is supplied. If the “from” and “to” date parameters are not supplied, the date will default to a year from today.
+                description: The start date of the range by which to filter obligations. Format YYYY-MM-DD. Mandatory if the "to" query parameter is supplied. If the “from” and “to” date parameters are not supplied, the date range will default to a year from today.
                 type: string
                 example: 2018-04-06
                 required: false
               to:
-                description: The end date of the range by which to filter obligations, in the format YYYY-MM-DD. Mandatory if the "from" query parameter is supplied. If the “from” and “to” date parameters are not supplied, the date will default to a year from today.
+                description: The end date of the range by which to filter obligations, in the format YYYY-MM-DD. Mandatory if the "from" query parameter is supplied. If the “from” and “to” date parameters are not supplied, the date range will default to a year from today.
                 type: string
                 example: 2019-04-05
                 required: false
@@ -999,12 +999,12 @@ traits:
           securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
           queryParameters:
             from:
-              description: The start date of the range to filter obligations, in the format YYYY-MM-DD. Mandatory if the "to" query parameter is supplied. If the “from” and “to” date parameters are not supplied, the date will default to a year from today.
+              description: The start date of the range to filter obligations, in the format YYYY-MM-DD. Mandatory if the "to" query parameter is supplied. If the “from” and “to” date parameters are not supplied, the date range will default to a year from today.
               type: string
               example: 2018-04-06
               required: false
             to:
-              description: The end date of the range to filter obligations, in the format YYYY-MM-DD. Mandatory if the "from" query parameter is supplied. If the “from” and “to” date parameters are not supplied, the date will default to a year from today.
+              description: The end date of the range to filter obligations, in the format YYYY-MM-DD. Mandatory if the "from" query parameter is supplied. If the “from” and “to” date parameters are not supplied, the date range will default to a year from today.
               type: string
               example: 2019-04-05
               required: false
