@@ -77,11 +77,6 @@ case class FeatureSwitch(value: Option[Configuration]) {
     case Some(config) => config.getBoolean("crystallisation-version-2.enabled").getOrElse(false)
     case None => false
   }
-
-  def isCrystallisationObligationsV2Enabled: Boolean = value match {
-    case Some(config) => config.getBoolean("crystallisation-obligations-version-2.enabled").getOrElse(false)
-    case None => false
-  }
 }
 
 sealed case class FeatureConfig(config: Configuration) {

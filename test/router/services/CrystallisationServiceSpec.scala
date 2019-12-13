@@ -134,9 +134,6 @@ class CrystallisationServiceSpec extends UnitSpec
 
   "retrieve" should {
 
-    val version2ObligationsConfigEnabled =  Configuration("crystallisation-obligations-version-2.enabled" -> true)
-    val version2ObligationsConfigDisabled = Configuration("crystallisation-obligations-version-2.enabled" -> false)
-
     "return a HttpResponse" when {
 
       val body: JsValue = Json.parse(
@@ -163,11 +160,11 @@ class CrystallisationServiceSpec extends UnitSpec
           |}
         """.stripMargin)
 
-      "the request contains a version 1.0 header and crystallisation obligations version 2 config is disabled" in new Setup {
+
+      "the request contains a version 1.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
         val response = HttpResponse(200)
 
-        MockAppConfig.featureSwitch returns Some(version2ObligationsConfigDisabled)
         MockSelfAssessmentConnector.get(request.uri)
           .returns(Future.successful(Right(response)))
 
@@ -175,38 +172,12 @@ class CrystallisationServiceSpec extends UnitSpec
         result shouldBe Right(response)
       }
 
-      "the request contains a version 1.0 header and crystallisation obligations version 2 config is enabled" in new Setup {
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
-
-        MockAppConfig.featureSwitch returns Some(version2ObligationsConfigEnabled)
-        MockSelfAssessmentConnector.get(request.uri)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.get())
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 2.0 header and crystallisation obligations version 2 config is disabled" in new Setup {
-
-        implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
-
-        MockAppConfig.featureSwitch returns Some(version2ObligationsConfigDisabled)
-        MockSelfAssessmentConnector.get(request.uri)
-          .returns(Future.successful(Right(response)))
-
-        val result = await(service.get())
-        result shouldBe Right(response)
-      }
-
-      "the request contains a version 2.0 header and crystallisation obligations version 2 config is enabled" in new Setup {
+      "the request contains a version 2.0 header" in new Setup {
 
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
 
         val httpResponse = HttpResponse(OK, Some(body))
 
-        MockAppConfig.featureSwitch returns Some(version2ObligationsConfigEnabled)
         MockCrystallisationConnector.get(s"/$VERSION_2${request.uri}")
           .returns(Future.successful(Right(httpResponse)))
 
