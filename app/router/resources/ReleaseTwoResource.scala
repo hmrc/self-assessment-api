@@ -18,15 +18,16 @@ package router.resources
 
 import javax.inject.Inject
 import play.api.libs.json.JsValue
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import router.services.ReleaseTwoService
 import uk.gov.hmrc.auth.core.AuthConnector
 
 import scala.concurrent.ExecutionContext
 
 class ReleaseTwoResource @Inject()(service: ReleaseTwoService,
+                                   val cc: ControllerComponents,
                                    val authConnector: AuthConnector)
-                                  (implicit ec: ExecutionContext) extends BaseResource {
+                                  (implicit ec: ExecutionContext) extends BaseResource(cc, authConnector) {
 
     def create(param:Any*): Action[JsValue] = AuthAction.async(parse.json) {
     implicit request =>

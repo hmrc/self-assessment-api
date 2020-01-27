@@ -17,11 +17,13 @@
 package config
 
 import mocks.Mock
-import org.mockito.ArgumentCaptor
+import org.joda.time.DateTime
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Configuration
 import play.api.http.Status
 import play.api.libs.json.{Json, OFormat}
+import play.api.mvc.RequestHeader
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import router.errors.ErrorCode
@@ -30,6 +32,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, JsValidationException, NotFoundException
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
 import uk.gov.hmrc.play.audit.model.DataEvent
+import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import uk.gov.hmrc.play.bootstrap.http.ErrorResponse
 import uk.gov.hmrc.play.test.UnitSpec
 
@@ -51,11 +54,33 @@ class ErrorHandlerSpec extends UnitSpec with Mock with GuiceOneAppPerSuite {
     val requestHeader = FakeRequest().withHeaders(versionInHeader.map(versionHeader).toSeq: _*)
 
     val auditConnector = mock[AuditConnector]
+    val httpAuditEvent = mock[HttpAuditEvent]
+
+    val eventTags: Map[String, String] = Map("transactionName" -> "event.transactionName")
+
+    def dataEvent(auditType: String) = DataEvent(
+      auditSource = "auditSource",
+      auditType = auditType,
+      eventId = "",
+      tags = eventTags,
+      detail = Map("test" -> "test"),
+      generatedAt = DateTime.now()
+    )
+
+    def mockAuditCall(expectedAuditType: String) = {
+      when(httpAuditEvent.dataEvent(ArgumentMatchers.eq(expectedAuditType), any[String](), any[RequestHeader](), any[Map[String, String]]())(any[HeaderCarrier]()))
+        .thenReturn(dataEvent(expectedAuditType))
+    }
+    mockAuditCall("ResourceNotFound")
+    mockAuditCall("ClientError")
+    mockAuditCall("ServerValidationError")
+    mockAuditCall("ServerInternalError")
+
     when(auditConnector.sendEvent(any[DataEvent]())(any[HeaderCarrier](), any[ExecutionContext]()))
       .thenReturn(Future.successful(Success))
 
     val configuration = Configuration("appName" -> "myApp")
-    val handler = new ErrorHandler(configuration, auditConnector)
+    val handler = new ErrorHandler(configuration, auditConnector, httpAuditEvent)
   }
 
   "onClientError" should {

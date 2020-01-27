@@ -17,16 +17,17 @@
 package router.resources
 
 import javax.inject.Inject
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.{JsNull, JsValue}
-import play.api.mvc.{Action, AnyContent, BodyParser}
+import play.api.mvc.{Action, AnyContent, BodyParser, ControllerComponents}
 import router.constants.Versions
 import router.constants.Versions._
 import router.services.{CrystallisationService, Service}
 import uk.gov.hmrc.auth.core.AuthConnector
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class CrystallisationResource @Inject()(service: CrystallisationService,
-                                        val authConnector: AuthConnector) extends BaseResource with Service {
+                                        val cc: ControllerComponents,
+                                        val authConnector: AuthConnector) extends BaseResource(cc, authConnector) with Service {
 
   def post(param: Any*): Action[JsValue] = AuthAction.async(parse.json) {
     implicit request =>

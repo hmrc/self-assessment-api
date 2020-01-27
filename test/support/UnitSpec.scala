@@ -18,6 +18,8 @@ package support
 
 import org.scalatest.{EitherValues, Matchers, WordSpecLike}
 import play.api.http.{HeaderNames, MimeTypes, Status}
+import play.api.mvc.ControllerComponents
+import play.api.test.Helpers.stubControllerComponents
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits, ResultExtractors}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -32,6 +34,8 @@ trait UnitSpec extends WordSpecLike
   with HeaderNames
   with Status
   with MimeTypes {
+
+  lazy val controllerComponents: ControllerComponents = stubControllerComponents()
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 

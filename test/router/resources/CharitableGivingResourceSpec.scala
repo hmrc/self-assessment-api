@@ -33,7 +33,8 @@ class CharitableGivingResourceSpec extends ResourceSpec
   class Setup {
     val resource = new CharitableGivingResource(
       service = mockCharitableGivingService,
-      authConnector = mockAuthConnector
+      authConnector = mockAuthConnector,
+      cc = controllerComponents
     )
     mockAuthAction
   }

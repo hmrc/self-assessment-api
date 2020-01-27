@@ -32,7 +32,8 @@ class CrystallisationResourceSpec extends ResourceSpec
   class Setup {
     val resource = new CrystallisationResource(
       service = mockCrystallisationService,
-      authConnector = mockAuthConnector
+      authConnector = mockAuthConnector,
+      cc = controllerComponents
     )
     mockAuthAction
   }

@@ -32,7 +32,8 @@ class SelfAssessmentResourceSpec extends ResourceSpec
   class Setup {
     val resource = new SelfAssessmentResource(
       service = mockSelfAssessmentService,
-      authConnector = mockAuthConnector
+      authConnector = mockAuthConnector,
+      cc = controllerComponents
     )
     mockAuthAction
   }

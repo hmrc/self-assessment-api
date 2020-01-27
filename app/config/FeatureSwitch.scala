@@ -38,13 +38,13 @@ case class FeatureSwitch(value: Option[Configuration]) {
 
   def isWhiteListingEnabled: Boolean = {
     value match {
-      case Some(config) => config.getBoolean("white-list.enabled").getOrElse(false)
+      case Some(config) => config.getOptional[Boolean]("white-list.enabled").getOrElse(false)
       case None => false
     }
   }
 
   def isAgentSimulationFilterEnabled: Boolean = value match {
-    case Some(config) => config.getBoolean("test-scenario-simulation.enabled").getOrElse(false)
+    case Some(config) => config.getOptional[Boolean]("test-scenario-simulation.enabled").getOrElse(false)
     case None => false
   }
 
@@ -52,29 +52,29 @@ case class FeatureSwitch(value: Option[Configuration]) {
     value match {
       case Some(config) =>
         config
-          .getStringSeq("white-list.applicationIds")
+          .getOptional[Seq[String]]("white-list.applicationIds")
           .getOrElse(throw new RuntimeException(s"feature-switch.white-list.applicationIds is not configured"))
       case None => Seq()
     }
   }
 
   def isCharitableGivingV2Enabled: Boolean = value match {
-    case Some(config) => config.getBoolean("charitable-giving-version-2.enabled").getOrElse(false)
+    case Some(config) => config.getOptional[Boolean]("charitable-giving-version-2.enabled").getOrElse(false)
     case None => false
   }
 
   def isDividendsV2Enabled: Boolean = value match {
-    case Some(config) => config.getBoolean("dividends-income-version-2.enabled").getOrElse(false)
+    case Some(config) => config.getOptional[Boolean]("dividends-income-version-2.enabled").getOrElse(false)
     case None => false
   }
 
   def isSavingsAccountsV2Enabled: Boolean = value match {
-    case Some(config) => config.getBoolean("savings-accounts-version-2.enabled").getOrElse(false)
+    case Some(config) => config.getOptional[Boolean]("savings-accounts-version-2.enabled").getOrElse(false)
     case None => false
   }
 
   def isCrystallisationV2Enabled: Boolean = value match {
-    case Some(config) => config.getBoolean("crystallisation-version-2.enabled").getOrElse(false)
+    case Some(config) => config.getOptional[Boolean]("crystallisation-version-2.enabled").getOrElse(false)
     case None => false
   }
 }
@@ -82,7 +82,7 @@ case class FeatureSwitch(value: Option[Configuration]) {
 sealed case class FeatureConfig(config: Configuration) {
 
   def isSummaryEnabled(source: String, summary: String): Boolean = {
-    val summaryEnabled = config.getBoolean(s"$source.$summary.enabled") match {
+    val summaryEnabled = config.getOptional[Boolean](s"$source.$summary.enabled") match {
       case Some(flag) => flag
       case None => true
     }
@@ -90,6 +90,6 @@ sealed case class FeatureConfig(config: Configuration) {
   }
 
   def isSourceEnabled(source: String): Boolean = {
-    config.getBoolean(s"$source.enabled").getOrElse(true)
+    config.getOptional[Boolean](s"$source.enabled").getOrElse(true)
   }
 }

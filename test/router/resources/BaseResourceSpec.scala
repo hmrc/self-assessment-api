@@ -17,14 +17,11 @@
 package router.resources
 
 import support.ResourceSpec
-import uk.gov.hmrc.auth.core.AuthConnector
 
 class BaseResourceSpec extends ResourceSpec {
 
   class Setup {
-    val resource = new BaseResource {
-      override def authConnector: AuthConnector = mockAuthConnector
-    }
+    val resource: BaseResource = new BaseResource(controllerComponents, mockAuthConnector)
     mockAuthAction
   }
 
