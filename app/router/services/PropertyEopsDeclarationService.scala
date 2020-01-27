@@ -19,7 +19,7 @@ package router.services
 import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.Request
-import router.connectors.{PropertyConnector, SelfAssessmentConnector}
+import router.connectors.PropertyConnector
 import router.constants.Versions._
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier

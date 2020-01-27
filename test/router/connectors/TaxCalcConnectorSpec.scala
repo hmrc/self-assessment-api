@@ -21,7 +21,6 @@ import mocks.config.MockAppConfig
 import mocks.httpParser.MockSelfAssessmentHttpParser
 import play.api.http.Status
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import support.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
@@ -50,12 +49,11 @@ class TaxCalcConnectorSpec extends UnitSpec
   "get" should {
     "return a HttpResponse" when {
       "a successful HttpResponse is returned" in new Setup {
-        val request = FakeRequest("GET", path)
         val response  = HttpResponse(Status.OK, Some(Json.obj()))
 
         MockSelfAssessmentHttpParser.read.returns(Right(response))
         MockHttp.GET[SelfAssessmentOutcome](s"$taxCalcUrl$path").returns(Future.successful(Right(response)))
-        await(TestConnector.get(path)(hc, request)) shouldBe Right(response)
+        await(TestConnector.get(path)(hc)) shouldBe Right(response)
       }
     }
   }

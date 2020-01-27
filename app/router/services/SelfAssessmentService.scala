@@ -16,8 +16,7 @@
 
 package router.services
 
-import javax.inject.{Inject, Provider}
-import play.api.Application
+import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.Request
 import router.connectors.SelfAssessmentConnector
@@ -32,21 +31,21 @@ class SelfAssessmentService @Inject()(val selfAssessmentConnector: SelfAssessmen
   def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.get(s"${req.uri}")
-      case Some(VERSION_2) => selfAssessmentConnector.get(req.uri)(convertHeaderToVersion1, req)
+      case Some(VERSION_2) => selfAssessmentConnector.get(req.uri)(convertHeaderToVersion1)
     }
   }
 
   def post(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.post(req.uri, body)
-      case Some(VERSION_2) => selfAssessmentConnector.post(req.uri, body)(convertHeaderToVersion1, req)
+      case Some(VERSION_2) => selfAssessmentConnector.post(req.uri, body)(convertHeaderToVersion1)
     }
   }
 
   def put(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.put(req.uri, body)
-      case Some(VERSION_2) => selfAssessmentConnector.put(req.uri, body)(convertHeaderToVersion1, req)
+      case Some(VERSION_2) => selfAssessmentConnector.put(req.uri, body)(convertHeaderToVersion1)
     }
   }
 }

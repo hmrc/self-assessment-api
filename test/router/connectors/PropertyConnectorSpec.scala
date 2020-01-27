@@ -22,7 +22,6 @@ import mocks.config.MockAppConfig
 import mocks.httpParser.MockSelfAssessmentHttpParser
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
-import play.api.test.FakeRequest
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import support.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
@@ -50,12 +49,11 @@ class PropertyConnectorSpec extends UnitSpec
   "get" should {
     "return a HttpResponse" when {
       "a successful HttpResponse is returned" in new Setup {
-        val request = FakeRequest("GET", path)
         val response  = HttpResponse(Status.OK, Some(Json.obj()))
 
         MockSelfAssessmentHttpParser.read.returns(Right(response))
         MockHttp.GET[SelfAssessmentOutcome](s"$propertyUrl$path").returns(Future.successful(Right(response)))
-        await(TestConnector.get(path)(hc, request)) shouldBe Right(response)
+        await(TestConnector.get(path)(hc)) shouldBe Right(response)
       }
     }
   }
@@ -63,12 +61,11 @@ class PropertyConnectorSpec extends UnitSpec
   "post" should {
     "return an HttpResponse" when {
       "a successful HttpResponse with no content is returned" in new Setup {
-        val request = FakeRequest("POST", path)
         val response = HttpResponse(Status.NO_CONTENT)
         val requestJson = Json.obj("test" -> "request json")
 
         MockHttp.POST[JsValue, SelfAssessmentOutcome](s"$propertyUrl$path", requestJson).returns(Future.successful(Right(response)))
-        await(TestConnector.post(path, requestJson)(hc, request)) shouldBe Right(response)
+        await(TestConnector.post(path, requestJson)(hc)) shouldBe Right(response)
       }
     }
   }

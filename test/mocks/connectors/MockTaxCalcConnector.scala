@@ -19,7 +19,6 @@ package mocks.connectors
 import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
-import play.api.mvc.Request
 import router.connectors.TaxCalcConnector
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,7 +31,7 @@ trait MockTaxCalcConnector extends Mock { _: Suite =>
 
   object MockTaxCalcConnector {
     def get(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockTaxCalcConnector.get(eqTo(uri))(any[HeaderCarrier](), any[Request[_]]()))
+      when(mockTaxCalcConnector.get(eqTo(uri))(any[HeaderCarrier]()))
     }
   }
 

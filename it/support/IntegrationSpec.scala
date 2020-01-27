@@ -16,7 +16,8 @@
 
 package support
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.http.{HeaderNames, MimeTypes, Status}
@@ -24,7 +25,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import support.functional.FunctionalSyntax
 import support.wiremock.WireMockSupport
 
-trait IntegrationSpec extends WordSpec
+trait IntegrationSpec extends AnyWordSpec
   with GuiceOneServerPerSuite
   with WireMockSupport
   with Matchers

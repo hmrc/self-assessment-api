@@ -16,7 +16,6 @@
 
 package router.enums
 
-import play.api.data.validation.ValidationError
 import play.api.libs.json._
 
 object EnumJson {

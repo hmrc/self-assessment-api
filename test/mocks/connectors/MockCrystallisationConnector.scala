@@ -20,7 +20,6 @@ import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
 import play.api.libs.json.JsValue
-import play.api.mvc.Request
 import router.connectors.CrystallisationConnector
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,15 +32,15 @@ trait MockCrystallisationConnector extends Mock {_: Suite =>
 
   object MockCrystallisationConnector {
     def post(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockCrystallisationConnector.post(eqTo(uri), eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
+      when(mockCrystallisationConnector.post(eqTo(uri), eqTo(body))(any[HeaderCarrier]()))
     }
 
     def postEmpty(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockCrystallisationConnector.postEmpty(eqTo(uri))(any[HeaderCarrier](), any[Request[_]]()))
+      when(mockCrystallisationConnector.postEmpty(eqTo(uri))(any[HeaderCarrier]()))
     }
 
     def get(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockCrystallisationConnector.get(eqTo(uri))(any[HeaderCarrier](), any[Request[_]]()))
+      when(mockCrystallisationConnector.get(eqTo(uri))(any[HeaderCarrier]()))
     }
   }
 

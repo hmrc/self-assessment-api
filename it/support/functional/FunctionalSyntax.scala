@@ -19,7 +19,7 @@ package support.functional
 import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import com.github.tomakehurst.wiremock.client.{MappingBuilder, ResponseDefinitionBuilder}
 import com.github.tomakehurst.wiremock.verification.LoggedRequest
-import org.scalatest.Matchers._
+import org.scalatest.matchers.should.Matchers._
 import play.api.Application
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}

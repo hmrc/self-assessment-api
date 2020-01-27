@@ -19,7 +19,6 @@ package router.services
 import mocks.connectors.MockSelfAssessmentConnector
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import router.connectors.SelfAssessmentConnector
 import router.errors.{IncorrectAPIVersion, UnsupportedAPIVersion}
 import support.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}

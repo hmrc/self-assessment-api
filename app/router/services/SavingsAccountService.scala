@@ -16,12 +16,12 @@
 
 package router.services
 
-import config.{AppConfig, FeatureSwitch}
+import config.AppConfig
 import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.Request
-import router.connectors.{SavingsAccountConnector, SelfAssessmentConnector}
-import router.constants.Versions.{VERSION_1, VERSION_2}
+import router.connectors.SavingsAccountConnector
+import router.constants.Versions.VERSION_2
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
 

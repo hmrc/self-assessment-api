@@ -18,7 +18,7 @@ package router.controllers
 
 import controllers.Assets
 import javax.inject.{Inject, Singleton}
-import play.api.http.{HttpErrorHandler, LazyHttpErrorHandler}
+import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import router.definition.SelfAssessmentApiDefinition
@@ -33,7 +33,7 @@ class DocumentationController @Inject()(selfAssessmentApiDefinition: SelfAssessm
     Ok(Json.toJson(selfAssessmentApiDefinition.definition))
   }
 
-  def raml(version: String, file: String): Action[AnyContent] = {
+  override def conf(version: String, file: String): Action[AnyContent] = {
     assets.at(s"/public/api/conf/$version", file)
   }
 }

@@ -20,7 +20,6 @@ import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
 import play.api.libs.json.JsValue
-import play.api.mvc.Request
 import router.connectors.SelfAssessmentConnector
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,19 +32,19 @@ trait MockSelfAssessmentConnector extends Mock { _: Suite =>
 
   object MockSelfAssessmentConnector {
     def get(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSelfAssessmentConnector.get(eqTo(uri))(any[HeaderCarrier](), any[Request[_]]()))
+      when(mockSelfAssessmentConnector.get(eqTo(uri))(any[HeaderCarrier]()))
     }
 
     def post(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSelfAssessmentConnector.post(eqTo(uri), eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
+      when(mockSelfAssessmentConnector.post(eqTo(uri), eqTo(body))(any[HeaderCarrier]()))
     }
 
     def postEmpty(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSelfAssessmentConnector.postEmpty(eqTo(uri))(any[HeaderCarrier](), any[Request[_]]()))
+      when(mockSelfAssessmentConnector.postEmpty(eqTo(uri))(any[HeaderCarrier]()))
     }
 
     def put(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSelfAssessmentConnector.put(eqTo(uri), eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
+      when(mockSelfAssessmentConnector.put(eqTo(uri), eqTo(body))(any[HeaderCarrier]()))
     }
   }
 

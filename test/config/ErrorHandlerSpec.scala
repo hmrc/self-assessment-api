@@ -25,8 +25,8 @@ import play.api.http.Status
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.RequestHeader
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
 import router.errors.ErrorCode
+import support.UnitSpec
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.{HeaderCarrier, JsValidationException, NotFoundException}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -34,7 +34,6 @@ import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
 import uk.gov.hmrc.play.audit.model.DataEvent
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import uk.gov.hmrc.play.bootstrap.http.ErrorResponse
-import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
