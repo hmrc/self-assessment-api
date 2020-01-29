@@ -37,7 +37,7 @@ class ReleaseTwoService @Inject()(val appConfig: AppConfig,
 
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.post(r2+req.uri, body)
-      case Some(VERSION_2) => selfAssessmentConnector.post(r2+req.uri, body)(convertHeaderToVersion1, req)
+      case Some(VERSION_2) => selfAssessmentConnector.post(r2+req.uri, body)(convertHeaderToVersion1)
     }
   }
 
@@ -45,7 +45,7 @@ class ReleaseTwoService @Inject()(val appConfig: AppConfig,
 
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.get(r2+req.uri)
-      case Some(VERSION_2) => selfAssessmentConnector.get(r2+req.uri)(convertHeaderToVersion1, req)
+      case Some(VERSION_2) => selfAssessmentConnector.get(r2+req.uri)(convertHeaderToVersion1)
     }
   }
 
@@ -53,7 +53,7 @@ class ReleaseTwoService @Inject()(val appConfig: AppConfig,
 
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.put(r2+req.uri, body)
-      case Some(VERSION_2) => selfAssessmentConnector.put(r2+req.uri, body)(convertHeaderToVersion1, req)
+      case Some(VERSION_2) => selfAssessmentConnector.put(r2+req.uri, body)(convertHeaderToVersion1)
     }
   }
 

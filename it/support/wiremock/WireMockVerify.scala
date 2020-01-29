@@ -21,11 +21,11 @@ import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import com.github.tomakehurst.wiremock.verification.LoggedRequest
 import org.scalatest.Assertion
-import org.scalatest.Matchers._
+import org.scalatest.matchers.should.Matchers._
 
-import scala.collection.JavaConversions._
+import scala.collection.convert.ToScalaImplicits
 
-trait WireMockVerify {
+trait WireMockVerify extends ToScalaImplicits {
 
   private def allMocks: List[LoggedRequest] = WireMock.findAll(RequestPatternBuilder.allRequests()).toList
 

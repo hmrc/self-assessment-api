@@ -33,7 +33,8 @@ class SavingsAccountResourceSpec extends ResourceSpec
   class Setup {
     val resource = new SavingsAccountResource(
       service = mockSavingsAccountService,
-      authConnector = mockAuthConnector
+      authConnector = mockAuthConnector,
+      cc = controllerComponents
     )
     mockAuthAction
   }

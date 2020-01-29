@@ -16,8 +16,7 @@
 
 package support.functional
 
-import play.api.libs.ws.{WSRequest, WSResponse}
-import play.api.mvc.Results.EmptyContent
+import play.api.libs.ws.{EmptyBody, WSRequest, WSResponse}
 import support.WSClient
 
 import scala.concurrent.Future
@@ -33,8 +32,8 @@ trait HttpRequest extends WSClient {
 
     private def executeNoBody: Future[WSResponse] = verb match {
       case GET  => wsRequest.get()
-      case POST => wsRequest.post(EmptyContent())
-      case PUT => wsRequest.put(EmptyContent())
+      case POST => wsRequest.post(EmptyBody)
+      case PUT => wsRequest.put(EmptyBody)
     }
 
     private def executeWithBody(body: String): Future[WSResponse] = verb match {
@@ -57,7 +56,7 @@ trait HttpRequest extends WSClient {
   }
 
   def requestWithHeaders(request: HttpRequest, headers: Seq[(String, String)]): HttpRequest = {
-    request.copy(wsRequest = request.wsRequest.withHeaders(headers: _*))
+    request.copy(wsRequest = request.wsRequest.withHttpHeaders(headers: _*))
   }
 
   def requestWithBody(request: HttpRequest, body: String): HttpRequest = {

@@ -17,7 +17,6 @@
 package router.services
 import mocks.config.MockAppConfig
 import mocks.connectors.{MockCharitableGivingConnector, MockSelfAssessmentConnector}
-import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import router.constants.Versions.VERSION_2

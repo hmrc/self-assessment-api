@@ -16,7 +16,7 @@
 
 package router.services
 
-import config.{AppConfig, FeatureSwitch}
+import config.AppConfig
 import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.Request

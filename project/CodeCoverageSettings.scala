@@ -14,22 +14,27 @@
  * limitations under the License.
  */
 
-package router.services
+import sbt.Setting
+import scoverage.ScoverageKeys
 
-import javax.inject.Inject
-import play.api.mvc.Request
-import router.connectors.TaxCalcConnector
-import router.constants.Versions._
-import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
-import uk.gov.hmrc.http.HeaderCarrier
+object CodeCoverageSettings {
 
-import scala.concurrent.Future
+  private val excludedPackages: Seq[String] = Seq(
+    "<empty>",
+    "Reverse.*",
+    "uk.gov.hmrc.BuildInfo",
+    "app.*",
+    "prod.*",
+    ".*Routes.*",
+    "config.*",
+    "testOnly.*",
+    "testOnlyDoNotUseInAppConf.*"
+  )
 
-class TaxCalcService @Inject()(val taxCalcConnector: TaxCalcConnector) extends Service {
-
-  def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
-    withApiVersion {
-      case Some(VERSION_2) => taxCalcConnector.get(s"/$VERSION_2${req.uri}")
-    }
-  }
+  val settings: Seq[Setting[_]] = Seq(
+    ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
+    ScoverageKeys.coverageMinimum := 80,
+    ScoverageKeys.coverageFailOnMinimum := true,
+    ScoverageKeys.coverageHighlighting := true
+  )
 }

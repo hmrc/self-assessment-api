@@ -32,7 +32,8 @@ class SelfEmploymentEopsDeclarationResourceSpec extends ResourceSpec
   class Setup {
     val resource = new SelfEmploymentEopsDeclarationResource(
       service = mockSelfEmploymentEopsDeclarationService,
-      authConnector = mockAuthConnector
+      authConnector = mockAuthConnector,
+      cc = controllerComponents
     )
     mockAuthAction
   }

@@ -20,7 +20,6 @@ import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
 import play.api.libs.json.JsValue
-import play.api.mvc.Request
 import router.connectors.SavingsAccountConnector
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,15 +32,15 @@ trait MockSavingsAccountConnector extends Mock { _: Suite =>
 
   object MockSavingsAccountConnector {
     def post(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSavingsAccountConnector.post(eqTo(uri), eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
+      when(mockSavingsAccountConnector.post(eqTo(uri), eqTo(body))(any[HeaderCarrier]()))
     }
 
     def get(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSavingsAccountConnector.get(eqTo(uri))(any[HeaderCarrier](), any[Request[_]]()))
+      when(mockSavingsAccountConnector.get(eqTo(uri))(any[HeaderCarrier]()))
     }
 
     def put(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSavingsAccountConnector.put(eqTo(uri), eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
+      when(mockSavingsAccountConnector.put(eqTo(uri), eqTo(body))(any[HeaderCarrier]()))
     }
   }
 

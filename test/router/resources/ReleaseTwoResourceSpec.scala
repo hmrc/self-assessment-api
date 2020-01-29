@@ -32,7 +32,8 @@ class ReleaseTwoResourceSpec extends ResourceSpec
   class Setup {
     val resource = new ReleaseTwoResource(
       service = mockReleaseTwoService,
-      authConnector = mockAuthConnector
+      authConnector = mockAuthConnector,
+      cc = controllerComponents
     )
     mockAuthAction
   }

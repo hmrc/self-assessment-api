@@ -16,14 +16,18 @@
 
 package support
 
-import org.scalatest.{EitherValues, Matchers, WordSpecLike}
+import org.scalatest.EitherValues
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.{HeaderNames, MimeTypes, Status}
+import play.api.mvc.ControllerComponents
+import play.api.test.Helpers.stubControllerComponents
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits, ResultExtractors}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.util.control.NoStackTrace
 
-trait UnitSpec extends WordSpecLike
+trait UnitSpec extends AnyWordSpecLike
   with EitherValues
   with Matchers
   with FutureAwaits
@@ -32,6 +36,8 @@ trait UnitSpec extends WordSpecLike
   with HeaderNames
   with Status
   with MimeTypes {
+
+  lazy val controllerComponents: ControllerComponents = stubControllerComponents()
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 

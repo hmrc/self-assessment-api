@@ -16,7 +16,6 @@
 
 package router.errors
 
-import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json, OWrites}
 
 case class ErrorCode(code: String, message: String){

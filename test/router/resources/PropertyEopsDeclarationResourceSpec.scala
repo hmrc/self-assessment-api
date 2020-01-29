@@ -32,7 +32,8 @@ class PropertyEopsDeclarationResourceSpec extends ResourceSpec
   class Setup {
     val resource = new PropertyEopsDeclarationResource(
       service = mockPropertyEopsDeclarationService,
-      authConnector = mockAuthConnector
+      authConnector = mockAuthConnector,
+      cc = controllerComponents
     )
     mockAuthAction
   }

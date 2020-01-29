@@ -32,7 +32,8 @@ class TaxCalcResourceSpec extends ResourceSpec
   class Setup {
     val resource = new TaxCalcResource(
       service = mockTaxCalcService,
-      authConnector = mockAuthConnector
+      authConnector = mockAuthConnector,
+      cc = controllerComponents
     )
     mockAuthAction
   }

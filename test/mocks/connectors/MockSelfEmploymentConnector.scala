@@ -20,7 +20,6 @@ import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
 import play.api.libs.json.JsValue
-import play.api.mvc.Request
 import router.connectors.SelfEmploymentConnector
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,10 +32,10 @@ trait MockSelfEmploymentConnector extends Mock { _: Suite =>
 
   object MockSelfEmploymentConnector {
     def get(uri: String): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSelfEmploymentConnector.get(eqTo(uri))(any[HeaderCarrier](), any[Request[_]]()))
+      when(mockSelfEmploymentConnector.get(eqTo(uri))(any[HeaderCarrier]()))
     }
     def post(uri: String, body: JsValue): OngoingStubbing[Future[SelfAssessmentOutcome]] = {
-      when(mockSelfEmploymentConnector.post(eqTo(uri), eqTo(body))(any[HeaderCarrier](), any[Request[_]]()))
+      when(mockSelfEmploymentConnector.post(eqTo(uri), eqTo(body))(any[HeaderCarrier]()))
     }
   }
 

@@ -16,22 +16,24 @@
 
 package router.controllers
 
+import controllers.Assets
 import javax.inject.{Inject, Singleton}
-import play.api.http.LazyHttpErrorHandler
+import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
-import play.api.mvc.Action
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import router.definition.SelfAssessmentApiDefinition
 import uk.gov.hmrc.api.controllers.{DocumentationController => HmrcDocumentationController}
 
 @Singleton
-class DocumentationController @Inject()(selfAssessmentApiDefinition: SelfAssessmentApiDefinition)
-  extends HmrcDocumentationController(LazyHttpErrorHandler) {
+class DocumentationController @Inject()(selfAssessmentApiDefinition: SelfAssessmentApiDefinition,
+                                        cc: ControllerComponents, assets: Assets, errorHandler: HttpErrorHandler)
+  extends HmrcDocumentationController(cc, assets, errorHandler) {
 
-  override def definition() = Action {
+  override def definition(): Action[AnyContent] = Action {
     Ok(Json.toJson(selfAssessmentApiDefinition.definition))
   }
 
-  override def conf(version: String, file: String) = {
-    super.at(s"/public/api/conf/$version", file)
+  override def conf(version: String, file: String): Action[AnyContent] = {
+    assets.at(s"/public/api/conf/$version", file)
   }
 }

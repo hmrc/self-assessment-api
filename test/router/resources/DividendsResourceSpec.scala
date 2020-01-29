@@ -33,7 +33,8 @@ class DividendsResourceSpec extends ResourceSpec
   class Setup {
     val resource = new DividendsResource(
       service = mockDividendsService,
-      authConnector = mockAuthConnector
+      authConnector = mockAuthConnector,
+      cc = controllerComponents
     )
     mockAuthAction
   }

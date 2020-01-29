@@ -21,7 +21,6 @@ import mocks.config.MockAppConfig
 import mocks.httpParser.MockSelfAssessmentHttpParser
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
-import play.api.test.FakeRequest
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import support.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
@@ -49,13 +48,12 @@ class SavingsAccountsConnectorSpec extends UnitSpec
   "create" should {
     "return a HttpResponse" when {
       "a successful HttpResponse is returned" in new Setup {
-        val request = FakeRequest("POST", path)
         val response  = HttpResponse(Status.CREATED, Some(Json.obj()))
         val requestJson = Json.obj("test" -> "request json")
 
         MockSelfAssessmentHttpParser.read.returns(Right(response))
         MockHttp.POST[JsValue, SelfAssessmentOutcome](s"$savingsAccountsApiUrl$path", requestJson).returns(Future.successful(Right(response)))
-        await(TestConnector.post(path, requestJson)(hc, request)) shouldBe Right(response)
+        await(TestConnector.post(path, requestJson)(hc)) shouldBe Right(response)
       }
     }
   }
@@ -63,12 +61,11 @@ class SavingsAccountsConnectorSpec extends UnitSpec
   "retrieve" should {
     "return a HttpResponse" when {
       "a successful HttpResponse is returned" in new Setup {
-        val request = FakeRequest("GET", path)
         val response  = HttpResponse(Status.OK, Some(Json.obj()))
 
         MockSelfAssessmentHttpParser.read.returns(Right(response))
         MockHttp.GET[SelfAssessmentOutcome](s"$savingsAccountsApiUrl$path").returns(Future.successful(Right(response)))
-        await(TestConnector.get(path)(hc, request)) shouldBe Right(response)
+        await(TestConnector.get(path)(hc)) shouldBe Right(response)
       }
     }
   }
@@ -76,13 +73,12 @@ class SavingsAccountsConnectorSpec extends UnitSpec
   "amend" should {
     "return a HttpResponse" when {
       "a successful HttpResponse is returned" in new Setup {
-        val request = FakeRequest("PUT", path)
         val response  = HttpResponse(Status.NO_CONTENT)
         val requestJson = Json.obj("test" -> "request json")
 
         MockSelfAssessmentHttpParser.read.returns(Right(response))
         MockHttp.PUT[JsValue, SelfAssessmentOutcome](s"$savingsAccountsApiUrl$path", requestJson).returns(Future.successful(Right(response)))
-        await(TestConnector.put(path, requestJson)(hc, request)) shouldBe Right(response)
+        await(TestConnector.put(path, requestJson)(hc)) shouldBe Right(response)
       }
     }
   }
