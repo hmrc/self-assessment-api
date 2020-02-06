@@ -52,5 +52,6 @@
     <logger name="application" level="WARN"/>
     <logger name="akka" level="WARN"/>
     <logger name="org.eclipse.jetty" level="ERROR"/>
+    <logger name="akka.actor.ActorSystemImpl" level="ERROR"/>
 
 </configuration>

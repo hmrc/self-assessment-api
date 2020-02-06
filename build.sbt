@@ -48,10 +48,11 @@ lazy val microservice = Project(appName, file("."))
   .configs(ItTest)
   .settings(inConfig(ItTest)(Defaults.testSettings): _*)
   .settings(
-    fork in ItTest := false,
+    fork in ItTest := true,
     unmanagedSourceDirectories in ItTest := Seq((baseDirectory in ItTest).value / "it"),
     unmanagedClasspath in ItTest += baseDirectory.value / "resources",
     unmanagedClasspath in Runtime += baseDirectory.value / "resources",
+    javaOptions in ItTest += "-Dlogger.resource=logback-test.xml",
     parallelExecution in ItTest := false,
     addTestReportOption(ItTest, "int-test-reports")
   )
