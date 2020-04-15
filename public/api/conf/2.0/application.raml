@@ -61,7 +61,7 @@ traits:
             type: types.errorResponse
             examples:
               agentNotSubscribed:
-                description: Agent not subscribed to Agent Services
+                description: Agent is not subscribed to Agent Services
                 value:
                   code: AGENT_NOT_SUBSCRIBED
               agentNotAuthorized:
@@ -98,15 +98,15 @@ traits:
             type: types.errorResponse
             examples:
               overlappingPeriod:
-                description: If update period overlaps with any of the existing update periods
+                description: Update period overlaps with any of the existing update periods
                 value:
                   code: OVERLAPPING_PERIOD
               misAlignedPeriod:
-                description: If update period is not within the accounting period
+                description: Update period is not within the accounting period
                 value:
                   code: MISALIGNED_PERIOD
               nonContiguousPeriod:
-                description: If update periods are not contiguous
+                description: Update periods are not contiguous
                 value:
                   code: NOT_CONTIGUOUS_PERIOD
 
@@ -1060,10 +1060,10 @@ traits:
         /periods:
           post:
             displayName: Create a non-FHL UK property update period
-            description: Create a non-FHL UK property update period for submission of periodic data i.e incomes and expenses.
-                         Submissions  which do not include any incomes or expenses are invalid.
-                         You should submit zero values if you do not have incomes or expenses.
-                         <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
+            description: Use this endpoint to create a non-FHL UK property update-period and submit periodic data (incomes and expenses).
+                         Submissions must include incomes and expenses.
+                         If you do not have incomes or expenses, submit zero values.
+                         <br><br><b>A valid payload may contain either expenses or consolidatedExpenses elements.</b>
             (annotations.sandboxData): !include scenarios/stateful-ukp-submit.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, periodBVRs]
             (annotations.scope): "write:self-assessment"
@@ -1083,7 +1083,7 @@ traits:
                 headers:
                   X-CorrelationId:
                     example: 5968c22d620000620096db11
-                    description: Unique id for operation tracking
+                    description: Unique ID for operation-tracking
                   Location:
                     example: /self-assessment/ni/{nino}/uk-properties/{propertyType}/periods/{periodId}
                     description: Location of the resource created
@@ -1101,15 +1101,15 @@ traits:
                         value:
                           code: MANDATORY_FIELD_MISSING
                       invalidDate:
-                        description: Non ISO format date (from and to fields)
+                        description: The from and/or to dates are provided in a non-ISO format
                         value:
                           code: INVALID_DATE
                       invalidPeriod:
-                        description: The period 'to' date is before the period 'from' date or the submission period already exists
+                        description: The provided from date is after the provided to date
                         value:
                           code: INVALID_PERIOD
                       invalidMonetaryAmount:
-                        description: income or expense is not a non-negative amount or up to 2 decimal places
+                        description: income or expense is not a positive amount or up to 2 decimal places
                         value:
                           code: INVALID_MONETARY_AMOUNT
                       noIncomesAndExpenses:
@@ -1750,7 +1750,7 @@ traits:
                                 code: RULE_EARLY_SUBMISSION
                             lateSubmission:
                               description: The period to finalise has passed.
-                              value:
+                              value:AGENT_
                                 code: RULE_LATE_SUBMISSION
                             consolidatedExpenses:
                               description: Consolidated expenses are not allowed if the cumulative turnover amount exceeds the threshold.
