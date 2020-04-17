@@ -5,7 +5,7 @@
   "properties": {
     "amount": {
       "title": "Amount",
-      "description": "Expenses associated with the running of the business - Between 0 and 99999999999.99",
+      "description": "Amount - Between 0 and 99999999999.99",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,
