@@ -15,7 +15,7 @@
     },
     "taxDeducted": {
       "title": "Tax deducted",
-      "description": "Tax taken off any income - Between 0 and 99999999999.99",
+      "description": "Tax taken off rentIncome (applies to non-resident landlords only) - Between 0 and 99999999999.99",
       "type": "number",
       "multipleOf": 0.01,
       "minimum": 0,

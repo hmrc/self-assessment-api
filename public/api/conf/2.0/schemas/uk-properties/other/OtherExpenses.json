@@ -2,11 +2,11 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "title": "Expenses",
-  "description": "Expenses",
+  "description": "Costs associated with the running of your property rental business",
   "properties": {
     "premisesRunningCosts": {
       "title": "Premises running costs",
-      "description": "Rent, rates, insurance, ground rents etc",
+      "description": "Running costs such as rent, rates, insurance and ground rents",
       "$ref": "../../SimpleExpense.json"
     },
     "repairsAndMaintenance": {
@@ -31,7 +31,7 @@
     },
     "other": {
       "title": "Other",
-      "description": "Other allowable property expenses",
+      "description": "Other allowable property expenses, such as stationery, phone and business travel",
       "$ref": "../../SimpleExpense.json"
     },
     "consolidatedExpenses": {

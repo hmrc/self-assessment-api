@@ -61,7 +61,7 @@ traits:
             type: types.errorResponse
             examples:
               agentNotSubscribed:
-                description: Agent not subscribed to Agent Services
+                description: Agent is not subscribed to Agent Services
                 value:
                   code: AGENT_NOT_SUBSCRIBED
               agentNotAuthorized:
@@ -98,15 +98,15 @@ traits:
             type: types.errorResponse
             examples:
               overlappingPeriod:
-                description: If update period overlaps with any of the existing update periods
+                description: Update period overlaps with any of the existing update periods
                 value:
                   code: OVERLAPPING_PERIOD
               misAlignedPeriod:
-                description: If update period is not within the accounting period
+                description: Update period is not within the accounting period
                 value:
                   code: MISALIGNED_PERIOD
               nonContiguousPeriod:
-                description: If update periods are not contiguous
+                description: Update periods are not contiguous
                 value:
                   code: NOT_CONTIGUOUS_PERIOD
 
@@ -262,7 +262,7 @@ traits:
                       notFound:
                         description: Not found. This error returns no response body.
                         value:
-                          code:  
+                          code: ""
         /obligations:
           get:
             displayName: Retrieve self-employment business obligations
@@ -329,7 +329,7 @@ traits:
                       notFound:
                         description: Not found. This error returns no response body.
                         value:
-                          code:  
+                          code: ""
         /periods:
           post:
             displayName: Create a self-employment periodic update
@@ -410,7 +410,7 @@ traits:
                       notFound:
                         description: Not found. This error returns no response body.
                         value:
-                          code:  
+                          code: ""
           get:
             displayName: List all self-employment update periods
             description: List all self-employment update periods.
@@ -445,7 +445,7 @@ traits:
                       notFound:
                         description: Not found. This error returns no response body.
                         value:
-                          code:  
+                          code: ""
           /{periodId}:
             uriParameters:
               periodId:
@@ -491,7 +491,7 @@ traits:
                         notFound:
                           description: Not found. This error returns no response body.
                           value:
-                            code:  
+                            code: ""
             put:
               displayName: Amend a self-employment periodic update
               description: Amend a self-employment periodic update.
@@ -557,7 +557,7 @@ traits:
                         notFound:
                           description: Not found. This error returns no response body.
                           value:
-                            code:  
+                            code: ""
         /{taxYear}:
           uriParameters:
             taxYear:
@@ -652,7 +652,7 @@ traits:
                       notFound:
                         description: Not found. This error returns no response body.
                         value:
-                          code:  
+                          code: ""
           get:
             displayName: Get a self-employment annual summary
             description: Get a self-employment annual summary for a tax year.
@@ -691,10 +691,10 @@ traits:
                       notFound:
                         description: Not found. This error returns no response body.
                         value:
-                          code:  
+                          code: ""
           /income-summary:
              get:
-                displayName:  Get Self-Employment Business Income Source Summary (BISS) [No longer available]
+                displayName: Get Self-Employment Business Income Source Summary (BISS) [No longer available]
                 description: This resource is no longer available. It has been replaced by the <a href="/api-documentation/docs/api/service/self-assessment-biss-api">self-assessment-biss-api</a>.
                 (annotations.sandboxData): !include scenarios/self-employment-biss.md
                 is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
@@ -988,7 +988,7 @@ traits:
                   notFound:
                     description: Not found. This error returns no response body.
                     value:
-                      code:  
+                      code: ""
       /obligations:
         get:
           displayName: Retrieve all UK property business obligations
@@ -1055,15 +1055,13 @@ traits:
                     notFound:
                       description: Not found. This error returns no response body.
                       value:
-                        code:  
+                        code: ""
       /other:
         /periods:
           post:
             displayName: Create a non-FHL UK property update period
-            description: Create a non-FHL UK property update period for submission of periodic data i.e incomes and expenses.
-                         Submissions  which do not include any incomes or expenses are invalid.
-                         You should submit zero values if you do not have incomes or expenses.
-                         <br><br><b>Valid payload may contain either expenses or consolidatedExpenses elements.</b>
+            description: Use this endpoint to create a non-FHL UK property update-period and submit periodic data (incomes and expenses). Submissions must include incomes and expenses. If you do not have incomes or expenses, submit zero values.
+                         <br><br><b>A valid payload may contain either expenses or consolidatedExpenses elements.</b>
             (annotations.sandboxData): !include scenarios/stateful-ukp-submit.md
             is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, periodBVRs]
             (annotations.scope): "write:self-assessment"
@@ -1083,7 +1081,7 @@ traits:
                 headers:
                   X-CorrelationId:
                     example: 5968c22d620000620096db11
-                    description: Unique id for operation tracking
+                    description: Unique ID for operation-tracking
                   Location:
                     example: /self-assessment/ni/{nino}/uk-properties/{propertyType}/periods/{periodId}
                     description: Location of the resource created
@@ -1101,15 +1099,15 @@ traits:
                         value:
                           code: MANDATORY_FIELD_MISSING
                       invalidDate:
-                        description: Non ISO format date (from and to fields)
+                        description: The from and/or to dates are provided in a non-ISO format
                         value:
                           code: INVALID_DATE
                       invalidPeriod:
-                        description: The period 'to' date is before the period 'from' date or the submission period already exists
+                        description: The provided from date is after the provided to date
                         value:
                           code: INVALID_PERIOD
                       invalidMonetaryAmount:
-                        description: income or expense is not a non-negative amount or up to 2 decimal places
+                        description: income or expense is not a positive amount or up to 2 decimal places
                         value:
                           code: INVALID_MONETARY_AMOUNT
                       noIncomesAndExpenses:
@@ -1128,7 +1126,7 @@ traits:
                       notFound:
                         description: Not found. This error returns no response body.
                         value:
-                          code:  
+                          code: ""
           get:
             displayName: List all non-FHL UK property update periods
             description: List all non-FHL UK property update periods.
@@ -1163,7 +1161,7 @@ traits:
                       notFound:
                         description: Not found. This error returns no response body.
                         value:
-                          code:  
+                          code: ""
           /{periodId}:
             uriParameters:
               periodId:
@@ -1210,7 +1208,7 @@ traits:
                         notFound:
                           description: Not found. This error returns no response body.
                           value:
-                            code:  
+                            code: ""
             put:
               displayName: Amend a non-FHL UK property periodic update
               description: Amend a non-FHL UK property periodic update.
@@ -1266,7 +1264,7 @@ traits:
                         notFound:
                           description: Not found. This error returns no response body.
                           value:
-                            code:  
+                            code: ""
         /{taxYear}:
             displayName: Annual Summary
             uriParameters:
@@ -1322,7 +1320,7 @@ traits:
                         notFound:
                           description: Not found. This error returns no response body.
                           value:
-                            code:  
+                            code: ""
             get:
               displayName: Get a non-FHL UK property business annual summary
               description: Get a non-FHL UK property business annual summary for a tax year.
@@ -1361,7 +1359,7 @@ traits:
                         notFound:
                           description: Not found. This error returns no response body.
                           value:
-                            code:  
+                            code: ""
       /furnished-holiday-lettings:
         /periods:
           post:
@@ -1434,7 +1432,7 @@ traits:
                       notFound:
                         description: Not found. This error returns no response body.
                         value:
-                          code:  
+                          code: ""
           get:
             displayName: List all FHL UK property update periods
             description: List all FHL UK property update periods.
@@ -1469,7 +1467,7 @@ traits:
                       notFound:
                         description: Not found. This error returns no response body.
                         value:
-                          code:  
+                          code: ""
           /{periodId}:
             uriParameters:
               periodId:
@@ -1516,7 +1514,7 @@ traits:
                         notFound:
                           description: Not found. This error returns no response body.
                           value:
-                            code:  
+                            code: ""
             put:
               displayName: Amend a FHL UK property periodic update
               description: Amend a FHL UK property periodic update.
@@ -1576,7 +1574,7 @@ traits:
                         notFound:
                           description: Not found. This error returns no response body.
                           value:
-                            code:  
+                            code: ""
         /{taxYear}:
             displayName: Annual Summary
             uriParameters:
@@ -1636,7 +1634,7 @@ traits:
                         notFound:
                           description: Not found. This error returns no response body.
                           value:
-                            code:  
+                            code: ""
             get:
               displayName: Get a FHL UK property business annual summary
               description: Get a FHL UK property business annual summary for a tax year.
@@ -1675,7 +1673,7 @@ traits:
                         notFound:
                           description: Not found. This error returns no response body.
                           value:
-                            code:  
+                            code: ""
       /end-of-period-statements:
         /from:
           /{start}:

@@ -22,15 +22,15 @@
         </tr>
         <tr>
             <td><p>AGENT_NOT_SUBSCRIBED</p></td>
-            <td><p>Simulate agent subscription check failure</p></td>
+            <td><p>Simulates the scenario where the agent is not subscribed to Agent Services</p></td>
         </tr>
         <tr>
             <td><p>AGENT_NOT_AUTHORIZED</p></td>
-            <td><p>Simulate agent is not authorized by the client to act on their behalf</p></td>
+            <td><p>Simulates the scenario where the agent is not authorized by the client to act on their behalf</p></td>
         </tr>
         <tr>
             <td><p>CLIENT_NOT_SUBSCRIBED</p></td>
-            <td><p>Simulate client subscription to MTD check failure</p></td>
+            <td><p>Simulates the scenario where the client is not subscribed to Making Tax Digital</p></td>
         </tr>
         <tr>
             <td><p>NOT_FOUND</p></td>
