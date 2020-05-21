@@ -804,6 +804,10 @@ traits:
                           application/json:
                             type: types.errorResponse
                             examples:
+                              nonMatchingPeriod:
+                                description: An End of Period Statement without a matching accounting period cannot be submitted.
+                                  value:
+                                    code: RULE_NON_MATCHING_PERIOD
                               notFinalised:
                                 description: Statement not declared as finalised.
                                 value:
@@ -1734,6 +1738,10 @@ traits:
                         application/json:
                           type: types.errorResponse
                           examples:
+                            nonMatchingPeriod:
+                              description: An End of Period Statement without a matching accounting period cannot be submitted.
+                                value:
+                                  code: RULE_NON_MATCHING_PERIOD
                             notFinalised:
                               description: Statement not declared as finalised.
                               value:
