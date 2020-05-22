@@ -20,6 +20,10 @@
             <td><p>Simulates an error where the declaration has already been submitted.</p></td>
         </tr>
         <tr>
+            <td><p>NON_MATCHING_PERIOD</p></td>
+            <td><p>Simulates an error where the declaration has been submitted against a non matching accounting period.</p></td>
+        </tr>
+        <tr>
             <td><p>RULE_EARLY_SUBMISSION</p></td>
             <td><p>Simulates an error where a submission is made before the end of your accounting period.</p></td>
         </tr>
