@@ -59,6 +59,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     resolvers += Resolver.jcenterRepo
   )
+  .disablePlugins(JUnitXmlReportPlugin)
   .settings(PlayKeys.playDefaultPort := 9666)
   .settings(
     // from https://github.com/playframework/playframework/issues/7382#issuecomment-444062750
