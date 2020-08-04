@@ -186,15 +186,6 @@ traits:
                     description: Invalid postcode
                     value:
                       code: INVALID_POSTCODE
-          403:
-            body:
-              application/json:
-                type: types.errorResponse
-                examples:
-                  tooManySources:
-                    description: Adding 2nd SE business
-                    value:
-                      code: TOO_MANY_SOURCES
       get:
         displayName: List all self-employment businesses
         description: List all self-employment businesses
