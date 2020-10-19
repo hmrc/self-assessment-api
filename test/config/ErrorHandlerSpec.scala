@@ -16,8 +16,9 @@
 
 package config
 
+import java.time.Instant
+
 import mocks.Mock
-import org.joda.time.DateTime
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Configuration
@@ -63,7 +64,7 @@ class ErrorHandlerSpec extends UnitSpec with Mock with GuiceOneAppPerSuite {
       eventId = "",
       tags = eventTags,
       detail = Map("test" -> "test"),
-      generatedAt = DateTime.now()
+      generatedAt = Instant.now()
     )
 
     def mockAuditCall(expectedAuditType: String) = {
