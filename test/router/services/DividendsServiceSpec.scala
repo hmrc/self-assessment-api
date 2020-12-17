@@ -47,7 +47,7 @@ class DividendsServiceSpec extends UnitSpec
     "return a HttpResponse" when {
       "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(204)
+        val response = HttpResponse(204, None.orNull)
 
         MockDividendsConnector.put(s"/$VERSION_2${request.uri}", requestBody)
           .returns(Future.successful(Right(response)))
@@ -96,7 +96,7 @@ class DividendsServiceSpec extends UnitSpec
 
 
         val correlationId = "X-123"
-        val httpResponse = HttpResponse(OK, Some(body), Map("CorrelationId" -> Seq(correlationId)))
+        val httpResponse = HttpResponse(OK, body.toString(), Map("CorrelationId" -> Seq(correlationId)))
 
         MockDividendsConnector.get(s"/$VERSION_2${request.uri}")
           .returns(Future.successful(Right(httpResponse)))

@@ -49,7 +49,7 @@ class PropertyConnectorSpec extends UnitSpec
   "get" should {
     "return a HttpResponse" when {
       "a successful HttpResponse is returned" in new Setup {
-        val response  = HttpResponse(Status.OK, Some(Json.obj()))
+        val response  = HttpResponse(Status.OK, Json.obj().toString())
 
         MockSelfAssessmentHttpParser.read.returns(Right(response))
         MockHttp.GET[SelfAssessmentOutcome](s"$propertyUrl$path").returns(Future.successful(Right(response)))
@@ -61,7 +61,7 @@ class PropertyConnectorSpec extends UnitSpec
   "post" should {
     "return an HttpResponse" when {
       "a successful HttpResponse with no content is returned" in new Setup {
-        val response = HttpResponse(Status.NO_CONTENT)
+        val response = HttpResponse(Status.NO_CONTENT, None.orNull)
         val requestJson = Json.obj("test" -> "request json")
 
         MockHttp.POST[JsValue, SelfAssessmentOutcome](s"$propertyUrl$path", requestJson).returns(Future.successful(Right(response)))

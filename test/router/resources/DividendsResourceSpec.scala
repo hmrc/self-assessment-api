@@ -43,7 +43,7 @@ class DividendsResourceSpec extends ResourceSpec
     "return status 204 with the response headers" when {
       "the service returns a HttpResponse containing status 204 with no body" in new Setup {
         MockDividendsService.put(requestJson)
-          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, None, testHeaderResponse))))
+          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, "", testHeaderResponse))))
 
         private val result = resource.put("nino", "taxYear")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NO_CONTENT
@@ -88,7 +88,7 @@ class DividendsResourceSpec extends ResourceSpec
              |}""".stripMargin
         )
 
-        val httpResponse = HttpResponse(OK, Some(body), testHeaderResponse)
+        val httpResponse = HttpResponse(OK, body.toString(), testHeaderResponse)
 
         MockDividendsService.get()
           .returns(Future.successful(Right(httpResponse)))

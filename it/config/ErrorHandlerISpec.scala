@@ -8,7 +8,7 @@ import play.api.libs.json.{JsValue, Json, OFormat}
 import router.errors.ErrorCode
 import router.services.SavingsAccountService
 import support.IntegrationSpec
-import uk.gov.hmrc.play.bootstrap.http.ErrorResponse
+import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
 
 import scala.util.control.NoStackTrace
 

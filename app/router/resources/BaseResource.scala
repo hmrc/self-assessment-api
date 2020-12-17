@@ -23,7 +23,7 @@ import play.api.mvc.{ActionBuilder, AnyContent, BodyParser, ControllerComponents
 import router.errors.{ErrorCode, IncorrectAPIVersion, SelfAssessmentAPIError, UnsupportedAPIVersion}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisationException, AuthorisedFunctions, InvalidBearerToken}
 import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Success, Try}
@@ -57,10 +57,10 @@ class BaseResource @Inject()(cc: ControllerComponents, connector: AuthConnector)
     Try(apiResponse.json) match {
       case Success(_: JsValue) =>
         new Status(apiResponse.status)(apiResponse.json)
-          .withHeaders(toSimpleHeaders(apiResponse.allHeaders):_*)
+          .withHeaders(toSimpleHeaders(apiResponse.headers):_*)
       case _ =>
         new Status(apiResponse.status)
-          .withHeaders(toSimpleHeaders(apiResponse.allHeaders):_*)
+          .withHeaders(toSimpleHeaders(apiResponse.headers):_*)
     }
   }
 

@@ -48,7 +48,7 @@ class SavingsAccountsConnectorSpec extends UnitSpec
   "create" should {
     "return a HttpResponse" when {
       "a successful HttpResponse is returned" in new Setup {
-        val response  = HttpResponse(Status.CREATED, Some(Json.obj()))
+        val response  = HttpResponse(Status.CREATED, Json.obj().toString())
         val requestJson = Json.obj("test" -> "request json")
 
         MockSelfAssessmentHttpParser.read.returns(Right(response))
@@ -61,7 +61,7 @@ class SavingsAccountsConnectorSpec extends UnitSpec
   "retrieve" should {
     "return a HttpResponse" when {
       "a successful HttpResponse is returned" in new Setup {
-        val response  = HttpResponse(Status.OK, Some(Json.obj()))
+        val response  = HttpResponse(Status.OK, Json.obj().toString())
 
         MockSelfAssessmentHttpParser.read.returns(Right(response))
         MockHttp.GET[SelfAssessmentOutcome](s"$savingsAccountsApiUrl$path").returns(Future.successful(Right(response)))
@@ -73,7 +73,7 @@ class SavingsAccountsConnectorSpec extends UnitSpec
   "amend" should {
     "return a HttpResponse" when {
       "a successful HttpResponse is returned" in new Setup {
-        val response  = HttpResponse(Status.NO_CONTENT)
+        val response  = HttpResponse(Status.NO_CONTENT, None.orNull)
         val requestJson = Json.obj("test" -> "request json")
 
         MockSelfAssessmentHttpParser.read.returns(Right(response))

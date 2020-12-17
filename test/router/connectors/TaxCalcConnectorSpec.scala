@@ -49,7 +49,7 @@ class TaxCalcConnectorSpec extends UnitSpec
   "get" should {
     "return a HttpResponse" when {
       "a successful HttpResponse is returned" in new Setup {
-        val response  = HttpResponse(Status.OK, Some(Json.obj()))
+        val response  = HttpResponse(Status.OK, Json.obj().toString())
 
         MockSelfAssessmentHttpParser.read.returns(Right(response))
         MockHttp.GET[SelfAssessmentOutcome](s"$taxCalcUrl$path").returns(Future.successful(Right(response)))

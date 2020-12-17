@@ -55,7 +55,7 @@ class CrystallisationServiceSpec extends UnitSpec
     "return a HttpResponse" when {
       "the request contains a version 2 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(204)
+        val response = HttpResponse(204, None.orNull)
 
         MockCrystallisationConnector.post(s"/$VERSION_2${request.uri}", requestBody)
           .returns(Future.successful(Right(response)))
@@ -96,7 +96,7 @@ class CrystallisationServiceSpec extends UnitSpec
     "return a HttpResponse" when {
       "the request contains a version 2 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(204)
+        val response = HttpResponse(204, None.orNull)
 
         MockCrystallisationConnector.postEmpty(s"/$VERSION_2${request.uri}")
           .returns(Future.successful(Right(response)))
@@ -163,7 +163,7 @@ class CrystallisationServiceSpec extends UnitSpec
 
       "the request contains a version 1.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockSelfAssessmentConnector.get(request.uri)
           .returns(Future.successful(Right(response)))
@@ -176,7 +176,7 @@ class CrystallisationServiceSpec extends UnitSpec
 
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
 
-        val httpResponse = HttpResponse(OK, Some(body))
+        val httpResponse = HttpResponse(OK, body.toString())
 
         MockCrystallisationConnector.get(s"/$VERSION_2${request.uri}")
           .returns(Future.successful(Right(httpResponse)))

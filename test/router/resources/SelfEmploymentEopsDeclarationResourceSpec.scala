@@ -44,7 +44,7 @@ class SelfEmploymentEopsDeclarationResourceSpec extends ResourceSpec
     "return a 204 with the response headers" when {
       "the service returns a HttpResponse containing a 204 with no json response body" in new Setup {
         MockSelfEmploymentEopsDeclarationService.post()
-          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, None, testHeaderResponse))))
+          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, "", testHeaderResponse))))
 
         val result: Future[Result] = resource.post("","","","")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NO_CONTENT
@@ -56,7 +56,7 @@ class SelfEmploymentEopsDeclarationResourceSpec extends ResourceSpec
     "return a 200 with a json response body and response headers" when {
       "the service returns a HttpResponse containing a 200 with a json response body" in new Setup {
         MockSelfEmploymentEopsDeclarationService.post()
-          .returns(Future.successful(Right(HttpResponse(OK, Some(responseJson), testHeaderResponse))))
+          .returns(Future.successful(Right(HttpResponse(OK, responseJson.toString(), testHeaderResponse))))
 
         val result: Future[Result] = resource.post("","","","")(FakeRequest().withBody(requestJson))
         status(result) shouldBe OK

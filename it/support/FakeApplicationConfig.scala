@@ -22,7 +22,7 @@ trait FakeApplicationConfig { _: WireMockConfig =>
 
   val fakeApplicationConfig: Map[String, Any] = Map(
     "auditing.enabled" -> false,
-    "httpHeadersWhitelist" -> Seq("Accept"),
+    "bootstrap.http.headersAllowlist" -> Seq("Accept"),
     "internalServiceHostPatterns" -> Seq("localhost"),
     "appUrl" -> "test-self-assessment-api-router",
     "microservice.services.service-locator.enabled" -> false,

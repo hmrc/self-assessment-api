@@ -44,7 +44,7 @@ class ReleaseTwoResourceSpec extends ResourceSpec
     "return a 201 with the response headers" when {
       "the service returns a HttpResponse containing a 201 with no json response body" in new Setup {
         MockReleaseTwoService.create(requestJson)
-          .returns(Future.successful(Right(HttpResponse(CREATED, None, testHeaderResponse))))
+          .returns(Future.successful(Right(HttpResponse(CREATED, "", testHeaderResponse))))
 
         val result: Future[Result] = resource.create("")(FakeRequest().withBody(requestJson))
         status(result) shouldBe CREATED
@@ -81,7 +81,7 @@ class ReleaseTwoResourceSpec extends ResourceSpec
     "return a 200 with the response headers" when {
       "the service returns a HttpResponse containing a 200 with no json response body" in new Setup {
         MockReleaseTwoService.get()
-          .returns(Future.successful(Right(HttpResponse(OK, None, testHeaderResponse))))
+          .returns(Future.successful(Right(HttpResponse(OK, "", testHeaderResponse))))
 
         val result: Future[Result] = resource.get("", "")(FakeRequest())
         status(result) shouldBe OK
@@ -119,7 +119,7 @@ class ReleaseTwoResourceSpec extends ResourceSpec
     "return a 204 with the response headers" when {
       "the service returns a HttpResponse containing a 204 with no json response body" in new Setup {
         MockReleaseTwoService.amend(requestJson)
-          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, None, testHeaderResponse))))
+          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, "", testHeaderResponse))))
 
         val result: Future[Result] = resource.update("", "")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NO_CONTENT

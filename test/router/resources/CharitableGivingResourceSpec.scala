@@ -43,7 +43,7 @@ class CharitableGivingResourceSpec extends ResourceSpec
     "return a 204 with the response headers" when {
       "the service returns a HttpResponse containing a 204 with no json response body" in new Setup {
         MockCharitableGivingService.put(requestJson)
-          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, None, testHeaderResponse))))
+          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, "", testHeaderResponse))))
 
         private val result = resource.put("", "")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NO_CONTENT
@@ -101,7 +101,7 @@ class CharitableGivingResourceSpec extends ResourceSpec
              |}""".stripMargin
         )
 
-        val httpResponse = HttpResponse(OK, Some(body), testHeaderResponse)
+        val httpResponse = HttpResponse(OK, body.toString(), testHeaderResponse)
 
         MockCharitableGivingService.get()
           .returns(Future.successful(Right(httpResponse)))

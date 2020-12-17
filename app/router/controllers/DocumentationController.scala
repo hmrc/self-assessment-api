@@ -22,18 +22,18 @@ import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import router.definition.SelfAssessmentApiDefinition
-import uk.gov.hmrc.api.controllers.{DocumentationController => HmrcDocumentationController}
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 @Singleton
 class DocumentationController @Inject()(selfAssessmentApiDefinition: SelfAssessmentApiDefinition,
                                         cc: ControllerComponents, assets: Assets, errorHandler: HttpErrorHandler)
-  extends HmrcDocumentationController(cc, assets, errorHandler) {
+  extends BackendController(cc) {
 
-  override def definition(): Action[AnyContent] = Action {
+  def definition(): Action[AnyContent] = Action {
     Ok(Json.toJson(selfAssessmentApiDefinition.definition))
   }
 
-  override def conf(version: String, file: String): Action[AnyContent] = {
+  def conf(version: String, file: String): Action[AnyContent] = {
     assets.at(s"/public/api/conf/$version", file)
   }
 }
