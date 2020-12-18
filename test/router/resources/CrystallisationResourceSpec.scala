@@ -42,7 +42,7 @@ class CrystallisationResourceSpec extends ResourceSpec
     "return a 204 with response headers" when {
       "the service returns a HttpResponse containing a 204 with no json response body" in new Setup {
         MockCrystallisationService.post(requestJson)
-          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, None, testHeaderResponse))))
+          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, "", testHeaderResponse))))
 
         private val result = resource.post("", "")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NO_CONTENT
@@ -82,7 +82,7 @@ class CrystallisationResourceSpec extends ResourceSpec
       "the service returns a HttpResponse containing a 303 with no json response body" must {
         "return a 303 with response headers" in new Setup {
           MockCrystallisationService.post(requestJson)
-            .returns(Future.successful(Right(HttpResponse(SEE_OTHER, None, testHeaderResponse))))
+            .returns(Future.successful(Right(HttpResponse(SEE_OTHER, "", testHeaderResponse))))
 
           val result = resource.intent("", "")(
             FakeRequest().withBody(requestJson).withHeaders(ACCEPT -> "application/vnd.hmrc.1.0+json"))
@@ -124,7 +124,7 @@ class CrystallisationResourceSpec extends ResourceSpec
       "the service returns a HttpResponse containing a 303 with no json response body" must {
         "return a 303 with response headers" in new Setup {
           MockCrystallisationService.postEmpty
-            .returns(Future.successful(Right(HttpResponse(SEE_OTHER, None, testHeaderResponse))))
+            .returns(Future.successful(Right(HttpResponse(SEE_OTHER, "", testHeaderResponse))))
 
           val result = resource.intent("", "")()(
             FakeRequest().withBody(JsNull).withHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
@@ -219,7 +219,7 @@ class CrystallisationResourceSpec extends ResourceSpec
     "return a response with status 200, with a header body containing an obligations" when {
       "the service returns a 200 HttpResponse containing a 200 and a response body" in new Setup {
 
-        val httpResponse = HttpResponse(OK, Some(body), testHeaderResponse)
+        val httpResponse = HttpResponse(OK, body.toString(), testHeaderResponse)
         MockCrystallisationService.get()
           .returns(Future.successful(Right(httpResponse)))
 

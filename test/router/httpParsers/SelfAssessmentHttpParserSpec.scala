@@ -31,24 +31,24 @@ class SelfAssessmentHttpParserSpec extends UnitSpec {
       val testJson = Json.toJson(s"""{"testKey":"testValue"}""")
 
       "self-assessment returns a 200 (OK) response" in {
-        val response = HttpResponse(Status.OK, Some(testJson))
-        val result  = httpParser.read("GET", "/", response).right.value
+        val response = HttpResponse(Status.OK, testJson.toString())
+        val result  = httpParser.read("GET", "/", response).value
 
         result shouldBe response
         result.status shouldBe Status.OK
         result.body shouldBe testJson.toString
       }
       "self-assessment returns a 500 (InternalServerError)" in {
-        val response = HttpResponse(Status.INTERNAL_SERVER_ERROR, Some(testJson))
-        val result = httpParser.read("GET", "/any-url", response).right.value
+        val response = HttpResponse(Status.INTERNAL_SERVER_ERROR, testJson.toString())
+        val result = httpParser.read("GET", "/any-url", response).value
 
         result shouldBe response
         result.status shouldBe Status.INTERNAL_SERVER_ERROR
         result.body shouldBe testJson.toString
       }
       "self-assessment returns a 400 (BadRequest)" in {
-        val response = HttpResponse(Status.BAD_REQUEST, Some(testJson))
-        val result = httpParser.read("GET", "/any/url", response).right.value
+        val response = HttpResponse(Status.BAD_REQUEST, testJson.toString())
+        val result = httpParser.read("GET", "/any/url", response).value
 
         result shouldBe response
         result.status shouldBe Status.BAD_REQUEST

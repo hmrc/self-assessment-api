@@ -31,7 +31,7 @@ import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
-import uk.gov.hmrc.play.bootstrap.http.JsonErrorHandler
+import uk.gov.hmrc.play.bootstrap.backend.http.JsonErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -93,8 +93,8 @@ class ErrorHandler @Inject()(
           case _: AuthorisationException => (UNAUTHORIZED, unauthorisedError, "ClientError")
           case _: JsValidationException => (BAD_REQUEST, invalidRequest, "ServerValidationError")
           case e: HttpException => (e.responseCode, invalidRequest, "ServerValidationError")
-          case e: Upstream4xxResponse => (e.reportAs, invalidRequest, "ServerValidationError")
-          case e: Upstream5xxResponse => (e.reportAs, internalServerError, "ServerInternalError")
+          case e: UpstreamErrorResponse if UpstreamErrorResponse.Upstream4xxResponse.unapply(e).isDefined => (e.reportAs, invalidRequest, "ServerValidationError")
+          case e: UpstreamErrorResponse if UpstreamErrorResponse.Upstream5xxResponse.unapply(e).isDefined => (e.reportAs, internalServerError, "ServerInternalError")
           case _ => (INTERNAL_SERVER_ERROR, internalServerError, "ServerInternalError")
         }
 

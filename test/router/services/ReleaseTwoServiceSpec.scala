@@ -46,7 +46,7 @@ class ReleaseTwoServiceSpec extends UnitSpec
 
       "the request contains a version 1.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockSelfAssessmentConnector.post(s"/r2${request.uri}", requestBody)
           .returns(Future.successful(Right(response)))
@@ -57,7 +57,7 @@ class ReleaseTwoServiceSpec extends UnitSpec
 
       "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
 
         MockSelfAssessmentConnector.post(s"/r2${request.uri}", requestBody)
@@ -96,7 +96,7 @@ class ReleaseTwoServiceSpec extends UnitSpec
 
       "the request contains a version 1.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockSelfAssessmentConnector.get(s"/r2${request.uri}")
           .returns(Future.successful(Right(response)))
@@ -107,7 +107,7 @@ class ReleaseTwoServiceSpec extends UnitSpec
 
       "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockSelfAssessmentConnector.get(s"/r2${request.uri}")
           .returns(Future.successful(Right(response)))
@@ -145,7 +145,7 @@ class ReleaseTwoServiceSpec extends UnitSpec
 
       "the request contains a version 1.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockSelfAssessmentConnector.put(s"/r2${request.uri}", requestBody)
           .returns(Future.successful(Right(response)))
@@ -156,7 +156,7 @@ class ReleaseTwoServiceSpec extends UnitSpec
 
       "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockSelfAssessmentConnector.put(s"/r2${request.uri}", requestBody)
           .returns(Future.successful(Right(response)))
@@ -193,7 +193,7 @@ class ReleaseTwoServiceSpec extends UnitSpec
 
       "the request contains a version 1.0 header and release-2 config is enabled" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockSelfAssessmentConnector.get(s"/r2${request.uri}")
           .returns(Future.successful(Right(response)))
@@ -205,7 +205,7 @@ class ReleaseTwoServiceSpec extends UnitSpec
 
       "the request contains a version 2.0 header and release-2 config is enabled" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockSelfAssessmentConnector.get(s"/r2${request.uri}")
           .returns(Future.successful(Right(response)))

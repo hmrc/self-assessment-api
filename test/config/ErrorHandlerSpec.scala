@@ -33,8 +33,8 @@ import uk.gov.hmrc.http.{HeaderCarrier, JsValidationException, NotFoundException
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
 import uk.gov.hmrc.play.audit.model.DataEvent
+import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
-import uk.gov.hmrc.play.bootstrap.http.ErrorResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -79,7 +79,11 @@ class ErrorHandlerSpec extends UnitSpec with Mock with GuiceOneAppPerSuite {
     when(auditConnector.sendEvent(any[DataEvent]())(any[HeaderCarrier](), any[ExecutionContext]()))
       .thenReturn(Future.successful(Success))
 
-    val configuration = Configuration("appName" -> "myApp")
+    val configuration = Configuration(
+      "appName" -> "myApp",
+      "bootstrap.errorHandler.warnOnly.statusCodes" -> List.empty
+    )
+
     val handler = new ErrorHandler(configuration, auditConnector, httpAuditEvent)
   }
 

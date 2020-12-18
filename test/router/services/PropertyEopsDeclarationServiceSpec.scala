@@ -43,7 +43,7 @@ class PropertyEopsDeclarationServiceSpec extends UnitSpec
     "return a HttpResponse" when {
       "the request contains a version 2.0 header" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockPropertyConnector.post("/2.0"+request.uri, requestBody)
           .returns(Future.successful(Right(response)))

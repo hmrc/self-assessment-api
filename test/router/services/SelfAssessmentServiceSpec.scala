@@ -40,7 +40,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
     "return a HttpResponse" when {
       "the request contains a version 1.0 header and the connector preforms a successful get" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockSelfAssessmentConnector.get(request.uri)
           .returns(Future.successful(Right(response)))
@@ -51,7 +51,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
 
       "the request contains a version 2.0 header and the connector preforms a successful get" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockSelfAssessmentConnector.get(request.uri)
           .returns(Future.successful(Right(response)))
@@ -87,7 +87,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
     "return a HttpResponse" when {
       "the request contains a version 1.0 header and the connector preforms a successful post" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockSelfAssessmentConnector.post(request.uri, requestBody)
           .returns(Future.successful(Right(response)))
@@ -98,7 +98,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
 
       "the request contains a version 2.0 header and the connector preforms a successful post" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockSelfAssessmentConnector.post(request.uri, requestBody)
           .returns(Future.successful(Right(response)))
@@ -134,7 +134,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
     "return a HttpResponse" when {
       "the request contains a version 1.0 header and the connector preforms a successful post" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.1.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockSelfAssessmentConnector.put(request.uri, requestBody)
           .returns(Future.successful(Right(response)))
@@ -145,7 +145,7 @@ class SelfAssessmentServiceSpec extends UnitSpec
 
       "the request contains a version 2.0 header and the connector preforms a successful post" in new Setup {
         implicit val hc = HeaderCarrier(extraHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-        val response = HttpResponse(200)
+        val response = HttpResponse(200, None.orNull)
 
         MockSelfAssessmentConnector.put(request.uri, requestBody)
           .returns(Future.successful(Right(response)))

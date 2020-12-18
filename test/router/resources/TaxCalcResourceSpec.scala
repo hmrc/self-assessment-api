@@ -42,7 +42,7 @@ class TaxCalcResourceSpec extends ResourceSpec
     "return a 200 with the response headers" when {
       "the service returns a HttpResponse containing a 200 with no json response body" in new Setup {
         MockTaxCalcService.get()
-          .returns(Future.successful(Right(HttpResponse(OK, None, testHeaderResponse))))
+          .returns(Future.successful(Right(HttpResponse(OK, "", testHeaderResponse))))
 
         val result: Future[Result] = resource.get("","")(FakeRequest())
         status(result) shouldBe OK
@@ -54,7 +54,7 @@ class TaxCalcResourceSpec extends ResourceSpec
     "return a 200 with a json response body and response headers" when {
       "the service returns a HttpResponse containing a 200 with a json response body" in new Setup {
         MockTaxCalcService.get()
-          .returns(Future.successful(Right(HttpResponse(OK, Some(responseJson), testHeaderResponse))))
+          .returns(Future.successful(Right(HttpResponse(OK, responseJson.toString(), testHeaderResponse))))
 
         val result: Future[Result] = resource.get("","")(FakeRequest())
         status(result) shouldBe OK

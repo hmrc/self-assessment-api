@@ -47,7 +47,7 @@ class CharitableGivingResourceISpec extends IntegrationSpec {
   val correlationId = "X-123"
   val testHeader = Map("X-CorrelationId" -> Seq(correlationId), "X-Content-Type-Options" -> Seq("nosniff"))
 
-  val httpResponse = HttpResponse(OK, Some(body), testHeader)
+  val httpResponse = HttpResponse(OK, body.toString(), testHeader)
 
   "GET Charitable Giving annuals with release-2 enabled" should {
 

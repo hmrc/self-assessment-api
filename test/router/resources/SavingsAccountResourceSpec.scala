@@ -47,7 +47,7 @@ class SavingsAccountResourceSpec extends ResourceSpec
         val response: JsObject = Json.obj("id" -> "SAVKB2UVwUTBQGJ")
 
         MockSavingsAccountService.post(request)
-          .returns(Future.successful(Right(HttpResponse(CREATED, Some(response), testHeaderResponse))))
+          .returns(Future.successful(Right(HttpResponse(CREATED, response.toString(), testHeaderResponse))))
 
         private val result = resource.post("nino", "taxYear")(FakeRequest().withBody(request))
         status(result) shouldBe CREATED
@@ -101,7 +101,7 @@ class SavingsAccountResourceSpec extends ResourceSpec
              |}""".stripMargin
         )
 
-        val httpResponse = HttpResponse(OK, Some(body), testHeaderResponse)
+        val httpResponse = HttpResponse(OK, body.toString(), testHeaderResponse)
 
         MockSavingsAccountService.get()
           .returns(Future.successful(Right(httpResponse)))
@@ -143,7 +143,7 @@ class SavingsAccountResourceSpec extends ResourceSpec
     "return a 204 with the response headers" when {
       "the service returns a HttpResponse containing a 204 with no json response body" in new Setup {
         MockSavingsAccountService.put(requestJson)
-          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, None, testHeaderResponse))))
+          .returns(Future.successful(Right(HttpResponse(NO_CONTENT, "", testHeaderResponse))))
 
         private val result = resource.put("", "")(FakeRequest().withBody(requestJson))
         status(result) shouldBe NO_CONTENT
