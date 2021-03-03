@@ -17,10 +17,12 @@
 package router.definition
 
 import config.{AppConfig, FeatureSwitch}
+
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import router.definition.APIStatus.APIStatus
 import router.constants.Versions._
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 @Singleton
 class SelfAssessmentApiDefinition @Inject()(appConfig: AppConfig) {
@@ -28,18 +30,22 @@ class SelfAssessmentApiDefinition @Inject()(appConfig: AppConfig) {
   private val readScope = "read:self-assessment"
   private val writeScope = "write:self-assessment"
 
+  def confidenceLevel: ConfidenceLevel = if (appConfig.confidenceLevelDefinitionConfig) ConfidenceLevel.L200 else ConfidenceLevel.L50
+
   lazy val definition: Definition =
     Definition(
       scopes = Seq(
         Scope(
           key = readScope,
           name = "View your Self Assessment information",
-          description = "Allow read access to self assessment data"
+          description = "Allow read access to self assessment data",
+          confidenceLevel = confidenceLevel
         ),
         Scope(
           key = writeScope,
           name = "Change your Self Assessment information",
-          description = "Allow write access to self assessment data"
+          description = "Allow write access to self assessment data",
+          confidenceLevel = confidenceLevel
         )
       ),
       api = APIDefinition(

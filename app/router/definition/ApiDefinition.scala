@@ -19,6 +19,7 @@ package router.definition
 import play.api.libs.json.{Format, Json}
 import router.definition.APIStatus.APIStatus
 import router.enums.EnumJson
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 
 case class Access(`type`: String, whitelistedApplicationIds: Seq[String])
@@ -77,7 +78,8 @@ object APIDefinition {
 
 case class Scope(key: String,
                  name: String,
-                 description: String)
+                 description: String,
+                 confidenceLevel: ConfidenceLevel)
 
 object Scope {
   implicit val formatScope = Json.format[Scope]
