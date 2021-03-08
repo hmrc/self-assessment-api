@@ -16,9 +16,10 @@
 
 package config
 
-import javax.inject.{Inject, Singleton}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AppConfig @Inject()(val environment: Environment,
@@ -26,22 +27,36 @@ class AppConfig @Inject()(val environment: Environment,
                           config: ServicesConfig) {
 
   def appName: String = config.getString("appName")
+
   def appUrl: String = config.getString("appUrl")
+
   def registrationEnabled: Boolean = config.getBoolean("microservice.services.service-locator.enabled")
 
   def featureSwitch: Option[Configuration] = configuration.getOptional[Configuration](s"feature-switch")
+
   def apiStatus(version: String): String = config.getString(s"api.$version.status")
+
   def apiGatewayContext: String = config.getString("api.gateway.context")
+
+  def confidenceLevelDefinitionConfig: Boolean = config.getBoolean(s"api.confidence-level-check.definition.enabled")
 
   //Services
   def saApiUrl: String = config.baseUrl("self-assessment-api")
+
   def cgApiUrl: String = config.baseUrl("mtd-charitable-giving")
+
   def taxCalcUrl: String = config.baseUrl("mtd-tax-calculation")
+
   def propertyUrl: String = config.baseUrl("mtd-property-api")
+
   def selfEmploymentUrl: String = config.baseUrl("mtd-self-employment")
+
   def release2Enabled: Boolean = config.getBoolean("release-2.enabled")
+
   def dividendsApiUrl: String = config.baseUrl("mtd-dividends-income")
+
   def savingsAccountApiUrl: String = config.baseUrl("mtd-savings-accounts")
+
   def crystallisationApiUrl: String = config.baseUrl("mtd-crystallisation")
 
 }

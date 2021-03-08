@@ -43,9 +43,8 @@
     </appender>
 
 
-    <root level="OFF">
-        <appender-ref ref="ASYNC_FILE"/>
-        <appender-ref ref="ASYNC_STDOUT"/>
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
     </root>
 
 

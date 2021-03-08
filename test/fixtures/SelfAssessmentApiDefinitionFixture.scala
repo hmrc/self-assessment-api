@@ -18,12 +18,14 @@ package fixtures
 
 import play.api.libs.json.Json
 import router.definition._
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 object SelfAssessmentApiDefinitionFixture {
 
   private val scopeKey = "test-scope"
   private val scopeName = "test scope name"
   private val scopeDescription = "test scope description"
+  private val confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200
 
   private val apiName = "test api name"
   private val apiDescription = "test api description"
@@ -46,7 +48,8 @@ object SelfAssessmentApiDefinitionFixture {
       Scope(
         key = scopeKey,
         name = scopeName,
-        description = scopeDescription
+        description = scopeDescription,
+        confidenceLevel
       )
     ),
     api = APIDefinition(
