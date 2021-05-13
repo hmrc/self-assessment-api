@@ -22,7 +22,7 @@ import support.IntegrationSpec
 class TaxCalcResourceISpec extends IntegrationSpec {
 
   val jsonRequest: JsObject = Json.obj("test" -> "json request")
-  val jsonResponse: JsObject = Json.obj("test" -> "json response")
+  val jsonResponse: JsObject = Json.obj("code" -> "RESOURCE_GONE", "message" -> "This resource is no longer available")
 
   "GET Tax Calculation" should {
     "return a 200 with a json response body" when {
@@ -41,10 +41,8 @@ class TaxCalcResourceISpec extends IntegrationSpec {
           .get(incomingUrl)
           .withHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json")
           .Then()
-          .statusIs(OK)
+          .statusIs(GONE)
           .bodyIs(jsonResponse)
-          .verify(mockFor(outgoingUrl)
-            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
       }
     }
   }
@@ -66,10 +64,8 @@ class TaxCalcResourceISpec extends IntegrationSpec {
           .get(incomingUrl)
           .withHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json")
           .Then()
-          .statusIs(OK)
+          .statusIs(GONE)
           .bodyIs(jsonResponse)
-          .verify(mockFor(outgoingUrl)
-            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
       }
     }
   }

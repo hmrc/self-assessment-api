@@ -33,4 +33,5 @@ object ErrorCode {
   val invalidRequest = ErrorCode("INVALID_REQUEST", "Invalid request")
   val invalidBodyType = ErrorCode("INVALID_BODY_TYPE", "Expecting text/json or application/json body")
   val matchingResourceNotFound = ErrorCode("MATCHING_RESOURCE_NOT_FOUND", "The requested resource could not be found.")
+  val resourceGone = ErrorCode("RESOURCE_GONE", "This resource is no longer available")
 }
