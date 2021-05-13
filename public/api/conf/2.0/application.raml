@@ -2296,7 +2296,7 @@ traits:
         name: Tax calculations
         description: !include docs/tax-calculation.md
       post:
-        displayName: Trigger a tax calculation
+        displayName: Trigger a tax calculation [No longer available]
         description: From the end of July 2020, this endpoint will no longer be available.  This is because it has been replaced with the Individual Calculations API.  Calling this endpoint will return a 410 error. Trigger a tax calculation.
         (annotations.sandboxData): !include scenarios/agent-scenarios.md
         is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
@@ -2340,7 +2340,7 @@ traits:
             type: string
             example: 041f7e4d-87d9-4d4a-a296-3cfbdf92f7e2
         get:
-          displayName: Retrieve a tax calculation
+          displayName: Retrieve a tax calculation [No longer available]
           description: From the end of July 2020, this endpoint will no longer be available.  This is because it has been replaced with the Individual Calculations API.  Calling this endpoint will return a 410 error. Use this endpoint to retrieve a tax calculation. In the sandbox environment, this endpoint returns pre-defined responses that are representative of what may be returned in production.
           (annotations.sandboxData): !include scenarios/tax-calculation-retrieve.md
           is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
@@ -2392,7 +2392,7 @@ traits:
                         code: MATCHING_RESOURCE_NOT_FOUND
         /validation-messages:
                 get:
-                  displayName: Retrieve validation messages associated with a tax calculation
+                  displayName: Retrieve validation messages associated with a tax calculation [No longer available]
                   description: From the end of July 2020, this endpoint will no longer be available.  This is because it has been replaced with the Individual Calculations API.  Calling this endpoint will return a 410 error. Use this endpoint to retrieve the validation messages associated with a tax calculation. In the sandbox environment, this endpoint returns pre-defined responses that are representative of what may be returned in production.
                   (annotations.sandboxData): !include scenarios/tax-calculation-bvr.md
                   is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
