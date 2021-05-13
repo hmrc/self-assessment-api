@@ -20,13 +20,11 @@ import javax.inject.Inject
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import router.errors.ErrorCode
-import router.services.TaxCalcService
 import uk.gov.hmrc.auth.core.AuthConnector
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxCalcResource @Inject()(service: TaxCalcService,
-                                val cc: ControllerComponents,
+class TaxCalcResource @Inject()(val cc: ControllerComponents,
                                 val authConnector: AuthConnector)
                                (implicit ec: ExecutionContext) extends BaseResource(cc, authConnector) {
 
