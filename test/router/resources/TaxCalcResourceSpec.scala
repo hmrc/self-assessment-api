@@ -45,9 +45,9 @@ class TaxCalcResourceSpec extends ResourceSpec
           .returns(Future.successful(Right(HttpResponse(OK, "", testHeaderResponse))))
 
         val result: Future[Result] = resource.get("","")(FakeRequest())
-        status(result) shouldBe OK
-        headers(result) shouldBe testHeader
-        contentType(result) shouldBe None
+        status(result) shouldBe GONE
+        contentType(result) shouldBe Some(JSON)
+        contentAsJson(result) shouldBe ErrorCode.resourceGone.asJson
       }
     }
 
@@ -57,10 +57,9 @@ class TaxCalcResourceSpec extends ResourceSpec
           .returns(Future.successful(Right(HttpResponse(OK, responseJson.toString(), testHeaderResponse))))
 
         val result: Future[Result] = resource.get("","")(FakeRequest())
-        status(result) shouldBe OK
-        headers(result) shouldBe testHeader
+        status(result) shouldBe GONE
         contentType(result) shouldBe Some(JSON)
-        contentAsJson(result) shouldBe responseJson
+        contentAsJson(result) shouldBe ErrorCode.resourceGone.asJson
       }
     }
 
@@ -70,9 +69,9 @@ class TaxCalcResourceSpec extends ResourceSpec
           .returns(Future.successful(Left(IncorrectAPIVersion)))
 
         val result: Future[Result] = resource.get("","")(FakeRequest())
-        status(result) shouldBe NOT_ACCEPTABLE
+        status(result) shouldBe GONE
         contentType(result) shouldBe Some(JSON)
-        contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
+        contentAsJson(result) shouldBe ErrorCode.resourceGone.asJson
       }
     }
 
@@ -82,9 +81,9 @@ class TaxCalcResourceSpec extends ResourceSpec
           .returns(Future.successful(Left(UnsupportedAPIVersion)))
 
         val result: Future[Result] = resource.get("","")(FakeRequest())
-        status(result) shouldBe NOT_FOUND
+        status(result) shouldBe GONE
         contentType(result) shouldBe Some(JSON)
-        contentAsJson(result) shouldBe ErrorCode.notFound.asJson
+        contentAsJson(result) shouldBe ErrorCode.resourceGone.asJson
       }
     }
   }
