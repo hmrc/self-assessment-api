@@ -17,6 +17,7 @@
 package mocks.config
 
 import config.AppConfig
+import config.AppConfig.RequestMethodAndRoute
 import mocks.Mock
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Suite
@@ -41,6 +42,8 @@ trait MockAppConfig extends Mock { _: Suite =>
     def dividendsApiUrl: OngoingStubbing[String] = when(mockAppConfig.dividendsApiUrl)
     def savingsAccountsApiUrl: OngoingStubbing[String] = when(mockAppConfig.savingsAccountApiUrl)
     def crystallisationApiUrl: OngoingStubbing[String] = when(mockAppConfig.crystallisationApiUrl)
+
+    def deprecatedRoutes[A]: OngoingStubbing[Seq[RequestMethodAndRoute]] = when(mockAppConfig.deprecatedRoutes)
   }
 
   override protected def beforeEach(): Unit = {

@@ -16,6 +16,7 @@
 
 package router.resources
 
+import config.AppConfig
 import mocks.services.MockSavingsAccountService
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.Result
@@ -31,12 +32,14 @@ class SavingsAccountResourceSpec extends ResourceSpec
   with MockSavingsAccountService {
 
   class Setup {
+    implicit val appConfig: AppConfig = mockAppConfig
     val resource = new SavingsAccountResource(
       service = mockSavingsAccountService,
       authConnector = mockAuthConnector,
       cc = controllerComponents
     )
     mockAuthAction
+    mockDeprecatedRoutes
   }
 
   val request: JsObject = Json.obj("accountName" -> "Main account name")

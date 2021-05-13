@@ -16,6 +16,8 @@
 
 package router.resources
 
+import config.AppConfig
+
 import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import router.services.PropertyEopsObligationsService
@@ -26,7 +28,7 @@ import scala.concurrent.ExecutionContext
 class PropertyEopsObligationsResource @Inject()(service: PropertyEopsObligationsService,
                                                 val cc: ControllerComponents,
                                                 val authConnector: AuthConnector)
-                                               (implicit ec: ExecutionContext) extends BaseResource(cc, authConnector) {
+                                               (implicit ec: ExecutionContext, appConfig: AppConfig) extends BaseResource(cc, authConnector) {
 
   def get(nino: String, from: String, to: String): Action[AnyContent] = AuthAction.async {
     implicit request =>

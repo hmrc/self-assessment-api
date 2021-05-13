@@ -16,6 +16,7 @@
 
 package router.resources
 
+import config.AppConfig
 import mocks.services.MockReleaseTwoService
 import play.api.mvc.Result
 import play.api.test.FakeRequest
@@ -30,12 +31,14 @@ class ReleaseTwoResourceSpec extends ResourceSpec
   with MockReleaseTwoService {
 
   class Setup {
+    implicit val appConfig: AppConfig = mockAppConfig
     val resource = new ReleaseTwoResource(
       service = mockReleaseTwoService,
       authConnector = mockAuthConnector,
       cc = controllerComponents
     )
     mockAuthAction
+    mockDeprecatedRoutes
   }
 
   val request = FakeRequest()

@@ -16,7 +16,9 @@
 
 package support
 
+import config.AppConfig.RequestMethodAndRoute
 import mocks.auth.MockAuthConnector
+import mocks.config.MockAppConfig
 import org.mockito.stubbing.OngoingStubbing
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
@@ -25,7 +27,7 @@ import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
 import scala.concurrent.Future
 
 trait ResourceSpec extends UnitSpec
-  with MockAuthConnector {
+  with MockAuthConnector with MockAppConfig {
 
   val requestJson: JsObject = Json.obj("test" -> "request json")
   val responseJson: JsObject = Json.obj("test" -> "response json")
@@ -36,4 +38,7 @@ trait ResourceSpec extends UnitSpec
     MockAuthConnector.authorise(EmptyPredicate, EmptyRetrieval)
       .returns(Future.successful(()))
   }
+
+  def mockDeprecatedRoutes: OngoingStubbing[Seq[RequestMethodAndRoute]] =
+    MockAppConfig.deprecatedRoutes.returns(Seq())
 }

@@ -16,10 +16,12 @@
 
 package config
 
-import play.api.{Configuration, Environment}
+import config.AppConfig.RequestMethodAndRoute
+import play.api.{ConfigLoader, Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
+import scala.collection.JavaConverters.asScalaBufferConverter
 
 @Singleton
 class AppConfig @Inject()(val environment: Environment,
@@ -59,4 +61,23 @@ class AppConfig @Inject()(val environment: Environment,
 
   def crystallisationApiUrl: String = config.baseUrl("mtd-crystallisation")
 
+  /**
+   * List of deprecated routes
+   * Use where some of the routes in a resource are deprecated but the whole resource isn't deprecated
+   * (e.g. individual routes within self-assessment-api-legacy)
+   */
+  lazy val deprecatedRoutes: Seq[RequestMethodAndRoute] = configuration.get[Seq[RequestMethodAndRoute]]("deprecated-routes")
+
+}
+
+object AppConfig {
+  case class RequestMethodAndRoute(method: String, routeRegex: String)
+  implicit val requestMethodAndRouteSeqConfigLoader: ConfigLoader[Seq[RequestMethodAndRoute]] = ConfigLoader(_.getConfigList).map(
+    _.asScala.toList.map(config =>
+      RequestMethodAndRoute(
+        method = config.getString("method"),
+        routeRegex = config.getString("routeRegex")
+      )
+    )
+  )
 }

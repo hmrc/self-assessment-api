@@ -16,6 +16,7 @@
 
 package router.resources
 
+import config.AppConfig
 import mocks.services.MockPropertyEopsDeclarationService
 import play.api.mvc.Result
 import play.api.test.FakeRequest
@@ -30,12 +31,14 @@ class PropertyEopsDeclarationResourceSpec extends ResourceSpec
   with MockPropertyEopsDeclarationService {
 
   class Setup {
+    implicit val appConfig: AppConfig = mockAppConfig
     val resource = new PropertyEopsDeclarationResource(
       service = mockPropertyEopsDeclarationService,
       authConnector = mockAuthConnector,
       cc = controllerComponents
     )
     mockAuthAction
+    mockDeprecatedRoutes
   }
 
   val request = FakeRequest()

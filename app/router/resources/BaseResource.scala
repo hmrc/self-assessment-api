@@ -16,6 +16,7 @@
 
 package router.resources
 
+import config.AppConfig
 import play.api.Logger
 import play.api.libs.json.JsValue
 import play.api.mvc._
@@ -28,18 +29,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Success, Try}
 
-class BaseResource @Inject()(cc: ControllerComponents, connector: AuthConnector) extends BackendController(cc) {
-
-  case class RequestMethodAndRoute(method: String, routeRegex: String)
-
-  /**
-   * List of deprecated routes
-   * Use where some of the routes in a resource are deprecated but the whole resource isn't deprecated
-   * (e.g. individual routes within self-assessment-api-legacy)
-   */
-  val deprecatedRoutes: Seq[RequestMethodAndRoute] = Seq(
-    RequestMethodAndRoute("GET", """^/ni/.{9}/uk-properties$""")
-  )
+class BaseResource @Inject()(cc: ControllerComponents, connector: AuthConnector)(implicit appConfig: AppConfig) extends BackendController(cc) {
 
   def AuthAction: ActionBuilder[Request, AnyContent] = new ActionBuilder[Request, AnyContent] {
 
@@ -54,7 +44,7 @@ class BaseResource @Inject()(cc: ControllerComponents, connector: AuthConnector)
     override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
       implicit val req: Request[A] = request
 
-      if (deprecatedRoutes.exists(route => (req.method == route.method) && req.uri.matches(route.routeRegex))) {
+      if (appConfig.deprecatedRoutes.exists(route => (req.method == route.method) && req.uri.matches(route.routeRegex))) {
         Logger.warn(s"[BaseResource] tried to access deprecated route matching [method: ${req.method}] and [uri: ${req.uri}]")
         Future.successful(Gone(ErrorCode.resourceGone.asJson))
       } else {

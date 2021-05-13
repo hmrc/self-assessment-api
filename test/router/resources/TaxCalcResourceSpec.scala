@@ -16,28 +16,29 @@
 
 package router.resources
 
+import config.AppConfig
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import router.errors.{ErrorCode, IncorrectAPIVersion, UnsupportedAPIVersion}
+import router.errors.ErrorCode
 import support.ResourceSpec
-import uk.gov.hmrc.http.HttpResponse
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class TaxCalcResourceSpec extends ResourceSpec {
 
   class Setup {
+    implicit val appConfig: AppConfig = mockAppConfig
     val resource = new TaxCalcResource(
       authConnector = mockAuthConnector,
       cc = controllerComponents
     )
     mockAuthAction
+    mockDeprecatedRoutes
   }
 
   "get" should {
-    "return a 200 with the response headers" when {
-      "the service returns a HttpResponse containing a 200 with no json response body" in new Setup {
+    "return a 410" when {
+      "called" in new Setup {
 
         val result: Future[Result] = resource.get("","")(FakeRequest())
         status(result) shouldBe GONE

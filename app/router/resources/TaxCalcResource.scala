@@ -16,20 +16,19 @@
 
 package router.resources
 
-import javax.inject.Inject
+import config.AppConfig
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import router.errors.ErrorCode
 import uk.gov.hmrc.auth.core.AuthConnector
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.Inject
 
 class TaxCalcResource @Inject()(val cc: ControllerComponents,
                                 val authConnector: AuthConnector)
-                               (implicit ec: ExecutionContext) extends BaseResource(cc, authConnector) {
+                               (implicit appConfig: AppConfig) extends BaseResource(cc, authConnector) {
 
-  def get(nino: String, calculationId: String): Action[AnyContent] = AuthAction.async {
-    implicit request =>
-      Future.successful(Gone(Json.toJson(ErrorCode.resourceGone)))
+  def get(nino: String, calculationId: String): Action[AnyContent] = AuthAction {
+    Gone(Json.toJson(ErrorCode.resourceGone))
   }
 }
