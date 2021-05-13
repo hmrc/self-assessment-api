@@ -16,7 +16,7 @@
 
 package router.resources
 
-import mocks.services.MockTaxCalcService
+import mocks.services.MockPropertyEopsObligationsService
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import router.errors.{ErrorCode, IncorrectAPIVersion, UnsupportedAPIVersion}
@@ -27,11 +27,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class PropertyEopsObligationsResourceSpec extends ResourceSpec
-  with MockTaxCalcService {
+  with MockPropertyEopsObligationsService {
 
   class Setup {
-    val resource = new TaxCalcResource(
-      service = mockTaxCalcService,
+    val resource = new PropertyEopsObligationsResource(
+      service = mockPropertyEopsObligationsService,
       authConnector = mockAuthConnector,
       cc = controllerComponents
     )
@@ -41,10 +41,10 @@ class PropertyEopsObligationsResourceSpec extends ResourceSpec
   "get" should {
     "return a 200 with the response headers" when {
       "the service returns a HttpResponse containing a 200 with no json response body" in new Setup {
-        MockTaxCalcService.get()
+        MockPropertyEopsObligationsService.get()
           .returns(Future.successful(Right(HttpResponse(OK, "", testHeaderResponse))))
 
-        val result: Future[Result] = resource.get("","")(FakeRequest())
+        val result: Future[Result] = resource.get("","","")(FakeRequest())
         status(result) shouldBe OK
         headers(result) shouldBe testHeader
         contentType(result) shouldBe None
@@ -53,10 +53,10 @@ class PropertyEopsObligationsResourceSpec extends ResourceSpec
 
     "return a 200 with a json response body and response headers" when {
       "the service returns a HttpResponse containing a 200 with a json response body" in new Setup {
-        MockTaxCalcService.get()
+        MockPropertyEopsObligationsService.get()
           .returns(Future.successful(Right(HttpResponse(OK, responseJson.toString(), testHeaderResponse))))
 
-        val result: Future[Result] = resource.get("","")(FakeRequest())
+        val result: Future[Result] = resource.get("","","")(FakeRequest())
         status(result) shouldBe OK
         headers(result) shouldBe testHeader
         contentType(result) shouldBe Some(JSON)
@@ -66,10 +66,10 @@ class PropertyEopsObligationsResourceSpec extends ResourceSpec
 
     "return a 406 with a json response body representing the error" when {
       "the service returns an IncorrectAPIVersion response" in new Setup {
-        MockTaxCalcService.get()
+        MockPropertyEopsObligationsService.get()
           .returns(Future.successful(Left(IncorrectAPIVersion)))
 
-        val result: Future[Result] = resource.get("","")(FakeRequest())
+        val result: Future[Result] = resource.get("","","")(FakeRequest())
         status(result) shouldBe NOT_ACCEPTABLE
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.invalidAcceptHeader.asJson
@@ -78,10 +78,10 @@ class PropertyEopsObligationsResourceSpec extends ResourceSpec
 
     "return a 404 with a json response body representing the error" when {
       "the service returns an UnsupportedAPIVersion response" in new Setup {
-        MockTaxCalcService.get()
+        MockPropertyEopsObligationsService.get()
           .returns(Future.successful(Left(UnsupportedAPIVersion)))
 
-        val result: Future[Result] = resource.get("","")(FakeRequest())
+        val result: Future[Result] = resource.get("","","")(FakeRequest())
         status(result) shouldBe NOT_FOUND
         contentType(result) shouldBe Some(JSON)
         contentAsJson(result) shouldBe ErrorCode.notFound.asJson
