@@ -16,19 +16,26 @@
 
 package router.resources
 
-import config.AppConfig
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import router.errors.ErrorCode
-import uk.gov.hmrc.auth.core.AuthConnector
+import support.IntegrationSpec
 
-import javax.inject.Inject
+class DeprecatedRoutesISpec extends IntegrationSpec {
 
-class TaxCalcResource @Inject()(val cc: ControllerComponents,
-                                val authConnector: AuthConnector)
-                               (implicit appConfig: AppConfig) extends BaseResource(cc, authConnector) {
+  val gone = ErrorCode.resourceGone.asJson
 
-  def get(nino: String, calculationId: String): Action[AnyContent] = AuthAction {
-    Gone(Json.toJson(ErrorCode.resourceGone))
+  "hitting a deprecated route" should {
+    "return 410" when {
+      "the route is GET UK Property" in {
+        val outgoingUrl = s"/ni/AA111111A/uk-property"
+
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .get(outgoingUrl)
+          .returns(aResponse
+            .withStatus(GONE)
+            .withBody(gone))
+      }
+    }
   }
 }

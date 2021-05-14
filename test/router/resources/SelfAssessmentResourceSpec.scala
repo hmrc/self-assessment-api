@@ -16,6 +16,7 @@
 
 package router.resources
 
+import config.AppConfig
 import mocks.services.MockSelfAssessmentService
 import play.api.mvc.Result
 import play.api.test.FakeRequest
@@ -30,12 +31,14 @@ class SelfAssessmentResourceSpec extends ResourceSpec
   with MockSelfAssessmentService {
 
   class Setup {
+    implicit val appConfig: AppConfig = mockAppConfig
     val resource = new SelfAssessmentResource(
       service = mockSelfAssessmentService,
       authConnector = mockAuthConnector,
       cc = controllerComponents
     )
     mockAuthAction
+    mockDeprecatedRoutes
   }
 
   "get" should {

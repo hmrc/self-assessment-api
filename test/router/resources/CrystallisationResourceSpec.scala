@@ -16,6 +16,7 @@
 
 package router.resources
 
+import config.AppConfig
 import mocks.services.MockCrystallisationService
 import play.api.libs.json.{JsNull, JsValue, Json}
 import play.api.mvc.Result
@@ -30,12 +31,14 @@ class CrystallisationResourceSpec extends ResourceSpec
   with MockCrystallisationService {
 
   class Setup {
+    implicit val appConfig: AppConfig = mockAppConfig
     val resource = new CrystallisationResource(
       service = mockCrystallisationService,
       authConnector = mockAuthConnector,
       cc = controllerComponents
     )
     mockAuthAction
+    mockDeprecatedRoutes
   }
 
   "post" should {

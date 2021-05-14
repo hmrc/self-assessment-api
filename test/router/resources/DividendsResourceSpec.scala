@@ -16,6 +16,7 @@
 
 package router.resources
 
+import config.AppConfig
 import mocks.services.MockDividendsService
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
@@ -31,12 +32,14 @@ class DividendsResourceSpec extends ResourceSpec
   with MockDividendsService {
 
   class Setup {
+    implicit val appConfig: AppConfig = mockAppConfig
     val resource = new DividendsResource(
       service = mockDividendsService,
       authConnector = mockAuthConnector,
       cc = controllerComponents
     )
     mockAuthAction
+    mockDeprecatedRoutes
   }
 
   "amend" should {

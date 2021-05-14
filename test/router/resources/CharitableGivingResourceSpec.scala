@@ -16,6 +16,7 @@
 
 package router.resources
 
+import config.AppConfig
 import mocks.services.MockCharitableGivingService
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
@@ -31,12 +32,14 @@ class CharitableGivingResourceSpec extends ResourceSpec
   with MockCharitableGivingService {
 
   class Setup {
+    implicit val appConfig: AppConfig = mockAppConfig
     val resource = new CharitableGivingResource(
       service = mockCharitableGivingService,
       authConnector = mockAuthConnector,
       cc = controllerComponents
     )
     mockAuthAction
+    mockDeprecatedRoutes
   }
 
   "amend" should {
