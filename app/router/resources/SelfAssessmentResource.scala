@@ -16,6 +16,7 @@
 
 package router.resources
 
+import config.AppConfig
 import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -27,7 +28,7 @@ import scala.concurrent.ExecutionContext
 class SelfAssessmentResource @Inject()(service: SelfAssessmentService,
                                        val cc: ControllerComponents,
                                        val authConnector: AuthConnector)
-                                      (implicit ec: ExecutionContext) extends BaseResource(cc, authConnector) {
+                                      (implicit ec: ExecutionContext, appConfig: AppConfig) extends BaseResource(cc, authConnector) {
 
   def get(route: Any*): Action[AnyContent] = AuthAction.async {
     implicit request =>

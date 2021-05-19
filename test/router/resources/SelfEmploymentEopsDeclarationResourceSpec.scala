@@ -16,6 +16,7 @@
 
 package router.resources
 
+import config.AppConfig
 import mocks.services.MockSelfEmploymentEopsDeclarationService
 import play.api.mvc.Result
 import play.api.test.FakeRequest
@@ -30,12 +31,14 @@ class SelfEmploymentEopsDeclarationResourceSpec extends ResourceSpec
   with MockSelfEmploymentEopsDeclarationService {
 
   class Setup {
+    implicit val appConfig: AppConfig = mockAppConfig
     val resource = new SelfEmploymentEopsDeclarationResource(
       service = mockSelfEmploymentEopsDeclarationService,
       authConnector = mockAuthConnector,
       cc = controllerComponents
     )
     mockAuthAction
+    mockDeprecatedRoutes
   }
 
   val request = FakeRequest()

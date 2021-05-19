@@ -950,8 +950,8 @@ traits:
                 type: !include schemas/Error.json
                 example: !include examples/errors/CONFLICT.json
       get:
-        displayName: Get a UK property business
-        description: Get a UK property business
+        displayName: Get a UK property business [no longer available]
+        description: This resource is no longer available. It has been replaced by List all businesses and Retrieve business details in the <a href="/api-documentation/docs/api/service/business-details-api/1.0">business-details-api</a>.
         (annotations.sandboxData): !include scenarios/stateful-ukp-retrieve.md
         is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
         (annotations.scope): "read:self-assessment"

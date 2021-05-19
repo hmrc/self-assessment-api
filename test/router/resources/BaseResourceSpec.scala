@@ -16,13 +16,16 @@
 
 package router.resources
 
+import config.AppConfig
 import support.ResourceSpec
 
 class BaseResourceSpec extends ResourceSpec {
 
   class Setup {
+    implicit val appConfig: AppConfig = mockAppConfig
     val resource: BaseResource = new BaseResource(controllerComponents, mockAuthConnector)
     mockAuthAction
+    mockDeprecatedRoutes
   }
 
   "toSimpleHeaders" should {
