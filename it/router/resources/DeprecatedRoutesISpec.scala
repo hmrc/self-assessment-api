@@ -36,6 +36,18 @@ class DeprecatedRoutesISpec extends IntegrationSpec {
             .withStatus(GONE)
             .withBody(gone))
       }
+
+      "the route is POST a tax calculation " in  {
+        val outgoingUrl = s"/ni/AA111111A/calculations"
+
+        Given()
+          .theClientIsAuthorised
+          .And()
+          .get(outgoingUrl)
+          .returns(aResponse
+            .withStatus(GONE)
+            .withBody(gone))
+      }
     }
   }
 }
