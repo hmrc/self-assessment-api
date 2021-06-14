@@ -36,26 +36,9 @@ case class FeatureSwitch(value: Option[Configuration]) {
     case None => DEFAULT_VALUE
   }
 
-  def isWhiteListingEnabled: Boolean = {
-    value match {
-      case Some(config) => config.getOptional[Boolean]("white-list.enabled").getOrElse(false)
-      case None => false
-    }
-  }
-
   def isAgentSimulationFilterEnabled: Boolean = value match {
     case Some(config) => config.getOptional[Boolean]("test-scenario-simulation.enabled").getOrElse(false)
     case None => false
-  }
-
-  def whiteListedApplicationIds: Seq[String] = {
-    value match {
-      case Some(config) =>
-        config
-          .getOptional[Seq[String]]("white-list.applicationIds")
-          .getOrElse(throw new RuntimeException(s"feature-switch.white-list.applicationIds is not configured"))
-      case None => Seq()
-    }
   }
 
   def isCharitableGivingV2Enabled: Boolean = value match {

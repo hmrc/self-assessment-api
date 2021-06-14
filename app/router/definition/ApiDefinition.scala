@@ -21,13 +21,6 @@ import router.definition.APIStatus.APIStatus
 import router.enums.EnumJson
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 
-
-case class Access(`type`: String, whitelistedApplicationIds: Seq[String])
-
-object Access {
-  implicit val formatAccess = Json.format[Access]
-}
-
 case class Parameter(name: String, required: Boolean = false)
 
 object Parameter {
@@ -44,7 +37,6 @@ object APIStatus extends Enumeration {
 }
 
 case class APIVersion(version: String,
-                      access: Option[Access] = None,
                       status: APIStatus,
                       endpointsEnabled: Boolean) {
 

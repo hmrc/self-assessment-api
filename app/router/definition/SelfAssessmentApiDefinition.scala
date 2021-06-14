@@ -16,7 +16,7 @@
 
 package router.definition
 
-import config.{AppConfig, FeatureSwitch}
+import config.AppConfig
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
@@ -55,12 +55,10 @@ class SelfAssessmentApiDefinition @Inject()(appConfig: AppConfig) {
         versions = Seq(
           APIVersion(
             version = VERSION_1,
-            access = buildWhiteListingAccess(),
             status = buildAPIStatus(VERSION_1),
             endpointsEnabled = true),
           APIVersion(
             version = VERSION_2,
-            access = buildWhiteListingAccess(),
             status = buildAPIStatus(VERSION_2),
             endpointsEnabled = true)
         ),
@@ -77,14 +75,6 @@ class SelfAssessmentApiDefinition @Inject()(appConfig: AppConfig) {
       case "RETIRED" => APIStatus.RETIRED
       case _ => Logger.error(s"[ApiDefinition][buildApiStatus] no API Status found in config.  Reverting to Alpha")
         APIStatus.ALPHA
-    }
-  }
-
-  private[definition] def buildWhiteListingAccess(): Option[Access] = {
-    val featureSwitch = FeatureSwitch(appConfig.featureSwitch)
-    featureSwitch.isWhiteListingEnabled match {
-      case true => Some(Access("PRIVATE", featureSwitch.whiteListedApplicationIds))
-      case false => None
     }
   }
 }
