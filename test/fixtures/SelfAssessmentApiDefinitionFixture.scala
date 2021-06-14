@@ -35,10 +35,6 @@ object SelfAssessmentApiDefinitionFixture {
 
   val apiVersion_1 = APIVersion(
     version = "1.0",
-    access = Some(Access(
-      `type` = accessType,
-      whitelistedApplicationIds = Seq("test-whitelisted-id")
-    )),
     status = APIStatus.ALPHA,
     endpointsEnabled = true
   )
@@ -75,9 +71,7 @@ object SelfAssessmentApiDefinitionFixture {
         "versions" -> Json.arr(Json.obj(
           "version" -> "1.0",
           "access" -> Json.obj(
-            "type" -> accessType,
-            "whitelistedApplicationIds" -> Json.arr("test-whitelisted-id")
-          ),
+            "type" -> accessType),
           "status" -> "ALPHA",
           "endpointsEnabled" -> true
         ))

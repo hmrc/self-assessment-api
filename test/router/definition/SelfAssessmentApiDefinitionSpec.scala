@@ -17,7 +17,6 @@
 package router.definition
 
 import mocks.config.MockAppConfig
-import play.api.Configuration
 import router.definition.APIStatus.APIStatus
 import support.UnitSpec
 import router.constants.Versions._
@@ -46,27 +45,6 @@ class SelfAssessmentApiDefinitionSpec extends UnitSpec
         val apiStatus: APIStatus = saApiDefinition.buildAPIStatus(VERSION_1)
         apiStatus shouldBe output
       }
-    }
-  }
-
-  "buildWhiteListingAccess" should {
-
-    val whitelistedIds = Seq("1", "2", "3")
-    val whitelistDisabledConfig = Configuration("white-list.enabled" -> false)
-    val whitelistEnabledConfig = Configuration(
-      "white-list.enabled" -> true,
-      "white-list.applicationIds" -> whitelistedIds)
-
-    "return an Access model when whitelisting is enabled" in new Setup {
-      MockAppConfig.featureSwitch returns Some(whitelistEnabledConfig)
-
-      saApiDefinition.buildWhiteListingAccess() shouldBe Some(Access("PRIVATE", whitelistedIds))
-    }
-
-    "return None when whitelisting is not enabled" in new Setup {
-      MockAppConfig.featureSwitch returns Some(whitelistDisabledConfig)
-
-      saApiDefinition.buildWhiteListingAccess() shouldBe None
     }
   }
 }
