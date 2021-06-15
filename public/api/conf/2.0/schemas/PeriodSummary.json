@@ -6,7 +6,9 @@
     "id": {
       "title": "ID",
       "description": "Unique period identifier for the income source",
-      "type": "string"
+      "type": "string",
+      "example": "XKIS00000000988",
+      "pattern": "^[A-Za-z0-9]{15}$"
     },
     "from": {
       "description" : "The start date of this update period",

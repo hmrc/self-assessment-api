@@ -136,7 +136,7 @@ traits:
           201:
             headers:
               Location:
-                example: /self-assessment/ni/{nino}/self-employments/{selfEmploymentId}
+                example: /self-assessment/ni/{nino}/self-employments/XKIS00000000988
                 description: Location of the resource created
               X-CorrelationId:
                 example: 5968c22d620000620096db5f
@@ -218,6 +218,7 @@ traits:
           selfEmploymentId:
             displayName: Self-employment ID
             description: An identifier for the self-employment business, unique to the customer.<p>Must conform to the regular expression `^X[A-Z0-9]{1}IS[0-9]{11}$`<p>
+            example: XKIS00000000988
             type: string
         get:
           displayName: Get a self-employment business
@@ -849,6 +850,7 @@ traits:
                 selfEmploymentId:
                   displayName: Self-employment ID
                   description: An identifier for the self-employment business, unique to the customer.<p>Must conform to the regular expression `^[A-Za-z0-9]{15}$`<p>
+                  example: XKIS00000000988
                   type: string
               get:
                 displayName: Retrieve End of Period Statement Obligations for a Self-Employment Business
