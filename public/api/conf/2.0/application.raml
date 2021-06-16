@@ -188,7 +188,7 @@ traits:
                       code: INVALID_POSTCODE
       get:
         displayName: List all self-employment businesses
-        description: List all self-employment businesses
+        description: From 30 June 2021 this resource will be replaced by the <a href="/api-documentation/docs/api/service/business-details-api/1.0">business-details-api</a>.
         (annotations.sandboxData): !include scenarios/stateful-se-retrieve.md
         is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
         (annotations.scope): "read:self-assessment"
@@ -221,7 +221,7 @@ traits:
             type: string
         get:
           displayName: Get a self-employment business
-          description: Get a self-employment business
+          description: From 30 June 2021 this resource will be replaced by the <a href="/api-documentation/docs/api/service/business-details-api/1.0">business-details-api</a>.
           (annotations.sandboxData): !include scenarios/stateful-se-retrieve.md
           is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
@@ -257,7 +257,7 @@ traits:
         /obligations:
           get:
             displayName: Retrieve self-employment business obligations
-            description: Retrieve self-employment business obligations. In sandbox environment, different scenarios for this endpoint can be simulated using 'Gov-Test-Scenario' header
+            description: From 30 June 2021 this resource will be replaced by the <a href="/api-documentation/docs/api/service/obligations-api/1.0">obligations-api</a>.
             (annotations.sandboxData): !include scenarios/self-employment-obligation-scenarios.md
             is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
             (annotations.scope): "read:self-assessment"
@@ -751,7 +751,7 @@ traits:
                       example: 2018-04-05
                   post:
                     displayName: Submit Self-Employment End-of-Period Statement
-                    description: Use this endpoint to finalise the end-of-period statement, for this accounting period, for a self-employment business.
+                    description: From 30 November 2021 this resource will be replaced by the <a href="https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/individuals-business-eops-api/1.0">individuals-business-eops-api</a>.
                     (annotations.sandboxData): !include scenarios/self-employment-declaration-scenarios.md
                     is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
                     (annotations.scope): "write:self-assessment"
@@ -852,7 +852,7 @@ traits:
                   type: string
               get:
                 displayName: Retrieve End of Period Statement Obligations for a Self-Employment Business
-                description: This end point allows you to retrieve End of Period Statement Obligations for a Self-Employment Business. The response can be filtered by providing a date range in query parameters.
+                description: From 30 June 2021 this resource will be replaced by the <a href="/api-documentation/docs/api/service/obligations-api/1.0">obligations-api</a>.
                 (annotations.sandboxData): !include scenarios/eops-se-obligation-scenarios.md
                 is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
                 (annotations.scope): "read:self-assessment"
@@ -987,7 +987,7 @@ traits:
       /obligations:
         get:
           displayName: Retrieve all UK property business obligations
-          description: Retrieve all UK property business obligations. In sandbox environment, different scenarios for this endpoint can be simulated using 'Gov-Test-Scenario' header.
+          description: From 30 November 2021 this resource will be replaced by the Retrieve Income Tax (Self Assessment) Income and Expenditure Obligations endpoint in the <a href="/api-documentation/docs/api/service/obligations-api/1.0">obligations-api</a>.
           (annotations.sandboxData): !include scenarios/property-obligation-scenarios.md
           is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
@@ -1685,7 +1685,7 @@ traits:
                     example: 2018-04-05
                 post:
                   displayName: Submit UK Property End-of-Period Statement
-                  description: Use this endpoint to finalise the end-of-period statement, for this accounting period, for a UK property business.
+                  description: From 30 November 2021 this resource will be replaced by the Submit End of Period Statement for a Business endpoint in the <a href="/api-documentation/docs/api/service/individuals-business-eops-api/1.0">individuals-business-eops-api</a>.
                   (annotations.sandboxData): !include scenarios/uk-prop-declaration-scenarios.md
                   is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
                   (annotations.scope): "write:self-assessment"
@@ -1789,7 +1789,7 @@ traits:
         /obligations:
                     get:
                       displayName: Retrieve End of Period Statement Obligations for a UK Property Business
-                      description: Use this endpoint to retrieve the End of Period Statement (EOPS) of obligations for a UK property business. In the sandbox environment, this endpoint returns pre-defined responses that are representative of what may be returned in production.
+                      description: From 30 November 2021 this resource will be replaced by the Retrieve Income Tax (Self Assessment) End of Period Statement Obligations endpoint in the <a href="/api-documentation/docs/api/service/obligations-api/1.0">obligations-api</a>.
                       (annotations.sandboxData): !include scenarios/eops-property-obligation-scenarios.md
                       is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
                       (annotations.scope): "read:self-assessment"
@@ -1869,7 +1869,7 @@ traits:
             type: string
             example: 2017-18
         get:
-          displayName:  Get UK property Business Income Source Summary (BISS) [No longer available]
+          displayName: Get UK property Business Income Source Summary (BISS) [No longer available]
           description: This resource is no longer available. It has been replaced by the <a href="/api-documentation/docs/api/service/self-assessment-biss-api">self-assessment-biss-api</a>.
           (annotations.sandboxData): !include scenarios/uk-properties-biss.md
           is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
@@ -2297,7 +2297,7 @@ traits:
         description: !include docs/tax-calculation.md
       post:
         displayName: Trigger a tax calculation [no longer available]
-        description: From the end of July 2020, this endpoint will no longer be available.  This is because it has been replaced with the Individual Calculations API.  Calling this endpoint will return a 410 error. Trigger a tax calculation.
+        description: This resource is no longer available. It has been replaced by the Trigger a Self Assessment Tax Calculation endpoint of the <a href="/api-documentation/docs/api/service/individual-calculations-api/2.0">individual-calculations-api</a>.
         (annotations.sandboxData): !include scenarios/agent-scenarios.md
         is: [headers.acceptHeader, contentType, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
         (annotations.scope): "write:self-assessment"
@@ -2341,7 +2341,7 @@ traits:
             example: 041f7e4d-87d9-4d4a-a296-3cfbdf92f7e2
         get:
           displayName: Retrieve a tax calculation [no longer available]
-          description: From the end of July 2020, this endpoint will no longer be available.  This is because it has been replaced with the Individual Calculations API.  Calling this endpoint will return a 410 error. Use this endpoint to retrieve a tax calculation. In the sandbox environment, this endpoint returns pre-defined responses that are representative of what may be returned in production.
+          description: This resource is no longer available. It has been replaced by the <a href="/api-documentation/docs/api/service/individual-calculations-api/2.0">individual-calculations-api</a>.
           (annotations.sandboxData): !include scenarios/tax-calculation-retrieve.md
           is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
@@ -2393,7 +2393,7 @@ traits:
         /validation-messages:
                 get:
                   displayName: Retrieve validation messages associated with a tax calculation [no longer available]
-                  description: From the end of July 2020, this endpoint will no longer be available.  This is because it has been replaced with the Individual Calculations API.  Calling this endpoint will return a 410 error. Use this endpoint to retrieve the validation messages associated with a tax calculation. In the sandbox environment, this endpoint returns pre-defined responses that are representative of what may be returned in production.
+                  description: This resource is no longer available. It has been replaced by the Retrieve Self Assessment Tax Calculation Messages endpoint of the <a href="/api-documentation/docs/api/service/individual-calculations-api/2.0">individual-calculations-api</a>.
                   (annotations.sandboxData): !include scenarios/tax-calculation-bvr.md
                   is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
                   (annotations.scope): "read:self-assessment"
@@ -2583,7 +2583,7 @@ traits:
       /obligations:
         get:
           displayName: Retrieve Crystallisation Obligations
-          description: The "Retrieve Crystallisation Obligations" endpoint returns the crystallisation obligations for a specific National Insurance Number
+          description: From 30 November 2021 this resource will be replaced by the Retrieve Income Tax (Self Assessment) Crystallisation Obligations endpoint in the <a href="/api-documentation/docs/api/service/obligations-api/1.0">obligations-api</a>.
           (annotations.sandboxData): !include scenarios/crystalllisation-retrieve-scenarios.md
           is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "read:self-assessment"

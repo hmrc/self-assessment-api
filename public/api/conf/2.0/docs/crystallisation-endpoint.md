@@ -1,1 +1,2 @@
 This is the final step of the crystallisation process which allows a taxpayer to crystallise for a tax year by agreeing to the HMRC's tax calculation.
+From 30 November 2021 this resource will be replaced by the Intent to crystallise endpoint in the <a href="/api-documentation/docs/api/service/individual-calculations-api/2.0">individual-calculations-api</a>.
