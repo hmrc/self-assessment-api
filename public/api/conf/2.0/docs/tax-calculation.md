@@ -1,1 +1,1 @@
-From 30 November 2021 this resource will be replaced by the Intent to crystallise endpoint in the <a href="/api-documentation/docs/api/service/individual-calculations-api/2.0">individual-calculations-api</a>.
+This function is no longer available. It has been replaced by <a href="/api-documentation/docs/api/service/individual-calculations-api/2.0">individual-calculations-api</a>.

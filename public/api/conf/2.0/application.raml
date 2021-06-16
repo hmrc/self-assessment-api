@@ -751,7 +751,7 @@ traits:
                       example: 2018-04-05
                   post:
                     displayName: Submit Self-Employment End-of-Period Statement
-                    description: From 30 November 2021 this resource will be replaced by the <a href="/api-documentation/docs/api/service/business-details-api/1.0">business-details-api</a>.
+                    description: From 30 November 2021 this resource will be replaced by the <a href="https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/individuals-business-eops-api/1.0">individuals-business-eops-api</a>.
                     (annotations.sandboxData): !include scenarios/self-employment-declaration-scenarios.md
                     is: [headers.acceptHeader, contentType, clientOrAgentNotAuthorised, testScenarioHeader]
                     (annotations.scope): "write:self-assessment"
@@ -2583,7 +2583,7 @@ traits:
       /obligations:
         get:
           displayName: Retrieve Crystallisation Obligations
-          description: From 30 November 2021 this resource will be replaced by the Retrieve Income Tax (Self Assessment) Crystallisation Obligations endpoint in the <a href="/api-documentation/docs/api/service/individual-calculations-api/2.0">individual-calculations-api</a>.
+          description: From 30 November 2021 this resource will be replaced by the Retrieve Income Tax (Self Assessment) Crystallisation Obligations endpoint in the <a href="/api-documentation/docs/api/service/obligations-api/1.0">obligations-api</a>.
           (annotations.sandboxData): !include scenarios/crystalllisation-retrieve-scenarios.md
           is: [headers.acceptHeader, clientOrAgentNotAuthorised, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
