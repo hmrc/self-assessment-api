@@ -17,10 +17,12 @@
 package router.services
 
 import config.AppConfig
+
 import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.Request
 import router.connectors.SelfAssessmentConnector
+import router.constants.Versions
 import router.constants.Versions.{VERSION_1, VERSION_2}
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
@@ -37,7 +39,7 @@ class ReleaseTwoService @Inject()(val appConfig: AppConfig,
 
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.post(r2+req.uri, body)
-      case Some(VERSION_2) => selfAssessmentConnector.post(r2+req.uri, body)(convertHeaderToVersion1)
+      case Some(VERSION_2) => selfAssessmentConnector.post(r2+req.uri, body)(Versions.convertHeaderToVersion1)
     }
   }
 
@@ -45,7 +47,7 @@ class ReleaseTwoService @Inject()(val appConfig: AppConfig,
 
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.get(r2+req.uri)
-      case Some(VERSION_2) => selfAssessmentConnector.get(r2+req.uri)(convertHeaderToVersion1)
+      case Some(VERSION_2) => selfAssessmentConnector.get(r2+req.uri)(Versions.convertHeaderToVersion1)
     }
   }
 
@@ -53,7 +55,7 @@ class ReleaseTwoService @Inject()(val appConfig: AppConfig,
 
     withApiVersion {
       case Some(VERSION_1) => selfAssessmentConnector.put(r2+req.uri, body)
-      case Some(VERSION_2) => selfAssessmentConnector.put(r2+req.uri, body)(convertHeaderToVersion1)
+      case Some(VERSION_2) => selfAssessmentConnector.put(r2+req.uri, body)(Versions.convertHeaderToVersion1)
     }
   }
 

@@ -16,23 +16,23 @@
 
 package config
 
-import javax.inject.Inject
+import play.api.Configuration
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result}
-import play.api.{Configuration, Logger}
-import router.constants.Versions
-import router.constants.Versions.VERSION_2
+import router.constants.Versions.{VERSION_2, getAPIVersionFromRequest}
 import router.errors.ErrorCode
 import router.errors.ErrorCode._
 import uk.gov.hmrc.auth.core.AuthorisationException
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import uk.gov.hmrc.play.bootstrap.backend.http.JsonErrorHandler
+import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import utils.Logging
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ErrorHandler @Inject()(
@@ -40,16 +40,16 @@ class ErrorHandler @Inject()(
                               auditConnector: AuditConnector,
                               httpAuditEvent: HttpAuditEvent
                             )
-                            (implicit ec: ExecutionContext) extends JsonErrorHandler(auditConnector, httpAuditEvent, config) {
+                            (implicit ec: ExecutionContext) extends JsonErrorHandler(auditConnector, httpAuditEvent, config) with Logging {
 
   import httpAuditEvent.dataEvent
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
 
-    implicit val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-    getAPIVersionFromRequest match {
+    implicit val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    getAPIVersionFromRequest(request) match {
       case Some(VERSION_2) =>
-        Logger.warn(s"[ErrorHandler][onClientError] error in version 2, for (${request.method}) [${request.uri}] with status: $statusCode and message: $message")
+        logger.warn(s"[ErrorHandler][onClientError] error in version 2, for (${request.method}) [${request.uri}] with status: $statusCode and message: $message")
         statusCode match {
           case BAD_REQUEST =>
             auditConnector.sendEvent(dataEvent("ServerValidationError", "Request bad format exception", request))
@@ -76,17 +76,17 @@ class ErrorHandler @Inject()(
             Future.successful(Status(statusCode)(Json.toJson(errorCode)))
         }
       case _ =>
-        Logger.warn(s"[ErrorHandler][onClientError], error for (${request.method}) [${request.uri}] with status: $statusCode and message: $message")
+        logger.warn(s"[ErrorHandler][onClientError], error for (${request.method}) [${request.uri}] with status: $statusCode and message: $message")
         ErrorHandler.super.onClientError(request, statusCode, message)
     }
   }
 
   override def onServerError(request: RequestHeader, ex: Throwable): Future[Result] = {
-    implicit val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    getAPIVersionFromRequest match {
+    getAPIVersionFromRequest(request) match {
       case Some(VERSION_2) =>
-        Logger.warn(s"[ErrorHandler][onServerError] Internal server error in version 2, for (${request.method}) [${request.uri}] -> ", ex)
+        logger.warn(s"[ErrorHandler][onServerError] Internal server error in version 2, for (${request.method}) [${request.uri}] -> ", ex)
 
         val (status, errorCode, eventType) = ex match {
           case _: NotFoundException => (NOT_FOUND, matchingResourceNotFound, "ResourceNotFound")
@@ -112,7 +112,4 @@ class ErrorHandler @Inject()(
       case _ => ErrorHandler.super.onServerError(request, ex)
     }
   }
-
-  private def getAPIVersionFromRequest(implicit hc: HeaderCarrier): Option[String] =
-    Versions.getFromRequest
 }

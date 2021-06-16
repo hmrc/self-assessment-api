@@ -17,19 +17,19 @@
 package router.resources
 
 import config.AppConfig
-import play.api.Logger
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import router.errors.{ErrorCode, IncorrectAPIVersion, SelfAssessmentAPIError, UnsupportedAPIVersion}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisationException, AuthorisedFunctions, InvalidBearerToken}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import utils.Logging
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Success, Try}
 
-class BaseResource @Inject()(cc: ControllerComponents, connector: AuthConnector)(implicit appConfig: AppConfig) extends BackendController(cc) {
+class BaseResource @Inject()(cc: ControllerComponents, connector: AuthConnector)(implicit appConfig: AppConfig) extends BackendController(cc) with Logging {
 
   def AuthAction: ActionBuilder[Request, AnyContent] = new ActionBuilder[Request, AnyContent] {
 
@@ -45,15 +45,15 @@ class BaseResource @Inject()(cc: ControllerComponents, connector: AuthConnector)
       implicit val req: Request[A] = request
 
       if (appConfig.deprecatedRoutes.exists(route => (req.method == route.method) && req.uri.matches(route.routeRegex))) {
-        Logger.warn(s"[BaseResource] tried to access deprecated route matching [method: ${req.method}] and [uri: ${req.uri}]")
+        logger.warn(s"[BaseResource] tried to access deprecated route matching [method: ${req.method}] and [uri: ${req.uri}]")
         Future.successful(Gone(ErrorCode.resourceGone.asJson))
       } else {
         authFunction.authorised()(block(request)).recover {
           case _: InvalidBearerToken =>
-            Logger.warn(s"[AuthorisedActions] invalid bearer token when trying to access ${request.uri}")
+            logger.warn(s"[AuthorisedActions] invalid bearer token when trying to access ${request.uri}")
             Forbidden(ErrorCode.invalidBearerToken.asJson)
           case ex: AuthorisationException =>
-            Logger.warn(s"[AuthorisedActions] authorisation exception caught when trying to access ${request.uri} : ${ex.reason}")
+            logger.warn(s"[AuthorisedActions] authorisation exception caught when trying to access ${request.uri} : ${ex.reason}")
             Forbidden(ErrorCode.unauthorisedError.asJson)
         }
       }

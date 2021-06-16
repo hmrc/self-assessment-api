@@ -16,76 +16,67 @@
 
 package router.resources
 
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.{JsObject, Json}
+import play.api.libs.ws.{WSRequest, WSResponse}
 import support.IntegrationSpec
+import support.stubs.{AuthStub, DownstreamStub}
 
-class DividendsResourceISpec extends IntegrationSpec{
+class DividendsResourceISpec extends IntegrationSpec {
 
-  val jsonRequest: JsObject = Json.obj("test" -> "json request")
-  val jsonResponse: JsObject = Json.obj("test" -> "json response")
+  trait Test {
+    val nino    = "AA123456B"
+    val taxYear = "2018-19"
 
-  val body: String =
-    s"""{
-       |  "ukDividends": 1000.00,
-       |  "otherUkDividends": 2000.00
-       |}""".stripMargin
+    val jsonRequest: JsObject = Json.obj("test" -> "json request")
+    val jsonResponse: JsObject = Json.parse(s"""{
+                                               |  "ukDividends": 1000.00,
+                                               |  "otherUkDividends": 2000.00
+                                               |}""".stripMargin).as[JsObject]
 
-  val correlationId = "X-123"
-  val testHeader = Map("X-CorrelationId" -> Seq(correlationId), "X-Content-Type-Options" -> Seq("nosniff"))
+    val acceptHeader: String = "application/vnd.hmrc.2.0+json"
+
+    def uri: String           = s"/ni/$nino/dividends/$taxYear"
+    def downstreamUri: String = s"/2.0/ni/$nino/dividends/$taxYear"
+
+    def setupStubs(): StubMapping
+
+    def request: WSRequest = {
+      setupStubs()
+      buildRequest(uri)
+        .withHttpHeaders((ACCEPT, acceptHeader))
+    }
+  }
 
   "Amend Dividends income with Version 2 enabled" should {
-
     "return a 204 with no json response body" when {
-      "a version 2.0 header is provided and the response from the Dividends income API is a 204" in {
-        val incomingUrl = "/ni/AA111111A/dividends/2018-19"
-        val outgoingUrl = "/2.0/ni/AA111111A/dividends/2018-19"
+      "a version 2.0 header is provided and the response from the Dividends income API is a 204" in new Test {
+        override def setupStubs(): StubMapping = {
+          AuthStub.authorised()
+          //            MtdIdLookupStub.ninoFound(nino)
+          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse)
+        }
 
-        Given()
-          .theClientIsAuthorised
-          .And()
-          .put(outgoingUrl)
-          .returns(aResponse
-            .withStatus(NO_CONTENT)
-            .withBody(jsonResponse))
-          .When()
-          .put(incomingUrl)
-          .withBody(jsonRequest)
-          .withHeaders(
-            ACCEPT -> "application/vnd.hmrc.2.0+json",
-            CONTENT_TYPE -> JSON
-          )
-          .Then()
-          .statusIs(NO_CONTENT)
-          .bodyIs("")
-          .verify(mockFor(outgoingUrl)
-            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+        val response: WSResponse = await(request.put(jsonRequest))
+        response.status shouldBe NO_CONTENT
+        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
       }
     }
   }
 
   "Retrieve" should {
     "return response with status 200 and body contains dividends income" when {
-      "version 2.0 header is provided in the request" in {
-        val incomingUrl = "/ni/AA111111A/dividends/2018-19"
-        val outgoingUrl = "/2.0/ni/AA111111A/dividends/2018-19"
+      "version 2.0 header is provided in the request" in new Test {
+        override def setupStubs(): StubMapping = {
+          AuthStub.authorised()
+          //            MtdIdLookupStub.ninoFound(nino)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse)
+        }
 
-        Given()
-          .theClientIsAuthorised
-          .And()
-          .get(outgoingUrl)
-          .returns(aResponse.withBody(Json.parse(body)))
-          .When()
-          .get(incomingUrl)
-          .withHeaders(
-            ACCEPT -> "application/vnd.hmrc.2.0+json",
-            CONTENT_TYPE -> JSON
-          )
-          .Then()
-          .statusIs(OK)
-          .bodyIs(Json.parse(body))
-          .verify(mockFor(outgoingUrl)
-            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
-
+        val response: WSResponse = await(request.get)
+        response.status shouldBe OK
+        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
+        response.json shouldBe jsonResponse
       }
     }
   }

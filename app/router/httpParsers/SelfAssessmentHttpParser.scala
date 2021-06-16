@@ -16,15 +16,15 @@
 
 package router.httpParsers
 
-import play.api.Logger
 import router.errors.SelfAssessmentAPIError
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+import utils.Logging
 
-class SelfAssessmentHttpParser extends HttpReads[SelfAssessmentOutcome] {
+class SelfAssessmentHttpParser extends HttpReads[SelfAssessmentOutcome] with Logging {
 
   override def read(method: String, url: String, response: HttpResponse): SelfAssessmentOutcome = {
-    Logger.debug(s"[SelfAssessmentConnector] [get] - Success: ${response.body}")
+    logger.debug(s"[SelfAssessmentConnector] [get] - Success: ${response.body}")
     Right(response)
   }
 }

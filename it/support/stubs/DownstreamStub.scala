@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
-package support
+package support.stubs
 
-trait ReleaseTwoIntegrationSpec extends  IntegrationBaseSpec {
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.libs.json.JsValue
+import support.wiremock.WireMockMethods
 
-  override val releaseTwoEnabled: Boolean = true
+object DownstreamStub extends WireMockMethods {
 
+  def onSuccess(method: HTTPMethod,
+                uri: String,
+                status: Int,
+                body: JsValue,
+                queryParams: Map[String, String] = Map.empty,
+                headers: Map[String, String] = Map.empty): StubMapping = {
+    when(method = method, uri = uri, queryParams = queryParams)
+      .thenReturn(status = status, body, headers)
+  }
 }

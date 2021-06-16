@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package support
+package utils
 
-import play.api.Application
-import play.api.libs.ws.{WSRequest, WSClient => PlayWSClient}
+import play.api.Logger
 
-trait WSClient {
-
-  implicit val app: Application
-  val port: Int
-
-  private val ws = app.injector.instanceOf[PlayWSClient]
-
-  def buildRequest(uri: String): WSRequest = ws.url(s"http://localhost:$port$uri")
+trait Logging {
+  lazy val logger: Logger = Logger(this.getClass)
 }
