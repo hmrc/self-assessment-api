@@ -26,9 +26,6 @@ import support.stubs.{AuthStub, DownstreamStub}
 class AuthISpec extends IntegrationSpec {
 
   trait Test {
-    val nino          = "AA123456B"
-    val correlationId = "X-123"
-
     val acceptHeader: String = "application/vnd.hmrc.1.0+json"
 
     def uri: String           = s"/any/url"

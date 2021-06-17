@@ -23,39 +23,37 @@ import play.api.libs.json.JsValue
 import play.api.mvc.Request
 import router.connectors.SelfAssessmentConnector
 import router.constants.Versions
-import router.constants.Versions.{VERSION_1, VERSION_2}
+import router.constants.Versions.{ VERSION_1, VERSION_2 }
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class ReleaseTwoService @Inject()(val appConfig: AppConfig,
-                                  val selfAssessmentConnector: SelfAssessmentConnector) extends Service {
+class ReleaseTwoService @Inject()(val appConfig: AppConfig, val selfAssessmentConnector: SelfAssessmentConnector) extends Service {
 
   val r2 = "/r2"
 
   def create(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
 
-
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.post(r2+req.uri, body)
-      case Some(VERSION_2) => selfAssessmentConnector.post(r2+req.uri, body)(Versions.convertHeaderToVersion1)
+      case Some(VERSION_1) => selfAssessmentConnector.post(r2 + req.uri, body)
+      case Some(VERSION_2) => selfAssessmentConnector.post(r2 + req.uri, body)(Versions.convertHeaderToVersion1)
     }
   }
 
   def get()(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
 
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.get(r2+req.uri)
-      case Some(VERSION_2) => selfAssessmentConnector.get(r2+req.uri)(Versions.convertHeaderToVersion1)
+      case Some(VERSION_1) => selfAssessmentConnector.get(r2 + req.uri)
+      case Some(VERSION_2) => selfAssessmentConnector.get(r2 + req.uri)(Versions.convertHeaderToVersion1)
     }
   }
 
   def amend(body: JsValue)(implicit hc: HeaderCarrier, req: Request[_]): Future[SelfAssessmentOutcome] = {
 
     withApiVersion {
-      case Some(VERSION_1) => selfAssessmentConnector.put(r2+req.uri, body)
-      case Some(VERSION_2) => selfAssessmentConnector.put(r2+req.uri, body)(Versions.convertHeaderToVersion1)
+      case Some(VERSION_1) => selfAssessmentConnector.put(r2 + req.uri, body)
+      case Some(VERSION_2) => selfAssessmentConnector.put(r2 + req.uri, body)(Versions.convertHeaderToVersion1)
     }
   }
 
