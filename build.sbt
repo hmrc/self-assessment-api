@@ -47,7 +47,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     inConfig(ItTest)(Defaults.itSettings ++ headerSettings(ItTest) ++ automateHeaderSettings(ItTest)),
     ItTest / fork := true,
-    ItTest / unmanagedSourceDirectories := Seq((baseDirectory in ItTest).value / "it"),
+    ItTest / unmanagedSourceDirectories := Seq((ItTest / baseDirectory).value / "it"),
     ItTest / unmanagedClasspath += baseDirectory.value / "resources",
     Runtime / unmanagedClasspath += baseDirectory.value / "resources",
     ItTest / javaOptions += "-Dlogger.resource=logback-test.xml",
@@ -62,11 +62,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(SilencerSettings())
 
 dependencyUpdatesFilter -= moduleFilter(organization = "com.typesafe.play")
-dependencyUpdatesFilter -= moduleFilter(name = "simple-reactivemongo")
-dependencyUpdatesFilter -= moduleFilter(name = "reactivemongo-test")
-dependencyUpdatesFilter -= moduleFilter(name = "domain")
 dependencyUpdatesFilter -= moduleFilter(name = "scala-library")
 dependencyUpdatesFilter -= moduleFilter(name = "flexmark-all")
 dependencyUpdatesFilter -= moduleFilter(name = "scalatestplus-play")
-dependencyUpdatesFilter -= moduleFilter(name = "scalatestplus-scalacheck")
 dependencyUpdatesFailBuild := true
