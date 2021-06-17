@@ -51,12 +51,11 @@ class CrystallisationResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.POST, downstreamUri, NO_CONTENT, Json.obj())
+          DownstreamStub.onSuccess(DownstreamStub.POST, downstreamUri, NO_CONTENT, Json.obj(), requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.post(jsonRequest))
         response.status shouldBe NO_CONTENT
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
       }
     }
   }
@@ -88,12 +87,16 @@ class CrystallisationResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.POST, downstreamUri, SEE_OTHER, JsNull, headers = Map(LOCATION -> location))
+          DownstreamStub.onSuccess(DownstreamStub.POST,
+                                   downstreamUri,
+                                   SEE_OTHER,
+                                   JsNull,
+                                   requestHeaders = Map(ACCEPT    -> acceptHeader),
+                                   responseHeaders = Map(LOCATION -> location))
         }
 
         val response: WSResponse = await(request.post(JsNull))
         response.status shouldBe SEE_OTHER
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
         response.header(LOCATION) shouldBe Some(location)
       }
     }
@@ -147,12 +150,11 @@ class CrystallisationResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.POST, downstreamUri, OK, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.get)
         response.status shouldBe OK
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
         response.json shouldBe jsonResponse
       }
     }

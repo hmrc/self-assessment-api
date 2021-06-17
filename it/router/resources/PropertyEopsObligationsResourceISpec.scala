@@ -32,7 +32,9 @@ class PropertyEopsObligationsResourceISpec extends IntegrationSpec {
     val acceptHeader: String = "application/vnd.hmrc.2.0+json"
 
     def uri: String           = s"/ni/$nino/uk-properties/end-of-period-statements/obligations?from=2017-04-06&to=2018-04-05"
-    def downstreamUri: String = s"/2.0/ni/$nino/uk-properties/end-of-period-statements/obligations?from=2017-04-06&to=2018-04-05"
+    def downstreamUri: String = s"/2.0/ni/$nino/uk-properties/end-of-period-statements/obligations"
+
+    val queryParams: Map[String, String] = Map("from" -> "2017-04-06", "to" -> "2018-04-05")
 
     def setupStubs(): StubMapping
 
@@ -49,12 +51,11 @@ class PropertyEopsObligationsResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, queryParams = queryParams, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.get)
         response.status shouldBe OK
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
         response.json shouldBe jsonResponse
       }
     }

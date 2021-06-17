@@ -17,23 +17,23 @@
 package router.resources
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.{JsObject, Json}
-import play.api.libs.ws.{WSRequest, WSResponse}
+import play.api.libs.json.{ JsObject, Json }
+import play.api.libs.ws.{ WSRequest, WSResponse }
 import support.IntegrationSpec
-import support.stubs.{AuthStub, DownstreamStub}
+import support.stubs.{ AuthStub, DownstreamStub }
 
 class CharitableGivingResourceISpec extends IntegrationSpec {
 
   trait Test {
-    val nino = "AA123456B"
+    val nino          = "AA123456B"
     val correlationId = "X-123"
 
-    val acceptHeader: String
+    val acceptHeader: String = "application/vnd.hmrc.2.0+json"
 
     def uri: String           = s"/ni/$nino/charitable-giving/2018-19"
-    def downstreamUri: String = s"/r2/ni/$nino/charitable-giving/2018-19"
+    def downstreamUri: String = s"/2.0/ni/$nino/charitable-giving/2018-19"
 
-    val jsonRequest: JsObject = Json.obj("test" -> "json request")
+    val jsonRequest: JsObject  = Json.obj("test" -> "json request")
     val jsonResponse: JsObject = Json.obj("test" -> "json response")
 
     def setupStubs(): StubMapping
@@ -48,9 +48,9 @@ class CharitableGivingResourceISpec extends IntegrationSpec {
   "GET Charitable Giving annuals with release-2 enabled" should {
     s"return status 200 with a json response body" when {
       "the downstream response from the Charitable Giving api version 2 returns status 200 with a json response body" in new Test {
-        override val acceptHeader: String = "application/vnd.hmrc.2.0+json"
-        override val jsonResponse: JsObject = Json.parse(
-          s"""{
+        override val jsonResponse: JsObject = Json
+          .parse(
+            s"""{
              |  "giftAidPayments": {
              |    "specifiedYear": 10000.00,
              |    "oneOffSpecifiedYear": 1000.00,
@@ -66,17 +66,22 @@ class CharitableGivingResourceISpec extends IntegrationSpec {
              |    "investmentsNonUKCharityNames": ["International Charity C","International Charity D"]
              |  }
              |}""".stripMargin
-        ).as[JsObject]
+          )
+          .as[JsObject]
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, headers = Map("X-CorrelationId" -> correlationId))
+          DownstreamStub.onSuccess(DownstreamStub.GET,
+                                   downstreamUri,
+                                   OK,
+                                   jsonResponse,
+                                   requestHeaders = Map(ACCEPT             -> acceptHeader),
+                                   responseHeaders = Map("X-CorrelationId" -> correlationId))
         }
 
         val response: WSResponse = await(request.get)
         response.status shouldBe OK
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
         response.header("X-CorrelationId") shouldBe Some(correlationId)
         response.json shouldBe jsonResponse
       }
@@ -87,17 +92,14 @@ class CharitableGivingResourceISpec extends IntegrationSpec {
 
     "return a 204 with no json response body" when {
       "a version 2.0 header is provided and the response from the Charitable Giving API is a 204" in new Test {
-        override val acceptHeader: String = "application/vnd.hmrc.2.0+json"
-
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.put(jsonRequest))
         response.status shouldBe NO_CONTENT
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
       }
     }
   }

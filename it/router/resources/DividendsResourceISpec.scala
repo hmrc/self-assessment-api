@@ -54,12 +54,11 @@ class DividendsResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.put(jsonRequest))
         response.status shouldBe NO_CONTENT
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
       }
     }
   }
@@ -70,12 +69,11 @@ class DividendsResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.get)
         response.status shouldBe OK
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
         response.json shouldBe jsonResponse
       }
     }

@@ -27,8 +27,9 @@ object DownstreamStub extends WireMockMethods {
                 status: Int,
                 body: JsValue,
                 queryParams: Map[String, String] = Map.empty,
-                headers: Map[String, String] = Map.empty): StubMapping = {
-    when(method = method, uri = uri, queryParams = queryParams)
-      .thenReturn(status = status, body, headers)
+                requestHeaders: Map[String, String] = Map.empty,
+                responseHeaders: Map[String, String] = Map.empty): StubMapping = {
+    when(method = method, uri = uri, queryParams = queryParams, headers = requestHeaders)
+      .thenReturn(status = status, body, headers = responseHeaders)
   }
 }

@@ -34,19 +34,27 @@ trait BaseConnector {
 
   val serviceUrl: String
 
+  private def downstreamHeaderCarrier(additionalHeaders: Seq[String] = Seq.empty)(implicit hc: HeaderCarrier): HeaderCarrier =
+    HeaderCarrier(
+      extraHeaders = hc.extraHeaders ++
+       // Other headers (i.e Gov-Test-Scenario, Content-Type)
+        hc.headers(additionalHeaders ++ appConfig.environmentHeaders.getOrElse(Seq.empty))
+    )
+
+
   def get(uri: String)(implicit hc: HeaderCarrier): Future[SelfAssessmentOutcome] = {
-    http.GET[SelfAssessmentOutcome](s"$serviceUrl$uri")(httpParser, hc, implicitly)
+    http.GET[SelfAssessmentOutcome](s"$serviceUrl$uri")(httpParser, downstreamHeaderCarrier(), implicitly)
   }
 
   def post(uri: String, body: JsValue)(implicit hc: HeaderCarrier): Future[SelfAssessmentOutcome] = {
-    http.POST[JsValue, SelfAssessmentOutcome](s"$serviceUrl$uri", body)(implicitly, httpParser, hc, implicitly)
+    http.POST[JsValue, SelfAssessmentOutcome](s"$serviceUrl$uri", body)(implicitly, httpParser, downstreamHeaderCarrier(Seq("Content-Type")), implicitly)
   }
 
   def postEmpty(uri: String)(implicit hc: HeaderCarrier): Future[SelfAssessmentOutcome] = {
-    http.POSTEmpty[SelfAssessmentOutcome](s"$serviceUrl$uri")(httpParser, hc, implicitly)
+    http.POSTEmpty[SelfAssessmentOutcome](s"$serviceUrl$uri")(httpParser, downstreamHeaderCarrier(Seq("Content-Type")), implicitly)
   }
 
   def put(uri: String, body: JsValue)(implicit hc: HeaderCarrier): Future[SelfAssessmentOutcome] = {
-    http.PUT[JsValue, SelfAssessmentOutcome](s"$serviceUrl$uri", body)(implicitly, httpParser, hc, implicitly)
+    http.PUT[JsValue, SelfAssessmentOutcome](s"$serviceUrl$uri", body)(implicitly, httpParser, downstreamHeaderCarrier(Seq("Content-Type")), implicitly)
   }
 }

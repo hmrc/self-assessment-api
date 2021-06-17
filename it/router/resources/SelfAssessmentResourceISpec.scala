@@ -17,10 +17,10 @@
 package router.resources
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.{JsObject, Json}
-import play.api.libs.ws.{WSRequest, WSResponse}
+import play.api.libs.json.{ JsObject, Json }
+import play.api.libs.ws.{ WSRequest, WSResponse }
 import support.IntegrationSpec
-import support.stubs.{AuthStub, DownstreamStub}
+import support.stubs.{ AuthStub, DownstreamStub }
 
 class SelfAssessmentResourceISpec extends IntegrationSpec {
 
@@ -56,12 +56,11 @@ class SelfAssessmentResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.get)
         response.status shouldBe OK
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.1.0+json")
         response.json shouldBe jsonResponse
       }
 
@@ -71,12 +70,15 @@ class SelfAssessmentResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.GET,
+                                   downstreamUri,
+                                   OK,
+                                   jsonResponse,
+                                   requestHeaders = Map(ACCEPT -> "application/vnd.hmrc.1.0+json"))
         }
 
         val response: WSResponse = await(request.get)
         response.status shouldBe OK
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.1.0+json")
         response.json shouldBe jsonResponse
       }
     }
@@ -90,12 +92,16 @@ class SelfAssessmentResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.POST, downstreamUri, OK, jsonResponse, headers = Map(LOCATION -> locationValue))
+          DownstreamStub.onSuccess(DownstreamStub.POST,
+                                   downstreamUri,
+                                   OK,
+                                   jsonResponse,
+                                   requestHeaders = Map(ACCEPT    -> acceptHeader),
+                                   responseHeaders = Map(LOCATION -> locationValue))
         }
 
         val response: WSResponse = await(request.post(jsonRequest))
         response.status shouldBe OK
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.1.0+json")
         response.header(LOCATION) shouldBe Some(locationValue)
         response.json shouldBe jsonResponse
       }
@@ -110,12 +116,11 @@ class SelfAssessmentResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, OK, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.put(jsonRequest))
         response.status shouldBe OK
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.1.0+json")
         response.json shouldBe jsonResponse
       }
     }

@@ -17,7 +17,7 @@
 package router.resources
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import router.errors.ErrorCode
 import support.IntegrationSpec
@@ -46,7 +46,7 @@ class DeprecatedRoutesISpec extends IntegrationSpec {
   "hitting a deprecated route" should {
     "return 410" when {
       "the route is GET UK Property" in new Test {
-        override def uri: String = s"/ni/$nino/uk-property"
+        override def uri: String = s"/ni/$nino/uk-properties"
 
         override def acceptHeader: String = "application/vnd.hmrc.1.0+json"
 
@@ -70,11 +70,12 @@ class DeprecatedRoutesISpec extends IntegrationSpec {
           //            MtdIdLookupStub.ninoFound(nino)
         }
 
-        val response: WSResponse = await(request.get)
+        val response: WSResponse = await(request.post(Json.obj()))
         response.status shouldBe GONE
         response.json shouldBe gone
       }
 
+      //TODO: add these routes to application.conf and remove TaxCalcResource completely
       "the route is GET tax calculation" in new Test {
         override def uri: String = s"/ni/$nino/calculations/041f7e4d-87d9-4d4a-a296-3cfbdf92f7e2"
 

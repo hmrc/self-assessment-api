@@ -55,12 +55,11 @@ class SelfEmploymentAnnualsResourceISpec extends ReleaseTwoIntegrationSpec {
           override def setupStubs(): StubMapping = {
             AuthStub.authorised()
             //            MtdIdLookupStub.ninoFound(nino)
-            DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse)
+            DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
           }
 
           val response: WSResponse = await(request.get)
           response.status shouldBe OK
-          response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.1.0+json")
           response.json shouldBe jsonResponse
         }
 
@@ -70,12 +69,11 @@ class SelfEmploymentAnnualsResourceISpec extends ReleaseTwoIntegrationSpec {
           override def setupStubs(): StubMapping = {
             AuthStub.authorised()
             //            MtdIdLookupStub.ninoFound(nino)
-            DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse)
+            DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> "application/vnd.hmrc.1.0+json"))
           }
 
           val response: WSResponse = await(request.get)
           response.status shouldBe OK
-          response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.1.0+json")
           response.json shouldBe jsonResponse
         }
       }
@@ -90,12 +88,11 @@ class SelfEmploymentAnnualsResourceISpec extends ReleaseTwoIntegrationSpec {
           override def setupStubs(): StubMapping = {
             AuthStub.authorised()
             //            MtdIdLookupStub.ninoFound(nino)
-            DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse)
+            DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
           }
 
           val response: WSResponse = await(request.put(jsonRequest))
           response.status shouldBe NO_CONTENT
-          response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.1.0+json")
         }
 
         "a version 2.0 header is provided and the downstream response from the self assessment api returns a 204 with a json response body" in new Test {
@@ -104,12 +101,11 @@ class SelfEmploymentAnnualsResourceISpec extends ReleaseTwoIntegrationSpec {
           override def setupStubs(): StubMapping = {
             AuthStub.authorised()
             //            MtdIdLookupStub.ninoFound(nino)
-            DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse)
+            DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse, requestHeaders = Map(ACCEPT -> "application/vnd.hmrc.1.0+json"))
           }
 
           val response: WSResponse = await(request.put(jsonRequest))
           response.status shouldBe NO_CONTENT
-          response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.1.0+json")
         }
       }
   }

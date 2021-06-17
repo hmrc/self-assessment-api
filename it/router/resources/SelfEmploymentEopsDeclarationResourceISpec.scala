@@ -50,12 +50,11 @@ class SelfEmploymentEopsDeclarationResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.POST, downstreamUri, NO_CONTENT, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.POST, downstreamUri, NO_CONTENT, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.post(jsonRequest))
         response.status shouldBe NO_CONTENT
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
       }
     }
   }

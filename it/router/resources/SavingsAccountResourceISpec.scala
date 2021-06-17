@@ -17,10 +17,10 @@
 package router.resources
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.{JsObject, Json}
-import play.api.libs.ws.{WSRequest, WSResponse}
+import play.api.libs.json.{ JsObject, Json }
+import play.api.libs.ws.{ WSRequest, WSResponse }
 import support.IntegrationSpec
-import support.stubs.{AuthStub, DownstreamStub}
+import support.stubs.{ AuthStub, DownstreamStub }
 
 class SavingsAccountResourceISpec extends IntegrationSpec {
 
@@ -54,12 +54,16 @@ class SavingsAccountResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.POST, downstreamUri, CREATED, jsonResponse, headers = Map("X-CorrelationId" -> correlationId))
+          DownstreamStub.onSuccess(DownstreamStub.POST,
+                                   downstreamUri,
+                                   CREATED,
+                                   jsonResponse,
+                                   requestHeaders = Map(ACCEPT             -> acceptHeader),
+                                   responseHeaders = Map("X-CorrelationId" -> correlationId))
         }
 
         val response: WSResponse = await(request.post(jsonRequest))
         response.status shouldBe CREATED
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
         response.header("X-CorrelationId") shouldBe Some(correlationId)
         response.json shouldBe jsonResponse
       }
@@ -108,12 +112,11 @@ class SavingsAccountResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.get)
         response.status shouldBe OK
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
         response.json shouldBe jsonResponse
       }
     }
@@ -146,12 +149,11 @@ class SavingsAccountResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.get)
         response.status shouldBe OK
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
         response.json shouldBe jsonResponse
       }
     }
@@ -186,12 +188,11 @@ class SavingsAccountResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.put(jsonRequest))
         response.status shouldBe NO_CONTENT
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
       }
     }
   }
@@ -224,12 +225,11 @@ class SavingsAccountResourceISpec extends IntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
           //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.get)
         response.status shouldBe OK
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.2.0+json")
         response.json shouldBe jsonResponse
 
       }

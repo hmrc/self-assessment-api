@@ -57,14 +57,13 @@ class PropertyAnnualsResourceISpec extends ReleaseTwoIntegrationSpec {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
 //            MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.get)
 
         response.status shouldBe OK
         response.header("Content-Type") shouldBe Some("application/json")
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.1.0+json")
         response.json shouldBe jsonResponse
       }
 
@@ -74,14 +73,13 @@ class PropertyAnnualsResourceISpec extends ReleaseTwoIntegrationSpec {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> "application/vnd.hmrc.1.0+json"))
         }
 
         val response: WSResponse = await(request.get)
 
         response.status shouldBe OK
         response.header("Content-Type") shouldBe Some("application/json")
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.1.0+json")
         response.json shouldBe jsonResponse
       }
     }
@@ -90,36 +88,32 @@ class PropertyAnnualsResourceISpec extends ReleaseTwoIntegrationSpec {
   "PUT Non-FHL UK Property annuals with release-2 enabled" should {
 
     s"return a 204 with no json response body for $propertyType properties" when {
-      "a version 1.0 header is provided and the downstream response from the self assessment api returns a 204 with a json response body" in new Test {
+      "a version 1.0 header is provided and the downstream response from the self assessment api returns a 204" in new Test {
         override val acceptHeader: String  = "application/vnd.hmrc.1.0+json"
         override val downstreamUri: String = s"/r2/ni/$nino/uk-properties/$propertyType/2018-19"
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
         val response: WSResponse = await(request.put(jsonRequest))
 
         response.status shouldBe NO_CONTENT
-        response.header("Content-Type") shouldBe Some("application/json")
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.1.0+json")
       }
 
-      "a version 2.0 header is provided and the downstream response from the self assessment api returns a 204 with a json response body" in new Test {
+      "a version 2.0 header is provided and the downstream response from the self assessment api returns a 204" in new Test {
         override val acceptHeader: String  = "application/vnd.hmrc.2.0+json"
         override val downstreamUri: String = s"/r2/ni/$nino/uk-properties/$propertyType/2018-19"
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse)
+          DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse, requestHeaders = Map(ACCEPT -> "application/vnd.hmrc.1.0+json"))
         }
 
         val response: WSResponse = await(request.put(jsonRequest))
 
         response.status shouldBe NO_CONTENT
-        response.header("Content-Type") shouldBe Some("application/json")
-        response.header(ACCEPT) shouldBe Some("application/vnd.hmrc.1.0+json")
       }
     }
   }
