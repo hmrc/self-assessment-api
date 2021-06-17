@@ -47,7 +47,7 @@ class ErrorHandler @Inject()(
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
 
     implicit val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    getAPIVersionFromRequest(request) match {
+    getAPIVersionFromRequest match {
       case Some(VERSION_2) =>
         logger.warn(s"[ErrorHandler][onClientError] error in version 2, for (${request.method}) [${request.uri}] with status: $statusCode and message: $message")
         statusCode match {
@@ -84,7 +84,7 @@ class ErrorHandler @Inject()(
   override def onServerError(request: RequestHeader, ex: Throwable): Future[Result] = {
     implicit val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    getAPIVersionFromRequest(request) match {
+    getAPIVersionFromRequest match {
       case Some(VERSION_2) =>
         logger.warn(s"[ErrorHandler][onServerError] Internal server error in version 2, for (${request.method}) [${request.uri}] -> ", ex)
 

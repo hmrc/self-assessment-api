@@ -16,26 +16,25 @@
 
 package router.constants
 
-import play.api.mvc.Headers
-import play.api.test.FakeRequest
+import router.constants.Versions.AcceptHeader
 import support.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
 
 class VersionsSpec extends UnitSpec {
-  "apiVersion" should {
 
+  "getAPIVersionFromRequest" should {
     Seq(
       "application/vnd.hmrc.1.0+json" -> "1.0",
       "application/vnd.hmrc.0.0+json" -> "0.0",
       "application/vnd.hmrc.9.9+json" -> "9.9"
-    ).foreach { case (headerValue, version) =>
-
-      "extract and return the version number from the Accept header" when {
-        s"the Accept header contains a value of $headerValue" in {
-          val hc = FakeRequest(method = "", uri = "", body = None, headers = Headers((ACCEPT, headerValue)))
-          Versions.getAPIVersionFromRequest(hc) shouldBe Some(version)
+    ).foreach {
+      case (headerValue, version) =>
+        "extract and return the version number from the Accept header" when {
+          s"the Accept header contains a value of $headerValue" in {
+            val hc = HeaderCarrier(extraHeaders = Seq((ACCEPT, headerValue)))
+            Versions.getAPIVersionFromRequest(hc) shouldBe Some(version)
+          }
         }
-      }
     }
 
     Seq(
@@ -46,12 +45,30 @@ class VersionsSpec extends UnitSpec {
       "application/vnd.hmrc.-1.0+json",
       "application/vnd.hmrc.10.0+json"
     ).foreach { headerValue =>
-
       "return a None" when {
         s"the Accept header contains an incorrect value of $headerValue" in {
-          val hc = FakeRequest(method = "", uri = "", body = None, headers = Headers((ACCEPT, headerValue)))
+          val hc = HeaderCarrier(extraHeaders = Seq((ACCEPT, headerValue)))
           Versions.getAPIVersionFromRequest(hc) shouldBe None
         }
+      }
+    }
+  }
+
+  "extractAcceptHeader" should {
+    "return a header" when {
+      "an Accept header is provided in extraHeaders" in {
+        val hc = HeaderCarrier(extraHeaders = Seq((ACCEPT, "application/vnd.hmrc.1.0+json")))
+        Versions.extractAcceptHeader(hc) shouldBe Some(AcceptHeader("1.0", "json"))
+      }
+      "an Accept header is provided in otherHeaders" in {
+        val hc = HeaderCarrier(otherHeaders = Seq((ACCEPT, "application/vnd.hmrc.1.0+json")))
+        Versions.extractAcceptHeader(hc) shouldBe Some(AcceptHeader("1.0", "json"))
+      }
+    }
+    "return None" when {
+      "no Accept header is provided" in {
+        val hc = HeaderCarrier()
+        Versions.extractAcceptHeader(hc) shouldBe None
       }
     }
   }
@@ -60,7 +77,7 @@ class VersionsSpec extends UnitSpec {
     "return a version 1 header" when {
       "a non version 1 header is supplied" in {
         val hc = HeaderCarrier(
-          otherHeaders = Seq(ACCEPT -> "application/vnd.hmrc.2.0+json", "test" -> "header"),
+          otherHeaders = Seq(ACCEPT  -> "application/vnd.hmrc.2.0+json", "test" -> "header"),
           extraHeaders = Seq("other" -> "test-header")
         )
         Versions.convertHeaderToVersion1(hc).headers(Seq(ACCEPT)) shouldBe Seq(ACCEPT -> "application/vnd.hmrc.1.0+json")

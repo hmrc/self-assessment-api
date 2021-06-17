@@ -40,6 +40,7 @@ class DividendsConnectorSpec extends UnitSpec
       mockAppConfig
     )
     MockAppConfig.dividendsApiUrl returns dividendsApiUrl
+    MockAppConfig.environmentHeaders returns None
   }
 
   lazy val dividendsApiUrl = "test-di-api-url"

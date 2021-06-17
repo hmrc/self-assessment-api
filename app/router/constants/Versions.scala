@@ -17,7 +17,7 @@
 package router.constants
 
 import play.api.http.HeaderNames.ACCEPT
-import play.api.mvc.{AnyContent, Request, RequestHeader}
+import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
 
 object Versions {
@@ -32,25 +32,14 @@ object Versions {
   private def getFrom(headers: Seq[(String, String)]): Option[String] =
     headers.collectFirst { case (ACCEPT, versionRegex(ver)) => ver }
 
-  def getAPIVersionFromRequest(implicit request: Request[AnyContent]): Option[String] = {
-    extractAcceptHeader(request).map(header => header.version)
+  def getAPIVersionFromRequest(implicit hc: HeaderCarrier): Option[String] = {
+    extractAcceptHeader(hc).map(header => header.version)
   }
 
-  def getAPIVersionFromRequest(implicit request: RequestHeader): Option[String] = {
-    extractAcceptHeader(request).map(header => header.version)
-  }
-
-  def extractAcceptHeader[A](req: RequestHeader): Option[AcceptHeader] = {
+  def extractAcceptHeader[A](hc: HeaderCarrier): Option[AcceptHeader] = {
     val versionRegex = """^application/vnd\.hmrc\.(\d\.\d)\+(.*)$""".r
-    req.headers.get(ACCEPT).flatMap {
-      case versionRegex(version, contentType) => Some(AcceptHeader(version, contentType))
-      case _ => None
-    }
-  }
-
-  def extractAcceptHeader[A](req: Request[A]): Option[AcceptHeader] = {
-    val versionRegex = """^application/vnd\.hmrc\.(\d\.\d)\+(.*)$""".r
-    req.headers.get(ACCEPT).flatMap {
+    val headers = hc.headers(Seq(ACCEPT)) ++ hc.extraHeaders // hc.headers doesn't include extraHeaders
+    headers.toMap.get(ACCEPT).flatMap {
       case versionRegex(version, contentType) => Some(AcceptHeader(version, contentType))
       case _ => None
     }

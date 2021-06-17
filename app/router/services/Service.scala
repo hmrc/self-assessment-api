@@ -16,10 +16,10 @@
 
 package router.services
 
-import play.api.mvc._
 import router.constants.Versions
 import router.errors.{IncorrectAPIVersion, UnsupportedAPIVersion}
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
 
 import scala.concurrent.Future
@@ -27,7 +27,7 @@ import scala.concurrent.Future
 trait Service extends Logging {
 
   private[services] def withApiVersion[A](pf: PartialFunction[Option[String], Future[SelfAssessmentOutcome]])
-                       (implicit request: Request[A]): Future[SelfAssessmentOutcome] = {
+                       (implicit hc: HeaderCarrier): Future[SelfAssessmentOutcome] = {
     pf.orElse[Option[String], Future[SelfAssessmentOutcome]] {
       case Some(_) =>
         logger.info("request header contains an unsupported api version")
@@ -35,6 +35,6 @@ trait Service extends Logging {
       case None =>
         logger.info("request header contains an incorrect or empty api version")
         Future.successful(Left(IncorrectAPIVersion))
-    }(Versions.extractAcceptHeader(request).map(_.version))
+    }(Versions.extractAcceptHeader(hc).map(_.version))
   }
 }

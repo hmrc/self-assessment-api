@@ -17,12 +17,12 @@
 package router.definition
 
 import mocks.config.MockAppConfig
+import router.constants.Versions._
 import router.definition.APIStatus.APIStatus
 import support.UnitSpec
-import router.constants.Versions._
+import uk.gov.hmrc.auth.core.ConfidenceLevel
 
-class SelfAssessmentApiDefinitionSpec extends UnitSpec
-  with MockAppConfig {
+class SelfAssessmentApiDefinitionSpec extends UnitSpec with MockAppConfig {
 
   class Setup {
     val saApiDefinition = new SelfAssessmentApiDefinition(mockAppConfig)
@@ -31,20 +31,37 @@ class SelfAssessmentApiDefinitionSpec extends UnitSpec
   "buildAPIStatus" should {
 
     Seq(
-      "ALPHA" -> APIStatus.ALPHA,
-      "BETA" -> APIStatus.BETA,
-      "STABLE" -> APIStatus.STABLE,
-      "DEPRECATED" -> APIStatus.DEPRECATED,
-      "RETIRED" -> APIStatus.RETIRED,
+      "ALPHA"            -> APIStatus.ALPHA,
+      "BETA"             -> APIStatus.BETA,
+      "STABLE"           -> APIStatus.STABLE,
+      "DEPRECATED"       -> APIStatus.DEPRECATED,
+      "RETIRED"          -> APIStatus.RETIRED,
       "any other string" -> APIStatus.ALPHA
-    ).foreach { case (input, output) =>
-      s"return $output when provided with $input from config" in new Setup {
-        MockAppConfig.apiStatus("1.0")
-          .returns(input)
+    ).foreach {
+      case (input, output) =>
+        s"return $output when provided with $input from config" in new Setup {
+          MockAppConfig
+            .apiStatus("1.0")
+            .returns(input)
 
-        val apiStatus: APIStatus = saApiDefinition.buildAPIStatus(VERSION_1)
-        apiStatus shouldBe output
-      }
+          val apiStatus: APIStatus = saApiDefinition.buildAPIStatus(VERSION_1)
+          apiStatus shouldBe output
+        }
+    }
+  }
+
+  "confidenceLevel" should {
+    Seq(
+      true  -> ConfidenceLevel.L200,
+      false -> ConfidenceLevel.L50
+    ).foreach {
+      case (appConfigValue, confidenceLevel) =>
+        s"return $confidenceLevel" when {
+          s"confidenceLevelDefinitionConfig is $appConfigValue" in new Setup {
+            MockAppConfig.confidenceLevelDefinitionConfig returns appConfigValue
+            saApiDefinition.confidenceLevel shouldBe confidenceLevel
+          }
+        }
     }
   }
 }

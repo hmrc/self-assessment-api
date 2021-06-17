@@ -37,7 +37,7 @@ trait MockHttp extends Mock {
 
   object MockHttp {
     def GET[T](url: String): OngoingStubbing[Future[T]] = {
-      when(mockHttp.GET[T](eqTo(url))(any[HttpReads[T]](), any[HeaderCarrier](), any[ExecutionContext]()))
+      when(mockHttp.GET[T](eqTo(url), any(), any())(any[HttpReads[T]](), any[HeaderCarrier](), any[ExecutionContext]()))
     }
 
     def POST[I, O](url: String, body: I, headers: (String, String)*): OngoingStubbing[Future[O]] = {
