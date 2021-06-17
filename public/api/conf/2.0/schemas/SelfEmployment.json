@@ -6,7 +6,9 @@
     "id": {
       "title": "ID",
       "description": "An identifier for the self-employment business, unique to the customer",
-      "type": "string"
+      "type": "string",
+      "pattern": "^[A-Za-z0-9]{15}$",
+      "example": "XKIS00000000988"
     },
     "accountingPeriod": {
       "$ref": "AccountingPeriod.json"
