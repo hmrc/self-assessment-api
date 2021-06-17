@@ -19,7 +19,6 @@ package router.resources
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import play.api.test.Helpers.GET
 import router.errors.ErrorCode
 import support.IntegrationSpec
 import support.stubs.{AuthStub, DownstreamStub}
