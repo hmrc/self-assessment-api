@@ -56,7 +56,6 @@ class PropertyAnnualsResourceISpec extends ReleaseTwoIntegrationSpec {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-//            MtdIdLookupStub.ninoFound(nino)
           DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 

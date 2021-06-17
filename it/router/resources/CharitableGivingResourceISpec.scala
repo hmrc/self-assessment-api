@@ -71,7 +71,6 @@ class CharitableGivingResourceISpec extends IntegrationSpec {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
           DownstreamStub.onSuccess(DownstreamStub.GET,
                                    downstreamUri,
                                    OK,
@@ -94,7 +93,6 @@ class CharitableGivingResourceISpec extends IntegrationSpec {
       "a version 2.0 header is provided and the response from the Charitable Giving API is a 204" in new Test {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
           DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 

@@ -55,7 +55,6 @@ class SelfAssessmentResourceISpec extends IntegrationSpec {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
           DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
@@ -69,7 +68,6 @@ class SelfAssessmentResourceISpec extends IntegrationSpec {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
           DownstreamStub.onSuccess(DownstreamStub.GET,
                                    downstreamUri,
                                    OK,
@@ -91,7 +89,6 @@ class SelfAssessmentResourceISpec extends IntegrationSpec {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
           DownstreamStub.onSuccess(DownstreamStub.POST,
                                    downstreamUri,
                                    OK,
@@ -115,7 +112,6 @@ class SelfAssessmentResourceISpec extends IntegrationSpec {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
           DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 

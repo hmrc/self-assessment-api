@@ -52,7 +52,6 @@ class DeprecatedRoutesISpec extends IntegrationSpec {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
         }
 
         val response: WSResponse = await(request.get)
@@ -67,7 +66,6 @@ class DeprecatedRoutesISpec extends IntegrationSpec {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
         }
 
         val response: WSResponse = await(request.post(Json.obj()))
@@ -75,7 +73,6 @@ class DeprecatedRoutesISpec extends IntegrationSpec {
         response.json shouldBe gone
       }
 
-      //TODO: add these routes to application.conf and remove TaxCalcResource completely
       "the route is GET tax calculation" in new Test {
         override def uri: String = s"/ni/$nino/calculations/041f7e4d-87d9-4d4a-a296-3cfbdf92f7e2"
 
@@ -83,7 +80,6 @@ class DeprecatedRoutesISpec extends IntegrationSpec {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
         }
 
         val response: WSResponse = await(request.get)
@@ -98,7 +94,6 @@ class DeprecatedRoutesISpec extends IntegrationSpec {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
         }
 
         val response: WSResponse = await(request.get)

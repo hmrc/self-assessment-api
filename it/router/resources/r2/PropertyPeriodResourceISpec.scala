@@ -58,7 +58,6 @@ class PropertyPeriodResourceISpec extends ReleaseTwoIntegrationSpec {
 
           override def setupStubs(): StubMapping = {
             AuthStub.authorised()
-            //            MtdIdLookupStub.ninoFound(nino)
             DownstreamStub.onSuccess(DownstreamStub.POST, downstreamUri, CREATED, jsonResponse)
           }
 
@@ -72,7 +71,6 @@ class PropertyPeriodResourceISpec extends ReleaseTwoIntegrationSpec {
 
           override def setupStubs(): StubMapping = {
             AuthStub.authorised()
-            //            MtdIdLookupStub.ninoFound(nino)
             DownstreamStub.onSuccess(DownstreamStub.POST, downstreamUri, CREATED, jsonResponse)
           }
 
@@ -114,7 +112,6 @@ class PropertyPeriodResourceISpec extends ReleaseTwoIntegrationSpec {
 
           override def setupStubs(): StubMapping = {
             AuthStub.authorised()
-            //            MtdIdLookupStub.ninoFound(nino)
             DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
           }
 
@@ -129,7 +126,6 @@ class PropertyPeriodResourceISpec extends ReleaseTwoIntegrationSpec {
 
           override def setupStubs(): StubMapping = {
             AuthStub.authorised()
-            //            MtdIdLookupStub.ninoFound(nino)
             DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> "application/vnd.hmrc.1.0+json"))
           }
 
@@ -173,7 +169,6 @@ class PropertyPeriodResourceISpec extends ReleaseTwoIntegrationSpec {
 
           override def setupStubs(): StubMapping = {
             AuthStub.authorised()
-            //            MtdIdLookupStub.ninoFound(nino)
             DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
           }
 
@@ -186,7 +181,6 @@ class PropertyPeriodResourceISpec extends ReleaseTwoIntegrationSpec {
 
           override def setupStubs(): StubMapping = {
             AuthStub.authorised()
-            //            MtdIdLookupStub.ninoFound(nino)
             DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse, requestHeaders = Map(ACCEPT -> "application/vnd.hmrc.1.0+json"))
           }
 

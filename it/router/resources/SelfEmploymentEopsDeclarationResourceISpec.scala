@@ -49,7 +49,6 @@ class SelfEmploymentEopsDeclarationResourceISpec extends IntegrationSpec {
       "the downstream response from the self employment version 2.0 returns a 204 with no json response body" in new Test {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
           DownstreamStub.onSuccess(DownstreamStub.POST, downstreamUri, NO_CONTENT, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 

@@ -68,7 +68,6 @@ class ErrorHandlerISpec extends IntegrationSpec with MockSavingsAccountService {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
         }
 
         val response: WSResponse = await(request.post(badJson))
@@ -85,7 +84,6 @@ class ErrorHandlerISpec extends IntegrationSpec with MockSavingsAccountService {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
         }
 
         val response: WSResponse = await(request.post(badJson))
@@ -104,7 +102,6 @@ class ErrorHandlerISpec extends IntegrationSpec with MockSavingsAccountService {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
         }
 
         val response: WSResponse = await(request.post(badJson))
@@ -119,7 +116,6 @@ class ErrorHandlerISpec extends IntegrationSpec with MockSavingsAccountService {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
         }
 
         val response: WSResponse = await(request.post(badJson))
@@ -153,7 +149,6 @@ class ErrorHandlerISpec extends IntegrationSpec with MockSavingsAccountService {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
         }
 
         val response: WSResponse = await(request.post(body))
@@ -170,7 +165,6 @@ class ErrorHandlerISpec extends IntegrationSpec with MockSavingsAccountService {
 
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
         }
 
         val response: WSResponse = await(request.post(body))

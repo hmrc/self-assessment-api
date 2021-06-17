@@ -53,7 +53,6 @@ class DividendsResourceISpec extends IntegrationSpec {
       "a version 2.0 header is provided and the response from the Dividends income API is a 204" in new Test {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
           DownstreamStub.onSuccess(DownstreamStub.PUT, downstreamUri, NO_CONTENT, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
@@ -68,7 +67,6 @@ class DividendsResourceISpec extends IntegrationSpec {
       "version 2.0 header is provided in the request" in new Test {
         override def setupStubs(): StubMapping = {
           AuthStub.authorised()
-          //            MtdIdLookupStub.ninoFound(nino)
           DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
         }
 
