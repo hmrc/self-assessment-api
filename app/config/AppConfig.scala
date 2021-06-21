@@ -61,6 +61,8 @@ class AppConfig @Inject()(val environment: Environment,
 
   def crystallisationApiUrl: String = config.baseUrl("mtd-crystallisation")
 
+  def environmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("environmentHeaders")
+
   /**
    * List of deprecated routes
    * Use where some of the routes in a resource are deprecated but the whole resource isn't deprecated

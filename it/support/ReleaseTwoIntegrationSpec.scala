@@ -16,27 +16,8 @@
 
 package support
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.Application
-import play.api.http.{HeaderNames, MimeTypes, Status}
-import play.api.inject.guice.GuiceApplicationBuilder
-import support.functional.FunctionalSyntax
-import support.wiremock.WireMockSupport
+trait ReleaseTwoIntegrationSpec extends  IntegrationBaseSpec {
 
-trait ReleaseTwoIntegrationSpec extends AnyWordSpec
-  with GuiceOneServerPerSuite
-  with WireMockSupport
-  with Matchers
-  with Status
-  with HeaderNames
-  with MimeTypes
-  with FakeApplicationConfig
-  with FunctionalSyntax {
-
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .configure(fakeApplicationConfig + ("feature-switch.release-2.enabled" -> true))
-    .build()
+  override val releaseTwoEnabled: Boolean = true
 
 }

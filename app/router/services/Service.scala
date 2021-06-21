@@ -16,37 +16,25 @@
 
 package router.services
 
-import play.api.Logger
-import play.api.http.HeaderNames.ACCEPT
 import router.constants.Versions
 import router.errors.{IncorrectAPIVersion, UnsupportedAPIVersion}
 import router.httpParsers.SelfAssessmentHttpParser.SelfAssessmentOutcome
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.Logging
 
 import scala.concurrent.Future
 
-trait Service {
+trait Service extends Logging {
 
-  private[services] def withApiVersion(pf: PartialFunction[Option[String], Future[SelfAssessmentOutcome]])
-                                      (implicit hc: HeaderCarrier): Future[SelfAssessmentOutcome] = {
+  private[services] def withApiVersion[A](pf: PartialFunction[Option[String], Future[SelfAssessmentOutcome]])
+                       (implicit hc: HeaderCarrier): Future[SelfAssessmentOutcome] = {
     pf.orElse[Option[String], Future[SelfAssessmentOutcome]] {
       case Some(_) =>
-        Logger.info("request header contains an unsupported api version")
+        logger.info("request header contains an unsupported api version")
         Future.successful(Left(UnsupportedAPIVersion))
       case None =>
-        Logger.info("request header contains an incorrect or empty api version")
+        logger.info("request header contains an incorrect or empty api version")
         Future.successful(Left(IncorrectAPIVersion))
-    }(getAPIVersionFromRequest)
-  }
-
-  private[services] def getAPIVersionFromRequest(implicit hc: HeaderCarrier): Option[String] =
-    Versions.getFromRequest
-
-  private[services] def convertHeaderToVersion1(implicit hc: HeaderCarrier) = {
-    val convertAcceptHeader: PartialFunction[(String, String), (String, String)] = {
-      case (ACCEPT, _) => (ACCEPT, "application/vnd.hmrc.1.0+json")
-      case header => header
-    }
-    hc.copy(otherHeaders = hc.otherHeaders.map(convertAcceptHeader))
+    }(Versions.extractAcceptHeader(hc).map(_.version))
   }
 }

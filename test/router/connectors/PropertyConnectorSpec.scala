@@ -41,6 +41,7 @@ class PropertyConnectorSpec extends UnitSpec
       mockAppConfig
     )
     MockAppConfig.propertyUrl returns propertyUrl
+    MockAppConfig.environmentHeaders returns None
   }
 
   lazy val propertyUrl = "test-sa-api-url"

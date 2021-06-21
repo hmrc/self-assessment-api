@@ -40,6 +40,7 @@ class SavingsAccountsConnectorSpec extends UnitSpec
       mockAppConfig
     )
     MockAppConfig.savingsAccountsApiUrl returns savingsAccountsApiUrl
+    MockAppConfig.environmentHeaders returns None
   }
 
   lazy val savingsAccountsApiUrl = "test-di-api-url"

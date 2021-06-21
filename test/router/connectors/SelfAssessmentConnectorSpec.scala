@@ -40,6 +40,7 @@ class SelfAssessmentConnectorSpec extends UnitSpec
       mockAppConfig
     )
     MockAppConfig.saApiUrl returns saApiUrl
+    MockAppConfig.environmentHeaders returns None
   }
 
   lazy val saApiUrl = "test-sa-api-url"

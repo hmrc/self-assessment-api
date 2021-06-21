@@ -44,6 +44,7 @@ class CrystallisationConnectorSpec extends UnitSpec
     )
 
     MockAppConfig.crystallisationApiUrl returns crystallisationApiUrl
+    MockAppConfig.environmentHeaders returns None
   }
 
   lazy val crystallisationApiUrl = "test-di-api-url"

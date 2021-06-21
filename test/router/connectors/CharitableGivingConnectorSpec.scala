@@ -40,6 +40,7 @@ class CharitableGivingConnectorSpec extends UnitSpec
       mockAppConfig
     )
     MockAppConfig.cgApiUrl returns cgApiUrl
+    MockAppConfig.environmentHeaders returns None
   }
 
   lazy val cgApiUrl = "test-cg-api-url"

@@ -40,6 +40,7 @@ class SelfEmploymentConnectorSpec extends UnitSpec
       mockAppConfig
     )
     MockAppConfig.selfEmploymentUrl returns selfEmploymentUrl
+    MockAppConfig.environmentHeaders returns None
   }
 
   lazy val selfEmploymentUrl = "test-sa-api-url"

@@ -18,7 +18,6 @@ package router.controllers
 
 import controllers.Assets
 import javax.inject.{Inject, Singleton}
-import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import router.definition.SelfAssessmentApiDefinition
@@ -26,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 @Singleton
 class DocumentationController @Inject()(selfAssessmentApiDefinition: SelfAssessmentApiDefinition,
-                                        cc: ControllerComponents, assets: Assets, errorHandler: HttpErrorHandler)
+                                        cc: ControllerComponents, assets: Assets)
   extends BackendController(cc) {
 
   def definition(): Action[AnyContent] = Action {

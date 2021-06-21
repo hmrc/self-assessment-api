@@ -17,15 +17,15 @@
 package router.definition
 
 import config.AppConfig
+import router.constants.Versions._
+import router.definition.APIStatus.APIStatus
+import uk.gov.hmrc.auth.core.ConfidenceLevel
+import utils.Logging
 
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
-import router.definition.APIStatus.APIStatus
-import router.constants.Versions._
-import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 @Singleton
-class SelfAssessmentApiDefinition @Inject()(appConfig: AppConfig) {
+class SelfAssessmentApiDefinition @Inject()(appConfig: AppConfig) extends Logging {
 
   private val readScope = "read:self-assessment"
   private val writeScope = "write:self-assessment"
@@ -73,7 +73,7 @@ class SelfAssessmentApiDefinition @Inject()(appConfig: AppConfig) {
       case "STABLE" => APIStatus.STABLE
       case "DEPRECATED" => APIStatus.DEPRECATED
       case "RETIRED" => APIStatus.RETIRED
-      case _ => Logger.error(s"[ApiDefinition][buildApiStatus] no API Status found in config.  Reverting to Alpha")
+      case _ => logger.error(s"[ApiDefinition][buildApiStatus] no API Status found in config.  Reverting to Alpha")
         APIStatus.ALPHA
     }
   }

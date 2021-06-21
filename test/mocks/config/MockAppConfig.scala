@@ -44,6 +44,10 @@ trait MockAppConfig extends Mock { _: Suite =>
     def crystallisationApiUrl: OngoingStubbing[String] = when(mockAppConfig.crystallisationApiUrl)
 
     def deprecatedRoutes[A]: OngoingStubbing[Seq[RequestMethodAndRoute]] = when(mockAppConfig.deprecatedRoutes)
+
+    def environmentHeaders: OngoingStubbing[Option[Seq[String]]] = when(mockAppConfig.environmentHeaders)
+
+    def confidenceLevelDefinitionConfig: OngoingStubbing[Boolean] = when(mockAppConfig.confidenceLevelDefinitionConfig)
   }
 
   override protected def beforeEach(): Unit = {

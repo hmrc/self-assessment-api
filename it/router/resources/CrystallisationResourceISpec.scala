@@ -16,89 +16,102 @@
 
 package router.resources
 
-import play.api.libs.json.{JsObject, Json}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.libs.json.{ JsNull, JsObject, Json }
+import play.api.libs.ws.{ WSRequest, WSResponse }
 import support.IntegrationSpec
+import support.stubs.{ AuthStub, DownstreamStub }
 
 class CrystallisationResourceISpec extends IntegrationSpec {
 
-
-  val taxYear = "2017-18"
-  val nino = "AA111111A"
-
-  val jsonRequest: JsObject = Json.obj("test" -> "json request")
-
   "create crystallisation" should {
 
+    trait Test {
+      val nino    = "AA123456B"
+      val taxYear = "2017-18"
+
+      val acceptHeader: String = "application/vnd.hmrc.2.0+json"
+
+      def uri: String           = s"/ni/$nino/$taxYear/crystallisation"
+      def downstreamUri: String = s"/2.0/ni/$nino/$taxYear/crystallisation"
+
+      val jsonRequest: JsObject = Json.obj("test" -> "json request")
+
+      def setupStubs(): StubMapping
+
+      def request: WSRequest = {
+        setupStubs()
+        buildRequest(uri)
+          .withHttpHeaders((ACCEPT, acceptHeader))
+      }
+    }
+
     "return a response with no Json response" when {
-      "a version 2.0 header is provided and the response from the crystallisation API is 204" in {
+      "a version 2.0 header is provided and the response from the crystallisation API is 204" in new Test {
+        override def setupStubs(): StubMapping = {
+          AuthStub.authorised()
+          DownstreamStub.onSuccess(DownstreamStub.POST, downstreamUri, NO_CONTENT, Json.obj(), requestHeaders = Map(ACCEPT -> acceptHeader))
+        }
 
-        val incomingUrl = s"/ni/$nino/$taxYear/crystallisation"
-        val outgoingUrl = s"/2.0/ni/$nino/$taxYear/crystallisation"
-
-        Given()
-          .theClientIsAuthorised
-          .And()
-          .post(outgoingUrl)
-          .returns(aResponse
-            .withStatus(NO_CONTENT)
-            .withBody(""))
-          .When()
-          .post(incomingUrl)
-          .withBody(jsonRequest)
-          .withHeaders(
-            ACCEPT -> "application/vnd.hmrc.2.0+json",
-            CONTENT_TYPE -> JSON
-          )
-          .Then()
-          .statusIs(NO_CONTENT)
-          .bodyIs("")
-          .verify(mockFor(outgoingUrl)
-            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+        val response: WSResponse = await(request.post(jsonRequest))
+        response.status shouldBe NO_CONTENT
       }
     }
   }
 
   "Intent to crystallise" should {
-    val location = "/self-assessment/ni/AA111111A/calculations/someCalculationId"
+
+    trait Test {
+      val nino    = "AA123456B"
+      val taxYear = "2017-18"
+
+      val location = "/self-assessment/ni/AA111111A/calculations/someCalculationId"
+
+      val acceptHeader: String = "application/vnd.hmrc.2.0+json"
+
+      def uri: String           = s"/ni/$nino/$taxYear/intent-to-crystallise"
+      def downstreamUri: String = s"/2.0/ni/$nino/$taxYear/intent-to-crystallise"
+
+      def setupStubs(): StubMapping
+
+      def request: WSRequest = {
+        setupStubs()
+        buildRequest(uri)
+          .withHttpHeaders((ACCEPT, acceptHeader))
+      }
+    }
 
     "return a 303 with no json response body" when {
+      "a version 2.0 header is provided and the response from the API is a 204" in new Test {
+        override def setupStubs(): StubMapping = {
+          AuthStub.authorised()
+          DownstreamStub.onSuccess(DownstreamStub.POST,
+                                   downstreamUri,
+                                   SEE_OTHER,
+                                   JsNull,
+                                   requestHeaders = Map(ACCEPT    -> acceptHeader),
+                                   responseHeaders = Map(LOCATION -> location))
+        }
 
-      "a version 2.0 header is provided and the response from the API is a 204" in {
-        // Note V2 requires empty body
-        val emptyBody = ""
-        val incomingUrl = s"/ni/$nino/$taxYear/intent-to-crystallise"
-        val outgoingUrl = s"/2.0/ni/$nino/$taxYear/intent-to-crystallise"
-
-        Given()
-          .theClientIsAuthorised
-          .And()
-          .post(outgoingUrl)
-          .returns(aResponse
-            .withStatus(SEE_OTHER)
-            .withBody("")
-            .withHeader(
-              LOCATION, location))
-          .When()
-          .post(incomingUrl)
-          .withBody(emptyBody)
-          .withHeaders(
-            ACCEPT -> "application/vnd.hmrc.2.0+json"
-          )
-          .Then()
-          .statusIs(SEE_OTHER)
-          .bodyIs("")
-          .containsHeaders(
-            LOCATION -> location)
-          .verify(mockFor(outgoingUrl)
-            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+        val response: WSResponse = await(request.post(JsNull))
+        response.status shouldBe SEE_OTHER
+        response.header(LOCATION) shouldBe Some(location)
       }
     }
   }
 
   "Retrieve obligations" should {
 
-    val body: String =
-      """
+    trait Test {
+      val nino    = "AA123456B"
+      val taxYear = "2017-18"
+
+      val acceptHeader: String = "application/vnd.hmrc.2.0+json"
+
+      def uri: String           = s"/ni/$nino/crystallisation/obligations"
+      def downstreamUri: String = s"/2.0/ni/$nino/crystallisation/obligations"
+
+      val jsonResponse: JsObject = Json.parse("""
         |{
         |  "obligations": [
         |    {
@@ -119,28 +132,27 @@ class CrystallisationResourceISpec extends IntegrationSpec {
         |    }
         |  ]
         |}
-      """.stripMargin
+      """.stripMargin).as[JsObject]
+
+      def setupStubs(): StubMapping
+
+      def request: WSRequest = {
+        setupStubs()
+        buildRequest(uri)
+          .withHttpHeaders((ACCEPT, acceptHeader))
+      }
+    }
 
     "return a status 200 and a body containing an obligation" when {
-      "a version 2 header is provided in the request" in {
-        val incomingUrl = s"/ni/$nino/crystallisation/obligations"
-        val outgoingUrl = s"/2.0/ni/$nino/crystallisation/obligations"
-        Given()
-          .theClientIsAuthorised
-          .And()
-          .get(outgoingUrl)
-          .returns(aResponse.withBody(Json.parse(body)))
-          .When()
-          .get(incomingUrl)
-          .withHeaders(
-            ACCEPT -> "application/vnd.hmrc.2.0+json",
-            CONTENT_TYPE -> JSON
-          )
-          .Then()
-          .statusIs(OK)
-          .bodyIs(Json.parse(body))
-          .verify(mockFor(outgoingUrl)
-            .receivedHeaders(ACCEPT -> "application/vnd.hmrc.2.0+json"))
+      "a version 2 header is provided in the request" in new Test {
+        override def setupStubs(): StubMapping = {
+          AuthStub.authorised()
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, jsonResponse, requestHeaders = Map(ACCEPT -> acceptHeader))
+        }
+
+        val response: WSResponse = await(request.get)
+        response.status shouldBe OK
+        response.json shouldBe jsonResponse
       }
     }
   }
