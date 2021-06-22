@@ -10,4 +10,6 @@ Here, a software package can provide:
 * Balancing charges
 * Goods & Services for own use
 
+selfEmploymentId is now called businessId. businessId will include self-employment businesses.
+
 Please note that the taxpayer's self-employment businesses must already be known to HMRC as per the subscription process.
