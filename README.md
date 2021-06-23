@@ -62,6 +62,14 @@ Start the app:
     the results, making any changes that might be necessary. E.g.
 
     sbt clean test it:test coverage dependencyUpdatesReport dependencyCheck
+    
+### Changelog
+
+You can see our changelog [here](https://github.com/hmrc/income-tax-mtd-changelog/wiki)
+
+### Support and Reporting Issues
+
+You can create a GitHub issue [here](https://github.com/hmrc/income-tax-mtd-changelog/issues)
 
 ### License
 
