@@ -10,7 +10,6 @@ POST        /ni/*nino/uk-properties/end-of-period-statements/from/*from/to/*to  
 POST        /ni/*nino/self-employments/*seId/end-of-period-statements/from/*from/to/*to        router.resources.SelfEmploymentEopsDeclarationResource.post(nino, seId, from, to)
 
 # Self Employment Obligations
-GET         /ni/:nino/self-employments/:id/obligations                                         router.resources.SelfAssessmentResource.get(nino, id)
 GET         /ni/:nino/self-employments/:id/periods                                             router.resources.SelfAssessmentResource.get(nino, id)
 
 #### Version One - Release Two #####
