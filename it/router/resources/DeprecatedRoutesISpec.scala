@@ -30,6 +30,8 @@ class DeprecatedRoutesISpec extends IntegrationSpec {
   trait Test {
     val nino = "AA123456B"
 
+    val selfEmploymentId = "XKIS00000000988"
+
     def acceptHeader: String
 
     def uri: String
@@ -89,6 +91,62 @@ class DeprecatedRoutesISpec extends IntegrationSpec {
 
       "the route is GET tax calculation messages" in new Test {
         override def uri: String = s"/ni/$nino/calculations/041f7e4d-87d9-4d4a-a296-3cfbdf92f7e2/validation-messages"
+
+        override def acceptHeader: String = "application/vnd.hmrc.2.0+json"
+
+        override def setupStubs(): StubMapping = {
+          AuthStub.authorised()
+        }
+
+        val response: WSResponse = await(request.get)
+        response.status shouldBe GONE
+        response.json shouldBe gone
+      }
+
+      "the route is GET all self employment business" in new Test {
+        override def uri: String = s"/ni/$nino/self-employments"
+
+        override def acceptHeader: String = "application/vnd.hmrc.2.0+json"
+
+        override def setupStubs(): StubMapping = {
+          AuthStub.authorised()
+        }
+
+        val response: WSResponse = await(request.get)
+        response.status shouldBe GONE
+        response.json shouldBe gone
+      }
+
+      "the route is GET a self employment business" in new Test {
+        override def uri: String = s"/ni/$nino/self-employments/$selfEmploymentId"
+
+        override def acceptHeader: String = "application/vnd.hmrc.2.0+json"
+
+        override def setupStubs(): StubMapping = {
+          AuthStub.authorised()
+        }
+
+        val response: WSResponse = await(request.get)
+        response.status shouldBe GONE
+        response.json shouldBe gone
+      }
+
+      "the route is GET self-employment business obligations" in new Test {
+        override def uri: String = s"/ni/$nino/self-employments/$selfEmploymentId/obligations"
+
+        override def acceptHeader: String = "application/vnd.hmrc.2.0+json"
+
+        override def setupStubs(): StubMapping = {
+          AuthStub.authorised()
+        }
+
+        val response: WSResponse = await(request.get)
+        response.status shouldBe GONE
+        response.json shouldBe gone
+      }
+
+      "the route is GET End of Period Statement Obligations for a Self-Employment Business" in new Test {
+        override def uri: String = s"/ni/$nino/self-employments/$selfEmploymentId/end-of-period-statements/obligations"
 
         override def acceptHeader: String = "application/vnd.hmrc.2.0+json"
 
