@@ -187,8 +187,8 @@ traits:
                     value:
                       code: INVALID_POSTCODE
       get:
-        displayName: List all self-employment businesses
-        description: From 30 June 2021 this resource will be replaced by the <a href="/api-documentation/docs/api/service/business-details-api/1.0">business-details-api</a>.
+        displayName: List all self-employment businesses [No longer available]
+        description: This resource is no longer available. It has been replaced by the <a href="/api-documentation/docs/api/service/business-details-api/1.0">business-details-api</a>.
         (annotations.sandboxData): !include scenarios/stateful-se-retrieve.md
         is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
         (annotations.scope): "read:self-assessment"
@@ -221,8 +221,8 @@ traits:
             example: XKIS00000000988
             type: string
         get:
-          displayName: Get a self-employment business
-          description: From 30 June 2021 this resource will be replaced by the <a href="/api-documentation/docs/api/service/business-details-api/1.0">business-details-api</a>.
+          displayName: Get a self-employment business [No longer available]
+          description: This resource is no longer available. It has been replaced by the <a href="/api-documentation/docs/api/service/business-details-api/1.0">business-details-api</a>.
           (annotations.sandboxData): !include scenarios/stateful-se-retrieve.md
           is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
           (annotations.scope): "read:self-assessment"
@@ -257,8 +257,8 @@ traits:
                           code: ""
         /obligations:
           get:
-            displayName: Retrieve self-employment business obligations
-            description: From 30 June 2021 this resource will be replaced by the <a href="/api-documentation/docs/api/service/obligations-api/1.0">obligations-api</a>.
+            displayName: Retrieve self-employment business obligations [No longer available]
+            description: This resource is no longer available. It has been replaced by the <a href="/api-documentation/docs/api/service/obligations-api/1.0">obligations-api</a>.
             (annotations.sandboxData): !include scenarios/self-employment-obligation-scenarios.md
             is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
             (annotations.scope): "read:self-assessment"
@@ -853,8 +853,8 @@ traits:
                   example: XKIS00000000988
                   type: string
               get:
-                displayName: Retrieve End of Period Statement Obligations for a Self-Employment Business
-                description: From 30 June 2021 this resource will be replaced by the <a href="/api-documentation/docs/api/service/obligations-api/1.0">obligations-api</a>.
+                displayName: Retrieve End of Period Statement Obligations for a Self-Employment Business [No longer available]
+                description: This resource is no longer available. It has been replaced by the <a href="/api-documentation/docs/api/service/obligations-api/1.0">obligations-api</a>.
                 (annotations.sandboxData): !include scenarios/eops-se-obligation-scenarios.md
                 is: [headers.acceptHeader, agentSubscription, clientSubscriptionToMTD, testScenarioHeader]
                 (annotations.scope): "read:self-assessment"
