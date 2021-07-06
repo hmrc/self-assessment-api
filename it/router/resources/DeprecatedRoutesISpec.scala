@@ -32,6 +32,9 @@ class DeprecatedRoutesISpec extends IntegrationSpec {
 
     val selfEmploymentId = "XKIS00000000988"
 
+    val fromDate = "2018-04-06"
+    val toDate = "2019-04-05"
+
     def acceptHeader: String
 
     def uri: String
@@ -145,8 +148,36 @@ class DeprecatedRoutesISpec extends IntegrationSpec {
         response.json shouldBe gone
       }
 
+      "the route is GET self-employment business obligations with query parameters" in new Test {
+        override def uri: String = s"/ni/$nino/self-employments/$selfEmploymentId/obligations?from=$fromDate&to=$toDate"
+
+        override def acceptHeader: String = "application/vnd.hmrc.2.0+json"
+
+        override def setupStubs(): StubMapping = {
+          AuthStub.authorised()
+        }
+
+        val response: WSResponse = await(request.get)
+        response.status shouldBe GONE
+        response.json shouldBe gone
+      }
+
       "the route is GET End of Period Statement Obligations for a Self-Employment Business" in new Test {
         override def uri: String = s"/ni/$nino/self-employments/$selfEmploymentId/end-of-period-statements/obligations"
+
+        override def acceptHeader: String = "application/vnd.hmrc.2.0+json"
+
+        override def setupStubs(): StubMapping = {
+          AuthStub.authorised()
+        }
+
+        val response: WSResponse = await(request.get)
+        response.status shouldBe GONE
+        response.json shouldBe gone
+      }
+
+      "the route is GET End of Period Statement Obligations for a Self Employment Business with query parameters" in new Test {
+        override def uri: String = s"/ni/$nino/self-employments/$selfEmploymentId/end-of-period-statements/obligations?from=$fromDate&to=$toDate"
 
         override def acceptHeader: String = "application/vnd.hmrc.2.0+json"
 
