@@ -1,5 +1,5 @@
 # Self Assessment API
-[![Build Status](https://travis-ci.org/hmrc/self-assessment-api.svg)](https://travis-ci.org/hmrc/self-assessment-api) [ ![Download](https://api.bintray.com/packages/hmrc/releases/self-assessment-api/images/download.svg) ](https://bintray.com/hmrc/releases/self-assessment-api/_latestVersion)
+[ ![Download](https://api.bintray.com/packages/hmrc/releases/self-assessment-api/images/download.svg) ](https://bintray.com/hmrc/releases/self-assessment-api/_latestVersion)
 
 This API provides access to versioned resources of the [Self Assessment API Legacy](https://github.com/hmrc/self-assessment-api-legacy).
 
