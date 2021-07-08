@@ -189,6 +189,34 @@ class DeprecatedRoutesISpec extends IntegrationSpec {
         response.status shouldBe GONE
         response.json shouldBe gone
       }
+
+      "the route is GET Crystallisation Obligations" in new Test {
+        override def uri: String = s"/ni/$nino/crystallisation/obligations"
+
+        override def acceptHeader: String = "application/vnd.hmrc.2.0+json"
+
+        override def setupStubs(): StubMapping = {
+          AuthStub.authorised()
+        }
+
+        val response: WSResponse = await(request.get)
+        response.status shouldBe GONE
+        response.json shouldBe gone
+      }
+
+      "the route is GET Crystallisation Obligations with query parameters" in new Test {
+        override def uri: String = s"/ni/$nino/crystallisation/obligations?from=$fromDate&to=$toDate"
+
+        override def acceptHeader: String = "application/vnd.hmrc.2.0+json"
+
+        override def setupStubs(): StubMapping = {
+          AuthStub.authorised()
+        }
+
+        val response: WSResponse = await(request.get)
+        response.status shouldBe GONE
+        response.json shouldBe gone
+      }
     }
   }
 }
